@@ -36,14 +36,19 @@ struct ProcessRunner: ProcessRunning {
         environment: [String: String] = [:],
         currentDirectory: URL? = nil
     ) async throws -> ProcessResult {
-        guard FileManager.default.isExecutableFile(atPath: executable) else {
+        let resolvedExecutable = BinaryLocator.resolveExecutable(
+            preferredPath: executable,
+            candidateNames: BinaryLocator.candidateNames(forExecutable: executable)
+        )
+
+        guard let resolvedExecutable else {
             throw ProcessRunnerError.executableNotFound(executable)
         }
 
         let process = Process()
         return try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { continuation in
-                process.executableURL = URL(fileURLWithPath: executable)
+                process.executableURL = URL(fileURLWithPath: resolvedExecutable)
                 process.arguments = arguments
                 process.currentDirectoryURL = currentDirectory
                 process.environment = ProcessInfo.processInfo.environment.merging(environment) { _, new in new }

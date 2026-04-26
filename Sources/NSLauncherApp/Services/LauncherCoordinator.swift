@@ -4,6 +4,7 @@ struct LauncherCoordinator: Sendable {
     private let settingsStore: SettingsStoring
     private let downloadStateStore: DownloadStateStoring
     private let manifestInstaller: ManifestInstalling
+    private let genshinStreamingMetadataService: GenshinStreamingMetadataProviding
     private let packageDownloader: PackageDownloading
     private let archiveInstaller: ArchiveInstalling
     private let importService: ImportServicing
@@ -13,6 +14,7 @@ struct LauncherCoordinator: Sendable {
         settingsStore: SettingsStoring,
         downloadStateStore: DownloadStateStoring,
         manifestInstaller: ManifestInstalling,
+        genshinStreamingMetadataService: GenshinStreamingMetadataProviding,
         packageDownloader: PackageDownloading,
         archiveInstaller: ArchiveInstalling,
         importService: ImportServicing,
@@ -21,6 +23,7 @@ struct LauncherCoordinator: Sendable {
         self.settingsStore = settingsStore
         self.downloadStateStore = downloadStateStore
         self.manifestInstaller = manifestInstaller
+        self.genshinStreamingMetadataService = genshinStreamingMetadataService
         self.packageDownloader = packageDownloader
         self.archiveInstaller = archiveInstaller
         self.importService = importService
@@ -61,6 +64,9 @@ struct LauncherCoordinator: Sendable {
             )
         case .manifest:
             let manifest = try await manifestInstaller.fetchManifest(for: game)
+            return try await manifestInstaller.planInstall(for: game, manifest: manifest)
+        case .streamingManifest:
+            let manifest = try await genshinStreamingMetadataService.fetchManifest(for: game, language: settings.language)
             return try await manifestInstaller.planInstall(for: game, manifest: manifest)
         }
     }
@@ -106,7 +112,20 @@ struct LauncherCoordinator: Sendable {
             try await importService.import(game: game, text: text, onEvent: onEvent)
         case .manifest:
             let manifest = try await manifestInstaller.fetchManifest(for: game)
-            try await manifestInstaller.install(game: game, manifest: manifest, onEvent: onEvent)
+            try await manifestInstaller.install(
+                game: game,
+                manifest: manifest,
+                operationController: operationController,
+                onEvent: onEvent
+            )
+        case .streamingManifest:
+            let manifest = try await genshinStreamingMetadataService.fetchManifest(for: game, language: settings.language)
+            try await manifestInstaller.install(
+                game: game,
+                manifest: manifest,
+                operationController: operationController,
+                onEvent: onEvent
+            )
         }
     }
 

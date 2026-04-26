@@ -4,6 +4,7 @@ import SwiftUI
 struct OperationProgress: Equatable {
     var stageTitle: String
     var itemPath: String?
+    var itemPaths: [String]? = nil
     var partText: String?
     var detailText: String?
     var resumePointText: String? = nil
@@ -39,6 +40,7 @@ final class LauncherViewModel: ObservableObject {
     private var transferSamples: [TransferSample] = []
     private var lastDownloadFieldsUpdateAt: Date?
     private var displayedDownloadFields: DownloadFieldSnapshot?
+    private var activeManifestItems: [String: Date] = [:]
 
     init(settings: AppSettings, coordinator: LauncherCoordinator) {
         self.settings = settings
@@ -53,6 +55,7 @@ final class LauncherViewModel: ObservableObject {
             settingsStore: SettingsStore(),
             downloadStateStore: DownloadStateStore(),
             manifestInstaller: ManifestInstaller(),
+            genshinStreamingMetadataService: GenshinStreamingMetadataService(),
             packageDownloader: PackageDownloadService(),
             archiveInstaller: ArchiveInstaller(processRunner: processRunner),
             importService: ImportService(),
@@ -74,12 +77,30 @@ final class LauncherViewModel: ObservableObject {
     }
 
     var selectedGamePackageName: String {
-        selectedGame?.packageSource?.archiveFileName ?? text.noPackageConfigured
+        guard let game = selectedGame else { return text.noPackageConfigured }
+        if game.installerStrategy == .streamingManifest {
+            return text.officialStreamingSource
+        }
+        return game.packageSource?.archiveFileName ?? text.noPackageConfigured
     }
 
     var canDownloadSelectedGame: Bool {
-        guard let packageSource = selectedGame?.packageSource else { return false }
-        return packageSource.remoteURL != nil || !(packageSource.partURLs?.isEmpty ?? true)
+        guard let game = selectedGame else { return false }
+        switch game.installerStrategy {
+        case .streamingManifest:
+            return true
+        case .manifest:
+            return game.manifestURL != nil
+        case .archivePackage:
+            guard let packageSource = game.packageSource else { return false }
+            return packageSource.remoteURL != nil || !(packageSource.partURLs?.isEmpty ?? true)
+        case .existingInstall:
+            return false
+        }
+    }
+
+    var canInstallFromLocalArchive: Bool {
+        selectedGame?.installerStrategy == .archivePackage
     }
 
     var text: AppText {
@@ -103,6 +124,7 @@ final class LauncherViewModel: ObservableObject {
     func refreshPlan() {
         guard let game = selectedGame else { return }
         resetTransferMetricsDisplay()
+        resetActiveManifestItems()
         currentTask?.cancel()
         isBusy = true
         isPaused = false
@@ -172,6 +194,7 @@ final class LauncherViewModel: ObservableObject {
     func installSelectedGame(archiveOverrideURL: URL? = nil) {
         guard let game = selectedGame else { return }
         resetTransferMetricsDisplay()
+        resetActiveManifestItems()
         resumableDownloadGameID = nil
         currentTask?.cancel()
         isBusy = true
@@ -260,6 +283,7 @@ final class LauncherViewModel: ObservableObject {
     func importSelectedGame(from directoryURL: URL? = nil) {
         guard let game = selectedGame else { return }
         resetTransferMetricsDisplay()
+        resetActiveManifestItems()
         let importDirectory = directoryURL ?? game.installDirectory
         updateSelectedGame { current in
             current.installDirectory = importDirectory
@@ -338,6 +362,7 @@ final class LauncherViewModel: ObservableObject {
     func rescanSelectedGame() {
         guard let game = selectedGame else { return }
         resetTransferMetricsDisplay()
+        resetActiveManifestItems()
         currentTask?.cancel()
         isBusy = true
         isPaused = false
@@ -757,6 +782,33 @@ final class LauncherViewModel: ObservableObject {
                 ),
                 currentPartKBText: nil
             )
+        case let .downloadingManifest(path, overallReceived, overallTotal, fileReceived, fileTotal):
+            let overallReceivedText = ByteCountFormatter.string(fromByteCount: overallReceived, countStyle: .file)
+            let overallTotalText = ByteCountFormatter.string(fromByteCount: overallTotal, countStyle: .file)
+            let fileReceivedText = ByteCountFormatter.string(fromByteCount: fileReceived, countStyle: .file)
+            let fileTotalText = ByteCountFormatter.string(fromByteCount: fileTotal, countStyle: .file)
+            let activeItems = registerActiveManifestItem(path)
+            statusText = text.downloadingPackage(
+                path,
+                received: overallReceivedText,
+                total: overallTotalText
+            )
+            operationProgress = OperationProgress(
+                stageTitle: text.downloadingStage,
+                itemPath: path,
+                itemPaths: activeItems,
+                partText: nil,
+                detailText: text.progressValue(received: overallReceivedText, total: overallTotalText),
+                fractionCompleted: overallTotal > 0 ? min(max(Double(overallReceived) / Double(overallTotal), 0), 1) : nil,
+                isIndeterminate: overallTotal <= 0,
+                currentPartDetailText: text.currentPartProgressValue(received: fileReceivedText, total: fileTotalText),
+                currentPartFractionCompleted: fileTotal > 0 ? min(max(Double(fileReceived) / Double(fileTotal), 0), 1) : nil,
+                currentPartIsIndeterminate: fileTotal <= 0,
+                speedText: nil,
+                etaText: nil,
+                totalKBText: nil,
+                currentPartKBText: nil
+            )
         case let .extracting(path):
             statusText = text.extracting(path)
             operationProgress = OperationProgress(
@@ -1100,6 +1152,8 @@ final class LauncherViewModel: ObservableObject {
                 return text.archivePackageMissing
             case .sevenZipBinaryMissing:
                 return text.sevenZipBinaryMissing
+            case let .sevenZipBinaryNotFound(path):
+                return text.sevenZipBinaryNotFound(path)
             case let .expectedExecutableMissing(path):
                 return text.expectedExecutableMissingAfterExtraction(path)
             }
@@ -1111,6 +1165,17 @@ final class LauncherViewModel: ObservableObject {
                 return text.serverInvalidResponse
             case let .checksumMismatch(path):
                 return text.checksumMismatch(path)
+            case let .expectedExecutableMissing(path):
+                return text.missingExpectedExecutable(path)
+            }
+        case let streamingError as GenshinStreamingMetadataError:
+            switch streamingError {
+            case .officialStreamingMetadataUnavailable:
+                return text.officialStreamingMetadataUnavailable
+            case .streamingManifestIncomplete:
+                return text.streamingManifestIncomplete
+            case .freshInstallUnsupported:
+                return text.freshInstallUnsupported
             }
         case let importError as ImportServiceError:
             switch importError {
@@ -1122,6 +1187,21 @@ final class LauncherViewModel: ObservableObject {
         default:
             return error.localizedDescription
         }
+    }
+
+    private func registerActiveManifestItem(_ path: String) -> [String] {
+        let now = Date()
+        activeManifestItems[path] = now
+        activeManifestItems = activeManifestItems.filter { now.timeIntervalSince($0.value) < 2.5 }
+        return activeManifestItems
+            .sorted { $0.value > $1.value }
+            .map(\.key)
+            .prefix(16)
+            .map { $0 }
+    }
+
+    private func resetActiveManifestItems() {
+        activeManifestItems.removeAll()
     }
 }
 

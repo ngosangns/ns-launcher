@@ -3,6 +3,7 @@ import Foundation
 enum ArchiveInstallerError: LocalizedError {
     case packageSourceMissing
     case sevenZipBinaryMissing
+    case sevenZipBinaryNotFound(String)
     case expectedExecutableMissing(String)
 
     var errorDescription: String? {
@@ -11,6 +12,8 @@ enum ArchiveInstallerError: LocalizedError {
             return "The selected game does not define an archive package."
         case .sevenZipBinaryMissing:
             return "7zz binary path is empty."
+        case let .sevenZipBinaryNotFound(path):
+            return "7zz executable not found. Checked: \(path)"
         case let .expectedExecutableMissing(path):
             return "Expected executable was not found after extraction: \(path)"
         }
@@ -44,8 +47,16 @@ struct ArchiveInstaller: ArchiveInstalling {
         guard game.packageSource != nil else {
             throw ArchiveInstallerError.packageSourceMissing
         }
-        guard !settings.sevenZipBinaryPath.isEmpty else {
+        let sevenZipBinaryPath = BinaryLocator.resolveExecutable(
+            preferredPath: settings.sevenZipBinaryPath,
+            candidateNames: ["7zz", "7z", "7za"]
+        )
+
+        guard !settings.sevenZipBinaryPath.isEmpty || sevenZipBinaryPath != nil else {
             throw ArchiveInstallerError.sevenZipBinaryMissing
+        }
+        guard let sevenZipBinaryPath else {
+            throw ArchiveInstallerError.sevenZipBinaryNotFound(settings.sevenZipBinaryPath)
         }
         try await operationController?.checkpoint()
 
@@ -62,7 +73,7 @@ struct ArchiveInstaller: ArchiveInstalling {
         try await operationController?.checkpoint()
         let extractionSource = normalizedArchiveURL(for: archiveURL, game: game)
         _ = try await processRunner.run(
-            executable: settings.sevenZipBinaryPath,
+            executable: sevenZipBinaryPath,
             arguments: [
                 "x",
                 "-y",

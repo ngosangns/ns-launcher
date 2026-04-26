@@ -5,12 +5,22 @@ enum AppLanguage: String, Codable, CaseIterable, Identifiable {
     case vietnamese
 
     var id: String { rawValue }
+
+    var officialMetadataLanguageCode: String {
+        switch self {
+        case .english:
+            return "en-us"
+        case .vietnamese:
+            return "vi-vn"
+        }
+    }
 }
 
 enum InstallerStrategy: String, Codable, CaseIterable, Identifiable {
     case archivePackage
     case existingInstall
     case manifest
+    case streamingManifest
 
     var id: String { rawValue }
 }
@@ -151,11 +161,20 @@ struct AppSettings: Codable, Equatable {
     var games: [GameDefinition]
     var selectedGameID: String?
     var language: AppLanguage
-    var wineBinaryPath: String
-    var aria2BinaryPath: String
-    var sevenZipBinaryPath: String
     var downloadCacheDirectory: String
     var temporaryExtractionDirectory: String
+
+    var wineBinaryPath: String {
+        BinaryLocator.resolveManagedExecutable(.wine, preferredPath: "") ?? "wine64"
+    }
+
+    var aria2BinaryPath: String {
+        BinaryLocator.resolveManagedExecutable(.aria2, preferredPath: "") ?? "aria2c"
+    }
+
+    var sevenZipBinaryPath: String {
+        BinaryLocator.resolveManagedExecutable(.sevenZip, preferredPath: "") ?? "7zz"
+    }
 
     static var defaultGenshinPackageSource: PackageSource {
         let genshinPackageParts = [
@@ -191,18 +210,15 @@ struct AppSettings: Codable, Equatable {
                     installDirectory: root,
                     executableRelativePath: "Genshin Impact Game/GenshinImpact.exe",
                     winePrefixDirectory: root.appendingPathComponent(".wine", isDirectory: true),
-                    installerStrategy: .archivePackage,
+                    installerStrategy: .streamingManifest,
                     runtimeRequirements: [.wine],
                     manifestURL: nil,
-                    packageSource: defaultGenshinPackageSource,
+                    packageSource: nil,
                     launchArguments: []
                 )
             ],
             selectedGameID: "genshin-global",
             language: .english,
-            wineBinaryPath: "/opt/homebrew/bin/wine64",
-            aria2BinaryPath: "/opt/homebrew/bin/aria2c",
-            sevenZipBinaryPath: "/opt/homebrew/bin/7zz",
             downloadCacheDirectory: home
                 .appendingPathComponent("Library/Caches/NSLauncher/Downloads", isDirectory: true)
                 .path,
@@ -214,21 +230,64 @@ struct AppSettings: Codable, Equatable {
 
     func applyingBundledGenshinDefaultsIfNeeded() -> AppSettings {
         var copy = self
+
         guard let index = copy.games.firstIndex(where: { $0.id == "genshin-global" }) else {
             return copy
         }
 
-        let current = copy.games[index].packageSource
-        let shouldBackfill =
-            current == nil ||
-            ((current?.remoteURL == nil) && (current?.partURLs?.isEmpty ?? true)) ||
-            current?.archiveFileName == "GenshinImpact_latest.7z"
-
-        if shouldBackfill {
-            copy.games[index].packageSource = Self.defaultGenshinPackageSource
-        }
+        copy.games[index].installerStrategy = .streamingManifest
+        copy.games[index].packageSource = nil
+        copy.games[index].manifestURL = nil
 
         return copy
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case games
+        case selectedGameID
+        case language
+        case downloadCacheDirectory
+        case temporaryExtractionDirectory
+        case wineBinaryPath
+        case aria2BinaryPath
+        case sevenZipBinaryPath
+    }
+
+    init(
+        games: [GameDefinition],
+        selectedGameID: String?,
+        language: AppLanguage,
+        downloadCacheDirectory: String,
+        temporaryExtractionDirectory: String
+    ) {
+        self.games = games
+        self.selectedGameID = selectedGameID
+        self.language = language
+        self.downloadCacheDirectory = downloadCacheDirectory
+        self.temporaryExtractionDirectory = temporaryExtractionDirectory
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.games = try container.decode([GameDefinition].self, forKey: .games)
+        self.selectedGameID = try container.decodeIfPresent(String.self, forKey: .selectedGameID)
+        self.language = try container.decodeIfPresent(AppLanguage.self, forKey: .language) ?? .english
+        self.downloadCacheDirectory = try container.decode(String.self, forKey: .downloadCacheDirectory)
+        self.temporaryExtractionDirectory = try container.decode(String.self, forKey: .temporaryExtractionDirectory)
+
+        // Ignore deprecated custom binary paths while remaining decode-compatible with older settings files.
+        _ = try container.decodeIfPresent(String.self, forKey: .wineBinaryPath)
+        _ = try container.decodeIfPresent(String.self, forKey: .aria2BinaryPath)
+        _ = try container.decodeIfPresent(String.self, forKey: .sevenZipBinaryPath)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(games, forKey: .games)
+        try container.encodeIfPresent(selectedGameID, forKey: .selectedGameID)
+        try container.encode(language, forKey: .language)
+        try container.encode(downloadCacheDirectory, forKey: .downloadCacheDirectory)
+        try container.encode(temporaryExtractionDirectory, forKey: .temporaryExtractionDirectory)
     }
 }
 
@@ -246,6 +305,13 @@ enum InstallProgressEvent: Equatable {
         speedBytesPerSecond: Int64?
     )
     case downloading(path: String, received: Int64, total: Int64)
+    case downloadingManifest(
+        path: String,
+        overallReceived: Int64,
+        overallTotal: Int64,
+        fileReceived: Int64,
+        fileTotal: Int64
+    )
     case extracting(path: String)
     case verifying(path: String)
     case validatingInstall(path: String)

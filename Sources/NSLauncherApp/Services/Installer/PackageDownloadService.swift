@@ -35,6 +35,8 @@ protocol PackageDownloading: Sendable {
 }
 
 actor PackageDownloadService: PackageDownloading {
+    private static let connectionRetryDelayNanoseconds: UInt64 = 3_000_000_000
+
     private let fileManager: FileManager
     private let session: URLSession
     private let downloadStateStore: DownloadStateStoring
@@ -100,7 +102,10 @@ actor PackageDownloadService: PackageDownloading {
         }
 
         let destination = cacheDirectory.appendingPathComponent(package.archiveFileName)
-        let metadata = try await contentMetadata(for: remoteURL)
+        let metadata = try await contentMetadataWithRetry(
+            for: remoteURL,
+            operationController: operationController
+        )
         if let persistedState = try? downloadStateStore.load(for: game.id),
            shouldResetPartialDownload(
                 persistedState: persistedState,
@@ -142,29 +147,33 @@ actor PackageDownloadService: PackageDownloading {
             onEvent: onEvent
         )
 
-        try await streamDownload(
-            game: game,
-            archiveFileName: package.archiveFileName,
-            archiveFormat: package.archiveFormat,
-            remoteURL: remoteURL,
-            destination: destination,
-            totalExpectedBytes: totalBytes,
-            downloadedBytesBaseline: 0,
-            currentPart: nil,
-            totalParts: nil,
-            remoteMetadata: metadata,
+        try await retryOnConnectionLoss(
             operationController: operationController
-        ) { received, total, speed in
-            await onEvent(.downloadingPackage(
-                path: package.archiveFileName,
-                received: received,
-                total: totalBytes == 0 ? total : totalBytes,
+        ) {
+            try await self.streamDownload(
+                game: game,
+                archiveFileName: package.archiveFileName,
+                archiveFormat: package.archiveFormat,
+                remoteURL: remoteURL,
+                destination: destination,
+                totalExpectedBytes: totalBytes,
+                downloadedBytesBaseline: 0,
                 currentPart: nil,
                 totalParts: nil,
-                currentPartReceived: received,
-                currentPartTotal: total > 0 ? total : nil,
-                speedBytesPerSecond: speed
-            ))
+                remoteMetadata: metadata,
+                operationController: operationController
+            ) { received, total, speed in
+                await onEvent(.downloadingPackage(
+                    path: package.archiveFileName,
+                    received: received,
+                    total: totalBytes == 0 ? total : totalBytes,
+                    currentPart: nil,
+                    totalParts: nil,
+                    currentPartReceived: received,
+                    currentPartTotal: total > 0 ? total : nil,
+                    speedBytesPerSecond: speed
+                ))
+            }
         }
 
         try? downloadStateStore.clear(for: game.id)
@@ -207,7 +216,10 @@ actor PackageDownloadService: PackageDownloading {
 
             let currentPart = index + 1
             let destination = cacheDirectory.appendingPathComponent(partURL.lastPathComponent)
-            let metadata = try await contentMetadata(for: partURL)
+            let metadata = try await contentMetadataWithRetry(
+                for: partURL,
+                operationController: operationController
+            )
             if let persistedState,
                persistedState.currentPart == currentPart,
                shouldResetPartialDownload(
@@ -260,30 +272,34 @@ actor PackageDownloadService: PackageDownloading {
             )
 
             let completedBytesBeforePart = completedBytes
-            try await streamDownload(
-                game: game,
-                archiveFileName: fileName,
-                archiveFormat: .multipartZip,
-                remoteURL: partURL,
-                destination: destination,
-                totalExpectedBytes: expectedArchiveSize,
-                downloadedBytesBaseline: completedBytes,
-                currentPart: currentPart,
-                totalParts: totalParts,
-                remoteMetadata: metadata,
+            try await retryOnConnectionLoss(
                 operationController: operationController
-            ) { received, total, speed in
-                let overallTotal = expectedArchiveSize ?? (completedBytesBeforePart + total)
-                await onEvent(.downloadingPackage(
-                    path: partURL.lastPathComponent,
-                    received: completedBytesBeforePart + received,
-                    total: overallTotal,
+            ) {
+                try await self.streamDownload(
+                    game: game,
+                    archiveFileName: fileName,
+                    archiveFormat: .multipartZip,
+                    remoteURL: partURL,
+                    destination: destination,
+                    totalExpectedBytes: expectedArchiveSize,
+                    downloadedBytesBaseline: completedBytes,
                     currentPart: currentPart,
                     totalParts: totalParts,
-                    currentPartReceived: received,
-                    currentPartTotal: total > 0 ? total : nil,
-                    speedBytesPerSecond: speed
-                ))
+                    remoteMetadata: metadata,
+                    operationController: operationController
+                ) { received, total, speed in
+                    let overallTotal = expectedArchiveSize ?? (completedBytesBeforePart + total)
+                    await onEvent(.downloadingPackage(
+                        path: partURL.lastPathComponent,
+                        received: completedBytesBeforePart + received,
+                        total: overallTotal,
+                        currentPart: currentPart,
+                        totalParts: totalParts,
+                        currentPartReceived: received,
+                        currentPartTotal: total > 0 ? total : nil,
+                        speedBytesPerSecond: speed
+                    ))
+                }
             }
 
             try? downloadStateStore.clear(for: game.id)
@@ -439,6 +455,74 @@ actor PackageDownloadService: PackageDownloading {
             etag: http.value(forHTTPHeaderField: "ETag"),
             lastModified: http.value(forHTTPHeaderField: "Last-Modified")
         )
+    }
+
+    private func contentMetadataWithRetry(
+        for remoteURL: URL,
+        operationController: OperationController?
+    ) async throws -> RemoteFileMetadata {
+        try await retryOnConnectionLoss(operationController: operationController) {
+            try await self.contentMetadata(for: remoteURL)
+        }
+    }
+
+    private func retryOnConnectionLoss<T>(
+        operationController: OperationController?,
+        operation: () async throws -> T
+    ) async throws -> T {
+        while true {
+            try await operationController?.checkpoint()
+
+            do {
+                return try await operation()
+            } catch PackageDownloadInterruption.paused {
+                throw PackageDownloadInterruption.paused
+            } catch is CancellationError {
+                throw CancellationError()
+            } catch {
+                guard shouldRetryAfterConnectionLoss(error) else {
+                    throw error
+                }
+
+                try await waitForRetryDelay(operationController: operationController)
+            }
+        }
+    }
+
+    private func waitForRetryDelay(operationController: OperationController?) async throws {
+        let retryDelayStepNanoseconds: UInt64 = 250_000_000
+        var remaining = Self.connectionRetryDelayNanoseconds
+
+        while remaining > 0 {
+            try await operationController?.checkpoint()
+            let nextDelay = min(remaining, retryDelayStepNanoseconds)
+            try await Task.sleep(nanoseconds: nextDelay)
+            remaining -= nextDelay
+        }
+    }
+
+    private func shouldRetryAfterConnectionLoss(_ error: Error) -> Bool {
+        let nsError = error as NSError
+        guard nsError.domain == NSURLErrorDomain else {
+            return false
+        }
+
+        switch nsError.code {
+        case NSURLErrorNetworkConnectionLost,
+             NSURLErrorNotConnectedToInternet,
+             NSURLErrorTimedOut,
+             NSURLErrorCannotConnectToHost,
+             NSURLErrorCannotFindHost,
+             NSURLErrorDNSLookupFailed,
+             NSURLErrorInternationalRoamingOff,
+             NSURLErrorCallIsActive,
+             NSURLErrorDataNotAllowed,
+             NSURLErrorSecureConnectionFailed,
+             NSURLErrorCannotLoadFromNetwork:
+            return true
+        default:
+            return false
+        }
     }
 
     private func normalizedExistingSize(at url: URL, expectedBytes: Int64?) -> Int64 {

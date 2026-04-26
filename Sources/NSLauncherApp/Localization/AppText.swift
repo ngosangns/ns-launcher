@@ -7,8 +7,9 @@ struct AppText {
     var settingsTitle: String { localized(en: "Settings", vi: "Cài đặt") }
     var close: String { localized(en: "Close", vi: "Đóng") }
     var openSettings: String { localized(en: "Open Settings", vi: "Mở cài đặt") }
-    var settingsDescription: String { localized(en: "Adjust language, tool paths, and install options.", vi: "Điều chỉnh ngôn ngữ, đường dẫn công cụ và tùy chọn cài đặt.") }
-    var toolsSectionTitle: String { localized(en: "Runtime & Storage", vi: "Runtime và lưu trữ") }
+    var open: String { localized(en: "Open", vi: "Mở") }
+    var settingsDescription: String { localized(en: "Adjust language and storage locations used by the launcher.", vi: "Điều chỉnh ngôn ngữ và các vị trí lưu trữ mà launcher sử dụng.") }
+    var toolsSectionTitle: String { localized(en: "Storage", vi: "Lưu trữ") }
     var gamePackageSectionTitle: String { localized(en: "Game Package", vi: "Gói cài đặt game") }
     var browse: String { localized(en: "Browse", vi: "Chọn") }
     var addLink: String { localized(en: "Add Link", vi: "Thêm link") }
@@ -29,10 +30,11 @@ struct AppText {
     var packageURL: String { localized(en: "Package URL", vi: "URL gói cài đặt") }
     var localLaunchExperimental: String { localized(en: "Local macOS launch is currently experimental.", vi: "Chạy local trên macOS hiện đang ở mức thử nghiệm.") }
     var installPlanner: String { localized(en: "Install Planner", vi: "Kế hoạch cài đặt") }
-    var installPlannerDescription: String { localized(en: "This prototype now supports archive-based download, extraction, import, and re-scan flows for Windows games on macOS.", vi: "Bản mẫu này đã hỗ trợ tải gói nén, giải nén, import và quét lại game Windows trên macOS.") }
+    var installPlannerDescription: String { localized(en: "This prototype now supports streaming installs, imports, and re-scan flows for Windows games on macOS.", vi: "Bản mẫu này đã hỗ trợ cài đặt streaming, import và quét lại game Windows trên macOS.") }
     var status: String { localized(en: "Status", vi: "Trạng thái") }
     var currentStepLabel: String { localized(en: "Current step", vi: "Bước hiện tại") }
     var currentItemLabel: String { localized(en: "Current item", vi: "Mục đang xử lý") }
+    var currentItemsLabel: String { localized(en: "Current items", vi: "Các mục đang xử lý") }
     var currentPartLabel: String { localized(en: "Current part", vi: "Part hiện tại") }
     var resumePointLabel: String { localized(en: "Resume point", vi: "Điểm tiếp tục") }
     var currentPartProgressLabel: String { localized(en: "Current part progress", vi: "Tiến độ part hiện tại") }
@@ -103,6 +105,7 @@ struct AppText {
     var chooseExistingGameFolder: String { localized(en: "Choose Existing Game Folder", vi: "Chọn thư mục game có sẵn") }
     var chooseInstallFolder: String { localized(en: "Choose Install Folder", vi: "Chọn thư mục cài đặt") }
     var noPackageConfigured: String { localized(en: "No package configured", vi: "Chưa cấu hình gói cài đặt") }
+    var officialStreamingSource: String { localized(en: "Official streaming source", vi: "Nguồn streaming chính thức") }
     var downloadReady: String { localized(en: "Download ready", vi: "Sẵn sàng tải") }
     var localOnly: String { localized(en: "Local archive only", vi: "Chỉ hỗ trợ file local") }
     var experimentalBadge: String { localized(en: "Experimental", vi: "Thử nghiệm") }
@@ -115,7 +118,7 @@ struct AppText {
     var planInstallTitle: String { localized(en: "Plan Install", vi: "Lập kế hoạch") }
     var planInstallDescription: String { localized(en: "Estimate download size, temporary space, and planned steps.", vi: "Ước tính dung lượng tải, bộ nhớ tạm và các bước cài đặt.") }
     var downloadInstallTitle: String { localized(en: "Download & Install", vi: "Tải và cài đặt") }
-    var downloadInstallDescription: String { localized(en: "Download the package from the configured URL and extract it.", vi: "Tải gói cài đặt từ URL đã cấu hình và giải nén.") }
+    var downloadInstallDescription: String { localized(en: "Download official game files directly into the install directory.", vi: "Tải trực tiếp các file game chính thức vào thư mục cài đặt.") }
     var localArchiveTitle: String { localized(en: "Install From Local Archive", vi: "Cài từ file local") }
     var localArchiveDescription: String { localized(en: "Pick a local .7z, .zip, or split archive and install from it.", vi: "Chọn file .7z, .zip hoặc gói tách nhỏ từ máy để cài đặt.") }
     var importTitle: String { localized(en: "Import Existing Install", vi: "Import bản cài đặt có sẵn") }
@@ -135,6 +138,8 @@ struct AppText {
             return localized(en: "Existing install strategy", vi: "Chiến lược import bản cài đặt có sẵn")
         case .manifest:
             return localized(en: "Manifest strategy", vi: "Chiến lược manifest")
+        case .streamingManifest:
+            return localized(en: "Official streaming strategy", vi: "Chiến lược streaming chính thức")
         }
     }
 
@@ -314,8 +319,30 @@ struct AppText {
         localized(en: "The selected game does not define an archive package.", vi: "Game đang chọn chưa khai báo gói nén cài đặt.")
     }
 
+    var officialStreamingMetadataUnavailable: String {
+        localized(en: "Official streaming metadata is unavailable for Genshin Impact right now.", vi: "Hiện chưa lấy được metadata streaming chính thức cho Genshin Impact.")
+    }
+
+    var streamingManifestIncomplete: String {
+        localized(en: "HoYoPlay does not expose a complete official file manifest for Genshin Impact fresh install right now.", vi: "Hiện HoYoPlay chưa công khai đầy đủ file manifest chính thức cho cài mới Genshin Impact.")
+    }
+
+    var freshInstallUnsupported: String {
+        localized(en: "Fresh install is currently unsupported because the official streaming manifest is incomplete.", vi: "Hiện chưa hỗ trợ cài mới vì manifest streaming chính thức vẫn chưa đầy đủ.")
+    }
+
     var sevenZipBinaryMissing: String {
-        localized(en: "7zz binary path is empty.", vi: "Đường dẫn 7zz đang để trống.")
+        localized(
+            en: "7zz is not configured. Install 7-Zip or set the binary path in Settings.",
+            vi: "Chưa cấu hình 7zz. Hãy cài 7-Zip hoặc đặt đường dẫn binary trong Settings."
+        )
+    }
+
+    func sevenZipBinaryNotFound(_ path: String) -> String {
+        localized(
+            en: "Could not find a working 7zz/7z binary. Current setting: \(path)",
+            vi: "Không tìm thấy binary 7zz/7z dùng được. Cấu hình hiện tại: \(path)"
+        )
     }
 
     func expectedExecutableMissingAfterExtraction(_ path: String) -> String {

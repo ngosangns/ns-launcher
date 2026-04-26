@@ -74,6 +74,20 @@ struct ContentView: View {
                 )
             }
         }
+        .padding(24)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            LinearGradient(
+                colors: [
+                    Color.accentColor.opacity(0.16),
+                    Color.orange.opacity(0.08),
+                    Color.clear
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            ),
+            in: RoundedRectangle(cornerRadius: 24)
+        )
     }
 
     private var installSummary: some View {
@@ -81,7 +95,7 @@ struct ContentView: View {
     }
 
     private var actionBar: some View {
-        let buttons = [
+        var buttons = [
             ActionButtonItem(
                 title: text.downloadInstallTitle,
                 icon: "arrow.down.circle",
@@ -89,49 +103,59 @@ struct ContentView: View {
                 disabled: viewModel.isBusy || !viewModel.canDownloadSelectedGame
             ) {
                 viewModel.installSelectedGame()
-            },
-            ActionButtonItem(
-                title: text.localArchiveTitle,
-                icon: "externaldrive.badge.plus",
-                disabled: viewModel.isBusy
-            ) {
-                if let archiveURL = chooseArchiveURL() {
-                    viewModel.installSelectedGame(archiveOverrideURL: archiveURL)
-                }
-            },
-            ActionButtonItem(
-                title: text.importTitle,
-                icon: "folder.badge.plus",
-                disabled: viewModel.isBusy
-            ) {
-                if let directoryURL = chooseDirectoryURL(title: text.chooseExistingGameFolder) {
-                    viewModel.importSelectedGame(from: directoryURL)
-                }
-            },
-            ActionButtonItem(
-                title: text.rescanTitle,
-                icon: "arrow.clockwise.circle",
-                disabled: viewModel.isBusy
-            ) {
-                viewModel.rescanSelectedGame()
-            },
-            ActionButtonItem(
-                title: text.chooseFolderTitle,
-                icon: "folder",
-                disabled: viewModel.isBusy
-            ) {
-                if let directoryURL = chooseDirectoryURL(title: text.chooseInstallFolder) {
-                    viewModel.setInstallDirectoryForSelectedGame(directoryURL)
-                }
-            },
-            ActionButtonItem(
-                title: text.launchTitle,
-                icon: "play.circle",
-                disabled: viewModel.isBusy
-            ) {
-                viewModel.launchSelectedGame()
             }
         ]
+
+        if viewModel.canInstallFromLocalArchive {
+            buttons.append(
+                ActionButtonItem(
+                    title: text.localArchiveTitle,
+                    icon: "externaldrive.badge.plus",
+                    disabled: viewModel.isBusy
+                ) {
+                    if let archiveURL = chooseArchiveURL() {
+                        viewModel.installSelectedGame(archiveOverrideURL: archiveURL)
+                    }
+                }
+            )
+        }
+
+        buttons.append(
+            contentsOf: [
+                ActionButtonItem(
+                    title: text.importTitle,
+                    icon: "folder.badge.plus",
+                    disabled: viewModel.isBusy
+                ) {
+                    if let directoryURL = chooseDirectoryURL(title: text.chooseExistingGameFolder) {
+                        viewModel.importSelectedGame(from: directoryURL)
+                    }
+                },
+                ActionButtonItem(
+                    title: text.rescanTitle,
+                    icon: "arrow.clockwise.circle",
+                    disabled: viewModel.isBusy
+                ) {
+                    viewModel.rescanSelectedGame()
+                },
+                ActionButtonItem(
+                    title: text.chooseFolderTitle,
+                    icon: "folder",
+                    disabled: viewModel.isBusy
+                ) {
+                    if let directoryURL = chooseDirectoryURL(title: text.chooseInstallFolder) {
+                        viewModel.setInstallDirectoryForSelectedGame(directoryURL)
+                    }
+                },
+                ActionButtonItem(
+                    title: text.launchTitle,
+                    icon: "play.circle",
+                    disabled: viewModel.isBusy
+                ) {
+                    viewModel.launchSelectedGame()
+                }
+            ]
+        )
 
         return FlexFlowLayout(spacing: 12, rowSpacing: 10) {
             ForEach(Array(buttons.enumerated()), id: \.offset) { _, item in
@@ -161,8 +185,6 @@ struct ContentView: View {
 
                 if let progress = viewModel.operationProgress {
                     VStack(alignment: .leading, spacing: 10) {
-                        statusInfoGrid(progress: progress)
-
                         VStack(alignment: .leading, spacing: 6) {
                             Text(text.totalProgressLabel)
                                 .font(.caption.weight(.semibold))
@@ -224,6 +246,8 @@ struct ContentView: View {
                             .disabled(!viewModel.isBusy)
                             .pointerOnHover(enabled: viewModel.isBusy)
                         }
+
+                        statusInfoGrid(progress: progress)
                     }
                 }
             }
@@ -233,14 +257,17 @@ struct ContentView: View {
     }
 
     private func statusInfoGrid(progress: OperationProgress) -> some View {
-        let items = [
-            progress.itemPath.map { StatusItem(label: text.currentItemLabel, value: $0, monospaced: true) },
-            progress.partText.map { StatusItem(label: text.currentPartLabel, value: $0, monospaced: false) }
-        ].compactMap { $0 }
+        VStack(alignment: .leading, spacing: 12) {
+            if let itemPaths = progress.itemPaths, !itemPaths.isEmpty {
+                statusListTile(label: text.currentItemsLabel, values: itemPaths, monospaced: true)
+            } else if let itemPath = progress.itemPath {
+                statusTile(label: text.currentItemLabel, value: itemPath, monospaced: true)
+            }
 
-        return LazyVGrid(columns: [GridItem(.adaptive(minimum: 240), spacing: 12)], alignment: .leading, spacing: 12) {
-            ForEach(items) { item in
-                statusTile(label: item.label, value: item.value, monospaced: item.monospaced)
+            if let partText = progress.partText {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 240), spacing: 12)], alignment: .leading, spacing: 12) {
+                    statusTile(label: text.currentPartLabel, value: partText, monospaced: false)
+                }
             }
         }
     }
@@ -258,11 +285,6 @@ struct ContentView: View {
             warmupItem
         ].compactMap { $0 }
 
-        let sizeItems = [
-            progress.totalKBText.map { StatusItem(label: text.totalSizeKBLabel, value: $0, monospaced: true) },
-            progress.currentPartKBText.map { StatusItem(label: text.partSizeKBLabel, value: $0, monospaced: true) }
-        ].compactMap { $0 }
-
         return VStack(alignment: .leading, spacing: 8) {
             Text(text.transferDetailsLabel)
                 .font(.caption.weight(.semibold))
@@ -271,15 +293,6 @@ struct ContentView: View {
             if !topItems.isEmpty {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 220), spacing: 12)], alignment: .leading, spacing: 12) {
                     ForEach(topItems) { item in
-                        statusTile(label: item.label, value: item.value, monospaced: item.monospaced)
-                    }
-                }
-            }
-
-            if !sizeItems.isEmpty {
-                let sizeColumns = Array(repeating: GridItem(.flexible(minimum: 220), spacing: 12), count: min(sizeItems.count, 2))
-                LazyVGrid(columns: sizeColumns, alignment: .leading, spacing: 12) {
-                    ForEach(sizeItems) { item in
                         statusTile(label: item.label, value: item.value, monospaced: item.monospaced)
                     }
                 }
@@ -297,11 +310,48 @@ struct ContentView: View {
                 Text(value)
                     .font(.system(.body, design: .monospaced))
                     .textSelection(.enabled)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .fixedSize(horizontal: false, vertical: true)
             } else {
                 Text(value)
                     .font(.body)
                     .textSelection(.enabled)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .fixedSize(horizontal: false, vertical: true)
             }
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.black.opacity(0.08), in: RoundedRectangle(cornerRadius: 10))
+    }
+
+    private func statusListTile(label: String, values: [String], monospaced: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(label)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(Array(values.enumerated()), id: \.offset) { _, value in
+                        if monospaced {
+                            Text(value)
+                                .font(.system(.body, design: .monospaced))
+                                .textSelection(.enabled)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .fixedSize(horizontal: false, vertical: true)
+                        } else {
+                            Text(value)
+                                .font(.body)
+                                .textSelection(.enabled)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .frame(height: 140)
         }
         .padding(10)
         .frame(maxWidth: .infinity, alignment: .leading)

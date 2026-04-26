@@ -85,32 +85,6 @@ struct SettingsView: View {
                 }
 
                 PathInputRow(
-                    label: text.wineBinary,
-                    value: Binding(
-                        get: { viewModel.settings.wineBinaryPath },
-                        set: {
-                            viewModel.settings.wineBinaryPath = $0
-                            viewModel.persistSettings()
-                        }
-                    ),
-                    buttonTitle: text.browse,
-                    choose: chooseExecutablePath
-                )
-
-                PathInputRow(
-                    label: text.sevenZipBinary,
-                    value: Binding(
-                        get: { viewModel.settings.sevenZipBinaryPath },
-                        set: {
-                            viewModel.settings.sevenZipBinaryPath = $0
-                            viewModel.persistSettings()
-                        }
-                    ),
-                    buttonTitle: text.browse,
-                    choose: chooseExecutablePath
-                )
-
-                PathInputRow(
                     label: text.downloadCacheDirectory,
                     value: Binding(
                         get: { viewModel.settings.downloadCacheDirectory },
@@ -120,6 +94,11 @@ struct SettingsView: View {
                         }
                     ),
                     buttonTitle: text.browse,
+                    secondaryButtonTitle: text.open,
+                    isSecondaryButtonDisabled: !directoryExists(at: viewModel.settings.downloadCacheDirectory),
+                    secondaryAction: {
+                        openDirectory(viewModel.settings.downloadCacheDirectory)
+                    },
                     choose: chooseDirectoryPath
                 )
 
@@ -133,6 +112,11 @@ struct SettingsView: View {
                         }
                     ),
                     buttonTitle: text.browse,
+                    secondaryButtonTitle: text.open,
+                    isSecondaryButtonDisabled: !directoryExists(at: viewModel.settings.temporaryExtractionDirectory),
+                    secondaryAction: {
+                        openDirectory(viewModel.settings.temporaryExtractionDirectory)
+                    },
                     choose: chooseDirectoryPath
                 )
             }
@@ -171,115 +155,122 @@ struct SettingsView: View {
 
     private func packageSection(for game: GameDefinition) -> some View {
         SettingsCard(title: text.gamePackageSectionTitle, subtitle: text.packageLinksDescription) {
-            settingField {
-                Picker(text.archiveFormat, selection: Binding(
-                    get: { game.packageSource?.archiveFormat ?? .sevenZip },
-                    set: { newFormat in
-                        viewModel.setArchiveFormatForSelectedGame(newFormat)
-                        syncPackageFields()
-                    }
-                )) {
-                    ForEach(ArchiveFormat.allCases) { format in
-                        Text(format.fileExtensionHint).tag(format)
-                    }
-                }
-                .pointerOnHover()
-            } label: {
-                Text(text.archiveFormat)
-            }
-
-            if game.packageSource?.archiveFormat == .multipartZip {
+            if game.installerStrategy == .streamingManifest {
                 LazyVGrid(columns: settingsColumns, alignment: .leading, spacing: 16) {
-                    InfoRow(
-                        label: text.archiveFileName,
-                        value: game.packageSource?.archiveFileName ?? text.noPackageConfigured,
-                        monospaced: true
-                    )
-
-                    InfoRow(
-                        label: text.selectedSource,
-                        value: text.archiveTypeDescription(game.packageSource?.archiveFormat ?? .multipartZip)
-                    )
+                    InfoRow(label: text.selectedSource, value: text.officialStreamingSource)
+                    InfoRow(label: text.strategy, value: text.installStrategyDescription(game.installerStrategy))
                 }
-
-                Text(text.derivedFromFirstPart)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
-                VStack(alignment: .leading, spacing: 10) {
-                    ForEach(Array(partURLRows.enumerated()), id: \.offset) { index, _ in
-                        settingField {
-                            HStack(alignment: .top, spacing: 10) {
-                                TextField(
-                                    "\(text.packageLinkRow) \(index + 1)",
-                                    text: Binding(
-                                        get: { partURLRows[index] },
-                                        set: { newValue in
-                                            partURLRows[index] = newValue
-                                            persistPartRows()
-                                        }
-                                    )
-                                )
-                                .textFieldStyle(.roundedBorder)
-                                .font(.system(.body, design: .monospaced))
-
-                                Button(text.remove) {
-                                    partURLRows.remove(at: index)
-                                    persistPartRows()
-                                }
-                                .buttonStyle(.bordered)
-                                .pointerOnHover()
-                            }
-                        } label: {
-                            Text("\(text.packageLinkRow) \(index + 1)")
-                        }
-                    }
-
-                    Button(text.addLink) {
-                        partURLRows.append("")
-                    }
-                    .buttonStyle(.bordered)
-                    .pointerOnHover()
-                }
-
-                Text(text.multipartHint)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
             } else {
                 settingField {
-                    TextField(text.packageURL, text: Binding(
-                        get: { game.packageSource?.remoteURL?.absoluteString ?? packageURLText },
-                        set: {
-                            packageURLText = $0
-                            if $0.isEmpty {
-                                viewModel.clearPackageURLForSelectedGame()
-                            } else if let url = URL(string: $0) {
-                                viewModel.setPackageURLForSelectedGame(url)
-                            }
+                    Picker(text.archiveFormat, selection: Binding(
+                        get: { game.packageSource?.archiveFormat ?? .sevenZip },
+                        set: { newFormat in
+                            viewModel.setArchiveFormatForSelectedGame(newFormat)
+                            syncPackageFields()
                         }
-                    ))
-                    .textFieldStyle(.roundedBorder)
-                    .font(.system(.body, design: .monospaced))
+                    )) {
+                        ForEach(ArchiveFormat.allCases) { format in
+                            Text(format.fileExtensionHint).tag(format)
+                        }
+                    }
+                    .pointerOnHover()
                 } label: {
-                    Text(text.singlePackageLink)
+                    Text(text.archiveFormat)
                 }
 
-                LazyVGrid(columns: settingsColumns, alignment: .leading, spacing: 16) {
-                    InfoRow(
-                        label: text.selectedSource,
-                        value: game.packageSource?.remoteURL == nil ? text.remoteNotConfigured : text.remoteConfigured
-                    )
+                if game.packageSource?.archiveFormat == .multipartZip {
+                    LazyVGrid(columns: settingsColumns, alignment: .leading, spacing: 16) {
+                        InfoRow(
+                            label: text.archiveFileName,
+                            value: game.packageSource?.archiveFileName ?? text.noPackageConfigured,
+                            monospaced: true
+                        )
 
-                    InfoRow(
-                        label: text.archive,
-                        value: text.archiveTypeDescription(game.packageSource?.archiveFormat ?? .sevenZip)
-                    )
-                }
+                        InfoRow(
+                            label: text.selectedSource,
+                            value: text.archiveTypeDescription(game.packageSource?.archiveFormat ?? .multipartZip)
+                        )
+                    }
 
-                if game.packageSource?.remoteURL == nil {
-                    Text(text.packageURLOptional)
+                    Text(text.derivedFromFirstPart)
                         .font(.caption)
                         .foregroundStyle(.secondary)
+
+                    VStack(alignment: .leading, spacing: 10) {
+                        ForEach(Array(partURLRows.enumerated()), id: \.offset) { index, _ in
+                            settingField {
+                                HStack(alignment: .top, spacing: 10) {
+                                    TextField(
+                                        "\(text.packageLinkRow) \(index + 1)",
+                                        text: Binding(
+                                            get: { partURLRows[index] },
+                                            set: { newValue in
+                                                partURLRows[index] = newValue
+                                                persistPartRows()
+                                            }
+                                        )
+                                    )
+                                    .textFieldStyle(.roundedBorder)
+                                    .font(.system(.body, design: .monospaced))
+
+                                    Button(text.remove) {
+                                        partURLRows.remove(at: index)
+                                        persistPartRows()
+                                    }
+                                    .buttonStyle(.bordered)
+                                    .pointerOnHover()
+                                }
+                            } label: {
+                                Text("\(text.packageLinkRow) \(index + 1)")
+                            }
+                        }
+
+                        Button(text.addLink) {
+                            partURLRows.append("")
+                        }
+                        .buttonStyle(.bordered)
+                        .pointerOnHover()
+                    }
+
+                    Text(text.multipartHint)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else {
+                    settingField {
+                        TextField(text.packageURL, text: Binding(
+                            get: { game.packageSource?.remoteURL?.absoluteString ?? packageURLText },
+                            set: {
+                                packageURLText = $0
+                                if $0.isEmpty {
+                                    viewModel.clearPackageURLForSelectedGame()
+                                } else if let url = URL(string: $0) {
+                                    viewModel.setPackageURLForSelectedGame(url)
+                                }
+                            }
+                        ))
+                        .textFieldStyle(.roundedBorder)
+                        .font(.system(.body, design: .monospaced))
+                    } label: {
+                        Text(text.singlePackageLink)
+                    }
+
+                    LazyVGrid(columns: settingsColumns, alignment: .leading, spacing: 16) {
+                        InfoRow(
+                            label: text.selectedSource,
+                            value: game.packageSource?.remoteURL == nil ? text.remoteNotConfigured : text.remoteConfigured
+                        )
+
+                        InfoRow(
+                            label: text.archive,
+                            value: text.archiveTypeDescription(game.packageSource?.archiveFormat ?? .sevenZip)
+                        )
+                    }
+
+                    if game.packageSource?.remoteURL == nil {
+                        Text(text.packageURLOptional)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
         }
@@ -325,20 +316,23 @@ struct SettingsView: View {
         viewModel.setPartURLsForSelectedGame(urls)
     }
 
-    private func chooseExecutablePath() -> String? {
-        let panel = NSOpenPanel()
-        panel.canChooseFiles = true
-        panel.canChooseDirectories = false
-        panel.allowsMultipleSelection = false
-        return panel.runModal() == .OK ? panel.url?.path : nil
-    }
-
     private func chooseDirectoryPath() -> String? {
         let panel = NSOpenPanel()
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
         panel.allowsMultipleSelection = false
         return panel.runModal() == .OK ? panel.url?.path : nil
+    }
+
+    private func directoryExists(at path: String) -> Bool {
+        guard !path.isEmpty else { return false }
+        var isDirectory: ObjCBool = false
+        return FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory) && isDirectory.boolValue
+    }
+
+    private func openDirectory(_ path: String) {
+        guard directoryExists(at: path) else { return }
+        NSWorkspace.shared.open(URL(fileURLWithPath: path, isDirectory: true))
     }
 }
 
@@ -409,6 +403,9 @@ private struct PathInputRow: View {
     let label: String
     @Binding var value: String
     let buttonTitle: String
+    var secondaryButtonTitle: String? = nil
+    var isSecondaryButtonDisabled = false
+    var secondaryAction: (() -> Void)? = nil
     let choose: () -> String?
 
     var body: some View {
@@ -429,6 +426,13 @@ private struct PathInputRow: View {
                 }
                 .buttonStyle(.bordered)
                 .pointerOnHover()
+
+                if let secondaryButtonTitle, let secondaryAction {
+                    Button(secondaryButtonTitle, action: secondaryAction)
+                        .buttonStyle(.bordered)
+                        .pointerOnHover()
+                        .disabled(isSecondaryButtonDisabled)
+                }
             }
         }
         .padding(14)
