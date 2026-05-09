@@ -1,5 +1,6 @@
 import Foundation
 
+/// Archive installation failures reported before localization.
 enum ArchiveInstallerError: LocalizedError {
     case packageSourceMissing
     case sevenZipBinaryMissing
@@ -20,6 +21,7 @@ enum ArchiveInstallerError: LocalizedError {
     }
 }
 
+/// Boundary for extracting an archive package into a game install directory.
 protocol ArchiveInstalling: Sendable {
     func install(
         archiveURL: URL,
@@ -30,6 +32,7 @@ protocol ArchiveInstalling: Sendable {
     ) async throws
 }
 
+/// Installs downloaded or user-selected archives with 7-Zip.
 struct ArchiveInstaller: ArchiveInstalling {
     private let processRunner: ProcessRunning
 
@@ -37,6 +40,7 @@ struct ArchiveInstaller: ArchiveInstalling {
         self.processRunner = processRunner
     }
 
+    /// Extracts an archive into a temporary folder, merges it into place, and writes install metadata.
     func install(
         archiveURL: URL,
         game: GameDefinition,
@@ -62,6 +66,7 @@ struct ArchiveInstaller: ArchiveInstalling {
 
         try FileManager.default.createDirectory(at: game.installDirectory, withIntermediateDirectories: true)
 
+        // Extraction happens in a clean temp directory so failed runs do not leave partial files in place.
         let tempDirectory = URL(fileURLWithPath: settings.temporaryExtractionDirectory, isDirectory: true)
             .appendingPathComponent(game.id, isDirectory: true)
         if FileManager.default.fileExists(atPath: tempDirectory.path) {
@@ -71,6 +76,7 @@ struct ArchiveInstaller: ArchiveInstalling {
 
         await onEvent(.extracting(path: archiveURL.lastPathComponent))
         try await operationController?.checkpoint()
+        // 7-Zip expects the first .001 member when reading multipart zip packages.
         let extractionSource = normalizedArchiveURL(for: archiveURL, game: game)
         _ = try await processRunner.run(
             executable: sevenZipBinaryPath,
@@ -107,6 +113,7 @@ struct ArchiveInstaller: ArchiveInstalling {
         try data.write(to: metadataURL, options: .atomic)
     }
 
+    /// Returns the correct first archive part for multipart packages when possible.
     private func normalizedArchiveURL(for archiveURL: URL, game: GameDefinition) -> URL {
         guard game.packageSource?.archiveFormat == .multipartZip else {
             return archiveURL
@@ -125,6 +132,7 @@ struct ArchiveInstaller: ArchiveInstalling {
         return archiveURL
     }
 
+    /// Moves extracted files into the install directory while preserving nested paths.
     private func mergeContents(of sourceDirectory: URL, into destinationDirectory: URL) throws {
         guard let enumerator = FileManager.default.enumerator(
             at: sourceDirectory,
@@ -139,6 +147,7 @@ struct ArchiveInstaller: ArchiveInstalling {
             let values = try source.resourceValues(forKeys: [.isDirectoryKey])
 
             if values.isDirectory == true {
+                // Create directories first so file moves can always assume their parent exists.
                 try FileManager.default.createDirectory(at: destination, withIntermediateDirectories: true)
                 continue
             }

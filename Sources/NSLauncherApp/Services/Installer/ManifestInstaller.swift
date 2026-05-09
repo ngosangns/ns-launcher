@@ -1,6 +1,7 @@
 import CryptoKit
 import Foundation
 
+/// Manifest installation failures reported before localization.
 enum ManifestInstallerError: LocalizedError {
     case manifestURLMissing
     case invalidResponse
@@ -21,6 +22,7 @@ enum ManifestInstallerError: LocalizedError {
     }
 }
 
+/// Boundary for metadata-driven installs.
 protocol ManifestInstalling: Sendable {
     func fetchManifest(for game: GameDefinition) async throws -> RemoteGameManifest
     func planInstall(for game: GameDefinition, manifest: RemoteGameManifest) async throws -> InstallPlan
@@ -32,18 +34,23 @@ protocol ManifestInstalling: Sendable {
     ) async throws
 }
 
+/// Downloads manifest files concurrently and verifies them before moving into place.
 actor ManifestInstaller: ManifestInstalling {
+    /// Upper bound for concurrent file downloads from a manifest.
     private static let maxConcurrentDownloads = 32
+    /// Delay between retries after transient connection failures.
     private static let connectionRetryDelayNanoseconds: UInt64 = 5_000_000_000
 
     private let session: URLSession
     private let fileManager: FileManager
 
+    /// Creates a manifest installer with an optimized download session by default.
     init(session: URLSession? = nil, fileManager: FileManager = .default) {
         self.session = session ?? Self.makeDownloadSession()
         self.fileManager = fileManager
     }
 
+    /// Builds the URLSession used for high-concurrency manifest downloads.
     private static func makeDownloadSession() -> URLSession {
         let configuration = URLSessionConfiguration.default
         configuration.httpMaximumConnectionsPerHost = maxConcurrentDownloads
@@ -52,6 +59,7 @@ actor ManifestInstaller: ManifestInstalling {
         return URLSession(configuration: configuration)
     }
 
+    /// Actor-backed work queue that lets many tasks pull files without races.
     private actor FileWorkQueue {
         private let files: [RemoteGameFile]
         private var nextIndex = 0
@@ -60,10 +68,12 @@ actor ManifestInstaller: ManifestInstalling {
             self.files = files
         }
 
+        /// Number of worker tasks needed for this batch.
         nonisolated var workerCount: Int {
             min(ManifestInstaller.maxConcurrentDownloads, files.count)
         }
 
+        /// Returns the next file to download, or nil when the queue is drained.
         func next() -> RemoteGameFile? {
             guard nextIndex < files.count else { return nil }
             let file = files[nextIndex]
@@ -72,6 +82,7 @@ actor ManifestInstaller: ManifestInstalling {
         }
     }
 
+    /// Fetches and decodes the manifest configured on a game definition.
     func fetchManifest(for game: GameDefinition) async throws -> RemoteGameManifest {
         guard let manifestURL = game.manifestURL else {
             throw ManifestInstallerError.manifestURLMissing
@@ -85,6 +96,7 @@ actor ManifestInstaller: ManifestInstalling {
         return try JSONDecoder().decode(RemoteGameManifest.self, from: data)
     }
 
+    /// Converts a manifest into a visible install plan and byte estimate.
     func planInstall(for game: GameDefinition, manifest: RemoteGameManifest) async throws -> InstallPlan {
         let peakTemp = manifest.files.map(\.size).max() ?? 0
         let steps = manifest.files.flatMap { file in
@@ -100,6 +112,7 @@ actor ManifestInstaller: ManifestInstalling {
         return InstallPlan(version: manifest.version, steps: steps, estimatedBytesToDownload: total, peakTemporaryBytes: peakTemp)
     }
 
+    /// Downloads all manifest files, validates the executable, and writes install metadata.
     func install(
         game: GameDefinition,
         manifest: RemoteGameManifest,
@@ -136,6 +149,7 @@ actor ManifestInstaller: ManifestInstalling {
         await onEvent(.finished(version: manifest.version))
     }
 
+    /// Runs concurrent worker tasks until every manifest file is processed.
     private func downloadFiles(
         _ files: [RemoteGameFile],
         for game: GameDefinition,
@@ -150,6 +164,7 @@ actor ManifestInstaller: ManifestInstalling {
         try await withThrowingTaskGroup(of: Void.self) { group in
             for _ in 0..<queue.workerCount {
                 group.addTask {
+                    // Each worker repeatedly pulls from the actor queue, avoiding shared index races.
                     while let file = await queue.next() {
                         try await self.installFile(
                             file,
@@ -166,6 +181,7 @@ actor ManifestInstaller: ManifestInstalling {
         }
     }
 
+    /// Downloads one file to a partial path, verifies it, and atomically moves it into place.
     private func installFile(
         _ file: RemoteGameFile,
         for game: GameDefinition,
@@ -182,6 +198,7 @@ actor ManifestInstaller: ManifestInstalling {
         let existingDestinationBytes = normalizedPartialSize(at: destination, expectedBytes: file.size)
 
         if existingDestinationBytes == file.size {
+            // Already-installed files are counted in progress so resumed runs start at the right total.
             if fileManager.fileExists(atPath: partial.path) {
                 try? fileManager.removeItem(at: partial)
             }
@@ -195,6 +212,7 @@ actor ManifestInstaller: ManifestInstalling {
         }
 
         if fileManager.fileExists(atPath: destination.path), existingDestinationBytes != file.size {
+            // A mismatched final file is safer to discard than to patch in place.
             try fileManager.removeItem(at: destination)
         }
 
@@ -234,6 +252,7 @@ actor ManifestInstaller: ManifestInstalling {
         try fileManager.moveItem(at: partial, to: destination)
     }
 
+    /// Streams one file into a partial file, resuming from the requested offset when supported.
     private func streamFile(
         _ file: RemoteGameFile,
         to partial: URL,
@@ -259,6 +278,7 @@ actor ManifestInstaller: ManifestInstalling {
         }
 
         if startOffset > 0 && http.statusCode == 200 {
+            // The server ignored the Range header, so restart the partial file from scratch.
             if fileManager.fileExists(atPath: partial.path) {
                 try fileManager.removeItem(at: partial)
             }
@@ -300,6 +320,7 @@ actor ManifestInstaller: ManifestInstalling {
             buffer.append(byte)
 
             if buffer.count >= 256 * 1024 {
+                // Buffer writes reduce FileHandle overhead while keeping progress responsive.
                 try writeBuffer(
                     &buffer,
                     to: handle,
@@ -323,6 +344,7 @@ actor ManifestInstaller: ManifestInstalling {
         }
     }
 
+    /// Retries a streaming file download after transient connection failures.
     private func resumeStreamingFile(
         _ file: RemoteGameFile,
         to partial: URL,
@@ -359,6 +381,7 @@ actor ManifestInstaller: ManifestInstalling {
         }
     }
 
+    /// Writes buffered bytes and forwards progress through the actor tracker.
     private func writeBuffer(
         _ buffer: inout Data,
         to handle: FileHandle,
@@ -380,6 +403,7 @@ actor ManifestInstaller: ManifestInstalling {
         }
     }
 
+    /// Returns a local file size, deleting partials that are larger than the manifest entry.
     private func normalizedPartialSize(at url: URL, expectedBytes: Int64?) -> Int64 {
         guard fileManager.fileExists(atPath: url.path) else { return 0 }
         let attributes = try? fileManager.attributesOfItem(atPath: url.path)
@@ -393,6 +417,7 @@ actor ManifestInstaller: ManifestInstalling {
         return actualSize
     }
 
+    /// Identifies URL loading errors that are likely transient.
     private func shouldRetryAfterConnectionLoss(_ error: Error) -> Bool {
         let nsError = error as NSError
         guard nsError.domain == NSURLErrorDomain else {
@@ -417,6 +442,7 @@ actor ManifestInstaller: ManifestInstalling {
         }
     }
 
+    /// Sleeps in short chunks so pause/stop requests remain responsive during retry backoff.
     private func waitForRetryDelay(operationController: OperationController?) async throws {
         let retryDelayStepNanoseconds: UInt64 = 250_000_000
         var remaining = Self.connectionRetryDelayNanoseconds
@@ -429,6 +455,7 @@ actor ManifestInstaller: ManifestInstalling {
         }
     }
 
+    /// Verifies a downloaded file against the manifest's SHA-256 hash when provided.
     private func verifySHA256(of fileURL: URL, expectedHex: String, path: String) throws {
         let handle = try FileHandle(forReadingFrom: fileURL)
         defer { try? handle.close() }
@@ -448,6 +475,7 @@ actor ManifestInstaller: ManifestInstalling {
     }
 }
 
+/// Actor that aggregates per-file progress into manifest-wide progress events.
 actor ManifestDownloadProgressTracker {
     private let totalBytes: Int64
     private var totalReceivedBytes: Int64 = 0
@@ -457,6 +485,7 @@ actor ManifestDownloadProgressTracker {
         self.totalBytes = totalBytes
     }
 
+    /// Counts bytes already present on disk during resumed installs.
     func registerExistingBytes(
         for path: String,
         bytes: Int64,
@@ -477,6 +506,7 @@ actor ManifestDownloadProgressTracker {
         ))
     }
 
+    /// Removes previously counted bytes when a partial must restart from zero.
     func resetBytes(
         for path: String,
         fileTotal: Int64,
@@ -495,6 +525,7 @@ actor ManifestDownloadProgressTracker {
         ))
     }
 
+    /// Adds newly written bytes and emits a combined progress event.
     func advance(
         bytes: Int64,
         for path: String,

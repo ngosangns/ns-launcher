@@ -1,11 +1,14 @@
 import Foundation
 
+/// Resolves external command-line tools from user preferences and common install paths.
 enum BinaryLocator {
+    /// Known tools managed by the launcher.
     enum ManagedBinary: CaseIterable {
         case wine
         case aria2
         case sevenZip
 
+        /// Ordered executable names to probe for this tool.
         var candidateNames: [String] {
             switch self {
             case .wine:
@@ -18,6 +21,7 @@ enum BinaryLocator {
         }
     }
 
+    /// Returns a usable executable path from an explicit path or fallback names.
     static func resolveExecutable(preferredPath: String, candidateNames: [String]) -> String? {
         let preferredPath = preferredPath.trimmingCharacters(in: .whitespacesAndNewlines)
         if !preferredPath.isEmpty, FileManager.default.isExecutableFile(atPath: preferredPath) {
@@ -37,10 +41,12 @@ enum BinaryLocator {
         return nil
     }
 
+    /// Resolves one of the launcher's known tools.
     static func resolveManagedExecutable(_ binary: ManagedBinary, preferredPath: String) -> String? {
         resolveExecutable(preferredPath: preferredPath, candidateNames: binary.candidateNames)
     }
 
+    /// Derives fallback lookup names from a requested executable.
     static func candidateNames(forExecutable executable: String) -> [String] {
         let basename = URL(fileURLWithPath: executable).lastPathComponent
 
@@ -51,6 +57,7 @@ enum BinaryLocator {
         return basename.isEmpty ? [] : [basename]
     }
 
+    /// Builds an ordered search path from the current environment plus common macOS roots.
     private static func executableSearchRoots() -> [URL] {
         let pathEntries = (ProcessInfo.processInfo.environment["PATH"] ?? "")
             .split(separator: ":")

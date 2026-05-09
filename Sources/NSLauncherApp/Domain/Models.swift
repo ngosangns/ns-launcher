@@ -1,11 +1,13 @@
 import Foundation
 
+/// Languages exposed by the launcher UI and by official metadata requests.
 enum AppLanguage: String, Codable, CaseIterable, Identifiable {
     case english
     case vietnamese
 
     var id: String { rawValue }
 
+    /// Language code expected by HoYoPlay's official package metadata endpoint.
     var officialMetadataLanguageCode: String {
         switch self {
         case .english:
@@ -16,6 +18,7 @@ enum AppLanguage: String, Codable, CaseIterable, Identifiable {
     }
 }
 
+/// Installation backend selected for a game definition.
 enum InstallerStrategy: String, Codable, CaseIterable, Identifiable {
     case archivePackage
     case existingInstall
@@ -25,6 +28,7 @@ enum InstallerStrategy: String, Codable, CaseIterable, Identifiable {
     var id: String { rawValue }
 }
 
+/// Runtime components the launcher may need before a game can run correctly.
 enum RuntimeRequirement: String, Codable, CaseIterable, Identifiable {
     case wine
     case dxvk
@@ -34,6 +38,7 @@ enum RuntimeRequirement: String, Codable, CaseIterable, Identifiable {
     var id: String { rawValue }
 }
 
+/// Archive formats supported by the package installer.
 enum ArchiveFormat: String, Codable, CaseIterable, Identifiable {
     case sevenZip
     case zip
@@ -42,6 +47,7 @@ enum ArchiveFormat: String, Codable, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
+    /// Human-readable extension hint shown in Settings and used for default names.
     var fileExtensionHint: String {
         switch self {
         case .sevenZip:
@@ -56,6 +62,7 @@ enum ArchiveFormat: String, Codable, CaseIterable, Identifiable {
     }
 }
 
+/// Remote archive description for single-file or multipart package downloads.
 struct PackageSource: Codable, Hashable {
     var remoteURL: URL?
     var partURLs: [URL]?
@@ -64,6 +71,7 @@ struct PackageSource: Codable, Hashable {
     var expectedArchiveSize: Int64?
 }
 
+/// Resume metadata written beside partial package downloads.
 struct PersistedDownloadState: Codable, Equatable {
     var gameID: String
     var archiveFileName: String
@@ -82,6 +90,7 @@ struct PersistedDownloadState: Codable, Equatable {
     var savedAt: Date
 }
 
+/// Marker file written into an install directory after a successful install/import.
 struct InstalledGameMetadata: Codable, Hashable {
     var gameID: String
     var installMode: InstallerStrategy
@@ -91,11 +100,13 @@ struct InstalledGameMetadata: Codable, Hashable {
     var version: String?
 }
 
+/// Result returned by import and re-scan validation.
 struct ImportValidationResult: Hashable {
     var isValid: Bool
     var message: String
 }
 
+/// Coarse install state used by UI or future persistence.
 enum InstallState: String, Codable {
     case notInstalled
     case packageReady
@@ -103,6 +114,7 @@ enum InstallState: String, Codable {
     case imported
 }
 
+/// Static configuration for one launchable game.
 struct GameDefinition: Identifiable, Codable, Hashable {
     let id: String
     var displayName: String
@@ -116,11 +128,13 @@ struct GameDefinition: Identifiable, Codable, Hashable {
     var launchArguments: [String]
 }
 
+/// File manifest format used by the manifest installer.
 struct RemoteGameManifest: Codable, Hashable {
     var version: String
     var files: [RemoteGameFile]
 }
 
+/// One downloadable file in a remote manifest.
 struct RemoteGameFile: Codable, Hashable, Identifiable {
     var path: String
     var url: URL
@@ -130,6 +144,7 @@ struct RemoteGameFile: Codable, Hashable, Identifiable {
     var id: String { path }
 }
 
+/// User-facing estimate of the operations required for an install.
 struct InstallPlan: Hashable {
     var version: String
     var steps: [InstallStep]
@@ -137,7 +152,9 @@ struct InstallPlan: Hashable {
     var peakTemporaryBytes: Int64
 }
 
+/// One planned install operation.
 struct InstallStep: Hashable, Identifiable {
+    /// Type of file-system or network action represented by this step.
     enum Kind: Hashable {
         case createDirectory
         case downloadFile
@@ -152,11 +169,13 @@ struct InstallStep: Hashable, Identifiable {
     var bytes: Int64
 }
 
+/// Launch-time arguments and environment that can be persisted or derived.
 struct LaunchConfiguration: Codable, Hashable {
     var gameArguments: [String]
     var environment: [String: String]
 }
 
+/// User settings and bundled game defaults persisted to disk.
 struct AppSettings: Codable, Equatable {
     var games: [GameDefinition]
     var selectedGameID: String?
@@ -164,18 +183,22 @@ struct AppSettings: Codable, Equatable {
     var downloadCacheDirectory: String
     var temporaryExtractionDirectory: String
 
+    /// Resolved Wine executable path, falling back to a PATH lookup name.
     var wineBinaryPath: String {
         BinaryLocator.resolveManagedExecutable(.wine, preferredPath: "") ?? "wine64"
     }
 
+    /// Resolved aria2 executable path reserved for future downloader integrations.
     var aria2BinaryPath: String {
         BinaryLocator.resolveManagedExecutable(.aria2, preferredPath: "") ?? "aria2c"
     }
 
+    /// Resolved 7-Zip executable path used by archive extraction.
     var sevenZipBinaryPath: String {
         BinaryLocator.resolveManagedExecutable(.sevenZip, preferredPath: "") ?? "7zz"
     }
 
+    /// Bundled multipart package metadata for the default Genshin Impact entry.
     static var defaultGenshinPackageSource: PackageSource {
         let genshinPackageParts = [
             "https://autopatchhk.yuanshen.com/client_app/download/pc_zip/20250314110016_HcIQuDGRmsbByeAE/GenshinImpact_5.5.0.zip.001",
@@ -197,6 +220,7 @@ struct AppSettings: Codable, Equatable {
         )
     }
 
+    /// First-run settings used when no settings file exists yet.
     static var `default`: AppSettings {
         let home = FileManager.default.homeDirectoryForCurrentUser
         let root = home
@@ -210,10 +234,10 @@ struct AppSettings: Codable, Equatable {
                     installDirectory: root,
                     executableRelativePath: "Genshin Impact Game/GenshinImpact.exe",
                     winePrefixDirectory: root.appendingPathComponent(".wine", isDirectory: true),
-                    installerStrategy: .streamingManifest,
+                    installerStrategy: .archivePackage,
                     runtimeRequirements: [.wine],
                     manifestURL: nil,
-                    packageSource: nil,
+                    packageSource: defaultGenshinPackageSource,
                     launchArguments: []
                 )
             ],
@@ -228,6 +252,7 @@ struct AppSettings: Codable, Equatable {
         )
     }
 
+    /// Migrates older settings to the current bundled Genshin archive strategy.
     func applyingBundledGenshinDefaultsIfNeeded() -> AppSettings {
         var copy = self
 
@@ -235,8 +260,8 @@ struct AppSettings: Codable, Equatable {
             return copy
         }
 
-        copy.games[index].installerStrategy = .streamingManifest
-        copy.games[index].packageSource = nil
+        copy.games[index].installerStrategy = .archivePackage
+        copy.games[index].packageSource = copy.games[index].packageSource ?? Self.defaultGenshinPackageSource
         copy.games[index].manifestURL = nil
 
         return copy
@@ -315,6 +340,7 @@ enum InstallProgressEvent: Equatable {
     case extracting(path: String)
     case verifying(path: String)
     case validatingInstall(path: String)
+    case cleaningDownloadedArchives(path: String)
     case importing(path: String)
     case rescanning(path: String)
     case finished(version: String)

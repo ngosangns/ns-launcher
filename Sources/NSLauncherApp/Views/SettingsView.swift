@@ -1,11 +1,13 @@
 import AppKit
 import SwiftUI
 
+/// Settings screen for storage paths, language, install folder, and package URLs.
 struct SettingsView: View {
     @ObservedObject var viewModel: LauncherViewModel
     @State private var packageURLText = ""
     @State private var partURLRows: [String] = []
 
+    /// Convenience accessor for localized copy.
     private var text: AppText { viewModel.text }
 
     var body: some View {
@@ -25,6 +27,7 @@ struct SettingsView: View {
         .onAppear(perform: syncPackageFields)
     }
 
+    /// Header block summarizing the current settings context.
     private var settingsHeader: some View {
         HStack(alignment: .top, spacing: 20) {
             VStack(alignment: .leading, spacing: 8) {
@@ -67,6 +70,7 @@ struct SettingsView: View {
         )
     }
 
+    /// Runtime and storage settings shared across games.
     private var runtimeSection: some View {
         SettingsCard(title: text.toolsSectionTitle, subtitle: text.settingsDescription) {
             LazyVGrid(columns: settingsColumns, alignment: .leading, spacing: 16) {
@@ -123,11 +127,12 @@ struct SettingsView: View {
         }
     }
 
+    /// Selected-game install root and executable settings.
     private func installSection(for game: GameDefinition) -> some View {
         SettingsCard(title: text.selectedGame, subtitle: game.displayName) {
             LazyVGrid(columns: settingsColumns, alignment: .leading, spacing: 16) {
                 InfoRow(label: text.name, value: game.displayName)
-                InfoRow(label: text.strategy, value: game.installerStrategy.rawValue)
+                InfoRow(label: text.strategy, value: text.installStrategyDescription(game.installerStrategy))
 
                 PathInputRow(
                     label: text.installRoot,
@@ -153,6 +158,7 @@ struct SettingsView: View {
         }
     }
 
+    /// Package-source editor for either streaming, multipart, or single archive installs.
     private func packageSection(for game: GameDefinition) -> some View {
         SettingsCard(title: text.gamePackageSectionTitle, subtitle: text.packageLinksDescription) {
             if game.installerStrategy == .streamingManifest {
@@ -166,6 +172,7 @@ struct SettingsView: View {
                         get: { game.packageSource?.archiveFormat ?? .sevenZip },
                         set: { newFormat in
                             viewModel.setArchiveFormatForSelectedGame(newFormat)
+                            // Refresh local text fields after format changes because the source shape may change.
                             syncPackageFields()
                         }
                     )) {
@@ -190,6 +197,16 @@ struct SettingsView: View {
                             label: text.selectedSource,
                             value: text.archiveTypeDescription(game.packageSource?.archiveFormat ?? .multipartZip)
                         )
+
+                        InfoRow(
+                            label: text.archivePartCount,
+                            value: "\(game.packageSource?.partURLs?.count ?? 0)"
+                        )
+
+                        InfoRow(
+                            label: text.cacheCleanupPolicy,
+                            value: text.downloadedArchivesCleanedUp
+                        )
                     }
 
                     Text(text.derivedFromFirstPart)
@@ -206,6 +223,7 @@ struct SettingsView: View {
                                             get: { partURLRows[index] },
                                             set: { newValue in
                                                 partURLRows[index] = newValue
+                                                // Persist after each edit so Settings remains the source of truth.
                                                 persistPartRows()
                                             }
                                         )
@@ -264,6 +282,11 @@ struct SettingsView: View {
                             label: text.archive,
                             value: text.archiveTypeDescription(game.packageSource?.archiveFormat ?? .sevenZip)
                         )
+
+                        InfoRow(
+                            label: text.cacheCleanupPolicy,
+                            value: text.downloadedArchivesCleanedUp
+                        )
                     }
 
                     if game.packageSource?.remoteURL == nil {
@@ -276,12 +299,14 @@ struct SettingsView: View {
         }
     }
 
+    /// Adaptive grid columns used by the settings cards.
     private var settingsColumns: [GridItem] {
         [
             GridItem(.adaptive(minimum: 320), alignment: .top)
         ]
     }
 
+    /// Common labeled field container for settings controls.
     private func settingField<Content: View, Label: View>(
         @ViewBuilder content: () -> Content,
         @ViewBuilder label: () -> Label
@@ -298,6 +323,7 @@ struct SettingsView: View {
         .background(.black.opacity(0.08), in: RoundedRectangle(cornerRadius: 14))
     }
 
+    /// Synchronizes text-field state from the selected game's package source.
     private func syncPackageFields() {
         packageURLText = viewModel.selectedGame?.packageSource?.remoteURL?.absoluteString ?? ""
         partURLRows = (viewModel.selectedGame?.packageSource?.partURLs ?? [])
@@ -308,6 +334,7 @@ struct SettingsView: View {
         }
     }
 
+    /// Parses and persists all non-empty multipart URL rows.
     private func persistPartRows() {
         let urls = partURLRows
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
@@ -316,6 +343,7 @@ struct SettingsView: View {
         viewModel.setPartURLsForSelectedGame(urls)
     }
 
+    /// Opens a folder picker and returns the selected path.
     private func chooseDirectoryPath() -> String? {
         let panel = NSOpenPanel()
         panel.canChooseFiles = false
@@ -324,18 +352,21 @@ struct SettingsView: View {
         return panel.runModal() == .OK ? panel.url?.path : nil
     }
 
+    /// Checks that a saved path still points to an existing directory.
     private func directoryExists(at path: String) -> Bool {
         guard !path.isEmpty else { return false }
         var isDirectory: ObjCBool = false
         return FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory) && isDirectory.boolValue
     }
 
+    /// Opens a valid directory in Finder.
     private func openDirectory(_ path: String) {
         guard directoryExists(at: path) else { return }
         NSWorkspace.shared.open(URL(fileURLWithPath: path, isDirectory: true))
     }
 }
 
+/// Capsule-style badge used by the settings header.
 private struct SettingsBadge: View {
     let title: String
     let tint: Color
@@ -350,6 +381,7 @@ private struct SettingsBadge: View {
     }
 }
 
+/// Section container used by settings groups.
 private struct SettingsCard<Content: View>: View {
     let title: String
     let subtitle: String
@@ -373,6 +405,7 @@ private struct SettingsCard<Content: View>: View {
     }
 }
 
+/// Read-only label/value row for selected-game metadata.
 private struct InfoRow: View {
     let label: String
     let value: String
@@ -399,6 +432,7 @@ private struct InfoRow: View {
     }
 }
 
+/// Editable path row with optional secondary action, such as opening the folder.
 private struct PathInputRow: View {
     let label: String
     @Binding var value: String

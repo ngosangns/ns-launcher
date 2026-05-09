@@ -2,242 +2,108 @@
 
 ## Goal
 
-Adapt `ns-launcher` to support `Genshin Impact` on macOS with these primary flows:
+`ns-launcher` targets a native macOS launcher workflow for `Genshin Impact` through local game files and Wine. The current app supports these product flows:
 
-1. `download + unzip/extract + install`
-2. `import existing install`
-3. `re-scan / relocate`
+1. official streaming-source install planning and install when a complete manifest is available
+2. archive-package install when a package source is configured
+3. local archive install from a user-selected file
+4. import existing install
+5. re-scan / relocate
+6. launch through Wine
 
-This MVP explicitly does **not** target cloud gaming, and does **not** treat `manifest-first` as the main installation path for Genshin.
+The project does not target cloud gaming.
 
-## MVP Scope
+## Current MVP State
 
-- Download a game package to a local cache
-- Extract the package into the final install directory
-- Persist local install metadata
-- Import an already existing game folder
-- Re-scan an imported or installed game folder
-- Launch the game through the current local runtime path
+The bundled `genshin-global` game definition uses `streamingManifest` by default. It points at the official HoYoPlay metadata path rather than a hardcoded archive package source. The expected Windows executable remains:
 
-## Out of Scope
+```text
+Genshin Impact Game/GenshinImpact.exe
+```
 
-- Cloud support
-- Full manifest-based install flow for Genshin
-- Multiple runtime profiles in the first iteration
-- Full repair mode with global checksum verification
-- Over-engineered service splitting before the end-to-end flow works
+Fresh official streaming install depends on HoYoPlay exposing a complete `pkg_version` manifest. If the official metadata is unavailable or incomplete, the launcher reports that fresh install is unsupported instead of pretending the install can continue.
 
-## Product Direction
+## Supported Install Sources
 
-For Genshin, the practical MVP should focus on archive-based installation and existing-install import.
+### Official Streaming Source
 
-Recommended supported flows:
+`GenshinStreamingMetadataService` requests HoYoPlay game package metadata for `hk4e_global`, using the selected app language to choose the official metadata language. It reads the returned resource-list base URL and parses `pkg_version` entries into `RemoteGameFile` values.
 
-- `Download & Install`
-- `Import Existing Install`
-- `Re-scan`
-- `Launch`
+The manifest installer then downloads files directly into the install directory through `.partial` files. It can resume existing partial files, retries transient network failures, verifies final file sizes, optionally verifies SHA-256 values when a manifest file supplies them, and writes `.nslauncher-install.json` after the expected executable is present.
 
-Recommended product labeling:
+### Archive Packages
 
-- `Install / Import`: supported
-- `Local launch on macOS`: experimental
+Archive package installation remains available for game definitions configured with `archivePackage`.
 
-## Implementation Plan
+`PackageDownloadService` supports:
 
-### 1. Extend Domain Models
+- single remote archive downloads
+- multipart package downloads through explicit part URLs
+- byte-range resume when supported by the server
+- persisted paused-download state
+- part-size validation from remote metadata
+- transfer progress, speed, and ETA reporting
 
-Update `Sources/NSLauncherApp/Domain/Models.swift`.
+`ArchiveInstaller` extracts through a resolved `7zz`, `7z`, or `7za` binary into the configured temporary extraction directory. It then merges files into the install directory, validates the expected executable, writes install metadata, and lets the coordinator clean downloaded cache archives after successful extraction.
 
-Add or revise:
+### Existing Installs
 
-- `InstallerStrategy`
-- `PackageSource`
-- `ArchiveFormat`
-- `InstalledGameMetadata`
-- `ImportValidationResult`
-- `InstallState`
+Import and re-scan validate an existing directory by checking the expected executable path. Import writes launcher metadata for the selected folder. Re-scan reports whether the current install directory still looks valid.
 
-Recommended `InstallerStrategy` values:
+## Settings and Runtime
 
-- `archivePackage`
-- `existingInstall`
-- `manifest`
+The app persists:
 
-`manifest` can remain in the codebase for future research, but it should not drive the Genshin MVP.
-
-### 2. Expand GameDefinition
-
-Update `GameDefinition` so a game can declare:
-
-- package URL
-- downloaded archive filename
-- archive format such as `.7z`, `.zip`, or `.tar.gz`
-- expected executable path after extraction
-- install root
-- prefix root
-
-### 3. Add PackageDownloadService
-
-Create a download service responsible for:
-
-- downloading package files into a cache directory
-- resuming partial downloads where feasible
-- reporting progress to the UI
-- validating basic file presence and size
-
-For MVP, `URLSession` is enough. `aria2c` can remain configurable for later acceleration.
-
-### 4. Add ArchiveInstaller
-
-Create an installer responsible for:
-
-- extracting supported archives into the final install directory
-- using temporary paths safely
-- validating the expected executable after extraction
-- writing install metadata
-
-The first supported format should be whichever archive format is actually used by the real Genshin package flow.
-
-### 5. Add ImportService
-
-Create an import service responsible for:
-
-- validating a selected folder
-- checking for expected executable paths
-- checking minimum directory structure
-- writing launcher metadata for imported installs
-
-### 6. Refactor LauncherCoordinator
-
-Update `Sources/NSLauncherApp/Services/LauncherCoordinator.swift` to route by install strategy instead of assuming everything goes through `ManifestInstaller`.
-
-Coordinator responsibilities should include:
-
-- build install summary
-- install from archive
-- import install
-- re-scan install
-- launch game
-
-### 7. Expand Progress Events
-
-Update `InstallProgressEvent` to include archive-flow stages such as:
-
-- `downloadingPackage`
-- `extracting`
-- `validatingInstall`
-- `importing`
-- `rescanning`
-
-### 8. Update View Model
-
-Update `Sources/NSLauncherApp/ViewModels/LauncherViewModel.swift` to expose commands for:
-
-- `downloadAndInstallSelectedGame`
-- `importSelectedGame`
-- `rescanSelectedGame`
-- `launchSelectedGame`
-
-### 9. Update UI
-
-Update the SwiftUI views to support:
-
-- `Download & Install`
-- `Import Existing Install`
-- `Re-scan`
-- `Launch`
-- progress and status text for download and extraction
-
-### 10. Expand Settings
-
-Add settings for:
-
+- selected language
+- game definitions
+- selected game id
 - download cache directory
 - temporary extraction directory
-- default install root
-- `7zz` binary path
-- runtime binary path
 
-### 11. Standardize Install Metadata
+Managed runtime/tool paths are resolved dynamically. Wine candidates are `wine64` and `wine`; archive-tool candidates are `7zz`, `7z`, and `7za`; `aria2c` remains a managed candidate for future sidecar use.
 
-Persist `.nslauncher-install.json` with at least:
+The launcher currently starts the configured Windows executable through Wine with the configured Wine prefix directory and game arguments.
 
-- game id
-- install mode
-- install timestamp
-- source archive name or imported folder marker
-- executable path
-- version if known
+## Product Labels
 
-### 12. Keep Runtime Simple for MVP
+Recommended labels in the app:
 
-Continue using the current runtime launch path first. Do not split into multiple runtime profiles until installation and import already work end to end.
+- `Download & Install`: official streaming source or configured remote package
+- `Install From Local Archive`: configured archive-package games only
+- `Import Existing Install`: supported
+- `Re-scan`: supported
+- `Launch via Wine`: experimental
 
-## Suggested Milestones
+## Remaining Work
 
-### Milestone 1
+### Fresh Install Reliability
 
-- extend models
-- add import flow
-- validate imported installs
-- launch imported game
+- Confirm whether the official `pkg_version` resource list is complete enough for a clean Genshin install.
+- Add clearer remediation when official metadata is incomplete.
+- Add checksum support for hashes provided by official metadata.
 
-### Milestone 2
+### Repair and Validation
 
-- add package download
-- add archive extraction
-- install from package
-- launch installed game
+- Add repair mode for missing or corrupted files.
+- Persist and compare installed version metadata.
+- Expand import validation beyond the executable check.
 
-### Milestone 3
+### Runtime Packaging
 
-- add re-scan / relocate
-- improve progress reporting
-- improve error handling
-- clean up metadata and settings UX
+- Add runtime downloader/updater for Wine and graphics layers.
+- Add configurable runtime profiles after the install/import path is stable.
+- Add signing, notarization, and app bundle packaging.
 
 ## Key Risks
 
-- local runtime compatibility on macOS may break across Genshin updates
-- real-world package structure may change
-- archive extraction can require large temporary disk usage if handled poorly
+- Official metadata endpoints can change without notice.
+- Genshin package structure can change between versions.
+- Local Wine compatibility can break across macOS, Wine, or game updates.
+- Archive extraction can require large temporary disk usage for package-based installs.
 
 ## Guiding Decisions
 
-- prioritize end-to-end archive install over manifest research
-- prefer a working vertical slice over deep abstraction
-- label local macOS launch as experimental until it proves stable
-
-## Research Findings
-
-### Current Packaging Direction
-
-Research on 2026-04-23 suggests these practical conclusions for Genshin:
-
-- prioritize `.7z` support
-- support `.zip` next
-- expect split archives such as `.zip.001` in some community-documented flows
-- do not prioritize `.tar` for core game installation
-
-### Executable Path
-
-The commonly referenced Windows executable path for Genshin is:
-
-- `Genshin Impact Game/GenshinImpact.exe`
-
-This path appears consistently in community troubleshooting threads and is a reasonable default for import validation and post-install checks.
-
-### Official and Ecosystem Signals
-
-- HoYoPlay support documentation for related games shows a manual package flow based on downloading archives, extracting them manually, then using a relocate/find-game flow.
-- HoYo ecosystem materials also show launcher-side distribution via `.zip`.
-- Community launcher documentation for Genshin on macOS mentions split archive pieces in real-world install/update workflows.
-
-### Product Implication
-
-For this project, the most useful install order is:
-
-1. local archive install
-2. import existing install
-3. optional direct package download once reliable URLs are available
+- Prefer official streaming metadata when it provides a complete manifest.
+- Keep archive install and existing-install import as practical fallback paths.
+- Keep local macOS launch labeled experimental until runtime compatibility is proven.
+- Prefer a working vertical slice over deeper abstraction.

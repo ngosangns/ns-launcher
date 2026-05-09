@@ -1,5 +1,6 @@
 import Foundation
 
+/// Failures specific to HoYoPlay streaming metadata discovery.
 enum GenshinStreamingMetadataError: LocalizedError {
     case officialStreamingMetadataUnavailable
     case streamingManifestIncomplete
@@ -17,10 +18,12 @@ enum GenshinStreamingMetadataError: LocalizedError {
     }
 }
 
+/// Boundary for converting official HoYoPlay metadata into the launcher's manifest shape.
 protocol GenshinStreamingMetadataProviding: Sendable {
     func fetchManifest(for game: GameDefinition, language: AppLanguage) async throws -> RemoteGameManifest
 }
 
+/// Reads Genshin Impact package metadata from HoYoPlay's public launcher endpoints.
 struct GenshinStreamingMetadataService: GenshinStreamingMetadataProviding {
     private let session: URLSession
 
@@ -28,6 +31,7 @@ struct GenshinStreamingMetadataService: GenshinStreamingMetadataProviding {
         self.session = session
     }
 
+    /// Fetches the official package list and turns its resource list into RemoteGameFile entries.
     func fetchManifest(for game: GameDefinition, language: AppLanguage) async throws -> RemoteGameManifest {
         guard game.id == "genshin-global" else {
             throw GenshinStreamingMetadataError.freshInstallUnsupported
@@ -45,6 +49,7 @@ struct GenshinStreamingMetadataService: GenshinStreamingMetadataProviding {
         return RemoteGameManifest(version: metadata.version, files: files)
     }
 
+    /// Calls HoYoPlay's package endpoint for the selected UI language.
     private func fetchOfficialMetadata(language: AppLanguage) async throws -> GenshinOfficialMetadata {
         var components = URLComponents(string: "https://sg-hyp-api.hoyoverse.com/hyp/hyp-connect/api/getGamePackages")
         components?.queryItems = [
@@ -74,6 +79,7 @@ struct GenshinStreamingMetadataService: GenshinStreamingMetadataProviding {
         )
     }
 
+    /// Reads the newline-delimited pkg_version resource list.
     private func fetchManifestEntries(baseURL: URL) async throws -> [RemoteGameFile] {
         let manifestURL = baseURL.appendingPathComponent("pkg_version", isDirectory: false)
         let (data, response) = try await session.data(from: manifestURL)
@@ -96,6 +102,7 @@ struct GenshinStreamingMetadataService: GenshinStreamingMetadataProviding {
 
         let decoder = JSONDecoder()
         return try lines.map { line in
+            // Each line is an independent JSON object describing one resource file.
             let entry = try decoder.decode(GenshinPkgVersionEntry.self, from: Data(line.utf8))
             guard !entry.remoteName.isEmpty, entry.fileSize > 0 else {
                 throw GenshinStreamingMetadataError.streamingManifestIncomplete
@@ -111,6 +118,7 @@ struct GenshinStreamingMetadataService: GenshinStreamingMetadataProviding {
         }
     }
 
+    /// Builds a URL by appending every remote path component safely.
     private func fileURL(for remoteName: String, baseURL: URL) -> URL {
         remoteName
             .split(separator: "/")
@@ -121,11 +129,13 @@ struct GenshinStreamingMetadataService: GenshinStreamingMetadataProviding {
     }
 }
 
+/// Minimal official metadata needed by the launcher.
 private struct GenshinOfficialMetadata {
     var version: String
     var resListURL: URL
 }
 
+/// One line from HoYoPlay's pkg_version file.
 private struct GenshinPkgVersionEntry: Decodable {
     var remoteName: String
     var md5: String
@@ -133,6 +143,7 @@ private struct GenshinPkgVersionEntry: Decodable {
     var fileSize: Int64
 }
 
+/// Decodable shape for the HoYoPlay game-packages response.
 private struct GenshinOfficialPackagesResponse: Decodable {
     var data: DataPayload
 

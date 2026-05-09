@@ -2,10 +2,12 @@ import AppKit
 import SwiftUI
 import UniformTypeIdentifiers
 
+/// Main launcher screen with install actions and operation status.
 struct ContentView: View {
     @ObservedObject var viewModel: LauncherViewModel
     @State private var isShowingSettings = false
 
+    /// Convenience accessor for localized copy.
     private var text: AppText { viewModel.text }
 
     var body: some View {
@@ -52,6 +54,7 @@ struct ContentView: View {
         }
     }
 
+    /// Top visual summary for the selected game and current install strategy.
     private func titleBlock(for game: GameDefinition) -> some View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 8) {
@@ -90,10 +93,12 @@ struct ContentView: View {
         )
     }
 
+    /// Reserved area for future install metadata without changing the main layout.
     private var installSummary: some View {
         EmptyView()
     }
 
+    /// Builds the available user actions for the selected game.
     private var actionBar: some View {
         var buttons = [
             ActionButtonItem(
@@ -170,6 +175,7 @@ struct ContentView: View {
         }
     }
 
+    /// Status panel that renders progress, pause/stop controls, and transfer details.
     private var footer: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(text.status)
@@ -184,6 +190,7 @@ struct ContentView: View {
                 }
 
                 if let progress = viewModel.operationProgress {
+                    // Progress is split into overall and per-part bars for multipart archives.
                     VStack(alignment: .leading, spacing: 10) {
                         VStack(alignment: .leading, spacing: 6) {
                             Text(text.totalProgressLabel)
@@ -256,6 +263,7 @@ struct ContentView: View {
         }
     }
 
+    /// Renders current file/part details below the progress bars.
     private func statusInfoGrid(progress: OperationProgress) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             if let itemPaths = progress.itemPaths, !itemPaths.isEmpty {
@@ -272,6 +280,7 @@ struct ContentView: View {
         }
     }
 
+    /// Renders transfer speed and ETA information when available.
     private func transferDetailsGrid(progress: OperationProgress) -> some View {
         let warmupItem: StatusItem? = if progress.isETAWarmingUp, progress.etaText == nil {
             StatusItem(label: text.etaLabel, value: text.etaWarmupMessage, monospaced: false)
@@ -300,6 +309,7 @@ struct ContentView: View {
         }
     }
 
+    /// Small reusable labeled value tile for status metadata.
     private func statusTile(label: String, value: String, monospaced: Bool) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(label)
@@ -325,6 +335,7 @@ struct ContentView: View {
         .background(.black.opacity(0.08), in: RoundedRectangle(cornerRadius: 10))
     }
 
+    /// Scrollable tile for the currently active manifest-file list.
     private func statusListTile(label: String, values: [String], monospaced: Bool) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(label)
@@ -358,6 +369,7 @@ struct ContentView: View {
         .background(.black.opacity(0.08), in: RoundedRectangle(cornerRadius: 10))
     }
 
+    /// Legacy compact status row kept for future detail layouts.
     private func statusRow(label: String, value: String, monospaced: Bool = false) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(label)
@@ -374,6 +386,7 @@ struct ContentView: View {
         }
     }
 
+    /// Opens a file picker for archive formats supported by the installer.
     private func chooseArchiveURL() -> URL? {
         let panel = NSOpenPanel()
         panel.title = text.chooseArchivePackage
@@ -390,6 +403,7 @@ struct ContentView: View {
         return panel.runModal() == .OK ? panel.url : nil
     }
 
+    /// Opens a directory picker with a localized title.
     private func chooseDirectoryURL(title: String) -> URL? {
         let panel = NSOpenPanel()
         panel.title = title
@@ -400,6 +414,7 @@ struct ContentView: View {
     }
 }
 
+/// Identifiable labeled value for transfer detail grids.
 private struct StatusItem: Identifiable {
     let id = UUID()
     let label: String
@@ -407,6 +422,7 @@ private struct StatusItem: Identifiable {
     let monospaced: Bool
 }
 
+/// Button wrapper used by the action bar.
 private struct ActionButton: View {
     let title: String
     let icon: String
@@ -434,6 +450,7 @@ private struct ActionButton: View {
     }
 }
 
+/// Data model for action bar button construction.
 private struct ActionButtonItem {
     let title: String
     let icon: String
@@ -442,6 +459,7 @@ private struct ActionButtonItem {
     let action: () -> Void
 }
 
+/// Simple wrapping layout for action buttons on narrow windows.
 private struct FlexFlowLayout: Layout {
     var spacing: CGFloat = 12
     var rowSpacing: CGFloat = 10
@@ -461,6 +479,7 @@ private struct FlexFlowLayout: Layout {
             let size = subview.sizeThatFits(.unspecified)
             let proposedX = currentX == 0 ? size.width : currentX + spacing + size.width
             if proposedX > maxWidth, currentX > 0 {
+                // Start a new row when the next button would overflow the proposed width.
                 currentY += rowHeight + rowSpacing
                 currentX = size.width
                 rowHeight = size.height
@@ -507,6 +526,7 @@ private struct FlexFlowLayout: Layout {
     }
 }
 
+/// Small status badge shown in the header.
 private struct HeaderBadge: View {
     let title: String
     let tint: Color

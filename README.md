@@ -21,14 +21,18 @@ It already includes:
 
 - a native SwiftUI app
 - install planning models
-- a manifest-first installer strategy that downloads files directly into the final game directory using per-file `.partial` files
-- process wrappers for `wine`, `aria2c`, and external sidecars
-- editable game configuration and launch settings
+- official streaming-manifest plumbing for Genshin Impact metadata
+- manifest installs that download files directly into the final game directory using per-file `.partial` files
+- resumable archive package downloads, including multipart `.zip.001` package flows
+- archive extraction through `7zz`/`7z`/`7za`
+- import, re-scan, and launch flows for existing installs
+- process wrappers for Wine, archive tooling, and other external sidecars
+- editable game configuration, language, storage, package, and launch settings
 - architecture docs for extending the launcher
 
 ## Why this install flow uses less disk
 
-The intended default strategy is:
+The lowest-amplification strategy is:
 
 1. fetch a manifest
 2. create the destination tree
@@ -38,7 +42,13 @@ The intended default strategy is:
 
 This means the launcher only needs temporary space roughly equal to the largest file currently being written, not the full compressed payload plus the full decompressed payload.
 
-Fallback archive installers can still exist, but they should be treated as compatibility mode rather than the primary path.
+Archive installers are also supported for package-based ecosystems. They download into the configured cache, extract through the configured temporary extraction directory, merge into the install directory, then remove downloaded cache archives after successful extraction when the launcher downloaded them itself.
+
+## Current Genshin Direction
+
+The bundled `genshin-global` definition uses the official streaming source path. The launcher queries HoYoPlay package metadata, reads the `pkg_version` resource list, and plans or installs those files through the manifest installer when a complete manifest is available.
+
+Fresh streaming installs can still fail if the official metadata endpoint does not expose a complete file manifest. Archive-package install and existing-install import remain available paths when the game definition is configured for them.
 
 ## Build
 
@@ -57,3 +67,5 @@ swift run
 ## Docs
 
 - [Architecture](docs/architecture.md)
+- [Genshin Install Plan](docs/genshin-install-plan.md)
+- [Docs Index](docs/_index.md)

@@ -1,5 +1,6 @@
 import Foundation
 
+/// Import-specific validation errors.
 enum ImportServiceError: LocalizedError {
     case expectedExecutableMissing(String)
 
@@ -11,8 +12,11 @@ enum ImportServiceError: LocalizedError {
     }
 }
 
+/// Boundary for validating and registering existing game folders.
 protocol ImportServicing: Sendable {
+    /// Checks whether the configured executable exists in the selected folder.
     func validate(game: GameDefinition, text: AppText) async -> ImportValidationResult
+    /// Writes launcher metadata for a valid existing installation.
     func `import`(
         game: GameDefinition,
         text: AppText,
@@ -20,9 +24,11 @@ protocol ImportServicing: Sendable {
     ) async throws
 }
 
+/// Registers already-installed game folders without downloading or extracting files.
 struct ImportService: ImportServicing {
     init() {}
 
+    /// Validates an import by checking the executable path relative to the install directory.
     func validate(game: GameDefinition, text: AppText) async -> ImportValidationResult {
         let executable = game.installDirectory.appendingPathComponent(game.executableRelativePath)
         guard FileManager.default.fileExists(atPath: executable.path) else {
@@ -38,6 +44,7 @@ struct ImportService: ImportServicing {
         )
     }
 
+    /// Validates and writes the standard NSLauncher metadata marker into the import folder.
     func `import`(
         game: GameDefinition,
         text: AppText,

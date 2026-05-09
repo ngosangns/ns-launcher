@@ -1,5 +1,6 @@
 import Foundation
 
+/// Facade that coordinates persistence, install backends, import validation, and launching.
 struct LauncherCoordinator: Sendable {
     private let settingsStore: SettingsStoring
     private let downloadStateStore: DownloadStateStoring
@@ -10,6 +11,7 @@ struct LauncherCoordinator: Sendable {
     private let importService: ImportServicing
     private let wineService: WineServicing
 
+    /// Injects every side-effecting service so the view model stays UI-focused.
     init(
         settingsStore: SettingsStoring,
         downloadStateStore: DownloadStateStoring,
@@ -30,22 +32,27 @@ struct LauncherCoordinator: Sendable {
         self.wineService = wineService
     }
 
+    /// Loads persisted application settings.
     func loadSettings() throws -> AppSettings {
         try settingsStore.load()
     }
 
+    /// Saves application settings after UI changes.
     func saveSettings(_ settings: AppSettings) throws {
         try settingsStore.save(settings)
     }
 
+    /// Loads a paused package download checkpoint for the selected game.
     func loadPersistedDownloadState(for gameID: String) throws -> PersistedDownloadState? {
         try downloadStateStore.load(for: gameID)
     }
 
+    /// Clears a stale or intentionally stopped package download checkpoint.
     func clearPersistedDownloadState(for gameID: String) throws {
         try downloadStateStore.clear(for: gameID)
     }
 
+    /// Builds an install plan using the selected install strategy.
     func fetchInstallPlan(for game: GameDefinition, settings: AppSettings) async throws -> InstallPlan {
         let text = AppText(language: settings.language)
         switch game.installerStrategy {
@@ -71,6 +78,7 @@ struct LauncherCoordinator: Sendable {
         }
     }
 
+    /// Runs the install/import flow for the selected strategy.
     func installGame(
         _ game: GameDefinition,
         settings: AppSettings,
@@ -81,6 +89,7 @@ struct LauncherCoordinator: Sendable {
         let text = AppText(language: settings.language)
         switch game.installerStrategy {
         case .archivePackage:
+            // Local archive overrides skip downloading but reuse the same extraction path.
             let archiveURL: URL
             if let archiveOverrideURL {
                 archiveURL = archiveOverrideURL
@@ -105,6 +114,8 @@ struct LauncherCoordinator: Sendable {
                 onEvent: onEvent
             )
             if archiveOverrideURL == nil {
+                // Remote archives are cache artifacts, so remove them once extraction succeeds.
+                await onEvent(.cleaningDownloadedArchives(path: archiveURL.lastPathComponent))
                 try cleanupDownloadedArchives(for: archiveURL, game: game, settings: settings)
             }
             await onEvent(.finished(version: text.archiveVersionLabel))
@@ -129,6 +140,7 @@ struct LauncherCoordinator: Sendable {
         }
     }
 
+    /// Revalidates the current install directory without changing settings.
     func rescanGame(
         _ game: GameDefinition,
         settings: AppSettings,
@@ -138,6 +150,7 @@ struct LauncherCoordinator: Sendable {
         return await importService.validate(game: game, text: AppText(language: settings.language))
     }
 
+    /// Creates a Wine launch request from the saved game configuration.
     func launchGame(_ game: GameDefinition, settings: AppSettings) async throws -> ProcessResult {
         let exe = game.installDirectory.appendingPathComponent(game.executableRelativePath)
         let request = WineLaunchRequest(
@@ -151,6 +164,7 @@ struct LauncherCoordinator: Sendable {
         return try await wineService.launch(request)
     }
 
+    /// Deletes cached archive files after a successful remote package install.
     private func cleanupDownloadedArchives(for archiveURL: URL, game: GameDefinition, settings: AppSettings) throws {
         let fileManager = FileManager.default
         let cacheDirectory = URL(fileURLWithPath: settings.downloadCacheDirectory, isDirectory: true)
@@ -158,6 +172,7 @@ struct LauncherCoordinator: Sendable {
         if game.packageSource?.archiveFormat == .multipartZip,
            let partURLs = game.packageSource?.partURLs,
            !partURLs.isEmpty {
+            // Multipart archives must remove every sibling part, not just the .001 entry.
             for partURL in partURLs {
                 let cachedPart = cacheDirectory.appendingPathComponent(partURL.lastPathComponent)
                 if fileManager.fileExists(atPath: cachedPart.path) {

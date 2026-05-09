@@ -1,7 +1,11 @@
 import Foundation
 
+/// Centralized localized copy for the launcher UI and error messages.
 struct AppText {
+    /// Active language used for every localized string.
     let language: AppLanguage
+
+    // MARK: - Static Labels
 
     var appTitle: String { localized(en: "NS Launcher", vi: "NS Launcher") }
     var settingsTitle: String { localized(en: "Settings", vi: "Cài đặt") }
@@ -15,8 +19,8 @@ struct AppText {
     var addLink: String { localized(en: "Add Link", vi: "Thêm link") }
     var remove: String { localized(en: "Remove", vi: "Xóa") }
     var derivedFromFirstPart: String { localized(en: "Derived from the first part link.", vi: "Tự suy ra từ link part đầu tiên.") }
-    var packageLinksDescription: String { localized(en: "Edit the download source links used for this game.", vi: "Chỉnh các link tải dùng cho game này.") }
-    var packageLinkRow: String { localized(en: "Part link", vi: "Link part") }
+    var packageLinksDescription: String { localized(en: "Download archive packages to cache, extract them into the install folder, then clean up the cached archives.", vi: "Tải gói nén vào cache, giải nén vào thư mục cài đặt, rồi xóa các gói nén trong cache.") }
+    var packageLinkRow: String { localized(en: "Archive part link", vi: "Link part gói nén") }
     var singlePackageLink: String { localized(en: "Package link", vi: "Link gói cài đặt") }
     var games: String { localized(en: "Games", vi: "Trò chơi") }
     var noGameSelected: String { localized(en: "No game selected", vi: "Chưa chọn game") }
@@ -30,7 +34,7 @@ struct AppText {
     var packageURL: String { localized(en: "Package URL", vi: "URL gói cài đặt") }
     var localLaunchExperimental: String { localized(en: "Local macOS launch is currently experimental.", vi: "Chạy local trên macOS hiện đang ở mức thử nghiệm.") }
     var installPlanner: String { localized(en: "Install Planner", vi: "Kế hoạch cài đặt") }
-    var installPlannerDescription: String { localized(en: "This prototype now supports streaming installs, imports, and re-scan flows for Windows games on macOS.", vi: "Bản mẫu này đã hỗ trợ cài đặt streaming, import và quét lại game Windows trên macOS.") }
+    var installPlannerDescription: String { localized(en: "This prototype supports archive-package installs, imports, and re-scan flows for Windows games on macOS.", vi: "Bản mẫu này hỗ trợ cài đặt từ gói nén, import và quét lại game Windows trên macOS.") }
     var status: String { localized(en: "Status", vi: "Trạng thái") }
     var currentStepLabel: String { localized(en: "Current step", vi: "Bước hiện tại") }
     var currentItemLabel: String { localized(en: "Current item", vi: "Mục đang xử lý") }
@@ -54,6 +58,7 @@ struct AppText {
     var extractingStage: String { localized(en: "Extracting", vi: "Đang giải nén") }
     var verifyingStage: String { localized(en: "Verifying", vi: "Đang xác thực") }
     var validatingStage: String { localized(en: "Validating", vi: "Đang kiểm tra") }
+    var cleaningStage: String { localized(en: "Cleaning up", vi: "Đang dọn dẹp") }
     var importingStage: String { localized(en: "Importing", vi: "Đang import") }
     var rescanningStage: String { localized(en: "Re-scanning", vi: "Đang quét lại") }
     var completedStage: String { localized(en: "Completed", vi: "Hoàn tất") }
@@ -61,7 +66,7 @@ struct AppText {
     var connectingToServer: String { localized(en: "Connecting to the package server...", vi: "Đang kết nối tới máy chủ gói cài đặt...") }
     var waitingForFirstDownloadBytes: String { localized(en: "Waiting for the first download data from the server...", vi: "Đang chờ dữ liệu tải đầu tiên từ máy chủ...") }
     var preparingExtractionAfterDownload: String { localized(en: "All parts are downloaded. Preparing extraction...", vi: "Đã tải xong toàn bộ các part. Đang chuẩn bị giải nén...") }
-    var downloadedArchivesCleanedUp: String { localized(en: "Downloaded archive parts will be removed from cache after extraction completes.", vi: "Các part đã tải sẽ được xóa khỏi cache sau khi giải nén xong.") }
+    var downloadedArchivesCleanedUp: String { localized(en: "Cached archive files are removed after successful extraction.", vi: "Các file gói nén trong cache sẽ được xóa sau khi giải nén thành công.") }
     var operationPaused: String { localized(en: "Operation paused", vi: "Đã tạm dừng thao tác") }
     var operationResumed: String { localized(en: "Operation resumed", vi: "Đã tiếp tục thao tác") }
     var operationStopped: String { localized(en: "Operation stopped", vi: "Đã dừng thao tác") }
@@ -95,7 +100,7 @@ struct AppText {
     var partURLs: String { localized(en: "Split package URLs", vi: "Danh sách URL các phần") }
     var partURLsHint: String { localized(en: "Paste one URL per line for multipart downloads.", vi: "Dán mỗi URL trên một dòng cho gói tải nhiều phần.") }
     var packageURLOptional: String { localized(en: "Package URL is optional. Leave it empty to use local archive install only.", vi: "Package URL là tùy chọn. Để trống nếu chỉ muốn cài từ file local.") }
-    var multipartHint: String { localized(en: "For split archives, choose the first .001 part locally or list every remote part URL below.", vi: "Với gói tách nhỏ, hãy chọn file .001 đầu tiên ở máy hoặc liệt kê đầy đủ URL các phần bên dưới.") }
+    var multipartHint: String { localized(en: "Split archives must keep every .001/.002/... part until extraction finishes; the launcher removes them afterward.", vi: "Gói tách nhỏ cần giữ đủ các part .001/.002/... cho tới khi giải nén xong; launcher sẽ xóa chúng sau đó.") }
     var wineBinary: String { localized(en: "Wine binary", vi: "File Wine") }
     var aria2Binary: String { localized(en: "aria2c binary", vi: "File aria2c") }
     var sevenZipBinary: String { localized(en: "7zz binary", vi: "File 7zz") }
@@ -114,11 +119,15 @@ struct AppText {
     var remoteNotConfigured: String { localized(en: "No remote URL configured", vi: "Chưa cấu hình remote URL") }
     var multipartArchiveDescription: String { localized(en: "Split archive (.001 + siblings)", vi: "Gói tách nhỏ (.001 và các part khác)") }
     var singleArchiveDescription: String { localized(en: "Single archive package", vi: "Gói nén đơn") }
+    var archivePartCount: String { localized(en: "Archive parts", vi: "Số part gói nén") }
+    var cacheCleanupPolicy: String { localized(en: "Cache cleanup", vi: "Dọn cache") }
+
+    // MARK: - Action Labels
 
     var planInstallTitle: String { localized(en: "Plan Install", vi: "Lập kế hoạch") }
     var planInstallDescription: String { localized(en: "Estimate download size, temporary space, and planned steps.", vi: "Ước tính dung lượng tải, bộ nhớ tạm và các bước cài đặt.") }
     var downloadInstallTitle: String { localized(en: "Download & Install", vi: "Tải và cài đặt") }
-    var downloadInstallDescription: String { localized(en: "Download official game files directly into the install directory.", vi: "Tải trực tiếp các file game chính thức vào thư mục cài đặt.") }
+    var downloadInstallDescription: String { localized(en: "Download the configured archive package, extract it, then remove cached archive files.", vi: "Tải gói nén đã cấu hình, giải nén, rồi xóa các file gói nén trong cache.") }
     var localArchiveTitle: String { localized(en: "Install From Local Archive", vi: "Cài từ file local") }
     var localArchiveDescription: String { localized(en: "Pick a local .7z, .zip, or split archive and install from it.", vi: "Chọn file .7z, .zip hoặc gói tách nhỏ từ máy để cài đặt.") }
     var importTitle: String { localized(en: "Import Existing Install", vi: "Import bản cài đặt có sẵn") }
@@ -130,6 +139,7 @@ struct AppText {
     var launchTitle: String { localized(en: "Launch via Wine", vi: "Chạy qua Wine") }
     var launchDescription: String { localized(en: "Start the configured Windows executable with the current Wine path.", vi: "Chạy file Windows đã cấu hình bằng đường dẫn Wine hiện tại.") }
 
+    /// Describes an install strategy in settings and summaries.
     func installStrategyDescription(_ strategy: InstallerStrategy) -> String {
         switch strategy {
         case .archivePackage:
@@ -143,6 +153,7 @@ struct AppText {
         }
     }
 
+    /// Builds the short subtitle shown in the main header.
     func launcherStrategyDescription(_ strategy: InstallerStrategy) -> String {
         switch language {
         case .english:
@@ -152,6 +163,7 @@ struct AppText {
         }
     }
 
+    /// Describes whether an archive is split into multiple parts or not.
     func archiveTypeDescription(_ format: ArchiveFormat) -> String {
         switch format {
         case .multipartZip:
@@ -161,6 +173,7 @@ struct AppText {
         }
     }
 
+    /// Formats the multiline install plan summary.
     func installPlanSummary(version: String, download: String, peakTemp: String, steps: Int) -> String {
         """
         \(versionLabel): \(version)
@@ -170,90 +183,119 @@ struct AppText {
         """
     }
 
+    // MARK: - Status Messages
+
+    /// Status text shown while the planner is running.
     func planningInstall(for gameName: String) -> String {
         localized(en: "Planning install for \(gameName)...", vi: "Đang lập kế hoạch cài đặt cho \(gameName)...")
     }
 
+    /// Status text shown during remote package installs.
     func installing(_ gameName: String) -> String {
         localized(en: "Installing \(gameName)...", vi: "Đang cài đặt \(gameName)...")
     }
 
+    /// Status text shown during local archive installs.
     func installingFromArchive(_ gameName: String, archiveName: String) -> String {
         localized(en: "Installing \(gameName) from \(archiveName)...", vi: "Đang cài đặt \(gameName) từ \(archiveName)...")
     }
 
+    /// Status text shown during import.
     func importing(_ gameName: String) -> String {
         localized(en: "Importing \(gameName)...", vi: "Đang import \(gameName)...")
     }
 
+    /// Status text shown during re-scan.
     func rescanning(_ gameName: String) -> String {
         localized(en: "Re-scanning \(gameName)...", vi: "Đang quét lại \(gameName)...")
     }
 
+    /// Status text shown while launching through Wine.
     func launching(_ gameName: String) -> String {
         localized(en: "Launching \(gameName)...", vi: "Đang mở \(gameName)...")
     }
 
+    /// Stage text for preparation events.
     func preparing(_ path: String) -> String {
         localized(en: "Preparing \(path)", vi: "Đang chuẩn bị \(path)")
     }
 
+    /// Stage text for extraction events.
     func extracting(_ path: String) -> String {
         localized(en: "Extracting \(path)", vi: "Đang giải nén \(path)")
     }
 
+    /// Stage text for verification events.
     func verifying(_ path: String) -> String {
         localized(en: "Verifying \(path)", vi: "Đang xác thực \(path)")
     }
 
+    /// Stage text for install validation events.
     func validating(_ path: String) -> String {
         localized(en: "Validating \(path)", vi: "Đang kiểm tra \(path)")
     }
 
+    /// Stage text for cache cleanup after extraction.
+    func cleaningDownloadedArchives(_ path: String) -> String {
+        localized(en: "Removing cached archive files for \(path)", vi: "Đang xóa các file gói nén trong cache cho \(path)")
+    }
+
+    /// Stage text for importing from a path.
     func importingPath(_ path: String) -> String {
         localized(en: "Importing from \(path)", vi: "Đang import từ \(path)")
     }
 
+    /// Stage text for re-scanning a path.
     func rescanningPath(_ path: String) -> String {
         localized(en: "Re-scanning \(path)", vi: "Đang quét lại \(path)")
     }
 
+    /// Completion text with installed version.
     func installedVersion(_ version: String) -> String {
         localized(en: "Installed version \(version)", vi: "Đã cài bản \(version)")
     }
 
+    /// Progress text for manifest file downloads.
     func downloaded(_ path: String, received: String, total: String) -> String {
         localized(en: "Downloaded \(path) (\(received) / \(total))", vi: "Đã tải \(path) (\(received) / \(total))")
     }
 
+    /// Progress text for package downloads.
     func downloadingPackage(_ path: String, received: String, total: String) -> String {
         localized(en: "Downloading package \(path) (\(received) / \(total))", vi: "Đang tải gói \(path) (\(received) / \(total))")
     }
 
+    /// Generic byte progress value.
     func progressValue(received: String, total: String) -> String {
         localized(en: "\(received) / \(total)", vi: "\(received) / \(total)")
     }
 
+    /// KB progress value used by detailed status tiles.
     func progressValueKB(receivedKB: String, totalKB: String) -> String {
         localized(en: "\(receivedKB) KB / \(totalKB) KB", vi: "\(receivedKB) KB / \(totalKB) KB")
     }
 
+    /// Multipart archive part label.
     func partProgress(current: Int, total: Int) -> String {
         localized(en: "Part \(current) / \(total)", vi: "Part \(current) / \(total)")
     }
 
+    /// Per-part byte progress text.
     func currentPartProgressValue(received: String, total: String) -> String {
         localized(en: "\(received) / \(total) for this part", vi: "\(received) / \(total) cho part này")
     }
 
+    /// Resume checkpoint text.
     func resumePointValue(_ value: String) -> String {
         localized(en: "Resume from \(value)", vi: "Tiếp tục từ \(value)")
     }
 
+    /// Pass-through hook reserved for future localized speed formatting.
     func speedValue(_ value: String) -> String {
         localized(en: value, vi: value)
     }
 
+    /// Transition text between completed multipart download and extraction.
     func extractionStartsAfterDownload(downloadedParts: Int, totalParts: Int) -> String {
         localized(
             en: "Downloaded \(downloadedParts)/\(totalParts) parts. Starting extraction...",
@@ -261,9 +303,12 @@ struct AppText {
         )
     }
 
+    /// Error text for a missing configured executable.
     func missingExpectedExecutable(_ path: String) -> String {
         localized(en: "Missing expected executable at \(path)", vi: "Không tìm thấy file chạy mong đợi tại \(path)")
     }
+
+    // MARK: - Error Messages
 
     var existingInstallLooksValid: String {
         localized(en: "Existing install looks valid.", vi: "Bản cài đặt hiện có có vẻ hợp lệ.")
@@ -285,10 +330,12 @@ struct AppText {
         localized(en: "archive", vi: "gói-nén")
     }
 
+    /// Error text for missing process executables.
     func executableNotFound(_ path: String) -> String {
         localized(en: "Executable not found at \(path)", vi: "Không tìm thấy file chạy tại \(path)")
     }
 
+    /// Error text for non-zero external process exits.
     func processFailed(code: Int32, details: String) -> String {
         localized(
             en: "Process failed with code \(code): \(details)",
@@ -308,6 +355,7 @@ struct AppText {
         localized(en: "The package server returned an invalid response.", vi: "Máy chủ gói cài đặt trả về phản hồi không hợp lệ.")
     }
 
+    /// Error text for downloaded parts whose byte count does not match server metadata.
     func downloadedPartIntegrityMismatch(_ fileName: String, expected: String, actual: String) -> String {
         localized(
             en: "Downloaded part \(fileName) is incomplete or mismatched: expected \(expected), found \(actual).",
@@ -338,6 +386,7 @@ struct AppText {
         )
     }
 
+    /// Error text for a configured 7-Zip path that cannot be resolved.
     func sevenZipBinaryNotFound(_ path: String) -> String {
         localized(
             en: "Could not find a working 7zz/7z binary. Current setting: \(path)",
@@ -345,6 +394,7 @@ struct AppText {
         )
     }
 
+    /// Error text when extraction completes without the configured executable.
     func expectedExecutableMissingAfterExtraction(_ path: String) -> String {
         localized(en: "Expected executable was not found after extraction: \(path)", vi: "Không tìm thấy file chạy mong đợi sau khi giải nén: \(path)")
     }
@@ -357,10 +407,12 @@ struct AppText {
         localized(en: "The server returned an invalid response.", vi: "Máy chủ trả về phản hồi không hợp lệ.")
     }
 
+    /// Error text for manifest checksum mismatches.
     func checksumMismatch(_ path: String) -> String {
         localized(en: "Checksum mismatch for \(path)", vi: "Checksum không khớp cho \(path)")
     }
 
+    /// Returns the string for the currently selected language.
     private func localized(en: String, vi: String) -> String {
         switch language {
         case .english:

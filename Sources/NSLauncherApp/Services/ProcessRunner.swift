@@ -1,11 +1,13 @@
 import Foundation
 
+/// Captured output and exit status from an external process.
 struct ProcessResult {
     var exitCode: Int32
     var stdout: String
     var stderr: String
 }
 
+/// Errors surfaced by the process runner before localization.
 enum ProcessRunnerError: LocalizedError {
     case executableNotFound(String)
     case nonZeroExit(ProcessResult)
@@ -20,6 +22,7 @@ enum ProcessRunnerError: LocalizedError {
     }
 }
 
+/// Async boundary for running external tools such as Wine and 7-Zip.
 protocol ProcessRunning: Sendable {
     func run(
         executable: String,
@@ -29,7 +32,9 @@ protocol ProcessRunning: Sendable {
     ) async throws -> ProcessResult
 }
 
+/// Foundation.Process wrapper with executable lookup, output capture, and cancellation.
 struct ProcessRunner: ProcessRunning {
+    /// Runs a command and throws when the executable is missing or exits non-zero.
     func run(
         executable: String,
         arguments: [String] = [],
@@ -48,6 +53,7 @@ struct ProcessRunner: ProcessRunning {
         let process = Process()
         return try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { continuation in
+                // Configure pipes before launch so both stdout and stderr are captured.
                 process.executableURL = URL(fileURLWithPath: resolvedExecutable)
                 process.arguments = arguments
                 process.currentDirectoryURL = currentDirectory
@@ -59,6 +65,7 @@ struct ProcessRunner: ProcessRunning {
                 process.standardError = stderrPipe
 
                 process.terminationHandler = { proc in
+                    // Read process output only after termination to avoid partial text snapshots.
                     let stdoutData = stdoutPipe.fileHandleForReading.readDataToEndOfFile()
                     let stderrData = stderrPipe.fileHandleForReading.readDataToEndOfFile()
                     let result = ProcessResult(

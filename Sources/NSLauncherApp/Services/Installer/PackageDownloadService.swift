@@ -1,5 +1,6 @@
 import Foundation
 
+/// Download-specific failures reported before localization.
 enum PackageDownloadError: LocalizedError {
     case packageSourceMissing
     case remoteURLMissing
@@ -20,10 +21,12 @@ enum PackageDownloadError: LocalizedError {
     }
 }
 
+/// Control-flow error used when a package download is intentionally paused.
 enum PackageDownloadInterruption: Error {
     case paused
 }
 
+/// Boundary for planning and downloading archive packages.
 protocol PackageDownloading: Sendable {
     func planInstall(for game: GameDefinition) async throws -> InstallPlan
     func downloadPackage(
@@ -34,13 +37,16 @@ protocol PackageDownloading: Sendable {
     ) async throws -> URL
 }
 
+/// Downloads single-file and multipart archives with resumable range requests.
 actor PackageDownloadService: PackageDownloading {
+    /// Delay between retry attempts after transient network failures.
     private static let connectionRetryDelayNanoseconds: UInt64 = 3_000_000_000
 
     private let fileManager: FileManager
     private let session: URLSession
     private let downloadStateStore: DownloadStateStoring
 
+    /// Creates a downloader with injectable file-system, network, and state dependencies.
     init(
         fileManager: FileManager = .default,
         session: URLSession = .shared,
@@ -51,6 +57,7 @@ actor PackageDownloadService: PackageDownloading {
         self.downloadStateStore = downloadStateStore
     }
 
+    /// Builds a package install estimate from static package metadata.
     func planInstall(for game: GameDefinition) async throws -> InstallPlan {
         guard let package = game.packageSource else {
             throw PackageDownloadError.packageSourceMissing
@@ -69,6 +76,7 @@ actor PackageDownloadService: PackageDownloading {
         )
     }
 
+    /// Downloads the configured archive package and returns the local first archive URL.
     func downloadPackage(
         for game: GameDefinition,
         settings: AppSettings,
@@ -86,6 +94,7 @@ actor PackageDownloadService: PackageDownloading {
         if package.archiveFormat == .multipartZip,
            let partURLs = package.partURLs,
            !partURLs.isEmpty {
+            // Multipart packages are streamed part-by-part because every sibling is needed for extraction.
             return try await downloadMultipartPackage(
                 game: game,
                 fileName: package.archiveFileName,
@@ -112,6 +121,7 @@ actor PackageDownloadService: PackageDownloading {
                 remoteURL: remoteURL,
                 remoteMetadata: metadata
            ) {
+            // If the server-side object changed, discard local bytes that no longer match it.
             if fileManager.fileExists(atPath: destination.path) {
                 try? fileManager.removeItem(at: destination)
             }
@@ -121,6 +131,7 @@ actor PackageDownloadService: PackageDownloading {
         let initialBytes = normalizedExistingSize(at: destination, expectedBytes: metadata.contentLength)
 
         if let expected = metadata.contentLength, initialBytes == expected {
+            // A fully cached archive can be reused without another network request.
             await onEvent(.downloadingPackage(
                 path: package.archiveFileName,
                 received: totalBytes == 0 ? expected : totalBytes,
@@ -197,6 +208,7 @@ actor PackageDownloadService: PackageDownloading {
         return destination
     }
 
+    /// Downloads every part of a split archive and returns the local .001 path.
     private func downloadMultipartPackage(
         game: GameDefinition,
         fileName: String,
@@ -239,6 +251,7 @@ actor PackageDownloadService: PackageDownloading {
             }
 
             if let expected = metadata.contentLength, localBytes == expected {
+                // Already-complete parts still contribute to overall progress.
                 completedBytes += expected
                 await onEvent(.downloadingPackage(
                     path: fileName,
@@ -254,6 +267,7 @@ actor PackageDownloadService: PackageDownloading {
             }
 
             let resumedBytes = if persistedState?.currentPart == currentPart {
+                // Prefer persisted bytes for the active part if they are ahead of the file size snapshot.
                 max(localBytes, persistedState?.currentPartReceivedBytes ?? 0)
             } else {
                 localBytes
@@ -330,6 +344,7 @@ actor PackageDownloadService: PackageDownloading {
         return firstPartURL
     }
 
+    /// Streams one remote URL into a local file, saving checkpoints for resume.
     private func streamDownload(
         game: GameDefinition,
         archiveFileName: String,
@@ -348,6 +363,7 @@ actor PackageDownloadService: PackageDownloading {
         let effectiveMetadata = remoteMetadata
 
         if startOffset > 0, !remoteMetadata.supportsByteRanges {
+            // Servers without byte ranges cannot resume safely, so restart from zero.
             if fileManager.fileExists(atPath: destination.path) {
                 try fileManager.removeItem(at: destination)
             }
@@ -362,6 +378,7 @@ actor PackageDownloadService: PackageDownloading {
             expectedBytes: effectiveMetadata.contentLength,
             progress: progress,
             checkpoint: { [downloadStateStore] currentPartBytes, expectedPartBytes in
+                // Persist enough metadata to detect stale partial files on the next launch.
                 let state = PersistedDownloadState(
                     gameID: game.id,
                     archiveFileName: archiveFileName,
@@ -390,11 +407,13 @@ actor PackageDownloadService: PackageDownloading {
 
         await operationController?.setHandlers(
             pause: {
+                // URLSession must be invalidated to break out of delegate.start immediately.
                 delegate.pause()
                 downloadSession.invalidateAndCancel()
             },
             resume: nil,
             stop: { [self] in
+                // Stop is terminal: clear checkpoints so the next run starts fresh.
                 delegate.stop()
                 downloadSession.invalidateAndCancel()
                 try? self.downloadStateStore.clear(for: game.id)
@@ -416,6 +435,7 @@ actor PackageDownloadService: PackageDownloading {
         }
     }
 
+    /// Emits a package progress event with common field mapping.
     private func emitPackageProgress(
         path: String,
         received: Int64,
@@ -439,6 +459,7 @@ actor PackageDownloadService: PackageDownloading {
         ))
     }
 
+    /// Fetches content length, range support, and validators with a HEAD request.
     private func contentMetadata(for remoteURL: URL) async throws -> RemoteFileMetadata {
         var request = URLRequest(url: remoteURL)
         request.httpMethod = "HEAD"
@@ -457,6 +478,7 @@ actor PackageDownloadService: PackageDownloading {
         )
     }
 
+    /// Wraps metadata loading in transient network retry handling.
     private func contentMetadataWithRetry(
         for remoteURL: URL,
         operationController: OperationController?
@@ -466,6 +488,7 @@ actor PackageDownloadService: PackageDownloading {
         }
     }
 
+    /// Retries network operations that failed because connectivity dropped.
     private func retryOnConnectionLoss<T>(
         operationController: OperationController?,
         operation: () async throws -> T
@@ -489,6 +512,7 @@ actor PackageDownloadService: PackageDownloading {
         }
     }
 
+    /// Sleeps in short chunks so pause/stop requests remain responsive during retry backoff.
     private func waitForRetryDelay(operationController: OperationController?) async throws {
         let retryDelayStepNanoseconds: UInt64 = 250_000_000
         var remaining = Self.connectionRetryDelayNanoseconds
@@ -501,6 +525,7 @@ actor PackageDownloadService: PackageDownloading {
         }
     }
 
+    /// Identifies URL loading errors that are likely transient.
     private func shouldRetryAfterConnectionLoss(_ error: Error) -> Bool {
         let nsError = error as NSError
         guard nsError.domain == NSURLErrorDomain else {
@@ -525,6 +550,7 @@ actor PackageDownloadService: PackageDownloading {
         }
     }
 
+    /// Returns a local file size, deleting files that are larger than the expected remote object.
     private func normalizedExistingSize(at url: URL, expectedBytes: Int64?) -> Int64 {
         guard fileManager.fileExists(atPath: url.path) else { return 0 }
         let attributes = try? fileManager.attributesOfItem(atPath: url.path)
@@ -538,6 +564,7 @@ actor PackageDownloadService: PackageDownloading {
         return actualSize
     }
 
+    /// Ensures the destination file exists before FileHandle or URLSession delegates write into it.
     private func prepareDestinationFile(at url: URL) throws {
         let directory = url.deletingLastPathComponent()
         try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
@@ -546,6 +573,7 @@ actor PackageDownloadService: PackageDownloading {
         }
     }
 
+    /// Creates an HTTP request with a Range header when resuming.
     private func makeRequest(for remoteURL: URL, startOffset: Int64) -> URLRequest {
         var request = URLRequest(url: remoteURL)
         if startOffset > 0 {
@@ -554,6 +582,7 @@ actor PackageDownloadService: PackageDownloading {
         return request
     }
 
+    /// Validates byte count when the server exposed a reliable content length.
     private func verifyDownloadedPart(fileName: String, actualBytes: Int64, expectedBytes: Int64?) throws {
         guard let expectedBytes, expectedBytes > 0 else { return }
         guard actualBytes == expectedBytes else {
@@ -565,6 +594,7 @@ actor PackageDownloadService: PackageDownloading {
         }
     }
 
+    /// Decides whether saved resume data belongs to a different server-side object.
     private func shouldResetPartialDownload(
         persistedState: PersistedDownloadState,
         remoteURL: URL,
@@ -587,6 +617,7 @@ actor PackageDownloadService: PackageDownloading {
         return false
     }
 
+    /// Uses known archive size when present, otherwise reports observed bytes.
     private func resolvedTotalBytes(_ value: Int64, _ expectedArchiveSize: Int64?) -> Int64 {
         if let expectedArchiveSize, expectedArchiveSize > 0 {
             return expectedArchiveSize
@@ -595,6 +626,7 @@ actor PackageDownloadService: PackageDownloading {
     }
 }
 
+/// Lightweight metadata returned by package servers.
 private struct RemoteFileMetadata: Sendable {
     let contentLength: Int64?
     let supportsByteRanges: Bool
@@ -602,6 +634,7 @@ private struct RemoteFileMetadata: Sendable {
     let lastModified: String?
 }
 
+/// URLSession delegate that appends streamed data to disk and bridges completion to async/await.
 private final class RangeDownloadDelegate: NSObject, URLSessionDataDelegate, @unchecked Sendable {
     private let destinationURL: URL
     private let startOffset: Int64
@@ -624,6 +657,7 @@ private final class RangeDownloadDelegate: NSObject, URLSessionDataDelegate, @un
     private var lastCheckpointDate = Date()
     private var bytesSinceCheckpoint: Int64 = 0
 
+    /// Creates a delegate for one resumable URLSession data task.
     init(
         destinationURL: URL,
         startOffset: Int64,
@@ -639,6 +673,7 @@ private final class RangeDownloadDelegate: NSObject, URLSessionDataDelegate, @un
         self.checkpointHandler = checkpoint
     }
 
+    /// Opens the destination file and starts the URLSession task.
     func start(session: URLSession, request: URLRequest) async throws {
         let handle = try FileHandle(forWritingTo: destinationURL)
         try handle.seekToEnd()
@@ -654,6 +689,7 @@ private final class RangeDownloadDelegate: NSObject, URLSessionDataDelegate, @un
         }
     }
 
+    /// Saves a checkpoint and cancels the task with a resumable pause result.
     func pause() {
         checkpointHandler(currentBytes, expectedBytes)
         lock.lock()
@@ -663,6 +699,7 @@ private final class RangeDownloadDelegate: NSObject, URLSessionDataDelegate, @un
         task?.cancel()
     }
 
+    /// Cancels the task as a terminal stop.
     func stop() {
         lock.lock()
         isStopRequested = true
@@ -671,6 +708,7 @@ private final class RangeDownloadDelegate: NSObject, URLSessionDataDelegate, @un
         task?.cancel()
     }
 
+    /// Appends received data, updates checkpoints, and emits throttled speed estimates.
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         do {
             try handle?.write(contentsOf: data)
@@ -707,6 +745,7 @@ private final class RangeDownloadDelegate: NSObject, URLSessionDataDelegate, @un
         lastProgressBytes = currentBytes
 
         if bytesSinceCheckpoint >= 4 * 1024 * 1024 || now.timeIntervalSince(lastCheckpointDate) >= 2 {
+            // Checkpoints are written by byte threshold and by time threshold to balance durability and disk churn.
             checkpointHandler(currentBytes, expectedBytes)
             bytesSinceCheckpoint = 0
             lastCheckpointDate = now
@@ -717,6 +756,7 @@ private final class RangeDownloadDelegate: NSObject, URLSessionDataDelegate, @un
         }
     }
 
+    /// Validates that the server honored the requested full or range response.
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse) async -> URLSession.ResponseDisposition {
         guard let http = response as? HTTPURLResponse else {
             resume(with: .failure(PackageDownloadError.invalidResponse))
@@ -736,6 +776,7 @@ private final class RangeDownloadDelegate: NSObject, URLSessionDataDelegate, @un
         return .allow
     }
 
+    /// Translates URLSession completion into the async continuation result.
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         try? handle?.synchronize()
         try? handle?.close()
@@ -760,6 +801,7 @@ private final class RangeDownloadDelegate: NSObject, URLSessionDataDelegate, @un
         resume(with: .success(()))
     }
 
+    /// Resumes the continuation exactly once across delegate callbacks and cancellations.
     private func resume(with result: Result<Void, Error>) {
         lock.lock()
         guard !didResume, let continuation else {
@@ -773,6 +815,7 @@ private final class RangeDownloadDelegate: NSObject, URLSessionDataDelegate, @un
         continuation.resume(with: result)
     }
 
+    /// Combines instantaneous and rolling average speed to keep ETA display stable.
     private func blendedSpeedEstimate(instantaneousSpeed: Double, now: Date) -> Double {
         let elapsed = max(now.timeIntervalSince(transferStartDate ?? now), 0.001)
         let transferredBytes = max(currentBytes - startOffset, 0)
