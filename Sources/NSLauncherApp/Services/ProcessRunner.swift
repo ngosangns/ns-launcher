@@ -7,6 +7,17 @@ struct ProcessResult {
     var stderr: String
 }
 
+/// A process output chunk emitted while a command is still running.
+struct ProcessOutputChunk: Sendable {
+    enum Stream: Sendable {
+        case stdout
+        case stderr
+    }
+
+    var stream: Stream
+    var text: String
+}
+
 /// Errors surfaced by the process runner before localization.
 enum ProcessRunnerError: LocalizedError {
     case executableNotFound(String)
@@ -28,8 +39,26 @@ protocol ProcessRunning: Sendable {
         executable: String,
         arguments: [String],
         environment: [String: String],
-        currentDirectory: URL?
+        currentDirectory: URL?,
+        onOutput: (@Sendable (ProcessOutputChunk) -> Void)?
     ) async throws -> ProcessResult
+}
+
+extension ProcessRunning {
+    func run(
+        executable: String,
+        arguments: [String],
+        environment: [String: String],
+        currentDirectory: URL?
+    ) async throws -> ProcessResult {
+        try await run(
+            executable: executable,
+            arguments: arguments,
+            environment: environment,
+            currentDirectory: currentDirectory,
+            onOutput: nil
+        )
+    }
 }
 
 /// Foundation.Process wrapper with executable lookup, output capture, and cancellation.
@@ -39,7 +68,8 @@ struct ProcessRunner: ProcessRunning {
         executable: String,
         arguments: [String] = [],
         environment: [String: String] = [:],
-        currentDirectory: URL? = nil
+        currentDirectory: URL? = nil,
+        onOutput: (@Sendable (ProcessOutputChunk) -> Void)? = nil
     ) async throws -> ProcessResult {
         let resolvedExecutable = BinaryLocator.resolveExecutable(
             preferredPath: executable,
@@ -63,15 +93,29 @@ struct ProcessRunner: ProcessRunning {
                 let stderrPipe = Pipe()
                 process.standardOutput = stdoutPipe
                 process.standardError = stderrPipe
+                let outputBuffer = ProcessOutputBuffer()
+                stdoutPipe.fileHandleForReading.readabilityHandler = { fileHandle in
+                    let data = fileHandle.availableData
+                    guard !data.isEmpty else { return }
+                    outputBuffer.append(data, stream: .stdout)
+                    onOutput?(ProcessOutputChunk(stream: .stdout, text: String(decoding: data, as: UTF8.self)))
+                }
+                stderrPipe.fileHandleForReading.readabilityHandler = { fileHandle in
+                    let data = fileHandle.availableData
+                    guard !data.isEmpty else { return }
+                    outputBuffer.append(data, stream: .stderr)
+                    onOutput?(ProcessOutputChunk(stream: .stderr, text: String(decoding: data, as: UTF8.self)))
+                }
 
                 process.terminationHandler = { proc in
-                    // Read process output only after termination to avoid partial text snapshots.
-                    let stdoutData = stdoutPipe.fileHandleForReading.readDataToEndOfFile()
-                    let stderrData = stderrPipe.fileHandleForReading.readDataToEndOfFile()
+                    stdoutPipe.fileHandleForReading.readabilityHandler = nil
+                    stderrPipe.fileHandleForReading.readabilityHandler = nil
+                    outputBuffer.append(stdoutPipe.fileHandleForReading.readDataToEndOfFile(), stream: .stdout)
+                    outputBuffer.append(stderrPipe.fileHandleForReading.readDataToEndOfFile(), stream: .stderr)
                     let result = ProcessResult(
                         exitCode: proc.terminationStatus,
-                        stdout: String(decoding: stdoutData, as: UTF8.self),
-                        stderr: String(decoding: stderrData, as: UTF8.self)
+                        stdout: outputBuffer.stdout,
+                        stderr: outputBuffer.stderr
                     )
 
                     if Task.isCancelled {
@@ -92,6 +136,36 @@ struct ProcessRunner: ProcessRunning {
         } onCancel: {
             if process.isRunning {
                 process.terminate()
+            }
+        }
+    }
+}
+
+private final class ProcessOutputBuffer: @unchecked Sendable {
+    private let lock = NSLock()
+    private var stdoutData = Data()
+    private var stderrData = Data()
+
+    var stdout: String {
+        lock.withLock {
+            String(decoding: stdoutData, as: UTF8.self)
+        }
+    }
+
+    var stderr: String {
+        lock.withLock {
+            String(decoding: stderrData, as: UTF8.self)
+        }
+    }
+
+    func append(_ data: Data, stream: ProcessOutputChunk.Stream) {
+        guard !data.isEmpty else { return }
+        lock.withLock {
+            switch stream {
+            case .stdout:
+                stdoutData.append(data)
+            case .stderr:
+                stderrData.append(data)
             }
         }
     }

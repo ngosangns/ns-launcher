@@ -134,6 +134,20 @@ struct SettingsView: View {
                 InfoRow(label: text.name, value: game.displayName)
                 InfoRow(label: text.strategy, value: text.installStrategyDescription(game.installerStrategy))
 
+                settingField {
+                    Picker(text.displayModeLabel, selection: Binding(
+                        get: { viewModel.settings.launchDisplayMode },
+                        set: { viewModel.setLaunchDisplayMode($0) }
+                    )) {
+                        Text(text.windowedMode).tag(LaunchDisplayMode.windowed)
+                        Text(text.fullscreenMode).tag(LaunchDisplayMode.fullscreen)
+                    }
+                    .pickerStyle(.segmented)
+                    .pointerOnHover()
+                } label: {
+                    Text(text.displayModeLabel)
+                }
+
                 PathInputRow(
                     label: text.installRoot,
                     value: Binding(
@@ -141,6 +155,11 @@ struct SettingsView: View {
                         set: { viewModel.setInstallDirectoryForSelectedGame(URL(fileURLWithPath: $0, isDirectory: true)) }
                     ),
                     buttonTitle: text.browse,
+                    secondaryButtonTitle: text.open,
+                    isSecondaryButtonDisabled: !directoryExists(at: game.installDirectory.path),
+                    secondaryAction: {
+                        openDirectory(game.installDirectory.path)
+                    },
                     choose: chooseDirectoryPath
                 )
 

@@ -38,6 +38,24 @@ enum RuntimeRequirement: String, Codable, CaseIterable, Identifiable {
     var id: String { rawValue }
 }
 
+/// User-selected display mode for games launched through Wine.
+enum LaunchDisplayMode: String, Codable, CaseIterable, Identifiable {
+    case windowed
+    case fullscreen
+
+    var id: String { rawValue }
+
+    /// Unity-compatible launch arguments used by Genshin Impact and similar games.
+    var launchArguments: [String] {
+        switch self {
+        case .windowed:
+            return ["-screen-fullscreen", "0", "-screen-width", "1280", "-screen-height", "720"]
+        case .fullscreen:
+            return ["-screen-fullscreen", "1"]
+        }
+    }
+}
+
 /// Archive formats supported by the package installer.
 enum ArchiveFormat: String, Codable, CaseIterable, Identifiable {
     case sevenZip
@@ -139,6 +157,7 @@ struct RemoteGameFile: Codable, Hashable, Identifiable {
     var path: String
     var url: URL
     var size: Int64
+    var md5: String?
     var sha256: String?
 
     var id: String { path }
@@ -150,6 +169,109 @@ struct InstallPlan: Hashable {
     var steps: [InstallStep]
     var estimatedBytesToDownload: Int64
     var peakTemporaryBytes: Int64
+}
+
+/// Delta plan for bringing an existing manifest install up to the latest version.
+struct GameUpdatePlan: Hashable {
+    var sourceKind: UpdatePlanSourceKind = .manifest
+    var installedVersion: String?
+    var latestVersion: String
+    var targetFiles: [RemoteGameFile] = []
+    var filesToDownload: [RemoteGameFile]
+    var sophonTargetAssets: [SophonAsset] = []
+    var sophonAssetsToWrite: [SophonAsset] = []
+    var skippedFiles: Int
+    var sophonSkippedAssets: Int = 0
+    var bytesToDownload: Int64
+    var decompressedBytesToWrite: Int64 = 0
+    var peakTemporaryBytes: Int64
+    var metadataNeedsUpdate: Bool
+
+    var isUpToDate: Bool {
+        filesToDownload.isEmpty && sophonAssetsToWrite.isEmpty && !metadataNeedsUpdate
+    }
+
+    var changedItemCount: Int {
+        switch sourceKind {
+        case .manifest:
+            return filesToDownload.count
+        case .sophon:
+            return sophonAssetsToWrite.count
+        }
+    }
+
+    var skippedItemCount: Int {
+        switch sourceKind {
+        case .manifest:
+            return skippedFiles
+        case .sophon:
+            return sophonSkippedAssets
+        }
+    }
+}
+
+/// Update backend selected for a plan.
+enum UpdatePlanSourceKind: String, Hashable {
+    case manifest
+    case sophon
+}
+
+/// Parsed Sophon build metadata for HoYoPlay chunk-based installs.
+struct SophonBuild: Hashable {
+    var version: String
+    var packageID: String
+    var manifests: [SophonCategoryManifest]
+}
+
+/// One category manifest inside a Sophon build, such as game resources or one voice language.
+struct SophonCategoryManifest: Hashable {
+    var categoryID: String
+    var matchingField: String
+    var categoryName: String
+    var manifestID: String
+    var manifestMD5: String
+    var manifestCompressedSize: Int64
+    var manifestUncompressedSize: Int64
+    var manifestBaseURL: URL
+    var chunkBaseURL: URL
+    var compressedBytes: Int64
+    var decompressedBytes: Int64
+    var fileCount: Int
+    var chunkCount: Int
+    var assets: [SophonAsset]
+}
+
+/// One final game asset described by a Sophon manifest.
+struct SophonAsset: Hashable, Identifiable {
+    var path: String
+    var size: Int64
+    var md5: String
+    var chunks: [SophonChunk]
+    var isDirectory: Bool
+    var matchingField: String
+    var categoryName: String
+
+    var id: String { "\(matchingField):\(path)" }
+
+    var compressedBytes: Int64 {
+        chunks.reduce(Int64(0)) { $0 + $1.compressedSize }
+    }
+}
+
+/// One compressed chunk used to reconstruct a Sophon asset.
+struct SophonChunk: Hashable, Identifiable {
+    var name: String
+    var offset: Int64
+    var compressedSize: Int64
+    var decompressedSize: Int64
+    var decompressedMD5: String
+    var chunkBaseURL: URL
+
+    var id: String { name }
+
+    var url: URL {
+        chunkBaseURL.appendingPathComponent(name, isDirectory: false)
+    }
 }
 
 /// One planned install operation.
@@ -177,11 +299,16 @@ struct LaunchConfiguration: Codable, Hashable {
 
 /// User settings and bundled game defaults persisted to disk.
 struct AppSettings: Codable, Equatable {
+    private static let genshinGameID = "genshin-global"
+    private static let genshinArchiveExecutablePath = "Genshin Impact Game/GenshinImpact.exe"
+    private static let genshinStreamingExecutablePath = "GenshinImpact.exe"
+
     var games: [GameDefinition]
     var selectedGameID: String?
     var language: AppLanguage
     var downloadCacheDirectory: String
     var temporaryExtractionDirectory: String
+    var launchDisplayMode: LaunchDisplayMode
 
     /// Resolved Wine executable path, falling back to a PATH lookup name.
     var wineBinaryPath: String {
@@ -229,40 +356,47 @@ struct AppSettings: Codable, Equatable {
         return AppSettings(
             games: [
                 GameDefinition(
-                    id: "genshin-global",
+                    id: genshinGameID,
                     displayName: "Genshin Impact",
                     installDirectory: root,
-                    executableRelativePath: "Genshin Impact Game/GenshinImpact.exe",
+                    executableRelativePath: genshinStreamingExecutablePath,
                     winePrefixDirectory: root.appendingPathComponent(".wine", isDirectory: true),
-                    installerStrategy: .archivePackage,
-                    runtimeRequirements: [.wine],
+                    installerStrategy: .streamingManifest,
+                    runtimeRequirements: [.wine, .dxmt],
                     manifestURL: nil,
-                    packageSource: defaultGenshinPackageSource,
+                    packageSource: nil,
                     launchArguments: []
                 )
             ],
-            selectedGameID: "genshin-global",
+            selectedGameID: genshinGameID,
             language: .english,
             downloadCacheDirectory: home
                 .appendingPathComponent("Library/Caches/NSLauncher/Downloads", isDirectory: true)
                 .path,
             temporaryExtractionDirectory: home
                 .appendingPathComponent("Library/Caches/NSLauncher/Extraction", isDirectory: true)
-                .path
+                .path,
+            launchDisplayMode: .windowed
         )
     }
 
-    /// Migrates older settings to the current bundled Genshin archive strategy.
+    /// Migrates older settings to the current bundled Genshin streaming strategy.
     func applyingBundledGenshinDefaultsIfNeeded() -> AppSettings {
         var copy = self
 
-        guard let index = copy.games.firstIndex(where: { $0.id == "genshin-global" }) else {
+        guard let index = copy.games.firstIndex(where: { $0.id == Self.genshinGameID }) else {
             return copy
         }
 
-        copy.games[index].installerStrategy = .archivePackage
-        copy.games[index].packageSource = copy.games[index].packageSource ?? Self.defaultGenshinPackageSource
+        copy.games[index].installerStrategy = .streamingManifest
         copy.games[index].manifestURL = nil
+        copy.games[index].runtimeRequirements.removeAll { $0 == .dxvk }
+        if !copy.games[index].runtimeRequirements.contains(.dxmt) {
+            copy.games[index].runtimeRequirements.append(.dxmt)
+        }
+        if copy.games[index].executableRelativePath == Self.genshinArchiveExecutablePath {
+            copy.games[index].executableRelativePath = Self.genshinStreamingExecutablePath
+        }
 
         return copy
     }
@@ -273,6 +407,7 @@ struct AppSettings: Codable, Equatable {
         case language
         case downloadCacheDirectory
         case temporaryExtractionDirectory
+        case launchDisplayMode
         case wineBinaryPath
         case aria2BinaryPath
         case sevenZipBinaryPath
@@ -283,13 +418,15 @@ struct AppSettings: Codable, Equatable {
         selectedGameID: String?,
         language: AppLanguage,
         downloadCacheDirectory: String,
-        temporaryExtractionDirectory: String
+        temporaryExtractionDirectory: String,
+        launchDisplayMode: LaunchDisplayMode = .windowed
     ) {
         self.games = games
         self.selectedGameID = selectedGameID
         self.language = language
         self.downloadCacheDirectory = downloadCacheDirectory
         self.temporaryExtractionDirectory = temporaryExtractionDirectory
+        self.launchDisplayMode = launchDisplayMode
     }
 
     init(from decoder: Decoder) throws {
@@ -299,6 +436,7 @@ struct AppSettings: Codable, Equatable {
         self.language = try container.decodeIfPresent(AppLanguage.self, forKey: .language) ?? .english
         self.downloadCacheDirectory = try container.decode(String.self, forKey: .downloadCacheDirectory)
         self.temporaryExtractionDirectory = try container.decode(String.self, forKey: .temporaryExtractionDirectory)
+        self.launchDisplayMode = try container.decodeIfPresent(LaunchDisplayMode.self, forKey: .launchDisplayMode) ?? .windowed
 
         // Ignore deprecated custom binary paths while remaining decode-compatible with older settings files.
         _ = try container.decodeIfPresent(String.self, forKey: .wineBinaryPath)
@@ -313,6 +451,35 @@ struct AppSettings: Codable, Equatable {
         try container.encode(language, forKey: .language)
         try container.encode(downloadCacheDirectory, forKey: .downloadCacheDirectory)
         try container.encode(temporaryExtractionDirectory, forKey: .temporaryExtractionDirectory)
+        try container.encode(launchDisplayMode, forKey: .launchDisplayMode)
+    }
+
+    /// Builds launch arguments with display mode controlled by settings rather than stale game flags.
+    func launchArguments(for game: GameDefinition) -> [String] {
+        Self.filteredUnityDisplayArguments(game.launchArguments) + launchDisplayMode.launchArguments
+    }
+
+    /// Removes Unity screen flags that are now owned by launchDisplayMode.
+    private static func filteredUnityDisplayArguments(_ arguments: [String]) -> [String] {
+        var filtered: [String] = []
+        var index = 0
+        let keyedScreenArguments = Set(["-screen-fullscreen", "-screen-width", "-screen-height"])
+
+        while index < arguments.count {
+            let argument = arguments[index]
+            if keyedScreenArguments.contains(argument) {
+                index += 2
+                continue
+            }
+            if argument == "-popupwindow" {
+                index += 1
+                continue
+            }
+            filtered.append(argument)
+            index += 1
+        }
+
+        return filtered
     }
 }
 
@@ -342,6 +509,5 @@ enum InstallProgressEvent: Equatable {
     case validatingInstall(path: String)
     case cleaningDownloadedArchives(path: String)
     case importing(path: String)
-    case rescanning(path: String)
     case finished(version: String)
 }

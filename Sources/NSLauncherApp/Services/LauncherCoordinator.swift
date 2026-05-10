@@ -6,6 +6,7 @@ struct LauncherCoordinator: Sendable {
     private let downloadStateStore: DownloadStateStoring
     private let manifestInstaller: ManifestInstalling
     private let genshinStreamingMetadataService: GenshinStreamingMetadataProviding
+    private let sophonInstaller: SophonInstalling
     private let packageDownloader: PackageDownloading
     private let archiveInstaller: ArchiveInstalling
     private let importService: ImportServicing
@@ -17,6 +18,7 @@ struct LauncherCoordinator: Sendable {
         downloadStateStore: DownloadStateStoring,
         manifestInstaller: ManifestInstalling,
         genshinStreamingMetadataService: GenshinStreamingMetadataProviding,
+        sophonInstaller: SophonInstalling,
         packageDownloader: PackageDownloading,
         archiveInstaller: ArchiveInstalling,
         importService: ImportServicing,
@@ -26,6 +28,7 @@ struct LauncherCoordinator: Sendable {
         self.downloadStateStore = downloadStateStore
         self.manifestInstaller = manifestInstaller
         self.genshinStreamingMetadataService = genshinStreamingMetadataService
+        self.sophonInstaller = sophonInstaller
         self.packageDownloader = packageDownloader
         self.archiveInstaller = archiveInstaller
         self.importService = importService
@@ -140,28 +143,93 @@ struct LauncherCoordinator: Sendable {
         }
     }
 
-    /// Revalidates the current install directory without changing settings.
-    func rescanGame(
+    /// Builds a delta update plan for manifest-backed game installs.
+    func fetchUpdatePlan(for game: GameDefinition, settings: AppSettings) async throws -> GameUpdatePlan {
+        if game.installerStrategy == .streamingManifest, game.id == "genshin-global" {
+            let build = try await sophonInstaller.fetchBuild(language: settings.language)
+            return try await sophonInstaller.planUpdate(
+                for: game,
+                build: build,
+                installedMetadata: installedMetadata(for: game)
+            )
+        }
+
+        let manifest = try await updateManifest(for: game, settings: settings)
+        return try await manifestInstaller.planUpdate(
+            for: game,
+            manifest: manifest,
+            installedMetadata: installedMetadata(for: game)
+        )
+    }
+
+    /// Applies a previously computed update plan using the existing manifest download pipeline.
+    func updateGame(
         _ game: GameDefinition,
         settings: AppSettings,
+        plan: GameUpdatePlan,
+        operationController: OperationController? = nil,
         onEvent: @escaping @Sendable (InstallProgressEvent) async -> Void
-    ) async throws -> ImportValidationResult {
-        await onEvent(.rescanning(path: game.installDirectory.path))
-        return await importService.validate(game: game, text: AppText(language: settings.language))
+    ) async throws {
+        if plan.sourceKind == .sophon {
+            try await sophonInstaller.update(
+                game: game,
+                version: plan.latestVersion,
+                targetAssets: plan.sophonTargetAssets.isEmpty ? plan.sophonAssetsToWrite : plan.sophonTargetAssets,
+                assets: plan.sophonAssetsToWrite,
+                operationController: operationController,
+                onEvent: onEvent
+            )
+            return
+        }
+
+        let targetFiles = plan.targetFiles.isEmpty ? plan.filesToDownload : plan.targetFiles
+        let manifest = RemoteGameManifest(version: plan.latestVersion, files: targetFiles)
+        try await manifestInstaller.install(
+            game: game,
+            manifest: manifest,
+            files: plan.filesToDownload,
+            operationController: operationController,
+            onEvent: onEvent
+        )
     }
 
     /// Creates a Wine launch request from the saved game configuration.
-    func launchGame(_ game: GameDefinition, settings: AppSettings) async throws -> ProcessResult {
+    func launchGame(
+        _ game: GameDefinition,
+        settings: AppSettings,
+        onOutput: (@Sendable (ProcessOutputChunk) -> Void)? = nil
+    ) async throws -> ProcessResult {
         let exe = game.installDirectory.appendingPathComponent(game.executableRelativePath)
         let request = WineLaunchRequest(
             wineBinaryPath: settings.wineBinaryPath,
             prefixDirectory: game.winePrefixDirectory,
             executablePath: exe,
-            arguments: game.launchArguments,
+            arguments: settings.launchArguments(for: game),
             environment: [:],
-            currentDirectory: game.installDirectory
+            currentDirectory: game.installDirectory,
+            runtimeRequirements: game.runtimeRequirements,
+            onOutput: onOutput
         )
         return try await wineService.launch(request)
+    }
+
+    /// Fetches the latest manifest shape suitable for update checks.
+    private func updateManifest(for game: GameDefinition, settings: AppSettings) async throws -> RemoteGameManifest {
+        switch game.installerStrategy {
+        case .manifest:
+            return try await manifestInstaller.fetchManifest(for: game)
+        case .streamingManifest:
+            return try await genshinStreamingMetadataService.fetchUpdateManifest(for: game, language: settings.language)
+        case .archivePackage, .existingInstall:
+            throw ManifestInstallerError.manifestURLMissing
+        }
+    }
+
+    /// Reads the marker metadata written by successful installs/imports.
+    private func installedMetadata(for game: GameDefinition) -> InstalledGameMetadata? {
+        let metadataURL = game.installDirectory.appendingPathComponent(".nslauncher-install.json")
+        guard let data = try? Data(contentsOf: metadataURL) else { return nil }
+        return try? JSONDecoder().decode(InstalledGameMetadata.self, from: data)
     }
 
     /// Deletes cached archive files after a successful remote package install.

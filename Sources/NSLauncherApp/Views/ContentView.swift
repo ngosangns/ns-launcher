@@ -108,6 +108,13 @@ struct ContentView: View {
                 disabled: viewModel.isBusy || !viewModel.canDownloadSelectedGame
             ) {
                 viewModel.installSelectedGame()
+            },
+            ActionButtonItem(
+                title: text.updateGameTitle,
+                icon: "arrow.triangle.2.circlepath",
+                disabled: viewModel.isBusy || !viewModel.canUpdateSelectedGame
+            ) {
+                viewModel.updateSelectedGame()
             }
         ]
 
@@ -128,36 +135,16 @@ struct ContentView: View {
         buttons.append(
             contentsOf: [
                 ActionButtonItem(
-                    title: text.importTitle,
-                    icon: "folder.badge.plus",
-                    disabled: viewModel.isBusy
+                    title: viewModel.isLaunchingWithWine ? text.stopTitle : text.playTitle,
+                    icon: viewModel.isLaunchingWithWine ? "stop.circle" : "play.circle",
+                    prominent: true,
+                    disabled: viewModel.isBusy && !viewModel.isLaunchingWithWine
                 ) {
-                    if let directoryURL = chooseDirectoryURL(title: text.chooseExistingGameFolder) {
-                        viewModel.importSelectedGame(from: directoryURL)
+                    if viewModel.isLaunchingWithWine {
+                        viewModel.stopCurrentOperation()
+                    } else {
+                        viewModel.launchSelectedGame()
                     }
-                },
-                ActionButtonItem(
-                    title: text.rescanTitle,
-                    icon: "arrow.clockwise.circle",
-                    disabled: viewModel.isBusy
-                ) {
-                    viewModel.rescanSelectedGame()
-                },
-                ActionButtonItem(
-                    title: text.chooseFolderTitle,
-                    icon: "folder",
-                    disabled: viewModel.isBusy
-                ) {
-                    if let directoryURL = chooseDirectoryURL(title: text.chooseInstallFolder) {
-                        viewModel.setInstallDirectoryForSelectedGame(directoryURL)
-                    }
-                },
-                ActionButtonItem(
-                    title: text.launchTitle,
-                    icon: "play.circle",
-                    disabled: viewModel.isBusy
-                ) {
-                    viewModel.launchSelectedGame()
                 }
             ]
         )
@@ -238,28 +225,81 @@ struct ContentView: View {
                             transferDetailsGrid(progress: progress)
                         }
 
-                        HStack(spacing: 10) {
-                            Button(viewModel.isPaused ? text.resumeTitle : text.pauseTitle) {
-                                viewModel.togglePause()
-                            }
-                            .buttonStyle(.bordered)
-                            .disabled(!viewModel.isBusy)
-                            .pointerOnHover(enabled: viewModel.isBusy)
+                        if !viewModel.isLaunchingWithWine {
+                            HStack(spacing: 10) {
+                                Button(viewModel.isPaused ? text.resumeTitle : text.pauseTitle) {
+                                    viewModel.togglePause()
+                                }
+                                .buttonStyle(.bordered)
+                                .disabled(!viewModel.isBusy)
+                                .pointerOnHover(enabled: viewModel.isBusy)
 
-                            Button(text.stopTitle) {
-                                viewModel.stopCurrentOperation()
+                                Button(text.stopTitle) {
+                                    viewModel.stopCurrentOperation()
+                                }
+                                .buttonStyle(.bordered)
+                                .disabled(!viewModel.isBusy)
+                                .pointerOnHover(enabled: viewModel.isBusy)
                             }
-                            .buttonStyle(.bordered)
-                            .disabled(!viewModel.isBusy)
-                            .pointerOnHover(enabled: viewModel.isBusy)
                         }
 
                         statusInfoGrid(progress: progress)
                     }
                 }
+
+                logPanels
             }
             .padding(12)
             .background(.quaternary.opacity(0.35), in: RoundedRectangle(cornerRadius: 12))
+        }
+    }
+
+    /// Live diagnostics for update and Wine operations.
+    private var logPanels: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            if !viewModel.updateRunLog.isEmpty {
+                logPanel(
+                    title: text.updateRunLogTitle,
+                    contents: viewModel.updateRunLog,
+                    bottomID: "update-run-log-bottom"
+                )
+            }
+
+            if !viewModel.wineRunLog.isEmpty {
+                logPanel(
+                    title: text.wineRunLogTitle,
+                    contents: viewModel.wineRunLog,
+                    bottomID: "wine-run-log-bottom"
+                )
+            }
+        }
+    }
+
+    /// Live diagnostics from the current or latest Wine launch.
+    private func logPanel(title: String, contents: String, bottomID: String) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+
+            ScrollViewReader { proxy in
+                ScrollView {
+                    Text(contents)
+                        .font(.system(.caption, design: .monospaced))
+                        .textSelection(.enabled)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Color.clear
+                        .frame(height: 1)
+                        .id(bottomID)
+                }
+                .onChange(of: contents.count) { _, _ in
+                    proxy.scrollTo(bottomID, anchor: .bottom)
+                }
+            }
+            .frame(minHeight: 180, maxHeight: 280)
+            .padding(10)
+            .background(.black.opacity(0.12), in: RoundedRectangle(cornerRadius: 10))
         }
     }
 
@@ -403,15 +443,6 @@ struct ContentView: View {
         return panel.runModal() == .OK ? panel.url : nil
     }
 
-    /// Opens a directory picker with a localized title.
-    private func chooseDirectoryURL(title: String) -> URL? {
-        let panel = NSOpenPanel()
-        panel.title = title
-        panel.canChooseFiles = false
-        panel.canChooseDirectories = true
-        panel.allowsMultipleSelection = false
-        return panel.runModal() == .OK ? panel.url : nil
-    }
 }
 
 /// Identifiable labeled value for transfer detail grids.

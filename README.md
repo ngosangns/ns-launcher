@@ -22,10 +22,11 @@ It already includes:
 - a native SwiftUI app
 - install planning models
 - official streaming-manifest plumbing for Genshin Impact metadata
-- manifest installs that download files directly into the final game directory using per-file `.partial` files
+- manifest installs that download files directly into the final game directory using per-file `.partial` files, segmented ranged downloads for large files, and checksum validation when hashes are available
 - resumable archive package downloads, including multipart `.zip.001` package flows
 - archive extraction through `7zz`/`7z`/`7za`
 - import, re-scan, and launch flows for existing installs
+- Wine launch bootstrap that installs DXMT or DXVK into prefixes for DirectX 11 games that require a graphics bridge
 - process wrappers for Wine, archive tooling, and other external sidecars
 - editable game configuration, language, storage, package, and launch settings
 - architecture docs for extending the launcher

@@ -51,8 +51,11 @@ struct AppText {
     var partSizeKBLabel: String { localized(en: "Current part size (KB)", vi: "Dung lượng part hiện tại (KB)") }
     var progressLabel: String { localized(en: "Progress", vi: "Tiến độ") }
     var pauseTitle: String { localized(en: "Pause", vi: "Tạm dừng") }
+    var playTitle: String { localized(en: "Play", vi: "Chơi") }
     var resumeTitle: String { localized(en: "Resume", vi: "Tiếp tục") }
     var stopTitle: String { localized(en: "Stop", vi: "Dừng") }
+    var wineRunLogTitle: String { localized(en: "Wine run log (filtered)", vi: "Log chạy Wine (đã lọc)") }
+    var updateRunLogTitle: String { localized(en: "Update log", vi: "Log cập nhật") }
     var preparingStage: String { localized(en: "Preparing", vi: "Chuẩn bị") }
     var downloadingStage: String { localized(en: "Downloading", vi: "Đang tải") }
     var extractingStage: String { localized(en: "Extracting", vi: "Đang giải nén") }
@@ -60,7 +63,6 @@ struct AppText {
     var validatingStage: String { localized(en: "Validating", vi: "Đang kiểm tra") }
     var cleaningStage: String { localized(en: "Cleaning up", vi: "Đang dọn dẹp") }
     var importingStage: String { localized(en: "Importing", vi: "Đang import") }
-    var rescanningStage: String { localized(en: "Re-scanning", vi: "Đang quét lại") }
     var completedStage: String { localized(en: "Completed", vi: "Hoàn tất") }
     var waitingForProgress: String { localized(en: "Working...", vi: "Đang xử lý...") }
     var connectingToServer: String { localized(en: "Connecting to the package server...", vi: "Đang kết nối tới máy chủ gói cài đặt...") }
@@ -81,9 +83,8 @@ struct AppText {
     var stepsLabel: String { localized(en: "Steps", vi: "Số bước") }
     var installCompleted: String { localized(en: "Install completed", vi: "Đã cài đặt xong") }
     var installFailed: String { localized(en: "Install failed", vi: "Cài đặt thất bại") }
-    var importCompleted: String { localized(en: "Import completed", vi: "Import thành công") }
-    var importFailed: String { localized(en: "Import failed", vi: "Import thất bại") }
-    var rescanFailed: String { localized(en: "Re-scan failed", vi: "Quét lại thất bại") }
+    var updateCompleted: String { localized(en: "Update completed", vi: "Đã cập nhật xong") }
+    var updateFailed: String { localized(en: "Update failed", vi: "Cập nhật thất bại") }
     var launchFailed: String { localized(en: "Launch failed", vi: "Mở game thất bại") }
     var gameExitedNormally: String { localized(en: "Game exited normally", vi: "Game đã thoát bình thường") }
     var selectedGame: String { localized(en: "Selected Game", vi: "Game đang chọn") }
@@ -91,6 +92,9 @@ struct AppText {
     var languageLabel: String { localized(en: "Language", vi: "Ngôn ngữ") }
     var english: String { localized(en: "English", vi: "Tiếng Anh") }
     var vietnamese: String { localized(en: "Vietnamese", vi: "Tiếng Việt") }
+    var displayModeLabel: String { localized(en: "Display mode", vi: "Chế độ hiển thị") }
+    var windowedMode: String { localized(en: "Windowed", vi: "Cửa sổ") }
+    var fullscreenMode: String { localized(en: "Fullscreen", vi: "Toàn màn hình") }
     var name: String { localized(en: "Name", vi: "Tên") }
     var strategy: String { localized(en: "Strategy", vi: "Chiến lược") }
     var installRoot: String { localized(en: "Install root", vi: "Thư mục cài đặt") }
@@ -107,8 +111,6 @@ struct AppText {
     var downloadCacheDirectory: String { localized(en: "Download cache directory", vi: "Thư mục cache download") }
     var temporaryExtractionDirectory: String { localized(en: "Temporary extraction directory", vi: "Thư mục giải nén tạm") }
     var chooseArchivePackage: String { localized(en: "Choose Archive Package", vi: "Chọn gói nén") }
-    var chooseExistingGameFolder: String { localized(en: "Choose Existing Game Folder", vi: "Chọn thư mục game có sẵn") }
-    var chooseInstallFolder: String { localized(en: "Choose Install Folder", vi: "Chọn thư mục cài đặt") }
     var noPackageConfigured: String { localized(en: "No package configured", vi: "Chưa cấu hình gói cài đặt") }
     var officialStreamingSource: String { localized(en: "Official streaming source", vi: "Nguồn streaming chính thức") }
     var downloadReady: String { localized(en: "Download ready", vi: "Sẵn sàng tải") }
@@ -128,14 +130,10 @@ struct AppText {
     var planInstallDescription: String { localized(en: "Estimate download size, temporary space, and planned steps.", vi: "Ước tính dung lượng tải, bộ nhớ tạm và các bước cài đặt.") }
     var downloadInstallTitle: String { localized(en: "Download & Install", vi: "Tải và cài đặt") }
     var downloadInstallDescription: String { localized(en: "Download the configured archive package, extract it, then remove cached archive files.", vi: "Tải gói nén đã cấu hình, giải nén, rồi xóa các file gói nén trong cache.") }
+    var updateGameTitle: String { localized(en: "Update Game", vi: "Cập nhật game") }
+    var updateGameDescription: String { localized(en: "Check the latest manifest and download only changed files.", vi: "Kiểm tra manifest mới nhất và chỉ tải các file đã thay đổi.") }
     var localArchiveTitle: String { localized(en: "Install From Local Archive", vi: "Cài từ file local") }
     var localArchiveDescription: String { localized(en: "Pick a local .7z, .zip, or split archive and install from it.", vi: "Chọn file .7z, .zip hoặc gói tách nhỏ từ máy để cài đặt.") }
-    var importTitle: String { localized(en: "Import Existing Install", vi: "Import bản cài đặt có sẵn") }
-    var importDescription: String { localized(en: "Validate an existing game folder and register it with the launcher.", vi: "Kiểm tra thư mục game có sẵn và đăng ký vào launcher.") }
-    var rescanTitle: String { localized(en: "Re-scan", vi: "Quét lại") }
-    var rescanDescription: String { localized(en: "Check the current install folder again and validate the executable.", vi: "Kiểm tra lại thư mục cài đặt hiện tại và xác thực file chạy.") }
-    var chooseFolderTitle: String { localized(en: "Choose Install Folder", vi: "Chọn thư mục cài đặt") }
-    var chooseFolderDescription: String { localized(en: "Change where the launcher installs or looks for the game.", vi: "Đổi thư mục mà launcher sử dụng để cài đặt hoặc tìm game.") }
     var launchTitle: String { localized(en: "Launch via Wine", vi: "Chạy qua Wine") }
     var launchDescription: String { localized(en: "Start the configured Windows executable with the current Wine path.", vi: "Chạy file Windows đã cấu hình bằng đường dẫn Wine hiện tại.") }
 
@@ -183,6 +181,14 @@ struct AppText {
         """
     }
 
+    /// Formats the multiline update plan summary.
+    func updatePlanSummary(currentVersion: String, latestVersion: String, download: String, files: Int, skipped: Int) -> String {
+        localized(
+            en: "Current: \(currentVersion)\nLatest: \(latestVersion)\nDownload: \(download)\nChanged files: \(files)\nUnchanged files: \(skipped)",
+            vi: "Hiện tại: \(currentVersion)\nMới nhất: \(latestVersion)\nDung lượng tải: \(download)\nFile cần cập nhật: \(files)\nFile giữ nguyên: \(skipped)"
+        )
+    }
+
     // MARK: - Status Messages
 
     /// Status text shown while the planner is running.
@@ -195,6 +201,16 @@ struct AppText {
         localized(en: "Installing \(gameName)...", vi: "Đang cài đặt \(gameName)...")
     }
 
+    /// Status text shown while checking update metadata.
+    func checkingForUpdates(_ gameName: String) -> String {
+        localized(en: "Checking updates for \(gameName)...", vi: "Đang kiểm tra cập nhật cho \(gameName)...")
+    }
+
+    /// Status text shown while applying manifest updates.
+    func updating(_ gameName: String) -> String {
+        localized(en: "Updating \(gameName)...", vi: "Đang cập nhật \(gameName)...")
+    }
+
     /// Status text shown during local archive installs.
     func installingFromArchive(_ gameName: String, archiveName: String) -> String {
         localized(en: "Installing \(gameName) from \(archiveName)...", vi: "Đang cài đặt \(gameName) từ \(archiveName)...")
@@ -203,11 +219,6 @@ struct AppText {
     /// Status text shown during import.
     func importing(_ gameName: String) -> String {
         localized(en: "Importing \(gameName)...", vi: "Đang import \(gameName)...")
-    }
-
-    /// Status text shown during re-scan.
-    func rescanning(_ gameName: String) -> String {
-        localized(en: "Re-scanning \(gameName)...", vi: "Đang quét lại \(gameName)...")
     }
 
     /// Status text shown while launching through Wine.
@@ -245,14 +256,19 @@ struct AppText {
         localized(en: "Importing from \(path)", vi: "Đang import từ \(path)")
     }
 
-    /// Stage text for re-scanning a path.
-    func rescanningPath(_ path: String) -> String {
-        localized(en: "Re-scanning \(path)", vi: "Đang quét lại \(path)")
-    }
-
     /// Completion text with installed version.
     func installedVersion(_ version: String) -> String {
         localized(en: "Installed version \(version)", vi: "Đã cài bản \(version)")
+    }
+
+    /// Completion text with updated version.
+    func updatedVersion(_ version: String) -> String {
+        localized(en: "Updated to version \(version)", vi: "Đã cập nhật lên bản \(version)")
+    }
+
+    /// Status text when no changed files are found.
+    func gameUpToDate(_ version: String) -> String {
+        localized(en: "Game is already up to date at version \(version)", vi: "Game đã ở bản mới nhất \(version)")
     }
 
     /// Progress text for manifest file downloads.
@@ -343,6 +359,38 @@ struct AppText {
         )
     }
 
+    /// Error text for Wine binaries blocked by macOS Gatekeeper quarantine.
+    func wineBinaryQuarantined(_ path: String) -> String {
+        localized(
+            en: "macOS is blocking Wine because it is quarantined or not verified. Open Terminal and run: xattr -dr com.apple.quarantine \"\(path)\". Then launch again.",
+            vi: "macOS đang chặn Wine vì file còn quarantine hoặc chưa được xác minh. Mở Terminal và chạy: xattr -dr com.apple.quarantine \"\(path)\". Sau đó chạy lại."
+        )
+    }
+
+    /// Error text for automatic DXVK setup failures.
+    func dxvkBootstrapFailed(_ details: String) -> String {
+        localized(
+            en: "DXVK setup failed before launching Wine: \(details)",
+            vi: "Thiết lập DXVK trước khi chạy Wine thất bại: \(details)"
+        )
+    }
+
+    /// Error text for automatic DXMT setup failures.
+    func dxmtBootstrapFailed(_ details: String) -> String {
+        localized(
+            en: "DXMT setup failed before launching Wine: \(details)",
+            vi: "Thiết lập DXMT trước khi chạy Wine thất bại: \(details)"
+        )
+    }
+
+    /// Error text when the selected Wine build cannot host DXMT.
+    func dxmtUnsupportedWine(_ path: String) -> String {
+        localized(
+            en: "No DXMT-compatible Wine binary was found. Checked: \(path). DXMT requires x86_64-unix/winemac.so to export macdrv_view_create_metal_view; Homebrew/Wine Stable is not enough for this runtime. Install Whisky or CrossOver, open it once so it downloads its Wine libraries, then try again.",
+            vi: "Chưa tìm thấy Wine binary tương thích DXMT. Đã kiểm tra: \(path). DXMT cần x86_64-unix/winemac.so export macdrv_view_create_metal_view; Homebrew/Wine Stable chưa đủ cho runtime này. Hãy cài Whisky hoặc CrossOver, mở app đó một lần để nó tải Wine libraries, rồi thử lại."
+        )
+    }
+
     var packageSourceMissing: String {
         localized(en: "The selected game does not define a package source.", vi: "Game đang chọn chưa khai báo nguồn gói cài đặt.")
     }
@@ -377,6 +425,38 @@ struct AppText {
 
     var freshInstallUnsupported: String {
         localized(en: "Fresh install is currently unsupported because the official streaming manifest is incomplete.", vi: "Hiện chưa hỗ trợ cài mới vì manifest streaming chính thức vẫn chưa đầy đủ.")
+    }
+
+    /// Error text when the package manifest endpoint is older than live game evidence.
+    func packageManifestStale(currentVersion: String, evidence: String) -> String {
+        localized(
+            en: "The official package manifest currently returns Genshin Impact \(currentVersion), but live installer evidence is newer. The launcher cannot safely claim the game is up to date from this stale source yet. Evidence: \(evidence)",
+            vi: "Nguồn manifest official hiện đang trả Genshin Impact \(currentVersion), nhưng dấu hiệu installer live đã mới hơn. Launcher chưa thể kết luận game đã mới nhất từ nguồn cũ này. Evidence: \(evidence)"
+        )
+    }
+
+    /// Error text when Genshin has moved from the legacy pkg_version list to Sophon chunks.
+    func sophonUpdateRequired(currentVersion: String, latestVersion: String, evidence: String) -> String {
+        localized(
+            en: "HoYoPlay reports Genshin Impact \(latestVersion), but the legacy file manifest still returns \(currentVersion). This version uses Sophon chunk metadata, which this updater cannot apply safely yet. Evidence: \(evidence)",
+            vi: "HoYoPlay đang báo Genshin Impact \(latestVersion), nhưng manifest file-level cũ vẫn trả \(currentVersion). Bản này đã chuyển sang metadata Sophon chunk, updater hiện tại chưa thể áp dụng an toàn. Evidence: \(evidence)"
+        )
+    }
+
+    /// Error text when the temporary Sophon zstd backend is unavailable.
+    var sophonZstdUnavailable: String {
+        localized(
+            en: "Sophon update needs the zstd command-line tool to decompress HoYoPlay manifests and chunks. Install zstd with Homebrew, then try Update Game again.",
+            vi: "Cập nhật Sophon cần công cụ dòng lệnh zstd để giải nén manifest và chunk của HoYoPlay. Hãy cài zstd bằng Homebrew, rồi bấm Cập nhật game lại."
+        )
+    }
+
+    /// Generic Sophon update failure text.
+    func sophonUpdateFailed(_ details: String) -> String {
+        localized(
+            en: "Sophon update failed: \(details)",
+            vi: "Cập nhật Sophon thất bại: \(details)"
+        )
     }
 
     var sevenZipBinaryMissing: String {

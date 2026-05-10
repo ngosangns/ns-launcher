@@ -91,6 +91,13 @@ struct ArchiveInstaller: ArchiveInstalling {
         )
 
         try await operationController?.checkpoint()
+        let targetPaths = try extractedFileRelativePaths(in: tempDirectory)
+        try InstallTargetPruner.pruneBeforeApplyingTarget(
+            installDirectory: game.installDirectory,
+            targetRelativePaths: targetPaths,
+            protectedURLs: [game.winePrefixDirectory]
+        )
+        try await operationController?.checkpoint()
         try mergeContents(of: tempDirectory, into: game.installDirectory)
 
         let executable = game.installDirectory.appendingPathComponent(game.executableRelativePath)
@@ -111,6 +118,25 @@ struct ArchiveInstaller: ArchiveInstalling {
         let metadataURL = game.installDirectory.appendingPathComponent(".nslauncher-install.json")
         let data = try JSONEncoder().encode(metadata)
         try data.write(to: metadataURL, options: .atomic)
+    }
+
+    /// Collects the exact file set produced by an archive extraction.
+    private func extractedFileRelativePaths(in sourceDirectory: URL) throws -> Set<String> {
+        guard let enumerator = FileManager.default.enumerator(
+            at: sourceDirectory,
+            includingPropertiesForKeys: [.isDirectoryKey]
+        ) else {
+            return []
+        }
+
+        var paths = Set<String>()
+        for case let source as URL in enumerator {
+            let values = try source.resourceValues(forKeys: [.isDirectoryKey])
+            guard values.isDirectory != true else { continue }
+            let relativePath = source.path.replacingOccurrences(of: sourceDirectory.path + "/", with: "")
+            paths.insert(relativePath)
+        }
+        return paths
     }
 
     /// Returns the correct first archive part for multipart packages when possible.
