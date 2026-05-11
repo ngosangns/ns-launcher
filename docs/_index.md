@@ -12,6 +12,9 @@
 ## Planning
 
 - [Sophon-only Download Flow](specs/planning/sophon-only-download-flow.md) describes the completed migration away from archive/package/manifest download paths.
+- [Fix Genshin Wine Kernel Driver Launch](specs/planning/fix-genshin-wine-kernel-driver-launch.md) describes the supported handling when Wine reports Windows kernel driver protection errors.
+- [HoYoKProtect Wine Launch Handling](specs/planning/hoyokprotect-wine-launch-handling.md) records the no-bypass launch policy and targeted error guidance for `HoYoKProtect.sys`.
+- [Genshin Launch Alternatives](specs/planning/genshin-launch-alternatives.md) evaluates GeForce NOW, Windows native, Boot Camp, and VM options when Wine cannot run the game.
 - [Implement Genshin Sophon Update](specs/planning/implement-genshin-sophon-update.md) describes the HoYoPlay Sophon chunk update path for Genshin 6.x.
 - [Optimize Genshin Sophon Downloads](specs/planning/optimize-genshin-sophon-downloads.md) describes the chunk downloader optimization strategy for Sophon assets.
 - [Fix Genshin Stale Update Source](specs/planning/fix-genshin-stale-update-source.md) is historical context for the stale package metadata issue that led to Sophon-first updates.

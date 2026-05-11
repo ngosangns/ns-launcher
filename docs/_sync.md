@@ -2,8 +2,8 @@
 
 ## Meta
 
-- Synced commit: `28798bd34025bfa50d0bbbeddc53da8924f09d5b` plus current worktree changes
-- Synced at: `2026-05-11T00:00:00+07:00`
-- Scope: README, architecture docs, Genshin install plan, downloader module docs, docs index, Sophon-only install/update flow, removal of legacy archive/package/manifest download paths from active product docs, Wine unsupported kernel-driver launch error guidance
-- Status: synced-to-current-worktree
-- Known unsynced: Code and docs are uncommitted; no unrelated dirty paths were intentionally excluded from this sync.
+- Synced commit: `3d70a306f078dc53a9409999f81b260086539fa8`
+- Synced at: `2026-05-11T09:30:00+07:00`
+- Scope: README, architecture docs, Genshin install plan, downloader module docs, docs index, Sophon-only install/update flow, Wine launch diagnostics, latest WineHQ Devel runtime selection, and supported alternatives for Windows kernel-driver launch failures
+- Status: synced
+- Known unsynced: Không có.
