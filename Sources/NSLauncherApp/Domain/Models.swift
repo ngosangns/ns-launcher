@@ -220,6 +220,14 @@ struct AppSettings: Codable, Equatable {
     var selectedGameID: String?
     var language: AppLanguage
     var launchDisplayMode: LaunchDisplayMode
+    /// Wine Mac Driver registry: enable Retina scaling for HiDPI displays.
+    var macDriverRetina: Bool
+    /// Wine Mac Driver registry: treat the left Command key as Ctrl for games that assume Windows bindings.
+    var leftCommandIsCtrl: Bool
+    /// Debug overlay: set `MTL_HUD_ENABLED=1` at launch to show the Metal performance HUD.
+    var showMetalHUD: Bool
+    /// Optional `cmd /c` batch wrapper that runs `cd /d <game_dir>` before launching the executable.
+    var useBatchWrapper: Bool
 
     /// Resolved Wine executable path, falling back to a PATH lookup name.
     var wineBinaryPath: String {
@@ -247,7 +255,11 @@ struct AppSettings: Codable, Equatable {
             ],
             selectedGameID: genshinGameID,
             language: .english,
-            launchDisplayMode: .windowed
+            launchDisplayMode: .windowed,
+            macDriverRetina: true,
+            leftCommandIsCtrl: false,
+            showMetalHUD: false,
+            useBatchWrapper: false
         )
     }
 
@@ -281,18 +293,30 @@ struct AppSettings: Codable, Equatable {
         case wineBinaryPath
         case aria2BinaryPath
         case sevenZipBinaryPath
+        case macDriverRetina
+        case leftCommandIsCtrl
+        case showMetalHUD
+        case useBatchWrapper
     }
 
     init(
         games: [GameDefinition],
         selectedGameID: String?,
         language: AppLanguage,
-        launchDisplayMode: LaunchDisplayMode = .windowed
+        launchDisplayMode: LaunchDisplayMode = .windowed,
+        macDriverRetina: Bool = true,
+        leftCommandIsCtrl: Bool = false,
+        showMetalHUD: Bool = false,
+        useBatchWrapper: Bool = false
     ) {
         self.games = games
         self.selectedGameID = selectedGameID
         self.language = language
         self.launchDisplayMode = launchDisplayMode
+        self.macDriverRetina = macDriverRetina
+        self.leftCommandIsCtrl = leftCommandIsCtrl
+        self.showMetalHUD = showMetalHUD
+        self.useBatchWrapper = useBatchWrapper
     }
 
     init(from decoder: Decoder) throws {
@@ -301,6 +325,10 @@ struct AppSettings: Codable, Equatable {
         self.selectedGameID = try container.decodeIfPresent(String.self, forKey: .selectedGameID)
         self.language = try container.decodeIfPresent(AppLanguage.self, forKey: .language) ?? .english
         self.launchDisplayMode = try container.decodeIfPresent(LaunchDisplayMode.self, forKey: .launchDisplayMode) ?? .windowed
+        self.macDriverRetina = try container.decodeIfPresent(Bool.self, forKey: .macDriverRetina) ?? true
+        self.leftCommandIsCtrl = try container.decodeIfPresent(Bool.self, forKey: .leftCommandIsCtrl) ?? false
+        self.showMetalHUD = try container.decodeIfPresent(Bool.self, forKey: .showMetalHUD) ?? false
+        self.useBatchWrapper = try container.decodeIfPresent(Bool.self, forKey: .useBatchWrapper) ?? false
 
         // Ignore deprecated storage and custom binary paths while remaining decode-compatible with older settings files.
         _ = try container.decodeIfPresent(String.self, forKey: .downloadCacheDirectory)
@@ -316,6 +344,10 @@ struct AppSettings: Codable, Equatable {
         try container.encodeIfPresent(selectedGameID, forKey: .selectedGameID)
         try container.encode(language, forKey: .language)
         try container.encode(launchDisplayMode, forKey: .launchDisplayMode)
+        try container.encode(macDriverRetina, forKey: .macDriverRetina)
+        try container.encode(leftCommandIsCtrl, forKey: .leftCommandIsCtrl)
+        try container.encode(showMetalHUD, forKey: .showMetalHUD)
+        try container.encode(useBatchWrapper, forKey: .useBatchWrapper)
     }
 
     /// Builds launch arguments with display mode controlled by settings rather than stale game flags.
@@ -360,4 +392,80 @@ enum InstallProgressEvent: Equatable {
     case verifying(path: String)
     case validatingInstall(path: String)
     case finished(version: String)
+}
+
+/// Runtime backend used for DirectX translation on macOS.
+enum RuntimeBackend: String, Codable {
+    case dxmt
+    case dxvk
+    case plainWine
+}
+
+/// Describes the full runtime environment for a single game launch session.
+struct LaunchRuntimeProfile {
+    var wineBinaryPath: String
+    var prefixDirectory: URL
+    var executablePath: URL
+    var currentDirectory: URL
+    var arguments: [String]
+    var backend: RuntimeBackend
+    var environment: [String: String]
+    var runtimeRequirements: [RuntimeRequirement]
+
+    /// Builds a profile from game definition and app settings.
+    static func build(game: GameDefinition, settings: AppSettings) -> LaunchRuntimeProfile {
+        let exe = game.installDirectory.appendingPathComponent(game.executableRelativePath)
+        let backend: RuntimeBackend = {
+            if game.runtimeRequirements.contains(.dxmt) { return .dxmt }
+            if game.runtimeRequirements.contains(.dxvk) { return .dxvk }
+            return .plainWine
+        }()
+
+        var env: [String: String] = [
+            "WINEARCH": "win64",
+            "WINEDEBUG": "fixme-all,err-unwind"
+        ]
+
+        if backend == .dxmt {
+            env["WINEMSYNC"] = "1"
+            let cacheDir = FileManager.default.homeDirectoryForCurrentUser
+                .appendingPathComponent("Library/Caches/NSLauncher/DXMT", isDirectory: true)
+            env["DXMT_LOG_PATH"] = cacheDir.appendingPathComponent("dxmt.log").path
+            env["DXMT_CONFIG_FILE"] = cacheDir.appendingPathComponent("dxmt.conf").path
+        } else if backend == .dxvk {
+            env["WINEESYNC"] = "1"
+        }
+
+        return LaunchRuntimeProfile(
+            wineBinaryPath: settings.wineBinaryPath,
+            prefixDirectory: game.winePrefixDirectory,
+            executablePath: exe,
+            currentDirectory: game.installDirectory,
+            arguments: settings.launchArguments(for: game),
+            backend: backend,
+            environment: env,
+            runtimeRequirements: game.runtimeRequirements
+        )
+    }
+}
+
+/// Preflight errors that block launch before Wine is invoked.
+enum LaunchPreflightError: LocalizedError {
+    case missingExecutable(String)
+    case missingInstallMetadata
+    case invalidInstallMetadata(String)
+    case updateRequiredBeforeLaunch(String)
+
+    var errorDescription: String? {
+        switch self {
+        case let .missingExecutable(path):
+            return "Game executable not found at \(path)."
+        case .missingInstallMetadata:
+            return "Install metadata (.nslauncher-install.json) is missing. Run Update Game first."
+        case let .invalidInstallMetadata(detail):
+            return "Install metadata is invalid: \(detail)."
+        case let .updateRequiredBeforeLaunch(reason):
+            return "Update Game is required before launch: \(reason)."
+        }
+    }
 }

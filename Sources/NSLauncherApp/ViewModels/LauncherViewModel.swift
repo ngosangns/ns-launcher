@@ -504,6 +504,9 @@ final class LauncherViewModel: ObservableObject {
         appendWineLogLine("Working directory: \(game.installDirectory.path)")
         appendWineLogLine("Executable: \(game.installDirectory.appendingPathComponent(game.executableRelativePath).path)")
         appendWineLogLine("Display mode: \(settings.launchDisplayMode.rawValue)")
+        let profile = LaunchRuntimeProfile.build(game: game, settings: settings)
+        appendWineLogLine("Runtime backend: \(profile.backend.rawValue)")
+        appendWineLogLine("Environment: \(profile.environment.sorted(by: { $0.key < $1.key }).map { "\($0.key)=\($0.value)" }.joined(separator: ", "))")
         if !game.runtimeRequirements.isEmpty {
             appendWineLogLine("Runtime requirements: \(game.runtimeRequirements.map(\.rawValue).joined(separator: ", "))")
         }
@@ -1074,6 +1077,17 @@ final class LauncherViewModel: ObservableObject {
     /// Converts domain errors into localized UI strings.
     private func localizedErrorMessage(for error: Error) -> String {
         switch error {
+        case let preflightError as LaunchPreflightError:
+            switch preflightError {
+            case let .missingExecutable(path):
+                return text.preflightMissingExecutable(path)
+            case .missingInstallMetadata:
+                return text.preflightMissingMetadata
+            case let .invalidInstallMetadata(detail):
+                return text.preflightInvalidMetadata(detail)
+            case let .updateRequiredBeforeLaunch(reason):
+                return text.preflightUpdateRequired(reason)
+            }
         case let wineError as WineServiceError:
             switch wineError {
             case let .binaryQuarantined(path):

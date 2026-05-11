@@ -256,8 +256,42 @@ struct AppText {
     /// Error text when Wine cannot load a Windows kernel driver required by the game.
     func unsupportedKernelDriver(_ driver: String) -> String {
         localized(
-            en: "Wine cannot load the Windows kernel driver \(driver). This usually means the game is trying to start an anti-cheat or protection driver, which Wine on macOS cannot run. Use the game executable that does not require HoYoPlay's protection driver, update the game through NSLauncher first, or run the official launcher/game on Windows.",
-            vi: "Wine không load được driver kernel Windows \(driver). Thường là game đang cố khởi động driver anti-cheat/protection, thứ Wine trên macOS không chạy được. Hãy chạy đúng file game không cần driver protection của HoYoPlay, cập nhật game qua NSLauncher trước, hoặc chạy launcher/game chính thức trên Windows."
+            en: "Wine cannot load the Windows kernel driver \(driver). This game requires an anti-cheat or protection driver that Wine on macOS cannot run. Update the game through NSLauncher first to ensure files are valid. If the error persists, Wine/macOS does not support this protection driver — use Windows or the official cloud gaming option instead.",
+            vi: "Wine không load được driver kernel Windows \(driver). Game này yêu cầu driver anti-cheat/protection mà Wine trên macOS không chạy được. Hãy cập nhật game qua NSLauncher trước để đảm bảo file hợp lệ. Nếu lỗi vẫn xảy ra, Wine/macOS không hỗ trợ driver protection này — hãy dùng Windows hoặc tùy chọn cloud gaming chính thức."
+        )
+    }
+
+    // MARK: - Preflight Errors
+
+    /// Preflight error: game executable not found.
+    func preflightMissingExecutable(_ path: String) -> String {
+        localized(
+            en: "Game executable not found at \(path). Run Update Game to restore missing files.",
+            vi: "Không tìm thấy file chạy game tại \(path). Hãy chạy Cập nhật game để khôi phục file thiếu."
+        )
+    }
+
+    /// Preflight error: install metadata missing.
+    var preflightMissingMetadata: String {
+        localized(
+            en: "Install metadata is missing. Run Update Game before launching to create the required metadata file.",
+            vi: "Thiếu metadata cài đặt. Hãy chạy Cập nhật game trước khi mở game để tạo file metadata cần thiết."
+        )
+    }
+
+    /// Preflight error: install metadata is invalid or mismatched.
+    func preflightInvalidMetadata(_ detail: String) -> String {
+        localized(
+            en: "Install metadata is invalid: \(detail). Run Update Game to repair.",
+            vi: "Metadata cài đặt không hợp lệ: \(detail). Hãy chạy Cập nhật game để sửa."
+        )
+    }
+
+    /// Preflight error: update required before launch.
+    func preflightUpdateRequired(_ reason: String) -> String {
+        localized(
+            en: "Update Game is required before launch: \(reason)",
+            vi: "Cần Cập nhật game trước khi mở: \(reason)"
         )
     }
 

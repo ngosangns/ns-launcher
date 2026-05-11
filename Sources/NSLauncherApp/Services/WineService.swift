@@ -84,10 +84,30 @@ struct WineService: WineServicing {
         request.onOutput?(ProcessOutputChunk(stream: .stdout, text: "NSLauncher selected Wine binary: \(resolvedWineBinary)\n"))
 
         // Caller-supplied environment values win except for WINEPREFIX, which must match settings.
-        let env = request.environment.merging([
-            "WINEPREFIX": request.prefixDirectory.path
-        ]) { _, new in new }
-        emitDiagnostic("environment WINEPREFIX=\(env["WINEPREFIX"] ?? "") customKeys=\(request.environment.keys.sorted().joined(separator: ","))", request: request)
+        // Enforce WINEARCH and WINEDEBUG defaults if caller did not supply them.
+        var baseEnv: [String: String] = [
+            "WINEARCH": "win64",
+            "WINEDEBUG": "fixme-all,err-unwind"
+        ]
+        baseEnv.merge(request.environment) { _, new in new }
+        baseEnv["WINEPREFIX"] = request.prefixDirectory.path
+
+        // Ensure DXMT log/config directory exists when DXMT env vars reference it.
+        if let dxmtLogPath = baseEnv["DXMT_LOG_PATH"] {
+            let logDir = URL(fileURLWithPath: dxmtLogPath).deletingLastPathComponent()
+            try? FileManager.default.createDirectory(at: logDir, withIntermediateDirectories: true)
+        }
+        if let dxmtConfigFile = baseEnv["DXMT_CONFIG_FILE"] {
+            let configDir = URL(fileURLWithPath: dxmtConfigFile).deletingLastPathComponent()
+            try? FileManager.default.createDirectory(at: configDir, withIntermediateDirectories: true)
+            // Create empty config file if it doesn't exist so DXMT doesn't warn.
+            if !FileManager.default.fileExists(atPath: dxmtConfigFile) {
+                FileManager.default.createFile(atPath: dxmtConfigFile, contents: nil)
+            }
+        }
+
+        let env = baseEnv
+        emitDiagnostic("environment WINEPREFIX=\(env["WINEPREFIX"] ?? "") WINEARCH=\(env["WINEARCH"] ?? "") WINEDEBUG=\(env["WINEDEBUG"] ?? "") customKeys=\(request.environment.keys.sorted().joined(separator: ","))", request: request)
 
         if request.runtimeRequirements.contains(.dxmt) {
             emitDiagnostic("ensure DXMT runtime", request: request)
@@ -112,9 +132,10 @@ struct WineService: WineServicing {
         emitDiagnostic("snapshot existing game processes", request: request)
         let alreadyRunningGamePIDs = await runningExecutableProcessIDs(request.executablePath)
         emitDiagnostic("existing game process count=\(alreadyRunningGamePIDs.count)", request: request)
+        let launchResult: ProcessResult
         do {
             emitDiagnostic("start process command=\(resolvedWineBinary) \(([request.executablePath.path] + request.arguments).joined(separator: " "))", request: request)
-            return try await processRunner.run(
+            launchResult = try await processRunner.run(
                 executable: resolvedWineBinary,
                 arguments: [request.executablePath.path] + request.arguments,
                 environment: env,
@@ -125,28 +146,53 @@ struct WineService: WineServicing {
             emitDiagnostic("process exited non-zero code=\(result.exitCode); checking whether game stayed alive", request: request)
             if await hasNewLaunchedExecutableProcess(request.executablePath, excluding: alreadyRunningGamePIDs) {
                 emitDiagnostic("detected launched game process after Wine exit; treating launch as successful", request: request)
-                return ProcessResult(exitCode: 0, stdout: result.stdout, stderr: result.stderr)
-            }
-            if result.exitCode == 15, Self.outputIndicatesGameStarted(result.stdout + "\n" + result.stderr) {
+                launchResult = ProcessResult(exitCode: 0, stdout: result.stdout, stderr: result.stderr)
+            } else if result.exitCode == 15, Self.outputIndicatesGameStarted(result.stdout + "\n" + result.stderr) {
                 emitDiagnostic("Wine exit 15 with started-game signal; treating launch as successful", request: request)
-                return ProcessResult(exitCode: 0, stdout: result.stdout, stderr: result.stderr)
-            }
-            if request.runtimeRequirements.contains(.dxmt),
+                launchResult = ProcessResult(exitCode: 0, stdout: result.stdout, stderr: result.stderr)
+            } else if request.runtimeRequirements.contains(.dxmt),
                Self.outputIndicatesDXMTUnsupportedWine(result.stdout + "\n" + result.stderr) {
                 emitDiagnostic("DXMT unsupported Wine signal detected", request: request)
                 throw WineServiceError.dxmtUnsupportedWine(resolvedWineBinary)
-            }
-            if let driverName = Self.unsupportedKernelDriverName(in: result.stdout + "\n" + result.stderr) {
+            } else if let driverName = Self.unsupportedKernelDriverName(in: result.stdout + "\n" + result.stderr) {
                 emitDiagnostic("unsupported kernel driver detected=\(driverName)", request: request)
                 throw WineServiceError.unsupportedKernelDriver(driverName)
+            } else {
+                emitDiagnostic("non-zero process exit remains failure code=\(result.exitCode)", request: request)
+                throw ProcessRunnerError.nonZeroExit(result)
             }
-            emitDiagnostic("non-zero process exit remains failure code=\(result.exitCode)", request: request)
-            throw ProcessRunnerError.nonZeroExit(result)
         }
+
+        // Best-effort wineserver -w: flush registry and wait for Wine processes to exit.
+        await waitForWineserver(wineBinaryPath: resolvedWineBinary, environment: env, request: request)
+
+        return launchResult
     }
 
     private func emitDiagnostic(_ message: String, request: WineLaunchRequest) {
         request.onOutput?(ProcessOutputChunk(stream: .stdout, text: "[NSLauncher][launch-detail] \(message)\n"))
+    }
+
+    /// Best-effort wait for wineserver to exit, flushing registry writes and logs.
+    private func waitForWineserver(wineBinaryPath: String, environment: [String: String], request: WineLaunchRequest) async {
+        do {
+            let wineRoot = try wineRootDirectory(forBinaryAtPath: wineBinaryPath)
+            let wineserverPath = wineRoot.appendingPathComponent("bin/wineserver").path
+            guard FileManager.default.isExecutableFile(atPath: wineserverPath) else {
+                emitDiagnostic("wineserver not found at \(wineserverPath); skipping wait", request: request)
+                return
+            }
+            emitDiagnostic("wineserver -w wait start", request: request)
+            _ = try await processRunner.run(
+                executable: wineserverPath,
+                arguments: ["-w"],
+                environment: environment,
+                currentDirectory: nil
+            )
+            emitDiagnostic("wineserver -w completed", request: request)
+        } catch {
+            emitDiagnostic("wineserver -w best-effort failed: \(error.localizedDescription)", request: request)
+        }
     }
 
     /// Installs the DXMT builtin payload into the Wine runtime and clears prefix overrides.
