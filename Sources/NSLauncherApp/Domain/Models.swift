@@ -20,12 +20,15 @@ enum AppLanguage: String, Codable, CaseIterable, Identifiable {
 
 /// Installation backend selected for a game definition.
 enum InstallerStrategy: String, Codable, CaseIterable, Identifiable {
-    case archivePackage
-    case existingInstall
-    case manifest
-    case streamingManifest
+    case sophon
 
     var id: String { rawValue }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        _ = try? container.decode(String.self)
+        self = .sophon
+    }
 }
 
 /// Runtime components the launcher may need before a game can run correctly.
@@ -56,80 +59,19 @@ enum LaunchDisplayMode: String, Codable, CaseIterable, Identifiable {
     }
 }
 
-/// Archive formats supported by the package installer.
-enum ArchiveFormat: String, Codable, CaseIterable, Identifiable {
-    case sevenZip
-    case zip
-    case multipartZip
-    case tarGz
-
-    var id: String { rawValue }
-
-    /// Human-readable extension hint shown in Settings and used for default names.
-    var fileExtensionHint: String {
-        switch self {
-        case .sevenZip:
-            return "7z"
-        case .zip:
-            return "zip"
-        case .multipartZip:
-            return "zip.001"
-        case .tarGz:
-            return "tar.gz"
-        }
-    }
-}
-
-/// Remote archive description for single-file or multipart package downloads.
-struct PackageSource: Codable, Hashable {
-    var remoteURL: URL?
-    var partURLs: [URL]?
-    var archiveFileName: String
-    var archiveFormat: ArchiveFormat
-    var expectedArchiveSize: Int64?
-}
-
-/// Resume metadata written beside partial package downloads.
-struct PersistedDownloadState: Codable, Equatable {
-    var gameID: String
-    var archiveFileName: String
-    var archiveFormat: ArchiveFormat
-    var totalExpectedBytes: Int64?
-    var downloadedBytes: Int64
-    var currentPart: Int?
-    var totalParts: Int?
-    var currentPartURL: URL
-    var currentPartFileName: String
-    var currentPartReceivedBytes: Int64
-    var currentPartExpectedBytes: Int64?
-    var supportsByteRanges: Bool
-    var etag: String?
-    var lastModified: String?
-    var savedAt: Date
-}
-
-/// Marker file written into an install directory after a successful install/import.
+/// Marker file written into an install directory after a successful Sophon install or update.
 struct InstalledGameMetadata: Codable, Hashable {
     var gameID: String
     var installMode: InstallerStrategy
     var installedAt: Date
-    var sourceArchiveFileName: String?
     var executableRelativePath: String
     var version: String?
-}
-
-/// Result returned by import and re-scan validation.
-struct ImportValidationResult: Hashable {
-    var isValid: Bool
-    var message: String
 }
 
 /// Coarse install state used by UI or future persistence.
 enum InstallState: String, Codable {
     case notInstalled
-    case packageReady
     case installed
-    case imported
 }
 
 /// Static configuration for one launchable game.
@@ -141,26 +83,7 @@ struct GameDefinition: Identifiable, Codable, Hashable {
     var winePrefixDirectory: URL
     var installerStrategy: InstallerStrategy
     var runtimeRequirements: [RuntimeRequirement]
-    var manifestURL: URL?
-    var packageSource: PackageSource?
     var launchArguments: [String]
-}
-
-/// File manifest format used by the manifest installer.
-struct RemoteGameManifest: Codable, Hashable {
-    var version: String
-    var files: [RemoteGameFile]
-}
-
-/// One downloadable file in a remote manifest.
-struct RemoteGameFile: Codable, Hashable, Identifiable {
-    var path: String
-    var url: URL
-    var size: Int64
-    var md5: String?
-    var sha256: String?
-
-    var id: String { path }
 }
 
 /// User-facing estimate of the operations required for an install.
@@ -171,16 +94,13 @@ struct InstallPlan: Hashable {
     var peakTemporaryBytes: Int64
 }
 
-/// Delta plan for bringing an existing manifest install up to the latest version.
+/// Delta plan for bringing an existing Sophon install up to the latest version.
 struct GameUpdatePlan: Hashable {
-    var sourceKind: UpdatePlanSourceKind = .manifest
+    var sourceKind: UpdatePlanSourceKind = .sophon
     var installedVersion: String?
     var latestVersion: String
-    var targetFiles: [RemoteGameFile] = []
-    var filesToDownload: [RemoteGameFile]
     var sophonTargetAssets: [SophonAsset] = []
     var sophonAssetsToWrite: [SophonAsset] = []
-    var skippedFiles: Int
     var sophonSkippedAssets: Int = 0
     var bytesToDownload: Int64
     var decompressedBytesToWrite: Int64 = 0
@@ -188,31 +108,20 @@ struct GameUpdatePlan: Hashable {
     var metadataNeedsUpdate: Bool
 
     var isUpToDate: Bool {
-        filesToDownload.isEmpty && sophonAssetsToWrite.isEmpty && !metadataNeedsUpdate
+        sophonAssetsToWrite.isEmpty && !metadataNeedsUpdate
     }
 
     var changedItemCount: Int {
-        switch sourceKind {
-        case .manifest:
-            return filesToDownload.count
-        case .sophon:
-            return sophonAssetsToWrite.count
-        }
+        sophonAssetsToWrite.count
     }
 
     var skippedItemCount: Int {
-        switch sourceKind {
-        case .manifest:
-            return skippedFiles
-        case .sophon:
-            return sophonSkippedAssets
-        }
+        sophonSkippedAssets
     }
 }
 
 /// Update backend selected for a plan.
 enum UpdatePlanSourceKind: String, Hashable {
-    case manifest
     case sophon
 }
 
@@ -269,6 +178,10 @@ struct SophonChunk: Hashable, Identifiable {
 
     var id: String { name }
 
+    var resumeKey: String {
+        "\(name)|\(offset)|\(decompressedSize)|\(decompressedMD5)"
+    }
+
     var url: URL {
         chunkBaseURL.appendingPathComponent(name, isDirectory: false)
     }
@@ -300,51 +213,17 @@ struct LaunchConfiguration: Codable, Hashable {
 /// User settings and bundled game defaults persisted to disk.
 struct AppSettings: Codable, Equatable {
     private static let genshinGameID = "genshin-global"
-    private static let genshinArchiveExecutablePath = "Genshin Impact Game/GenshinImpact.exe"
+    private static let genshinLegacyNestedExecutablePath = "Genshin Impact Game/GenshinImpact.exe"
     private static let genshinStreamingExecutablePath = "GenshinImpact.exe"
 
     var games: [GameDefinition]
     var selectedGameID: String?
     var language: AppLanguage
-    var downloadCacheDirectory: String
-    var temporaryExtractionDirectory: String
     var launchDisplayMode: LaunchDisplayMode
 
     /// Resolved Wine executable path, falling back to a PATH lookup name.
     var wineBinaryPath: String {
         BinaryLocator.resolveManagedExecutable(.wine, preferredPath: "") ?? "wine64"
-    }
-
-    /// Resolved aria2 executable path reserved for future downloader integrations.
-    var aria2BinaryPath: String {
-        BinaryLocator.resolveManagedExecutable(.aria2, preferredPath: "") ?? "aria2c"
-    }
-
-    /// Resolved 7-Zip executable path used by archive extraction.
-    var sevenZipBinaryPath: String {
-        BinaryLocator.resolveManagedExecutable(.sevenZip, preferredPath: "") ?? "7zz"
-    }
-
-    /// Bundled multipart package metadata for the default Genshin Impact entry.
-    static var defaultGenshinPackageSource: PackageSource {
-        let genshinPackageParts = [
-            "https://autopatchhk.yuanshen.com/client_app/download/pc_zip/20250314110016_HcIQuDGRmsbByeAE/GenshinImpact_5.5.0.zip.001",
-            "https://autopatchhk.yuanshen.com/client_app/download/pc_zip/20250314110016_HcIQuDGRmsbByeAE/GenshinImpact_5.5.0.zip.002",
-            "https://autopatchhk.yuanshen.com/client_app/download/pc_zip/20250314110016_HcIQuDGRmsbByeAE/GenshinImpact_5.5.0.zip.003",
-            "https://autopatchhk.yuanshen.com/client_app/download/pc_zip/20250314110016_HcIQuDGRmsbByeAE/GenshinImpact_5.5.0.zip.004",
-            "https://autopatchhk.yuanshen.com/client_app/download/pc_zip/20250314110016_HcIQuDGRmsbByeAE/GenshinImpact_5.5.0.zip.005",
-            "https://autopatchhk.yuanshen.com/client_app/download/pc_zip/20250314110016_HcIQuDGRmsbByeAE/GenshinImpact_5.5.0.zip.006",
-            "https://autopatchhk.yuanshen.com/client_app/download/pc_zip/20250314110016_HcIQuDGRmsbByeAE/GenshinImpact_5.5.0.zip.007",
-            "https://autopatchhk.yuanshen.com/client_app/download/pc_zip/20250314110016_HcIQuDGRmsbByeAE/GenshinImpact_5.5.0.zip.008"
-        ].compactMap(URL.init(string:))
-
-        return PackageSource(
-            remoteURL: genshinPackageParts.first,
-            partURLs: genshinPackageParts,
-            archiveFileName: "GenshinImpact_5.5.0.zip.001",
-            archiveFormat: .multipartZip,
-            expectedArchiveSize: 80030274036
-        )
     }
 
     /// First-run settings used when no settings file exists yet.
@@ -361,26 +240,18 @@ struct AppSettings: Codable, Equatable {
                     installDirectory: root,
                     executableRelativePath: genshinStreamingExecutablePath,
                     winePrefixDirectory: root.appendingPathComponent(".wine", isDirectory: true),
-                    installerStrategy: .streamingManifest,
+                    installerStrategy: .sophon,
                     runtimeRequirements: [.wine, .dxmt],
-                    manifestURL: nil,
-                    packageSource: nil,
                     launchArguments: []
                 )
             ],
             selectedGameID: genshinGameID,
             language: .english,
-            downloadCacheDirectory: home
-                .appendingPathComponent("Library/Caches/NSLauncher/Downloads", isDirectory: true)
-                .path,
-            temporaryExtractionDirectory: home
-                .appendingPathComponent("Library/Caches/NSLauncher/Extraction", isDirectory: true)
-                .path,
             launchDisplayMode: .windowed
         )
     }
 
-    /// Migrates older settings to the current bundled Genshin streaming strategy.
+    /// Migrates older settings to the Sophon-only bundled Genshin strategy.
     func applyingBundledGenshinDefaultsIfNeeded() -> AppSettings {
         var copy = self
 
@@ -388,13 +259,12 @@ struct AppSettings: Codable, Equatable {
             return copy
         }
 
-        copy.games[index].installerStrategy = .streamingManifest
-        copy.games[index].manifestURL = nil
+        copy.games[index].installerStrategy = .sophon
         copy.games[index].runtimeRequirements.removeAll { $0 == .dxvk }
         if !copy.games[index].runtimeRequirements.contains(.dxmt) {
             copy.games[index].runtimeRequirements.append(.dxmt)
         }
-        if copy.games[index].executableRelativePath == Self.genshinArchiveExecutablePath {
+        if copy.games[index].executableRelativePath == Self.genshinLegacyNestedExecutablePath {
             copy.games[index].executableRelativePath = Self.genshinStreamingExecutablePath
         }
 
@@ -417,15 +287,11 @@ struct AppSettings: Codable, Equatable {
         games: [GameDefinition],
         selectedGameID: String?,
         language: AppLanguage,
-        downloadCacheDirectory: String,
-        temporaryExtractionDirectory: String,
         launchDisplayMode: LaunchDisplayMode = .windowed
     ) {
         self.games = games
         self.selectedGameID = selectedGameID
         self.language = language
-        self.downloadCacheDirectory = downloadCacheDirectory
-        self.temporaryExtractionDirectory = temporaryExtractionDirectory
         self.launchDisplayMode = launchDisplayMode
     }
 
@@ -434,11 +300,11 @@ struct AppSettings: Codable, Equatable {
         self.games = try container.decode([GameDefinition].self, forKey: .games)
         self.selectedGameID = try container.decodeIfPresent(String.self, forKey: .selectedGameID)
         self.language = try container.decodeIfPresent(AppLanguage.self, forKey: .language) ?? .english
-        self.downloadCacheDirectory = try container.decode(String.self, forKey: .downloadCacheDirectory)
-        self.temporaryExtractionDirectory = try container.decode(String.self, forKey: .temporaryExtractionDirectory)
         self.launchDisplayMode = try container.decodeIfPresent(LaunchDisplayMode.self, forKey: .launchDisplayMode) ?? .windowed
 
-        // Ignore deprecated custom binary paths while remaining decode-compatible with older settings files.
+        // Ignore deprecated storage and custom binary paths while remaining decode-compatible with older settings files.
+        _ = try container.decodeIfPresent(String.self, forKey: .downloadCacheDirectory)
+        _ = try container.decodeIfPresent(String.self, forKey: .temporaryExtractionDirectory)
         _ = try container.decodeIfPresent(String.self, forKey: .wineBinaryPath)
         _ = try container.decodeIfPresent(String.self, forKey: .aria2BinaryPath)
         _ = try container.decodeIfPresent(String.self, forKey: .sevenZipBinaryPath)
@@ -449,8 +315,6 @@ struct AppSettings: Codable, Equatable {
         try container.encode(games, forKey: .games)
         try container.encodeIfPresent(selectedGameID, forKey: .selectedGameID)
         try container.encode(language, forKey: .language)
-        try container.encode(downloadCacheDirectory, forKey: .downloadCacheDirectory)
-        try container.encode(temporaryExtractionDirectory, forKey: .temporaryExtractionDirectory)
         try container.encode(launchDisplayMode, forKey: .launchDisplayMode)
     }
 
@@ -484,30 +348,16 @@ struct AppSettings: Codable, Equatable {
 }
 
 enum InstallProgressEvent: Equatable {
+    case diagnostic(String)
     case preparing(String)
-    case readyToExtract(downloadedParts: Int, totalParts: Int)
-    case downloadingPackage(
-        path: String,
-        received: Int64,
-        total: Int64,
-        currentPart: Int?,
-        totalParts: Int?,
-        currentPartReceived: Int64?,
-        currentPartTotal: Int64?,
-        speedBytesPerSecond: Int64?
-    )
-    case downloading(path: String, received: Int64, total: Int64)
-    case downloadingManifest(
+    case downloadingSophonAsset(
         path: String,
         overallReceived: Int64,
         overallTotal: Int64,
         fileReceived: Int64,
         fileTotal: Int64
     )
-    case extracting(path: String)
     case verifying(path: String)
     case validatingInstall(path: String)
-    case cleaningDownloadedArchives(path: String)
-    case importing(path: String)
     case finished(version: String)
 }

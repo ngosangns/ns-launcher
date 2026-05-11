@@ -44,20 +44,19 @@ final class LauncherViewModel: ObservableObject {
     @Published var wineRunLog = ""
     /// Streaming diagnostic log for the latest game update.
     @Published var updateRunLog = ""
-    /// True while the selected game is being updated from a manifest.
+    /// True while the selected game is being updated through Sophon.
     @Published var isUpdatingGame = false
 
     private let coordinator: LauncherCoordinator
     private var currentTask: Task<Void, Never>?
     private var operationController: OperationController?
-    private var resumableDownloadGameID: String?
     private var lastTransferMetricsUpdateAt: Date?
     private var displayedSpeedText: String?
     private var displayedEtaText: String?
     private var transferSamples: [TransferSample] = []
     private var lastDownloadFieldsUpdateAt: Date?
     private var displayedDownloadFields: DownloadFieldSnapshot?
-    private var activeManifestItems: [String: Date] = [:]
+    private var activeSophonItems: [String: Date] = [:]
     private var isSkippingMoltenVKExtensionDump = false
     private var didSummarizeMoltenVKDump = false
     private var lastUpdateLogOverallBucket: Int?
@@ -68,7 +67,6 @@ final class LauncherViewModel: ObservableObject {
         self.settings = settings
         self.statusText = AppText(language: settings.language).ready
         self.coordinator = coordinator
-        restorePersistedDownloadStateIfNeeded()
     }
 
     /// Builds the production dependency graph and loads settings for app startup.
@@ -76,13 +74,7 @@ final class LauncherViewModel: ObservableObject {
         let processRunner = ProcessRunner()
         let coordinator = LauncherCoordinator(
             settingsStore: SettingsStore(),
-            downloadStateStore: DownloadStateStore(),
-            manifestInstaller: ManifestInstaller(),
-            genshinStreamingMetadataService: GenshinStreamingMetadataService(),
             sophonInstaller: GenshinSophonInstaller(),
-            packageDownloader: PackageDownloadService(),
-            archiveInstaller: ArchiveInstaller(processRunner: processRunner),
-            importService: ImportService(),
             wineService: WineService(processRunner: processRunner)
         )
 
@@ -102,47 +94,14 @@ final class LauncherViewModel: ObservableObject {
         games.first
     }
 
-    /// Display name of the selected package source.
-    var selectedGamePackageName: String {
-        guard let game = selectedGame else { return text.noPackageConfigured }
-        if game.installerStrategy == .streamingManifest {
-            return text.officialStreamingSource
-        }
-        return game.packageSource?.archiveFileName ?? text.noPackageConfigured
-    }
-
-    /// Whether the selected game has enough remote metadata to start a download.
+    /// Whether the selected game has enough remote Sophon metadata to start a download.
     var canDownloadSelectedGame: Bool {
-        guard let game = selectedGame else { return false }
-        switch game.installerStrategy {
-        case .streamingManifest:
-            return true
-        case .manifest:
-            return game.manifestURL != nil
-        case .archivePackage:
-            guard let packageSource = game.packageSource else { return false }
-            return packageSource.remoteURL != nil || !(packageSource.partURLs?.isEmpty ?? true)
-        case .existingInstall:
-            return false
-        }
+        selectedGame != nil
     }
 
-    /// Whether the UI can offer a local archive picker for the selected game.
-    var canInstallFromLocalArchive: Bool {
-        selectedGame?.installerStrategy == .archivePackage
-    }
-
-    /// Whether the selected game can be updated from a remote manifest.
+    /// Whether the selected game can be updated from Sophon metadata.
     var canUpdateSelectedGame: Bool {
-        guard let game = selectedGame else { return false }
-        switch game.installerStrategy {
-        case .manifest:
-            return game.manifestURL != nil
-        case .streamingManifest:
-            return true
-        case .archivePackage, .existingInstall:
-            return false
-        }
+        selectedGame != nil
     }
 
     /// Localized text helper derived from the current setting.
@@ -176,7 +135,7 @@ final class LauncherViewModel: ObservableObject {
     func refreshPlan() {
         guard let game = selectedGame else { return }
         resetTransferMetricsDisplay()
-        resetActiveManifestItems()
+        resetActiveSophonItems()
         currentTask?.cancel()
         isBusy = true
         isPaused = false
@@ -243,23 +202,22 @@ final class LauncherViewModel: ObservableObject {
         }
     }
 
-    /// Installs the selected game from either the configured remote package or a local archive override.
-    func installSelectedGame(archiveOverrideURL: URL? = nil) {
+    /// Installs the selected game from Sophon chunk metadata.
+    func installSelectedGame() {
         guard let game = selectedGame else { return }
         resetTransferMetricsDisplay()
-        resetActiveManifestItems()
-        resumableDownloadGameID = nil
+        resetActiveSophonItems()
         currentTask?.cancel()
         isBusy = true
         isPaused = false
         operationController = OperationController()
         operationProgress = OperationProgress(
             stageTitle: text.downloadInstallTitle,
-            itemPath: archiveOverrideURL?.lastPathComponent ?? selectedGamePackageName,
+            itemPath: text.officialSophonSource,
             partText: nil,
-            detailText: archiveOverrideURL == nil ? text.connectingToServer : text.waitingForProgress,
+            detailText: text.checkingForUpdates(game.displayName),
             fractionCompleted: nil,
-            isIndeterminate: archiveOverrideURL != nil,
+            isIndeterminate: true,
             currentPartDetailText: nil,
             currentPartFractionCompleted: nil,
             currentPartIsIndeterminate: true,
@@ -268,31 +226,21 @@ final class LauncherViewModel: ObservableObject {
             totalKBText: nil,
             currentPartKBText: nil
         )
-        statusText = archiveOverrideURL == nil
-            ? text.installing(game.displayName)
-            : text.installingFromArchive(game.displayName, archiveName: archiveOverrideURL!.lastPathComponent)
+        statusText = text.installing(game.displayName)
         errorMessage = nil
 
         currentTask = Task { [weak self] in
             guard let self else { return }
-            var shouldKeepPausedState = false
             defer {
-                if shouldKeepPausedState {
-                    self.currentTask = nil
-                    self.operationController = nil
-                } else {
-                    self.isBusy = false
-                    self.isPaused = false
-                    self.resumableDownloadGameID = nil
-                    self.currentTask = nil
-                    self.operationController = nil
-                }
+                self.isBusy = false
+                self.isPaused = false
+                self.currentTask = nil
+                self.operationController = nil
             }
             do {
                 try await self.coordinator.installGame(
                     game,
                     settings: self.settings,
-                    archiveOverrideURL: archiveOverrideURL,
                     operationController: self.operationController
                 ) { [weak self] event in
                     await MainActor.run {
@@ -316,13 +264,7 @@ final class LauncherViewModel: ObservableObject {
                     currentPartKBText: nil
                 )
             } catch {
-                if let interruption = error as? PackageDownloadInterruption, interruption == .paused {
-                    // A paused download keeps the UI busy so the Resume action can continue it later.
-                    shouldKeepPausedState = true
-                    if let state = try? self.coordinator.loadPersistedDownloadState(for: game.id) {
-                        self.applyPersistedDownloadState(state, for: game.id)
-                    }
-                } else if error is CancellationError {
+                if error is CancellationError {
                     self.statusText = self.text.operationStopped
                     self.operationProgress = nil
                 } else {
@@ -334,12 +276,11 @@ final class LauncherViewModel: ObservableObject {
         }
     }
 
-    /// Updates the selected manifest-backed game by downloading only missing or changed files.
+    /// Updates the selected game by downloading only missing or changed Sophon assets.
     func updateSelectedGame() {
         guard let game = selectedGame, canUpdateSelectedGame else { return }
         resetTransferMetricsDisplay()
-        resetActiveManifestItems()
-        resumableDownloadGameID = nil
+        resetActiveSophonItems()
         currentTask?.cancel()
         isBusy = true
         isPaused = false
@@ -366,11 +307,10 @@ final class LauncherViewModel: ObservableObject {
         statusText = text.checkingForUpdates(game.displayName)
         errorMessage = nil
         appendUpdateLogLine(logText(en: "Update \(game.displayName)", vi: "Cập nhật \(game.displayName)"))
-        appendUpdateLogLine(logText(en: "Strategy: \(game.installerStrategy.rawValue)", vi: "Chiến lược: \(game.installerStrategy.rawValue)"))
         appendUpdateLogLine(logText(en: "Install directory: \(game.installDirectory.path)", vi: "Thư mục cài đặt: \(game.installDirectory.path)"))
         appendUpdateLogLine(logText(en: "Executable: \(game.executableRelativePath)", vi: "File chạy: \(game.executableRelativePath)"))
         appendUpdateLogLine(logText(en: "Runtime requirements: \(game.runtimeRequirements.map(\.rawValue).joined(separator: ", "))", vi: "Runtime cần có: \(game.runtimeRequirements.map(\.rawValue).joined(separator: ", "))"))
-        appendUpdateLogLine(logText(en: "---- check latest manifest ----", vi: "---- kiểm tra manifest mới nhất ----"))
+        appendUpdateLogLine(logText(en: "---- check latest Sophon build ----", vi: "---- kiểm tra Sophon build mới nhất ----"))
 
         currentTask = Task { [weak self] in
             guard let self else { return }
@@ -382,7 +322,14 @@ final class LauncherViewModel: ObservableObject {
                 self.operationController = nil
             }
             do {
-                let plan = try await self.coordinator.fetchUpdatePlan(for: game, settings: self.settings)
+                let plan = try await self.coordinator.fetchUpdatePlan(
+                    for: game,
+                    settings: self.settings
+                ) { [weak self] event in
+                    await MainActor.run {
+                        self?.apply(event: event)
+                    }
+                }
                 let currentVersion = plan.installedVersion ?? self.text.missingVersionLabel
                 let downloadText = ByteCountFormatter.string(fromByteCount: plan.bytesToDownload, countStyle: .file)
                 let summary = self.text.updatePlanSummary(
@@ -522,105 +469,6 @@ final class LauncherViewModel: ObservableObject {
         persistSettings()
     }
 
-    /// Updates the archive file name while preserving the rest of the package source.
-    func setArchiveFileNameForSelectedGame(_ fileName: String) {
-        updateSelectedGame { game in
-            let current = game.packageSource ?? PackageSource(
-                remoteURL: nil,
-                partURLs: nil,
-                archiveFileName: fileName,
-                archiveFormat: .sevenZip,
-                expectedArchiveSize: nil
-            )
-            game.packageSource = PackageSource(
-                remoteURL: current.remoteURL,
-                partURLs: current.partURLs,
-                archiveFileName: fileName,
-                archiveFormat: current.archiveFormat,
-                expectedArchiveSize: current.expectedArchiveSize
-            )
-        }
-        persistSettings()
-    }
-
-    /// Sets the single-file remote package URL for the selected game.
-    func setPackageURLForSelectedGame(_ url: URL) {
-        updateSelectedGame { current in
-            let packageSource = current.packageSource ?? PackageSource(
-                remoteURL: nil,
-                partURLs: nil,
-                archiveFileName: "package.7z",
-                archiveFormat: .sevenZip,
-                expectedArchiveSize: nil
-            )
-            current.packageSource = PackageSource(
-                remoteURL: url,
-                partURLs: packageSource.partURLs,
-                archiveFileName: packageSource.archiveFileName,
-                archiveFormat: packageSource.archiveFormat,
-                expectedArchiveSize: packageSource.expectedArchiveSize
-            )
-        }
-        persistSettings()
-    }
-
-    /// Sets multipart package URLs and switches the package source to multipart mode.
-    func setPartURLsForSelectedGame(_ urls: [URL]) {
-        updateSelectedGame { current in
-            let packageSource = current.packageSource ?? PackageSource(
-                remoteURL: urls.first,
-                partURLs: urls,
-                archiveFileName: urls.first?.lastPathComponent ?? "package.zip.001",
-                archiveFormat: .multipartZip,
-                expectedArchiveSize: nil
-            )
-            current.packageSource = PackageSource(
-                remoteURL: urls.first ?? packageSource.remoteURL,
-                partURLs: urls.isEmpty ? nil : urls,
-                archiveFileName: urls.first?.lastPathComponent ?? packageSource.archiveFileName,
-                archiveFormat: urls.isEmpty ? packageSource.archiveFormat : .multipartZip,
-                expectedArchiveSize: packageSource.expectedArchiveSize
-            )
-        }
-        persistSettings()
-    }
-
-    /// Removes only the single remote URL from the selected package source.
-    func clearPackageURLForSelectedGame() {
-        guard let game = selectedGame, let packageSource = game.packageSource else { return }
-        updateSelectedGame { current in
-            current.packageSource = PackageSource(
-                remoteURL: nil,
-                partURLs: packageSource.partURLs,
-                archiveFileName: packageSource.archiveFileName,
-                archiveFormat: packageSource.archiveFormat,
-                expectedArchiveSize: packageSource.expectedArchiveSize
-            )
-        }
-        persistSettings()
-    }
-
-    /// Changes the package archive format while keeping existing source metadata.
-    func setArchiveFormatForSelectedGame(_ format: ArchiveFormat) {
-        updateSelectedGame { game in
-            let current = game.packageSource ?? PackageSource(
-                remoteURL: nil,
-                partURLs: nil,
-                archiveFileName: "package.\(format.fileExtensionHint)",
-                archiveFormat: format,
-                expectedArchiveSize: nil
-            )
-            game.packageSource = PackageSource(
-                remoteURL: current.remoteURL,
-                partURLs: current.partURLs,
-                archiveFileName: current.archiveFileName,
-                archiveFormat: format,
-                expectedArchiveSize: current.expectedArchiveSize
-            )
-        }
-        persistSettings()
-    }
-
     /// Launches the selected game through Wine.
     func launchSelectedGame() {
         guard let game = selectedGame else { return }
@@ -711,14 +559,8 @@ final class LauncherViewModel: ObservableObject {
         }
     }
 
-    /// Pauses, resumes, or restarts a resumable download depending on current state.
+    /// Pauses or resumes the active Sophon operation.
     func togglePause() {
-        if isPaused, currentTask == nil, let game = selectedGame, resumableDownloadGameID == game.id {
-            installSelectedGame()
-            statusText = text.operationResumed
-            return
-        }
-
         guard isBusy, let operationController else { return }
         let newPausedValue = !isPaused
         isPaused = newPausedValue
@@ -738,25 +580,10 @@ final class LauncherViewModel: ObservableObject {
         }
     }
 
-    /// Stops the active operation and clears resumable state when needed.
+    /// Stops the active operation.
     func stopCurrentOperation() {
         guard isBusy else { return }
         resetTransferMetricsDisplay()
-        if currentTask == nil, let gameID = resumableDownloadGameID {
-            // No task means the operation is paused between runs; clear the persisted resume record.
-            do {
-                try coordinator.clearPersistedDownloadState(for: gameID)
-            } catch {
-                errorMessage = localizedErrorMessage(for: error)
-            }
-            resumableDownloadGameID = nil
-            isBusy = false
-            isPaused = false
-            statusText = text.operationStopped
-            operationProgress = nil
-            return
-        }
-
         Task {
             await operationController?.stop()
         }
@@ -769,7 +596,6 @@ final class LauncherViewModel: ObservableObject {
         currentTask?.cancel()
         statusText = text.operationStopped
         isPaused = false
-        resumableDownloadGameID = nil
         operationProgress = nil
     }
 
@@ -842,6 +668,7 @@ final class LauncherViewModel: ObservableObject {
 
     /// Keeps the latest Wine diagnostics bounded so the SwiftUI text view remains responsive.
     private func appendWineLogText(_ text: String) {
+        emitConsoleLog(channel: "wine", text: text)
         wineRunLog += text
         let maxCharacters = 80_000
         if wineRunLog.count > maxCharacters {
@@ -856,11 +683,26 @@ final class LauncherViewModel: ObservableObject {
 
     /// Appends a bounded diagnostic chunk to the update log.
     private func appendUpdateLogText(_ text: String) {
+        emitConsoleLog(channel: "update", text: text)
         updateRunLog += text
         let maxCharacters = 80_000
         if updateRunLog.count > maxCharacters {
             updateRunLog = String(updateRunLog.suffix(maxCharacters))
         }
+    }
+
+    /// Mirrors app-visible logs to stdout so terminal and Xcode console runs show the same diagnostics.
+    private func emitConsoleLog(channel: String, text: String) {
+        let prefixed = text
+            .split(separator: "\n", omittingEmptySubsequences: false)
+            .map { line in
+                line.isEmpty ? "" : "[NSLauncher][\(channel)] \(line)"
+            }
+            .joined(separator: "\n")
+
+        guard !prefixed.isEmpty,
+              let data = prefixed.data(using: .utf8) else { return }
+        FileHandle.standardOutput.write(data)
     }
 
     /// Localizes compact diagnostic log labels without making AppText carry implementation details.
@@ -873,37 +715,22 @@ final class LauncherViewModel: ObservableObject {
         }
     }
 
-    /// Writes a bounded sample of planned update items so huge manifests remain readable.
+    /// Writes a bounded sample of planned update items so huge Sophon plans remain readable.
     private func appendPlannedUpdateItemsToLog(_ plan: GameUpdatePlan) {
-        switch plan.sourceKind {
-        case .manifest:
-            let files = plan.filesToDownload
-            guard !files.isEmpty else { return }
-            appendUpdateLogLine(logText(en: "Changed file sample:", vi: "Một số file sẽ cập nhật:"))
-            for file in files.prefix(25) {
-                let sizeText = ByteCountFormatter.string(fromByteCount: file.size, countStyle: .file)
-                let checksum = file.md5?.isEmpty == false ? " md5=\(file.md5!)" : ""
-                appendUpdateLogLine("- \(file.path) (\(sizeText))\(checksum)")
-            }
-            if files.count > 25 {
-                appendUpdateLogLine(logText(en: "- ... \(files.count - 25) more files", vi: "- ... còn \(files.count - 25) file nữa"))
-            }
-        case .sophon:
-            let assets = plan.sophonAssetsToWrite
-            guard !assets.isEmpty else { return }
-            appendUpdateLogLine(logText(en: "Changed Sophon asset sample:", vi: "Một số asset Sophon sẽ cập nhật:"))
-            for asset in assets.prefix(25) {
-                let downloadText = ByteCountFormatter.string(fromByteCount: asset.compressedBytes, countStyle: .file)
-                let writeText = ByteCountFormatter.string(fromByteCount: asset.size, countStyle: .file)
-                appendUpdateLogLine("- \(asset.path) (\(downloadText) download, \(writeText) write) md5=\(asset.md5)")
-            }
-            if assets.count > 25 {
-                appendUpdateLogLine(logText(en: "- ... \(assets.count - 25) more assets", vi: "- ... còn \(assets.count - 25) asset nữa"))
-            }
+        let assets = plan.sophonAssetsToWrite
+        guard !assets.isEmpty else { return }
+        appendUpdateLogLine(logText(en: "Changed Sophon asset sample:", vi: "Một số asset Sophon sẽ cập nhật:"))
+        for asset in assets.prefix(25) {
+            let downloadText = ByteCountFormatter.string(fromByteCount: asset.compressedBytes, countStyle: .file)
+            let writeText = ByteCountFormatter.string(fromByteCount: asset.size, countStyle: .file)
+            appendUpdateLogLine("- \(asset.path) (\(downloadText) download, \(writeText) write) md5=\(asset.md5)")
+        }
+        if assets.count > 25 {
+            appendUpdateLogLine(logText(en: "- ... \(assets.count - 25) more assets", vi: "- ... còn \(assets.count - 25) asset nữa"))
         }
     }
 
-    /// Records manifest update progress at useful milestones without flooding the UI.
+    /// Records Sophon download progress at useful milestones without flooding the UI.
     private func appendUpdateProgressLog(path: String, overallReceived: Int64, overallTotal: Int64, fileReceived: Int64, fileTotal: Int64) {
         guard isUpdatingGame else { return }
 
@@ -933,6 +760,10 @@ final class LauncherViewModel: ObservableObject {
     /// Maps service-layer progress events into stable UI state.
     private func apply(event: InstallProgressEvent) {
         switch event {
+        case let .diagnostic(message):
+            if isUpdatingGame {
+                appendUpdateLogLine("[detail] \(message)")
+            }
         case let .preparing(path):
             if isUpdatingGame {
                 appendUpdateLogLine(logText(en: "[prepare] \(path)", vi: "[chuẩn bị] \(path)"))
@@ -952,127 +783,7 @@ final class LauncherViewModel: ObservableObject {
                 totalKBText: nil,
                 currentPartKBText: nil
             )
-        case let .readyToExtract(downloadedParts, totalParts):
-            let detail = text.extractionStartsAfterDownload(downloadedParts: downloadedParts, totalParts: totalParts)
-            statusText = detail
-            operationProgress = OperationProgress(
-                stageTitle: text.preparingStage,
-                itemPath: nil,
-                partText: text.partProgress(current: downloadedParts, total: totalParts),
-                detailText: detail,
-                resumePointText: nil,
-                fractionCompleted: 1,
-                isIndeterminate: false,
-                currentPartDetailText: nil,
-                currentPartFractionCompleted: nil,
-                currentPartIsIndeterminate: false,
-                speedText: nil,
-                totalKBText: nil,
-                currentPartKBText: nil
-            )
-        case let .downloadingPackage(path, received, total, currentPart, totalParts, currentPartReceived, currentPartTotal, _):
-            let receivedText = ByteCountFormatter.string(fromByteCount: received, countStyle: .file)
-            let totalText = ByteCountFormatter.string(fromByteCount: total, countStyle: .file)
-            let currentPartReceivedText = ByteCountFormatter.string(fromByteCount: currentPartReceived ?? 0, countStyle: .file)
-            let currentPartTotalText = ByteCountFormatter.string(fromByteCount: currentPartTotal ?? 0, countStyle: .file)
-            let derivedMetrics = deriveTransferMetrics(received: received, total: total)
-            let latestSpeedText = derivedMetrics.speedBytesPerSecond.map {
-                ByteCountFormatter.string(fromByteCount: $0, countStyle: .file) + "/s"
-            }
-            let latestEtaText: String? = {
-                guard derivedMetrics.isWarmupComplete,
-                      let speedBytesPerSecond = derivedMetrics.speedBytesPerSecond,
-                      speedBytesPerSecond > 0,
-                      total > received else { return nil }
-                return formatETA(seconds: Double(total - received) / Double(speedBytesPerSecond))
-            }()
-            let transferMetrics = throttledTransferMetrics(
-                latestSpeedText: latestSpeedText,
-                latestEtaText: latestEtaText
-            )
-            let partLabel: String? = {
-                if let currentPart, let totalParts {
-                    return text.partProgress(current: currentPart, total: totalParts)
-                }
-                return nil
-            }()
-            let latestDetailText = received == 0
-                ? text.waitingForFirstDownloadBytes
-                : text.progressValue(received: receivedText, total: totalText)
-            let latestCurrentPartDetailText = (currentPartReceived ?? 0) == 0
-                ? text.waitingForFirstDownloadBytes
-                : text.currentPartProgressValue(received: currentPartReceivedText, total: currentPartTotalText)
-            let latestTotalKBText = text.progressValueKB(
-                receivedKB: String(received / 1024),
-                totalKB: String(total / 1024)
-            )
-            let latestCurrentPartKBText: String? = {
-                guard let currentPartReceived, let currentPartTotal else { return nil }
-                return text.progressValueKB(
-                    receivedKB: String(currentPartReceived / 1024),
-                    totalKB: String(currentPartTotal / 1024)
-                )
-            }()
-            let throttledFields = throttledDownloadFields(
-                path: path,
-                partText: partLabel,
-                latestDetailText: latestDetailText,
-                latestCurrentPartDetailText: latestCurrentPartDetailText,
-                latestTotalKBText: latestTotalKBText,
-                latestCurrentPartKBText: latestCurrentPartKBText
-            )
-            statusText = text.downloadingPackage(
-                path,
-                received: receivedText,
-                total: totalText
-            )
-            operationProgress = OperationProgress(
-                stageTitle: text.downloadingStage,
-                itemPath: path,
-                partText: throttledFields.partText,
-                detailText: throttledFields.detailText,
-                resumePointText: received > 0 ? text.resumePointValue(receivedText) : nil,
-                fractionCompleted: total > 0 ? min(max(Double(received) / Double(total), 0), 1) : nil,
-                isIndeterminate: total <= 0 || received == 0,
-                currentPartDetailText: throttledFields.currentPartDetailText,
-                currentPartFractionCompleted: {
-                    guard let currentPartReceived, let currentPartTotal, currentPartTotal > 0 else { return nil }
-                    return min(max(Double(currentPartReceived) / Double(currentPartTotal), 0), 1)
-                }(),
-                currentPartIsIndeterminate: (currentPartTotal ?? 0) <= 0 || (currentPartReceived ?? 0) == 0,
-                speedText: transferMetrics.speedText,
-                etaText: transferMetrics.etaText,
-                isETAWarmingUp: !derivedMetrics.isWarmupComplete && received > 0,
-                totalKBText: throttledFields.totalKBText,
-                currentPartKBText: throttledFields.currentPartKBText
-            )
-        case let .downloading(path, received, total):
-            let receivedText = ByteCountFormatter.string(fromByteCount: received, countStyle: .file)
-            let totalText = ByteCountFormatter.string(fromByteCount: total, countStyle: .file)
-            statusText = text.downloaded(
-                path,
-                received: receivedText,
-                total: totalText
-            )
-            operationProgress = OperationProgress(
-                stageTitle: text.downloadingStage,
-                itemPath: path,
-                partText: nil,
-                detailText: text.progressValue(received: receivedText, total: totalText),
-                fractionCompleted: total > 0 ? min(max(Double(received) / Double(total), 0), 1) : nil,
-                isIndeterminate: total <= 0,
-                currentPartDetailText: nil,
-                currentPartFractionCompleted: nil,
-                currentPartIsIndeterminate: true,
-                speedText: nil,
-                etaText: nil,
-                totalKBText: text.progressValueKB(
-                    receivedKB: String(received / 1024),
-                    totalKB: String(total / 1024)
-                ),
-                currentPartKBText: nil
-            )
-        case let .downloadingManifest(path, overallReceived, overallTotal, fileReceived, fileTotal):
+        case let .downloadingSophonAsset(path, overallReceived, overallTotal, fileReceived, fileTotal):
             appendUpdateProgressLog(
                 path: path,
                 overallReceived: overallReceived,
@@ -1127,8 +838,8 @@ final class LauncherViewModel: ObservableObject {
                 latestTotalKBText: latestTotalKBText,
                 latestCurrentPartKBText: latestCurrentPartKBText
             )
-            let activeItems = registerActiveManifestItem(path)
-            statusText = text.downloadingPackage(
+            let activeItems = registerActiveSophonItem(path)
+            statusText = text.downloadingSophonAsset(
                 path,
                 received: overallReceivedText,
                 total: overallTotalText
@@ -1149,23 +860,6 @@ final class LauncherViewModel: ObservableObject {
                 isETAWarmingUp: !derivedMetrics.isWarmupComplete && overallReceived > 0,
                 totalKBText: throttledFields.totalKBText,
                 currentPartKBText: throttledFields.currentPartKBText
-            )
-        case let .extracting(path):
-            statusText = text.extracting(path)
-            operationProgress = OperationProgress(
-                stageTitle: text.extractingStage,
-                itemPath: path,
-                partText: nil,
-                detailText: nil,
-                fractionCompleted: nil,
-                isIndeterminate: true,
-                currentPartDetailText: nil,
-                currentPartFractionCompleted: nil,
-                currentPartIsIndeterminate: true,
-                speedText: nil,
-                etaText: nil,
-                totalKBText: nil,
-                currentPartKBText: nil
             )
         case let .verifying(path):
             if isUpdatingGame {
@@ -1194,41 +888,6 @@ final class LauncherViewModel: ObservableObject {
             statusText = text.validating(path)
             operationProgress = OperationProgress(
                 stageTitle: text.validatingStage,
-                itemPath: path,
-                partText: nil,
-                detailText: nil,
-                fractionCompleted: nil,
-                isIndeterminate: true,
-                currentPartDetailText: nil,
-                currentPartFractionCompleted: nil,
-                currentPartIsIndeterminate: true,
-                speedText: nil,
-                etaText: nil,
-                totalKBText: nil,
-                currentPartKBText: nil
-            )
-        case let .cleaningDownloadedArchives(path):
-            let detail = text.cleaningDownloadedArchives(path)
-            statusText = detail
-            operationProgress = OperationProgress(
-                stageTitle: text.cleaningStage,
-                itemPath: path,
-                partText: nil,
-                detailText: text.downloadedArchivesCleanedUp,
-                fractionCompleted: nil,
-                isIndeterminate: true,
-                currentPartDetailText: nil,
-                currentPartFractionCompleted: nil,
-                currentPartIsIndeterminate: true,
-                speedText: nil,
-                etaText: nil,
-                totalKBText: nil,
-                currentPartKBText: nil
-            )
-        case let .importing(path):
-            statusText = text.importingPath(path)
-            operationProgress = OperationProgress(
-                stageTitle: text.importingStage,
                 itemPath: path,
                 partText: nil,
                 detailText: nil,
@@ -1412,71 +1071,6 @@ final class LauncherViewModel: ObservableObject {
         update(&settings.games[0])
     }
 
-    /// Restores paused download state on startup when a checkpoint exists.
-    private func restorePersistedDownloadStateIfNeeded() {
-        guard currentTask == nil, let game = selectedGame else { return }
-
-        guard let state = try? coordinator.loadPersistedDownloadState(for: game.id) else {
-            if resumableDownloadGameID == game.id {
-                resumableDownloadGameID = nil
-                isBusy = false
-                isPaused = false
-                operationProgress = nil
-                statusText = text.ready
-            }
-            return
-        }
-
-        applyPersistedDownloadState(state, for: game.id)
-    }
-
-    /// Shows a paused download as resumable progress in the UI.
-    private func applyPersistedDownloadState(_ state: PersistedDownloadState, for gameID: String) {
-        resumableDownloadGameID = gameID
-        isBusy = true
-        isPaused = true
-
-        let totalBytes = state.totalExpectedBytes ?? max(state.downloadedBytes, 0)
-        let receivedText = ByteCountFormatter.string(fromByteCount: state.downloadedBytes, countStyle: .file)
-        let totalText = ByteCountFormatter.string(fromByteCount: totalBytes, countStyle: .file)
-        let currentPartReceivedText = ByteCountFormatter.string(fromByteCount: state.currentPartReceivedBytes, countStyle: .file)
-        let currentPartTotalText = ByteCountFormatter.string(fromByteCount: state.currentPartExpectedBytes ?? 0, countStyle: .file)
-
-        statusText = text.pausedDownloadReadyToResume
-        operationProgress = OperationProgress(
-            stageTitle: text.downloadingStage,
-            itemPath: state.currentPartFileName,
-            partText: {
-                guard let currentPart = state.currentPart, let totalParts = state.totalParts else { return nil }
-                return text.partProgress(current: currentPart, total: totalParts)
-            }(),
-            detailText: text.progressValue(received: receivedText, total: totalText),
-            resumePointText: text.resumePointValue(receivedText),
-            fractionCompleted: totalBytes > 0 ? min(max(Double(state.downloadedBytes) / Double(totalBytes), 0), 1) : nil,
-            isIndeterminate: totalBytes <= 0,
-            currentPartDetailText: state.currentPartExpectedBytes.map { _ in
-                text.currentPartProgressValue(received: currentPartReceivedText, total: currentPartTotalText)
-            },
-            currentPartFractionCompleted: {
-                guard let currentPartExpectedBytes = state.currentPartExpectedBytes, currentPartExpectedBytes > 0 else { return nil }
-                return min(max(Double(state.currentPartReceivedBytes) / Double(currentPartExpectedBytes), 0), 1)
-            }(),
-            currentPartIsIndeterminate: (state.currentPartExpectedBytes ?? 0) <= 0,
-            speedText: nil,
-            etaText: nil,
-            totalKBText: text.progressValueKB(
-                receivedKB: String(state.downloadedBytes / 1024),
-                totalKB: String(totalBytes / 1024)
-            ),
-            currentPartKBText: state.currentPartExpectedBytes.map {
-                text.progressValueKB(
-                    receivedKB: String(state.currentPartReceivedBytes / 1024),
-                    totalKB: String($0 / 1024)
-                )
-            }
-        )
-    }
-
     /// Converts domain errors into localized UI strings.
     private func localizedErrorMessage(for error: Error) -> String {
         switch error {
@@ -1490,6 +1084,8 @@ final class LauncherViewModel: ObservableObject {
                 return text.dxmtBootstrapFailed(details)
             case let .dxmtUnsupportedWine(path):
                 return text.dxmtUnsupportedWine(path)
+            case let .unsupportedKernelDriver(driver):
+                return text.unsupportedKernelDriver(driver)
             }
         case let processError as ProcessRunnerError:
             switch processError {
@@ -1499,71 +1095,12 @@ final class LauncherViewModel: ObservableObject {
                 let details = result.stderr.isEmpty ? result.stdout : result.stderr
                 return text.processFailed(code: result.exitCode, details: details)
             }
-        case let downloadError as PackageDownloadError:
-            switch downloadError {
-            case .packageSourceMissing:
-                return text.packageSourceMissing
-            case .remoteURLMissing:
-                return text.packageRemoteURLMissing
-            case .invalidResponse:
-                return text.packageServerInvalidResponse
-            case let .downloadedPartIntegrityMismatch(fileName, expectedBytes, actualBytes):
-                return text.downloadedPartIntegrityMismatch(
-                    fileName,
-                    expected: ByteCountFormatter.string(fromByteCount: expectedBytes, countStyle: .file),
-                    actual: ByteCountFormatter.string(fromByteCount: actualBytes, countStyle: .file)
-                )
-            }
-        case let archiveError as ArchiveInstallerError:
-            switch archiveError {
-            case .packageSourceMissing:
-                return text.archivePackageMissing
-            case .sevenZipBinaryMissing:
-                return text.sevenZipBinaryMissing
-            case let .sevenZipBinaryNotFound(path):
-                return text.sevenZipBinaryNotFound(path)
-            case let .expectedExecutableMissing(path):
-                return text.expectedExecutableMissingAfterExtraction(path)
-            }
-        case let manifestError as ManifestInstallerError:
-            switch manifestError {
-            case .manifestURLMissing:
-                return text.manifestURLMissing
-            case .invalidResponse:
-                return text.serverInvalidResponse
-            case let .checksumMismatch(path):
-                return text.checksumMismatch(path)
-            case let .expectedExecutableMissing(path):
-                return text.missingExpectedExecutable(path)
-            }
-        case let streamingError as GenshinStreamingMetadataError:
-            switch streamingError {
-            case .officialStreamingMetadataUnavailable:
-                return text.officialStreamingMetadataUnavailable
-            case .streamingManifestIncomplete:
-                return text.streamingManifestIncomplete
-            case .freshInstallUnsupported:
-                return text.freshInstallUnsupported
-            case let .packageManifestStale(currentVersion, evidence):
-                return text.packageManifestStale(currentVersion: currentVersion, evidence: evidence)
-            case let .sophonUpdateRequired(currentVersion, latestVersion, evidence):
-                return text.sophonUpdateRequired(
-                    currentVersion: currentVersion,
-                    latestVersion: latestVersion,
-                    evidence: evidence
-                )
-            }
         case let sophonError as SophonInstallerError:
             switch sophonError {
             case .zstdUnavailable:
                 return text.sophonZstdUnavailable
             default:
                 return text.sophonUpdateFailed(sophonError.localizedDescription)
-            }
-        case let importError as ImportServiceError:
-            switch importError {
-            case let .expectedExecutableMissing(path):
-                return text.missingExpectedExecutable(path)
             }
         case is CancellationError:
             return text.operationStopped
@@ -1572,21 +1109,21 @@ final class LauncherViewModel: ObservableObject {
         }
     }
 
-    /// Tracks recently active manifest files for the multi-file progress list.
-    private func registerActiveManifestItem(_ path: String) -> [String] {
+    /// Tracks recently active Sophon assets for the multi-file progress list.
+    private func registerActiveSophonItem(_ path: String) -> [String] {
         let now = Date()
-        activeManifestItems[path] = now
-        activeManifestItems = activeManifestItems.filter { now.timeIntervalSince($0.value) < 2.5 }
-        return activeManifestItems
+        activeSophonItems[path] = now
+        activeSophonItems = activeSophonItems.filter { now.timeIntervalSince($0.value) < 2.5 }
+        return activeSophonItems
             .sorted { $0.value > $1.value }
             .map(\.key)
             .prefix(16)
             .map { $0 }
     }
 
-    /// Clears the manifest activity list between operations.
-    private func resetActiveManifestItems() {
-        activeManifestItems.removeAll()
+    /// Clears the Sophon activity list between operations.
+    private func resetActiveSophonItems() {
+        activeSophonItems.removeAll()
     }
 }
 

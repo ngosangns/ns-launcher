@@ -5,18 +5,12 @@ enum BinaryLocator {
     /// Known tools managed by the launcher.
     enum ManagedBinary: CaseIterable {
         case wine
-        case aria2
-        case sevenZip
 
         /// Ordered executable names to probe for this tool.
         var candidateNames: [String] {
             switch self {
             case .wine:
                 return ["wine64", "wine"]
-            case .aria2:
-                return ["aria2c"]
-            case .sevenZip:
-                return ["7zz", "7z", "7za"]
             }
         }
     }

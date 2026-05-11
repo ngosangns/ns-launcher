@@ -33,7 +33,7 @@ enum ProcessRunnerError: LocalizedError {
     }
 }
 
-/// Async boundary for running external tools such as Wine and 7-Zip.
+/// Async boundary for running external tools such as Wine.
 protocol ProcessRunning: Sendable {
     func run(
         executable: String,

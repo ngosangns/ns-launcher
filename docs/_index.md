@@ -2,20 +2,21 @@
 
 ## Project
 
-- [Architecture](architecture.md) describes the current app layers, installer strategies, download behavior, progress flow, and runtime integration.
-- [Genshin Install Plan](genshin-install-plan.md) describes the current Genshin MVP behavior, supported sources, remaining work, and risks.
+- [Architecture](architecture.md) describes the current app layers, Sophon-only install/update flow, progress surface, and runtime integration.
+- [Genshin Install Plan](genshin-install-plan.md) describes the current Genshin Sophon-only behavior, remaining work, and risks.
 
 ## Modules
 
-- [Downloader Optimization](modules/downloader-optimization.md) documents the current manifest and Sophon downloader design, concurrency limits, resume sidecars, verification, and tuning constraints.
+- [Downloader Optimization](modules/downloader-optimization.md) documents the current Sophon downloader design, concurrency limits, resume sidecars, verification, pruning, and tuning constraints.
 
 ## Planning
 
-- [Fix Genshin Stale Update Source](specs/planning/fix-genshin-stale-update-source.md) describes the guard against stale HoYoPlay package metadata during update checks.
-- [Implement Game Update](specs/planning/implement-game-update.md) describes the manifest-backed update flow.
+- [Sophon-only Download Flow](specs/planning/sophon-only-download-flow.md) describes the completed migration away from archive/package/manifest download paths.
 - [Implement Genshin Sophon Update](specs/planning/implement-genshin-sophon-update.md) describes the HoYoPlay Sophon chunk update path for Genshin 6.x.
-- [Optimize Genshin ScatteredFiles Downloads](specs/planning/optimize-genshin-scatteredfiles-downloads.md) describes the native ranged downloader strategy for official file-level installs.
 - [Optimize Genshin Sophon Downloads](specs/planning/optimize-genshin-sophon-downloads.md) describes the chunk downloader optimization strategy for Sophon assets.
+- [Fix Genshin Stale Update Source](specs/planning/fix-genshin-stale-update-source.md) is historical context for the stale package metadata issue that led to Sophon-first updates.
+- [Implement Game Update](specs/planning/implement-game-update.md) is historical context for the former manifest-backed update flow.
+- [Optimize Genshin ScatteredFiles Downloads](specs/planning/optimize-genshin-scatteredfiles-downloads.md) is historical context for the removed file-level downloader path.
 
 ## Sync
 

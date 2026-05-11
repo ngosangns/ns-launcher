@@ -43,11 +43,15 @@ enum SophonInstallerError: LocalizedError {
 
 /// Boundary for Genshin's newer HoYoPlay Sophon update flow.
 protocol SophonInstalling: Sendable {
-    func fetchBuild(language: AppLanguage) async throws -> SophonBuild
+    func fetchBuild(
+        language: AppLanguage,
+        onEvent: (@Sendable (InstallProgressEvent) async -> Void)?
+    ) async throws -> SophonBuild
     func planUpdate(
         for game: GameDefinition,
         build: SophonBuild,
-        installedMetadata: InstalledGameMetadata?
+        installedMetadata: InstalledGameMetadata?,
+        onEvent: (@Sendable (InstallProgressEvent) async -> Void)?
     ) async throws -> GameUpdatePlan
     func update(
         game: GameDefinition,
@@ -67,9 +71,9 @@ actor GenshinSophonInstaller: SophonInstalling {
     private static let launcherID = "VYTpXlbWo8"
     private static let platApp = "ddxf6vlr1reo"
     private static let defaultVoiceMatchingField = "en-us"
-    private static let maxConcurrentAssets = 4
-    private static let maxConcurrentChunksPerAsset = 12
-    private static let maxActiveChunkRequests = 48
+    private static let maxConcurrentAssets = 2
+    private static let maxConcurrentChunksPerAsset = 6
+    private static let maxActiveChunkRequests = 12
     private static let stateFlushChunkCount = 64
     private static let connectionRetryDelayNanoseconds: UInt64 = 2_000_000_000
 
@@ -98,17 +102,27 @@ actor GenshinSophonInstaller: SophonInstalling {
     }
 
     /// Fetches and decodes the selected Genshin Sophon build.
-    func fetchBuild(language: AppLanguage) async throws -> SophonBuild {
+    func fetchBuild(
+        language: AppLanguage,
+        onEvent: (@Sendable (InstallProgressEvent) async -> Void)? = nil
+    ) async throws -> SophonBuild {
+        await onEvent?(.diagnostic("fetch branch metadata language=\(language.officialMetadataLanguageCode)"))
         let branch = try await fetchBranch(language: language)
+        await onEvent?(.diagnostic("branch resolved package=\(branch.packageID) tag=\(branch.tag) branch=\(branch.branch.isEmpty ? "main" : branch.branch)"))
+        await onEvent?(.diagnostic("fetch Sophon build metadata"))
         let buildResponse = try await fetchBuildResponse(branch: branch)
         let selectedIdentities = selectInstallIdentities(from: buildResponse.data.manifests)
+        await onEvent?(.diagnostic("build tag=\(buildResponse.data.tag.isEmpty ? branch.tag : buildResponse.data.tag) manifests total=\(buildResponse.data.manifests.count) selected=\(selectedIdentities.map(\.matchingField).joined(separator: ","))"))
         guard !selectedIdentities.isEmpty else {
             throw SophonInstallerError.buildUnavailable
         }
 
         var manifests: [SophonCategoryManifest] = []
         for identity in selectedIdentities {
-            try await manifests.append(fetchCategoryManifest(identity: identity))
+            await onEvent?(.diagnostic("fetch manifest field=\(identity.matchingField) compressed=\(Self.formatBytes(identity.manifest.compressedSize)) uncompressed=\(Self.formatBytes(identity.manifest.uncompressedSize)) files=\(identity.stats.fileCount) chunks=\(identity.stats.chunkCount)"))
+            let manifest = try await fetchCategoryManifest(identity: identity, onEvent: onEvent)
+            await onEvent?(.diagnostic("decoded manifest field=\(manifest.matchingField) assets=\(manifest.assets.count) files=\(manifest.fileCount) chunks=\(manifest.chunkCount)"))
+            manifests.append(manifest)
         }
 
         return SophonBuild(
@@ -122,23 +136,29 @@ actor GenshinSophonInstaller: SophonInstalling {
     func planUpdate(
         for game: GameDefinition,
         build: SophonBuild,
-        installedMetadata: InstalledGameMetadata?
+        installedMetadata: InstalledGameMetadata?,
+        onEvent: (@Sendable (InstallProgressEvent) async -> Void)? = nil
     ) async throws -> GameUpdatePlan {
         let assets = build.manifests.flatMap(\.assets).filter { !$0.isDirectory }
+        await onEvent?(.diagnostic("scan local install root=\(game.installDirectory.path) targetAssets=\(assets.count) installedVersion=\(installedMetadata?.version ?? "missing") latestVersion=\(build.version)"))
         var assetsToWrite: [SophonAsset] = []
         var skippedAssets = 0
 
-        for asset in assets {
+        for (index, asset) in assets.enumerated() {
             let destination = game.installDirectory.appendingPathComponent(asset.path)
             if try existingAssetMatches(asset, at: destination) {
                 skippedAssets += 1
             } else {
                 assetsToWrite.append(asset)
             }
+            if (index + 1).isMultiple(of: 250) || index + 1 == assets.count {
+                await onEvent?(.diagnostic("scan progress \(index + 1)/\(assets.count) valid=\(skippedAssets) changed=\(assetsToWrite.count) current=\(asset.path)"))
+            }
         }
 
         let compressedBytes = assetsToWrite.reduce(Int64(0)) { $0 + $1.compressedBytes }
         let decompressedBytes = assetsToWrite.reduce(Int64(0)) { $0 + $1.size }
+        await onEvent?(.diagnostic("plan computed changed=\(assetsToWrite.count) valid=\(skippedAssets) download=\(Self.formatBytes(compressedBytes)) write=\(Self.formatBytes(decompressedBytes))"))
         let metadataNeedsUpdate = installedMetadata?.gameID != game.id
             || installedMetadata?.installMode != game.installerStrategy
             || installedMetadata?.executableRelativePath != game.executableRelativePath
@@ -148,10 +168,8 @@ actor GenshinSophonInstaller: SophonInstalling {
             sourceKind: .sophon,
             installedVersion: installedMetadata?.version,
             latestVersion: build.version,
-            filesToDownload: [],
             sophonTargetAssets: assets,
             sophonAssetsToWrite: assetsToWrite,
-            skippedFiles: 0,
             sophonSkippedAssets: skippedAssets,
             bytesToDownload: compressedBytes,
             decompressedBytesToWrite: decompressedBytes,
@@ -172,16 +190,19 @@ actor GenshinSophonInstaller: SophonInstalling {
         operationController: OperationController?,
         onEvent: @escaping @Sendable (InstallProgressEvent) async -> Void
     ) async throws {
+        await onEvent(.diagnostic("apply Sophon plan assetsToWrite=\(assets.count) targetAssets=\(targetAssets.count) version=\(version)"))
         try fileManager.createDirectory(at: game.installDirectory, withIntermediateDirectories: true)
         let progress = SophonProgressTracker(totalBytes: assets.reduce(Int64(0)) { $0 + $1.compressedBytes })
         let queue = SophonAssetQueue(assets: assets)
         try await operationController?.checkpoint()
+        await onEvent(.diagnostic("prune install target before apply"))
         try InstallTargetPruner.pruneBeforeApplyingTarget(
             installDirectory: game.installDirectory,
             targetRelativePaths: Set(targetAssets.map(\.path)),
             protectedURLs: [game.winePrefixDirectory],
             fileManager: fileManager
         )
+        await onEvent(.diagnostic("prune completed; start workers assets=\(min(Self.maxConcurrentAssets, max(assets.count, 1))) chunkConcurrencyPerAsset=\(Self.maxConcurrentChunksPerAsset) requestLimit=\(Self.maxActiveChunkRequests)"))
         try await operationController?.checkpoint()
 
         try await withThrowingTaskGroup(of: Void.self) { group in
@@ -201,9 +222,11 @@ actor GenshinSophonInstaller: SophonInstalling {
 
             try await group.waitForAll()
         }
+        await onEvent(.diagnostic("asset workers completed; flush progress"))
         await progress.flush(onEvent: onEvent)
 
         let executable = game.installDirectory.appendingPathComponent(game.executableRelativePath)
+        await onEvent(.diagnostic("validate executable path=\(executable.path)"))
         guard fileManager.fileExists(atPath: executable.path) else {
             throw SophonInstallerError.expectedExecutableMissing(game.executableRelativePath)
         }
@@ -212,11 +235,11 @@ actor GenshinSophonInstaller: SophonInstalling {
             gameID: game.id,
             installMode: game.installerStrategy,
             installedAt: Date(),
-            sourceArchiveFileName: nil,
             executableRelativePath: game.executableRelativePath,
             version: version
         )
         let data = try JSONEncoder().encode(metadata)
+        await onEvent(.diagnostic("write install metadata .nslauncher-install.json"))
         try data.write(to: game.installDirectory.appendingPathComponent(".nslauncher-install.json"), options: .atomic)
         await onEvent(.finished(version: version))
     }
@@ -249,8 +272,24 @@ actor GenshinSophonInstaller: SophonInstalling {
 
         let state = SophonAssetStateStore(url: stateURL)
         var completed = try state.load(asset: asset)
+        if !completed.isEmpty {
+            await onEvent(.diagnostic("resume state loaded asset=\(asset.path) completedChunks=\(completed.count)/\(asset.chunks.count)"))
+            let validatedCompleted = try await validateCompletedChunks(
+                completed,
+                of: asset,
+                at: staging,
+                onEvent: onEvent
+            )
+            if validatedCompleted != completed {
+                completed = validatedCompleted
+                try state.save(completed: completed, asset: asset)
+                await onEvent(.diagnostic("resume state repaired asset=\(asset.path) validChunks=\(completed.count)/\(asset.chunks.count)"))
+            } else {
+                await onEvent(.diagnostic("resume state verified asset=\(asset.path) validChunks=\(completed.count)/\(asset.chunks.count)"))
+            }
+        }
         let completedBytes = asset.chunks
-            .filter { completed.contains($0.name) }
+            .filter { completed.contains($0.resumeKey) }
             .reduce(Int64(0)) { $0 + $1.compressedSize }
         if completedBytes > 0 {
             await progress.registerExistingBytes(
@@ -263,7 +302,7 @@ actor GenshinSophonInstaller: SophonInstalling {
         let writer = try SophonAssetWriter(url: staging)
         do {
             try await installPendingChunks(
-                asset.chunks.filter { !completed.contains($0.name) },
+                asset.chunks.filter { !completed.contains($0.resumeKey) },
                 of: asset,
                 completed: &completed,
                 state: state,
@@ -286,6 +325,45 @@ actor GenshinSophonInstaller: SophonInstalling {
         }
         try fileManager.moveItem(at: staging, to: destination)
         try? fileManager.removeItem(at: staging.appendingPathExtension("chunks.json"))
+    }
+
+    private func validateCompletedChunks(
+        _ completed: Set<String>,
+        of asset: SophonAsset,
+        at staging: URL,
+        onEvent: @escaping @Sendable (InstallProgressEvent) async -> Void
+    ) async throws -> Set<String> {
+        guard !completed.isEmpty else { return [] }
+
+        var validCompleted = Set<String>()
+        let handle = try FileHandle(forReadingFrom: staging)
+        defer { try? handle.close() }
+
+        for chunk in asset.chunks where completed.contains(chunk.resumeKey) || completed.contains(chunk.name) {
+            await Task.yield()
+            if try stagedChunkMatches(chunk, handle: handle) {
+                validCompleted.insert(chunk.resumeKey)
+            } else {
+                await onEvent(.diagnostic("resume chunk invalid; redownload asset=\(asset.path) chunk=\(chunk.name) offset=\(chunk.offset)"))
+            }
+        }
+
+        return validCompleted
+    }
+
+    private func stagedChunkMatches(_ chunk: SophonChunk, handle: FileHandle) throws -> Bool {
+        guard chunk.offset >= 0,
+              chunk.decompressedSize >= 0,
+              chunk.decompressedSize <= Int64(Int.max) else {
+            return false
+        }
+
+        try handle.seek(toOffset: UInt64(chunk.offset))
+        let data = try handle.read(upToCount: Int(chunk.decompressedSize)) ?? Data()
+        guard Int64(data.count) == chunk.decompressedSize else {
+            return false
+        }
+        return md5Hex(data).caseInsensitiveCompare(chunk.decompressedMD5) == .orderedSame
     }
 
     private func installPendingChunks(
@@ -319,7 +397,7 @@ actor GenshinSophonInstaller: SophonInstalling {
                         operationController: operationController,
                         onEvent: onEvent
                     )
-                    return chunk.name
+                    return chunk.resumeKey
                 }
             }
 
@@ -328,9 +406,9 @@ actor GenshinSophonInstaller: SophonInstalling {
             }
 
             while activeTasks > 0 {
-                guard let chunkName = try await group.next() else { break }
+                guard let chunkKey = try await group.next() else { break }
                 activeTasks -= 1
-                completed.insert(chunkName)
+                completed.insert(chunkKey)
                 chunksSinceStateSave += 1
                 if chunksSinceStateSave >= Self.stateFlushChunkCount {
                     try state.save(completed: completed, asset: asset)
@@ -502,7 +580,10 @@ actor GenshinSophonInstaller: SophonInstalling {
         }
     }
 
-    private func fetchCategoryManifest(identity: SophonBuildIdentity) async throws -> SophonCategoryManifest {
+    private func fetchCategoryManifest(
+        identity: SophonBuildIdentity,
+        onEvent: (@Sendable (InstallProgressEvent) async -> Void)?
+    ) async throws -> SophonCategoryManifest {
         let manifestURL = identity.manifestDownload.urlPrefix.appendingPathComponent(identity.manifest.id, isDirectory: false)
         let (data, response) = try await session.data(from: manifestURL)
         guard let http = response as? HTTPURLResponse, 200..<300 ~= http.statusCode else {
@@ -511,35 +592,23 @@ actor GenshinSophonInstaller: SophonInstalling {
         guard Int64(data.count) == identity.manifest.compressedSize else {
             throw SophonInstallerError.manifestUnavailable(identity.manifest.id)
         }
+        await onEvent?(.diagnostic("manifest downloaded field=\(identity.matchingField) bytes=\(Self.formatBytes(Int64(data.count)))"))
         let decompressedData = try await zstd.decompress(data, expectedSize: identity.manifest.uncompressedSize)
+        await onEvent?(.diagnostic("manifest decompressed field=\(identity.matchingField) bytes=\(Self.formatBytes(Int64(decompressedData.count)))"))
         guard Int64(decompressedData.count) == identity.manifest.uncompressedSize else {
             throw SophonInstallerError.invalidManifest(identity.manifest.id)
         }
         guard md5Hex(decompressedData).caseInsensitiveCompare(identity.manifest.checksum) == .orderedSame else {
             throw SophonInstallerError.manifestChecksumMismatch(identity.manifest.id)
         }
+        await onEvent?(.diagnostic("manifest checksum ok field=\(identity.matchingField)"))
 
-        let proto = try SophonManifestProtoDecoder().decode(decompressedData)
-        let assets = proto.assets.map { asset in
-            SophonAsset(
-                path: asset.name,
-                size: asset.size,
-                md5: asset.md5,
-                chunks: asset.chunks.map { chunk in
-                    SophonChunk(
-                        name: chunk.name,
-                        offset: chunk.offset,
-                        compressedSize: chunk.compressedSize,
-                        decompressedSize: chunk.decompressedSize,
-                        decompressedMD5: chunk.decompressedMD5,
-                        chunkBaseURL: identity.chunkDownload.urlPrefix
-                    )
-                },
-                isDirectory: asset.type != 0 || asset.md5.isEmpty,
-                matchingField: identity.matchingField,
-                categoryName: identity.categoryName
-            )
-        }
+        let assets = try SophonManifestProtoDecoder().decodeAssets(
+            decompressedData,
+            matchingField: identity.matchingField,
+            categoryName: identity.categoryName,
+            chunkBaseURL: identity.chunkDownload.urlPrefix
+        )
 
         return SophonCategoryManifest(
             categoryID: identity.categoryID,
@@ -557,6 +626,10 @@ actor GenshinSophonInstaller: SophonInstalling {
             chunkCount: identity.stats.chunkCount,
             assets: assets
         )
+    }
+
+    private static func formatBytes(_ bytes: Int64) -> String {
+        ByteCountFormatter.string(fromByteCount: bytes, countStyle: .file)
     }
 
     private func existingAssetMatches(_ asset: SophonAsset, at url: URL) throws -> Bool {
@@ -705,25 +778,40 @@ private struct ZstdDynamicLibrary: @unchecked Sendable {
 }
 
 private struct SophonManifestProtoDecoder {
-    func decode(_ data: Data) throws -> DecodedSophonManifest {
+    func decodeAssets(
+        _ data: Data,
+        matchingField: String,
+        categoryName: String,
+        chunkBaseURL: URL
+    ) throws -> [SophonAsset] {
         var reader = ProtobufReader(data: data)
-        var assets: [DecodedSophonAsset] = []
+        var assets: [SophonAsset] = []
         while let field = try reader.nextField() {
             switch field.number {
             case 1:
-                let message = try reader.readLengthDelimited()
-                assets.append(try decodeAsset(message))
+                let messageRange = try reader.readLengthDelimitedRange()
+                var assetReader = ProtobufReader(data: data, range: messageRange)
+                assets.append(try decodeAsset(
+                    &assetReader,
+                    matchingField: matchingField,
+                    categoryName: categoryName,
+                    chunkBaseURL: chunkBaseURL
+                ))
             default:
                 try reader.skip(wireType: field.wireType)
             }
         }
-        return DecodedSophonManifest(assets: assets)
+        return assets
     }
 
-    private func decodeAsset(_ data: Data) throws -> DecodedSophonAsset {
-        var reader = ProtobufReader(data: data)
+    private func decodeAsset(
+        _ reader: inout ProtobufReader,
+        matchingField: String,
+        categoryName: String,
+        chunkBaseURL: URL
+    ) throws -> SophonAsset {
         var name = ""
-        var chunks: [DecodedSophonChunk] = []
+        var chunks: [SophonChunk] = []
         var type = Int32(0)
         var size = Int64(0)
         var md5 = ""
@@ -733,7 +821,9 @@ private struct SophonManifestProtoDecoder {
             case 1:
                 name = try reader.readString()
             case 2:
-                chunks.append(try decodeChunk(reader.readLengthDelimited()))
+                let chunkRange = try reader.readLengthDelimitedRange()
+                var chunkReader = ProtobufReader(data: reader.data, range: chunkRange)
+                chunks.append(try decodeChunk(&chunkReader, chunkBaseURL: chunkBaseURL))
             case 3:
                 type = Int32(try reader.readVarint())
             case 4:
@@ -748,11 +838,18 @@ private struct SophonManifestProtoDecoder {
         guard !name.isEmpty else {
             throw SophonInstallerError.invalidManifest("asset")
         }
-        return DecodedSophonAsset(name: name, chunks: chunks, type: type, size: size, md5: md5)
+        return SophonAsset(
+            path: name,
+            size: size,
+            md5: md5,
+            chunks: chunks,
+            isDirectory: type != 0 || md5.isEmpty,
+            matchingField: matchingField,
+            categoryName: categoryName
+        )
     }
 
-    private func decodeChunk(_ data: Data) throws -> DecodedSophonChunk {
-        var reader = ProtobufReader(data: data)
+    private func decodeChunk(_ reader: inout ProtobufReader, chunkBaseURL: URL) throws -> SophonChunk {
         var name = ""
         var decompressedMD5 = ""
         var offset = Int64(0)
@@ -779,12 +876,13 @@ private struct SophonManifestProtoDecoder {
         guard !name.isEmpty, !decompressedMD5.isEmpty else {
             throw SophonInstallerError.invalidManifest("chunk")
         }
-        return DecodedSophonChunk(
+        return SophonChunk(
             name: name,
-            decompressedMD5: decompressedMD5,
             offset: offset,
             compressedSize: compressedSize,
-            decompressedSize: decompressedSize
+            decompressedSize: decompressedSize,
+            decompressedMD5: decompressedMD5,
+            chunkBaseURL: chunkBaseURL
         )
     }
 }
@@ -795,15 +893,23 @@ private struct ProtobufField {
 }
 
 private struct ProtobufReader {
-    private let bytes: [UInt8]
+    let data: Data
+    private let endIndex: Int
     private var index = 0
 
     init(data: Data) {
-        self.bytes = Array(data)
+        self.data = data
+        self.endIndex = data.count
+    }
+
+    init(data: Data, range: Range<Int>) {
+        self.data = data
+        self.index = range.lowerBound
+        self.endIndex = range.upperBound
     }
 
     mutating func nextField() throws -> ProtobufField? {
-        guard index < bytes.count else { return nil }
+        guard index < endIndex else { return nil }
         let key = try readVarint()
         return ProtobufField(number: Int(key >> 3), wireType: Int(key & 0x7))
     }
@@ -811,8 +917,8 @@ private struct ProtobufReader {
     mutating func readVarint() throws -> UInt64 {
         var result: UInt64 = 0
         var shift: UInt64 = 0
-        while index < bytes.count {
-            let byte = bytes[index]
+        while index < endIndex {
+            let byte = data[index]
             index += 1
             result |= UInt64(byte & 0x7f) << shift
             if byte & 0x80 == 0 {
@@ -825,21 +931,25 @@ private struct ProtobufReader {
     }
 
     mutating func readString() throws -> String {
-        let data = try readLengthDelimited()
-        guard let string = String(data: data, encoding: .utf8) else {
+        let range = try readLengthDelimitedRange()
+        guard let string = String(data: data[range], encoding: .utf8) else {
             throw SophonInstallerError.invalidManifest("string")
         }
         return string
     }
 
-    mutating func readLengthDelimited() throws -> Data {
-        let length = Int(try readVarint())
-        guard index + length <= bytes.count else {
+    mutating func readLengthDelimitedRange() throws -> Range<Int> {
+        let rawLength = try readVarint()
+        guard rawLength <= UInt64(Int.max) else {
             throw SophonInstallerError.invalidManifest("length")
         }
-        let data = Data(bytes[index..<index + length])
+        let length = Int(rawLength)
+        guard length <= endIndex - index else {
+            throw SophonInstallerError.invalidManifest("length")
+        }
+        let range = index..<index + length
         index += length
-        return data
+        return range
     }
 
     mutating func skip(wireType: Int) throws {
@@ -847,38 +957,24 @@ private struct ProtobufReader {
         case 0:
             _ = try readVarint()
         case 1:
+            guard endIndex - index >= 8 else {
+                throw SophonInstallerError.invalidManifest("skip")
+            }
             index += 8
         case 2:
-            _ = try readLengthDelimited()
+            _ = try readLengthDelimitedRange()
         case 5:
+            guard endIndex - index >= 4 else {
+                throw SophonInstallerError.invalidManifest("skip")
+            }
             index += 4
         default:
             throw SophonInstallerError.invalidManifest("wire")
         }
-        guard index <= bytes.count else {
+        guard index <= endIndex else {
             throw SophonInstallerError.invalidManifest("skip")
         }
     }
-}
-
-private struct DecodedSophonManifest {
-    var assets: [DecodedSophonAsset]
-}
-
-private struct DecodedSophonAsset {
-    var name: String
-    var chunks: [DecodedSophonChunk]
-    var type: Int32
-    var size: Int64
-    var md5: String
-}
-
-private struct DecodedSophonChunk {
-    var name: String
-    var decompressedMD5: String
-    var offset: Int64
-    var compressedSize: Int64
-    var decompressedSize: Int64
 }
 
 private actor SophonDownloadRequestLimiter {
@@ -978,7 +1074,7 @@ private actor SophonProgressTracker {
         lastFileTotal = fileTotal
         emittedBytes = receivedBytes
         lastEmitDate = Date()
-        await onEvent(.downloadingManifest(
+        await onEvent(.downloadingSophonAsset(
             path: path,
             overallReceived: receivedBytes,
             overallTotal: totalBytes,
@@ -1006,7 +1102,7 @@ private actor SophonProgressTracker {
 
         emittedBytes = receivedBytes
         lastEmitDate = now
-        await onEvent(.downloadingManifest(
+        await onEvent(.downloadingSophonAsset(
             path: path,
             overallReceived: receivedBytes,
             overallTotal: totalBytes,
@@ -1019,7 +1115,7 @@ private actor SophonProgressTracker {
         guard emittedBytes != receivedBytes, let lastPath else { return }
         emittedBytes = receivedBytes
         lastEmitDate = Date()
-        await onEvent(.downloadingManifest(
+        await onEvent(.downloadingSophonAsset(
             path: lastPath,
             overallReceived: receivedBytes,
             overallTotal: totalBytes,

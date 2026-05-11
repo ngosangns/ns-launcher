@@ -1,55 +1,53 @@
 # NS Launcher
 
-Native macOS launcher prototype built with `Swift + SwiftUI`, designed for Windows games that run through `Wine`.
+Native macOS launcher prototype built with `Swift + SwiftUI`, designed to install,
+update, and launch Genshin Impact through Wine.
 
 ## Goals
 
 - Native macOS app shell instead of a webview-based desktop wrapper.
-- Installation pipeline that does not require keeping a fully downloaded archive plus a fully extracted game copy at the same time.
-- Clear separation between:
-  - UI
-  - game definitions
-  - install planning
-  - Wine/runtime integration
-  - process execution
+- Sophon-only game download flow for current HoYoPlay Genshin builds.
+- Clear separation between UI, game definitions, Sophon install planning, Wine
+  runtime integration, and process execution.
 
-## Current scope
+## Current Scope
 
 This repository is a starter project, not a full production launcher yet.
 
 It already includes:
 
-- a native SwiftUI app
-- install planning models
-- official streaming-manifest plumbing for Genshin Impact metadata
-- manifest installs that download files directly into the final game directory using per-file `.partial` files, segmented ranged downloads for large files, and checksum validation when hashes are available
-- resumable archive package downloads, including multipart `.zip.001` package flows
-- archive extraction through `7zz`/`7z`/`7za`
-- import, re-scan, and launch flows for existing installs
-- Wine launch bootstrap that installs DXMT or DXVK into prefixes for DirectX 11 games that require a graphics bridge
-- process wrappers for Wine, archive tooling, and other external sidecars
-- editable game configuration, language, storage, package, and launch settings
-- architecture docs for extending the launcher
+- a native SwiftUI app;
+- a single bundled `genshin-global` definition;
+- Sophon build discovery through HoYoPlay branch/build metadata;
+- zstd-compressed Sophon manifest decoding;
+- chunk download, decompression, chunk MD5 verification, asset reconstruction,
+  final asset MD5 verification, and atomic replacement;
+- `.nslauncher-sophon-staging` resume sidecars for interrupted Sophon assets;
+- install/update planning that skips assets already matching size plus MD5;
+- a Settings screen limited to language, install root, executable path, and
+  display mode;
+- Wine launch bootstrap that installs DXMT or DXVK when required;
+- filtered Wine diagnostics with targeted messages for DXMT and unsupported
+  Windows kernel-driver failures.
 
-## Why this install flow uses less disk
+## Sophon Install Flow
 
-The lowest-amplification strategy is:
+The launcher uses HoYoPlay Sophon metadata for both fresh install and update:
 
-1. fetch a manifest
-2. create the destination tree
-3. download each game file to `filename.partial`
-4. atomically move it into place
-5. continue to the next file
+1. fetch `getGameBranches` and Sophon `getBuild`;
+2. select the game resource manifest plus the default `en-us` voice manifest;
+3. download and decode zstd-compressed protobuf manifests;
+4. compare local assets by size and MD5;
+5. prune files outside the target Sophon asset set while protecting the Wine
+   prefix and launcher metadata;
+6. download missing or mismatched chunks;
+7. decompress and verify each chunk;
+8. write chunks into staging files by offset;
+9. verify the final asset MD5 and atomically replace the destination;
+10. write `.nslauncher-install.json` only after the expected executable exists.
 
-This means the launcher only needs temporary space roughly equal to the largest file currently being written, not the full compressed payload plus the full decompressed payload.
-
-Archive installers are also supported for package-based ecosystems. They download into the configured cache, extract through the configured temporary extraction directory, merge into the install directory, then remove downloaded cache archives after successful extraction when the launcher downloaded them itself.
-
-## Current Genshin Direction
-
-The bundled `genshin-global` definition uses the official streaming source path. The launcher queries HoYoPlay package metadata, reads the `pkg_version` resource list, and plans or installs those files through the manifest installer when a complete manifest is available.
-
-Fresh streaming installs can still fail if the official metadata endpoint does not expose a complete file manifest. Archive-package install and existing-install import remain available paths when the game definition is configured for them.
+Archive packages, local archive install, generic JSON manifests, and the old
+`pkg_version`/file-level streaming path are no longer product paths.
 
 ## Build
 
@@ -69,4 +67,5 @@ swift run
 
 - [Architecture](docs/architecture.md)
 - [Genshin Install Plan](docs/genshin-install-plan.md)
+- [Downloader Optimization](docs/modules/downloader-optimization.md)
 - [Docs Index](docs/_index.md)

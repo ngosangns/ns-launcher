@@ -18,6 +18,7 @@ enum WineServiceError: LocalizedError {
     case dxvkBootstrapFailed(String)
     case dxmtBootstrapFailed(String)
     case dxmtUnsupportedWine(String)
+    case unsupportedKernelDriver(String)
 
     var errorDescription: String? {
         switch self {
@@ -29,6 +30,8 @@ enum WineServiceError: LocalizedError {
             return "DXMT setup failed: \(details)"
         case let .dxmtUnsupportedWine(path):
             return "Wine at \(path) does not expose the winemac.drv symbols required by DXMT."
+        case let .unsupportedKernelDriver(driver):
+            return "Wine cannot load the Windows kernel driver \(driver)."
         }
     }
 }
@@ -55,10 +58,15 @@ struct WineService: WineServicing {
 
     /// Launches the game executable through Wine and returns the completed process result.
     func launch(_ request: WineLaunchRequest) async throws -> ProcessResult {
+        emitDiagnostic("launch request executable=\(request.executablePath.path)", request: request)
+        emitDiagnostic("launch request currentDirectory=\(request.currentDirectory?.path ?? "nil") prefix=\(request.prefixDirectory.path)", request: request)
+        emitDiagnostic("launch request runtime=\(request.runtimeRequirements.map(\.rawValue).joined(separator: ",")) args=\(request.arguments.joined(separator: " "))", request: request)
         let resolvedWineBinary: String
         if request.runtimeRequirements.contains(.dxmt) {
+            emitDiagnostic("resolve DXMT-compatible Wine from preferred=\(request.wineBinaryPath)", request: request)
             resolvedWineBinary = try await resolveDXMTCompatibleWineBinary(preferredPath: request.wineBinaryPath)
         } else {
+            emitDiagnostic("resolve Wine executable preferred=\(request.wineBinaryPath)", request: request)
             guard let binary = BinaryLocator.resolveExecutable(
                 preferredPath: request.wineBinaryPath,
                 candidateNames: BinaryLocator.candidateNames(forExecutable: request.wineBinaryPath)
@@ -67,8 +75,10 @@ struct WineService: WineServicing {
             }
             resolvedWineBinary = binary
         }
+        emitDiagnostic("resolved Wine binary=\(resolvedWineBinary)", request: request)
 
         if let quarantinedPath = Self.quarantinedPath(forExecutableAtPath: resolvedWineBinary) {
+            emitDiagnostic("quarantine detected path=\(quarantinedPath)", request: request)
             throw WineServiceError.binaryQuarantined(quarantinedPath)
         }
         request.onOutput?(ProcessOutputChunk(stream: .stdout, text: "NSLauncher selected Wine binary: \(resolvedWineBinary)\n"))
@@ -77,23 +87,33 @@ struct WineService: WineServicing {
         let env = request.environment.merging([
             "WINEPREFIX": request.prefixDirectory.path
         ]) { _, new in new }
+        emitDiagnostic("environment WINEPREFIX=\(env["WINEPREFIX"] ?? "") customKeys=\(request.environment.keys.sorted().joined(separator: ","))", request: request)
 
         if request.runtimeRequirements.contains(.dxmt) {
+            emitDiagnostic("ensure DXMT runtime", request: request)
             try await ensureDXMTInstalled(
                 prefixDirectory: request.prefixDirectory,
                 wineBinaryPath: resolvedWineBinary,
-                environment: env
+                environment: env,
+                onDiagnostic: { emitDiagnostic($0, request: request) }
             )
+            emitDiagnostic("DXMT runtime ready", request: request)
         } else if request.runtimeRequirements.contains(.dxvk) {
+            emitDiagnostic("ensure DXVK runtime", request: request)
             try await ensureDXVKInstalled(
                 prefixDirectory: request.prefixDirectory,
                 wineBinaryPath: resolvedWineBinary,
-                environment: env
+                environment: env,
+                onDiagnostic: { emitDiagnostic($0, request: request) }
             )
+            emitDiagnostic("DXVK runtime ready", request: request)
         }
 
+        emitDiagnostic("snapshot existing game processes", request: request)
         let alreadyRunningGamePIDs = await runningExecutableProcessIDs(request.executablePath)
+        emitDiagnostic("existing game process count=\(alreadyRunningGamePIDs.count)", request: request)
         do {
+            emitDiagnostic("start process command=\(resolvedWineBinary) \(([request.executablePath.path] + request.arguments).joined(separator: " "))", request: request)
             return try await processRunner.run(
                 executable: resolvedWineBinary,
                 arguments: [request.executablePath.path] + request.arguments,
@@ -102,31 +122,49 @@ struct WineService: WineServicing {
                 onOutput: request.onOutput
             )
         } catch let ProcessRunnerError.nonZeroExit(result) {
+            emitDiagnostic("process exited non-zero code=\(result.exitCode); checking whether game stayed alive", request: request)
             if await hasNewLaunchedExecutableProcess(request.executablePath, excluding: alreadyRunningGamePIDs) {
+                emitDiagnostic("detected launched game process after Wine exit; treating launch as successful", request: request)
                 return ProcessResult(exitCode: 0, stdout: result.stdout, stderr: result.stderr)
             }
             if result.exitCode == 15, Self.outputIndicatesGameStarted(result.stdout + "\n" + result.stderr) {
+                emitDiagnostic("Wine exit 15 with started-game signal; treating launch as successful", request: request)
                 return ProcessResult(exitCode: 0, stdout: result.stdout, stderr: result.stderr)
             }
             if request.runtimeRequirements.contains(.dxmt),
                Self.outputIndicatesDXMTUnsupportedWine(result.stdout + "\n" + result.stderr) {
+                emitDiagnostic("DXMT unsupported Wine signal detected", request: request)
                 throw WineServiceError.dxmtUnsupportedWine(resolvedWineBinary)
             }
+            if let driverName = Self.unsupportedKernelDriverName(in: result.stdout + "\n" + result.stderr) {
+                emitDiagnostic("unsupported kernel driver detected=\(driverName)", request: request)
+                throw WineServiceError.unsupportedKernelDriver(driverName)
+            }
+            emitDiagnostic("non-zero process exit remains failure code=\(result.exitCode)", request: request)
             throw ProcessRunnerError.nonZeroExit(result)
         }
+    }
+
+    private func emitDiagnostic(_ message: String, request: WineLaunchRequest) {
+        request.onOutput?(ProcessOutputChunk(stream: .stdout, text: "[NSLauncher][launch-detail] \(message)\n"))
     }
 
     /// Installs the DXMT builtin payload into the Wine runtime and clears prefix overrides.
     private func ensureDXMTInstalled(
         prefixDirectory: URL,
         wineBinaryPath: String,
-        environment: [String: String]
+        environment: [String: String],
+        onDiagnostic: (String) -> Void = { _ in }
     ) async throws {
         do {
+            onDiagnostic("prepare DXMT payload")
             let extractedURL = try await prepareDXMTPayload()
+            onDiagnostic("DXMT payload path=\(extractedURL.path)")
             let wineRoot = try wineRootDirectory(forBinaryAtPath: wineBinaryPath)
+            onDiagnostic("Wine root for DXMT=\(wineRoot.path)")
             let wineLibrary = wineRoot.appendingPathComponent("lib/wine", isDirectory: true)
             try await ensureDXMTWineSymbolsAvailable(wineLibrary: wineLibrary, wineBinaryPath: wineBinaryPath)
+            onDiagnostic("DXMT Wine symbols available")
             let x64Windows = wineLibrary.appendingPathComponent("x86_64-windows", isDirectory: true)
             let x86Windows = wineLibrary.appendingPathComponent("i386-windows", isDirectory: true)
             let x64Unix = wineLibrary.appendingPathComponent("x86_64-unix", isDirectory: true)
@@ -166,6 +204,7 @@ struct WineService: WineServicing {
             ]
 
             if !FileManager.default.fileExists(atPath: markerURL.path) || !dxmtPayloadIsCurrent(requiredCopies) {
+                onDiagnostic("install DXMT payload into Wine library and prefix")
                 try FileManager.default.createDirectory(at: x64Windows, withIntermediateDirectories: true)
                 try FileManager.default.createDirectory(at: x86Windows, withIntermediateDirectories: true)
                 try FileManager.default.createDirectory(at: x64Unix, withIntermediateDirectories: true)
@@ -176,10 +215,13 @@ struct WineService: WineServicing {
                     try copyDLLs(copy.names, from: copy.sourceDirectory, to: copy.destinationDirectory)
                 }
                 try Data("installed\n".utf8).write(to: markerURL, options: .atomic)
+            } else {
+                onDiagnostic("DXMT payload marker current")
             }
 
             // The DXMT builtin payload replaces Wine builtin DLLs, so native overrides must be absent.
             for dllName in ["d3d10core", "d3d11", "dxgi", "nvapi64", "nvngx", "winemetal"] {
+                onDiagnostic("clear DXMT DLL override \(dllName)")
                 try await deleteDLLOverride(dllName, wineBinaryPath: wineBinaryPath, environment: environment)
             }
         } catch let wineError as WineServiceError {
@@ -189,7 +231,7 @@ struct WineService: WineServicing {
         }
     }
 
-    /// Selects a Wine binary that can host DXMT instead of blindly using Wine Stable.
+    /// Selects the latest WineHQ Devel binary and verifies that it can host DXMT.
     private func resolveDXMTCompatibleWineBinary(preferredPath: String) async throws -> String {
         var attemptedPaths: [String] = []
 
@@ -221,7 +263,8 @@ struct WineService: WineServicing {
     private func ensureDXVKInstalled(
         prefixDirectory: URL,
         wineBinaryPath: String,
-        environment: [String: String]
+        environment: [String: String],
+        onDiagnostic: (String) -> Void = { _ in }
     ) async throws {
         let markerURL = prefixDirectory.appendingPathComponent(".nslauncher-dxvk-\(Self.dxvkVersion)")
         let system32 = prefixDirectory.appendingPathComponent("drive_c/windows/system32", isDirectory: true)
@@ -229,14 +272,18 @@ struct WineService: WineServicing {
         if FileManager.default.fileExists(atPath: markerURL.path),
            FileManager.default.fileExists(atPath: system32.appendingPathComponent("d3d11.dll").path),
            FileManager.default.fileExists(atPath: system32.appendingPathComponent("dxgi.dll").path) {
+            onDiagnostic("DXVK marker current")
             return
         }
 
         do {
+            onDiagnostic("prepare DXVK payload")
             let extractedURL = try await prepareDXVKPayload()
+            onDiagnostic("DXVK payload path=\(extractedURL.path)")
             try FileManager.default.createDirectory(at: system32, withIntermediateDirectories: true)
             try FileManager.default.createDirectory(at: syswow64, withIntermediateDirectories: true)
 
+            onDiagnostic("copy DXVK DLLs into prefix")
             try copyDXVKDLLs(
                 from: extractedURL.appendingPathComponent("x64", isDirectory: true),
                 to: system32
@@ -246,6 +293,7 @@ struct WineService: WineServicing {
                 to: syswow64
             )
 
+            onDiagnostic("set DXVK DLL overrides")
             try await setDLLOverride("d3d11", wineBinaryPath: wineBinaryPath, environment: environment)
             try await setDLLOverride("dxgi", wineBinaryPath: wineBinaryPath, environment: environment)
             try Data("installed\n".utf8).write(to: markerURL, options: .atomic)
@@ -512,6 +560,12 @@ struct WineService: WineServicing {
         output.localizedCaseInsensitiveContains("no exported symbols needed by DXMT")
     }
 
+    /// Detects Windows kernel drivers that Wine cannot load, most commonly anti-cheat/protection drivers.
+    private static func unsupportedKernelDriverName(in output: String) -> String? {
+        let driverNames = ["HoYoKProtect.sys", "HoYoProtect.sys", "mhyprot2.sys"]
+        return driverNames.first { output.localizedCaseInsensitiveContains($0) }
+    }
+
     /// Some Wine builds return 15 when the GUI game session closes cleanly.
     private static func outputIndicatesGameStarted(_ output: String) -> Bool {
         output.contains("MultiThreadStackTrace init success")
@@ -519,7 +573,7 @@ struct WineService: WineServicing {
             || output.contains("\"message\":\"app running\"")
     }
 
-    /// Candidate Wine binaries that may include the winemac.drv exports DXMT requires.
+    /// Candidate Wine binaries from the single latest WineHQ install.
     private static func dxmtWineCandidatePaths(preferredPath: String) -> [String] {
         let preferredPath = preferredPath.trimmingCharacters(in: .whitespacesAndNewlines)
         let explicitCandidates = [
@@ -528,45 +582,18 @@ struct WineService: WineServicing {
                 preferredPath: preferredPath,
                 candidateNames: BinaryLocator.candidateNames(forExecutable: preferredPath)
             ),
-            "/Applications/CrossOver.app/Contents/SharedSupport/CrossOver/bin/wine64",
-            "/Applications/CrossOver.app/Contents/SharedSupport/CrossOver/bin/wine",
-            "/Applications/Whisky.app/Contents/Resources/Libraries/Wine/bin/wine64",
-            "/Applications/Whisky.app/Contents/Resources/Libraries/Wine/bin/wine",
-            FileManager.default.homeDirectoryForCurrentUser
-                .appendingPathComponent("Library/Application Support/com.isaacmarovitz.Whisky/Libraries/Wine/bin/wine64")
-                .path,
-            FileManager.default.homeDirectoryForCurrentUser
-                .appendingPathComponent("Library/Application Support/com.isaacmarovitz.Whisky/Libraries/Wine/bin/wine")
-                .path,
-            FileManager.default.homeDirectoryForCurrentUser
-                .appendingPathComponent("Library/Application Support/Whisky/Libraries/Wine/bin/wine64")
-                .path,
-            FileManager.default.homeDirectoryForCurrentUser
-                .appendingPathComponent("Library/Application Support/Whisky/Libraries/Wine/bin/wine")
-                .path,
-            FileManager.default.homeDirectoryForCurrentUser
-                .appendingPathComponent("Library/Application Support/Yaagl/wine/bin/wine64")
-                .path,
-            FileManager.default.homeDirectoryForCurrentUser
-                .appendingPathComponent("Library/Application Support/Yaagl/wine/bin/wine")
-                .path
+            "/Applications/Wine Devel.app/Contents/Resources/wine/bin/wine"
         ].compactMap { $0 }.filter { !$0.isEmpty }
 
         var seen = Set<String>()
         var candidates = explicitCandidates.filter { seen.insert($0).inserted }
 
-        for appName in ["CrossOver.app", "Whisky.app"] {
+        for appName in ["Wine Devel.app"] {
             for root in applicationSearchRoots() {
                 let appURL = root.appendingPathComponent(appName, isDirectory: true)
                 candidates.append(contentsOf: wineExecutables(in: appURL, seen: &seen))
             }
         }
-        for libraryURL in whiskyLibrarySearchRoots() {
-            candidates.append(contentsOf: wineExecutables(in: libraryURL, seen: &seen))
-        }
-        let yaaglWineURL = FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent("Library/Application Support/Yaagl/wine", isDirectory: true)
-        candidates.append(contentsOf: wineExecutables(in: yaaglWineURL, seen: &seen))
 
         return candidates
     }
@@ -576,16 +603,6 @@ struct WineService: WineServicing {
         [
             URL(fileURLWithPath: "/Applications", isDirectory: true),
             FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Applications", isDirectory: true)
-        ]
-    }
-
-    /// Whisky keeps its downloaded GPTK/Wine libraries under Application Support.
-    private static func whiskyLibrarySearchRoots() -> [URL] {
-        [
-            FileManager.default.homeDirectoryForCurrentUser
-                .appendingPathComponent("Library/Application Support/com.isaacmarovitz.Whisky/Libraries", isDirectory: true),
-            FileManager.default.homeDirectoryForCurrentUser
-                .appendingPathComponent("Library/Application Support/Whisky/Libraries", isDirectory: true)
         ]
     }
 

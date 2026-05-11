@@ -1,6 +1,5 @@
 import AppKit
 import SwiftUI
-import UniformTypeIdentifiers
 
 /// Main launcher screen with install actions and operation status.
 struct ContentView: View {
@@ -54,27 +53,14 @@ struct ContentView: View {
         }
     }
 
-    /// Top visual summary for the selected game and current install strategy.
+    /// Top visual summary for the selected game.
     private func titleBlock(for game: GameDefinition) -> some View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 8) {
                 Text(game.displayName)
                     .font(.largeTitle.bold())
-                Text(text.launcherStrategyDescription(game.installerStrategy))
+                Text(text.nativeLauncherDescription)
                     .foregroundStyle(.secondary)
-            }
-
-            Spacer()
-
-            VStack(alignment: .trailing, spacing: 10) {
-                HeaderBadge(
-                    title: viewModel.canDownloadSelectedGame ? text.downloadReady : text.localOnly,
-                    tint: viewModel.canDownloadSelectedGame ? .green : .orange
-                )
-                HeaderBadge(
-                    title: text.experimentalBadge,
-                    tint: .orange
-                )
             }
         }
         .padding(24)
@@ -102,35 +88,14 @@ struct ContentView: View {
     private var actionBar: some View {
         var buttons = [
             ActionButtonItem(
-                title: text.downloadInstallTitle,
-                icon: "arrow.down.circle",
-                prominent: true,
-                disabled: viewModel.isBusy || !viewModel.canDownloadSelectedGame
-            ) {
-                viewModel.installSelectedGame()
-            },
-            ActionButtonItem(
                 title: text.updateGameTitle,
                 icon: "arrow.triangle.2.circlepath",
+                prominent: true,
                 disabled: viewModel.isBusy || !viewModel.canUpdateSelectedGame
             ) {
                 viewModel.updateSelectedGame()
             }
         ]
-
-        if viewModel.canInstallFromLocalArchive {
-            buttons.append(
-                ActionButtonItem(
-                    title: text.localArchiveTitle,
-                    icon: "externaldrive.badge.plus",
-                    disabled: viewModel.isBusy
-                ) {
-                    if let archiveURL = chooseArchiveURL() {
-                        viewModel.installSelectedGame(archiveOverrideURL: archiveURL)
-                    }
-                }
-            )
-        }
 
         buttons.append(
             contentsOf: [
@@ -177,7 +142,7 @@ struct ContentView: View {
                 }
 
                 if let progress = viewModel.operationProgress {
-                    // Progress is split into overall and per-part bars for multipart archives.
+                    // Progress is split into overall and current Sophon asset bars.
                     VStack(alignment: .leading, spacing: 10) {
                         VStack(alignment: .leading, spacing: 6) {
                             Text(text.totalProgressLabel)
@@ -375,7 +340,7 @@ struct ContentView: View {
         .background(.black.opacity(0.08), in: RoundedRectangle(cornerRadius: 10))
     }
 
-    /// Scrollable tile for the currently active manifest-file list.
+    /// Scrollable tile for the currently active Sophon asset list.
     private func statusListTile(label: String, values: [String], monospaced: Bool) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(label)
@@ -424,23 +389,6 @@ struct ContentView: View {
                     .font(.body)
             }
         }
-    }
-
-    /// Opens a file picker for archive formats supported by the installer.
-    private func chooseArchiveURL() -> URL? {
-        let panel = NSOpenPanel()
-        panel.title = text.chooseArchivePackage
-        panel.canChooseFiles = true
-        panel.canChooseDirectories = false
-        panel.allowsMultipleSelection = false
-        panel.allowedContentTypes = [
-            UTType(filenameExtension: "7z"),
-            .zip,
-            UTType(filenameExtension: "001"),
-            UTType(filenameExtension: "tar"),
-            UTType(filenameExtension: "gz")
-        ].compactMap { $0 }
-        return panel.runModal() == .OK ? panel.url : nil
     }
 
 }
@@ -554,20 +502,5 @@ private struct FlexFlowLayout: Layout {
             currentX += size.width
             rowHeight = max(rowHeight, size.height)
         }
-    }
-}
-
-/// Small status badge shown in the header.
-private struct HeaderBadge: View {
-    let title: String
-    let tint: Color
-
-    var body: some View {
-        Text(title)
-            .font(.caption.weight(.semibold))
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
-            .background(tint.opacity(0.16), in: Capsule())
-            .foregroundStyle(tint)
     }
 }
