@@ -1,3 +1,11 @@
+// OperationController.swift
+//
+// Cooperative pause/stop control for long-running install/update/launch tasks.
+//
+// Swift concurrency has no built-in "pause", so long loops call `checkpoint()` to
+// (a) throw on cancellation/stop and (b) sleep while paused. Handlers let APIs that
+// need explicit cancellation (URLSession, Process) react to pause/stop requests.
+
 import Foundation
 
 /// Cooperative pause/stop controller shared by long-running async operations.

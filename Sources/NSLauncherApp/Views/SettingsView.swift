@@ -1,3 +1,13 @@
+// SettingsView.swift
+//
+// Settings screen: language + voice pack, and (for the selected game) install root,
+// executable path, display mode, the three opt-in launch toggles, and a voice-pack
+// storage overview with per-pack removal. There are intentionally no archive/cache/
+// package controls — the product is Sophon-only.
+//
+// The opt-in launch toggles (cloud compatibility, AC patch, network block) show
+// their ToS/ban warning inline via the localized descriptions.
+
 import AppKit
 import SwiftUI
 
@@ -16,6 +26,7 @@ struct SettingsView: View {
 
                 if let game = viewModel.selectedGame {
                     installSection(for: game)
+                    storageSection
                 }
             }
             .padding(24)
@@ -83,8 +94,93 @@ struct SettingsView: View {
                 } label: {
                     Text(text.languageLabel)
                 }
+
+                settingField {
+                    Picker(text.voiceLanguageLabel, selection: Binding(
+                        get: { viewModel.settings.voiceLanguage },
+                        set: { viewModel.setVoiceLanguage($0) }
+                    )) {
+                        ForEach(VoiceLanguage.allCases) { language in
+                            Text(text.voiceLanguageName(language)).tag(language)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .pointerOnHover()
+                } label: {
+                    Text(text.voiceLanguageLabel)
+                }
+
+                Text(text.voiceLanguageDescription)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
         }
+    }
+
+    /// Voice-pack storage overview with per-pack removal.
+    private var storageSection: some View {
+        SettingsCard(title: text.storageSectionTitle, subtitle: text.storageSectionSubtitle) {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack {
+                    Text(text.voicePacksLabel)
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Button(text.refreshVoicePacksTitle) {
+                        viewModel.refreshVoicePackages()
+                    }
+                    .buttonStyle(.bordered)
+                    .disabled(viewModel.isManagingVoicePacks)
+                    .pointerOnHover(enabled: !viewModel.isManagingVoicePacks)
+                }
+
+                if viewModel.voicePackages.isEmpty {
+                    Text(text.noVoicePacksFound)
+                        .foregroundStyle(.secondary)
+                } else {
+                    ForEach(viewModel.voicePackages) { package in
+                        voicePackageRow(package)
+                    }
+                }
+            }
+        }
+    }
+
+    /// One voice-pack row with size, file count, and a removal action for non-selected packs.
+    private func voicePackageRow(_ package: VoicePackage) -> some View {
+        let isSelected = package.voiceLanguage == viewModel.settings.voiceLanguage
+        let name = package.voiceLanguage.map { text.voiceLanguageName($0) } ?? package.categoryName
+
+        return HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(name)
+                    .font(.body.weight(.semibold))
+                HStack(spacing: 12) {
+                    Text("\(text.voicePackSizeLabel): \(ByteCountFormatter.string(fromByteCount: package.decompressedBytes, countStyle: .file))")
+                    Text("\(text.voicePackFilesLabel): \(package.fileCount)")
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            if isSelected {
+                Text(text.selectedVoicePackBadge)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.green)
+            } else {
+                Button(text.removeVoicePackTitle) {
+                    viewModel.removeVoicePack(package)
+                }
+                .buttonStyle(.bordered)
+                .disabled(viewModel.isManagingVoicePacks)
+                .pointerOnHover(enabled: !viewModel.isManagingVoicePacks)
+            }
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.black.opacity(0.08), in: RoundedRectangle(cornerRadius: 14))
     }
 
     /// Selected-game install root, executable, and display settings.
@@ -107,6 +203,57 @@ struct SettingsView: View {
                 } label: {
                     Text(text.displayModeLabel)
                 }
+
+                settingField {
+                    Toggle(isOn: Binding(
+                        get: { viewModel.settings.cloudCompatibilityMode },
+                        set: { viewModel.setCloudCompatibilityMode($0) }
+                    )) {
+                        Text(text.cloudCompatibilityLabel)
+                    }
+                    .toggleStyle(.switch)
+                    .pointerOnHover()
+                } label: {
+                    Text(text.cloudCompatibilityLabel)
+                }
+
+                Text(text.cloudCompatibilityDescription)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                settingField {
+                    Toggle(isOn: Binding(
+                        get: { viewModel.settings.acPatchMode },
+                        set: { viewModel.setACPatchMode($0) }
+                    )) {
+                        Text(text.acPatchLabel)
+                    }
+                    .toggleStyle(.switch)
+                    .pointerOnHover()
+                } label: {
+                    Text(text.acPatchLabel)
+                }
+
+                Text(text.acPatchDescription)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                settingField {
+                    Toggle(isOn: Binding(
+                        get: { viewModel.settings.blockNetMode },
+                        set: { viewModel.setBlockNetMode($0) }
+                    )) {
+                        Text(text.blockNetLabel)
+                    }
+                    .toggleStyle(.switch)
+                    .pointerOnHover()
+                } label: {
+                    Text(text.blockNetLabel)
+                }
+
+                Text(text.blockNetDescription)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
 
                 PathInputRow(
                     label: text.installRoot,

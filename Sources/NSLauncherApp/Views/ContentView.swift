@@ -1,3 +1,10 @@
+// ContentView.swift
+//
+// Main launcher screen: game title, action bar (Update Game / Play-Stop), status
+// and progress panels, and filtered Wine/update log panels. Settings is pushed as a
+// navigation destination. Also hosts small reusable layout/button helpers used only
+// by this screen.
+
 import AppKit
 import SwiftUI
 

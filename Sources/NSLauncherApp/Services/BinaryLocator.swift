@@ -1,3 +1,9 @@
+// BinaryLocator.swift
+//
+// Resolves external command-line tools (currently only Wine) from an explicit
+// preferred path, then fallback names across PATH and common macOS roots.
+// Kept separate so the Wine service, process runner, and settings share one lookup.
+
 import Foundation
 
 /// Resolves external command-line tools from user preferences and common install paths.

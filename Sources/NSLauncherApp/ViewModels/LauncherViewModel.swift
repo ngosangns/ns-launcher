@@ -1,3 +1,18 @@
+// LauncherViewModel.swift
+//
+// Main UI state machine. Owns published settings/status/progress/log state, starts
+// install/update/launch tasks, and maps service events into stable SwiftUI state.
+//
+// Responsibilities:
+// - bootstrap the production dependency graph and load/migrate settings;
+// - plan/install/update via LauncherCoordinator, with pause/stop/transfer metrics;
+// - voice-pack management (refresh + remove, blocking removal of the selected pack);
+// - Wine launch with filtered, bounded logging;
+// - localized error mapping for every service error type.
+//
+// Logs are capped (~80k chars) so the SwiftUI text views stay responsive; progress
+// and speed/ETA are throttled independently of the raw download callbacks.
+
 import Foundation
 import SwiftUI
 
@@ -46,6 +61,10 @@ final class LauncherViewModel: ObservableObject {
     @Published var updateRunLog = ""
     /// True while the selected game is being updated through Sophon.
     @Published var isUpdatingGame = false
+    /// Voice-over packages advertised by the live Sophon build.
+    @Published var voicePackages: [VoicePackage] = []
+    /// True while voice packages are being refreshed or removed.
+    @Published var isManagingVoicePacks = false
 
     private let coordinator: LauncherCoordinator
     private var currentTask: Task<Void, Never>?
@@ -129,6 +148,87 @@ final class LauncherViewModel: ObservableObject {
     func setLaunchDisplayMode(_ mode: LaunchDisplayMode) {
         settings.launchDisplayMode = mode
         persistSettings()
+    }
+
+    /// Updates the voice-over language pack and persists the choice.
+    func setVoiceLanguage(_ language: VoiceLanguage) {
+        settings.voiceLanguage = language
+        persistSettings()
+    }
+
+    /// Updates the cloud-compatibility launch toggle and persists the choice.
+    func setCloudCompatibilityMode(_ enabled: Bool) {
+        settings.cloudCompatibilityMode = enabled
+        persistSettings()
+    }
+
+    /// Updates the AC patch toggle and persists the choice.
+    func setACPatchMode(_ enabled: Bool) {
+        settings.acPatchMode = enabled
+        persistSettings()
+    }
+
+    /// Updates the launch network block toggle and persists the choice.
+    func setBlockNetMode(_ enabled: Bool) {
+        settings.blockNetMode = enabled
+        persistSettings()
+    }
+
+    /// Fetches the voice packages advertised by the live Sophon build.
+    func refreshVoicePackages() {
+        guard !isManagingVoicePacks else { return }
+        isManagingVoicePacks = true
+        statusText = text.checkingVoicePacks
+        errorMessage = nil
+
+        Task { [weak self] in
+            guard let self else { return }
+            defer { self.isManagingVoicePacks = false }
+            do {
+                let packages = try await self.coordinator.fetchVoicePackages(settings: self.settings)
+                self.voicePackages = packages.sorted { $0.decompressedBytes > $1.decompressedBytes }
+                if packages.isEmpty {
+                    self.statusText = self.text.noVoicePacksFound
+                } else {
+                    self.statusText = self.text.ready
+                }
+            } catch {
+                self.errorMessage = self.localizedErrorMessage(for: error)
+                self.statusText = self.text.voicePackRemoveFailed
+            }
+        }
+    }
+
+    /// Removes the local files of one non-selected voice pack.
+    func removeVoicePack(_ package: VoicePackage) {
+        guard !isManagingVoicePacks else { return }
+        guard let game = selectedGame else { return }
+        if package.voiceLanguage == settings.voiceLanguage {
+            errorMessage = text.voicePackAlreadySelected
+            return
+        }
+
+        isManagingVoicePacks = true
+        statusText = text.removingVoicePack
+        errorMessage = nil
+
+        Task { [weak self] in
+            guard let self else { return }
+            defer { self.isManagingVoicePacks = false }
+            do {
+                let freedBytes = try await self.coordinator.removeVoicePack(
+                    matchingField: package.matchingField,
+                    game: game
+                )
+                self.voicePackages.removeAll { $0.matchingField == package.matchingField }
+                self.statusText = self.text.voicePackRemoved(
+                    ByteCountFormatter.string(fromByteCount: freedBytes, countStyle: .file)
+                )
+            } catch {
+                self.errorMessage = self.localizedErrorMessage(for: error)
+                self.statusText = self.text.voicePackRemoveFailed
+            }
+        }
     }
 
     /// Builds an install plan for the selected game.

@@ -1,3 +1,34 @@
+// GenshinSophonInstaller.swift
+//
+// HoYoPlay Sophon install/update backend — the single download path for Genshin.
+//
+// Fresh install and update share this pipeline (a fresh install is just a delta
+// against an empty local root):
+//   1. getGameBranches → live branch (package id, branch, password, tag).
+//   2. getBuild → category manifests (game resources + voice-over packs).
+//   3. Select the "game" manifest plus the user-selected voice manifest.
+//   4. Download zstd-compressed protobuf manifests; verify compressed size,
+//      decompressed size, and manifest MD5.
+//   5. Decode assets/chunks; plan changed assets by local size + asset MD5.
+//   6. Prune files outside the target set (via InstallTargetPruner).
+//   7. Download missing chunks with bounded concurrency; decompress with in-process
+//      libzstd when available (CLI fallback); verify each decompressed chunk MD5;
+//      write by offset into `.nslauncher-sophon-staging`.
+//   8. Verify the full asset MD5 and atomically replace the final file.
+//   9. Write `.nslauncher-install.json` only after the expected executable exists.
+//
+// Tuning: concurrency is split into asset workers (`maxConcurrentAssets`), per-asset
+// chunk tasks (`maxConcurrentChunksPerAsset`), and a global HTTP request cap
+// (`maxActiveChunkRequests`) to avoid CDN throttling. Resume state is flushed every
+// `stateFlushChunkCount` chunks instead of per chunk, trading a few re-downloaded
+// chunks after a crash for far less metadata I/O.
+//
+// Voice packs: `fetchVoicePackages` lists every non-"game" category from `getBuild`
+// stats (no manifest download), and `removeVoicePack` deletes only the files named
+// by that category's manifest so game resources are never touched. The category
+// `matching_field` values (`game`, `en-us`, `zh-cn`, `ja-jp`, `ko-kr`) come from the
+// live API; if HoYoverse changes them, unknown packs still list via `categoryName`.
+
 import CryptoKit
 import Darwin
 import Foundation
@@ -14,6 +45,7 @@ enum SophonInstallerError: LocalizedError {
     case invalidChunk(String)
     case checksumMismatch(String)
     case expectedExecutableMissing(String)
+    case voicePackUnavailable(String)
 
     var errorDescription: String? {
         switch self {
@@ -21,6 +53,8 @@ enum SophonInstallerError: LocalizedError {
             return "Sophon metadata is unavailable."
         case .buildUnavailable:
             return "Sophon build metadata is unavailable."
+        case let .voicePackUnavailable(field):
+            return "Voice pack is unavailable: \(field)"
         case let .manifestUnavailable(path):
             return "Sophon manifest is unavailable: \(path)"
         case let .manifestChecksumMismatch(path):
@@ -45,8 +79,20 @@ enum SophonInstallerError: LocalizedError {
 protocol SophonInstalling: Sendable {
     func fetchBuild(
         language: AppLanguage,
+        voiceMatchingField: String,
         onEvent: (@Sendable (InstallProgressEvent) async -> Void)?
     ) async throws -> SophonBuild
+    /// Lists every voice-over category advertised by the current Sophon build.
+    func fetchVoicePackages(
+        language: AppLanguage,
+        onEvent: (@Sendable (InstallProgressEvent) async -> Void)?
+    ) async throws -> [VoicePackage]
+    /// Deletes the local files of one non-selected voice pack and returns the freed byte count.
+    func removeVoicePack(
+        matchingField: String,
+        game: GameDefinition,
+        onEvent: (@Sendable (InstallProgressEvent) async -> Void)?
+    ) async throws -> Int64
     func planUpdate(
         for game: GameDefinition,
         build: SophonBuild,
@@ -70,7 +116,6 @@ actor GenshinSophonInstaller: SophonInstalling {
     private static let gameID = "gopR6Cufr3"
     private static let launcherID = "VYTpXlbWo8"
     private static let platApp = "ddxf6vlr1reo"
-    private static let defaultVoiceMatchingField = "en-us"
     private static let maxConcurrentAssets = 2
     private static let maxConcurrentChunksPerAsset = 6
     private static let maxActiveChunkRequests = 12
@@ -104,6 +149,7 @@ actor GenshinSophonInstaller: SophonInstalling {
     /// Fetches and decodes the selected Genshin Sophon build.
     func fetchBuild(
         language: AppLanguage,
+        voiceMatchingField: String,
         onEvent: (@Sendable (InstallProgressEvent) async -> Void)? = nil
     ) async throws -> SophonBuild {
         await onEvent?(.diagnostic("fetch branch metadata language=\(language.officialMetadataLanguageCode)"))
@@ -111,7 +157,7 @@ actor GenshinSophonInstaller: SophonInstalling {
         await onEvent?(.diagnostic("branch resolved package=\(branch.packageID) tag=\(branch.tag) branch=\(branch.branch.isEmpty ? "main" : branch.branch)"))
         await onEvent?(.diagnostic("fetch Sophon build metadata"))
         let buildResponse = try await fetchBuildResponse(branch: branch)
-        let selectedIdentities = selectInstallIdentities(from: buildResponse.data.manifests)
+        let selectedIdentities = selectInstallIdentities(from: buildResponse.data.manifests, voiceMatchingField: voiceMatchingField)
         await onEvent?(.diagnostic("build tag=\(buildResponse.data.tag.isEmpty ? branch.tag : buildResponse.data.tag) manifests total=\(buildResponse.data.manifests.count) selected=\(selectedIdentities.map(\.matchingField).joined(separator: ","))"))
         guard !selectedIdentities.isEmpty else {
             throw SophonInstallerError.buildUnavailable
@@ -130,6 +176,67 @@ actor GenshinSophonInstaller: SophonInstalling {
             packageID: branch.packageID,
             manifests: manifests
         )
+    }
+
+    /// Lists the voice-over categories advertised by the live Sophon build without decoding full manifests.
+    func fetchVoicePackages(
+        language: AppLanguage,
+        onEvent: (@Sendable (InstallProgressEvent) async -> Void)? = nil
+    ) async throws -> [VoicePackage] {
+        let branch = try await fetchBranch(language: language)
+        await onEvent?(.diagnostic("fetch voice packages branch tag=\(branch.tag)"))
+        let buildResponse = try await fetchBuildResponse(branch: branch)
+        return buildResponse.data.manifests
+            .filter { $0.matchingField != "game" }
+            .map { identity in
+                VoicePackage(
+                    matchingField: identity.matchingField,
+                    categoryName: identity.categoryName,
+                    decompressedBytes: identity.stats.uncompressedSize,
+                    fileCount: identity.stats.fileCount
+                )
+            }
+    }
+
+    /// Deletes the local files of one non-selected voice pack and returns the freed byte count.
+    func removeVoicePack(
+        matchingField: String,
+        game: GameDefinition,
+        onEvent: (@Sendable (InstallProgressEvent) async -> Void)? = nil
+    ) async throws -> Int64 {
+        let branch = try await fetchBranch(language: .english)
+        let buildResponse = try await fetchBuildResponse(branch: branch)
+        guard let identity = buildResponse.data.manifests.first(where: { $0.matchingField == matchingField }) else {
+            throw SophonInstallerError.voicePackUnavailable(matchingField)
+        }
+        await onEvent?(.diagnostic("remove voice pack field=\(matchingField) files=\(identity.stats.fileCount)"))
+
+        let manifest = try await fetchCategoryManifest(identity: identity, onEvent: onEvent)
+        let assetPaths = manifest.assets.filter { !$0.isDirectory }.map(\.path)
+        await onEvent?(.diagnostic("voice pack \(matchingField) decoded assets=\(assetPaths.count)"))
+
+        var freedBytes: Int64 = 0
+        for relativePath in assetPaths {
+            let destination = game.installDirectory.appendingPathComponent(relativePath)
+            guard fileManager.fileExists(atPath: destination.path) else { continue }
+            guard !Self.isProtectedInstallPath(relativePath) else {
+                await onEvent?(.diagnostic("skip protected voice asset \(relativePath)"))
+                continue
+            }
+            let attributes = try? fileManager.attributesOfItem(atPath: destination.path)
+            let size = (attributes?[.size] as? NSNumber)?.int64Value ?? 0
+            try fileManager.removeItem(at: destination)
+            freedBytes += size
+        }
+        await onEvent?(.diagnostic("voice pack \(matchingField) removed files=\(assetPaths.count) freed=\(Self.formatBytes(freedBytes))"))
+        return freedBytes
+    }
+
+    /// Guards against removing launcher metadata, staging, or the Wine prefix when deleting voice assets.
+    private static func isProtectedInstallPath(_ relativePath: String) -> Bool {
+        let normalized = relativePath.replacingOccurrences(of: "\\", with: "/")
+        let protectedPrefixes = [".nslauncher-install.json", ".nslauncher-sophon-staging", ".wine"]
+        return protectedPrefixes.contains(where: { normalized == $0 || normalized.hasPrefix($0 + "/") })
     }
 
     /// Computes a full-build Sophon delta by checking existing files by size and MD5.
@@ -574,9 +681,12 @@ actor GenshinSophonInstaller: SophonInstalling {
         return decoded
     }
 
-    private func selectInstallIdentities(from identities: [SophonBuildIdentity]) -> [SophonBuildIdentity] {
+    private func selectInstallIdentities(
+        from identities: [SophonBuildIdentity],
+        voiceMatchingField: String
+    ) -> [SophonBuildIdentity] {
         identities.filter { identity in
-            identity.matchingField == "game" || identity.matchingField == Self.defaultVoiceMatchingField
+            identity.matchingField == "game" || identity.matchingField == voiceMatchingField
         }
     }
 

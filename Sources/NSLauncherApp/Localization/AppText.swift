@@ -1,3 +1,13 @@
+// AppText.swift
+//
+// Centralized English/Vietnamese copy for every user-facing string.
+//
+// `AppText` is a lightweight value type keyed by the active `AppLanguage`, so the
+// view model and views never hard-code user-facing text. Service-layer errors are
+// localized here and selected by `LauncherViewModel.localizedErrorMessage(for:)`.
+// Labels for the opt-in launch toggles carry their ToS/ban warning inline so the
+// risk is always visible in Settings.
+
 import Foundation
 
 /// Centralized localized copy for the launcher UI and error messages.
@@ -76,15 +86,67 @@ struct AppText {
     var languageLabel: String { localized(en: "Language", vi: "Ngôn ngữ") }
     var english: String { localized(en: "English", vi: "Tiếng Anh") }
     var vietnamese: String { localized(en: "Vietnamese", vi: "Tiếng Việt") }
+    var voiceLanguageLabel: String { localized(en: "Voice Pack", vi: "Gói lồng tiếng") }
+    var voiceLanguageDescription: String { localized(en: "Voice-over language downloaded with game resources. Keep one pack to minimize install and update size.", vi: "Ngôn ngữ lồng tiếng tải cùng tài nguyên game. Chỉ giữ một gói để giảm dung lượng cài đặt và cập nhật.") }
+
+    /// Localized display name for a voice-over language.
+    func voiceLanguageName(_ language: VoiceLanguage) -> String {
+        switch language {
+        case .english: return localized(en: "English", vi: "Tiếng Anh")
+        case .chinese: return localized(en: "Chinese", vi: "Tiếng Trung")
+        case .japanese: return localized(en: "Japanese", vi: "Tiếng Nhật")
+        case .korean: return localized(en: "Korean", vi: "Tiếng Hàn")
+        }
+    }
     var displayModeLabel: String { localized(en: "Display mode", vi: "Chế độ hiển thị") }
     var windowedMode: String { localized(en: "Windowed", vi: "Cửa sổ") }
     var fullscreenMode: String { localized(en: "Fullscreen", vi: "Toàn màn hình") }
+    var cloudCompatibilityLabel: String { localized(en: "Cloud compatibility mode", vi: "Chế độ tương thích cloud") }
+    var cloudCompatibilityDescription: String {
+        localized(
+            en: "Launch the Windows client in cloud-gaming mode and place a protection-driver stub so it can start under Wine. Unsupported by HoYoverse and may risk your account.",
+            vi: "Chạy client Windows ở chế độ cloud-gaming và đặt driver protection giả để game khởi động được dưới Wine. HoYoverse không hỗ trợ và có thể khiến tài khoản gặp rủi ro."
+        )
+    }
+    var acPatchLabel: String { localized(en: "AC patch (hide crash/Vulkan files)", vi: "AC patch (ẩn file crash/Vulkan)") }
+    var acPatchDescription: String {
+        localized(
+            en: "Temporarily move the crash reporter and Vulkan fallback files out of the way during launch, then restore them. Mirrors YAAGL's current Genshin behavior.",
+            vi: "Tạm di chuyển file crash reporter và Vulkan fallback ra chỗ khác trong lúc chạy game, rồi khôi phục sau. Theo đúng hành vi Genshin hiện tại của YAAGL."
+        )
+    }
+    var blockNetLabel: String { localized(en: "Launch network block (10s)", vi: "Chặn mạng lúc mở game (10 giây)") }
+    var blockNetDescription: String {
+        localized(
+            en: "Temporarily block dispatchosglobal.yuanshen.com in /etc/hosts for ~10 seconds during launch, then restore. Requires an administrator password prompt.",
+            vi: "Tạm chặn dispatchosglobal.yuanshen.com trong /etc/hosts khoảng 10 giây lúc mở game, rồi khôi phục. Cần xác nhận mật khẩu quản trị."
+        )
+    }
     var name: String { localized(en: "Name", vi: "Tên") }
     var installRoot: String { localized(en: "Install root", vi: "Thư mục cài đặt") }
     var executablePath: String { localized(en: "Executable path", vi: "Đường dẫn file chạy") }
     var wineBinary: String { localized(en: "Wine binary", vi: "File Wine") }
     var officialSophonSource: String { localized(en: "Official Sophon chunk source", vi: "Nguồn chunk Sophon chính thức") }
     var selectedSource: String { localized(en: "Selected source", vi: "Nguồn đang chọn") }
+
+    // MARK: - Storage Management
+
+    var storageSectionTitle: String { localized(en: "Storage", vi: "Dung lượng") }
+    var storageSectionSubtitle: String { localized(en: "Voice packs by size. Remove unused ones to free space; they can be re-downloaded any time.", vi: "Dung lượng các gói lồng tiếng. Gỡ gói không dùng để giải phóng dung lượng; có thể tải lại bất cứ lúc nào.") }
+    var voicePacksLabel: String { localized(en: "Voice packs", vi: "Gói lồng tiếng") }
+    var refreshVoicePacksTitle: String { localized(en: "Refresh", vi: "Làm mới") }
+    var selectedVoicePackBadge: String { localized(en: "Selected", vi: "Đang chọn") }
+    var removeVoicePackTitle: String { localized(en: "Remove", vi: "Gỡ") }
+    var voicePackSizeLabel: String { localized(en: "Size", vi: "Dung lượng") }
+    var voicePackFilesLabel: String { localized(en: "Files", vi: "Số file") }
+    var noVoicePacksFound: String { localized(en: "No voice packs found. Run Refresh after the game is installed.", vi: "Chưa có gói lồng tiếng. Hãy bấm Làm mới sau khi game đã cài đặt.") }
+    var checkingVoicePacks: String { localized(en: "Checking voice packs...", vi: "Đang kiểm tra gói lồng tiếng...") }
+    var removingVoicePack: String { localized(en: "Removing voice pack...", vi: "Đang gỡ gói lồng tiếng...") }
+    func voicePackRemoved(_ freedBytes: String) -> String {
+        localized(en: "Removed voice pack. Freed \(freedBytes).", vi: "Đã gỡ gói lồng tiếng. Giải phóng \(freedBytes).")
+    }
+    var voicePackRemoveFailed: String { localized(en: "Failed to remove voice pack", vi: "Gỡ gói lồng tiếng thất bại") }
+    var voicePackAlreadySelected: String { localized(en: "This voice pack is selected and cannot be removed.", vi: "Gói lồng tiếng này đang được chọn nên không thể gỡ.") }
 
     // MARK: - Action Labels
 

@@ -1,3 +1,16 @@
+// NSLauncherApp.swift
+//
+// Application entry point and AppKit lifecycle glue.
+//
+// NSLauncher is a native macOS launcher shell for a single bundled Genshin Impact
+// definition. This file wires the SwiftUI `@main` app to an `NSApplicationDelegate`
+// so the app behaves like a regular foreground app (activation policy, dock icon,
+// focus), then hosts `ContentView` bound to one shared `LauncherViewModel`.
+//
+// The production dependency graph (SettingsStore → LauncherCoordinator →
+// GenshinSophonInstaller + WineService) is assembled once in
+// `LauncherViewModel.bootstrap()` and injected into the root window.
+
 import AppKit
 import SwiftUI
 

@@ -1,3 +1,10 @@
+// SettingsStore.swift
+//
+// JSON persistence for `AppSettings` under
+// `~/Library/Application Support/NSLauncher/settings.json`. Writes are atomic so an
+// interrupted save cannot corrupt the file; the decoder in `AppSettings` tolerates
+// removed legacy keys so older files still load.
+
 import Foundation
 
 /// Persistence boundary for application settings.

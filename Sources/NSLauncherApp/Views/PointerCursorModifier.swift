@@ -1,3 +1,8 @@
+// PointerCursorModifier.swift
+//
+// Adds a pointing-hand cursor to clickable controls on macOS via an NSCursor
+// push/pop on hover, exposed as the `.pointerOnHover()` view modifier.
+
 import AppKit
 import SwiftUI
 

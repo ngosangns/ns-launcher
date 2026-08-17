@@ -1,3 +1,10 @@
+// ProcessRunner.swift
+//
+// Async wrapper around Foundation.Process with executable lookup, stdout/stderr
+// capture, streaming output chunks, and cancellation (terminates the process when
+// the surrounding task is cancelled). `ProcessOutputBuffer` is thread-safe (NSLock)
+// because readability/termination handlers run on background queues.
+
 import Foundation
 
 /// Captured output and exit status from an external process.

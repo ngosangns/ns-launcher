@@ -35,7 +35,7 @@ It already includes:
 The launcher uses HoYoPlay Sophon metadata for both fresh install and update:
 
 1. fetch `getGameBranches` and Sophon `getBuild`;
-2. select the game resource manifest plus the default `en-us` voice manifest;
+2. select the game resource manifest plus the user-selected voice manifest;
 3. download and decode zstd-compressed protobuf manifests;
 4. compare local assets by size and MD5;
 5. prune files outside the target Sophon asset set while protecting the Wine
@@ -63,9 +63,3 @@ cd /Users/ngosangns/Github/ns-launcher
 swift run
 ```
 
-## Docs
-
-- [Architecture](docs/architecture.md)
-- [Genshin Install Plan](docs/genshin-install-plan.md)
-- [Downloader Optimization](docs/modules/downloader-optimization.md)
-- [Docs Index](docs/_index.md)

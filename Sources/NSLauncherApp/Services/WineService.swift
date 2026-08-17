@@ -1,3 +1,18 @@
+// WineService.swift
+//
+// Launches the Windows game through Wine: resolves the Wine binary, applies the
+// environment, bootstraps DXMT (preferred) or DXVK into the prefix, streams output,
+// and maps failures to targeted errors.
+//
+// DXMT is the Direct3D↔Metal bridge used for the bundled Genshin definition; it
+// requires a Wine whose `x86_64-unix/winemac.so` exports
+// `macdrv_view_create_metal_view`, so the service verifies that symbol with `nm`
+// before launching.
+//
+// Wine cannot load Windows kernel drivers, so output is scanned for known protection
+// driver names (`HoYoKProtect.sys`, `HoYoProtect.sys`, `mhyprot2.sys`) and surfaced
+// as `.unsupportedKernelDriver` instead of a generic process failure.
+
 import Foundation
 
 /// Complete request needed to launch a Windows executable through Wine.

@@ -1,3 +1,16 @@
+// InstallTargetPruner.swift
+//
+// Removes install-root files that are no longer part of the target Sophon manifest,
+// so a changed voice selection or a new game version does not leave orphaned files.
+//
+// Invariants:
+// - Never delete the Wine prefix (`.wine`), launcher metadata
+//   (`.nslauncher-install.json`), or the staging/resume sidecars (`.partial*`,
+//   `.nslauncher-sophon-staging`) — these are protected.
+// - Only files outside the normalized target set are removed; directories are
+//   removed only after their contents are gone (deepest first).
+// - Callers may pass extra protected URLs (e.g. the game's Wine prefix).
+
 import Foundation
 
 /// Removes files from an install root when they are no longer present in the target manifest.

@@ -1,3 +1,25 @@
+// Models.swift
+//
+// Domain models: everything the app reasons about, independent of UI and I/O.
+//
+// The domain is intentionally narrow and Sophon-only. Genshin is the single bundled
+// game and its only install/update backend is HoYoPlay Sophon chunks
+// (`InstallerStrategy.sophon`). Deprecated archive/manifest/package download
+// surfaces were removed; `AppSettings` still decodes the old keys (ignored) so
+// existing settings files keep loading.
+//
+// Notable pieces:
+// - `VoiceLanguage`/`VoicePackage`: the four voice-over categories advertised by
+//   Sophon (`en-us`, `zh-cn`, `ja-jp`, `ko-kr`) and the per-pack storage removal.
+// - `AppSettings`: persisted config plus three opt-in, default-off launch toggles
+//   (`cloudCompatibilityMode`, `acPatchMode`, `blockNetMode`) that apply YAAGL-style
+//   runtime behavior under Wine. These are unsupported by HoYoverse and risk the
+//   account; they stay off unless the user explicitly enables them.
+// - `LaunchRuntimeProfile.build`: computes Wine args/environment, appending the
+//   cloud-gaming flags when `cloudCompatibilityMode` is on.
+// - Sophon models (`SophonBuild`, `SophonCategoryManifest`, `SophonAsset`,
+//   `SophonChunk`): the decoded shape of the official chunk manifests.
+
 import Foundation
 
 /// Languages exposed by the launcher UI and by official metadata requests.
@@ -15,6 +37,52 @@ enum AppLanguage: String, Codable, CaseIterable, Identifiable {
         case .vietnamese:
             return "vi-vn"
         }
+    }
+}
+
+/// Voice-over language pack downloaded alongside game resources.
+enum VoiceLanguage: String, Codable, CaseIterable, Identifiable {
+    case english
+    case chinese
+    case japanese
+    case korean
+
+    var id: String { rawValue }
+
+    /// Sophon `matching_field` for this voice pack, verified against the live `getBuild` response.
+    var sophonMatchingField: String {
+        switch self {
+        case .english: return "en-us"
+        case .chinese: return "zh-cn"
+        case .japanese: return "ja-jp"
+        case .korean: return "ko-kr"
+        }
+    }
+
+    /// Maps a Sophon voice matching field back to a supported voice language.
+    init?(sophonMatchingField: String) {
+        switch sophonMatchingField.lowercased() {
+        case "en-us": self = .english
+        case "zh-cn": self = .chinese
+        case "ja-jp": self = .japanese
+        case "ko-kr": self = .korean
+        default: return nil
+        }
+    }
+}
+
+/// One downloadable voice-over category exposed by the Sophon build.
+struct VoicePackage: Identifiable, Hashable {
+    var matchingField: String
+    var categoryName: String
+    var decompressedBytes: Int64
+    var fileCount: Int
+
+    var id: String { matchingField }
+
+    /// Known voice language for the matching field, when it maps to a supported language.
+    var voiceLanguage: VoiceLanguage? {
+        VoiceLanguage(sophonMatchingField: matchingField)
     }
 }
 
@@ -219,6 +287,8 @@ struct AppSettings: Codable, Equatable {
     var games: [GameDefinition]
     var selectedGameID: String?
     var language: AppLanguage
+    /// Voice-over language pack selected for Sophon downloads.
+    var voiceLanguage: VoiceLanguage
     var launchDisplayMode: LaunchDisplayMode
     /// Wine Mac Driver registry: enable Retina scaling for HiDPI displays.
     var macDriverRetina: Bool
@@ -228,6 +298,16 @@ struct AppSettings: Codable, Equatable {
     var showMetalHUD: Bool
     /// Optional `cmd /c` batch wrapper that runs `cd /d <game_dir>` before launching the executable.
     var useBatchWrapper: Bool
+    /// Opt-in YAAGL-style cloud-gaming launch: adds `CLOUD_THIRD_PARTY_PC` flags and installs a
+    /// protection-driver stub so the Windows client can start under Wine. Unsupported by HoYoverse
+    /// and may risk the account.
+    var cloudCompatibilityMode: Bool
+    /// Opt-in AC patch: temporarily hide the crash reporter and Vulkan fallback files during launch,
+    /// then restore them afterwards (mirrors YAAGL's current Genshin behavior).
+    var acPatchMode: Bool
+    /// Opt-in launch network block: temporarily block `dispatchosglobal.yuanshen.com` for ~10 seconds
+    /// during launch so the security check is skipped, then restore `/etc/hosts`.
+    var blockNetMode: Bool
 
     /// Resolved Wine executable path, falling back to a PATH lookup name.
     var wineBinaryPath: String {
@@ -255,11 +335,15 @@ struct AppSettings: Codable, Equatable {
             ],
             selectedGameID: genshinGameID,
             language: .english,
+            voiceLanguage: .english,
             launchDisplayMode: .windowed,
             macDriverRetina: true,
             leftCommandIsCtrl: false,
             showMetalHUD: false,
-            useBatchWrapper: false
+            useBatchWrapper: false,
+            cloudCompatibilityMode: false,
+            acPatchMode: false,
+            blockNetMode: false
         )
     }
 
@@ -287,6 +371,7 @@ struct AppSettings: Codable, Equatable {
         case games
         case selectedGameID
         case language
+        case voiceLanguage
         case downloadCacheDirectory
         case temporaryExtractionDirectory
         case launchDisplayMode
@@ -297,26 +382,37 @@ struct AppSettings: Codable, Equatable {
         case leftCommandIsCtrl
         case showMetalHUD
         case useBatchWrapper
+        case cloudCompatibilityMode
+        case acPatchMode
+        case blockNetMode
     }
 
     init(
         games: [GameDefinition],
         selectedGameID: String?,
         language: AppLanguage,
+        voiceLanguage: VoiceLanguage = .english,
         launchDisplayMode: LaunchDisplayMode = .windowed,
         macDriverRetina: Bool = true,
         leftCommandIsCtrl: Bool = false,
         showMetalHUD: Bool = false,
-        useBatchWrapper: Bool = false
+        useBatchWrapper: Bool = false,
+        cloudCompatibilityMode: Bool = false,
+        acPatchMode: Bool = false,
+        blockNetMode: Bool = false
     ) {
         self.games = games
         self.selectedGameID = selectedGameID
         self.language = language
+        self.voiceLanguage = voiceLanguage
         self.launchDisplayMode = launchDisplayMode
         self.macDriverRetina = macDriverRetina
         self.leftCommandIsCtrl = leftCommandIsCtrl
         self.showMetalHUD = showMetalHUD
         self.useBatchWrapper = useBatchWrapper
+        self.cloudCompatibilityMode = cloudCompatibilityMode
+        self.acPatchMode = acPatchMode
+        self.blockNetMode = blockNetMode
     }
 
     init(from decoder: Decoder) throws {
@@ -324,11 +420,15 @@ struct AppSettings: Codable, Equatable {
         self.games = try container.decode([GameDefinition].self, forKey: .games)
         self.selectedGameID = try container.decodeIfPresent(String.self, forKey: .selectedGameID)
         self.language = try container.decodeIfPresent(AppLanguage.self, forKey: .language) ?? .english
+        self.voiceLanguage = try container.decodeIfPresent(VoiceLanguage.self, forKey: .voiceLanguage) ?? .english
         self.launchDisplayMode = try container.decodeIfPresent(LaunchDisplayMode.self, forKey: .launchDisplayMode) ?? .windowed
         self.macDriverRetina = try container.decodeIfPresent(Bool.self, forKey: .macDriverRetina) ?? true
         self.leftCommandIsCtrl = try container.decodeIfPresent(Bool.self, forKey: .leftCommandIsCtrl) ?? false
         self.showMetalHUD = try container.decodeIfPresent(Bool.self, forKey: .showMetalHUD) ?? false
         self.useBatchWrapper = try container.decodeIfPresent(Bool.self, forKey: .useBatchWrapper) ?? false
+        self.cloudCompatibilityMode = try container.decodeIfPresent(Bool.self, forKey: .cloudCompatibilityMode) ?? false
+        self.acPatchMode = try container.decodeIfPresent(Bool.self, forKey: .acPatchMode) ?? false
+        self.blockNetMode = try container.decodeIfPresent(Bool.self, forKey: .blockNetMode) ?? false
 
         // Ignore deprecated storage and custom binary paths while remaining decode-compatible with older settings files.
         _ = try container.decodeIfPresent(String.self, forKey: .downloadCacheDirectory)
@@ -343,11 +443,15 @@ struct AppSettings: Codable, Equatable {
         try container.encode(games, forKey: .games)
         try container.encodeIfPresent(selectedGameID, forKey: .selectedGameID)
         try container.encode(language, forKey: .language)
+        try container.encode(voiceLanguage, forKey: .voiceLanguage)
         try container.encode(launchDisplayMode, forKey: .launchDisplayMode)
         try container.encode(macDriverRetina, forKey: .macDriverRetina)
         try container.encode(leftCommandIsCtrl, forKey: .leftCommandIsCtrl)
         try container.encode(showMetalHUD, forKey: .showMetalHUD)
         try container.encode(useBatchWrapper, forKey: .useBatchWrapper)
+        try container.encode(cloudCompatibilityMode, forKey: .cloudCompatibilityMode)
+        try container.encode(acPatchMode, forKey: .acPatchMode)
+        try container.encode(blockNetMode, forKey: .blockNetMode)
     }
 
     /// Builds launch arguments with display mode controlled by settings rather than stale game flags.
@@ -436,12 +540,18 @@ struct LaunchRuntimeProfile {
             env["WINEESYNC"] = "1"
         }
 
+        var launchArguments = settings.launchArguments(for: game)
+        if settings.cloudCompatibilityMode {
+            // YAAGL-style cloud-gaming mode: the game skips the local anti-cheat requirement.
+            launchArguments += ["-platform_type", "CLOUD_THIRD_PARTY_PC", "-is_cloud", "1"]
+        }
+
         return LaunchRuntimeProfile(
             wineBinaryPath: settings.wineBinaryPath,
             prefixDirectory: game.winePrefixDirectory,
             executablePath: exe,
             currentDirectory: game.installDirectory,
-            arguments: settings.launchArguments(for: game),
+            arguments: launchArguments,
             backend: backend,
             environment: env,
             runtimeRequirements: game.runtimeRequirements

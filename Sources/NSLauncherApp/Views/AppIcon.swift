@@ -1,3 +1,8 @@
+// AppIcon.swift
+//
+// Draws the app icon at runtime (rounded gradient square with a controller glyph)
+// so the prototype needs no bundled image assets.
+
 import AppKit
 
 /// Draws the application icon at runtime so the prototype does not need bundled image assets.
