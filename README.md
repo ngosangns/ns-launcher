@@ -24,6 +24,10 @@ It already includes:
   final asset MD5 verification, and atomic replacement;
 - `.nslauncher-sophon-staging` resume sidecars for interrupted Sophon assets;
 - install/update planning that skips assets already matching size plus MD5;
+- cutscene filtering: `Video/*.usm` / `*.wmv` assets are excluded from the Sophon
+  target set, so their chunk URLs are never downloaded, existing cutscene files
+  are pruned on the next update, and every size total (download, write, peak
+  temp, progress) excludes them;
 - a Settings screen limited to language, install root, executable path, and
   display mode;
 - Wine launch bootstrap that installs DXMT or DXVK when required;

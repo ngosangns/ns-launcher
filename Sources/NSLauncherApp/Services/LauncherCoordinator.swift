@@ -64,7 +64,9 @@ struct LauncherCoordinator: Sendable {
                 InstallStep(kind: .writeMetadata, relativePath: ".nslauncher-install.json", bytes: 0)
             ],
             estimatedBytesToDownload: plan.bytesToDownload,
-            peakTemporaryBytes: plan.peakTemporaryBytes
+            peakTemporaryBytes: plan.peakTemporaryBytes,
+            cutsceneSkippedAssets: plan.sophonCutsceneSkippedAssets,
+            cutsceneSkippedBytes: plan.sophonCutsceneSkippedBytes
         )
     }
 

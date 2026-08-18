@@ -75,6 +75,32 @@ enum SophonInstallerError: LocalizedError {
     }
 }
 
+/// Identifies Genshin cutscene video assets in a Sophon manifest so their chunk URLs
+/// are never downloaded and their bytes are excluded from every size total.
+///
+/// Genshin stores pre-rendered cutscenes as `.usm`/`.wmv` files under a `Video`
+/// directory. The game runs fine without them (playback is skipped), so excluding
+/// them from the target set also lets `InstallTargetPruner` remove existing ones.
+enum SophonCutsceneFilter {
+    /// Cutscene-only container formats used by Genshin Impact.
+    private static let cutsceneExtensions: Set<String> = ["usm", "wmv"]
+
+    static func isCutscene(_ path: String) -> Bool {
+        let normalized = path
+            .replacingOccurrences(of: "\\", with: "/")
+            .lowercased()
+        let components = normalized.split(separator: "/")
+        guard let fileName = components.last else { return false }
+
+        // Any file living under a `Video` folder is a cutscene asset.
+        if components.dropLast().contains("video") { return true }
+
+        // Fallback: cutscene-only video containers regardless of folder name.
+        guard let dot = fileName.lastIndex(of: ".") else { return false }
+        return cutsceneExtensions.contains(String(fileName[fileName.index(after: dot)...]))
+    }
+}
+
 /// Boundary for Genshin's newer HoYoPlay Sophon update flow.
 protocol SophonInstalling: Sendable {
     func fetchBuild(
@@ -240,14 +266,24 @@ actor GenshinSophonInstaller: SophonInstalling {
     }
 
     /// Computes a full-build Sophon delta by checking existing files by size and MD5.
+    ///
+    /// Cutscene videos (`Video/*.usm`, `*.wmv`) are excluded up front: they never
+    /// appear in the target set or in the download list, and every size total below
+    /// (download, write, peak temp) is computed after the filter.
     func planUpdate(
         for game: GameDefinition,
         build: SophonBuild,
         installedMetadata: InstalledGameMetadata?,
         onEvent: (@Sendable (InstallProgressEvent) async -> Void)? = nil
     ) async throws -> GameUpdatePlan {
-        let assets = build.manifests.flatMap(\.assets).filter { !$0.isDirectory }
-        await onEvent?(.diagnostic("scan local install root=\(game.installDirectory.path) targetAssets=\(assets.count) installedVersion=\(installedMetadata?.version ?? "missing") latestVersion=\(build.version)"))
+        let allAssets = build.manifests.flatMap(\.assets).filter { !$0.isDirectory }
+        let (assets, cutsceneAssets) = Self.splitCutsceneAssets(allAssets)
+        let cutsceneDownloadBytes = cutsceneAssets.reduce(Int64(0)) { $0 + $1.compressedBytes }
+        let cutsceneWriteBytes = cutsceneAssets.reduce(Int64(0)) { $0 + $1.size }
+        if !cutsceneAssets.isEmpty {
+            await onEvent?(.diagnostic("filter cutscene assets excluded=\(cutsceneAssets.count) download=\(Self.formatBytes(cutsceneDownloadBytes)) write=\(Self.formatBytes(cutsceneWriteBytes))"))
+        }
+        await onEvent?(.diagnostic("scan local install root=\(game.installDirectory.path) targetAssets=\(assets.count) cutsceneExcluded=\(cutsceneAssets.count) installedVersion=\(installedMetadata?.version ?? "missing") latestVersion=\(build.version)"))
         var assetsToWrite: [SophonAsset] = []
         var skippedAssets = 0
 
@@ -278,6 +314,8 @@ actor GenshinSophonInstaller: SophonInstalling {
             sophonTargetAssets: assets,
             sophonAssetsToWrite: assetsToWrite,
             sophonSkippedAssets: skippedAssets,
+            sophonCutsceneSkippedAssets: cutsceneAssets.count,
+            sophonCutsceneSkippedBytes: cutsceneDownloadBytes,
             bytesToDownload: compressedBytes,
             decompressedBytesToWrite: decompressedBytes,
             peakTemporaryBytes: min(
@@ -289,6 +327,9 @@ actor GenshinSophonInstaller: SophonInstalling {
     }
 
     /// Applies Sophon assets through staging files and atomic replacement.
+    ///
+    /// Defensively re-filters cutscene assets even though `planUpdate` already does,
+    /// so a plan built outside the planner can never request cutscene chunk URLs.
     func update(
         game: GameDefinition,
         version: String,
@@ -297,15 +338,17 @@ actor GenshinSophonInstaller: SophonInstalling {
         operationController: OperationController?,
         onEvent: @escaping @Sendable (InstallProgressEvent) async -> Void
     ) async throws {
-        await onEvent(.diagnostic("apply Sophon plan assetsToWrite=\(assets.count) targetAssets=\(targetAssets.count) version=\(version)"))
+        let filteredAssets = assets.filter { !SophonCutsceneFilter.isCutscene($0.path) }
+        let filteredTargets = targetAssets.filter { !SophonCutsceneFilter.isCutscene($0.path) }
+        await onEvent(.diagnostic("apply Sophon plan assetsToWrite=\(filteredAssets.count) targetAssets=\(filteredTargets.count) cutsceneExcluded=\(assets.count - filteredAssets.count) version=\(version)"))
         try fileManager.createDirectory(at: game.installDirectory, withIntermediateDirectories: true)
-        let progress = SophonProgressTracker(totalBytes: assets.reduce(Int64(0)) { $0 + $1.compressedBytes })
-        let queue = SophonAssetQueue(assets: assets)
+        let progress = SophonProgressTracker(totalBytes: filteredAssets.reduce(Int64(0)) { $0 + $1.compressedBytes })
+        let queue = SophonAssetQueue(assets: filteredAssets)
         try await operationController?.checkpoint()
         await onEvent(.diagnostic("prune install target before apply"))
         try InstallTargetPruner.pruneBeforeApplyingTarget(
             installDirectory: game.installDirectory,
-            targetRelativePaths: Set(targetAssets.map(\.path)),
+            targetRelativePaths: Set(filteredTargets.map(\.path)),
             protectedURLs: [game.winePrefixDirectory],
             fileManager: fileManager
         )
@@ -740,6 +783,20 @@ actor GenshinSophonInstaller: SophonInstalling {
 
     private static func formatBytes(_ bytes: Int64) -> String {
         ByteCountFormatter.string(fromByteCount: bytes, countStyle: .file)
+    }
+
+    /// Partitions manifest assets into kept files and cutscene videos.
+    private static func splitCutsceneAssets(_ assets: [SophonAsset]) -> (kept: [SophonAsset], cutscenes: [SophonAsset]) {
+        var kept: [SophonAsset] = []
+        var cutscenes: [SophonAsset] = []
+        for asset in assets {
+            if SophonCutsceneFilter.isCutscene(asset.path) {
+                cutscenes.append(asset)
+            } else {
+                kept.append(asset)
+            }
+        }
+        return (kept, cutscenes)
     }
 
     private func existingAssetMatches(_ asset: SophonAsset, at url: URL) throws -> Bool {

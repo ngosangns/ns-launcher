@@ -160,6 +160,9 @@ struct InstallPlan: Hashable {
     var steps: [InstallStep]
     var estimatedBytesToDownload: Int64
     var peakTemporaryBytes: Int64
+    /// Cutscene videos excluded from the plan; their chunk URLs are never downloaded.
+    var cutsceneSkippedAssets: Int = 0
+    var cutsceneSkippedBytes: Int64 = 0
 }
 
 /// Delta plan for bringing an existing Sophon install up to the latest version.
@@ -170,6 +173,9 @@ struct GameUpdatePlan: Hashable {
     var sophonTargetAssets: [SophonAsset] = []
     var sophonAssetsToWrite: [SophonAsset] = []
     var sophonSkippedAssets: Int = 0
+    /// Cutscene videos excluded from the target set, downloads, and every size total.
+    var sophonCutsceneSkippedAssets: Int = 0
+    var sophonCutsceneSkippedBytes: Int64 = 0
     var bytesToDownload: Int64
     var decompressedBytesToWrite: Int64 = 0
     var peakTemporaryBytes: Int64

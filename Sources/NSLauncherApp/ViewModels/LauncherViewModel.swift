@@ -272,7 +272,8 @@ final class LauncherViewModel: ObservableObject {
                     version: plan.version,
                     download: ByteCountFormatter.string(fromByteCount: plan.estimatedBytesToDownload, countStyle: .file),
                     peakTemp: ByteCountFormatter.string(fromByteCount: plan.peakTemporaryBytes, countStyle: .file),
-                    steps: plan.steps.count
+                    steps: plan.steps.count,
+                    cutscenes: cutsceneSkipText(assets: plan.cutsceneSkippedAssets, bytes: plan.cutsceneSkippedBytes)
                 )
                 statusText = text.installPlanReady
                 operationProgress = OperationProgress(
@@ -437,7 +438,8 @@ final class LauncherViewModel: ObservableObject {
                     latestVersion: plan.latestVersion,
                     download: downloadText,
                     files: plan.changedItemCount,
-                    skipped: plan.skippedItemCount
+                    skipped: plan.skippedItemCount,
+                    cutscenes: self.cutsceneSkipText(assets: plan.sophonCutsceneSkippedAssets, bytes: plan.sophonCutsceneSkippedBytes)
                 )
                 self.lastPlanSummary = summary
                 self.appendUpdateLogLine(self.logText(en: "Update source: \(plan.sourceKind.rawValue)", vi: "Nguồn cập nhật: \(plan.sourceKind.rawValue)"))
@@ -445,6 +447,10 @@ final class LauncherViewModel: ObservableObject {
                 self.appendUpdateLogLine(self.logText(en: "Latest version: \(plan.latestVersion)", vi: "Phiên bản mới nhất: \(plan.latestVersion)"))
                 self.appendUpdateLogLine(self.logText(en: "Items to update: \(plan.changedItemCount)", vi: "Mục cần cập nhật: \(plan.changedItemCount)"))
                 self.appendUpdateLogLine(self.logText(en: "Items already valid: \(plan.skippedItemCount)", vi: "Mục đã hợp lệ: \(plan.skippedItemCount)"))
+                self.appendUpdateLogLine(self.logText(
+                    en: "Cutscene files skipped: \(plan.sophonCutsceneSkippedAssets) (\(ByteCountFormatter.string(fromByteCount: plan.sophonCutsceneSkippedBytes, countStyle: .file)) download)",
+                    vi: "File cutscene bị bỏ qua: \(plan.sophonCutsceneSkippedAssets) (\(ByteCountFormatter.string(fromByteCount: plan.sophonCutsceneSkippedBytes, countStyle: .file)) tải)"
+                ))
                 self.appendUpdateLogLine(self.logText(en: "Bytes to download: \(downloadText)", vi: "Dung lượng cần tải: \(downloadText)"))
                 if plan.sourceKind == .sophon {
                     self.appendUpdateLogLine(self.logText(
@@ -816,6 +822,11 @@ final class LauncherViewModel: ObservableObject {
         case .vietnamese:
             return vi
         }
+    }
+
+    /// Formats the cutscene-skip line shown in install/update plan summaries.
+    private func cutsceneSkipText(assets: Int, bytes: Int64) -> String {
+        "\(assets) (\(ByteCountFormatter.string(fromByteCount: bytes, countStyle: .file)))"
     }
 
     /// Writes a bounded sample of planned update items so huge Sophon plans remain readable.

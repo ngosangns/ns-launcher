@@ -75,6 +75,7 @@ struct AppText {
     var downloadLabel: String { localized(en: "Download", vi: "Tải về") }
     var peakTempLabel: String { localized(en: "Peak temp", vi: "Bộ nhớ tạm tối đa") }
     var stepsLabel: String { localized(en: "Steps", vi: "Số bước") }
+    var cutscenesLabel: String { localized(en: "Cutscenes skipped", vi: "Cutscene bỏ qua") }
     var installCompleted: String { localized(en: "Install completed", vi: "Đã cài đặt xong") }
     var installFailed: String { localized(en: "Install failed", vi: "Cài đặt thất bại") }
     var updateCompleted: String { localized(en: "Update completed", vi: "Đã cập nhật xong") }
@@ -160,20 +161,21 @@ struct AppText {
     var launchDescription: String { localized(en: "Start the configured Windows executable with the current Wine path.", vi: "Chạy file Windows đã cấu hình bằng đường dẫn Wine hiện tại.") }
 
     /// Formats the multiline install plan summary.
-    func installPlanSummary(version: String, download: String, peakTemp: String, steps: Int) -> String {
+    func installPlanSummary(version: String, download: String, peakTemp: String, steps: Int, cutscenes: String) -> String {
         """
         \(versionLabel): \(version)
         \(downloadLabel): \(download)
         \(peakTempLabel): \(peakTemp)
         \(stepsLabel): \(steps)
+        \(cutscenesLabel): \(cutscenes)
         """
     }
 
     /// Formats the multiline update plan summary.
-    func updatePlanSummary(currentVersion: String, latestVersion: String, download: String, files: Int, skipped: Int) -> String {
+    func updatePlanSummary(currentVersion: String, latestVersion: String, download: String, files: Int, skipped: Int, cutscenes: String) -> String {
         localized(
-            en: "Current: \(currentVersion)\nLatest: \(latestVersion)\nDownload: \(download)\nChanged files: \(files)\nUnchanged files: \(skipped)",
-            vi: "Hiện tại: \(currentVersion)\nMới nhất: \(latestVersion)\nDung lượng tải: \(download)\nFile cần cập nhật: \(files)\nFile giữ nguyên: \(skipped)"
+            en: "Current: \(currentVersion)\nLatest: \(latestVersion)\nDownload: \(download)\nChanged files: \(files)\nUnchanged files: \(skipped)\nCutscene files skipped: \(cutscenes)",
+            vi: "Hiện tại: \(currentVersion)\nMới nhất: \(latestVersion)\nDung lượng tải: \(download)\nFile cần cập nhật: \(files)\nFile giữ nguyên: \(skipped)\nFile cutscene bị bỏ qua: \(cutscenes)"
         )
     }
 
