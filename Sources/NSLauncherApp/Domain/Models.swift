@@ -11,10 +11,10 @@
 // Notable pieces:
 // - `VoiceLanguage`/`VoicePackage`: the four voice-over categories advertised by
 //   Sophon (`en-us`, `zh-cn`, `ja-jp`, `ko-kr`) and the per-pack storage removal.
-// - `AppSettings`: persisted config plus three opt-in, default-off launch toggles
-//   (`cloudCompatibilityMode`, `acPatchMode`, `blockNetMode`) that apply YAAGL-style
-//   runtime behavior under Wine. These are unsupported by HoYoverse and risk the
-//   account; they stay off unless the user explicitly enables them.
+// - `AppSettings`: persisted config plus three YAAGL-style launch toggles
+//   (`cloudCompatibilityMode`, `acPatchMode`, `blockNetMode`), enabled by default and
+//   applied under Wine before launch. These are unsupported by HoYoverse and risk the
+//   account; users can still turn each one off in Settings.
 // - `LaunchRuntimeProfile.build`: computes Wine args/environment, appending the
 //   cloud-gaming flags when `cloudCompatibilityMode` is on.
 // - Sophon models (`SophonBuild`, `SophonCategoryManifest`, `SophonAsset`,
@@ -304,16 +304,18 @@ struct AppSettings: Codable, Equatable {
     var showMetalHUD: Bool
     /// Optional `cmd /c` batch wrapper that runs `cd /d <game_dir>` before launching the executable.
     var useBatchWrapper: Bool
-    /// Opt-in YAAGL-style cloud-gaming launch: adds `CLOUD_THIRD_PARTY_PC` flags and installs a
-    /// protection-driver stub so the Windows client can start under Wine. Unsupported by HoYoverse
-    /// and may risk the account.
+    /// YAAGL-style cloud-gaming launch (enabled by default): adds `CLOUD_THIRD_PARTY_PC` flags and
+    /// installs a protection-driver stub so the Windows client can start under Wine. Unsupported by
+    /// HoYoverse and may risk the account.
     var cloudCompatibilityMode: Bool
-    /// Opt-in AC patch: temporarily hide the crash reporter and Vulkan fallback files during launch,
-    /// then restore them afterwards (mirrors YAAGL's current Genshin behavior).
+    /// AC patch (enabled by default): temporarily hide the crash reporter and Vulkan fallback files
+    /// during launch, then restore them afterwards (mirrors YAAGL's current Genshin behavior).
     var acPatchMode: Bool
-    /// Opt-in launch network block: temporarily block `dispatchosglobal.yuanshen.com` for ~10 seconds
-    /// during launch so the security check is skipped, then restore `/etc/hosts`.
+    /// Launch network block (enabled by default): temporarily block anti-cheat and telemetry hosts in
+    /// the Wine prefix hosts file for the duration of the launch, then restore.
     var blockNetMode: Bool
+    /// Monotonic settings schema version used for one-time default migrations.
+    var settingsVersion: Int
 
     /// Resolved Wine executable path, falling back to a PATH lookup name.
     var wineBinaryPath: String {
@@ -347,15 +349,26 @@ struct AppSettings: Codable, Equatable {
             leftCommandIsCtrl: false,
             showMetalHUD: false,
             useBatchWrapper: false,
-            cloudCompatibilityMode: false,
-            acPatchMode: false,
-            blockNetMode: false
+            cloudCompatibilityMode: true,
+            acPatchMode: true,
+            blockNetMode: true,
+            settingsVersion: 1
         )
     }
 
     /// Migrates older settings to the Sophon-only bundled Genshin strategy.
     func applyingBundledGenshinDefaultsIfNeeded() -> AppSettings {
         var copy = self
+
+        // One-time migration: enable the YAAGL-style launch toggles for pre-existing settings that
+        // predate the default-on change. `settingsVersion` guards this so users can still turn them
+        // back off afterwards without the next launch re-enabling them.
+        if copy.settingsVersion < 1 {
+            copy.cloudCompatibilityMode = true
+            copy.acPatchMode = true
+            copy.blockNetMode = true
+            copy.settingsVersion = 1
+        }
 
         guard let index = copy.games.firstIndex(where: { $0.id == Self.genshinGameID }) else {
             return copy
@@ -391,6 +404,7 @@ struct AppSettings: Codable, Equatable {
         case cloudCompatibilityMode
         case acPatchMode
         case blockNetMode
+        case settingsVersion
     }
 
     init(
@@ -405,7 +419,8 @@ struct AppSettings: Codable, Equatable {
         useBatchWrapper: Bool = false,
         cloudCompatibilityMode: Bool = false,
         acPatchMode: Bool = false,
-        blockNetMode: Bool = false
+        blockNetMode: Bool = false,
+        settingsVersion: Int = 0
     ) {
         self.games = games
         self.selectedGameID = selectedGameID
@@ -419,6 +434,7 @@ struct AppSettings: Codable, Equatable {
         self.cloudCompatibilityMode = cloudCompatibilityMode
         self.acPatchMode = acPatchMode
         self.blockNetMode = blockNetMode
+        self.settingsVersion = settingsVersion
     }
 
     init(from decoder: Decoder) throws {
@@ -435,6 +451,7 @@ struct AppSettings: Codable, Equatable {
         self.cloudCompatibilityMode = try container.decodeIfPresent(Bool.self, forKey: .cloudCompatibilityMode) ?? false
         self.acPatchMode = try container.decodeIfPresent(Bool.self, forKey: .acPatchMode) ?? false
         self.blockNetMode = try container.decodeIfPresent(Bool.self, forKey: .blockNetMode) ?? false
+        self.settingsVersion = try container.decodeIfPresent(Int.self, forKey: .settingsVersion) ?? 0
 
         // Ignore deprecated storage and custom binary paths while remaining decode-compatible with older settings files.
         _ = try container.decodeIfPresent(String.self, forKey: .downloadCacheDirectory)
@@ -458,6 +475,7 @@ struct AppSettings: Codable, Equatable {
         try container.encode(cloudCompatibilityMode, forKey: .cloudCompatibilityMode)
         try container.encode(acPatchMode, forKey: .acPatchMode)
         try container.encode(blockNetMode, forKey: .blockNetMode)
+        try container.encode(settingsVersion, forKey: .settingsVersion)
     }
 
     /// Builds launch arguments with display mode controlled by settings rather than stale game flags.
