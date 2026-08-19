@@ -391,6 +391,21 @@ actor GenshinSophonInstaller: SophonInstalling {
         let data = try JSONEncoder().encode(metadata)
         await onEvent(.diagnostic("write install metadata .nslauncher-install.json"))
         try data.write(to: game.installDirectory.appendingPathComponent(".nslauncher-install.json"), options: .atomic)
+
+        // Best-effort removal of the staging tree after success. Assets are moved out
+        // of staging one by one, which would otherwise leave an empty
+        // `.nslauncher-sophon-staging` folder behind — and that folder trips the
+        // "partial update staging" launch preflight on the next run.
+        let stagingDirectory = game.installDirectory
+            .appendingPathComponent(".nslauncher-sophon-staging", isDirectory: true)
+        if fileManager.fileExists(atPath: stagingDirectory.path) {
+            do {
+                try fileManager.removeItem(at: stagingDirectory)
+                await onEvent(.diagnostic("removed leftover staging directory after successful apply"))
+            } catch {
+                await onEvent(.diagnostic("failed to remove leftover staging directory: \(error.localizedDescription)"))
+            }
+        }
         await onEvent(.finished(version: version))
     }
 

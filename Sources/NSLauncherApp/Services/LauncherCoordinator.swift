@@ -161,9 +161,10 @@ struct LauncherCoordinator: Sendable {
             throw LaunchPreflightError.invalidInstallMetadata("gameID mismatch: expected \(game.id), got \(metadata.gameID)")
         }
 
-        // Preflight: staging directory must not exist (partial update in progress)
+        // Preflight: staging must not hold leftover partial work (update in progress).
+        // Empty directories left after a completed update are not in-progress work.
         let stagingURL = game.installDirectory.appendingPathComponent(".nslauncher-sophon-staging")
-        if FileManager.default.fileExists(atPath: stagingURL.path) {
+        if hasLeftoverStagingWork(at: stagingURL) {
             throw LaunchPreflightError.updateRequiredBeforeLaunch("Partial update staging detected. Run Update Game to complete.")
         }
 
@@ -277,6 +278,23 @@ struct LauncherCoordinator: Sendable {
         let metadataURL = game.installDirectory.appendingPathComponent(".nslauncher-install.json")
         guard let data = try? Data(contentsOf: metadataURL) else { return nil }
         return try? JSONDecoder().decode(InstalledGameMetadata.self, from: data)
+    }
+
+    /// Returns true when the staging tree still holds partial files (`.partial` or
+    /// `.chunks.json`). Empty leftover directories left behind by a completed
+    /// update do not count as in-progress work and must not block launch.
+    private func hasLeftoverStagingWork(at directory: URL) -> Bool {
+        guard let enumerator = FileManager.default.enumerator(
+            at: directory,
+            includingPropertiesForKeys: nil,
+            options: [.skipsHiddenFiles]
+        ) else { return false }
+        for case let url as URL in enumerator {
+            var isDirectory: ObjCBool = false
+            guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory) else { continue }
+            if !isDirectory.boolValue { return true }
+        }
+        return false
     }
 
     /// Applies the Sophon asset plan through the installer.
