@@ -1,10 +1,18 @@
 .DS_Store
-/.build
-/Packages
+
+# Swift Package Manager build and workspace state
+/.build/
+/.swiftpm/
+/Packages/
+
+# Xcode user-specific state
 xcuserdata/
 DerivedData/
-.swiftpm/configuration/registries.json
-.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
+*.xcuserstate
+*.xccheckout
+*.xcscmblueprint
+
+# Local tooling and credentials
 .netrc
 .mcp.json
 .tools/

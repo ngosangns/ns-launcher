@@ -53,17 +53,31 @@ The launcher uses HoYoPlay Sophon metadata for both fresh install and update:
 Archive packages, local archive install, generic JSON manifests, and the old
 `pkg_version`/file-level streaming path are no longer product paths.
 
-## Build
+## Requirements
+
+- macOS 14 or later;
+- Swift 6.2 or later.
+
+## Production Build
+
+Build the optimized release executable from the repository root:
 
 ```bash
-cd /Users/ngosangns/Github/ns-launcher
-swift build
+swift build -c release
 ```
 
-## Run
+SwiftPM writes the executable to its release binary directory. Run the exact
+binary produced by the build with:
 
 ```bash
-cd /Users/ngosangns/Github/ns-launcher
+"$(swift build -c release --show-bin-path)/NSLauncherApp"
+```
+
+## Development
+
+For a debug build and run loop during development:
+
+```bash
 swift run
 ```
 
