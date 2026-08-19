@@ -198,6 +198,7 @@ struct LauncherCoordinator: Sendable {
             environment: profile.environment,
             currentDirectory: profile.currentDirectory,
             runtimeRequirements: profile.runtimeRequirements,
+            useSteamLauncher: settings.cloudCompatibilityMode,
             onOutput: onOutput
         )
         return try await wineService.launch(request)

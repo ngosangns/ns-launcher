@@ -24,6 +24,8 @@ struct WineLaunchRequest {
     var environment: [String: String]
     var currentDirectory: URL?
     var runtimeRequirements: [RuntimeRequirement]
+    /// Launch the game through a `steam.exe` parent process (miHoYo anti-cheat workaround).
+    var useSteamLauncher: Bool = false
     var onOutput: (@Sendable (ProcessOutputChunk) -> Void)?
 }
 
@@ -149,10 +151,26 @@ struct WineService: WineServicing {
         emitDiagnostic("existing game process count=\(alreadyRunningGamePIDs.count)", request: request)
         let launchResult: ProcessResult
         do {
-            emitDiagnostic("start process command=\(resolvedWineBinary) \(([request.executablePath.path] + request.arguments).joined(separator: " "))", request: request)
+            var processArguments: [String]
+            if request.useSteamLauncher {
+                // Launch through a `steam.exe` parent process: miHoYo's anti-cheat (MHYPBase)
+                // skips loading its HoYoKProtect kernel driver when the game's parent process is
+                // `steam.exe`. Wine cannot load that WDF driver, so this is the only working path.
+                if try ensureSteamLauncher(prefixDirectory: request.prefixDirectory, wineBinaryPath: resolvedWineBinary) {
+                    let commandLine = ([request.executablePath.lastPathComponent] + request.arguments).joined(separator: " ")
+                    processArguments = ["C:\\windows\\system32\\steam.exe", "/c", commandLine]
+                    emitDiagnostic("launch via steam.exe parent: \(commandLine)", request: request)
+                } else {
+                    emitDiagnostic("steam.exe launcher unavailable; falling back to direct launch", request: request)
+                    processArguments = [request.executablePath.path] + request.arguments
+                }
+            } else {
+                processArguments = [request.executablePath.path] + request.arguments
+            }
+            emitDiagnostic("start process command=\(resolvedWineBinary) \(processArguments.joined(separator: " "))", request: request)
             launchResult = try await processRunner.run(
                 executable: resolvedWineBinary,
-                arguments: [request.executablePath.path] + request.arguments,
+                arguments: processArguments,
                 environment: env,
                 currentDirectory: request.currentDirectory,
                 onOutput: request.onOutput
@@ -208,6 +226,25 @@ struct WineService: WineServicing {
         } catch {
             emitDiagnostic("wineserver -w best-effort failed: \(error.localizedDescription)", request: request)
         }
+    }
+
+    /// Copies the Wine builtin `cmd.exe` into the prefix as `steam.exe` so the game runs with a
+    /// `steam.exe` parent process. miHoYo's anti-cheat (MHYPBase) skips loading its HoYoKProtect
+    /// kernel driver when the parent process is `steam.exe`; Wine cannot load that WDF driver, so
+    /// this parent-process handoff is the only launch path that works.
+    private func ensureSteamLauncher(prefixDirectory: URL, wineBinaryPath: String) throws -> Bool {
+        let wineRoot = try wineRootDirectory(forBinaryAtPath: wineBinaryPath)
+        let source = wineRoot.appendingPathComponent("lib/wine/x86_64-windows/cmd.exe")
+        guard FileManager.default.fileExists(atPath: source.path) else { return false }
+        let system32 = prefixDirectory.appendingPathComponent("drive_c/windows/system32", isDirectory: true)
+        try FileManager.default.createDirectory(at: system32, withIntermediateDirectories: true)
+        let destination = system32.appendingPathComponent("steam.exe")
+        if FileManager.default.fileExists(atPath: destination.path) {
+            if FileManager.default.contentsEqual(atPath: source.path, andPath: destination.path) { return true }
+            try FileManager.default.removeItem(at: destination)
+        }
+        try FileManager.default.copyItem(at: source, to: destination)
+        return true
     }
 
     /// Installs the DXMT builtin payload into the Wine runtime and clears prefix overrides.
