@@ -212,8 +212,8 @@ struct GoldenProgressBar: View {
                     }
                 }
             } else {
-                ProgressView()
-                    .tint(LauncherPalette.goldHighlight)
+                Capsule()
+                    .fill(LauncherPalette.mist.opacity(0.14))
             }
         }
         .frame(height: 8)

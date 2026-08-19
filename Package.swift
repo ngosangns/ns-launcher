@@ -12,5 +12,10 @@ let package = Package(
             name: "NSLauncherApp",
             path: "Sources/NSLauncherApp"
         ),
+        .testTarget(
+            name: "NSLauncherAppTests",
+            dependencies: ["NSLauncherApp"],
+            path: "Tests/NSLauncherAppTests"
+        ),
     ]
 )

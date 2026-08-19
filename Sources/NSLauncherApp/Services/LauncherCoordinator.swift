@@ -3,21 +3,43 @@
 // Facade the view model talks to: it owns the settings store, the Sophon installer,
 // and the Wine service, and coordinates install/update/launch.
 //
+// ============================================================================
+// Anti-cheat bypass stack (Genshin Impact global, mirrors YAAGL's hk4e handling)
+// ============================================================================
+// Genshin cannot run under Wine without several coordinated workarounds. Each step
+// below fixes a DIFFERENT, independently-observed failure, so none of them is
+// redundant and none may be removed without re-introducing that specific failure.
+// They are all unsupported by HoYoverse and risk the account; they are isolated
+// here and gated by settings flags that can be turned off.
+//
 // Launch path, in order:
 //   1. Build the runtime profile and run preflight checks (executable exists, valid
 //      `.nslauncher-install.json` with matching game id, no partial staging).
-//   2. Cloud compatibility (default-on): install a `HoYoKProtect.sys` stub into the Wine
-//      prefix so the driver-load step does not abort Wine (Wine still cannot load a
-//      real kernel driver).
+//   2. Cloud compatibility (default-on): install a `HoYoKProtect.sys` stub into the
+//      Wine prefix AND launch with `-platform_type CLOUD_THIRD_PARTY_PC -is_cloud 1`
+//      (the flags are appended in `LaunchRuntimeProfile.build`). Without this the
+//      Windows client aborts early because Wine cannot load the real kernel driver.
 //   3. AC patch (default-on): temporarily move the crash reporter and Vulkan fallback
-//      files to `.bak` for the launch, restored via `defer`. This mirrors YAAGL's
-//      current Genshin-global behavior (its binary xdelta3 patch list is empty, so
-//      no binary diff is applied here).
-//   4. Network block (default-on): write the anti-cheat/telemetry hosts into the Wine
-//      prefix hosts file for the whole launch, removed via `defer` after the game exits.
+//      files to `.bak` for the launch, restored via `defer`. Mirrors YAAGL's current
+//      Genshin-global `removed[]` list (its binary xdelta3 `patched[]` list is empty,
+//      so no binary diff is applied here).
+//   4. Network block (default-on): write anti-cheat/telemetry hosts into the Wine
+//      prefix hosts file, removed via `defer` after the game exits. CRITICAL DETAIL:
+//      the dispatch host is blocked for only 10 seconds (see `dispatchBlockHost`),
+//      NOT for the whole launch — see the warning on `blockedHosts` below.
 //
-// All three modes are enabled by default, unsupported by HoYoverse, and risk the
-// account. They are isolated here and gated by settings flags that can be turned off.
+// Known failure signatures each step prevents (kept here so future edits know what
+// breaks if a step is removed):
+//   - Missing cloud flags / driver stub  -> game aborts at launch (anti-cheat driver
+//     load, `initDriver Failed` / `HoYoKProtect.sys` abort).
+//   - Missing steam.exe parent (see WineService) -> HoYoKProtect loads and aborts.
+//   - Blocking the dispatch host for the WHOLE launch -> game disconnects ~10 minutes
+//     after login ("ClearOnDisconnect" then kicked back to the title/waiting screen),
+//     because the client cannot re-dispatch to a game server. YAAGL only blocks it
+//     for the anti-cheat init window, then unblocks it.
+//   - Enabling msync (`WINEMSYNC`) instead of esync -> `wine client error:308:
+//     partial wakeup read 0` followed by `err:virtual:virtual_setup_exception`
+//     (a render-path crash). See `LaunchRuntimeProfile.build`.
 
 import Foundation
 
@@ -105,12 +127,13 @@ struct LauncherCoordinator: Sendable {
         )
     }
 
-    /// Lists voice-over packages advertised by the live Sophon build.
-    func fetchVoicePackages(
+    /// Builds locally present content inventory using live Sophon manifests.
+    func fetchStorageInventory(
+        for game: GameDefinition,
         settings: AppSettings,
         onEvent: (@Sendable (InstallProgressEvent) async -> Void)? = nil
-    ) async throws -> [VoicePackage] {
-        try await sophonInstaller.fetchVoicePackages(language: settings.language, onEvent: onEvent)
+    ) async throws -> GameStorageInventory {
+        try await sophonInstaller.fetchStorageInventory(game: game, language: settings.language, onEvent: onEvent)
     }
 
     /// Removes the local files of one non-selected voice pack.
@@ -183,12 +206,24 @@ struct LauncherCoordinator: Sendable {
 
         if settings.blockNetMode {
             try installHostsBlock(in: profile.prefixDirectory)
+            // YAAGL blocks the dispatch host only during the anti-cheat init window, then unblocks it
+            // so the game can re-dispatch without being kicked back to the title screen. The telemetry
+            // hosts stay blocked for the whole launch.
+            let prefixDirectory = profile.prefixDirectory
+            Task.detached {
+                try? await Task.sleep(nanoseconds: Self.dispatchBlockDurationNanoseconds)
+                try? Self.unblockDispatchHost(in: prefixDirectory)
+            }
         }
         defer {
             if settings.blockNetMode {
                 try? removeHostsBlock(in: profile.prefixDirectory)
             }
         }
+
+        let resolutionOverride: (width: Int, height: Int)? = settings.resolutionCustom
+            ? (settings.resolutionWidth, settings.resolutionHeight)
+            : nil
 
         let request = WineLaunchRequest(
             wineBinaryPath: profile.wineBinaryPath,
@@ -198,13 +233,24 @@ struct LauncherCoordinator: Sendable {
             environment: profile.environment,
             currentDirectory: profile.currentDirectory,
             runtimeRequirements: profile.runtimeRequirements,
-            useSteamLauncher: settings.cloudCompatibilityMode,
+            useSteamLauncher: settings.steamPatch,
+            macDriverRetina: settings.macDriverRetina,
+            leftCommandIsCtrl: settings.leftCommandIsCtrl,
+            resolutionOverride: resolutionOverride,
+            enableHDR: settings.enableHDR,
             onOutput: onOutput
         )
         return try await wineService.launch(request)
     }
 
-    /// Copies the game's protection driver into the Wine prefix system32 so the driver-load step does not abort.
+    /// Copies the game's protection driver into the Wine prefix system32 so the driver-load step does
+    /// not abort the process.
+    ///
+    /// Wine cannot load real Windows kernel drivers, but the client still tries to load
+    /// `HoYoKProtect.sys` during startup. Placing the file in system32 lets that load step succeed
+    /// (it is then inert under Wine). Combined with the cloud-gaming flags and the steam.exe parent
+    /// process (see WineService), this is what lets the client start at all. DO NOT REMOVE without a
+    /// replacement bypass; without it the client aborts during the anti-cheat driver-load phase.
     private func installProtectionDriverStub(for game: GameDefinition, prefixDirectory: URL) throws {
         let source = game.installDirectory.appendingPathComponent("HoYoKProtect.sys")
         guard FileManager.default.fileExists(atPath: source.path) else { return }
@@ -219,7 +265,13 @@ struct LauncherCoordinator: Sendable {
         try FileManager.default.copyItem(at: source, to: destination)
     }
 
-    /// Files YAAGL currently hides for Genshin global during launch (crash reporter and Vulkan fallback).
+    /// Files YAAGL hides for Genshin global during launch (crash reporter and Vulkan fallback).
+    ///
+    /// These are moved to `.bak` for the launch and restored afterwards. The crash reporters would
+    /// otherwise fire (and their upload would fail) when the game hits the benign Wine/DXMT errors;
+    /// hiding `vulkan-1.dll` keeps Unity from trying its Vulkan fallback path, which does not work
+    /// through DXMT. This list matches YAAGL's `removed[]` for hk4e_global exactly. DO NOT remove
+    /// entries from here without checking YAAGL's current `server.removed` — the set is deliberate.
     private static let acPatchRemovedFiles = [
         "GenshinImpact_Data/upload_crash.exe",
         "GenshinImpact_Data/Plugins/crashreport.exe",
@@ -250,28 +302,57 @@ struct LauncherCoordinator: Sendable {
         }
     }
 
-    /// Hosts blocked in the Wine prefix during launch to skip the anti-cheat security check and
-    /// suppress telemetry, mirroring YAAGL's Genshin-global host list.
+    /// Telemetry/anti-cheat hosts blocked in the Wine prefix for the whole launch. Mirrors YAAGL's
+    /// Genshin-global `OS_CUSTOM_HOSTS`.
+    ///
+    /// DO NOT ADD `dispatchosglobal.yuanshen.com` BACK TO THIS LIST.
+    /// `dispatchosglobal` is the game's *dispatch/region-routing* server, not a telemetry host.
+    /// Blocking it for the entire launch makes the client unable to re-dispatch once its initial
+    /// dispatch expires, which surfaces ~10 minutes after login as a disconnect back to the title
+    /// screen (`BeyondLevelEditModule ClearOnDisconnect` in the game's output_log.txt). YAAGL only
+    /// blocks it for the 10-second anti-cheat init window and then unblocks it — that behaviour is
+    /// implemented via `dispatchBlockHost` + `unblockDispatchHost` below. Do not "simplify" the two
+    /// lists back into one; the different lifetimes are load-bearing.
     private static let blockedHosts = [
-        "dispatchosglobal.yuanshen.com",
         "log-upload-os.hoyoverse.com",
         "sg-public-data-api.hoyoverse.com",
         "overseauspider.yuanshen.com"
     ]
 
+    /// Dispatch host blocked only during the anti-cheat init window, then unblocked so the game can
+    /// re-dispatch without disconnecting. Mirrors YAAGL's `OS_BLOCK_URL`.
+    ///
+    /// DO NOT REMOVE the timed unblock. This host must NOT stay blocked for the whole launch (see
+    /// the warning on `blockedHosts`). The 10-second window is long enough for the anti-cheat to
+    /// give up initialising against the dispatch endpoint, but short enough that the game's normal
+    /// re-dispatch still succeeds.
+    private static let dispatchBlockHost = "dispatchosglobal.yuanshen.com"
+
+    /// How long the dispatch host stays blocked at launch before being unblocked.
+    private static let dispatchBlockDurationNanoseconds: UInt64 = 10_000_000_000
+
     /// Writes the block section into the Wine prefix hosts file so name resolution under Wine maps
-    /// the blocked hosts to 0.0.0.0 for the whole launch. No admin privileges are needed because
-    /// the prefix is user-owned.
+    /// the blocked hosts to 0.0.0.0. No admin privileges are needed because the prefix is user-owned.
     private func installHostsBlock(in prefixDirectory: URL) throws {
-        let hostsURL = Self.prefixHostsURL(in: prefixDirectory)
+        try Self.writeHostsBlock(in: prefixDirectory, hosts: Self.blockedHosts + [Self.dispatchBlockHost])
+    }
+
+    /// Rewrites the block with only the persistent telemetry hosts, unblocking the dispatch host.
+    private static func unblockDispatchHost(in prefixDirectory: URL) throws {
+        try writeHostsBlock(in: prefixDirectory, hosts: blockedHosts)
+    }
+
+    /// Writes the NSLauncher block section into the Wine prefix hosts file.
+    private static func writeHostsBlock(in prefixDirectory: URL, hosts: [String]) throws {
+        let hostsURL = prefixHostsURL(in: prefixDirectory)
         try FileManager.default.createDirectory(at: hostsURL.deletingLastPathComponent(), withIntermediateDirectories: true)
 
-        var lines = Self.prefixHostsLines(excludingBlock: true, at: hostsURL)
+        var lines = prefixHostsLines(excludingBlock: true, at: hostsURL)
         if !lines.isEmpty, lines.last?.isEmpty == false {
             lines.append("")
         }
         lines.append("# Added by NSLauncher")
-        for host in Self.blockedHosts {
+        for host in hosts {
             lines.append("0.0.0.0 \(host)")
         }
         lines.append("# End of NSLauncher section")

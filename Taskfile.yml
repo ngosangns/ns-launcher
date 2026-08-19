@@ -1,0 +1,15 @@
+version: '3'
+
+tasks:
+  dev:
+    desc: Rebuild and relaunch NS Launcher when Swift sources change.
+    cmds:
+      - task --watch --force dev:run
+
+  dev:run:
+    run: always
+    sources:
+      - Sources/**/*.swift
+      - Package.swift
+    cmds:
+      - swift run

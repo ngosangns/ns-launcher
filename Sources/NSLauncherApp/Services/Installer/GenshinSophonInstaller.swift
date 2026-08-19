@@ -23,9 +23,9 @@
 // `stateFlushChunkCount` chunks instead of per chunk, trading a few re-downloaded
 // chunks after a crash for far less metadata I/O.
 //
-// Voice packs: `fetchVoicePackages` lists every non-"game" category from `getBuild`
-// stats (no manifest download), and `removeVoicePack` deletes only the files named
-// by that category's manifest so game resources are never touched. The category
+// Storage inventory: `fetchStorageInventory` decodes the game and voice manifests,
+// then reports local bytes without hashing assets; `removeVoicePack` deletes only the
+// files named by that category's manifest so game resources are never touched. The category
 // `matching_field` values (`game`, `en-us`, `zh-cn`, `ja-jp`, `ko-kr`) come from the
 // live API; if HoYoverse changes them, unknown packs still list via `categoryName`.
 
@@ -108,11 +108,12 @@ protocol SophonInstalling: Sendable {
         voiceMatchingField: String,
         onEvent: (@Sendable (InstallProgressEvent) async -> Void)?
     ) async throws -> SophonBuild
-    /// Lists every voice-over category advertised by the current Sophon build.
-    func fetchVoicePackages(
+    /// Builds local storage inventory from the live Sophon manifests.
+    func fetchStorageInventory(
+        game: GameDefinition,
         language: AppLanguage,
         onEvent: (@Sendable (InstallProgressEvent) async -> Void)?
-    ) async throws -> [VoicePackage]
+    ) async throws -> GameStorageInventory
     /// Deletes the local files of one non-selected voice pack and returns the freed byte count.
     func removeVoicePack(
         matchingField: String,
@@ -204,24 +205,119 @@ actor GenshinSophonInstaller: SophonInstalling {
         )
     }
 
-    /// Lists the voice-over categories advertised by the live Sophon build without decoding full manifests.
-    func fetchVoicePackages(
+    /// Builds local storage inventory from game and voice manifests without hashing files.
+    func fetchStorageInventory(
+        game: GameDefinition,
         language: AppLanguage,
         onEvent: (@Sendable (InstallProgressEvent) async -> Void)? = nil
-    ) async throws -> [VoicePackage] {
+    ) async throws -> GameStorageInventory {
         let branch = try await fetchBranch(language: language)
-        await onEvent?(.diagnostic("fetch voice packages branch tag=\(branch.tag)"))
+        await onEvent?(.diagnostic("fetch storage inventory branch tag=\(branch.tag)"))
         let buildResponse = try await fetchBuildResponse(branch: branch)
-        return buildResponse.data.manifests
-            .filter { $0.matchingField != "game" }
-            .map { identity in
+        var voicePackages: [VoicePackage] = []
+        var gameAssets: [SophonAsset] = []
+
+        for identity in buildResponse.data.manifests {
+            let manifest = try await fetchCategoryManifest(identity: identity, onEvent: onEvent)
+            let assets = manifest.assets.filter { !$0.isDirectory }
+            if identity.matchingField == "game" {
+                gameAssets = assets
+                continue
+            }
+
+            let localStats = localStorageStats(for: assets, game: game)
+            guard localStats.fileCount > 0 else { continue }
+            voicePackages.append(
                 VoicePackage(
                     matchingField: identity.matchingField,
                     categoryName: identity.categoryName,
-                    decompressedBytes: identity.stats.uncompressedSize,
-                    fileCount: identity.stats.fileCount
+                    localBytes: localStats.bytes,
+                    localFileCount: localStats.fileCount
                 )
+            )
+        }
+
+        let cutsceneAssets = gameAssets.filter { SophonCutsceneFilter.isCutscene($0.path) }
+        let audioAssets = gameAssets.filter { !SophonCutsceneFilter.isCutscene($0.path) && Self.isAudioAsset($0.path) }
+        return GameStorageInventory(
+            voicePackages: voicePackages,
+            contentGroups: [
+                storageGroup(kind: .cutscene, assets: cutsceneAssets, game: game, excludedFromInstall: true),
+                storageGroup(kind: .audio, assets: audioAssets, game: game, excludedFromInstall: false)
+            ],
+            questAssetAnalysis: questAssetAnalysis(for: gameAssets, game: game)
+        )
+    }
+
+    private func storageGroup(
+        kind: StorageContentKind,
+        assets: [SophonAsset],
+        game: GameDefinition,
+        excludedFromInstall: Bool
+    ) -> StorageContentGroup {
+        let localStats = localStorageStats(for: assets, game: game)
+        return StorageContentGroup(
+            kind: kind,
+            localBytes: localStats.bytes,
+            localFileCount: localStats.fileCount,
+            availableBytes: assets.reduce(Int64(0)) { $0 + $1.size },
+            availableFileCount: assets.count,
+            excludedFromInstall: excludedFromInstall
+        )
+    }
+
+    /// Reports only local runtime-container totals and never infers quest ownership.
+    private func questAssetAnalysis(for assets: [SophonAsset], game: GameDefinition) -> QuestAssetAnalysis {
+        var totals: [QuestAssetContainerKind: (bytes: Int64, fileCount: Int)] = [:]
+
+        for asset in assets {
+            guard !asset.isDirectory,
+                  let kind = QuestAssetContainerClassifier.kind(for: asset.path) else {
+                continue
             }
+            let destination = game.installDirectory.appendingPathComponent(asset.path)
+            guard let attributes = try? fileManager.attributesOfItem(atPath: destination.path),
+                  let size = (attributes[.size] as? NSNumber)?.int64Value else {
+                continue
+            }
+            let current = totals[kind] ?? (bytes: 0, fileCount: 0)
+            totals[kind] = (bytes: current.bytes + size, fileCount: current.fileCount + 1)
+        }
+
+        let groups = QuestAssetContainerKind.allCases.compactMap { kind -> QuestAssetContainerGroup? in
+            guard let total = totals[kind], total.fileCount > 0 else { return nil }
+            return QuestAssetContainerGroup(
+                kind: kind,
+                localBytes: total.bytes,
+                localFileCount: total.fileCount
+            )
+        }
+        return QuestAssetAnalysis(containerGroups: groups, mappingStatus: .unavailable)
+    }
+
+    private func localStorageStats(for assets: [SophonAsset], game: GameDefinition) -> (bytes: Int64, fileCount: Int) {
+        assets.reduce(into: (bytes: Int64(0), fileCount: 0)) { stats, asset in
+            let destination = game.installDirectory.appendingPathComponent(asset.path)
+            guard let attributes = try? fileManager.attributesOfItem(atPath: destination.path),
+                  let size = (attributes[.size] as? NSNumber)?.int64Value else {
+                return
+            }
+            stats.bytes += size
+            stats.fileCount += 1
+        }
+    }
+
+    private static func isAudioAsset(_ path: String) -> Bool {
+        let normalized = path.lowercased()
+        let components = normalized.split(separator: "/")
+        let audioDirectories = ["audio", "sound", "voice", "music"]
+        if components.dropLast().contains(where: { audioDirectories.contains(String($0)) }) {
+            return true
+        }
+
+        guard let dot = normalized.lastIndex(of: ".") else { return false }
+        let audioExtensions = ["acb", "awb", "bnk", "m4a", "mp3", "ogg", "opus", "pck", "wav", "wem"]
+        return audioExtensions.contains(String(normalized[normalized.index(after: dot)...]))
     }
 
     /// Deletes the local files of one non-selected voice pack and returns the freed byte count.

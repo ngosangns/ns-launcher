@@ -59,23 +59,14 @@ struct ContentView: View {
                     .foregroundStyle(LauncherPalette.goldHighlight)
             }
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text("NS LAUNCHER")
-                    .font(.system(.headline, design: .rounded, weight: .bold))
-                    .tracking(1.8)
-                    .foregroundStyle(LauncherPalette.parchment)
-                Text(text.nativeLauncherDescription)
-                    .font(.caption)
-                    .foregroundStyle(LauncherPalette.mist.opacity(0.78))
-            }
+            Text("NS LAUNCHER")
+                .font(.system(.headline, design: .rounded, weight: .bold))
+                .tracking(1.8)
+                .foregroundStyle(LauncherPalette.parchment)
 
             Spacer()
 
-            StatusPill(
-                title: viewModel.isBusy ? viewModel.statusText : text.ready,
-                tint: viewModel.isBusy ? LauncherPalette.warning : LauncherPalette.success
-            )
-            .lineLimit(1)
+            languageSwitcher
 
             Button {
                 isShowingSettings = true
@@ -87,54 +78,38 @@ struct ContentView: View {
         }
     }
 
+    private var languageSwitcher: some View {
+        let current = viewModel.settings.language
+        let target: AppLanguage = current == .english ? .vietnamese : .english
+        let targetName = target == .english ? text.english : text.vietnamese
+        return Button {
+            viewModel.setLanguage(target)
+        } label: {
+            Label(targetName, systemImage: "globe")
+        }
+        .buttonStyle(QuestButtonStyle(role: .quiet))
+        .pointerOnHover()
+    }
+
     private func hero(for game: GameDefinition) -> some View {
         OrnamentalPanel(padding: 30, tone: LauncherPalette.twilight.opacity(0.60)) {
             VStack(alignment: .leading, spacing: 24) {
                 HStack(alignment: .top) {
-                    VStack(alignment: .leading, spacing: 10) {
-                        Label(text.sophonSourceTitle.uppercased(), systemImage: "moon.stars.fill")
-                            .font(.system(.caption, design: .rounded, weight: .bold))
-                            .tracking(1.2)
-                            .foregroundStyle(LauncherPalette.goldHighlight)
-
-                        Text(game.displayName)
-                            .font(.system(size: 44, weight: .bold, design: .serif))
-                            .foregroundStyle(LauncherPalette.parchment)
-
-                        Text(text.installPlannerDescription)
-                            .font(.subheadline)
-                            .foregroundStyle(LauncherPalette.mist.opacity(0.88))
-                            .frame(maxWidth: 560, alignment: .leading)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
+                    Text(game.displayName)
+                        .font(.system(size: 44, weight: .bold, design: .serif))
+                        .foregroundStyle(LauncherPalette.parchment)
 
                     Spacer(minLength: 20)
 
-                    VStack(alignment: .trailing, spacing: 10) {
-                        CelestialMark()
-                            .scaleEffect(1.55)
-                            .padding(8)
-                        Text("MACOS · WINE")
-                            .font(.system(.caption2, design: .rounded, weight: .bold))
-                            .tracking(1.2)
-                            .foregroundStyle(LauncherPalette.mist.opacity(0.72))
-                    }
+                    CelestialMark()
+                        .scaleEffect(1.55)
+                        .padding(8)
                 }
 
                 Divider()
                     .overlay(LauncherPalette.gold.opacity(0.40))
 
-                ViewThatFits(in: .horizontal) {
-                    HStack(spacing: 12) {
-                        actionButtons
-                        Spacer(minLength: 20)
-                        journeyNote
-                    }
-                    VStack(alignment: .leading, spacing: 18) {
-                        actionButtons
-                        journeyNote
-                    }
-                }
+                actionButtons
             }
         }
     }
@@ -168,43 +143,18 @@ struct ContentView: View {
         }
     }
 
-    private var journeyNote: some View {
-        VStack(alignment: .trailing, spacing: 4) {
-            Text(viewModel.isBusy ? text.status : text.ready)
-                .font(.system(.caption, design: .rounded, weight: .bold))
-                .tracking(1)
-                .foregroundStyle(LauncherPalette.goldHighlight)
-            Text(viewModel.statusText)
-                .font(.caption)
-                .foregroundStyle(LauncherPalette.mist.opacity(0.86))
-                .multilineTextAlignment(.trailing)
-                .lineLimit(2)
-        }
-    }
-
     private var statusDeck: some View {
-        OrnamentalPanel(tone: LauncherPalette.night.opacity(0.66)) {
-            VStack(alignment: .leading, spacing: 20) {
-                HStack(alignment: .firstTextBaseline) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(text.status.uppercased())
-                            .font(.system(.caption, design: .rounded, weight: .bold))
-                            .tracking(1.4)
-                            .foregroundStyle(LauncherPalette.goldHighlight)
-                        Text(viewModel.statusText)
-                            .font(.system(.title3, design: .rounded, weight: .semibold))
-                            .foregroundStyle(LauncherPalette.parchment)
-                    }
-                    Spacer()
-                    Image(systemName: statusSymbol)
-                        .font(.title2)
-                        .foregroundStyle(viewModel.isBusy ? LauncherPalette.warning : LauncherPalette.success)
+        OrnamentalPanel(padding: 24, tone: LauncherPalette.night.opacity(0.66)) {
+            VStack(alignment: .leading, spacing: 18) {
+                if viewModel.isBusy || viewModel.isLaunchingWithWine {
+                    statusHeader
                 }
 
-                if let progress = viewModel.operationProgress {
+                // While a game is launching there is no meaningful overall progress to show
+                // (the launch bar is always indeterminate), so skip the progress section and
+                // surface only the diagnostics log.
+                if let progress = viewModel.operationProgress, !viewModel.isLaunchingWithWine {
                     progressDetails(progress)
-                } else {
-                    idleState
                 }
 
                 diagnostics
@@ -212,20 +162,44 @@ struct ContentView: View {
         }
     }
 
-    private var idleState: some View {
-        HStack(spacing: 14) {
-            Image(systemName: "checkmark.seal.fill")
-                .font(.title2)
-                .foregroundStyle(LauncherPalette.success)
-            Text(text.nativeLauncherDescription)
-                .font(.subheadline)
-                .foregroundStyle(LauncherPalette.mist.opacity(0.84))
+    private var statusHeader: some View {
+        HStack(alignment: .center, spacing: 14) {
+            ZStack {
+                Circle()
+                    .fill(statusTint.opacity(0.14))
+                    .frame(width: 42, height: 42)
+                if viewModel.isPaused {
+                    Image(systemName: "pause.fill")
+                        .font(.system(.title3, weight: .semibold))
+                        .foregroundStyle(statusTint)
+                } else {
+                    ProgressView()
+                        .controlSize(.small)
+                        .tint(statusTint)
+                }
+            }
+
+            VStack(alignment: .leading, spacing: 5) {
+                Text(text.status.uppercased())
+                    .font(.system(.caption2, design: .rounded, weight: .bold))
+                    .tracking(1.2)
+                    .foregroundStyle(LauncherPalette.goldHighlight)
+                Text(viewModel.statusText)
+                    .font(.system(.title3, design: .rounded, weight: .bold))
+                    .foregroundStyle(LauncherPalette.parchment)
+                    .lineLimit(2)
+            }
+
+            Spacer(minLength: 12)
         }
-        .padding(.vertical, 6)
+    }
+
+    private var statusTint: Color {
+        viewModel.isBusy || viewModel.isLaunchingWithWine ? LauncherPalette.warning : LauncherPalette.success
     }
 
     private func progressDetails(_ progress: OperationProgress) -> some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: 16) {
             progressLine(
                 title: text.totalProgressLabel,
                 detail: progress.detailText ?? text.waitingForProgress,
@@ -233,6 +207,8 @@ struct ContentView: View {
             )
 
             if progress.partText != nil || progress.currentPartDetailText != nil {
+                Divider()
+                    .overlay(LauncherPalette.mist.opacity(0.12))
                 progressLine(
                     title: text.currentPartProgressLabel,
                     detail: progress.currentPartDetailText ?? progress.partText ?? text.waitingForProgress,
@@ -241,10 +217,7 @@ struct ContentView: View {
             }
 
             if progress.speedText != nil || progress.etaText != nil || progress.totalKBText != nil {
-                ViewThatFits(in: .horizontal) {
-                    HStack(spacing: 24) { transferMetrics(progress) }
-                    VStack(alignment: .leading, spacing: 10) { transferMetrics(progress) }
-                }
+                transferMetricsStrip(progress)
             }
 
             if let paths = progress.itemPaths, !paths.isEmpty {
@@ -252,41 +225,40 @@ struct ContentView: View {
             } else if let path = progress.itemPath {
                 activeItemList([path])
             }
-
-            if !viewModel.isLaunchingWithWine {
-                HStack(spacing: 10) {
-                    Button(viewModel.isPaused ? text.resumeTitle : text.pauseTitle) {
-                        viewModel.togglePause()
-                    }
-                    .buttonStyle(QuestButtonStyle(role: .quiet))
-                    .disabled(!viewModel.isBusy)
-                    .pointerOnHover(enabled: viewModel.isBusy)
-
-                    Button(text.stopTitle) {
-                        viewModel.stopCurrentOperation()
-                    }
-                    .buttonStyle(QuestButtonStyle(role: .quiet))
-                    .disabled(!viewModel.isBusy)
-                    .pointerOnHover(enabled: viewModel.isBusy)
-                }
-            }
         }
     }
 
     private func progressLine(title: String, detail: String, value: Double?) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(title)
-                    .font(.system(.caption, design: .rounded, weight: .bold))
-                    .foregroundStyle(LauncherPalette.mist.opacity(0.72))
+        VStack(alignment: .leading, spacing: 9) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(title.uppercased())
+                    .font(.system(.caption2, design: .rounded, weight: .bold))
+                    .tracking(0.8)
+                    .foregroundStyle(LauncherPalette.mist.opacity(0.70))
                 Spacer()
-                Text(detail)
-                    .font(.caption)
-                    .foregroundStyle(LauncherPalette.parchment.opacity(0.88))
-                    .lineLimit(1)
+                if let value {
+                    Text("\(Int((value * 100).rounded()))%")
+                        .font(.system(.caption, design: .monospaced, weight: .semibold))
+                        .foregroundStyle(LauncherPalette.goldHighlight)
+                }
             }
+            Text(detail)
+                .font(.subheadline)
+                .foregroundStyle(LauncherPalette.parchment.opacity(0.92))
+                .lineLimit(2)
             GoldenProgressBar(value: value)
         }
+    }
+
+    private func transferMetricsStrip(_ progress: OperationProgress) -> some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(alignment: .top, spacing: 24) { transferMetrics(progress) }
+            VStack(alignment: .leading, spacing: 12) { transferMetrics(progress) }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(LauncherPalette.ink.opacity(0.26), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
 
     @ViewBuilder
@@ -299,50 +271,78 @@ struct ContentView: View {
     @ViewBuilder
     private func metric(_ label: String, _ value: String?) -> some View {
         if let value {
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(label.uppercased())
                     .font(.system(.caption2, design: .rounded, weight: .bold))
                     .tracking(0.8)
                     .foregroundStyle(LauncherPalette.gold.opacity(0.80))
                 Text(value)
-                    .font(.system(.subheadline, design: .monospaced, weight: .medium))
+                    .font(.system(.body, design: .monospaced, weight: .medium))
                     .foregroundStyle(LauncherPalette.parchment)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
     private func activeItemList(_ paths: [String]) -> some View {
-        VStack(alignment: .leading, spacing: 7) {
+        VStack(alignment: .leading, spacing: 9) {
             Text(paths.count > 1 ? text.currentItemsLabel : text.currentItemLabel)
-                .font(.system(.caption, design: .rounded, weight: .bold))
-                .foregroundStyle(LauncherPalette.mist.opacity(0.72))
+                .font(.system(.caption2, design: .rounded, weight: .bold))
+                .tracking(0.8)
+                .foregroundStyle(LauncherPalette.mist.opacity(0.70))
             ForEach(paths.prefix(3), id: \.self) { path in
-                Text(path)
-                    .font(.system(.caption, design: .monospaced))
-                    .foregroundStyle(LauncherPalette.parchment.opacity(0.88))
-                    .lineLimit(1)
-                    .textSelection(.enabled)
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Image(systemName: "doc.text")
+                        .font(.caption2)
+                        .foregroundStyle(LauncherPalette.gold.opacity(0.82))
+                    Text(path)
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundStyle(LauncherPalette.parchment.opacity(0.88))
+                        .lineLimit(1)
+                        .textSelection(.enabled)
+                }
             }
         }
-        .padding(.top, 2)
+        .padding(14)
+        .background(LauncherPalette.ink.opacity(0.20), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
 
     private var diagnostics: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Button {
-                withAnimation(.easeOut(duration: 0.2)) {
-                    isShowingDiagnostics.toggle()
+            HStack(spacing: 10) {
+                if !viewModel.isLaunchingWithWine {
+                    Button {
+                        withAnimation(.easeOut(duration: 0.2)) {
+                            isShowingDiagnostics.toggle()
+                        }
+                    } label: {
+                        Label(
+                            isShowingDiagnostics ? text.hideDiagnostics : text.showDiagnostics,
+                            systemImage: isShowingDiagnostics ? "chevron.up" : "chevron.down"
+                        )
+                    }
+                    .buttonStyle(QuestButtonStyle(role: .quiet))
+                    .pointerOnHover()
                 }
-            } label: {
-                Label(
-                    isShowingDiagnostics ? text.hideDiagnostics : text.showDiagnostics,
-                    systemImage: isShowingDiagnostics ? "chevron.up" : "chevron.down"
-                )
-            }
-            .buttonStyle(QuestButtonStyle(role: .quiet))
-            .pointerOnHover()
 
-            if isShowingDiagnostics {
+                if viewModel.isBusy && !viewModel.isLaunchingWithWine {
+                    Button(viewModel.isPaused ? text.resumeTitle : text.pauseTitle) {
+                        viewModel.togglePause()
+                    }
+                    .buttonStyle(QuestButtonStyle(role: .quiet))
+                    .pointerOnHover()
+
+                    Button(text.stopTitle) {
+                        viewModel.stopCurrentOperation()
+                    }
+                    .buttonStyle(QuestButtonStyle(role: .quiet))
+                    .pointerOnHover()
+                }
+
+                Spacer(minLength: 0)
+            }
+
+            if isShowingDiagnostics || viewModel.isLaunchingWithWine {
                 if !viewModel.updateRunLog.isEmpty {
                     logPanel(title: text.updateRunLogTitle, contents: viewModel.updateRunLog, bottomID: "update-log")
                 }

@@ -71,19 +71,80 @@ enum VoiceLanguage: String, Codable, CaseIterable, Identifiable {
     }
 }
 
-/// One downloadable voice-over category exposed by the Sophon build.
+/// One locally present voice-over category exposed by the Sophon build.
 struct VoicePackage: Identifiable, Hashable {
     var matchingField: String
     var categoryName: String
-    var decompressedBytes: Int64
-    var fileCount: Int
+    var localBytes: Int64
+    var localFileCount: Int
 
     var id: String { matchingField }
 
-    /// Known voice language for the matching field, when it maps to a supported language.
+    /// Known voice language for the matching field, when it maps to a supported voice language.
     var voiceLanguage: VoiceLanguage? {
         VoiceLanguage(sophonMatchingField: matchingField)
     }
+}
+
+/// A local game-content category derived from Sophon asset paths.
+enum StorageContentKind: String, Hashable, Identifiable {
+    case cutscene
+    case audio
+
+    var id: String { rawValue }
+}
+
+/// Actual local storage and current Sophon availability for one content category.
+struct StorageContentGroup: Hashable, Identifiable {
+    var kind: StorageContentKind
+    var localBytes: Int64
+    var localFileCount: Int
+    var availableBytes: Int64
+    var availableFileCount: Int
+    var excludedFromInstall: Bool
+
+    var id: StorageContentKind { kind }
+}
+
+/// Runtime container formats that can be measured locally without inferring quest ownership.
+enum QuestAssetContainerKind: String, CaseIterable, Hashable, Identifiable {
+    case encryptedBlock
+    case cabBundle
+    case assetBundle
+    case assetIndex
+
+    var id: String { rawValue }
+}
+
+/// Local totals for one runtime container format; these containers are not quest-specific.
+struct QuestAssetContainerGroup: Hashable, Identifiable {
+    var kind: QuestAssetContainerKind
+    var localBytes: Int64
+    var localFileCount: Int
+
+    var id: QuestAssetContainerKind { kind }
+}
+
+/// Whether the launcher has verified evidence to associate runtime files with quests.
+enum QuestAssetMappingStatus: Hashable {
+    case unavailable
+}
+
+/// A read-only report of runtime containers; it never identifies removable quest data.
+struct QuestAssetAnalysis: Hashable {
+    var containerGroups: [QuestAssetContainerGroup] = []
+    var mappingStatus: QuestAssetMappingStatus = .unavailable
+
+    static let unavailable = QuestAssetAnalysis()
+}
+
+/// Local storage inventory for one selected game, computed from live Sophon manifests.
+struct GameStorageInventory: Hashable {
+    var voicePackages: [VoicePackage] = []
+    var contentGroups: [StorageContentGroup] = []
+    var questAssetAnalysis = QuestAssetAnalysis.unavailable
+
+    static let empty = GameStorageInventory()
 }
 
 /// Installation backend selected for a game definition.
@@ -311,9 +372,31 @@ struct AppSettings: Codable, Equatable {
     /// AC patch (enabled by default): temporarily hide the crash reporter and Vulkan fallback files
     /// during launch, then restore them afterwards (mirrors YAAGL's current Genshin behavior).
     var acPatchMode: Bool
-    /// Launch network block (enabled by default): temporarily block anti-cheat and telemetry hosts in
-    /// the Wine prefix hosts file for the duration of the launch, then restore.
+    /// Launch network block (enabled by default): block the anti-cheat/telemetry hosts in the Wine
+    /// prefix hosts file for the duration of the launch, then restore. The dispatch host is only
+    /// blocked for the first 10 seconds (see `LauncherCoordinator.dispatchBlockHost`) so the game can
+    /// still re-dispatch — blocking it for the whole launch causes a disconnect back to the title
+    /// screen ~10 minutes after login.
     var blockNetMode: Bool
+    /// Wine network-timeout fix (enabled by default): set `WINE_ENABLE_TIMEOUT_FIX=1` so YAAGL-patched
+    /// Wine avoids the macOS socket timeout that drops the game back to the title screen mid-session.
+    /// Harmless (ignored) on Wine builds without that patch.
+    var timeoutFix: Bool
+    /// Steam patch (enabled by default): launch through a real `steam.exe` + `lsteamclient.dll` parent
+    /// so the anti-cheat skips loading its kernel driver.
+    var steamPatch: Bool
+    /// Apply a custom windowed resolution through the game's registry keys.
+    var resolutionCustom: Bool
+    var resolutionWidth: Int
+    var resolutionHeight: Int
+    /// Enable the game's HDR registry flag.
+    var enableHDR: Bool
+    /// Route the game through an HTTP/HTTPS proxy.
+    var proxyEnabled: Bool
+    var proxyHost: String
+    /// Optional Metal frame-pacing cap for DXMT (0 = disabled). The value must be a factor of the
+    /// display refresh rate (e.g. 60 on a 60/120 Hz display).
+    var maxFrameRate: Int
     /// Monotonic settings schema version used for one-time default migrations.
     var settingsVersion: Int
 
@@ -352,7 +435,16 @@ struct AppSettings: Codable, Equatable {
             cloudCompatibilityMode: true,
             acPatchMode: true,
             blockNetMode: true,
-            settingsVersion: 1
+            timeoutFix: true,
+            steamPatch: true,
+            resolutionCustom: false,
+            resolutionWidth: 1920,
+            resolutionHeight: 1080,
+            enableHDR: false,
+            proxyEnabled: false,
+            proxyHost: "",
+            maxFrameRate: 0,
+            settingsVersion: 2
         )
     }
 
@@ -368,6 +460,14 @@ struct AppSettings: Codable, Equatable {
             copy.acPatchMode = true
             copy.blockNetMode = true
             copy.settingsVersion = 1
+        }
+
+        // One-time migration: enable the timeout fix and real steam.exe parent for settings that
+        // predate these default-on toggles.
+        if copy.settingsVersion < 2 {
+            copy.timeoutFix = true
+            copy.steamPatch = true
+            copy.settingsVersion = 2
         }
 
         guard let index = copy.games.firstIndex(where: { $0.id == Self.genshinGameID }) else {
@@ -404,6 +504,15 @@ struct AppSettings: Codable, Equatable {
         case cloudCompatibilityMode
         case acPatchMode
         case blockNetMode
+        case timeoutFix
+        case steamPatch
+        case resolutionCustom
+        case resolutionWidth
+        case resolutionHeight
+        case enableHDR
+        case proxyEnabled
+        case proxyHost
+        case maxFrameRate
         case settingsVersion
     }
 
@@ -420,6 +529,15 @@ struct AppSettings: Codable, Equatable {
         cloudCompatibilityMode: Bool = false,
         acPatchMode: Bool = false,
         blockNetMode: Bool = false,
+        timeoutFix: Bool = false,
+        steamPatch: Bool = false,
+        resolutionCustom: Bool = false,
+        resolutionWidth: Int = 1920,
+        resolutionHeight: Int = 1080,
+        enableHDR: Bool = false,
+        proxyEnabled: Bool = false,
+        proxyHost: String = "",
+        maxFrameRate: Int = 0,
         settingsVersion: Int = 0
     ) {
         self.games = games
@@ -434,6 +552,15 @@ struct AppSettings: Codable, Equatable {
         self.cloudCompatibilityMode = cloudCompatibilityMode
         self.acPatchMode = acPatchMode
         self.blockNetMode = blockNetMode
+        self.timeoutFix = timeoutFix
+        self.steamPatch = steamPatch
+        self.resolutionCustom = resolutionCustom
+        self.resolutionWidth = resolutionWidth
+        self.resolutionHeight = resolutionHeight
+        self.enableHDR = enableHDR
+        self.proxyEnabled = proxyEnabled
+        self.proxyHost = proxyHost
+        self.maxFrameRate = maxFrameRate
         self.settingsVersion = settingsVersion
     }
 
@@ -451,6 +578,15 @@ struct AppSettings: Codable, Equatable {
         self.cloudCompatibilityMode = try container.decodeIfPresent(Bool.self, forKey: .cloudCompatibilityMode) ?? false
         self.acPatchMode = try container.decodeIfPresent(Bool.self, forKey: .acPatchMode) ?? false
         self.blockNetMode = try container.decodeIfPresent(Bool.self, forKey: .blockNetMode) ?? false
+        self.timeoutFix = try container.decodeIfPresent(Bool.self, forKey: .timeoutFix) ?? false
+        self.steamPatch = try container.decodeIfPresent(Bool.self, forKey: .steamPatch) ?? false
+        self.resolutionCustom = try container.decodeIfPresent(Bool.self, forKey: .resolutionCustom) ?? false
+        self.resolutionWidth = try container.decodeIfPresent(Int.self, forKey: .resolutionWidth) ?? 1920
+        self.resolutionHeight = try container.decodeIfPresent(Int.self, forKey: .resolutionHeight) ?? 1080
+        self.enableHDR = try container.decodeIfPresent(Bool.self, forKey: .enableHDR) ?? false
+        self.proxyEnabled = try container.decodeIfPresent(Bool.self, forKey: .proxyEnabled) ?? false
+        self.proxyHost = try container.decodeIfPresent(String.self, forKey: .proxyHost) ?? ""
+        self.maxFrameRate = try container.decodeIfPresent(Int.self, forKey: .maxFrameRate) ?? 0
         self.settingsVersion = try container.decodeIfPresent(Int.self, forKey: .settingsVersion) ?? 0
 
         // Ignore deprecated storage and custom binary paths while remaining decode-compatible with older settings files.
@@ -475,6 +611,15 @@ struct AppSettings: Codable, Equatable {
         try container.encode(cloudCompatibilityMode, forKey: .cloudCompatibilityMode)
         try container.encode(acPatchMode, forKey: .acPatchMode)
         try container.encode(blockNetMode, forKey: .blockNetMode)
+        try container.encode(timeoutFix, forKey: .timeoutFix)
+        try container.encode(steamPatch, forKey: .steamPatch)
+        try container.encode(resolutionCustom, forKey: .resolutionCustom)
+        try container.encode(resolutionWidth, forKey: .resolutionWidth)
+        try container.encode(resolutionHeight, forKey: .resolutionHeight)
+        try container.encode(enableHDR, forKey: .enableHDR)
+        try container.encode(proxyEnabled, forKey: .proxyEnabled)
+        try container.encode(proxyHost, forKey: .proxyHost)
+        try container.encode(maxFrameRate, forKey: .maxFrameRate)
         try container.encode(settingsVersion, forKey: .settingsVersion)
     }
 
@@ -551,22 +696,62 @@ struct LaunchRuntimeProfile {
 
         var env: [String: String] = [
             "WINEARCH": "win64",
-            "WINEDEBUG": "fixme-all,err-unwind"
+            "WINEDEBUG": "fixme-all,err-unwind,+timestamp"
         ]
 
         if backend == .dxmt {
-            env["WINEMSYNC"] = "1"
+            // DO NOT switch this back to msync (`WINEMSYNC=1`). On the DXMT-patched Wine build used
+            // here, msync surfaced as `wine client error:308: partial wakeup read 0` immediately
+            // followed by `err:virtual:virtual_setup_exception nested exception on signal stack` —
+            // a hard render-path crash. esync is what YAAGL uses for DXMT.
+            env["WINEESYNC"] = "1"
+            // An empty override list keeps the DXMT builtin D3D10/D3D11/DXGI DLLs authoritative and
+            // prevents any shell-level WINEDLLOVERRIDES from leaking into the launch. Keep it for
+            // DXMT only; the DXVK path below relies on registry `DllOverrides` instead.
+            env["WINEDLLOVERRIDES"] = ""
             let cacheDir = FileManager.default.homeDirectoryForCurrentUser
                 .appendingPathComponent("Library/Caches/NSLauncher/DXMT", isDirectory: true)
             env["DXMT_LOG_PATH"] = cacheDir.appendingPathComponent("dxmt.log").path
             env["DXMT_CONFIG_FILE"] = cacheDir.appendingPathComponent("dxmt.conf").path
+            // Optional Metal frame-pacing cap. DXMT requires the value to be a FACTOR of the display
+            // refresh rate (e.g. 60 for 60/120 Hz, 120 for 120 Hz). It is off by default; a hardcoded
+            // 60 was removed because it is invalid on non-60 Hz displays and contributed to the same
+            // render crash above. Keep it opt-in and validate against the refresh rate.
+            if settings.maxFrameRate > 0 {
+                env["DXMT_CONFIG"] = "d3d11.preferredMaxFrameRate=\(settings.maxFrameRate);"
+            }
+            // Rank GStreamer's H.264 decoders (Apple AudioToolbox + FFmpeg) so in-game/cutscene video
+            // never selects a broken decoder. Mirrors YAAGL's always-on DXMT launch config.
+            env["GST_PLUGIN_FEATURE_RANK"] = "atdec:MAX,avdec_h264:MAX"
         } else if backend == .dxvk {
             env["WINEESYNC"] = "1"
+        }
+
+        // YAAGL's network-timeout fix: prevents the macOS Wine socket timeout that drops the game
+        // back to the title screen mid-session. Only effective on Wine builds carrying the patch
+        // (the managed wine does); a harmless no-op elsewhere. Keep it default-on for Genshin.
+        if settings.timeoutFix {
+            env["WINE_ENABLE_TIMEOUT_FIX"] = "1"
+        }
+
+        // Metal performance HUD (debug overlay). Off by default; enabling it floods the launch log
+        // with `[libMTLHud]`/`NSEventModifierFlagFunction` noise and adds Metal pipeline overhead,
+        // so it should stay off for normal play.
+        if settings.showMetalHUD {
+            env["MTL_HUD_ENABLED"] = "1"
+        }
+
+        // Optional HTTP/HTTPS proxy forwarded to the Windows client.
+        if settings.proxyEnabled, !settings.proxyHost.isEmpty {
+            env["HTTP_PROXY"] = settings.proxyHost
+            env["HTTPS_PROXY"] = settings.proxyHost
         }
 
         var launchArguments = settings.launchArguments(for: game)
         if settings.cloudCompatibilityMode {
             // YAAGL-style cloud-gaming mode: the game skips the local anti-cheat requirement.
+            // DO NOT remove these flags; without them the client aborts during the anti-cheat
+            // driver-load phase (see LauncherCoordinator for the full bypass stack).
             launchArguments += ["-platform_type", "CLOUD_THIRD_PARTY_PC", "-is_cloud", "1"]
         }
 

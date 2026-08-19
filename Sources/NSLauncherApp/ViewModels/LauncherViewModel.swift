@@ -61,8 +61,10 @@ final class LauncherViewModel: ObservableObject {
     @Published var updateRunLog = ""
     /// True while the selected game is being updated through Sophon.
     @Published var isUpdatingGame = false
-    /// Voice-over packages advertised by the live Sophon build.
+    /// Voice-over packages with local assets in the selected game installation.
     @Published var voicePackages: [VoicePackage] = []
+    /// Cutscene and audio storage derived from the selected game's local files and live manifest.
+    @Published var storageInventory = GameStorageInventory.empty
     /// True while voice packages are being refreshed or removed.
     @Published var isManagingVoicePacks = false
 
@@ -174,27 +176,100 @@ final class LauncherViewModel: ObservableObject {
         persistSettings()
     }
 
-    /// Fetches the voice packages advertised by the live Sophon build.
+    /// Updates the Wine network-timeout-fix toggle and persists the choice.
+    func setTimeoutFix(_ enabled: Bool) {
+        settings.timeoutFix = enabled
+        persistSettings()
+    }
+
+    /// Updates the real steam.exe parent toggle and persists the choice.
+    func setSteamPatch(_ enabled: Bool) {
+        settings.steamPatch = enabled
+        persistSettings()
+    }
+
+    /// Updates the Wine Mac Driver Retina scaling toggle and persists the choice.
+    func setMacDriverRetina(_ enabled: Bool) {
+        settings.macDriverRetina = enabled
+        persistSettings()
+    }
+
+    /// Updates the Wine Mac Driver left-Command-as-Ctrl toggle and persists the choice.
+    func setLeftCommandIsCtrl(_ enabled: Bool) {
+        settings.leftCommandIsCtrl = enabled
+        persistSettings()
+    }
+
+    /// Updates the Metal HUD overlay toggle and persists the choice.
+    func setShowMetalHUD(_ enabled: Bool) {
+        settings.showMetalHUD = enabled
+        persistSettings()
+    }
+
+    /// Updates the custom-resolution toggle and persists the choice.
+    func setResolutionCustom(_ enabled: Bool) {
+        settings.resolutionCustom = enabled
+        persistSettings()
+    }
+
+    /// Updates the custom-resolution width and persists the choice.
+    func setResolutionWidth(_ width: Int) {
+        settings.resolutionWidth = max(width, 1)
+        persistSettings()
+    }
+
+    /// Updates the custom-resolution height and persists the choice.
+    func setResolutionHeight(_ height: Int) {
+        settings.resolutionHeight = max(height, 1)
+        persistSettings()
+    }
+
+    /// Updates the HDR toggle and persists the choice.
+    func setEnableHDR(_ enabled: Bool) {
+        settings.enableHDR = enabled
+        persistSettings()
+    }
+
+    /// Updates the proxy toggle and persists the choice.
+    func setProxyEnabled(_ enabled: Bool) {
+        settings.proxyEnabled = enabled
+        persistSettings()
+    }
+
+    /// Updates the proxy host and persists the choice.
+    func setProxyHost(_ host: String) {
+        settings.proxyHost = host
+        persistSettings()
+    }
+
+    /// Updates the optional DXMT frame-pacing cap (0 = disabled) and persists the choice.
+    func setMaxFrameRate(_ frameRate: Int) {
+        settings.maxFrameRate = max(frameRate, 0)
+        persistSettings()
+    }
+
+    /// Refreshes local storage inventory for the selected game.
     func refreshVoicePackages() {
-        guard !isManagingVoicePacks else { return }
+        guard !isManagingVoicePacks, let game = selectedGame else { return }
         isManagingVoicePacks = true
-        statusText = text.checkingVoicePacks
+        statusText = text.checkingStorageInventory
         errorMessage = nil
 
         Task { [weak self] in
             guard let self else { return }
             defer { self.isManagingVoicePacks = false }
             do {
-                let packages = try await self.coordinator.fetchVoicePackages(settings: self.settings)
-                self.voicePackages = packages.sorted { $0.decompressedBytes > $1.decompressedBytes }
-                if packages.isEmpty {
+                let inventory = try await self.coordinator.fetchStorageInventory(for: game, settings: self.settings)
+                self.storageInventory = inventory
+                self.voicePackages = inventory.voicePackages.sorted { $0.localBytes > $1.localBytes }
+                if inventory.voicePackages.isEmpty {
                     self.statusText = self.text.noVoicePacksFound
                 } else {
                     self.statusText = self.text.ready
                 }
             } catch {
                 self.errorMessage = self.localizedErrorMessage(for: error)
-                self.statusText = self.text.voicePackRemoveFailed
+                self.statusText = self.text.storageInventoryFailed
             }
         }
     }
@@ -221,6 +296,7 @@ final class LauncherViewModel: ObservableObject {
                     game: game
                 )
                 self.voicePackages.removeAll { $0.matchingField == package.matchingField }
+                self.storageInventory.voicePackages.removeAll { $0.matchingField == package.matchingField }
                 self.statusText = self.text.voicePackRemoved(
                     ByteCountFormatter.string(fromByteCount: freedBytes, countStyle: .file)
                 )

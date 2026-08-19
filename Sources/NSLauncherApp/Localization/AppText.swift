@@ -22,20 +22,15 @@ struct AppText {
     var close: String { localized(en: "Close", vi: "Đóng") }
     var openSettings: String { localized(en: "Open Settings", vi: "Mở cài đặt") }
     var open: String { localized(en: "Open", vi: "Mở") }
-    var settingsDescription: String { localized(en: "Adjust language and storage locations used by the launcher.", vi: "Điều chỉnh ngôn ngữ và các vị trí lưu trữ mà launcher sử dụng.") }
-    var generalSectionTitle: String { localized(en: "General", vi: "Chung") }
-    var sophonSourceTitle: String { localized(en: "Sophon", vi: "Sophon") }
     var browse: String { localized(en: "Browse", vi: "Chọn") }
     var games: String { localized(en: "Games", vi: "Trò chơi") }
     var noGameSelected: String { localized(en: "No game selected", vi: "Chưa chọn game") }
     var ok: String { localized(en: "OK", vi: "Đóng") }
-    var nativeLauncherDescription: String { localized(en: "Native macOS launcher shell", vi: "Launcher macOS thuần") }
     var installDirectory: String { localized(en: "Install Directory", vi: "Thư mục cài đặt") }
     var executable: String { localized(en: "Executable", vi: "File chạy") }
     var winePrefix: String { localized(en: "Wine Prefix", vi: "Tiền tố Wine") }
     var format: String { localized(en: "Format", vi: "Định dạng") }
     var installPlanner: String { localized(en: "Install Planner", vi: "Kế hoạch cài đặt") }
-    var installPlannerDescription: String { localized(en: "This launcher installs and updates Genshin Impact through official Sophon chunks on macOS.", vi: "Launcher này cài đặt và cập nhật Genshin Impact qua chunk Sophon chính thức trên macOS.") }
     var status: String { localized(en: "Status", vi: "Trạng thái") }
     var currentStepLabel: String { localized(en: "Current step", vi: "Bước hiện tại") }
     var currentItemLabel: String { localized(en: "Current item", vi: "Mục đang xử lý") }
@@ -126,6 +121,73 @@ struct AppText {
             vi: "Tạm chặn host anti-cheat và telemetry trong file hosts của Wine prefix suốt phiên game, rồi khôi phục. Không cần mật khẩu quản trị."
         )
     }
+    var timeoutFixLabel: String { localized(en: "Network timeout fix", vi: "Sửa lỗi timeout mạng") }
+    var timeoutFixDescription: String {
+        localized(
+            en: "Set WINE_ENABLE_TIMEOUT_FIX so YAAGL-patched Wine keeps sockets from dropping the game back to the title screen mid-session. Ignored by Wine builds without the patch.",
+            vi: "Bật WINE_ENABLE_TIMEOUT_FIX để Wine bản YAAGL không làm rớt kết nối khiến game quay về màn hình chờ giữa lúc chơi. Bản Wine không có patch sẽ bỏ qua."
+        )
+    }
+    var steamPatchLabel: String { localized(en: "Steam parent patch", vi: "Steam parent patch") }
+    var steamPatchDescription: String {
+        localized(
+            en: "Launch through a real steam.exe + lsteamclient.dll parent so the anti-cheat skips loading its kernel driver. The stubs are downloaded once and cached.",
+            vi: "Chạy game qua tiến trình cha steam.exe + lsteamclient.dll thật để anti-cheat bỏ qua việc nạp kernel driver. File stub chỉ tải một lần và được lưu cache."
+        )
+    }
+    var retinaLabel: String { localized(en: "Retina scaling", vi: "Hiển thị Retina") }
+    var retinaDescription: String {
+        localized(
+            en: "Enable HiDPI Retina rendering through the Wine Mac Driver registry.",
+            vi: "Bật render Retina độ phân giải cao qua registry Mac Driver của Wine."
+        )
+    }
+    var leftCommandLabel: String { localized(en: "Left Command as Ctrl", vi: "Command trái thành Ctrl") }
+    var leftCommandDescription: String {
+        localized(
+            en: "Treat the left Command key as Ctrl for games that assume Windows keyboard bindings.",
+            vi: "Dùng phím Command trái như phím Ctrl cho game dùng phím tắt kiểu Windows."
+        )
+    }
+    var metalHUDLabel: String { localized(en: "Metal HUD overlay", vi: "Hiển thị Metal HUD") }
+    var metalHUDDescription: String {
+        localized(
+            en: "Show the Metal performance HUD during launch (MTL_HUD_ENABLED).",
+            vi: "Hiện bảng thông số hiệu năng Metal khi chạy game (MTL_HUD_ENABLED)."
+        )
+    }
+    var resolutionCustomLabel: String { localized(en: "Custom resolution", vi: "Độ phân giải tùy chỉnh") }
+    var resolutionCustomDescription: String {
+        localized(
+            en: "Write a windowed resolution into the game's registry before launch.",
+            vi: "Ghi độ phân giải cửa sổ vào registry của game trước khi chạy."
+        )
+    }
+    var resolutionWidthLabel: String { localized(en: "Width", vi: "Chiều rộng") }
+    var resolutionHeightLabel: String { localized(en: "Height", vi: "Chiều cao") }
+    var hdrLabel: String { localized(en: "Enable HDR", vi: "Bật HDR") }
+    var hdrDescription: String {
+        localized(
+            en: "Set the game's HDR registry flag before launch.",
+            vi: "Bật cờ HDR trong registry của game trước khi chạy."
+        )
+    }
+    var proxyEnabledLabel: String { localized(en: "Proxy", vi: "Proxy") }
+    var proxyEnabledDescription: String {
+        localized(
+            en: "Route the game through an HTTP/HTTPS proxy.",
+            vi: "Định tuyến game qua proxy HTTP/HTTPS."
+        )
+    }
+    var proxyHostLabel: String { localized(en: "Proxy host", vi: "Địa chỉ proxy") }
+    var displayOptionsLabel: String { localized(en: "Display & input", vi: "Hiển thị & nhập liệu") }
+    var maxFrameRateLabel: String { localized(en: "Frame rate cap", vi: "Giới hạn FPS") }
+    var maxFrameRateDescription: String {
+        localized(
+            en: "Optional Metal frame-pacing cap for DXMT. Must be a factor of your display refresh rate (e.g. 60 on a 60/120 Hz display). Set 0 to disable.",
+            vi: "Giới hạn FPS qua Metal frame pacing cho DXMT (tùy chọn). Phải là ước số của tần số quét màn hình (vd: 60 trên màn 60/120 Hz). Đặt 0 để tắt."
+        )
+    }
     var name: String { localized(en: "Name", vi: "Tên") }
     var installRoot: String { localized(en: "Install root", vi: "Thư mục cài đặt") }
     var executablePath: String { localized(en: "Executable path", vi: "Đường dẫn file chạy") }
@@ -136,7 +198,25 @@ struct AppText {
     // MARK: - Storage Management
 
     var storageSectionTitle: String { localized(en: "Storage", vi: "Dung lượng") }
-    var storageSectionSubtitle: String { localized(en: "Voice packs by size. Remove unused ones to free space; they can be re-downloaded any time.", vi: "Dung lượng các gói lồng tiếng. Gỡ gói không dùng để giải phóng dung lượng; có thể tải lại bất cứ lúc nào.") }
+    var installedContentLabel: String { localized(en: "Installed content", vi: "Nội dung đã cài") }
+    var cutsceneStorageLabel: String { localized(en: "Cutscenes", vi: "Cutscene") }
+    var audioStorageLabel: String { localized(en: "Game audio", vi: "Âm thanh game") }
+    var localStorageLabel: String { localized(en: "On disk", vi: "Trên máy") }
+    var availableStorageLabel: String { localized(en: "In current build", vi: "Trong build hiện tại") }
+    var storageFilesLabel: String { localized(en: "Files", vi: "Số file") }
+    var cutscenesExcludedNote: String { localized(en: "Excluded from NS Launcher updates", vi: "Bị loại khỏi cập nhật của NS Launcher") }
+    var noStorageContentFound: String { localized(en: "No matching local content found. Refresh after the game is installed.", vi: "Chưa có nội dung local phù hợp. Hãy làm mới sau khi game được cài đặt.") }
+    var questResourceAnalysisLabel: String { localized(en: "Quest resource analysis", vi: "Phân tích dữ liệu nhiệm vụ") }
+    var questResourceMappingUnavailable: String { localized(en: "No verified quest-to-file mapping is available for desktop Genshin. NS Launcher cannot identify completed quests or files that are safe to remove.", vi: "Chưa có mapping quest-to-file đã được xác minh cho Genshin desktop. NS Launcher không thể xác định nhiệm vụ đã hoàn thành hoặc file nào an toàn để xóa.") }
+    var runtimeContainersLabel: String { localized(en: "Runtime containers (read-only)", vi: "Runtime container (chỉ đọc)") }
+    func questAssetContainerLabel(_ kind: QuestAssetContainerKind) -> String {
+        switch kind {
+        case .encryptedBlock: return localized(en: "Encrypted blocks (.blk)", vi: "Khối mã hóa (.blk)")
+        case .cabBundle: return localized(en: "CAB bundles (.cab)", vi: "Gói CAB (.cab)")
+        case .assetBundle: return localized(en: "Asset bundles (.bundle)", vi: "Gói asset (.bundle)")
+        case .assetIndex: return localized(en: "Asset index", vi: "Chỉ mục asset")
+        }
+    }
     var voicePacksLabel: String { localized(en: "Voice packs", vi: "Gói lồng tiếng") }
     var refreshVoicePacksTitle: String { localized(en: "Refresh", vi: "Làm mới") }
     var selectedVoicePackBadge: String { localized(en: "Selected", vi: "Đang chọn") }
@@ -145,6 +225,8 @@ struct AppText {
     var voicePackFilesLabel: String { localized(en: "Files", vi: "Số file") }
     var noVoicePacksFound: String { localized(en: "No voice packs found. Run Refresh after the game is installed.", vi: "Chưa có gói lồng tiếng. Hãy bấm Làm mới sau khi game đã cài đặt.") }
     var checkingVoicePacks: String { localized(en: "Checking voice packs...", vi: "Đang kiểm tra gói lồng tiếng...") }
+    var checkingStorageInventory: String { localized(en: "Checking game storage...", vi: "Đang kiểm tra dung lượng game...") }
+    var storageInventoryFailed: String { localized(en: "Failed to check game storage", vi: "Kiểm tra dung lượng game thất bại") }
     var removingVoicePack: String { localized(en: "Removing voice pack...", vi: "Đang gỡ gói lồng tiếng...") }
     func voicePackRemoved(_ freedBytes: String) -> String {
         localized(en: "Removed voice pack. Freed \(freedBytes).", vi: "Đã gỡ gói lồng tiếng. Giải phóng \(freedBytes).")

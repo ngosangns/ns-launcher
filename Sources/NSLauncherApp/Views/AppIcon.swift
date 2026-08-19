@@ -5,6 +5,13 @@ enum AppIcon {
         let image = NSImage(size: NSSize(width: size, height: size))
         image.lockFocus()
 
+        let iconScale: CGFloat = 0.88
+        let iconInset = size * (1 - iconScale) / 2
+        let context = NSGraphicsContext.current!.cgContext
+        context.saveGState()
+        context.translateBy(x: iconInset, y: iconInset)
+        context.scaleBy(x: iconScale, y: iconScale)
+
         let rect = NSRect(x: 0, y: 0, width: size, height: size)
         let rounded = NSBezierPath(roundedRect: rect, xRadius: size * 0.22, yRadius: size * 0.22)
         NSGradient(colors: [
@@ -35,6 +42,7 @@ enum AppIcon {
         NSColor(calibratedRed: 0.08, green: 0.13, blue: 0.24, alpha: 1).setFill()
         NSBezierPath(ovalIn: NSRect(x: center.x - size * 0.045, y: center.y - size * 0.045, width: size * 0.09, height: size * 0.09)).fill()
 
+        context.restoreGState()
         image.unlockFocus()
         image.isTemplate = false
         return image
