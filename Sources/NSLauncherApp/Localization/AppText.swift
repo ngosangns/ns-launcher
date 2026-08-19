@@ -116,11 +116,11 @@ struct AppText {
             vi: "Tạm di chuyển file crash reporter và Vulkan fallback ra chỗ khác trong lúc chạy game, rồi khôi phục sau. Theo đúng hành vi Genshin hiện tại của YAAGL."
         )
     }
-    var blockNetLabel: String { localized(en: "Launch network block (10s)", vi: "Chặn mạng lúc mở game (10 giây)") }
+    var blockNetLabel: String { localized(en: "Launch network block", vi: "Chặn mạng lúc mở game") }
     var blockNetDescription: String {
         localized(
-            en: "Temporarily block dispatchosglobal.yuanshen.com in /etc/hosts for ~10 seconds during launch, then restore. Requires an administrator password prompt.",
-            vi: "Tạm chặn dispatchosglobal.yuanshen.com trong /etc/hosts khoảng 10 giây lúc mở game, rồi khôi phục. Cần xác nhận mật khẩu quản trị."
+            en: "Temporarily block the anti-cheat and telemetry hosts in the Wine prefix hosts file for the whole launch, then restore. No administrator password required.",
+            vi: "Tạm chặn host anti-cheat và telemetry trong file hosts của Wine prefix suốt phiên game, rồi khôi phục. Không cần mật khẩu quản trị."
         )
     }
     var name: String { localized(en: "Name", vi: "Tên") }

@@ -6,18 +6,18 @@
 // Launch path, in order:
 //   1. Build the runtime profile and run preflight checks (executable exists, valid
 //      `.nslauncher-install.json` with matching game id, no partial staging).
-//   2. Opt-in cloud compatibility: install a `HoYoKProtect.sys` stub into the Wine
+//   2. Cloud compatibility (default-on): install a `HoYoKProtect.sys` stub into the Wine
 //      prefix so the driver-load step does not abort Wine (Wine still cannot load a
 //      real kernel driver).
-//   3. Opt-in AC patch: temporarily move the crash reporter and Vulkan fallback
+//   3. AC patch (default-on): temporarily move the crash reporter and Vulkan fallback
 //      files to `.bak` for the launch, restored via `defer`. This mirrors YAAGL's
 //      current Genshin-global behavior (its binary xdelta3 patch list is empty, so
 //      no binary diff is applied here).
-//   4. Opt-in blockNet: append a ~10s `/etc/hosts` block for
-//      `dispatchosglobal.yuanshen.com` through an admin `osascript` prompt.
+//   4. Network block (default-on): write the anti-cheat/telemetry hosts into the Wine
+//      prefix hosts file for the whole launch, removed via `defer` after the game exits.
 //
-// All three opt-in modes are default-off, unsupported by HoYoverse, and risk the
-// account. They are isolated here and gated by explicit settings flags.
+// All three modes are enabled by default, unsupported by HoYoverse, and risk the
+// account. They are isolated here and gated by settings flags that can be turned off.
 
 import Foundation
 
@@ -182,7 +182,12 @@ struct LauncherCoordinator: Sendable {
         }
 
         if settings.blockNetMode {
-            startTemporaryNetworkBlock()
+            try installHostsBlock(in: profile.prefixDirectory)
+        }
+        defer {
+            if settings.blockNetMode {
+                try? removeHostsBlock(in: profile.prefixDirectory)
+            }
         }
 
         let request = WineLaunchRequest(
@@ -244,33 +249,76 @@ struct LauncherCoordinator: Sendable {
         }
     }
 
-    /// Temporarily blocks `dispatchosglobal.yuanshen.com` for ~10 seconds during launch via an admin shell.
-    private func startTemporaryNetworkBlock() {
-        let script = """
-        #!/bin/sh
-        HOSTS_FILE="/etc/hosts"
-        ENTRY="0.0.0.0 dispatchosglobal.yuanshen.com"
-        PAD_START="# Temporarily Added by NSLauncher"
-        PAD_END="# End of section"
-        if ! grep -qF "$ENTRY" "$HOSTS_FILE"; then
-          printf '%s\\n%s\\n%s\\n' "$PAD_START" "$ENTRY" "$PAD_END" >> "$HOSTS_FILE"
-        fi
-        sleep 10
-        sed -i.bak "/$PAD_START/,/$PAD_END/d" "$HOSTS_FILE"
-        """
-        let temporaryPath = "/tmp/nslauncher_network_block.sh"
-        do {
-            try script.write(toFile: temporaryPath, atomically: true, encoding: .utf8)
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: "/usr/bin/osascript")
-            process.arguments = [
-                "-e",
-                "do shell script \"source \\(temporaryPath) > /dev/null 2>&1 &\" with administrator privileges"
-            ]
-            try process.run()
-        } catch {
-            // Best-effort: if the admin prompt is cancelled or fails, leave /etc/hosts untouched.
+    /// Hosts blocked in the Wine prefix during launch to skip the anti-cheat security check and
+    /// suppress telemetry, mirroring YAAGL's Genshin-global host list.
+    private static let blockedHosts = [
+        "dispatchosglobal.yuanshen.com",
+        "log-upload-os.hoyoverse.com",
+        "sg-public-data-api.hoyoverse.com",
+        "overseauspider.yuanshen.com"
+    ]
+
+    /// Writes the block section into the Wine prefix hosts file so name resolution under Wine maps
+    /// the blocked hosts to 0.0.0.0 for the whole launch. No admin privileges are needed because
+    /// the prefix is user-owned.
+    private func installHostsBlock(in prefixDirectory: URL) throws {
+        let hostsURL = Self.prefixHostsURL(in: prefixDirectory)
+        try FileManager.default.createDirectory(at: hostsURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+
+        var lines = Self.prefixHostsLines(excludingBlock: true, at: hostsURL)
+        if !lines.isEmpty, lines.last?.isEmpty == false {
+            lines.append("")
         }
+        lines.append("# Added by NSLauncher")
+        for host in Self.blockedHosts {
+            lines.append("0.0.0.0 \(host)")
+        }
+        lines.append("# End of NSLauncher section")
+        try (lines.joined(separator: "\n") + "\n").write(to: hostsURL, atomically: true, encoding: .utf8)
+    }
+
+    /// Removes the NSLauncher block section from the Wine prefix hosts file.
+    private func removeHostsBlock(in prefixDirectory: URL) throws {
+        let hostsURL = Self.prefixHostsURL(in: prefixDirectory)
+        guard FileManager.default.fileExists(atPath: hostsURL.path) else { return }
+        let lines = Self.prefixHostsLines(excludingBlock: true, at: hostsURL)
+        let content = lines.isEmpty ? "" : lines.joined(separator: "\n") + "\n"
+        try content.write(to: hostsURL, atomically: true, encoding: .utf8)
+    }
+
+    /// Path to the Windows hosts file inside the Wine prefix.
+    private static func prefixHostsURL(in prefixDirectory: URL) -> URL {
+        prefixDirectory
+            .appendingPathComponent("drive_c/windows/system32/drivers/etc", isDirectory: true)
+            .appendingPathComponent("hosts", isDirectory: false)
+    }
+
+    /// Reads the prefix hosts file lines with any prior NSLauncher block section removed.
+    private static func prefixHostsLines(excludingBlock: Bool, at hostsURL: URL) -> [String] {
+        let existing: [String] = (try? String(contentsOf: hostsURL, encoding: .utf8))?
+            .components(separatedBy: .newlines) ?? []
+        guard excludingBlock else { return existing }
+
+        var result: [String] = []
+        var inBlock = false
+        for line in existing {
+            if line.hasPrefix("# Added by NSLauncher") {
+                inBlock = true
+                continue
+            }
+            if inBlock, line.hasPrefix("# End of NSLauncher section") {
+                inBlock = false
+                continue
+            }
+            if !inBlock {
+                result.append(line)
+            }
+        }
+        // Drop trailing empty lines left by the removed block.
+        while result.last?.isEmpty == true {
+            result.removeLast()
+        }
+        return result
     }
 
     /// Reads the marker metadata written by successful Sophon installs and updates.
