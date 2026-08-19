@@ -472,10 +472,13 @@ struct WineService: WineServicing {
 
     /// DXMT needs Wine's Unix-side winemac bridge to export macOS/Metal view symbols.
     private func ensureDXMTWineSymbolsAvailable(wineLibrary: URL, wineBinaryPath: String) async throws {
-        let winemacBridge = wineLibrary
-            .appendingPathComponent("x86_64-unix", isDirectory: true)
-            .appendingPathComponent("winemac.so")
-        guard FileManager.default.fileExists(atPath: winemacBridge.path) else {
+        let unixDirectory = wineLibrary.appendingPathComponent("x86_64-unix", isDirectory: true)
+        // Stock Wine names the mac bridge `winemac.so`; CrossOver-derived builds use `winemac.drv.so`.
+        let winemacBridge = ["winemac.so", "winemac.drv.so"]
+            .map { unixDirectory.appendingPathComponent($0, isDirectory: false) }
+            .first { FileManager.default.fileExists(atPath: $0.path) }
+
+        guard let winemacBridge else {
             throw WineServiceError.dxmtUnsupportedWine(wineBinaryPath)
         }
 
@@ -634,9 +637,9 @@ struct WineService: WineServicing {
             || output.contains("\"message\":\"app running\"")
     }
 
-    /// Candidate Wine binaries: CrossOver-derived Wine (CrossOver.app, Apple Game Porting Toolkit)
-    /// plus WineHQ Devel. DXMT requires the winemac Metal symbols that only CrossOver-derived builds
-    /// expose, so CrossOver/GPTK are checked before falling back to stock WineHQ.
+    /// Candidate Wine binaries: the launcher-managed DXMT-patched Wine first, then CrossOver-derived
+    /// Wine (CrossOver.app, Apple Game Porting Toolkit) and WineHQ Devel as fallbacks. DXMT needs
+    /// `winemac` to export `macdrv_view_create_metal_view`, which only DXMT-patched builds provide.
     private static func dxmtWineCandidatePaths(preferredPath: String) -> [String] {
         let preferredPath = preferredPath.trimmingCharacters(in: .whitespacesAndNewlines)
         let explicitCandidates = [
@@ -645,6 +648,8 @@ struct WineService: WineServicing {
                 preferredPath: preferredPath,
                 candidateNames: BinaryLocator.candidateNames(forExecutable: preferredPath)
             ),
+            managedWineDirectory.appendingPathComponent("bin/wine64").path,
+            managedWineDirectory.appendingPathComponent("bin/wine").path,
             "/Applications/Wine Devel.app/Contents/Resources/wine/bin/wine",
             "/Applications/CrossOver.app/Contents/SharedSupport/CrossOver/bin/wine64",
             "/Applications/Game Porting Toolkit.app/Contents/Resources/wine/bin/wine64"
@@ -652,6 +657,8 @@ struct WineService: WineServicing {
 
         var seen = Set<String>()
         var candidates = explicitCandidates.filter { seen.insert($0).inserted }
+
+        candidates.append(contentsOf: wineExecutables(in: managedWineDirectory, seen: &seen))
 
         for appName in ["CrossOver.app", "Game Porting Toolkit.app", "Wine Devel.app"] {
             for root in applicationSearchRoots() {
@@ -661,6 +668,13 @@ struct WineService: WineServicing {
         }
 
         return candidates
+    }
+
+    /// Launcher-managed directory where a DXMT-patched Wine can be extracted so the resolver can
+    /// pick it up without any system-wide install or PATH changes.
+    private static var managedWineDirectory: URL {
+        FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent("Library/Application Support/NSLauncher/wine", isDirectory: true)
     }
 
     /// Searches standard app locations without scanning the whole filesystem.
