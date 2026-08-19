@@ -641,19 +641,20 @@ struct WineService: WineServicing {
             || output.contains("\"message\":\"app running\"")
     }
 
-    /// Candidate Wine binaries: the launcher-managed DXMT-patched Wine first, then CrossOver-derived
-    /// Wine (CrossOver.app, Apple Game Porting Toolkit) and WineHQ Devel as fallbacks. DXMT needs
-    /// `winemac` to export `macdrv_view_create_metal_view`, which only DXMT-patched builds provide.
+    /// Candidate Wine binaries: the launcher-managed DXMT-patched Wine first, then the preferred
+    /// PATH binary and CrossOver/GPTK/WineHQ app bundles as fallbacks. PATH wine (e.g. Game Porting
+    /// Toolkit) may export a `macdrv_functions` table with an incompatible struct layout and crash
+    /// at load time, so the managed build must win.
     private static func dxmtWineCandidatePaths(preferredPath: String) -> [String] {
         let preferredPath = preferredPath.trimmingCharacters(in: .whitespacesAndNewlines)
         let explicitCandidates = [
+            managedWineDirectory.appendingPathComponent("bin/wine64").path,
+            managedWineDirectory.appendingPathComponent("bin/wine").path,
             preferredPath,
             BinaryLocator.resolveExecutable(
                 preferredPath: preferredPath,
                 candidateNames: BinaryLocator.candidateNames(forExecutable: preferredPath)
             ),
-            managedWineDirectory.appendingPathComponent("bin/wine64").path,
-            managedWineDirectory.appendingPathComponent("bin/wine").path,
             "/Applications/Wine Devel.app/Contents/Resources/wine/bin/wine",
             "/Applications/CrossOver.app/Contents/SharedSupport/CrossOver/bin/wine64",
             "/Applications/Game Porting Toolkit.app/Contents/Resources/wine/bin/wine64"
