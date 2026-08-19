@@ -6,8 +6,8 @@
 //
 // DXMT is the Direct3D↔Metal bridge used for the bundled Genshin definition; it
 // requires a Wine whose `x86_64-unix/winemac.so` exports
-// `macdrv_view_create_metal_view`, so the service verifies that symbol with `nm`
-// before launching.
+// `macdrv_view_create_metal_view` (a CrossOver-only symbol, absent from stock
+// WineHQ builds), so the service verifies that symbol with `nm` before launching.
 //
 // Wine cannot load Windows kernel drivers, so output is scanned for known protection
 // driver names (`HoYoKProtect.sys`, `HoYoProtect.sys`, `mhyprot2.sys`) and surfaced
@@ -634,7 +634,9 @@ struct WineService: WineServicing {
             || output.contains("\"message\":\"app running\"")
     }
 
-    /// Candidate Wine binaries from the single latest WineHQ install.
+    /// Candidate Wine binaries: CrossOver-derived Wine (CrossOver.app, Apple Game Porting Toolkit)
+    /// plus WineHQ Devel. DXMT requires the winemac Metal symbols that only CrossOver-derived builds
+    /// expose, so CrossOver/GPTK are checked before falling back to stock WineHQ.
     private static func dxmtWineCandidatePaths(preferredPath: String) -> [String] {
         let preferredPath = preferredPath.trimmingCharacters(in: .whitespacesAndNewlines)
         let explicitCandidates = [
@@ -643,13 +645,15 @@ struct WineService: WineServicing {
                 preferredPath: preferredPath,
                 candidateNames: BinaryLocator.candidateNames(forExecutable: preferredPath)
             ),
-            "/Applications/Wine Devel.app/Contents/Resources/wine/bin/wine"
+            "/Applications/Wine Devel.app/Contents/Resources/wine/bin/wine",
+            "/Applications/CrossOver.app/Contents/SharedSupport/CrossOver/bin/wine64",
+            "/Applications/Game Porting Toolkit.app/Contents/Resources/wine/bin/wine64"
         ].compactMap { $0 }.filter { !$0.isEmpty }
 
         var seen = Set<String>()
         var candidates = explicitCandidates.filter { seen.insert($0).inserted }
 
-        for appName in ["Wine Devel.app"] {
+        for appName in ["CrossOver.app", "Game Porting Toolkit.app", "Wine Devel.app"] {
             for root in applicationSearchRoots() {
                 let appURL = root.appendingPathComponent(appName, isDirectory: true)
                 candidates.append(contentsOf: wineExecutables(in: appURL, seen: &seen))

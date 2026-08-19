@@ -312,8 +312,8 @@ struct AppText {
     /// Error text when the selected Wine build cannot host DXMT.
     func dxmtUnsupportedWine(_ path: String) -> String {
         localized(
-            en: "No DXMT-compatible Wine binary was found. Checked: \(path). DXMT requires x86_64-unix/winemac.so to export macdrv_view_create_metal_view. NSLauncher is configured to use only the latest WineHQ Devel build; update or reinstall wine@devel, then try again.",
-            vi: "Chưa tìm thấy Wine binary tương thích DXMT. Đã kiểm tra: \(path). DXMT cần x86_64-unix/winemac.so export macdrv_view_create_metal_view. NSLauncher đang chỉ dùng bản WineHQ Devel mới nhất; hãy cập nhật hoặc cài lại wine@devel rồi thử lại."
+            en: "No DXMT-compatible Wine binary was found. Checked: \(path). DXMT requires x86_64-unix/winemac.so to export macdrv_view_create_metal_view, which only CrossOver-derived Wine builds (CrossOver, Apple Game Porting Toolkit) provide. Install one of those, then try again.",
+            vi: "Chưa tìm thấy Wine binary tương thích DXMT. Đã kiểm tra: \(path). DXMT cần x86_64-unix/winemac.so export macdrv_view_create_metal_view, thứ mà chỉ Wine nền CrossOver (CrossOver, Apple Game Porting Toolkit) cung cấp. Hãy cài một trong hai rồi thử lại."
         )
     }
 
