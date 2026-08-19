@@ -57,6 +57,9 @@ struct AppText {
     var stopTitle: String { localized(en: "Stop", vi: "Dừng") }
     var wineRunLogTitle: String { localized(en: "Wine run log (filtered)", vi: "Log chạy Wine (đã lọc)") }
     var updateRunLogTitle: String { localized(en: "Update log", vi: "Log cập nhật") }
+    var showDiagnostics: String { localized(en: "Show diagnostics", vi: "Hiện chẩn đoán") }
+    var hideDiagnostics: String { localized(en: "Hide diagnostics", vi: "Ẩn chẩn đoán") }
+    var launchOptionsTitle: String { localized(en: "Launch options", vi: "Tùy chọn khởi chạy") }
     var preparingStage: String { localized(en: "Preparing", vi: "Chuẩn bị") }
     var downloadingStage: String { localized(en: "Downloading", vi: "Đang tải") }
     var verifyingStage: String { localized(en: "Verifying", vi: "Đang xác thực") }

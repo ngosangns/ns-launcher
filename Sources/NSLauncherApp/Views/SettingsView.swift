@@ -1,260 +1,161 @@
-// SettingsView.swift
-//
-// Settings screen: language + voice pack, and (for the selected game) install root,
-// executable path, display mode, the three opt-in launch toggles, and a voice-pack
-// storage overview with per-pack removal. There are intentionally no archive/cache/
-// package controls — the product is Sophon-only.
-//
-// The opt-in launch toggles (cloud compatibility, AC patch, network block) show
-// their ToS/ban warning inline via the localized descriptions.
-
 import AppKit
 import SwiftUI
 
-/// Settings screen for Sophon-only Genshin configuration.
 struct SettingsView: View {
     @ObservedObject var viewModel: LauncherViewModel
 
-    /// Convenience accessor for localized copy.
     private var text: AppText { viewModel.text }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                settingsHeader
-                generalSection
+        ZStack {
+            CelestialBackdrop()
 
-                if let game = viewModel.selectedGame {
-                    installSection(for: game)
-                    storageSection
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 22) {
+                    settingsHeader
+                    generalSection
+
+                    if let game = viewModel.selectedGame {
+                        gameSection(for: game)
+                        storageSection
+                    }
                 }
+                .frame(maxWidth: 1_080)
+                .padding(.horizontal, 34)
+                .padding(.vertical, 28)
+                .frame(maxWidth: .infinity)
             }
-            .padding(24)
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .navigationTitle(text.settingsTitle)
     }
 
-    /// Header block summarizing the current settings context.
     private var settingsHeader: some View {
         HStack(alignment: .top, spacing: 20) {
             VStack(alignment: .leading, spacing: 8) {
+                Label(text.settingsTitle.uppercased(), systemImage: "gearshape.2.fill")
+                    .font(.system(.caption, design: .rounded, weight: .bold))
+                    .tracking(1.4)
+                    .foregroundStyle(LauncherPalette.goldHighlight)
                 Text(text.settingsTitle)
-                    .font(.largeTitle.bold())
-
+                    .font(.system(size: 36, weight: .bold, design: .serif))
+                    .foregroundStyle(LauncherPalette.parchment)
                 Text(text.settingsDescription)
-                    .foregroundStyle(.secondary)
-            }
-
-            Spacer(minLength: 24)
-
-            VStack(alignment: .trailing, spacing: 10) {
-                SettingsBadge(
-                    title: text.sophonSourceTitle,
-                    tint: .blue
-                )
-
-                if let game = viewModel.selectedGame {
-                    SettingsBadge(
-                        title: game.displayName,
-                        tint: .orange
-                    )
-                }
-            }
-        }
-        .padding(24)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            LinearGradient(
-                colors: [
-                    Color.accentColor.opacity(0.16),
-                    Color.orange.opacity(0.08),
-                    Color.clear
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            ),
-            in: RoundedRectangle(cornerRadius: 24)
-        )
-    }
-
-    /// General app settings shared across the single bundled game.
-    private var generalSection: some View {
-        SettingsCard(title: text.generalSectionTitle, subtitle: text.settingsDescription) {
-            LazyVGrid(columns: settingsColumns, alignment: .leading, spacing: 16) {
-                settingField {
-                    Picker(text.languageLabel, selection: Binding(
-                        get: { viewModel.settings.language },
-                        set: { viewModel.setLanguage($0) }
-                    )) {
-                        Text(text.english).tag(AppLanguage.english)
-                        Text(text.vietnamese).tag(AppLanguage.vietnamese)
-                    }
-                    .pickerStyle(.segmented)
-                    .pointerOnHover()
-                } label: {
-                    Text(text.languageLabel)
-                }
-
-                settingField {
-                    Picker(text.voiceLanguageLabel, selection: Binding(
-                        get: { viewModel.settings.voiceLanguage },
-                        set: { viewModel.setVoiceLanguage($0) }
-                    )) {
-                        ForEach(VoiceLanguage.allCases) { language in
-                            Text(text.voiceLanguageName(language)).tag(language)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .pointerOnHover()
-                } label: {
-                    Text(text.voiceLanguageLabel)
-                }
-
-                Text(text.voiceLanguageDescription)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-        }
-    }
-
-    /// Voice-pack storage overview with per-pack removal.
-    private var storageSection: some View {
-        SettingsCard(title: text.storageSectionTitle, subtitle: text.storageSectionSubtitle) {
-            VStack(alignment: .leading, spacing: 16) {
-                HStack {
-                    Text(text.voicePacksLabel)
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                    Button(text.refreshVoicePacksTitle) {
-                        viewModel.refreshVoicePackages()
-                    }
-                    .buttonStyle(.bordered)
-                    .disabled(viewModel.isManagingVoicePacks)
-                    .pointerOnHover(enabled: !viewModel.isManagingVoicePacks)
-                }
-
-                if viewModel.voicePackages.isEmpty {
-                    Text(text.noVoicePacksFound)
-                        .foregroundStyle(.secondary)
-                } else {
-                    ForEach(viewModel.voicePackages) { package in
-                        voicePackageRow(package)
-                    }
-                }
-            }
-        }
-    }
-
-    /// One voice-pack row with size, file count, and a removal action for non-selected packs.
-    private func voicePackageRow(_ package: VoicePackage) -> some View {
-        let isSelected = package.voiceLanguage == viewModel.settings.voiceLanguage
-        let name = package.voiceLanguage.map { text.voiceLanguageName($0) } ?? package.categoryName
-
-        return HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(name)
-                    .font(.body.weight(.semibold))
-                HStack(spacing: 12) {
-                    Text("\(text.voicePackSizeLabel): \(ByteCountFormatter.string(fromByteCount: package.decompressedBytes, countStyle: .file))")
-                    Text("\(text.voicePackFilesLabel): \(package.fileCount)")
-                }
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                    .font(.subheadline)
+                    .foregroundStyle(LauncherPalette.mist.opacity(0.82))
             }
 
             Spacer()
 
-            if isSelected {
-                Text(text.selectedVoicePackBadge)
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.green)
-            } else {
-                Button(text.removeVoicePackTitle) {
-                    viewModel.removeVoicePack(package)
+            VStack(alignment: .trailing, spacing: 8) {
+                StatusPill(title: text.sophonSourceTitle, tint: LauncherPalette.gold)
+                if let game = viewModel.selectedGame {
+                    StatusPill(title: game.displayName, tint: LauncherPalette.success)
                 }
-                .buttonStyle(.bordered)
-                .disabled(viewModel.isManagingVoicePacks)
-                .pointerOnHover(enabled: !viewModel.isManagingVoicePacks)
             }
         }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.black.opacity(0.08), in: RoundedRectangle(cornerRadius: 14))
+        .padding(.vertical, 8)
     }
 
-    /// Selected-game install root, executable, and display settings.
-    private func installSection(for game: GameDefinition) -> some View {
-        SettingsCard(title: text.selectedGame, subtitle: game.displayName) {
-            LazyVGrid(columns: settingsColumns, alignment: .leading, spacing: 16) {
-                InfoRow(label: text.name, value: game.displayName)
-                InfoRow(label: text.selectedSource, value: text.officialSophonSource)
-
-                settingField {
-                    Picker(text.displayModeLabel, selection: Binding(
-                        get: { viewModel.settings.launchDisplayMode },
-                        set: { viewModel.setLaunchDisplayMode($0) }
-                    )) {
-                        Text(text.windowedMode).tag(LaunchDisplayMode.windowed)
-                        Text(text.fullscreenMode).tag(LaunchDisplayMode.fullscreen)
-                    }
-                    .pickerStyle(.segmented)
-                    .pointerOnHover()
-                } label: {
-                    Text(text.displayModeLabel)
+    private var generalSection: some View {
+        SettingsSection(title: text.generalSectionTitle, subtitle: text.settingsDescription) {
+            ViewThatFits(in: .horizontal) {
+                HStack(alignment: .top, spacing: 18) {
+                    languageField
+                    voiceLanguageField
                 }
-
-                settingField {
-                    Toggle(isOn: Binding(
-                        get: { viewModel.settings.cloudCompatibilityMode },
-                        set: { viewModel.setCloudCompatibilityMode($0) }
-                    )) {
-                        Text(text.cloudCompatibilityLabel)
-                    }
-                    .toggleStyle(.switch)
-                    .pointerOnHover()
-                } label: {
-                    Text(text.cloudCompatibilityLabel)
+                VStack(spacing: 14) {
+                    languageField
+                    voiceLanguageField
                 }
+            }
+        }
+    }
 
-                Text(text.cloudCompatibilityDescription)
+    private var languageField: some View {
+        SettingField(label: text.languageLabel) {
+            Picker(text.languageLabel, selection: Binding(
+                get: { viewModel.settings.language },
+                set: { viewModel.setLanguage($0) }
+            )) {
+                Text(text.english).tag(AppLanguage.english)
+                Text(text.vietnamese).tag(AppLanguage.vietnamese)
+            }
+            .pickerStyle(.segmented)
+            .pointerOnHover()
+        }
+    }
+
+    private var voiceLanguageField: some View {
+        SettingField(label: text.voiceLanguageLabel) {
+            VStack(alignment: .leading, spacing: 8) {
+                Picker(text.voiceLanguageLabel, selection: Binding(
+                    get: { viewModel.settings.voiceLanguage },
+                    set: { viewModel.setVoiceLanguage($0) }
+                )) {
+                    ForEach(VoiceLanguage.allCases) { language in
+                        Text(text.voiceLanguageName(language)).tag(language)
+                    }
+                }
+                .pickerStyle(.menu)
+                .pointerOnHover()
+
+                Text(text.voiceLanguageDescription)
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(LauncherPalette.mist.opacity(0.72))
+            }
+        }
+    }
 
-                settingField {
-                    Toggle(isOn: Binding(
-                        get: { viewModel.settings.acPatchMode },
-                        set: { viewModel.setACPatchMode($0) }
-                    )) {
-                        Text(text.acPatchLabel)
+    private func gameSection(for game: GameDefinition) -> some View {
+        SettingsSection(title: text.selectedGame, subtitle: game.displayName) {
+            VStack(alignment: .leading, spacing: 14) {
+                ViewThatFits(in: .horizontal) {
+                    HStack(alignment: .top, spacing: 18) {
+                        gameFacts(for: game)
+                        displayModeField
                     }
-                    .toggleStyle(.switch)
-                    .pointerOnHover()
-                } label: {
-                    Text(text.acPatchLabel)
+                    VStack(spacing: 14) {
+                        gameFacts(for: game)
+                        displayModeField
+                    }
                 }
 
-                Text(text.acPatchDescription)
+                pathFields(for: game)
+                launchOptions
+            }
+        }
+    }
+
+    private func gameFacts(for game: GameDefinition) -> some View {
+        SettingField(label: text.name) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(game.displayName)
+                    .font(.system(.body, design: .rounded, weight: .semibold))
+                    .foregroundStyle(LauncherPalette.parchment)
+                Label(text.officialSophonSource, systemImage: "checkmark.seal.fill")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(LauncherPalette.success)
+            }
+        }
+    }
 
-                settingField {
-                    Toggle(isOn: Binding(
-                        get: { viewModel.settings.blockNetMode },
-                        set: { viewModel.setBlockNetMode($0) }
-                    )) {
-                        Text(text.blockNetLabel)
-                    }
-                    .toggleStyle(.switch)
-                    .pointerOnHover()
-                } label: {
-                    Text(text.blockNetLabel)
-                }
+    private var displayModeField: some View {
+        SettingField(label: text.displayModeLabel) {
+            Picker(text.displayModeLabel, selection: Binding(
+                get: { viewModel.settings.launchDisplayMode },
+                set: { viewModel.setLaunchDisplayMode($0) }
+            )) {
+                Text(text.windowedMode).tag(LaunchDisplayMode.windowed)
+                Text(text.fullscreenMode).tag(LaunchDisplayMode.fullscreen)
+            }
+            .pickerStyle(.segmented)
+            .pointerOnHover()
+        }
+    }
 
-                Text(text.blockNetDescription)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
+    private func pathFields(for game: GameDefinition) -> some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(alignment: .top, spacing: 18) {
                 PathInputRow(
                     label: text.installRoot,
                     value: Binding(
@@ -264,51 +165,139 @@ struct SettingsView: View {
                     buttonTitle: text.browse,
                     secondaryButtonTitle: text.open,
                     isSecondaryButtonDisabled: !directoryExists(at: game.installDirectory.path),
-                    secondaryAction: {
-                        openDirectory(game.installDirectory.path)
-                    },
+                    secondaryAction: { openDirectory(game.installDirectory.path) },
                     choose: chooseDirectoryPath
                 )
+                executableField(for: game)
+            }
+            VStack(spacing: 14) {
+                PathInputRow(
+                    label: text.installRoot,
+                    value: Binding(
+                        get: { game.installDirectory.path },
+                        set: { viewModel.setInstallDirectoryForSelectedGame(URL(fileURLWithPath: $0, isDirectory: true)) }
+                    ),
+                    buttonTitle: text.browse,
+                    secondaryButtonTitle: text.open,
+                    isSecondaryButtonDisabled: !directoryExists(at: game.installDirectory.path),
+                    secondaryAction: { openDirectory(game.installDirectory.path) },
+                    choose: chooseDirectoryPath
+                )
+                executableField(for: game)
+            }
+        }
+    }
 
-                settingField {
-                    TextField(text.executablePath, text: Binding(
-                        get: { game.executableRelativePath },
-                        set: { viewModel.setExecutableRelativePathForSelectedGame($0) }
-                    ))
-                    .textFieldStyle(.roundedBorder)
-                    .font(.system(.body, design: .monospaced))
-                } label: {
-                    Text(text.executablePath)
+    private func executableField(for game: GameDefinition) -> some View {
+        SettingField(label: text.executablePath) {
+            TextField(text.executablePath, text: Binding(
+                get: { game.executableRelativePath },
+                set: { viewModel.setExecutableRelativePathForSelectedGame($0) }
+            ))
+            .textFieldStyle(.roundedBorder)
+            .font(.system(.body, design: .monospaced))
+        }
+    }
+
+    private var launchOptions: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(text.launchOptionsTitle)
+                .font(.system(.caption, design: .rounded, weight: .bold))
+                .tracking(1)
+                .foregroundStyle(LauncherPalette.gold.opacity(0.88))
+
+            LaunchOption(
+                title: text.cloudCompatibilityLabel,
+                detail: text.cloudCompatibilityDescription,
+                isOn: Binding(
+                    get: { viewModel.settings.cloudCompatibilityMode },
+                    set: { viewModel.setCloudCompatibilityMode($0) }
+                )
+            )
+            LaunchOption(
+                title: text.acPatchLabel,
+                detail: text.acPatchDescription,
+                isOn: Binding(
+                    get: { viewModel.settings.acPatchMode },
+                    set: { viewModel.setACPatchMode($0) }
+                )
+            )
+            LaunchOption(
+                title: text.blockNetLabel,
+                detail: text.blockNetDescription,
+                isOn: Binding(
+                    get: { viewModel.settings.blockNetMode },
+                    set: { viewModel.setBlockNetMode($0) }
+                )
+            )
+        }
+    }
+
+    private var storageSection: some View {
+        SettingsSection(title: text.storageSectionTitle, subtitle: text.storageSectionSubtitle) {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack {
+                    Text(text.voicePacksLabel)
+                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .tracking(1)
+                        .foregroundStyle(LauncherPalette.gold.opacity(0.88))
+                    Spacer()
+                    Button(text.refreshVoicePacksTitle) {
+                        viewModel.refreshVoicePackages()
+                    }
+                    .buttonStyle(QuestButtonStyle(role: .quiet))
+                    .disabled(viewModel.isManagingVoicePacks)
+                    .pointerOnHover(enabled: !viewModel.isManagingVoicePacks)
+                }
+
+                if viewModel.voicePackages.isEmpty {
+                    Label(text.noVoicePacksFound, systemImage: "tray")
+                        .font(.subheadline)
+                        .foregroundStyle(LauncherPalette.mist.opacity(0.74))
+                        .padding(.vertical, 12)
+                } else {
+                    ForEach(viewModel.voicePackages) { package in
+                        voicePackageRow(package)
+                    }
                 }
             }
         }
     }
 
-    /// Adaptive grid columns used by the settings cards.
-    private var settingsColumns: [GridItem] {
-        [
-            GridItem(.adaptive(minimum: 320), alignment: .top)
-        ]
-    }
+    private func voicePackageRow(_ package: VoicePackage) -> some View {
+        let isSelected = package.voiceLanguage == viewModel.settings.voiceLanguage
+        let name = package.voiceLanguage.map { text.voiceLanguageName($0) } ?? package.categoryName
 
-    /// Common labeled field container for settings controls.
-    private func settingField<Content: View, Label: View>(
-        @ViewBuilder content: () -> Content,
-        @ViewBuilder label: () -> Label
-    ) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            label()
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-
-            content()
+        return HStack(spacing: 14) {
+            Image(systemName: isSelected ? "waveform.circle.fill" : "waveform.circle")
+                .font(.title3)
+                .foregroundStyle(isSelected ? LauncherPalette.success : LauncherPalette.mist.opacity(0.72))
+            VStack(alignment: .leading, spacing: 4) {
+                Text(name)
+                    .font(.system(.body, design: .rounded, weight: .semibold))
+                    .foregroundStyle(LauncherPalette.parchment)
+                Text("\(text.voicePackSizeLabel): \(ByteCountFormatter.string(fromByteCount: package.decompressedBytes, countStyle: .file))  ·  \(text.voicePackFilesLabel): \(package.fileCount)")
+                    .font(.caption)
+                    .foregroundStyle(LauncherPalette.mist.opacity(0.72))
+            }
+            Spacer()
+            if isSelected {
+                StatusPill(title: text.selectedVoicePackBadge, tint: LauncherPalette.success)
+            } else {
+                Button(text.removeVoicePackTitle) {
+                    viewModel.removeVoicePack(package)
+                }
+                .buttonStyle(QuestButtonStyle(role: .quiet))
+                .disabled(viewModel.isManagingVoicePacks)
+                .pointerOnHover(enabled: !viewModel.isManagingVoicePacks)
+            }
         }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.black.opacity(0.08), in: RoundedRectangle(cornerRadius: 14))
+        .padding(.vertical, 10)
+        .overlay(alignment: .bottom) {
+            Rectangle().fill(LauncherPalette.mist.opacity(0.12)).frame(height: 1)
+        }
     }
 
-    /// Opens a folder picker and returns the selected path.
     private func chooseDirectoryPath() -> String? {
         let panel = NSOpenPanel()
         panel.canChooseFiles = false
@@ -317,102 +306,110 @@ struct SettingsView: View {
         return panel.runModal() == .OK ? panel.url?.path : nil
     }
 
-    /// Checks that a saved path still points to an existing directory.
     private func directoryExists(at path: String) -> Bool {
         guard !path.isEmpty else { return false }
         var isDirectory: ObjCBool = false
         return FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory) && isDirectory.boolValue
     }
 
-    /// Opens a valid directory in Finder.
     private func openDirectory(_ path: String) {
         guard directoryExists(at: path) else { return }
         NSWorkspace.shared.open(URL(fileURLWithPath: path, isDirectory: true))
     }
 }
 
-/// Capsule-style badge used by the settings header.
-private struct SettingsBadge: View {
-    let title: String
-    let tint: Color
-
-    var body: some View {
-        Text(title)
-            .font(.caption.weight(.semibold))
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
-            .background(tint.opacity(0.16), in: Capsule())
-            .foregroundStyle(tint)
-    }
-}
-
-/// Section container used by settings groups.
-private struct SettingsCard<Content: View>: View {
+private struct SettingsSection<Content: View>: View {
     let title: String
     let subtitle: String
-    @ViewBuilder let content: Content
+    let content: Content
+
+    init(title: String, subtitle: String, @ViewBuilder content: () -> Content) {
+        self.title = title
+        self.subtitle = subtitle
+        self.content = content()
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(.title3.weight(.semibold))
-                Text(subtitle)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+        OrnamentalPanel(tone: LauncherPalette.night.opacity(0.66)) {
+            VStack(alignment: .leading, spacing: 18) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.system(.title3, design: .rounded, weight: .bold))
+                        .foregroundStyle(LauncherPalette.parchment)
+                    Text(subtitle)
+                        .font(.subheadline)
+                        .foregroundStyle(LauncherPalette.mist.opacity(0.74))
+                }
+                content
             }
-
-            content
         }
-        .padding(20)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.quaternary.opacity(0.24), in: RoundedRectangle(cornerRadius: 20))
     }
 }
 
-/// Read-only label/value row for selected-game metadata.
-private struct InfoRow: View {
+private struct SettingField<Content: View>: View {
     let label: String
-    let value: String
-    var monospaced = false
+    let content: Content
+
+    init(label: String, @ViewBuilder content: () -> Content) {
+        self.label = label
+        self.content = content()
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(label)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-
-            if monospaced {
-                Text(value)
-                    .font(.system(.body, design: .monospaced))
-                    .textSelection(.enabled)
-            } else {
-                Text(value)
-                    .textSelection(.enabled)
-            }
+        VStack(alignment: .leading, spacing: 9) {
+            Text(label.uppercased())
+                .font(.system(.caption2, design: .rounded, weight: .bold))
+                .tracking(0.8)
+                .foregroundStyle(LauncherPalette.gold.opacity(0.88))
+            content
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.black.opacity(0.08), in: RoundedRectangle(cornerRadius: 14))
+        .background(LauncherPalette.ink.opacity(0.30), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
     }
 }
 
-/// Editable path row with optional secondary action, such as opening the folder.
+private struct LaunchOption: View {
+    let title: String
+    let detail: String
+    @Binding var isOn: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Toggle(isOn: $isOn) {
+                Text(title)
+                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                    .foregroundStyle(LauncherPalette.parchment)
+            }
+            .toggleStyle(.switch)
+            .tint(LauncherPalette.gold)
+            .pointerOnHover()
+
+            Text(detail)
+                .font(.caption)
+                .foregroundStyle(LauncherPalette.mist.opacity(0.72))
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(14)
+        .background(LauncherPalette.warning.opacity(0.09), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 15, style: .continuous)
+                .stroke(LauncherPalette.warning.opacity(0.28), lineWidth: 1)
+        }
+    }
+}
+
 private struct PathInputRow: View {
     let label: String
     @Binding var value: String
     let buttonTitle: String
-    var secondaryButtonTitle: String? = nil
+    var secondaryButtonTitle: String?
     var isSecondaryButtonDisabled = false
-    var secondaryAction: (() -> Void)? = nil
+    var secondaryAction: (() -> Void)?
     let choose: () -> String?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(label)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-
+        SettingField(label: label) {
             HStack(spacing: 10) {
                 TextField(label, text: $value)
                     .textFieldStyle(.roundedBorder)
@@ -423,19 +420,16 @@ private struct PathInputRow: View {
                         value = chosen
                     }
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(QuestButtonStyle(role: .quiet))
                 .pointerOnHover()
 
                 if let secondaryButtonTitle, let secondaryAction {
                     Button(secondaryButtonTitle, action: secondaryAction)
-                        .buttonStyle(.bordered)
-                        .pointerOnHover()
+                        .buttonStyle(QuestButtonStyle(role: .quiet))
                         .disabled(isSecondaryButtonDisabled)
+                        .pointerOnHover(enabled: !isSecondaryButtonDisabled)
                 }
             }
         }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.black.opacity(0.08), in: RoundedRectangle(cornerRadius: 14))
     }
 }

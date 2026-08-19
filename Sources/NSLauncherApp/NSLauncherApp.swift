@@ -35,11 +35,11 @@ struct NSLauncherApp: App {
     var body: some Scene {
         WindowGroup("NS Launcher") {
             ContentView(viewModel: viewModel)
-                .frame(minWidth: 980, minHeight: 640)
+                .frame(minWidth: 1_040, minHeight: 720)
                 .onAppear {
                     NSApp.activate(ignoringOtherApps: true)
                 }
         }
-        .windowResizability(.contentSize)
+        .windowResizability(.contentMinSize)
     }
 }
