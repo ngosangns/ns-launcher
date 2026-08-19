@@ -489,7 +489,11 @@ struct WineService: WineServicing {
                 environment: [:],
                 currentDirectory: nil
             )
-            if !result.stdout.contains("macdrv_view_create_metal_view") {
+            // DXMT resolves the mac driver interface through the `macdrv_functions` table on modern
+            // Wine; older DXMT-patched builds exported the individual `macdrv_view_create_metal_view`
+            // symbol instead. Accept either.
+            if !result.stdout.contains("macdrv_functions"),
+               !result.stdout.contains("macdrv_view_create_metal_view") {
                 throw WineServiceError.dxmtUnsupportedWine(wineBinaryPath)
             }
         } catch let wineError as WineServiceError {
