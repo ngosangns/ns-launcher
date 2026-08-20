@@ -93,6 +93,7 @@ struct WineService: WineServicing {
 
     /// Launches the game executable through Wine and returns the completed process result.
     func launch(_ request: WineLaunchRequest) async throws -> ProcessResult {
+        Self.raiseFileDescriptorLimit(onDiagnostic: { emitDiagnostic($0, request: request) })
         emitDiagnostic("launch request executable=\(request.executablePath.path)", request: request)
         emitDiagnostic("launch request currentDirectory=\(request.currentDirectory?.path ?? "nil") prefix=\(request.prefixDirectory.path)", request: request)
         emitDiagnostic("launch request runtime=\(request.runtimeRequirements.map(\.rawValue).joined(separator: ",")) args=\(request.arguments.joined(separator: " "))", request: request)
@@ -836,6 +837,32 @@ struct WineService: WineServicing {
                 })
         } catch {
             return []
+        }
+    }
+
+    /// Wine's esync (`WINEESYNC=1`, used by both the DXMT and DXVK backends) allocates a file
+    /// descriptor per sync object. A GUI app launched via Finder/LaunchServices inherits launchd's
+    /// default soft limit of 256 — far below what esync needs under load — even though a Terminal
+    /// shell on the same machine typically has a much higher limit from its profile. Raise the
+    /// soft limit once before spawning Wine so esync does not degrade. Best-effort: this must never
+    /// block the launch.
+    private static func raiseFileDescriptorLimit(onDiagnostic: (String) -> Void) {
+        var limit = rlimit()
+        guard getrlimit(RLIMIT_NOFILE, &limit) == 0 else {
+            onDiagnostic("getrlimit failed; skipping file descriptor limit raise")
+            return
+        }
+        let desired: rlim_t = 10_240
+        let target = min(desired, limit.rlim_max)
+        guard target > limit.rlim_cur else {
+            onDiagnostic("file descriptor limit already sufficient cur=\(limit.rlim_cur) max=\(limit.rlim_max)")
+            return
+        }
+        limit.rlim_cur = target
+        if setrlimit(RLIMIT_NOFILE, &limit) == 0 {
+            onDiagnostic("raised file descriptor limit to \(target)")
+        } else {
+            onDiagnostic("setrlimit failed to raise file descriptor limit to \(target)")
         }
     }
 
