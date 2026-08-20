@@ -188,6 +188,20 @@ struct AppText {
             vi: "Giới hạn FPS qua Metal frame pacing cho DXMT (tùy chọn). Phải là ước số của tần số quét màn hình (vd: 60 trên màn 60/120 Hz). Đặt 0 để tắt."
         )
     }
+    var metalFXUpscalingLabel: String { localized(en: "MetalFX upscaling (experimental)", vi: "MetalFX upscaling (thử nghiệm)") }
+    var metalFXUpscalingDescription: String {
+        localized(
+            en: "DXMT renders at the game's own resolution and lets Metal upscale to the window size. Only has an effect if you also lower the resolution below your display's native size (use Custom windowed resolution above).",
+            vi: "DXMT sẽ render ở độ phân giải game đang đặt rồi để Metal upscale lên kích thước cửa sổ. Chỉ có tác dụng nếu bạn cũng hạ độ phân giải thấp hơn màn hình (dùng Custom windowed resolution ở trên)."
+        )
+    }
+    var metalFXScaleFactorLabel: String { localized(en: "Upscale factor", vi: "Hệ số upscale") }
+    var metalFXScaleFactorDescription: String {
+        localized(
+            en: "Multiplier applied to the game's render resolution to reach the window size (e.g. 1.5 = render at ~67% scale).",
+            vi: "Hệ số nhân từ độ phân giải render của game lên kích thước cửa sổ (vd: 1.5 = render ở khoảng 67% độ phân giải)."
+        )
+    }
     var name: String { localized(en: "Name", vi: "Tên") }
     var installRoot: String { localized(en: "Install root", vi: "Thư mục cài đặt") }
     var executablePath: String { localized(en: "Executable path", vi: "Đường dẫn file chạy") }

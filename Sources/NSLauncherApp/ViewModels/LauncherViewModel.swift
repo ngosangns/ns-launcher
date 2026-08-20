@@ -248,6 +248,18 @@ final class LauncherViewModel: ObservableObject {
         persistSettings()
     }
 
+    /// Updates the DXMT MetalFX spatial upscaling toggle and persists the choice.
+    func setMetalFXUpscaling(_ enabled: Bool) {
+        settings.metalFXUpscaling = enabled
+        persistSettings()
+    }
+
+    /// Updates the MetalFX spatial upscale factor and persists the choice.
+    func setMetalFXScaleFactor(_ factor: Double) {
+        settings.metalFXScaleFactor = max(factor, 1.0)
+        persistSettings()
+    }
+
     /// Refreshes local storage inventory for the selected game.
     func refreshVoicePackages() {
         guard !isManagingVoicePacks, let game = selectedGame else { return }

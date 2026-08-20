@@ -397,6 +397,12 @@ struct AppSettings: Codable, Equatable {
     /// Optional Metal frame-pacing cap for DXMT (0 = disabled). The value must be a factor of the
     /// display refresh rate (e.g. 60 on a 60/120 Hz display).
     var maxFrameRate: Int
+    /// DXMT MetalFX spatial upscaling (DXMT only): renders at the game's own resolution and lets
+    /// Metal upscale to the window size by `metalFXScaleFactor`. Only has a visible effect when the
+    /// game itself renders below the window's native resolution (pair with `resolutionCustom`).
+    var metalFXUpscaling: Bool
+    /// Upscale factor applied when `metalFXUpscaling` is enabled (e.g. 1.5 = render at 2/3 scale).
+    var metalFXScaleFactor: Double
     /// Monotonic settings schema version used for one-time default migrations.
     var settingsVersion: Int
 
@@ -444,6 +450,8 @@ struct AppSettings: Codable, Equatable {
             proxyEnabled: false,
             proxyHost: "",
             maxFrameRate: 0,
+            metalFXUpscaling: false,
+            metalFXScaleFactor: 1.5,
             settingsVersion: 2
         )
     }
@@ -513,6 +521,8 @@ struct AppSettings: Codable, Equatable {
         case proxyEnabled
         case proxyHost
         case maxFrameRate
+        case metalFXUpscaling
+        case metalFXScaleFactor
         case settingsVersion
     }
 
@@ -538,6 +548,8 @@ struct AppSettings: Codable, Equatable {
         proxyEnabled: Bool = false,
         proxyHost: String = "",
         maxFrameRate: Int = 0,
+        metalFXUpscaling: Bool = false,
+        metalFXScaleFactor: Double = 1.5,
         settingsVersion: Int = 0
     ) {
         self.games = games
@@ -561,6 +573,8 @@ struct AppSettings: Codable, Equatable {
         self.proxyEnabled = proxyEnabled
         self.proxyHost = proxyHost
         self.maxFrameRate = maxFrameRate
+        self.metalFXUpscaling = metalFXUpscaling
+        self.metalFXScaleFactor = metalFXScaleFactor
         self.settingsVersion = settingsVersion
     }
 
@@ -587,6 +601,8 @@ struct AppSettings: Codable, Equatable {
         self.proxyEnabled = try container.decodeIfPresent(Bool.self, forKey: .proxyEnabled) ?? false
         self.proxyHost = try container.decodeIfPresent(String.self, forKey: .proxyHost) ?? ""
         self.maxFrameRate = try container.decodeIfPresent(Int.self, forKey: .maxFrameRate) ?? 0
+        self.metalFXUpscaling = try container.decodeIfPresent(Bool.self, forKey: .metalFXUpscaling) ?? false
+        self.metalFXScaleFactor = try container.decodeIfPresent(Double.self, forKey: .metalFXScaleFactor) ?? 1.5
         self.settingsVersion = try container.decodeIfPresent(Int.self, forKey: .settingsVersion) ?? 0
 
         // Ignore deprecated storage and custom binary paths while remaining decode-compatible with older settings files.
@@ -620,6 +636,8 @@ struct AppSettings: Codable, Equatable {
         try container.encode(proxyEnabled, forKey: .proxyEnabled)
         try container.encode(proxyHost, forKey: .proxyHost)
         try container.encode(maxFrameRate, forKey: .maxFrameRate)
+        try container.encode(metalFXUpscaling, forKey: .metalFXUpscaling)
+        try container.encode(metalFXScaleFactor, forKey: .metalFXScaleFactor)
         try container.encode(settingsVersion, forKey: .settingsVersion)
     }
 
@@ -717,8 +735,19 @@ struct LaunchRuntimeProfile {
             // refresh rate (e.g. 60 for 60/120 Hz, 120 for 120 Hz). It is off by default; a hardcoded
             // 60 was removed because it is invalid on non-60 Hz displays and contributed to the same
             // render crash above. Keep it opt-in and validate against the refresh rate.
+            var dxmtConfig = ""
             if settings.maxFrameRate > 0 {
-                env["DXMT_CONFIG"] = "d3d11.preferredMaxFrameRate=\(settings.maxFrameRate);"
+                dxmtConfig += "d3d11.preferredMaxFrameRate=\(settings.maxFrameRate);"
+            }
+            // MetalFX spatial upscaling: only has a visible effect when the game itself renders
+            // below the window's native resolution (pair with `resolutionCustom`). Off by default.
+            if settings.metalFXUpscaling {
+                env["DXMT_METALFX_SPATIAL_SWAPCHAIN"] = "1"
+                let factor = max(settings.metalFXScaleFactor, 1.0)
+                dxmtConfig += "d3d11.metalSpatialUpscaleFactor=\(factor);"
+            }
+            if !dxmtConfig.isEmpty {
+                env["DXMT_CONFIG"] = dxmtConfig
             }
             // Rank GStreamer's H.264 decoders (Apple AudioToolbox + FFmpeg) so in-game/cutscene video
             // never selects a broken decoder. Mirrors YAAGL's always-on DXMT launch config.

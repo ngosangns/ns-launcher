@@ -159,6 +159,28 @@ struct SettingsView: View {
                     .foregroundStyle(LauncherPalette.mist.opacity(0.72))
                     .fixedSize(horizontal: false, vertical: true)
             }
+
+            SettingToggle(
+                title: text.metalFXUpscalingLabel,
+                detail: text.metalFXUpscalingDescription,
+                isOn: Binding(
+                    get: { viewModel.settings.metalFXUpscaling },
+                    set: { viewModel.setMetalFXUpscaling($0) }
+                )
+            )
+            if viewModel.settings.metalFXUpscaling {
+                VStack(alignment: .leading, spacing: 6) {
+                    numericField(
+                        label: text.metalFXScaleFactorLabel,
+                        value: viewModel.settings.metalFXScaleFactor,
+                        set: viewModel.setMetalFXScaleFactor
+                    )
+                    Text(text.metalFXScaleFactorDescription)
+                        .font(.caption)
+                        .foregroundStyle(LauncherPalette.mist.opacity(0.72))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
         }
     }
 
@@ -254,6 +276,22 @@ struct SettingsView: View {
                 get: { value },
                 set: { set($0) }
             ), format: .number)
+            .textFieldStyle(.roundedBorder)
+            .font(.system(.body, design: .monospaced))
+            .frame(maxWidth: 160)
+        }
+    }
+
+    private func numericField(label: String, value: Double, set: @escaping (Double) -> Void) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(label.uppercased())
+                .font(.system(.caption2, design: .rounded, weight: .bold))
+                .tracking(0.8)
+                .foregroundStyle(LauncherPalette.gold.opacity(0.88))
+            TextField(label, value: Binding(
+                get: { value },
+                set: { set($0) }
+            ), format: .number.precision(.fractionLength(1)))
             .textFieldStyle(.roundedBorder)
             .font(.system(.body, design: .monospaced))
             .frame(maxWidth: 160)
