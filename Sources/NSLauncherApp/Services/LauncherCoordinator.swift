@@ -145,6 +145,130 @@ struct LauncherCoordinator: Sendable {
         try await sophonInstaller.removeVoicePack(matchingField: matchingField, game: game, onEvent: onEvent)
     }
 
+    /// Scans removable cache categories for the selected game and returns their on-disk sizes.
+    func fetchCacheReport(for game: GameDefinition) -> [RemovableCache] {
+        RemovableCache.Kind.allCases.map { kind in
+            RemovableCache(
+                kind: kind,
+                sizeBytes: Self.cacheLocations(for: kind, game: game)
+                    .reduce(0) { $0 + Self.sizeBytes(of: $1) }
+            )
+        }
+    }
+
+    /// Removes one removable cache category and returns the number of bytes freed.
+    func clearCache(_ kind: RemovableCache.Kind, for game: GameDefinition) throws -> Int64 {
+        let locations = Self.cacheLocations(for: kind, game: game)
+        let freed = locations.reduce(0) { $0 + Self.sizeBytes(of: $1) }
+        for location in locations {
+            try Self.remove(location)
+        }
+        return freed
+    }
+
+    /// A cache target: either everything inside a directory, or a single archive file.
+    private enum CacheLocation {
+        case directoryContents(URL)
+        case file(URL)
+    }
+
+    /// Maps each cache kind to the concrete paths that hold it.
+    private static func cacheLocations(for kind: RemovableCache.Kind, game: GameDefinition) -> [CacheLocation] {
+        let dataDir = game.installDirectory.appendingPathComponent("GenshinImpact_Data", isDirectory: true)
+        switch kind {
+        case .cutsceneVideos:
+            return [.directoryContents(dataDir.appendingPathComponent("Persistent/VideoAssets", isDirectory: true))]
+        case .gameWebCache:
+            return [.directoryContents(dataDir.appendingPathComponent("webCaches", isDirectory: true))]
+        case .gameSDKCache:
+            return [.directoryContents(dataDir.appendingPathComponent("SDKCaches", isDirectory: true))]
+        case .winePrefixTemp:
+            return winePrefixTempLocations(prefixDirectory: game.winePrefixDirectory)
+        case .launcherDownloadArchives:
+            return launcherDownloadArchiveLocations()
+        }
+    }
+
+    /// Temporary files inside the Wine prefix: the Windows temp dir plus each user's Temp dir.
+    private static func winePrefixTempLocations(prefixDirectory: URL) -> [CacheLocation] {
+        let driveC = prefixDirectory.appendingPathComponent("drive_c", isDirectory: true)
+        var locations: [CacheLocation] = [
+            .directoryContents(driveC.appendingPathComponent("windows/temp", isDirectory: true))
+        ]
+        let users = driveC.appendingPathComponent("users", isDirectory: true)
+        let userDirectories = (try? FileManager.default.contentsOfDirectory(
+            at: users,
+            includingPropertiesForKeys: [.isDirectoryKey],
+            options: [.skipsHiddenFiles]
+        )) ?? []
+        for userDirectory in userDirectories {
+            locations.append(.directoryContents(userDirectory.appendingPathComponent("Temp", isDirectory: true)))
+        }
+        return locations
+    }
+
+    /// Compressed archives the launcher downloaded but no longer needs after extraction.
+    private static func launcherDownloadArchiveLocations() -> [CacheLocation] {
+        let cacheRoot = FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent("Library/Caches/NSLauncher", isDirectory: true)
+        let directories = ["DXMT", "DXVK", "Wine"].map { cacheRoot.appendingPathComponent($0, isDirectory: true) }
+        var locations: [CacheLocation] = []
+        for directory in directories {
+            guard let enumerator = FileManager.default.enumerator(at: directory, includingPropertiesForKeys: nil) else { continue }
+            for case let fileURL as URL in enumerator {
+                let name = fileURL.lastPathComponent
+                if name.hasSuffix(".tar.gz") || name.hasSuffix(".tar.xz") {
+                    locations.append(.file(fileURL))
+                }
+            }
+        }
+        return locations
+    }
+
+    /// Returns the total byte size of one cache location.
+    private static func sizeBytes(of location: CacheLocation) -> Int64 {
+        switch location {
+        case let .file(url):
+            guard let values = try? url.resourceValues(forKeys: [.fileSizeKey, .isRegularFileKey]),
+                  values.isRegularFile == true else { return 0 }
+            return Int64(values.fileSize ?? 0)
+        case let .directoryContents(url):
+            guard let enumerator = FileManager.default.enumerator(
+                at: url,
+                includingPropertiesForKeys: [.fileSizeKey, .isRegularFileKey]
+            ) else { return 0 }
+            var total: Int64 = 0
+            for case let fileURL as URL in enumerator {
+                let values = try? fileURL.resourceValues(forKeys: [.fileSizeKey, .isRegularFileKey])
+                if values?.isRegularFile == true {
+                    total += Int64(values?.fileSize ?? 0)
+                }
+            }
+            return total
+        }
+    }
+
+    /// Removes one cache location. Directory contents are emptied without removing the
+    /// directory itself, so the game can keep writing to the same path.
+    private static func remove(_ location: CacheLocation) throws {
+        let fileManager = FileManager.default
+        switch location {
+        case let .file(url):
+            if fileManager.fileExists(atPath: url.path) {
+                try fileManager.removeItem(at: url)
+            }
+        case let .directoryContents(url):
+            let entries = (try? fileManager.contentsOfDirectory(
+                at: url,
+                includingPropertiesForKeys: nil,
+                options: []
+            )) ?? []
+            for entry in entries {
+                try? fileManager.removeItem(at: entry)
+            }
+        }
+    }
+
     /// Applies a previously computed Sophon update plan.
     func updateGame(
         _ game: GameDefinition,

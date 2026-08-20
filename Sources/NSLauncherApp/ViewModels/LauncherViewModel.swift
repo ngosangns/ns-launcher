@@ -67,6 +67,10 @@ final class LauncherViewModel: ObservableObject {
     @Published var storageInventory = GameStorageInventory.empty
     /// True while voice packages are being refreshed or removed.
     @Published var isManagingVoicePacks = false
+    /// Removable cache categories with their current on-disk sizes.
+    @Published var cacheReport: [RemovableCache] = []
+    /// True while cache sizes are being refreshed or a category is being cleared.
+    @Published var isManagingCache = false
 
     private let coordinator: LauncherCoordinator
     private var currentTask: Task<Void, Never>?
@@ -315,6 +319,52 @@ final class LauncherViewModel: ObservableObject {
             } catch {
                 self.errorMessage = self.localizedErrorMessage(for: error)
                 self.statusText = self.text.voicePackRemoveFailed
+            }
+        }
+    }
+
+    /// Scans removable cache categories for the selected game off the main actor.
+    func refreshCacheReport() {
+        guard !isManagingCache, let game = selectedGame else { return }
+        isManagingCache = true
+        let coordinator = self.coordinator
+        Task.detached(priority: .userInitiated) {
+            let report = coordinator.fetchCacheReport(for: game)
+            await MainActor.run { [weak self] in
+                self?.cacheReport = report
+                self?.isManagingCache = false
+            }
+        }
+    }
+
+    /// Clears one removable cache category off the main actor, then refreshes the report.
+    func clearCache(_ kind: RemovableCache.Kind) {
+        guard !isManagingCache, let game = selectedGame else { return }
+        isManagingCache = true
+        statusText = text.clearingCache
+        errorMessage = nil
+        let coordinator = self.coordinator
+        Task.detached(priority: .userInitiated) {
+            let outcome: Result<Int64, Error>
+            do {
+                outcome = .success(try coordinator.clearCache(kind, for: game))
+            } catch {
+                outcome = .failure(error)
+            }
+            let report = coordinator.fetchCacheReport(for: game)
+            await MainActor.run { [weak self] in
+                guard let self else { return }
+                self.cacheReport = report
+                switch outcome {
+                case let .success(freedBytes):
+                    self.statusText = self.text.cacheCleared(
+                        ByteCountFormatter.string(fromByteCount: freedBytes, countStyle: .file)
+                    )
+                case let .failure(error):
+                    self.errorMessage = self.localizedErrorMessage(for: error)
+                    self.statusText = self.text.cacheClearFailed
+                }
+                self.isManagingCache = false
             }
         }
     }

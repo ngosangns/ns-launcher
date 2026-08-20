@@ -17,6 +17,7 @@ struct SettingsView: View {
                     if let game = viewModel.selectedGame {
                         gameSection(for: game)
                         storageSection
+                        cacheSection(for: game)
                     }
                 }
                 .frame(maxWidth: 1_080)
@@ -349,6 +350,97 @@ struct SettingsView: View {
                 Divider().overlay(LauncherPalette.mist.opacity(0.14))
                 questAssetAnalysis(viewModel.storageInventory.questAssetAnalysis)
             }
+        }
+    }
+
+    private func cacheSection(for game: GameDefinition) -> some View {
+        SettingsSection(title: text.cacheManagementTitle, subtitle: text.cacheManagementSubtitle) {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Text(text.removableCacheLabel)
+                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .tracking(1)
+                        .foregroundStyle(LauncherPalette.gold.opacity(0.88))
+                    Spacer()
+                    Button(text.refreshVoicePacksTitle) {
+                        viewModel.refreshCacheReport()
+                    }
+                    .buttonStyle(QuestButtonStyle(role: .quiet))
+                    .disabled(viewModel.isManagingCache)
+                    .pointerOnHover(enabled: !viewModel.isManagingCache)
+                }
+
+                if viewModel.cacheReport.isEmpty {
+                    Label(text.noRemovableCache, systemImage: "trash")
+                        .font(.subheadline)
+                        .foregroundStyle(LauncherPalette.mist.opacity(0.74))
+                        .padding(.vertical, 8)
+                } else {
+                    ForEach(viewModel.cacheReport) { item in
+                        cacheRow(item)
+                    }
+                    cacheTotalRow
+                }
+            }
+        }
+        .onAppear { viewModel.refreshCacheReport() }
+    }
+
+    private func cacheRow(_ item: RemovableCache) -> some View {
+        HStack(alignment: .top, spacing: 14) {
+            Image(systemName: Self.cacheIcon(for: item.kind))
+                .font(.title3)
+                .foregroundStyle(LauncherPalette.goldHighlight)
+                .frame(width: 26)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(text.cacheKindLabel(item.kind))
+                    .font(.system(.body, design: .rounded, weight: .semibold))
+                    .foregroundStyle(LauncherPalette.parchment)
+                Text(text.cacheKindDescription(item.kind))
+                    .font(.caption)
+                    .foregroundStyle(LauncherPalette.mist.opacity(0.72))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 12)
+            VStack(alignment: .trailing, spacing: 6) {
+                Text(ByteCountFormatter.string(fromByteCount: item.sizeBytes, countStyle: .file))
+                    .font(.system(.caption, design: .monospaced))
+                    .foregroundStyle(LauncherPalette.mist.opacity(0.72))
+                Button(text.clearCacheTitle) {
+                    viewModel.clearCache(item.kind)
+                }
+                .buttonStyle(QuestButtonStyle(role: .quiet))
+                .disabled(viewModel.isManagingCache || item.sizeBytes == 0)
+                .pointerOnHover(enabled: !viewModel.isManagingCache && item.sizeBytes > 0)
+            }
+        }
+        .padding(.vertical, 10)
+        .overlay(alignment: .bottom) {
+            Rectangle().fill(LauncherPalette.mist.opacity(0.12)).frame(height: 1)
+        }
+    }
+
+    private var cacheTotalRow: some View {
+        let total = viewModel.cacheReport.reduce(Int64(0)) { $0 + $1.sizeBytes }
+        return HStack {
+            Text(text.totalRemovableCacheLabel)
+                .font(.system(.body, design: .rounded, weight: .semibold))
+                .foregroundStyle(LauncherPalette.parchment)
+            Spacer()
+            Text(ByteCountFormatter.string(fromByteCount: total, countStyle: .file))
+                .font(.system(.caption, design: .monospaced))
+                .foregroundStyle(LauncherPalette.goldHighlight)
+        }
+        .padding(.vertical, 10)
+    }
+
+    private static func cacheIcon(for kind: RemovableCache.Kind) -> String {
+        switch kind {
+        case .cutsceneVideos: return "film"
+        case .gameWebCache: return "globe"
+        case .gameSDKCache: return "square.stack.3d.up"
+        case .winePrefixTemp: return "wineglass"
+        case .launcherDownloadArchives: return "archivebox"
         }
     }
 

@@ -147,6 +147,28 @@ struct GameStorageInventory: Hashable {
     static let empty = GameStorageInventory()
 }
 
+/// One category of removable on-disk cache for the selected game, with its current size.
+///
+/// None of these hold player-save or game-required data; each is regenerated or
+/// re-downloaded on demand, so they are safe to clear to reclaim disk space.
+struct RemovableCache: Identifiable, Hashable {
+    /// Cache categories the launcher can measure and safely remove.
+    enum Kind: String, CaseIterable, Identifiable, Hashable {
+        case cutsceneVideos
+        case gameWebCache
+        case gameSDKCache
+        case winePrefixTemp
+        case launcherDownloadArchives
+
+        var id: String { rawValue }
+    }
+
+    let kind: Kind
+    let sizeBytes: Int64
+
+    var id: Kind { kind }
+}
+
 /// Installation backend selected for a game definition.
 enum InstallerStrategy: String, Codable, CaseIterable, Identifiable {
     case sophon
