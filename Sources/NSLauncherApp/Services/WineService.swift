@@ -40,8 +40,12 @@ struct WineLaunchRequest {
     var macDriverRetina: Bool = true
     /// Wine Mac Driver: treat the left Command key as Ctrl for games that assume Windows bindings.
     var leftCommandIsCtrl: Bool = false
-    /// Custom windowed resolution written to the game's registry keys before launch.
+    /// Custom starting resolution written to the game's registry keys before launch.
     var resolutionOverride: (width: Int, height: Int)? = nil
+    /// Force Unity's persisted fullscreen flag (`Screenmanager Is Fullscreen mode`) to 1 before
+    /// launch, so display changes made inside the game cannot carry a windowed state into the
+    /// next session.
+    var enforceUnityFullscreen: Bool = false
     /// Enable the game's HDR registry flag.
     var enableHDR: Bool = false
     var onOutput: (@Sendable (ProcessOutputChunk) -> Void)?
@@ -386,14 +390,18 @@ struct WineService: WineServicing {
             environment: environment
         )
 
-        if let resolution = request.resolutionOverride {
+        // Unity persists display changes made inside the game into these PlayerPrefs keys, so the
+        // fullscreen flag must be rewritten before every launch to keep fullscreen sticky.
+        if request.enforceUnityFullscreen || request.resolutionOverride != nil {
             try await setRegistryDWord(
                 key: "HKEY_CURRENT_USER\\Software\\miHoYo\\Genshin Impact",
                 valueName: "Screenmanager Is Fullscreen mode_h3981298716",
-                data: 0,
+                data: request.enforceUnityFullscreen ? 1 : 0,
                 wineBinaryPath: wineBinaryPath,
                 environment: environment
             )
+        }
+        if let resolution = request.resolutionOverride {
             try await setRegistryDWord(
                 key: "HKEY_CURRENT_USER\\Software\\miHoYo\\Genshin Impact",
                 valueName: "Screenmanager Resolution Width_h182942802",

@@ -665,7 +665,12 @@ struct AppSettings: Codable, Equatable {
 
     /// Builds launch arguments with display mode controlled by settings rather than stale game flags.
     func launchArguments(for game: GameDefinition) -> [String] {
-        Self.filteredUnityDisplayArguments(game.launchArguments) + launchDisplayMode.launchArguments
+        var arguments = Self.filteredUnityDisplayArguments(game.launchArguments) + launchDisplayMode.launchArguments
+        if launchDisplayMode == .fullscreen, resolutionCustom {
+            // Start fullscreen at the custom render size; DXMT/Metal upscales to the screen.
+            arguments += ["-screen-width", String(resolutionWidth), "-screen-height", String(resolutionHeight)]
+        }
+        return arguments
     }
 
     /// Removes Unity screen flags that are now owned by launchDisplayMode.

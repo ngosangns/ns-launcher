@@ -361,6 +361,7 @@ struct LauncherCoordinator: Sendable {
             macDriverRetina: settings.macDriverRetina,
             leftCommandIsCtrl: settings.leftCommandIsCtrl,
             resolutionOverride: resolutionOverride,
+            enforceUnityFullscreen: settings.launchDisplayMode == .fullscreen,
             enableHDR: settings.enableHDR,
             onOutput: onOutput
         )

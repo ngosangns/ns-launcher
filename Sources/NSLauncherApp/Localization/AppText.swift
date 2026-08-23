@@ -159,8 +159,8 @@ struct AppText {
     var resolutionCustomLabel: String { localized(en: "Custom resolution", vi: "Độ phân giải tùy chỉnh") }
     var resolutionCustomDescription: String {
         localized(
-            en: "Write a windowed resolution into the game's registry before launch.",
-            vi: "Ghi độ phân giải cửa sổ vào registry của game trước khi chạy."
+            en: "Write a starting resolution into the game's registry before launch. With Fullscreen display mode the game always relaunches fullscreen, even after changing resolution in-game.",
+            vi: "Ghi độ phân giải khởi đầu vào registry của game trước khi chạy. Ở chế độ Fullscreen, game luôn được chạy lại ở toàn màn hình kể cả sau khi đổi độ phân giải trong game."
         )
     }
     var resolutionWidthLabel: String { localized(en: "Width", vi: "Chiều rộng") }
