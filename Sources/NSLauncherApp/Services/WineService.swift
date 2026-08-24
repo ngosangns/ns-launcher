@@ -42,10 +42,6 @@ struct WineLaunchRequest {
     var leftCommandIsCtrl: Bool = false
     /// Custom starting resolution written to the game's registry keys before launch.
     var resolutionOverride: (width: Int, height: Int)? = nil
-    /// Force Unity's persisted fullscreen flag (`Screenmanager Is Fullscreen mode`) to 1 before
-    /// launch, so display changes made inside the game cannot carry a windowed state into the
-    /// next session.
-    var enforceUnityFullscreen: Bool = false
     /// Enable the game's HDR registry flag.
     var enableHDR: Bool = false
     var onOutput: (@Sendable (ProcessOutputChunk) -> Void)?
@@ -390,17 +386,18 @@ struct WineService: WineServicing {
             environment: environment
         )
 
-        // Unity persists display changes made inside the game into these PlayerPrefs keys, so the
-        // fullscreen flag must be rewritten before every launch to keep fullscreen sticky.
-        if request.enforceUnityFullscreen || request.resolutionOverride != nil {
-            try await setRegistryDWord(
-                key: "HKEY_CURRENT_USER\\Software\\miHoYo\\Genshin Impact",
-                valueName: "Screenmanager Is Fullscreen mode_h3981298716",
-                data: request.enforceUnityFullscreen ? 1 : 0,
-                wineBinaryPath: wineBinaryPath,
-                environment: environment
-            )
-        }
+        // Unity persists display changes made inside the game into these PlayerPrefs keys, so
+        // the flag is rewritten before every launch to keep it sticky. Both display modes run
+        // Unity windowed: the Fullscreen mode enters native macOS fullscreen at the AppKit
+        // level after launch (see MacNativeFullscreenActivator), and a persisted fullscreen
+        // flag here would fight that by making the game cover the screen borderlessly itself.
+        try await setRegistryDWord(
+            key: "HKEY_CURRENT_USER\\Software\\miHoYo\\Genshin Impact",
+            valueName: "Screenmanager Is Fullscreen mode_h3981298716",
+            data: 0,
+            wineBinaryPath: wineBinaryPath,
+            environment: environment
+        )
         if let resolution = request.resolutionOverride {
             try await setRegistryDWord(
                 key: "HKEY_CURRENT_USER\\Software\\miHoYo\\Genshin Impact",

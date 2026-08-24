@@ -100,7 +100,8 @@ final class LauncherViewModel: ObservableObject {
         let coordinator = LauncherCoordinator(
             settingsStore: SettingsStore(),
             sophonInstaller: GenshinSophonInstaller(),
-            wineService: WineService(processRunner: processRunner)
+            wineService: WineService(processRunner: processRunner),
+            macFullscreenActivator: MacNativeFullscreenActivator(processRunner: processRunner)
         )
 
         let loadedSettings = (try? coordinator.loadSettings()) ?? .default

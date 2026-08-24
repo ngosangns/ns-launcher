@@ -49,16 +49,19 @@ struct LauncherCoordinator: Sendable {
     private let settingsStore: SettingsStoring
     private let sophonInstaller: SophonInstalling
     private let wineService: WineServicing
+    private let macFullscreenActivator: MacNativeFullscreenActivator
 
     /// Injects every side-effecting service so the view model stays UI-focused.
     init(
         settingsStore: SettingsStoring,
         sophonInstaller: SophonInstalling,
-        wineService: WineServicing
+        wineService: WineServicing,
+        macFullscreenActivator: MacNativeFullscreenActivator
     ) {
         self.settingsStore = settingsStore
         self.sophonInstaller = sophonInstaller
         self.wineService = wineService
+        self.macFullscreenActivator = macFullscreenActivator
     }
 
     /// Loads persisted application settings.
@@ -362,10 +365,15 @@ struct LauncherCoordinator: Sendable {
             macDriverRetina: settings.macDriverRetina,
             leftCommandIsCtrl: settings.leftCommandIsCtrl,
             resolutionOverride: resolutionOverride,
-            enforceUnityFullscreen: settings.launchDisplayMode == .fullscreen,
             enableHDR: settings.enableHDR,
             onOutput: onOutput
         )
+        if settings.launchDisplayMode == .fullscreen {
+            // The game starts windowed on purpose (see LaunchDisplayMode.fullscreen); flip its
+            // window into native macOS fullscreen once it appears. Detached because the awaited
+            // launch below blocks until the game session ends.
+            _ = macFullscreenActivator.activateWhenWindowAppears(onOutput: onOutput)
+        }
         return try await wineService.launch(request)
     }
 

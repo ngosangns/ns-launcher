@@ -82,15 +82,20 @@ struct SettingsView: View {
 
     private var displayModeField: some View {
         SettingField(label: text.displayModeLabel) {
-            Picker(text.displayModeLabel, selection: Binding(
-                get: { viewModel.settings.launchDisplayMode },
-                set: { viewModel.setLaunchDisplayMode($0) }
-            )) {
-                Text(text.windowedMode).tag(LaunchDisplayMode.windowed)
-                Text(text.fullscreenMode).tag(LaunchDisplayMode.fullscreen)
+            VStack(alignment: .leading, spacing: 6) {
+                Picker(text.displayModeLabel, selection: Binding(
+                    get: { viewModel.settings.launchDisplayMode },
+                    set: { viewModel.setLaunchDisplayMode($0) }
+                )) {
+                    Text(text.windowedMode).tag(LaunchDisplayMode.windowed)
+                    Text(text.fullscreenMode).tag(LaunchDisplayMode.fullscreen)
+                }
+                .pickerStyle(.segmented)
+                .pointerOnHover()
+                Text(text.fullscreenHint)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
             }
-            .pickerStyle(.segmented)
-            .pointerOnHover()
         }
     }
 

@@ -200,12 +200,18 @@ enum LaunchDisplayMode: String, Codable, CaseIterable, Identifiable {
     var id: String { rawValue }
 
     /// Unity-compatible launch arguments used by Genshin Impact and similar games.
+    ///
+    /// Fullscreen deliberately starts windowed: Wine's Mac driver renders Win32
+    /// fullscreen as a borderless screen-covering window instead of real macOS
+    /// fullscreen, so the launcher flips the window into native macOS fullscreen
+    /// after launch (see MacNativeFullscreenActivator). A windowed Unity surface
+    /// is required for that flip to work.
     var launchArguments: [String] {
         switch self {
         case .windowed:
             return ["-screen-fullscreen", "0", "-screen-width", "1280", "-screen-height", "720"]
         case .fullscreen:
-            return ["-screen-fullscreen", "1"]
+            return ["-screen-fullscreen", "0"]
         }
     }
 }
@@ -706,7 +712,8 @@ struct AppSettings: Codable, Equatable {
     func launchArguments(for game: GameDefinition) -> [String] {
         var arguments = Self.filteredUnityDisplayArguments(game.launchArguments) + launchDisplayMode.launchArguments
         if launchDisplayMode == .fullscreen, resolutionCustom {
-            // Start fullscreen at the custom render size; DXMT/Metal upscales to the screen.
+            // Start windowed at the custom render size; native fullscreen scaling happens at
+            // the AppKit level after launch and DXMT/Metal upscales to the screen.
             arguments += ["-screen-width", String(resolutionWidth), "-screen-height", String(resolutionHeight)]
         }
         return arguments

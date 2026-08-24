@@ -100,6 +100,12 @@ struct AppText {
     var displayModeLabel: String { localized(en: "Display mode", vi: "Chế độ hiển thị") }
     var windowedMode: String { localized(en: "Windowed", vi: "Cửa sổ") }
     var fullscreenMode: String { localized(en: "Fullscreen", vi: "Toàn màn hình") }
+    var fullscreenHint: String {
+        localized(
+            en: "Fullscreen enters native macOS fullscreen after the game window appears. macOS may ask for Automation and Accessibility permission on first launch.",
+            vi: "Toàn màn hình sẽ vào fullscreen thật của macOS sau khi cửa sổ game xuất hiện. macOS có thể hỏi quyền Automation và Accessibility ở lần chạy đầu."
+        )
+    }
     var cloudCompatibilityLabel: String { localized(en: "Cloud compatibility mode", vi: "Chế độ tương thích cloud") }
     var cloudCompatibilityDescription: String {
         localized(
