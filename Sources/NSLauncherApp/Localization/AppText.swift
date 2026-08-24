@@ -135,6 +135,13 @@ struct AppText {
             vi: "Chạy game qua tiến trình cha steam.exe + lsteamclient.dll thật để anti-cheat bỏ qua việc nạp kernel driver. File stub chỉ tải một lần và được lưu cache."
         )
     }
+    var useMsyncLabel: String { localized(en: "msync (advanced)", vi: "msync (nâng cao)") }
+    var useMsyncDescription: String {
+        localized(
+            en: "Replace esync with msync (WINEMSYNC) for Wine synchronization. Known to crash this DXMT-patched Wine build with \"wine client error:308\" — leave off unless you switched to a Wine build where msync works.",
+            vi: "Thay esync bằng msync (WINEMSYNC) cho đồng bộ hóa của Wine. Đã biết gây crash trên bản Wine patch DXMT hiện tại với lỗi \"wine client error:308\" — để tắt trừ khi bạn đã đổi sang bản Wine mà msync hoạt động."
+        )
+    }
     var retinaLabel: String { localized(en: "Retina scaling", vi: "Hiển thị Retina") }
     var retinaDescription: String {
         localized(
@@ -200,6 +207,18 @@ struct AppText {
         localized(
             en: "Multiplier applied to the game's render resolution to reach the window size (e.g. 1.5 = render at ~67% scale).",
             vi: "Hệ số nhân từ độ phân giải render của game lên kích thước cửa sổ (vd: 1.5 = render ở khoảng 67% độ phân giải)."
+        )
+    }
+    func metalFXRenderResolutionHint(renderWidth: Int, renderHeight: Int, outputWidth: Int, outputHeight: Int) -> String {
+        localized(
+            en: "Renders at \(renderWidth)×\(renderHeight) and upscales to \(outputWidth)×\(outputHeight) — lower render resolution also means lower memory usage.",
+            vi: "Render ở \(renderWidth)×\(renderHeight) rồi upscale lên \(outputWidth)×\(outputHeight) — độ phân giải render thấp hơn cũng nghĩa là tốn ít bộ nhớ hơn."
+        )
+    }
+    var metalFXNeedsCustomResolutionWarning: String {
+        localized(
+            en: "No effect yet: turn on Custom windowed resolution and set it below your display's native size, otherwise the game still renders at full resolution.",
+            vi: "Chưa có tác dụng: bật Custom windowed resolution và đặt thấp hơn độ phân giải gốc của màn hình, nếu không game vẫn render ở độ phân giải đầy đủ."
         )
     }
     var name: String { localized(en: "Name", vi: "Tên") }

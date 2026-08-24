@@ -39,7 +39,8 @@
 //     for the anti-cheat init window, then unblocks it.
 //   - Enabling msync (`WINEMSYNC`) instead of esync -> `wine client error:308:
 //     partial wakeup read 0` followed by `err:virtual:virtual_setup_exception`
-//     (a render-path crash). See `LaunchRuntimeProfile.build`.
+//     (a render-path crash). msync therefore stays opt-in via the advanced
+//     `useMsync` setting; see `LaunchRuntimeProfile.build`.
 
 import Foundation
 

@@ -176,10 +176,27 @@ struct SettingsView: View {
                         value: viewModel.settings.metalFXScaleFactor,
                         set: viewModel.setMetalFXScaleFactor
                     )
-                    Text(text.metalFXScaleFactorDescription)
+                    if viewModel.settings.resolutionCustom {
+                        let renderResolution = AppSettings.metalFXRenderResolution(
+                            outputWidth: viewModel.settings.resolutionWidth,
+                            outputHeight: viewModel.settings.resolutionHeight,
+                            factor: viewModel.settings.metalFXScaleFactor
+                        )
+                        Text(text.metalFXRenderResolutionHint(
+                            renderWidth: renderResolution.width,
+                            renderHeight: renderResolution.height,
+                            outputWidth: viewModel.settings.resolutionWidth,
+                            outputHeight: viewModel.settings.resolutionHeight
+                        ))
                         .font(.caption)
                         .foregroundStyle(LauncherPalette.mist.opacity(0.72))
                         .fixedSize(horizontal: false, vertical: true)
+                    } else {
+                        Text(text.metalFXNeedsCustomResolutionWarning)
+                            .font(.caption)
+                            .foregroundStyle(LauncherPalette.gold.opacity(0.85))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
             }
         }
@@ -230,6 +247,14 @@ struct SettingsView: View {
                 isOn: Binding(
                     get: { viewModel.settings.steamPatch },
                     set: { viewModel.setSteamPatch($0) }
+                )
+            )
+            LaunchOption(
+                title: text.useMsyncLabel,
+                detail: text.useMsyncDescription,
+                isOn: Binding(
+                    get: { viewModel.settings.useMsync },
+                    set: { viewModel.setUseMsync($0) }
                 )
             )
             LaunchOption(

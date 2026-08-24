@@ -425,8 +425,41 @@ struct AppSettings: Codable, Equatable {
     var metalFXUpscaling: Bool
     /// Upscale factor applied when `metalFXUpscaling` is enabled (e.g. 1.5 = render at 2/3 scale).
     var metalFXScaleFactor: Double
+    /// Opt-in escape hatch replacing esync (`WINEESYNC=1`) with msync (`WINEMSYNC=1`) on the DXMT
+    /// backend. Off by default: on the current DXMT-patched Wine build msync crashed the render
+    /// path with `wine client error:308`. Only meaningful on Wine builds carrying the marzent
+    /// msync patches; the DXVK backend always uses esync.
+    var useMsync: Bool
     /// Monotonic settings schema version used for one-time default migrations.
     var settingsVersion: Int
+
+    /// Sanitizes a user-entered frame-rate cap: negative values and nonsensically large ones
+    /// collapse into range (DXMT still requires the value to be a factor of the refresh rate).
+    static func sanitizedMaxFrameRate(_ value: Int) -> Int {
+        min(max(value, 0), 360)
+    }
+
+    /// Sanitizes a user-entered MetalFX upscale factor: DXMT expects a value above 1.0 (otherwise
+    /// there is nothing to upscale) and anything past 4.0 renders at a uselessly tiny fraction of
+    /// the output size.
+    static func sanitizedMetalFXScaleFactor(_ value: Double) -> Double {
+        min(max(value, 1.0), 4.0)
+    }
+
+    /// Computes the actual render resolution implied by a MetalFX spatial upscale factor over the
+    /// given output (window/custom) size. This is what determines the unified-memory footprint:
+    /// render targets and textures scale down with these dimensions.
+    static func metalFXRenderResolution(
+        outputWidth: Int,
+        outputHeight: Int,
+        factor: Double
+    ) -> (width: Int, height: Int) {
+        let safeFactor = sanitizedMetalFXScaleFactor(factor)
+        return (
+            width: max(Int((Double(outputWidth) / safeFactor).rounded()), 1),
+            height: max(Int((Double(outputHeight) / safeFactor).rounded()), 1)
+        )
+    }
 
     /// Resolved Wine executable path, falling back to a PATH lookup name.
     var wineBinaryPath: String {
@@ -474,6 +507,7 @@ struct AppSettings: Codable, Equatable {
             maxFrameRate: 0,
             metalFXUpscaling: false,
             metalFXScaleFactor: 1.5,
+            useMsync: false,
             settingsVersion: 2
         )
     }
@@ -545,6 +579,7 @@ struct AppSettings: Codable, Equatable {
         case maxFrameRate
         case metalFXUpscaling
         case metalFXScaleFactor
+        case useMsync
         case settingsVersion
     }
 
@@ -572,6 +607,7 @@ struct AppSettings: Codable, Equatable {
         maxFrameRate: Int = 0,
         metalFXUpscaling: Bool = false,
         metalFXScaleFactor: Double = 1.5,
+        useMsync: Bool = false,
         settingsVersion: Int = 0
     ) {
         self.games = games
@@ -597,6 +633,7 @@ struct AppSettings: Codable, Equatable {
         self.maxFrameRate = maxFrameRate
         self.metalFXUpscaling = metalFXUpscaling
         self.metalFXScaleFactor = metalFXScaleFactor
+        self.useMsync = useMsync
         self.settingsVersion = settingsVersion
     }
 
@@ -625,6 +662,7 @@ struct AppSettings: Codable, Equatable {
         self.maxFrameRate = try container.decodeIfPresent(Int.self, forKey: .maxFrameRate) ?? 0
         self.metalFXUpscaling = try container.decodeIfPresent(Bool.self, forKey: .metalFXUpscaling) ?? false
         self.metalFXScaleFactor = try container.decodeIfPresent(Double.self, forKey: .metalFXScaleFactor) ?? 1.5
+        self.useMsync = try container.decodeIfPresent(Bool.self, forKey: .useMsync) ?? false
         self.settingsVersion = try container.decodeIfPresent(Int.self, forKey: .settingsVersion) ?? 0
 
         // Ignore deprecated storage and custom binary paths while remaining decode-compatible with older settings files.
@@ -660,6 +698,7 @@ struct AppSettings: Codable, Equatable {
         try container.encode(maxFrameRate, forKey: .maxFrameRate)
         try container.encode(metalFXUpscaling, forKey: .metalFXUpscaling)
         try container.encode(metalFXScaleFactor, forKey: .metalFXScaleFactor)
+        try container.encode(useMsync, forKey: .useMsync)
         try container.encode(settingsVersion, forKey: .settingsVersion)
     }
 
@@ -745,11 +784,13 @@ struct LaunchRuntimeProfile {
         ]
 
         if backend == .dxmt {
-            // DO NOT switch this back to msync (`WINEMSYNC=1`). On the DXMT-patched Wine build used
-            // here, msync surfaced as `wine client error:308: partial wakeup read 0` immediately
-            // followed by `err:virtual:virtual_setup_exception nested exception on signal stack` —
-            // a hard render-path crash. esync is what YAAGL uses for DXMT.
-            env["WINEESYNC"] = "1"
+            // Sync primitive selection. esync is the safe default: on the DXMT-patched Wine build
+            // used here, msync (`WINEMSYNC=1`) surfaced as `wine client error:308: partial wakeup
+            // read 0` immediately followed by `err:virtual:virtual_setup_exception nested exception
+            // on signal stack` — a hard render-path crash. YAAGL also ships esync for Genshin and
+            // msync only for its other game clients. `useMsync` is an opt-in escape hatch for Wine
+            // builds where the marzent msync patches work.
+            env[settings.useMsync ? "WINEMSYNC" : "WINEESYNC"] = "1"
             // An empty override list keeps the DXMT builtin D3D10/D3D11/DXGI DLLs authoritative and
             // prevents any shell-level WINEDLLOVERRIDES from leaking into the launch. Keep it for
             // DXMT only; the DXVK path below relies on registry `DllOverrides` instead.
@@ -780,6 +821,8 @@ struct LaunchRuntimeProfile {
             // never selects a broken decoder. Mirrors YAAGL's always-on DXMT launch config.
             env["GST_PLUGIN_FEATURE_RANK"] = "atdec:MAX,avdec_h264:MAX"
         } else if backend == .dxvk {
+            // msync only exists on Wine builds carrying the marzent patches (the DXMT-managed
+            // wine); generic DXVK setups stay on esync regardless of the setting.
             env["WINEESYNC"] = "1"
         }
 

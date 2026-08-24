@@ -247,8 +247,16 @@ final class LauncherViewModel: ObservableObject {
     }
 
     /// Updates the optional DXMT frame-pacing cap (0 = disabled) and persists the choice.
+    /// Clamped to a sane range; DXMT additionally requires the value to be a factor of the
+    /// display refresh rate, which is communicated through the setting's description.
     func setMaxFrameRate(_ frameRate: Int) {
-        settings.maxFrameRate = max(frameRate, 0)
+        settings.maxFrameRate = AppSettings.sanitizedMaxFrameRate(frameRate)
+        persistSettings()
+    }
+
+    /// Updates the opt-in msync toggle and persists the choice.
+    func setUseMsync(_ enabled: Bool) {
+        settings.useMsync = enabled
         persistSettings()
     }
 
@@ -260,7 +268,7 @@ final class LauncherViewModel: ObservableObject {
 
     /// Updates the MetalFX spatial upscale factor and persists the choice.
     func setMetalFXScaleFactor(_ factor: Double) {
-        settings.metalFXScaleFactor = max(factor, 1.0)
+        settings.metalFXScaleFactor = AppSettings.sanitizedMetalFXScaleFactor(factor)
         persistSettings()
     }
 
