@@ -96,6 +96,15 @@ struct AppText {
         case .korean: return localized(en: "Korean", vi: "Tiếng Hàn")
         }
     }
+    var renderBackendLabel: String { localized(en: "Render backend", vi: "Render backend") }
+    var renderBackendDXMT: String { localized(en: "DXMT", vi: "DXMT") }
+    var renderBackendD3DMetal: String { localized(en: "D3DMetal", vi: "D3DMetal") }
+    var renderBackendHint: String {
+        localized(
+            en: "DXMT is the default. D3DMetal is Apple's translation layer bundled with the managed Wine; it keeps its own pipeline cache and is worth trying if shader stutter persists. Changing this restarts shader compilation from scratch once.",
+            vi: "DXMT là mặc định. D3DMetal là lớp dịch của Apple đi kèm bản Wine đang dùng; nó có pipeline cache riêng, đáng thử nếu vẫn khựng do shader. Đổi lựa chọn này sẽ phải biên dịch lại shader từ đầu một lần."
+        )
+    }
     var displayModeLabel: String { localized(en: "Display mode", vi: "Chế độ hiển thị") }
     var windowedMode: String { localized(en: "Windowed", vi: "Cửa sổ") }
     var fullscreenMode: String { localized(en: "Fullscreen", vi: "Toàn màn hình") }
@@ -486,6 +495,14 @@ struct AppText {
         localized(
             en: "No DXMT-compatible Wine binary was found. Checked: \(path). DXMT needs winemac to export the macdrv_functions Metal interface (or macdrv_view_create_metal_view), which only DXMT-patched Wine builds (Wine 9.9+/11.x, e.g. yaagl/anime-game-wine or 3Shain/wine) provide — stock WineHQ and Game Porting Toolkit do not. Install a DXMT-patched Wine, then try again.",
             vi: "Chưa tìm thấy Wine binary tương thích DXMT. Đã kiểm tra: \(path). DXMT cần winemac export interface Metal macdrv_functions (hoặc macdrv_view_create_metal_view), chỉ có ở Wine đã patch DXMT (Wine 9.9+/11.x, ví dụ yaagl/anime-game-wine hoặc 3Shain/wine) — WineHQ thường và Game Porting Toolkit đều không có. Hãy cài Wine patch DXMT rồi thử lại."
+        )
+    }
+
+    /// Error text when the Wine build does not ship Apple D3DMetal.
+    func d3dMetalUnavailable(_ path: String) -> String {
+        localized(
+            en: "Apple D3DMetal was not found at \(path). It ships with CrossOver-derived Wine builds under lib64/apple_gptk; the managed Wine here does not have it. Switch the render backend back to DXMT in Settings.",
+            vi: "Không tìm thấy Apple D3DMetal tại \(path). D3DMetal đi kèm các bản Wine dựa trên CrossOver, nằm ở lib64/apple_gptk; bản Wine đang dùng không có. Hãy đổi render backend về DXMT trong Cài đặt."
         )
     }
 

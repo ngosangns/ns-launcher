@@ -359,6 +359,7 @@ struct LauncherCoordinator: Sendable {
             environment: profile.environment,
             currentDirectory: profile.currentDirectory,
             runtimeRequirements: profile.runtimeRequirements,
+            renderBackend: profile.backend,
             useSteamLauncher: settings.steamPatch,
             macDriverRetina: settings.macDriverRetina,
             leftCommandIsCtrl: settings.leftCommandIsCtrl,

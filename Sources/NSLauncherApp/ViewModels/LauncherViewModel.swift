@@ -269,6 +269,12 @@ final class LauncherViewModel: ObservableObject {
         persistSettings()
     }
 
+    /// Selects the Direct3D-to-Metal translation layer and persists the choice.
+    func setRenderBackend(_ backend: RenderBackendPreference) {
+        settings.renderBackend = backend
+        persistSettings()
+    }
+
     /// Updates the opt-in msync toggle and persists the choice.
     func setUseMsync(_ enabled: Bool) {
         settings.useMsync = enabled
@@ -1405,6 +1411,8 @@ final class LauncherViewModel: ObservableObject {
                 return text.dxmtBootstrapFailed(details)
             case let .dxmtUnsupportedWine(path):
                 return text.dxmtUnsupportedWine(path)
+            case let .d3dMetalUnavailable(path):
+                return text.d3dMetalUnavailable(path)
             case let .unsupportedKernelDriver(driver):
                 return text.unsupportedKernelDriver(driver)
             }

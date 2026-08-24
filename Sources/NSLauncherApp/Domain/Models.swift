@@ -431,6 +431,8 @@ struct AppSettings: Codable, Equatable {
     /// path with `wine client error:308`. Only meaningful on Wine builds carrying the marzent
     /// msync patches; the DXVK backend always uses esync.
     var useMsync: Bool
+    /// Direct3D-to-Metal translation layer used for games that require one.
+    var renderBackend: RenderBackendPreference
     /// Monotonic settings schema version used for one-time default migrations.
     var settingsVersion: Int
 
@@ -595,6 +597,7 @@ struct AppSettings: Codable, Equatable {
         case metalFXUpscaling
         case metalFXScaleFactor
         case useMsync
+        case renderBackend
         case settingsVersion
     }
 
@@ -623,6 +626,7 @@ struct AppSettings: Codable, Equatable {
         metalFXUpscaling: Bool = false,
         metalFXScaleFactor: Double = 1.5,
         useMsync: Bool = false,
+        renderBackend: RenderBackendPreference = .dxmt,
         settingsVersion: Int = 0
     ) {
         self.games = games
@@ -649,6 +653,7 @@ struct AppSettings: Codable, Equatable {
         self.metalFXUpscaling = metalFXUpscaling
         self.metalFXScaleFactor = metalFXScaleFactor
         self.useMsync = useMsync
+        self.renderBackend = renderBackend
         self.settingsVersion = settingsVersion
     }
 
@@ -678,6 +683,7 @@ struct AppSettings: Codable, Equatable {
         self.metalFXUpscaling = try container.decodeIfPresent(Bool.self, forKey: .metalFXUpscaling) ?? false
         self.metalFXScaleFactor = try container.decodeIfPresent(Double.self, forKey: .metalFXScaleFactor) ?? 1.5
         self.useMsync = try container.decodeIfPresent(Bool.self, forKey: .useMsync) ?? false
+        self.renderBackend = try container.decodeIfPresent(RenderBackendPreference.self, forKey: .renderBackend) ?? .dxmt
         self.settingsVersion = try container.decodeIfPresent(Int.self, forKey: .settingsVersion) ?? 0
 
         // Ignore deprecated storage and custom binary paths while remaining decode-compatible with older settings files.
@@ -714,6 +720,7 @@ struct AppSettings: Codable, Equatable {
         try container.encode(metalFXUpscaling, forKey: .metalFXUpscaling)
         try container.encode(metalFXScaleFactor, forKey: .metalFXScaleFactor)
         try container.encode(useMsync, forKey: .useMsync)
+        try container.encode(renderBackend, forKey: .renderBackend)
         try container.encode(settingsVersion, forKey: .settingsVersion)
     }
 
@@ -770,8 +777,29 @@ enum InstallProgressEvent: Equatable {
 /// Runtime backend used for DirectX translation on macOS.
 enum RuntimeBackend: String, Codable {
     case dxmt
+    case d3dMetal
     case dxvk
     case plainWine
+}
+
+/// Direct3D-to-Metal translation layer the user wants for games that need one.
+///
+/// Both ship with the managed CrossOver Wine, in separate directories: DXMT replaces the
+/// builtin `d3d11`/`dxgi` under `lib/wine`, while Apple's D3DMetal keeps its own copies under
+/// `lib64/apple_gptk/wine` and is selected by putting that directory first on `WINEDLLPATH`.
+/// They are alternatives, never both at once.
+enum RenderBackendPreference: String, Codable, CaseIterable, Identifiable {
+    case dxmt
+    case d3dMetal
+
+    var id: String { rawValue }
+
+    var runtimeBackend: RuntimeBackend {
+        switch self {
+        case .dxmt: return .dxmt
+        case .d3dMetal: return .d3dMetal
+        }
+    }
 }
 
 /// Describes the full runtime environment for a single game launch session.
@@ -799,7 +827,7 @@ struct LaunchRuntimeProfile {
     ) -> LaunchRuntimeProfile {
         let exe = game.installDirectory.appendingPathComponent(game.executableRelativePath)
         let backend: RuntimeBackend = {
-            if game.runtimeRequirements.contains(.dxmt) { return .dxmt }
+            if game.runtimeRequirements.contains(.dxmt) { return settings.renderBackend.runtimeBackend }
             if game.runtimeRequirements.contains(.dxvk) { return .dxvk }
             return .plainWine
         }()
@@ -867,6 +895,22 @@ struct LaunchRuntimeProfile {
             }
             // Rank GStreamer's H.264 decoders (Apple AudioToolbox + FFmpeg) so in-game/cutscene video
             // never selects a broken decoder. Mirrors YAAGL's always-on DXMT launch config.
+            env["GST_PLUGIN_FEATURE_RANK"] = "atdec:MAX,avdec_h264:MAX"
+        } else if backend == .d3dMetal {
+            // Apple's D3DMetal, shipped with the managed CrossOver Wine. It keeps its own
+            // pipeline cache on disk (`pipeline_cache.bin`) with no configuration, which is the
+            // reason to offer it as an alternative to DXMT.
+            //
+            // WINEDLLPATH is what actually selects it and can only be built once the Wine root is
+            // resolved, so WineService fills it in at launch time.
+            env[settings.useMsync ? "WINEMSYNC" : "WINEESYNC"] = "1"
+            env["WINEDLLOVERRIDES"] = ""
+            if settings.metalFXUpscaling, settings.resolutionCustom {
+                env["D3DM_ENABLE_METALFX"] = "1"
+            }
+            if settings.showMetalHUD {
+                env["D3DM_SHOW_HUD_STATS"] = "1"
+            }
             env["GST_PLUGIN_FEATURE_RANK"] = "atdec:MAX,avdec_h264:MAX"
         } else if backend == .dxvk {
             // msync only exists on Wine builds carrying the marzent patches (the DXMT-managed

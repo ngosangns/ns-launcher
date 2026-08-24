@@ -72,10 +72,30 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 14) {
                 voiceLanguageField
                 displayModeField
+                renderBackendField
                 pathFields(for: game)
                 voicePackageManagement
                 macDriverOptions
                 launchOptions
+            }
+        }
+    }
+
+    private var renderBackendField: some View {
+        SettingField(label: text.renderBackendLabel) {
+            VStack(alignment: .leading, spacing: 6) {
+                Picker(text.renderBackendLabel, selection: Binding(
+                    get: { viewModel.settings.renderBackend },
+                    set: { viewModel.setRenderBackend($0) }
+                )) {
+                    Text(text.renderBackendDXMT).tag(RenderBackendPreference.dxmt)
+                    Text(text.renderBackendD3DMetal).tag(RenderBackendPreference.d3dMetal)
+                }
+                .pickerStyle(.segmented)
+                .pointerOnHover()
+                Text(text.renderBackendHint)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
             }
         }
     }

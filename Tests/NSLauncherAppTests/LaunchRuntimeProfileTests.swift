@@ -19,13 +19,15 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         useMsync: Bool = false,
         maxFrameRate: Int = 0,
         metalFXUpscaling: Bool = false,
-        resolutionCustom: Bool = false
+        resolutionCustom: Bool = false,
+        renderBackend: RenderBackendPreference = .dxmt
     ) -> AppSettings {
         var settings = AppSettings.default
         settings.useMsync = useMsync
         settings.maxFrameRate = maxFrameRate
         settings.metalFXUpscaling = metalFXUpscaling
         settings.resolutionCustom = resolutionCustom
+        settings.renderBackend = renderBackend
         return settings
     }
 
@@ -126,6 +128,42 @@ final class LaunchRuntimeProfileTests: XCTestCase {
             displayRefreshRate: Self.refreshRate
         )
         XCTAssertEqual(profile.environment["DXMT_METALFX_SPATIAL_SWAPCHAIN"], "1")
+    }
+
+    /// D3DMetal is selected purely through the DLL search path, so none of DXMT's knobs may leak
+    /// into the launch; WineService fills in WINEDLLPATH once the Wine root is known.
+    func testD3DMetalBackendCarriesNoDXMTEnvironment() {
+        let profile = LaunchRuntimeProfile.build(
+            game: makeGame(requirements: [.wine, .dxmt]),
+            settings: makeSettings(renderBackend: .d3dMetal),
+            displayRefreshRate: Self.refreshRate
+        )
+        XCTAssertEqual(profile.backend, .d3dMetal)
+        XCTAssertNil(profile.environment["DXMT_SHADER_CACHE"])
+        XCTAssertNil(profile.environment["DXMT_LOG_PATH"])
+        XCTAssertNil(profile.environment["DXMT_CONFIG"])
+        XCTAssertEqual(profile.environment["WINEESYNC"], "1")
+    }
+
+    func testRenderBackendPreferenceOnlyAppliesToGamesNeedingABridge() {
+        let profile = LaunchRuntimeProfile.build(
+            game: makeGame(requirements: [.wine]),
+            settings: makeSettings(renderBackend: .d3dMetal),
+            displayRefreshRate: Self.refreshRate
+        )
+        XCTAssertEqual(profile.backend, .plainWine)
+    }
+
+    func testLegacySettingsWithoutRenderBackendDefaultToDXMT() throws {
+        let encoded = try JSONEncoder().encode(makeSettings(renderBackend: .d3dMetal))
+        var json = try XCTUnwrap(
+            JSONSerialization.jsonObject(with: encoded) as? [String: Any]
+        )
+        json.removeValue(forKey: "renderBackend")
+        let stripped = try JSONSerialization.data(withJSONObject: json)
+
+        let decoded = try JSONDecoder().decode(AppSettings.self, from: stripped)
+        XCTAssertEqual(decoded.renderBackend, .dxmt)
     }
 
     /// The persistent pipeline cache is what keeps a character swap from paying shader-compile

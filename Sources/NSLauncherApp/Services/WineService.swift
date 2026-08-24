@@ -34,6 +34,9 @@ struct WineLaunchRequest {
     var environment: [String: String]
     var currentDirectory: URL?
     var runtimeRequirements: [RuntimeRequirement]
+    /// Translation layer the profile resolved for this launch; decides which bridge is installed
+    /// and which DLL search path the game runs with.
+    var renderBackend: RuntimeBackend = .plainWine
     /// Launch the game through a `steam.exe` parent process (miHoYo anti-cheat workaround).
     var useSteamLauncher: Bool = false
     /// Wine Mac Driver: enable Retina scaling for HiDPI displays.
@@ -53,6 +56,7 @@ enum WineServiceError: LocalizedError {
     case dxvkBootstrapFailed(String)
     case dxmtBootstrapFailed(String)
     case dxmtUnsupportedWine(String)
+    case d3dMetalUnavailable(String)
     case unsupportedKernelDriver(String)
 
     var errorDescription: String? {
@@ -65,6 +69,8 @@ enum WineServiceError: LocalizedError {
             return "DXMT setup failed: \(details)"
         case let .dxmtUnsupportedWine(path):
             return "Wine at \(path) does not expose the winemac.drv symbols required by DXMT."
+        case let .d3dMetalUnavailable(path):
+            return "This Wine build does not ship Apple D3DMetal at \(path); switch the render backend back to DXMT."
         case let .unsupportedKernelDriver(driver):
             return "Wine cannot load the Windows kernel driver \(driver)."
         }
@@ -98,7 +104,7 @@ struct WineService: WineServicing {
         emitDiagnostic("launch request currentDirectory=\(request.currentDirectory?.path ?? "nil") prefix=\(request.prefixDirectory.path)", request: request)
         emitDiagnostic("launch request runtime=\(request.runtimeRequirements.map(\.rawValue).joined(separator: ",")) args=\(request.arguments.joined(separator: " "))", request: request)
         let resolvedWineBinary: String
-        if request.runtimeRequirements.contains(.dxmt) {
+        if request.renderBackend == .dxmt {
             emitDiagnostic("resolve DXMT-compatible Wine from preferred=\(request.wineBinaryPath)", request: request)
             resolvedWineBinary = try await resolveDXMTCompatibleWineBinary(preferredPath: request.wineBinaryPath)
         } else {
@@ -152,10 +158,22 @@ struct WineService: WineServicing {
             }
         }
 
+        // D3DMetal is selected purely through the DLL search path, so it has to be in place
+        // before `env` is frozen and handed to the registry writes and the launch itself.
+        if request.renderBackend == .d3dMetal {
+            emitDiagnostic("select Apple D3DMetal runtime", request: request)
+            try applyD3DMetalEnvironment(
+                into: &baseEnv,
+                wineBinaryPath: resolvedWineBinary,
+                onDiagnostic: { emitDiagnostic($0, request: request) }
+            )
+            emitDiagnostic("D3DMetal runtime ready", request: request)
+        }
+
         let env = baseEnv
         emitDiagnostic("environment WINEPREFIX=\(env["WINEPREFIX"] ?? "") WINEARCH=\(env["WINEARCH"] ?? "") WINEDEBUG=\(env["WINEDEBUG"] ?? "") customKeys=\(request.environment.keys.sorted().joined(separator: ","))", request: request)
 
-        if request.runtimeRequirements.contains(.dxmt) {
+        if request.renderBackend == .dxmt {
             emitDiagnostic("ensure DXMT runtime", request: request)
             try await ensureDXMTInstalled(
                 prefixDirectory: request.prefixDirectory,
@@ -164,7 +182,7 @@ struct WineService: WineServicing {
                 onDiagnostic: { emitDiagnostic($0, request: request) }
             )
             emitDiagnostic("DXMT runtime ready", request: request)
-        } else if request.runtimeRequirements.contains(.dxvk) {
+        } else if request.runtimeRequirements.contains(.dxvk), request.renderBackend != .d3dMetal {
             emitDiagnostic("ensure DXVK runtime", request: request)
             try await ensureDXVKInstalled(
                 prefixDirectory: request.prefixDirectory,
@@ -466,6 +484,49 @@ struct WineService: WineServicing {
             environment: environment,
             currentDirectory: nil
         )
+    }
+
+    /// Points the Wine builtin DLL search at Apple's D3DMetal instead of the `lib/wine` builtins.
+    ///
+    /// The managed CrossOver Wine ships D3DMetal's `d3d11.dll`/`dxgi.dll` in their own tree under
+    /// `lib64/apple_gptk/wine`, which is why they survive DXMT overwriting the `lib/wine` copies.
+    /// CrossOver's own launcher script selects them by putting that directory first on
+    /// `WINEDLLPATH`; the launcher does the same rather than going through a bottle config it does
+    /// not otherwise use.
+    ///
+    /// `libd3dshared.dylib` is loaded regardless of which bridge is active, so its path is exported
+    /// the same way CrossOver exports it.
+    private func applyD3DMetalEnvironment(
+        into environment: inout [String: String],
+        wineBinaryPath: String,
+        onDiagnostic: (String) -> Void = { _ in }
+    ) throws {
+        let wineRoot = try wineRootDirectory(forBinaryAtPath: wineBinaryPath)
+        let gptkRoot = wineRoot.appendingPathComponent("lib64/apple_gptk", isDirectory: true)
+        let gptkWindows = gptkRoot.appendingPathComponent("wine/x86_64-windows", isDirectory: true)
+        guard FileManager.default.fileExists(atPath: gptkWindows.appendingPathComponent("d3d11.dll").path) else {
+            throw WineServiceError.d3dMetalUnavailable(gptkWindows.path)
+        }
+
+        var searchPath = [gptkWindows.path]
+        for suffix in ["lib/wine/x86_64-windows", "lib/wine/i386-windows", "lib/wine"] {
+            let directory = wineRoot.appendingPathComponent(suffix, isDirectory: true)
+            if FileManager.default.fileExists(atPath: directory.path) {
+                searchPath.append(directory.path)
+            }
+        }
+        environment["WINEDLLPATH"] = searchPath.joined(separator: ":")
+        onDiagnostic("WINEDLLPATH=\(environment["WINEDLLPATH"] ?? "")")
+
+        let libD3DShared = gptkRoot.appendingPathComponent("external/libd3dshared.dylib")
+        if FileManager.default.fileExists(atPath: libD3DShared.path) {
+            environment["CX_APPLEGPTK_LIBD3DSHARED_PATH"] = libD3DShared.path
+        }
+
+        // DXMT-only knobs would otherwise leak in from the profile and confuse the launch log.
+        for key in ["DXMT_CONFIG", "DXMT_CONFIG_FILE", "DXMT_LOG_PATH", "DXMT_SHADER_CACHE", "DXMT_SHADER_CACHE_PATH", "DXMT_METALFX_SPATIAL_SWAPCHAIN"] {
+            environment.removeValue(forKey: key)
+        }
     }
 
     /// Installs the DXMT builtin payload into the Wine runtime and clears prefix overrides.
