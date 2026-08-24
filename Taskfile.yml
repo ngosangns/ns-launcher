@@ -1,5 +1,12 @@
 version: '3'
 
+vars:
+  APP_NAME: NSLauncher
+  # Must match CFBundleExecutable in Resources/Info.plist.
+  BIN_NAME: NSLauncher
+  BIN_PATH:
+    sh: swift build -c release --show-bin-path
+
 tasks:
   dev:
     desc: Rebuild and relaunch NS Launcher when Swift sources change.
@@ -13,3 +20,28 @@ tasks:
       - Package.swift
     cmds:
       - swift run
+
+  build:
+    desc: Build the optimized release binary.
+    cmds:
+      - swift build -c release
+
+  bundle:
+    desc: Build release and assemble {{.APP_NAME}}.app in .build/release.
+    deps: [build]
+    dir: '{{.BIN_PATH}}'
+    cmds:
+      - rm -rf '{{.APP_NAME}}.app'
+      - mkdir -p '{{.APP_NAME}}.app/Contents/MacOS'
+      - cp '{{.ROOT_DIR}}/Resources/Info.plist' '{{.APP_NAME}}.app/Contents/Info.plist'
+      - cp 'NSLauncherApp' '{{.APP_NAME}}.app/Contents/MacOS/{{.BIN_NAME}}'
+      - codesign --force --sign - '{{.APP_NAME}}.app'
+      - codesign --verify --strict '{{.APP_NAME}}.app'
+
+  install:
+    desc: Bundle and move {{.APP_NAME}}.app into /Applications.
+    deps: [bundle]
+    cmds:
+      - rm -rf '/Applications/{{.APP_NAME}}.app'
+      - ditto '{{.BIN_PATH}}/{{.APP_NAME}}.app' '/Applications/{{.APP_NAME}}.app'
+      - codesign --verify --strict '/Applications/{{.APP_NAME}}.app'

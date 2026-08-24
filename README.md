@@ -60,16 +60,30 @@ Archive packages, local archive install, generic JSON manifests, and the old
 
 ## Production Build
 
-Build the optimized release executable from the repository root:
+Build the optimized release binary:
+
+```bash
+task build
+```
+
+Assemble a signed `NSLauncher.app` bundle (release build + Info.plist +
+ad-hoc codesign) into the SwiftPM release binary directory:
+
+```bash
+task bundle
+```
+
+Build and move `NSLauncher.app` into `/Applications` (replaces any existing
+copy):
+
+```bash
+task install
+```
+
+Without Taskfile, run the raw release binary produced by SwiftPM:
 
 ```bash
 swift build -c release
-```
-
-SwiftPM writes the executable to its release binary directory. Run the exact
-binary produced by the build with:
-
-```bash
 "$(swift build -c release --show-bin-path)/NSLauncherApp"
 ```
 
