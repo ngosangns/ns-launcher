@@ -374,7 +374,7 @@ struct ContentView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                     Color.clear.frame(height: 1).id(bottomID)
                 }
-                .onChange(of: contents.count) { _, _ in
+                .onChange(of: viewModel.runLogVersion) { _, _ in
                     proxy.scrollTo(bottomID, anchor: .bottom)
                 }
             }

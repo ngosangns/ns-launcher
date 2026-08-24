@@ -3,7 +3,8 @@
 // Async wrapper around Foundation.Process with executable lookup, stdout/stderr
 // capture, streaming output chunks, and cancellation (terminates the process when
 // the surrounding task is cancelled). `ProcessOutputBuffer` is thread-safe (NSLock)
-// because readability/termination handlers run on background queues.
+// because readability/termination handlers run on background queues, and bounded
+// because a game session streams output for hours.
 
 import Foundation
 
@@ -148,21 +149,61 @@ struct ProcessRunner: ProcessRunning {
     }
 }
 
+/// Retains a bounded head and tail of one stream.
+///
+/// A game session runs for hours and Wine writes to stderr the whole time, so retaining every byte
+/// grows without limit. Callers classify failures from launch-time signals (`ensureDXMTInstalled`,
+/// `unsupportedKernelDriverName`) and from whatever the process said last, so the head and the tail
+/// are what matter; the middle is dropped once the stream grows past the cap.
+struct BoundedStreamBuffer {
+    /// Bytes kept from the start of the stream, where startup diagnostics appear.
+    private static let headLimit = 512 * 1024
+    /// Bytes kept from the end of the stream, where a crash or exit message appears.
+    private static let tailLimit = 512 * 1024
+    private static let elisionMarker = "\n[NSLauncher] ... middle of output omitted ...\n"
+
+    private var head = Data()
+    private var tail = Data()
+    private var droppedBytes = 0
+
+    var text: String {
+        guard droppedBytes > 0 else {
+            return String(decoding: head + tail, as: UTF8.self)
+        }
+        return String(decoding: head, as: UTF8.self)
+            + Self.elisionMarker
+            + String(decoding: tail, as: UTF8.self)
+    }
+
+    mutating func append(_ data: Data) {
+        guard !data.isEmpty else { return }
+        if head.count < Self.headLimit {
+            let take = min(Self.headLimit - head.count, data.count)
+            head.append(data.prefix(take))
+            let remainder = data.dropFirst(take)
+            guard !remainder.isEmpty else { return }
+            tail.append(remainder)
+        } else {
+            tail.append(data)
+        }
+        guard tail.count > Self.tailLimit else { return }
+        let overflow = tail.count - Self.tailLimit
+        tail = Data(tail.dropFirst(overflow))
+        droppedBytes += overflow
+    }
+}
+
 private final class ProcessOutputBuffer: @unchecked Sendable {
     private let lock = NSLock()
-    private var stdoutData = Data()
-    private var stderrData = Data()
+    private var stdoutBuffer = BoundedStreamBuffer()
+    private var stderrBuffer = BoundedStreamBuffer()
 
     var stdout: String {
-        lock.withLock {
-            String(decoding: stdoutData, as: UTF8.self)
-        }
+        lock.withLock { stdoutBuffer.text }
     }
 
     var stderr: String {
-        lock.withLock {
-            String(decoding: stderrData, as: UTF8.self)
-        }
+        lock.withLock { stderrBuffer.text }
     }
 
     func append(_ data: Data, stream: ProcessOutputChunk.Stream) {
@@ -170,9 +211,9 @@ private final class ProcessOutputBuffer: @unchecked Sendable {
         lock.withLock {
             switch stream {
             case .stdout:
-                stdoutData.append(data)
+                stdoutBuffer.append(data)
             case .stderr:
-                stderrData.append(data)
+                stderrBuffer.append(data)
             }
         }
     }

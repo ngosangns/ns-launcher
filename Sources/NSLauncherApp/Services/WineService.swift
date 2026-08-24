@@ -129,9 +129,19 @@ struct WineService: WineServicing {
         baseEnv["WINEPREFIX"] = request.prefixDirectory.path
 
         // Ensure DXMT log/config directory exists when DXMT env vars reference it.
+        // DXMT_LOG_PATH is itself the directory DXMT writes `d3d11.log` into, not a file path.
         if let dxmtLogPath = baseEnv["DXMT_LOG_PATH"] {
-            let logDir = URL(fileURLWithPath: dxmtLogPath).deletingLastPathComponent()
+            let logDir = URL(fileURLWithPath: dxmtLogPath, isDirectory: true)
             try? FileManager.default.createDirectory(at: logDir, withIntermediateDirectories: true)
+        }
+        // DXMT will not create its shader-cache directory itself; a missing path shows up as
+        // "[CacheReader] Failed to resolve cache path" and silently drops back to compiling
+        // every pipeline on first use.
+        if let shaderCachePath = baseEnv["DXMT_SHADER_CACHE_PATH"] {
+            try? FileManager.default.createDirectory(
+                at: URL(fileURLWithPath: shaderCachePath, isDirectory: true),
+                withIntermediateDirectories: true
+            )
         }
         if let dxmtConfigFile = baseEnv["DXMT_CONFIG_FILE"] {
             let configDir = URL(fileURLWithPath: dxmtConfigFile).deletingLastPathComponent()

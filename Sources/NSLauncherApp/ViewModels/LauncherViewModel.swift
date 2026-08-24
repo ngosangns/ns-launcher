@@ -59,11 +59,15 @@ final class LauncherViewModel: ObservableObject {
     @Published var wineRunLog = ""
     /// Streaming diagnostic log for the latest game update.
     @Published var updateRunLog = ""
+    /// Bumped on every published log change so views can drive auto-scroll without measuring the
+    /// log text itself; `contents.count` is O(n) and the panel re-renders far more often than the
+    /// log changes.
+    @Published var runLogVersion = 0
     /// True while the selected game is being updated through Sophon.
     @Published var isUpdatingGame = false
     /// Voice-over packages with local assets in the selected game installation.
     @Published var voicePackages: [VoicePackage] = []
-    /// Cutscene and audio storage derived from the selected game's local files and live manifest.
+    /// Audio storage derived from the selected game's local files and live manifest.
     @Published var storageInventory = GameStorageInventory.empty
     /// True while voice packages are being refreshed or removed.
     @Published var isManagingVoicePacks = false
@@ -86,6 +90,16 @@ final class LauncherViewModel: ObservableObject {
     private var didSummarizeMoltenVKDump = false
     private var lastUpdateLogOverallBucket: Int?
     private var updateLoggedCompletedFiles: Set<String> = []
+    private var pendingWineLogText = ""
+    private var pendingUpdateLogText = ""
+    private var runLogFlushTask: Task<Void, Never>?
+
+    /// How long buffered log text waits before it is published. Long enough to collapse a burst of
+    /// process output, short enough that the panel still reads as live.
+    private static let runLogFlushInterval: UInt64 = 250_000_000
+    /// Log size that triggers a trim, and the size the log is trimmed back to.
+    private static let runLogTrimThreshold = 120_000
+    private static let runLogRetainedCharacters = 80_000
 
     /// Creates a view model with already-loaded settings and a configured coordinator.
     init(settings: AppSettings, coordinator: LauncherCoordinator) {
@@ -532,6 +546,7 @@ final class LauncherViewModel: ObservableObject {
         isBusy = true
         isPaused = false
         isUpdatingGame = true
+        discardBufferedRunLogs()
         updateRunLog = ""
         lastUpdateLogOverallBucket = nil
         updateLoggedCompletedFiles.removeAll()
@@ -567,6 +582,7 @@ final class LauncherViewModel: ObservableObject {
                 self.isUpdatingGame = false
                 self.currentTask = nil
                 self.operationController = nil
+                self.flushRunLogs()
             }
             do {
                 let plan = try await self.coordinator.fetchUpdatePlan(
@@ -724,6 +740,7 @@ final class LauncherViewModel: ObservableObject {
         isBusy = true
         isPaused = false
         isLaunchingWithWine = true
+        discardBufferedRunLogs()
         wineRunLog = ""
         isSkippingMoltenVKExtensionDump = false
         didSummarizeMoltenVKDump = false
@@ -771,6 +788,7 @@ final class LauncherViewModel: ObservableObject {
                 self.isLaunchingWithWine = false
                 self.currentTask = nil
                 self.operationController = nil
+                self.flushRunLogs()
             }
             do {
                 let result = try await self.coordinator.launchGame(game, settings: self.settings) { [weak self] chunk in
@@ -916,14 +934,11 @@ final class LauncherViewModel: ObservableObject {
             || trimmedLine.contains("wineserver: using server-side synchronization")
     }
 
-    /// Keeps the latest Wine diagnostics bounded so the SwiftUI text view remains responsive.
+    /// Queues Wine diagnostics for the next coalesced flush.
     private func appendWineLogText(_ text: String) {
         emitConsoleLog(channel: "wine", text: text)
-        wineRunLog += text
-        let maxCharacters = 80_000
-        if wineRunLog.count > maxCharacters {
-            wineRunLog = String(wineRunLog.suffix(maxCharacters))
-        }
+        pendingWineLogText += text
+        scheduleRunLogFlush()
     }
 
     /// Appends one complete line to the update log.
@@ -931,14 +946,59 @@ final class LauncherViewModel: ObservableObject {
         appendUpdateLogText(line + "\n")
     }
 
-    /// Appends a bounded diagnostic chunk to the update log.
+    /// Queues update diagnostics for the next coalesced flush.
     private func appendUpdateLogText(_ text: String) {
         emitConsoleLog(channel: "update", text: text)
-        updateRunLog += text
-        let maxCharacters = 80_000
-        if updateRunLog.count > maxCharacters {
-            updateRunLog = String(updateRunLog.suffix(maxCharacters))
+        pendingUpdateLogText += text
+        scheduleRunLogFlush()
+    }
+
+    /// Publishes buffered log text on a timer instead of on every process output chunk.
+    ///
+    /// A running game emits Wine diagnostics continuously, and each published change re-lays out
+    /// the whole log `Text` (SwiftUI does not virtualize it) on the main thread the game is
+    /// competing with. Coalescing turns hundreds of layout passes per second into a handful.
+    private func scheduleRunLogFlush() {
+        guard runLogFlushTask == nil else { return }
+        runLogFlushTask = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: Self.runLogFlushInterval)
+            guard !Task.isCancelled else { return }
+            self?.flushRunLogs()
         }
+    }
+
+    /// Moves buffered text into the published logs and trims them back under the retention cap.
+    private func flushRunLogs() {
+        runLogFlushTask?.cancel()
+        runLogFlushTask = nil
+        guard !pendingWineLogText.isEmpty || !pendingUpdateLogText.isEmpty else { return }
+
+        if !pendingWineLogText.isEmpty {
+            wineRunLog = Self.trimmedRunLog(wineRunLog + pendingWineLogText)
+            pendingWineLogText = ""
+        }
+        if !pendingUpdateLogText.isEmpty {
+            updateRunLog = Self.trimmedRunLog(updateRunLog + pendingUpdateLogText)
+            pendingUpdateLogText = ""
+        }
+        runLogVersion &+= 1
+    }
+
+    /// Drops buffered text and any pending flush, so a new run never inherits the previous tail.
+    private func discardBufferedRunLogs() {
+        runLogFlushTask?.cancel()
+        runLogFlushTask = nil
+        pendingWineLogText = ""
+        pendingUpdateLogText = ""
+    }
+
+    /// Drops the oldest text once the log grows past the trim threshold.
+    ///
+    /// Trimming down to `runLogRetainedCharacters` only when past `runLogTrimThreshold` amortizes
+    /// the O(n) copy over many appends instead of paying it on every one.
+    private static func trimmedRunLog(_ log: String) -> String {
+        guard log.count > runLogTrimThreshold else { return log }
+        return String(log.suffix(runLogRetainedCharacters))
     }
 
     /// Mirrors app-visible logs to stdout so terminal and Xcode console runs show the same diagnostics.

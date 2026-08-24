@@ -440,6 +440,20 @@ struct AppSettings: Codable, Equatable {
         min(max(value, 0), 360)
     }
 
+    /// Snaps a requested frame cap onto a value DXMT accepts.
+    ///
+    /// `d3d11.preferredMaxFrameRate` must be a FACTOR of the display refresh rate; a non-factor
+    /// value contributed to the render crash that made this setting opt-in. A request that is not
+    /// a factor is lowered to the largest factor below it (60 becomes 48 on a 144 Hz display),
+    /// which caps at or under what the user asked for rather than above it. Returns 0 when the cap
+    /// is disabled or the refresh rate is unknown, leaving `DXMT_CONFIG` without the key.
+    static func supportedFrameCap(requested: Int, refreshRate: Int) -> Int {
+        let sanitized = sanitizedMaxFrameRate(requested)
+        guard sanitized > 0, refreshRate > 0 else { return 0 }
+        if sanitized >= refreshRate { return refreshRate }
+        return stride(from: sanitized, through: 1, by: -1).first { refreshRate % $0 == 0 } ?? 0
+    }
+
     /// Sanitizes a user-entered MetalFX upscale factor: DXMT expects a value above 1.0 (otherwise
     /// there is nothing to upscale) and anything past 4.0 renders at a uselessly tiny fraction of
     /// the output size.
@@ -772,7 +786,17 @@ struct LaunchRuntimeProfile {
     var runtimeRequirements: [RuntimeRequirement]
 
     /// Builds a profile from game definition and app settings.
-    static func build(game: GameDefinition, settings: AppSettings) -> LaunchRuntimeProfile {
+    /// Directory holding DXMT's persistent Metal pipeline cache across launches.
+    static let dxmtShaderCacheDirectory = FileManager.default.homeDirectoryForCurrentUser
+        .appendingPathComponent("Library/Application Support/NSLauncher/DXMTShaderCache", isDirectory: true)
+
+    /// - Parameter displayRefreshRate: refresh rate of the display the game will run on, used to
+    ///   snap the DXMT frame cap onto a value DXMT accepts. Defaults to the main display.
+    static func build(
+        game: GameDefinition,
+        settings: AppSettings,
+        displayRefreshRate: Int = DisplayRefreshRate.mainDisplay
+    ) -> LaunchRuntimeProfile {
         let exe = game.installDirectory.appendingPathComponent(game.executableRelativePath)
         let backend: RuntimeBackend = {
             if game.runtimeRequirements.contains(.dxmt) { return .dxmt }
@@ -799,19 +823,41 @@ struct LaunchRuntimeProfile {
             env["WINEDLLOVERRIDES"] = ""
             let cacheDir = FileManager.default.homeDirectoryForCurrentUser
                 .appendingPathComponent("Library/Caches/NSLauncher/DXMT", isDirectory: true)
-            env["DXMT_LOG_PATH"] = cacheDir.appendingPathComponent("dxmt.log").path
+            let shaderCacheDirectory = Self.dxmtShaderCacheDirectory
+            // DXMT treats DXMT_LOG_PATH as a DIRECTORY and writes `d3d11.log` inside it (matching
+            // YAAGL, which passes its data directory). Passing a file path here left DXMT unable to
+            // open its log, so every DXMT message fell through to stderr and into the launch pipe.
+            env["DXMT_LOG_PATH"] = cacheDir.path
             env["DXMT_CONFIG_FILE"] = cacheDir.appendingPathComponent("dxmt.conf").path
+            // Persistent Metal pipeline cache.
+            //
+            // DXMT translates each D3D11 pipeline state into a Metal pipeline the first time the
+            // game draws with it, on the calling thread. Without a cache that cost is paid again
+            // every session, so switching to a character whose materials, weapon and skill VFX have
+            // not been drawn yet stalls the frame while its pipelines compile. DXMT 0.80 exposes a
+            // persistent cache but leaves it off, and YAAGL never enables it either.
+            //
+            // The cache lives under Application Support rather than Caches because macOS purges
+            // Caches under disk pressure, which is exactly when losing it hurts most.
+            env["DXMT_SHADER_CACHE"] = "1"
+            env["DXMT_SHADER_CACHE_PATH"] = shaderCacheDirectory.path
             // Optional Metal frame-pacing cap. DXMT requires the value to be a FACTOR of the display
-            // refresh rate (e.g. 60 for 60/120 Hz, 120 for 120 Hz). It is off by default; a hardcoded
-            // 60 was removed because it is invalid on non-60 Hz displays and contributed to the same
-            // render crash above. Keep it opt-in and validate against the refresh rate.
+            // refresh rate, so the requested value is snapped down to the nearest valid factor: on a
+            // 144 Hz display a requested 60 becomes 48, because a non-factor value contributed to the
+            // render crash above. Off by default.
             var dxmtConfig = ""
-            if settings.maxFrameRate > 0 {
-                dxmtConfig += "d3d11.preferredMaxFrameRate=\(settings.maxFrameRate);"
+            let frameCap = AppSettings.supportedFrameCap(
+                requested: settings.maxFrameRate,
+                refreshRate: displayRefreshRate
+            )
+            if frameCap > 0 {
+                dxmtConfig += "d3d11.preferredMaxFrameRate=\(frameCap);"
             }
-            // MetalFX spatial upscaling: only has a visible effect when the game itself renders
-            // below the window's native resolution (pair with `resolutionCustom`). Off by default.
-            if settings.metalFXUpscaling {
+            // MetalFX spatial upscaling only does something when the game is told to render below
+            // the window size, which is what `resolutionCustom` sets up. Without it the game still
+            // renders at its own resolution and the MetalFX pass is pure GPU cost, so the env is
+            // withheld rather than emitted with nothing to upscale.
+            if settings.metalFXUpscaling, settings.resolutionCustom {
                 env["DXMT_METALFX_SPATIAL_SWAPCHAIN"] = "1"
                 let factor = max(settings.metalFXScaleFactor, 1.0)
                 dxmtConfig += "d3d11.metalSpatialUpscaleFactor=\(factor);"

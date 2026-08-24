@@ -15,17 +15,28 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         )
     }
 
-    private func makeSettings(useMsync: Bool = false, maxFrameRate: Int = 0) -> AppSettings {
+    private func makeSettings(
+        useMsync: Bool = false,
+        maxFrameRate: Int = 0,
+        metalFXUpscaling: Bool = false,
+        resolutionCustom: Bool = false
+    ) -> AppSettings {
         var settings = AppSettings.default
         settings.useMsync = useMsync
         settings.maxFrameRate = maxFrameRate
+        settings.metalFXUpscaling = metalFXUpscaling
+        settings.resolutionCustom = resolutionCustom
         return settings
     }
+
+    /// Pinned so the frame cap under test never depends on the display the tests run on.
+    private static let refreshRate = 120
 
     func testDXMTBackendDefaultsToEsync() {
         let profile = LaunchRuntimeProfile.build(
             game: makeGame(requirements: [.wine, .dxmt]),
-            settings: makeSettings()
+            settings: makeSettings(),
+            displayRefreshRate: Self.refreshRate
         )
         XCTAssertEqual(profile.backend, .dxmt)
         XCTAssertEqual(profile.environment["WINEESYNC"], "1")
@@ -37,7 +48,8 @@ final class LaunchRuntimeProfileTests: XCTestCase {
     func testUseMsyncOptsIntoMSyncOnDXMT() {
         let profile = LaunchRuntimeProfile.build(
             game: makeGame(requirements: [.wine, .dxmt]),
-            settings: makeSettings(useMsync: true)
+            settings: makeSettings(useMsync: true),
+            displayRefreshRate: Self.refreshRate
         )
         XCTAssertEqual(profile.environment["WINEMSYNC"], "1")
         XCTAssertNil(profile.environment["WINEESYNC"])
@@ -46,7 +58,8 @@ final class LaunchRuntimeProfileTests: XCTestCase {
     func testMaxFrameRateIsForwardedAsDXMTConfig() {
         let profile = LaunchRuntimeProfile.build(
             game: makeGame(requirements: [.wine, .dxmt]),
-            settings: makeSettings(maxFrameRate: 120)
+            settings: makeSettings(maxFrameRate: 120),
+            displayRefreshRate: Self.refreshRate
         )
         XCTAssertEqual(
             profile.environment["DXMT_CONFIG"]?.contains("d3d11.preferredMaxFrameRate=120;"),
@@ -57,7 +70,8 @@ final class LaunchRuntimeProfileTests: XCTestCase {
     func testDisabledMaxFrameRateOmitsDXMTConfig() {
         let profile = LaunchRuntimeProfile.build(
             game: makeGame(requirements: [.wine, .dxmt]),
-            settings: makeSettings(maxFrameRate: 0)
+            settings: makeSettings(maxFrameRate: 0),
+            displayRefreshRate: Self.refreshRate
         )
         XCTAssertNil(profile.environment["DXMT_CONFIG"])
     }
@@ -65,11 +79,84 @@ final class LaunchRuntimeProfileTests: XCTestCase {
     func testDXVKBackendAlwaysUsesEsyncEvenWhenMSyncRequested() {
         let profile = LaunchRuntimeProfile.build(
             game: makeGame(requirements: [.wine, .dxvk]),
-            settings: makeSettings(useMsync: true)
+            settings: makeSettings(useMsync: true),
+            displayRefreshRate: Self.refreshRate
         )
         XCTAssertEqual(profile.backend, .dxvk)
         XCTAssertEqual(profile.environment["WINEESYNC"], "1")
         XCTAssertNil(profile.environment["WINEMSYNC"])
+    }
+
+    func testFrameCapSnapsDownToAFactorOfTheRefreshRate() {
+        // 60 is not a factor of 144, which is what made a hardcoded 60 unsafe.
+        XCTAssertEqual(AppSettings.supportedFrameCap(requested: 60, refreshRate: 144), 48)
+        XCTAssertEqual(AppSettings.supportedFrameCap(requested: 60, refreshRate: 120), 60)
+        XCTAssertEqual(AppSettings.supportedFrameCap(requested: 100, refreshRate: 60), 60)
+        XCTAssertEqual(AppSettings.supportedFrameCap(requested: 0, refreshRate: 144), 0)
+        XCTAssertEqual(AppSettings.supportedFrameCap(requested: 60, refreshRate: 0), 0)
+    }
+
+    func testFrameCapIsSnappedBeforeReachingDXMTConfig() {
+        let profile = LaunchRuntimeProfile.build(
+            game: makeGame(requirements: [.wine, .dxmt]),
+            settings: makeSettings(maxFrameRate: 60),
+            displayRefreshRate: 144
+        )
+        XCTAssertEqual(
+            profile.environment["DXMT_CONFIG"]?.contains("d3d11.preferredMaxFrameRate=48;"),
+            true
+        )
+    }
+
+    /// MetalFX only upscales something when the game is told to render below the window size,
+    /// which is what `resolutionCustom` sets up; otherwise the pass is pure GPU cost.
+    func testMetalFXIsWithheldWithoutACustomRenderResolution() {
+        let profile = LaunchRuntimeProfile.build(
+            game: makeGame(requirements: [.wine, .dxmt]),
+            settings: makeSettings(metalFXUpscaling: true, resolutionCustom: false),
+            displayRefreshRate: Self.refreshRate
+        )
+        XCTAssertNil(profile.environment["DXMT_METALFX_SPATIAL_SWAPCHAIN"])
+    }
+
+    func testMetalFXIsAppliedWithACustomRenderResolution() {
+        let profile = LaunchRuntimeProfile.build(
+            game: makeGame(requirements: [.wine, .dxmt]),
+            settings: makeSettings(metalFXUpscaling: true, resolutionCustom: true),
+            displayRefreshRate: Self.refreshRate
+        )
+        XCTAssertEqual(profile.environment["DXMT_METALFX_SPATIAL_SWAPCHAIN"], "1")
+    }
+
+    /// The persistent pipeline cache is what keeps a character swap from paying shader-compile
+    /// cost again on every session; DXMT ships it off by default.
+    func testPersistentShaderCacheIsEnabled() {
+        let profile = LaunchRuntimeProfile.build(
+            game: makeGame(requirements: [.wine, .dxmt]),
+            settings: makeSettings(),
+            displayRefreshRate: Self.refreshRate
+        )
+        XCTAssertEqual(profile.environment["DXMT_SHADER_CACHE"], "1")
+        XCTAssertEqual(
+            profile.environment["DXMT_SHADER_CACHE_PATH"],
+            LaunchRuntimeProfile.dxmtShaderCacheDirectory.path
+        )
+    }
+
+    /// The cache must not sit under `Library/Caches`, which macOS purges under disk pressure.
+    func testShaderCacheSurvivesCachePurges() {
+        XCTAssertFalse(LaunchRuntimeProfile.dxmtShaderCacheDirectory.path.contains("/Library/Caches/"))
+    }
+
+    /// DXMT appends `d3d11.log` to this path, so it has to name a directory.
+    func testDXMTLogPathIsADirectory() {
+        let profile = LaunchRuntimeProfile.build(
+            game: makeGame(requirements: [.wine, .dxmt]),
+            settings: makeSettings(),
+            displayRefreshRate: Self.refreshRate
+        )
+        XCTAssertEqual(profile.environment["DXMT_LOG_PATH"]?.hasSuffix("/DXMT"), true)
+        XCTAssertEqual(profile.environment["DXMT_CONFIG_FILE"]?.hasSuffix("/DXMT/dxmt.conf"), true)
     }
 
     func testSanitizedMaxFrameRateClampsOutOfRangeValues() {
