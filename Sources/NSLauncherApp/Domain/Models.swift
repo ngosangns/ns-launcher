@@ -88,7 +88,6 @@ struct VoicePackage: Identifiable, Hashable {
 
 /// A local game-content category derived from Sophon asset paths.
 enum StorageContentKind: String, Hashable, Identifiable {
-    case cutscene
     case audio
 
     var id: String { rawValue }
@@ -101,7 +100,6 @@ struct StorageContentGroup: Hashable, Identifiable {
     var localFileCount: Int
     var availableBytes: Int64
     var availableFileCount: Int
-    var excludedFromInstall: Bool
 
     var id: StorageContentKind { kind }
 }
@@ -154,6 +152,9 @@ struct GameStorageInventory: Hashable {
 struct RemovableCache: Identifiable, Hashable {
     /// Cache categories the launcher can measure and safely remove.
     enum Kind: String, CaseIterable, Identifiable, Hashable {
+        /// Cutscene videos the client downloaded into `Persistent/VideoAssets` while they were
+        /// missing from `StreamingAssets`. Now that Sophon installs them, this only holds a stale
+        /// duplicate; clearing it is safe and does not trigger a re-download.
         case cutsceneVideos
         case gameWebCache
         case gameSDKCache
@@ -249,9 +250,6 @@ struct InstallPlan: Hashable {
     var steps: [InstallStep]
     var estimatedBytesToDownload: Int64
     var peakTemporaryBytes: Int64
-    /// Cutscene videos excluded from the plan; their chunk URLs are never downloaded.
-    var cutsceneSkippedAssets: Int = 0
-    var cutsceneSkippedBytes: Int64 = 0
 }
 
 /// Delta plan for bringing an existing Sophon install up to the latest version.
@@ -262,9 +260,6 @@ struct GameUpdatePlan: Hashable {
     var sophonTargetAssets: [SophonAsset] = []
     var sophonAssetsToWrite: [SophonAsset] = []
     var sophonSkippedAssets: Int = 0
-    /// Cutscene videos excluded from the target set, downloads, and every size total.
-    var sophonCutsceneSkippedAssets: Int = 0
-    var sophonCutsceneSkippedBytes: Int64 = 0
     var bytesToDownload: Int64
     var decompressedBytesToWrite: Int64 = 0
     var peakTemporaryBytes: Int64

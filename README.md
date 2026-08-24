@@ -24,10 +24,10 @@ It already includes:
   final asset MD5 verification, and atomic replacement;
 - `.nslauncher-sophon-staging` resume sidecars for interrupted Sophon assets;
 - install/update planning that skips assets already matching size plus MD5;
-- cutscene filtering: `Video/*.usm` / `*.wmv` assets are excluded from the Sophon
-  target set, so their chunk URLs are never downloaded, existing cutscene files
-  are pruned on the next update, and every size total (download, write, peak
-  temp, progress) excludes them;
+- a full-manifest target set: nothing is withheld from the install, because the
+  game re-downloads anything missing into `GenshinImpact_Data/Persistent` on its
+  own, which saves no space and moves the bytes onto a slower path the launcher
+  cannot observe;
 - a Settings screen limited to language, install root, executable path, and
   display mode;
 - Wine launch bootstrap that installs DXMT or DXVK when required;
@@ -43,7 +43,8 @@ The launcher uses HoYoPlay Sophon metadata for both fresh install and update:
 3. download and decode zstd-compressed protobuf manifests;
 4. compare local assets by size and MD5;
 5. prune files outside the target Sophon asset set while protecting the Wine
-   prefix and launcher metadata;
+   prefix, launcher metadata, and `GenshinImpact_Data/Persistent` (the client's
+   own resource downloads and version bookkeeping);
 6. download missing or mismatched chunks;
 7. decompress and verify each chunk;
 8. write chunks into staging files by offset;

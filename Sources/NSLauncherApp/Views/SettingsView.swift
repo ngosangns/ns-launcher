@@ -475,16 +475,13 @@ struct SettingsView: View {
     }
 
     private func storageGroupRow(_ group: StorageContentGroup) -> some View {
-        let title = group.kind == .cutscene ? text.cutsceneStorageLabel : text.audioStorageLabel
-        let icon = group.kind == .cutscene ? "film" : "speaker.wave.2"
-
-        return HStack(alignment: .top, spacing: 14) {
-            Image(systemName: icon)
+        HStack(alignment: .top, spacing: 14) {
+            Image(systemName: "speaker.wave.2")
                 .font(.title3)
-                .foregroundStyle(group.excludedFromInstall ? LauncherPalette.warning : LauncherPalette.goldHighlight)
+                .foregroundStyle(LauncherPalette.goldHighlight)
                 .frame(width: 26)
             VStack(alignment: .leading, spacing: 4) {
-                Text(title)
+                Text(text.audioStorageLabel)
                     .font(.system(.body, design: .rounded, weight: .semibold))
                     .foregroundStyle(LauncherPalette.parchment)
                 Text("\(text.localStorageLabel): \(ByteCountFormatter.string(fromByteCount: group.localBytes, countStyle: .file))  ·  \(text.storageFilesLabel): \(group.localFileCount)")
@@ -493,11 +490,6 @@ struct SettingsView: View {
                 Text("\(text.availableStorageLabel): \(ByteCountFormatter.string(fromByteCount: group.availableBytes, countStyle: .file))  ·  \(text.storageFilesLabel): \(group.availableFileCount)")
                     .font(.caption)
                     .foregroundStyle(LauncherPalette.mist.opacity(0.72))
-                if group.excludedFromInstall {
-                    Text(text.cutscenesExcludedNote)
-                        .font(.caption)
-                        .foregroundStyle(LauncherPalette.warning.opacity(0.88))
-                }
             }
             Spacer(minLength: 0)
         }

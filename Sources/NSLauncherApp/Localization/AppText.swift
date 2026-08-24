@@ -73,7 +73,6 @@ struct AppText {
     var downloadLabel: String { localized(en: "Download", vi: "Tải về") }
     var peakTempLabel: String { localized(en: "Peak temp", vi: "Bộ nhớ tạm tối đa") }
     var stepsLabel: String { localized(en: "Steps", vi: "Số bước") }
-    var cutscenesLabel: String { localized(en: "Cutscenes skipped", vi: "Cutscene bỏ qua") }
     var installCompleted: String { localized(en: "Install completed", vi: "Đã cài đặt xong") }
     var installFailed: String { localized(en: "Install failed", vi: "Cài đặt thất bại") }
     var updateCompleted: String { localized(en: "Update completed", vi: "Đã cập nhật xong") }
@@ -238,12 +237,10 @@ struct AppText {
 
     var storageSectionTitle: String { localized(en: "Storage", vi: "Dung lượng") }
     var installedContentLabel: String { localized(en: "Installed content", vi: "Nội dung đã cài") }
-    var cutsceneStorageLabel: String { localized(en: "Cutscenes", vi: "Cutscene") }
     var audioStorageLabel: String { localized(en: "Game audio", vi: "Âm thanh game") }
     var localStorageLabel: String { localized(en: "On disk", vi: "Trên máy") }
     var availableStorageLabel: String { localized(en: "In current build", vi: "Trong build hiện tại") }
     var storageFilesLabel: String { localized(en: "Files", vi: "Số file") }
-    var cutscenesExcludedNote: String { localized(en: "Excluded from NS Launcher updates", vi: "Bị loại khỏi cập nhật của NS Launcher") }
     var noStorageContentFound: String { localized(en: "No matching local content found. Refresh after the game is installed.", vi: "Chưa có nội dung local phù hợp. Hãy làm mới sau khi game được cài đặt.") }
     var questResourceAnalysisLabel: String { localized(en: "Quest resource analysis", vi: "Phân tích dữ liệu nhiệm vụ") }
     var questResourceMappingUnavailable: String { localized(en: "No verified quest-to-file mapping is available for desktop Genshin. NS Launcher cannot identify completed quests or files that are safe to remove.", vi: "Chưa có mapping quest-to-file đã được xác minh cho Genshin desktop. NS Launcher không thể xác định nhiệm vụ đã hoàn thành hoặc file nào an toàn để xóa.") }
@@ -299,8 +296,8 @@ struct AppText {
         switch kind {
         case .cutsceneVideos:
             return localized(
-                en: "Pre-downloaded story videos. Safe to delete; the game re-downloads them on demand.",
-                vi: "Video cốt truyện đã tải sẵn. Xóa an toàn; game sẽ tải lại khi cần."
+                en: "Stale copy the game downloaded itself while cutscenes were missing from the install. Safe to delete once an update has installed them.",
+                vi: "Bản trùng do game tự tải khi cutscene còn thiếu trong bản cài. Xóa an toàn sau khi đã cập nhật để cài lại cutscene."
             )
         case .gameWebCache:
             return localized(
@@ -337,21 +334,20 @@ struct AppText {
     var launchDescription: String { localized(en: "Start the configured Windows executable with the current Wine path.", vi: "Chạy file Windows đã cấu hình bằng đường dẫn Wine hiện tại.") }
 
     /// Formats the multiline install plan summary.
-    func installPlanSummary(version: String, download: String, peakTemp: String, steps: Int, cutscenes: String) -> String {
+    func installPlanSummary(version: String, download: String, peakTemp: String, steps: Int) -> String {
         """
         \(versionLabel): \(version)
         \(downloadLabel): \(download)
         \(peakTempLabel): \(peakTemp)
         \(stepsLabel): \(steps)
-        \(cutscenesLabel): \(cutscenes)
         """
     }
 
     /// Formats the multiline update plan summary.
-    func updatePlanSummary(currentVersion: String, latestVersion: String, download: String, files: Int, skipped: Int, cutscenes: String) -> String {
+    func updatePlanSummary(currentVersion: String, latestVersion: String, download: String, files: Int, skipped: Int) -> String {
         localized(
-            en: "Current: \(currentVersion)\nLatest: \(latestVersion)\nDownload: \(download)\nChanged files: \(files)\nUnchanged files: \(skipped)\nCutscene files skipped: \(cutscenes)",
-            vi: "Hiện tại: \(currentVersion)\nMới nhất: \(latestVersion)\nDung lượng tải: \(download)\nFile cần cập nhật: \(files)\nFile giữ nguyên: \(skipped)\nFile cutscene bị bỏ qua: \(cutscenes)"
+            en: "Current: \(currentVersion)\nLatest: \(latestVersion)\nDownload: \(download)\nChanged files: \(files)\nUnchanged files: \(skipped)",
+            vi: "Hiện tại: \(currentVersion)\nMới nhất: \(latestVersion)\nDung lượng tải: \(download)\nFile cần cập nhật: \(files)\nFile giữ nguyên: \(skipped)"
         )
     }
 
