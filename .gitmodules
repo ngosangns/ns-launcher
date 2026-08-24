@@ -1,0 +1,3 @@
+[submodule "Vendor/yaagl"]
+	path = Vendor/yaagl
+	url = https://github.com/yaagl/yet-another-anime-game-launcher.git
