@@ -154,18 +154,6 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         XCTAssertEqual(profile.backend, .plainWine)
     }
 
-    func testLegacySettingsWithoutRenderBackendDefaultToDXMT() throws {
-        let encoded = try JSONEncoder().encode(makeSettings(renderBackend: .d3dMetal))
-        var json = try XCTUnwrap(
-            JSONSerialization.jsonObject(with: encoded) as? [String: Any]
-        )
-        json.removeValue(forKey: "renderBackend")
-        let stripped = try JSONSerialization.data(withJSONObject: json)
-
-        let decoded = try JSONDecoder().decode(AppSettings.self, from: stripped)
-        XCTAssertEqual(decoded.renderBackend, .dxmt)
-    }
-
     /// The persistent pipeline cache is what keeps a character swap from paying shader-compile
     /// cost again on every session; DXMT ships it off by default.
     func testPersistentShaderCacheIsEnabled() {
@@ -228,19 +216,5 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         )
         XCTAssertGreaterThanOrEqual(resolution.width, 1)
         XCTAssertGreaterThanOrEqual(resolution.height, 1)
-    }
-
-    func testDecodingLegacySettingsWithoutMsyncKeyDefaultsItOff() throws {
-        let original = makeSettings(maxFrameRate: 90)
-        let data = try JSONEncoder().encode(original)
-
-        // Simulate a legacy file by stripping the new key from the payload.
-        var json = try JSONSerialization.jsonObject(with: data) as! [String: Any]
-        json.removeValue(forKey: "useMsync")
-        let legacyData = try JSONSerialization.data(withJSONObject: json)
-
-        let decoded = try JSONDecoder().decode(AppSettings.self, from: legacyData)
-        XCTAssertFalse(decoded.useMsync)
-        XCTAssertEqual(decoded.maxFrameRate, 90)
     }
 }

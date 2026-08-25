@@ -374,67 +374,67 @@ struct AppSettings: Codable, Equatable {
     private static let genshinLegacyNestedExecutablePath = "Genshin Impact Game/GenshinImpact.exe"
     private static let genshinStreamingExecutablePath = "GenshinImpact.exe"
 
-    var games: [GameDefinition]
+    var games: [GameDefinition] = []
     var selectedGameID: String?
-    var language: AppLanguage
+    var language: AppLanguage = .english
     /// Voice-over language pack selected for Sophon downloads.
-    var voiceLanguage: VoiceLanguage
-    var launchDisplayMode: LaunchDisplayMode
+    var voiceLanguage: VoiceLanguage = .english
+    var launchDisplayMode: LaunchDisplayMode = .windowed
     /// Wine Mac Driver registry: enable Retina scaling for HiDPI displays.
-    var macDriverRetina: Bool
+    var macDriverRetina: Bool = true
     /// Wine Mac Driver registry: treat the left Command key as Ctrl for games that assume Windows bindings.
-    var leftCommandIsCtrl: Bool
+    var leftCommandIsCtrl: Bool = false
     /// Debug overlay: set `MTL_HUD_ENABLED=1` at launch to show the Metal performance HUD.
-    var showMetalHUD: Bool
+    var showMetalHUD: Bool = false
     /// Optional `cmd /c` batch wrapper that runs `cd /d <game_dir>` before launching the executable.
-    var useBatchWrapper: Bool
+    var useBatchWrapper: Bool = false
     /// YAAGL-style cloud-gaming launch (enabled by default): adds `CLOUD_THIRD_PARTY_PC` flags and
     /// installs a protection-driver stub so the Windows client can start under Wine. Unsupported by
     /// HoYoverse and may risk the account.
-    var cloudCompatibilityMode: Bool
+    var cloudCompatibilityMode: Bool = false
     /// AC patch (enabled by default): temporarily hide the crash reporter and Vulkan fallback files
     /// during launch, then restore them afterwards (mirrors YAAGL's current Genshin behavior).
-    var acPatchMode: Bool
+    var acPatchMode: Bool = false
     /// Launch network block (enabled by default): block the anti-cheat/telemetry hosts in the Wine
     /// prefix hosts file for the duration of the launch, then restore. The dispatch host is only
     /// blocked for the first 10 seconds (see `LauncherCoordinator.dispatchBlockHost`) so the game can
     /// still re-dispatch — blocking it for the whole launch causes a disconnect back to the title
     /// screen ~10 minutes after login.
-    var blockNetMode: Bool
+    var blockNetMode: Bool = false
     /// Wine network-timeout fix (enabled by default): set `WINE_ENABLE_TIMEOUT_FIX=1` so YAAGL-patched
     /// Wine avoids the macOS socket timeout that drops the game back to the title screen mid-session.
     /// Harmless (ignored) on Wine builds without that patch.
-    var timeoutFix: Bool
+    var timeoutFix: Bool = false
     /// Steam patch (enabled by default): launch through a real `steam.exe` + `lsteamclient.dll` parent
     /// so the anti-cheat skips loading its kernel driver.
-    var steamPatch: Bool
+    var steamPatch: Bool = false
     /// Apply a custom windowed resolution through the game's registry keys.
-    var resolutionCustom: Bool
-    var resolutionWidth: Int
-    var resolutionHeight: Int
+    var resolutionCustom: Bool = false
+    var resolutionWidth: Int = 1920
+    var resolutionHeight: Int = 1080
     /// Enable the game's HDR registry flag.
-    var enableHDR: Bool
+    var enableHDR: Bool = false
     /// Route the game through an HTTP/HTTPS proxy.
-    var proxyEnabled: Bool
-    var proxyHost: String
+    var proxyEnabled: Bool = false
+    var proxyHost: String = ""
     /// Optional Metal frame-pacing cap for DXMT (0 = disabled). The value must be a factor of the
     /// display refresh rate (e.g. 60 on a 60/120 Hz display).
-    var maxFrameRate: Int
+    var maxFrameRate: Int = 0
     /// DXMT MetalFX spatial upscaling (DXMT only): renders at the game's own resolution and lets
     /// Metal upscale to the window size by `metalFXScaleFactor`. Only has a visible effect when the
     /// game itself renders below the window's native resolution (pair with `resolutionCustom`).
-    var metalFXUpscaling: Bool
+    var metalFXUpscaling: Bool = false
     /// Upscale factor applied when `metalFXUpscaling` is enabled (e.g. 1.5 = render at 2/3 scale).
-    var metalFXScaleFactor: Double
+    var metalFXScaleFactor: Double = 1.5
     /// Opt-in escape hatch replacing esync (`WINEESYNC=1`) with msync (`WINEMSYNC=1`) on the DXMT
     /// backend. Off by default: on the current DXMT-patched Wine build msync crashed the render
     /// path with `wine client error:308`. Only meaningful on Wine builds carrying the marzent
     /// msync patches; the DXVK backend always uses esync.
-    var useMsync: Bool
+    var useMsync: Bool = false
     /// Direct3D-to-Metal translation layer used for games that require one.
-    var renderBackend: RenderBackendPreference
+    var renderBackend: RenderBackendPreference = .dxmt
     /// Monotonic settings schema version used for one-time default migrations.
-    var settingsVersion: Int
+    var settingsVersion: Int = 0
 
     /// Sanitizes a user-entered frame-rate cap: negative values and nonsensically large ones
     /// collapse into range (DXMT still requires the value to be a factor of the refresh rate).
@@ -565,163 +565,6 @@ struct AppSettings: Codable, Equatable {
         }
 
         return copy
-    }
-
-    private enum CodingKeys: String, CodingKey {
-        case games
-        case selectedGameID
-        case language
-        case voiceLanguage
-        case downloadCacheDirectory
-        case temporaryExtractionDirectory
-        case launchDisplayMode
-        case wineBinaryPath
-        case aria2BinaryPath
-        case sevenZipBinaryPath
-        case macDriverRetina
-        case leftCommandIsCtrl
-        case showMetalHUD
-        case useBatchWrapper
-        case cloudCompatibilityMode
-        case acPatchMode
-        case blockNetMode
-        case timeoutFix
-        case steamPatch
-        case resolutionCustom
-        case resolutionWidth
-        case resolutionHeight
-        case enableHDR
-        case proxyEnabled
-        case proxyHost
-        case maxFrameRate
-        case metalFXUpscaling
-        case metalFXScaleFactor
-        case useMsync
-        case renderBackend
-        case settingsVersion
-    }
-
-    init(
-        games: [GameDefinition],
-        selectedGameID: String?,
-        language: AppLanguage,
-        voiceLanguage: VoiceLanguage = .english,
-        launchDisplayMode: LaunchDisplayMode = .windowed,
-        macDriverRetina: Bool = true,
-        leftCommandIsCtrl: Bool = false,
-        showMetalHUD: Bool = false,
-        useBatchWrapper: Bool = false,
-        cloudCompatibilityMode: Bool = false,
-        acPatchMode: Bool = false,
-        blockNetMode: Bool = false,
-        timeoutFix: Bool = false,
-        steamPatch: Bool = false,
-        resolutionCustom: Bool = false,
-        resolutionWidth: Int = 1920,
-        resolutionHeight: Int = 1080,
-        enableHDR: Bool = false,
-        proxyEnabled: Bool = false,
-        proxyHost: String = "",
-        maxFrameRate: Int = 0,
-        metalFXUpscaling: Bool = false,
-        metalFXScaleFactor: Double = 1.5,
-        useMsync: Bool = false,
-        renderBackend: RenderBackendPreference = .dxmt,
-        settingsVersion: Int = 0
-    ) {
-        self.games = games
-        self.selectedGameID = selectedGameID
-        self.language = language
-        self.voiceLanguage = voiceLanguage
-        self.launchDisplayMode = launchDisplayMode
-        self.macDriverRetina = macDriverRetina
-        self.leftCommandIsCtrl = leftCommandIsCtrl
-        self.showMetalHUD = showMetalHUD
-        self.useBatchWrapper = useBatchWrapper
-        self.cloudCompatibilityMode = cloudCompatibilityMode
-        self.acPatchMode = acPatchMode
-        self.blockNetMode = blockNetMode
-        self.timeoutFix = timeoutFix
-        self.steamPatch = steamPatch
-        self.resolutionCustom = resolutionCustom
-        self.resolutionWidth = resolutionWidth
-        self.resolutionHeight = resolutionHeight
-        self.enableHDR = enableHDR
-        self.proxyEnabled = proxyEnabled
-        self.proxyHost = proxyHost
-        self.maxFrameRate = maxFrameRate
-        self.metalFXUpscaling = metalFXUpscaling
-        self.metalFXScaleFactor = metalFXScaleFactor
-        self.useMsync = useMsync
-        self.renderBackend = renderBackend
-        self.settingsVersion = settingsVersion
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.games = try container.decode([GameDefinition].self, forKey: .games)
-        self.selectedGameID = try container.decodeIfPresent(String.self, forKey: .selectedGameID)
-        self.language = try container.decodeIfPresent(AppLanguage.self, forKey: .language) ?? .english
-        self.voiceLanguage = try container.decodeIfPresent(VoiceLanguage.self, forKey: .voiceLanguage) ?? .english
-        self.launchDisplayMode = try container.decodeIfPresent(LaunchDisplayMode.self, forKey: .launchDisplayMode) ?? .windowed
-        self.macDriverRetina = try container.decodeIfPresent(Bool.self, forKey: .macDriverRetina) ?? true
-        self.leftCommandIsCtrl = try container.decodeIfPresent(Bool.self, forKey: .leftCommandIsCtrl) ?? false
-        self.showMetalHUD = try container.decodeIfPresent(Bool.self, forKey: .showMetalHUD) ?? false
-        self.useBatchWrapper = try container.decodeIfPresent(Bool.self, forKey: .useBatchWrapper) ?? false
-        self.cloudCompatibilityMode = try container.decodeIfPresent(Bool.self, forKey: .cloudCompatibilityMode) ?? false
-        self.acPatchMode = try container.decodeIfPresent(Bool.self, forKey: .acPatchMode) ?? false
-        self.blockNetMode = try container.decodeIfPresent(Bool.self, forKey: .blockNetMode) ?? false
-        self.timeoutFix = try container.decodeIfPresent(Bool.self, forKey: .timeoutFix) ?? false
-        self.steamPatch = try container.decodeIfPresent(Bool.self, forKey: .steamPatch) ?? false
-        self.resolutionCustom = try container.decodeIfPresent(Bool.self, forKey: .resolutionCustom) ?? false
-        self.resolutionWidth = try container.decodeIfPresent(Int.self, forKey: .resolutionWidth) ?? 1920
-        self.resolutionHeight = try container.decodeIfPresent(Int.self, forKey: .resolutionHeight) ?? 1080
-        self.enableHDR = try container.decodeIfPresent(Bool.self, forKey: .enableHDR) ?? false
-        self.proxyEnabled = try container.decodeIfPresent(Bool.self, forKey: .proxyEnabled) ?? false
-        self.proxyHost = try container.decodeIfPresent(String.self, forKey: .proxyHost) ?? ""
-        self.maxFrameRate = try container.decodeIfPresent(Int.self, forKey: .maxFrameRate) ?? 0
-        self.metalFXUpscaling = try container.decodeIfPresent(Bool.self, forKey: .metalFXUpscaling) ?? false
-        self.metalFXScaleFactor = try container.decodeIfPresent(Double.self, forKey: .metalFXScaleFactor) ?? 1.5
-        self.useMsync = try container.decodeIfPresent(Bool.self, forKey: .useMsync) ?? false
-        self.renderBackend = try container.decodeIfPresent(RenderBackendPreference.self, forKey: .renderBackend) ?? .dxmt
-        self.settingsVersion = try container.decodeIfPresent(Int.self, forKey: .settingsVersion) ?? 0
-
-        // Ignore deprecated storage and custom binary paths while remaining decode-compatible with older settings files.
-        _ = try container.decodeIfPresent(String.self, forKey: .downloadCacheDirectory)
-        _ = try container.decodeIfPresent(String.self, forKey: .temporaryExtractionDirectory)
-        _ = try container.decodeIfPresent(String.self, forKey: .wineBinaryPath)
-        _ = try container.decodeIfPresent(String.self, forKey: .aria2BinaryPath)
-        _ = try container.decodeIfPresent(String.self, forKey: .sevenZipBinaryPath)
-    }
-
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(games, forKey: .games)
-        try container.encodeIfPresent(selectedGameID, forKey: .selectedGameID)
-        try container.encode(language, forKey: .language)
-        try container.encode(voiceLanguage, forKey: .voiceLanguage)
-        try container.encode(launchDisplayMode, forKey: .launchDisplayMode)
-        try container.encode(macDriverRetina, forKey: .macDriverRetina)
-        try container.encode(leftCommandIsCtrl, forKey: .leftCommandIsCtrl)
-        try container.encode(showMetalHUD, forKey: .showMetalHUD)
-        try container.encode(useBatchWrapper, forKey: .useBatchWrapper)
-        try container.encode(cloudCompatibilityMode, forKey: .cloudCompatibilityMode)
-        try container.encode(acPatchMode, forKey: .acPatchMode)
-        try container.encode(blockNetMode, forKey: .blockNetMode)
-        try container.encode(timeoutFix, forKey: .timeoutFix)
-        try container.encode(steamPatch, forKey: .steamPatch)
-        try container.encode(resolutionCustom, forKey: .resolutionCustom)
-        try container.encode(resolutionWidth, forKey: .resolutionWidth)
-        try container.encode(resolutionHeight, forKey: .resolutionHeight)
-        try container.encode(enableHDR, forKey: .enableHDR)
-        try container.encode(proxyEnabled, forKey: .proxyEnabled)
-        try container.encode(proxyHost, forKey: .proxyHost)
-        try container.encode(maxFrameRate, forKey: .maxFrameRate)
-        try container.encode(metalFXUpscaling, forKey: .metalFXUpscaling)
-        try container.encode(metalFXScaleFactor, forKey: .metalFXScaleFactor)
-        try container.encode(useMsync, forKey: .useMsync)
-        try container.encode(renderBackend, forKey: .renderBackend)
-        try container.encode(settingsVersion, forKey: .settingsVersion)
     }
 
     /// Builds launch arguments with display mode controlled by settings rather than stale game flags.
