@@ -657,10 +657,6 @@ struct LaunchRuntimeProfile {
     var runtimeRequirements: [RuntimeRequirement]
 
     /// Builds a profile from game definition and app settings.
-    /// Directory holding DXMT's persistent Metal pipeline cache across launches.
-    static let dxmtShaderCacheDirectory = FileManager.default.homeDirectoryForCurrentUser
-        .appendingPathComponent("Library/Application Support/NSLauncher/DXMTShaderCache", isDirectory: true)
-
     /// - Parameter displayRefreshRate: refresh rate of the display the game will run on, used to
     ///   snap the DXMT frame cap onto a value DXMT accepts. Defaults to the main display.
     static func build(
@@ -680,86 +676,15 @@ struct LaunchRuntimeProfile {
             "WINEDEBUG": "fixme-all,err-unwind,+timestamp"
         ]
 
-        if backend == .dxmt {
-            // Sync primitive selection. esync is the safe default: on the DXMT-patched Wine build
-            // used here, msync (`WINEMSYNC=1`) surfaced as `wine client error:308: partial wakeup
-            // read 0` immediately followed by `err:virtual:virtual_setup_exception nested exception
-            // on signal stack` — a hard render-path crash. YAAGL also ships esync for Genshin and
-            // msync only for its other game clients. `useMsync` is an opt-in escape hatch for Wine
-            // builds where the marzent msync patches work.
-            env[settings.useMsync ? "WINEMSYNC" : "WINEESYNC"] = "1"
-            // An empty override list keeps the DXMT builtin D3D10/D3D11/DXGI DLLs authoritative and
-            // prevents any shell-level WINEDLLOVERRIDES from leaking into the launch. Keep it for
-            // DXMT only; the DXVK path below relies on registry `DllOverrides` instead.
-            env["WINEDLLOVERRIDES"] = ""
-            let cacheDir = FileManager.default.homeDirectoryForCurrentUser
-                .appendingPathComponent("Library/Caches/NSLauncher/DXMT", isDirectory: true)
-            let shaderCacheDirectory = Self.dxmtShaderCacheDirectory
-            // DXMT treats DXMT_LOG_PATH as a DIRECTORY and writes `d3d11.log` inside it (matching
-            // YAAGL, which passes its data directory). Passing a file path here left DXMT unable to
-            // open its log, so every DXMT message fell through to stderr and into the launch pipe.
-            env["DXMT_LOG_PATH"] = cacheDir.path
-            env["DXMT_CONFIG_FILE"] = cacheDir.appendingPathComponent("dxmt.conf").path
-            // Persistent Metal pipeline cache.
-            //
-            // DXMT translates each D3D11 pipeline state into a Metal pipeline the first time the
-            // game draws with it, on the calling thread. Without a cache that cost is paid again
-            // every session, so switching to a character whose materials, weapon and skill VFX have
-            // not been drawn yet stalls the frame while its pipelines compile. DXMT 0.80 exposes a
-            // persistent cache but leaves it off, and YAAGL never enables it either.
-            //
-            // The cache lives under Application Support rather than Caches because macOS purges
-            // Caches under disk pressure, which is exactly when losing it hurts most.
-            env["DXMT_SHADER_CACHE"] = "1"
-            env["DXMT_SHADER_CACHE_PATH"] = shaderCacheDirectory.path
-            // Optional Metal frame-pacing cap. DXMT requires the value to be a FACTOR of the display
-            // refresh rate, so the requested value is snapped down to the nearest valid factor: on a
-            // 144 Hz display a requested 60 becomes 48, because a non-factor value contributed to the
-            // render crash above. Off by default.
-            var dxmtConfig = ""
-            let frameCap = AppSettings.supportedFrameCap(
-                requested: settings.maxFrameRate,
-                refreshRate: displayRefreshRate
+        // Everything specific to a translation layer — its variables, its cache, its quirks —
+        // belongs to that layer's RenderBridge, so this stays generic launch environment.
+        env.merge(
+            RenderBridges.launchEnvironment(
+                for: backend,
+                settings: settings,
+                displayRefreshRate: displayRefreshRate
             )
-            if frameCap > 0 {
-                dxmtConfig += "d3d11.preferredMaxFrameRate=\(frameCap);"
-            }
-            // MetalFX spatial upscaling only does something when the game is told to render below
-            // the window size, which is what `resolutionCustom` sets up. Without it the game still
-            // renders at its own resolution and the MetalFX pass is pure GPU cost, so the env is
-            // withheld rather than emitted with nothing to upscale.
-            if settings.metalFXUpscaling, settings.resolutionCustom {
-                env["DXMT_METALFX_SPATIAL_SWAPCHAIN"] = "1"
-                let factor = max(settings.metalFXScaleFactor, 1.0)
-                dxmtConfig += "d3d11.metalSpatialUpscaleFactor=\(factor);"
-            }
-            if !dxmtConfig.isEmpty {
-                env["DXMT_CONFIG"] = dxmtConfig
-            }
-            // Rank GStreamer's H.264 decoders (Apple AudioToolbox + FFmpeg) so in-game/cutscene video
-            // never selects a broken decoder. Mirrors YAAGL's always-on DXMT launch config.
-            env["GST_PLUGIN_FEATURE_RANK"] = "atdec:MAX,avdec_h264:MAX"
-        } else if backend == .d3dMetal {
-            // Apple's D3DMetal, shipped with the managed CrossOver Wine. It keeps its own
-            // pipeline cache on disk (`pipeline_cache.bin`) with no configuration, which is the
-            // reason to offer it as an alternative to DXMT.
-            //
-            // WINEDLLPATH is what actually selects it and can only be built once the Wine root is
-            // resolved, so WineService fills it in at launch time.
-            env[settings.useMsync ? "WINEMSYNC" : "WINEESYNC"] = "1"
-            env["WINEDLLOVERRIDES"] = ""
-            if settings.metalFXUpscaling, settings.resolutionCustom {
-                env["D3DM_ENABLE_METALFX"] = "1"
-            }
-            if settings.showMetalHUD {
-                env["D3DM_SHOW_HUD_STATS"] = "1"
-            }
-            env["GST_PLUGIN_FEATURE_RANK"] = "atdec:MAX,avdec_h264:MAX"
-        } else if backend == .dxvk {
-            // msync only exists on Wine builds carrying the marzent patches (the DXMT-managed
-            // wine); generic DXVK setups stay on esync regardless of the setting.
-            env["WINEESYNC"] = "1"
-        }
+        ) { _, bridgeValue in bridgeValue }
 
         // YAAGL's network-timeout fix: prevents the macOS Wine socket timeout that drops the game
         // back to the title screen mid-session. Only effective on Wine builds carrying the patch

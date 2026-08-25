@@ -165,13 +165,13 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         XCTAssertEqual(profile.environment["DXMT_SHADER_CACHE"], "1")
         XCTAssertEqual(
             profile.environment["DXMT_SHADER_CACHE_PATH"],
-            LaunchRuntimeProfile.dxmtShaderCacheDirectory.path
+            DXMTBridge.shaderCacheDirectory.path
         )
     }
 
     /// The cache must not sit under `Library/Caches`, which macOS purges under disk pressure.
     func testShaderCacheSurvivesCachePurges() {
-        XCTAssertFalse(LaunchRuntimeProfile.dxmtShaderCacheDirectory.path.contains("/Library/Caches/"))
+        XCTAssertFalse(DXMTBridge.shaderCacheDirectory.path.contains("/Library/Caches/"))
     }
 
     /// DXMT appends `d3d11.log` to this path, so it has to name a directory.

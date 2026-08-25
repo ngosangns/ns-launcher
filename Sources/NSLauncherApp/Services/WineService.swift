@@ -1,15 +1,12 @@
 // WineService.swift
 //
-// Launches the Windows game through Wine: resolves the Wine binary, applies the
-// environment, bootstraps DXMT (preferred) or DXVK into the prefix, writes the Wine
-// Mac Driver / game registry settings, launches (optionally through a steam.exe parent),
-// streams output, and maps failures to targeted errors.
+// Launches the Windows game through Wine: picks the render bridge, applies the environment,
+// writes the Wine Mac Driver / game registry settings, launches (optionally through a steam.exe
+// parent), streams output, and maps failures to targeted errors.
 //
-// DXMT is the Direct3D↔Metal bridge used for the bundled Genshin definition; it
-// requires a Wine whose `x86_64-unix/winemac.so` exports the `macdrv_functions` Metal
-// interface (or the older `macdrv_view_create_metal_view` symbol), which only
-// DXMT-patched Wine builds provide — so the service verifies that symbol with `nm`
-// before launching.
+// Which Direct3D translation layer runs, what it needs from the Wine build, and how it is put in
+// place all belong to `RenderBridge` (see Services/RenderBridges). This service only asks the
+// bridge for the backend the profile resolved and then gets on with launching.
 //
 // Wine cannot load Windows kernel drivers, so output is scanned for known protection
 // driver names (`HoYoKProtect.sys`, `HoYoProtect.sys`, `mhyprot2.sys`) and surfaced
@@ -84,12 +81,6 @@ protocol WineServicing: Sendable {
 
 /// Uses ProcessRunner to start a configured executable with WINEPREFIX applied.
 struct WineService: WineServicing {
-    private static let dxvkVersion = "2.7.1"
-    private static let dxvkArchiveName = "dxvk-2.7.1.tar.gz"
-    private static let dxvkArchiveURL = URL(string: "https://github.com/doitsujin/dxvk/releases/download/v2.7.1/dxvk-2.7.1.tar.gz")!
-    private static let dxmtVersion = "v0.80"
-    private static let dxmtArchiveName = "dxmt-v0.80-builtin.tar.gz"
-    private static let dxmtArchiveURL = URL(string: "https://github.com/3Shain/dxmt/releases/download/v0.80/dxmt-v0.80-builtin.tar.gz")!
 
     let processRunner: ProcessRunning
 
@@ -103,10 +94,16 @@ struct WineService: WineServicing {
         emitDiagnostic("launch request executable=\(request.executablePath.path)", request: request)
         emitDiagnostic("launch request currentDirectory=\(request.currentDirectory?.path ?? "nil") prefix=\(request.prefixDirectory.path)", request: request)
         emitDiagnostic("launch request runtime=\(request.runtimeRequirements.map(\.rawValue).joined(separator: ",")) args=\(request.arguments.joined(separator: " "))", request: request)
+        let bridge = RenderBridges.bridge(for: request.renderBackend)
+        emitDiagnostic("render backend=\(request.renderBackend.rawValue)", request: request)
+
         let resolvedWineBinary: String
-        if request.renderBackend == .dxmt {
-            emitDiagnostic("resolve DXMT-compatible Wine from preferred=\(request.wineBinaryPath)", request: request)
-            resolvedWineBinary = try await resolveDXMTCompatibleWineBinary(preferredPath: request.wineBinaryPath)
+        if let bridge {
+            emitDiagnostic("resolve Wine for \(request.renderBackend.rawValue) from preferred=\(request.wineBinaryPath)", request: request)
+            resolvedWineBinary = try await bridge.resolveWineBinary(
+                preferredPath: request.wineBinaryPath,
+                processRunner: processRunner
+            )
         } else {
             emitDiagnostic("resolve Wine executable preferred=\(request.wineBinaryPath)", request: request)
             guard let binary = BinaryLocator.resolveExecutable(
@@ -119,7 +116,7 @@ struct WineService: WineServicing {
         }
         emitDiagnostic("resolved Wine binary=\(resolvedWineBinary)", request: request)
 
-        if let quarantinedPath = Self.quarantinedPath(forExecutableAtPath: resolvedWineBinary) {
+        if let quarantinedPath = WineBinaryLocator.quarantinedPath(forExecutableAtPath: resolvedWineBinary) {
             emitDiagnostic("quarantine detected path=\(quarantinedPath)", request: request)
             throw WineServiceError.binaryQuarantined(quarantinedPath)
         }
@@ -133,65 +130,23 @@ struct WineService: WineServicing {
         ]
         baseEnv.merge(request.environment) { _, new in new }
         baseEnv["WINEPREFIX"] = request.prefixDirectory.path
+        DXMTBridge.createSupportDirectories()
 
-        // Ensure DXMT log/config directory exists when DXMT env vars reference it.
-        // DXMT_LOG_PATH is itself the directory DXMT writes `d3d11.log` into, not a file path.
-        if let dxmtLogPath = baseEnv["DXMT_LOG_PATH"] {
-            let logDir = URL(fileURLWithPath: dxmtLogPath, isDirectory: true)
-            try? FileManager.default.createDirectory(at: logDir, withIntermediateDirectories: true)
-        }
-        // DXMT will not create its shader-cache directory itself; a missing path shows up as
-        // "[CacheReader] Failed to resolve cache path" and silently drops back to compiling
-        // every pipeline on first use.
-        if let shaderCachePath = baseEnv["DXMT_SHADER_CACHE_PATH"] {
-            try? FileManager.default.createDirectory(
-                at: URL(fileURLWithPath: shaderCachePath, isDirectory: true),
-                withIntermediateDirectories: true
-            )
-        }
-        if let dxmtConfigFile = baseEnv["DXMT_CONFIG_FILE"] {
-            let configDir = URL(fileURLWithPath: dxmtConfigFile).deletingLastPathComponent()
-            try? FileManager.default.createDirectory(at: configDir, withIntermediateDirectories: true)
-            // Create empty config file if it doesn't exist so DXMT doesn't warn.
-            if !FileManager.default.fileExists(atPath: dxmtConfigFile) {
-                FileManager.default.createFile(atPath: dxmtConfigFile, contents: nil)
-            }
-        }
-
-        // D3DMetal is selected purely through the DLL search path, so it has to be in place
-        // before `env` is frozen and handed to the registry writes and the launch itself.
-        if request.renderBackend == .d3dMetal {
-            emitDiagnostic("select Apple D3DMetal runtime", request: request)
-            try applyD3DMetalEnvironment(
-                into: &baseEnv,
+        if let bridge {
+            emitDiagnostic("prepare \(request.renderBackend.rawValue) runtime", request: request)
+            try await bridge.prepare(
+                wineRoot: try WineBinaryLocator.wineRootDirectory(forBinaryAtPath: resolvedWineBinary),
                 wineBinaryPath: resolvedWineBinary,
+                prefixDirectory: request.prefixDirectory,
+                environment: &baseEnv,
+                processRunner: processRunner,
                 onDiagnostic: { emitDiagnostic($0, request: request) }
             )
-            emitDiagnostic("D3DMetal runtime ready", request: request)
+            emitDiagnostic("\(request.renderBackend.rawValue) runtime ready", request: request)
         }
 
         let env = baseEnv
         emitDiagnostic("environment WINEPREFIX=\(env["WINEPREFIX"] ?? "") WINEARCH=\(env["WINEARCH"] ?? "") WINEDEBUG=\(env["WINEDEBUG"] ?? "") customKeys=\(request.environment.keys.sorted().joined(separator: ","))", request: request)
-
-        if request.renderBackend == .dxmt {
-            emitDiagnostic("ensure DXMT runtime", request: request)
-            try await ensureDXMTInstalled(
-                prefixDirectory: request.prefixDirectory,
-                wineBinaryPath: resolvedWineBinary,
-                environment: env,
-                onDiagnostic: { emitDiagnostic($0, request: request) }
-            )
-            emitDiagnostic("DXMT runtime ready", request: request)
-        } else if request.runtimeRequirements.contains(.dxvk), request.renderBackend != .d3dMetal {
-            emitDiagnostic("ensure DXVK runtime", request: request)
-            try await ensureDXVKInstalled(
-                prefixDirectory: request.prefixDirectory,
-                wineBinaryPath: resolvedWineBinary,
-                environment: env,
-                onDiagnostic: { emitDiagnostic($0, request: request) }
-            )
-            emitDiagnostic("DXVK runtime ready", request: request)
-        }
 
         // Apply Wine Mac Driver and game registry settings (Retina, left-Cmd-as-Ctrl,
         // custom resolution, HDR) before the game process starts. Best-effort: a registry
@@ -276,7 +231,7 @@ struct WineService: WineServicing {
     /// Best-effort wait for wineserver to exit, flushing registry writes and logs.
     private func waitForWineserver(wineBinaryPath: String, environment: [String: String], request: WineLaunchRequest) async {
         do {
-            let wineRoot = try wineRootDirectory(forBinaryAtPath: wineBinaryPath)
+            let wineRoot = try WineBinaryLocator.wineRootDirectory(forBinaryAtPath: wineBinaryPath)
             let wineserverPath = wineRoot.appendingPathComponent("bin/wineserver").path
             guard FileManager.default.isExecutableFile(atPath: wineserverPath) else {
                 emitDiagnostic("wineserver not found at \(wineserverPath); skipping wait", request: request)
@@ -301,7 +256,7 @@ struct WineService: WineServicing {
     /// enough to satisfy it. Do not remove this fallback — if the stub download fails, the game must
     /// still get a steam.exe parent or it aborts during the anti-cheat driver-load phase.
     private func ensureSteamLauncher(prefixDirectory: URL, wineBinaryPath: String) throws -> Bool {
-        let wineRoot = try wineRootDirectory(forBinaryAtPath: wineBinaryPath)
+        let wineRoot = try WineBinaryLocator.wineRootDirectory(forBinaryAtPath: wineBinaryPath)
         let source = wineRoot.appendingPathComponent("lib/wine/x86_64-windows/cmd.exe")
         guard FileManager.default.fileExists(atPath: source.path) else { return false }
         let system32 = prefixDirectory.appendingPathComponent("drive_c/windows/system32", isDirectory: true)
@@ -486,401 +441,6 @@ struct WineService: WineServicing {
         )
     }
 
-    /// Points the Wine builtin DLL search at Apple's D3DMetal instead of the `lib/wine` builtins.
-    ///
-    /// The managed CrossOver Wine ships D3DMetal's `d3d11.dll`/`dxgi.dll` in their own tree under
-    /// `lib64/apple_gptk/wine`, which is why they survive DXMT overwriting the `lib/wine` copies.
-    /// CrossOver's own launcher script selects them by putting that directory first on
-    /// `WINEDLLPATH`; the launcher does the same rather than going through a bottle config it does
-    /// not otherwise use.
-    ///
-    /// `libd3dshared.dylib` is loaded regardless of which bridge is active, so its path is exported
-    /// the same way CrossOver exports it.
-    private func applyD3DMetalEnvironment(
-        into environment: inout [String: String],
-        wineBinaryPath: String,
-        onDiagnostic: (String) -> Void = { _ in }
-    ) throws {
-        let wineRoot = try wineRootDirectory(forBinaryAtPath: wineBinaryPath)
-        let gptkRoot = wineRoot.appendingPathComponent("lib64/apple_gptk", isDirectory: true)
-        let gptkWindows = gptkRoot.appendingPathComponent("wine/x86_64-windows", isDirectory: true)
-        guard FileManager.default.fileExists(atPath: gptkWindows.appendingPathComponent("d3d11.dll").path) else {
-            throw WineServiceError.d3dMetalUnavailable(gptkWindows.path)
-        }
-
-        var searchPath = [gptkWindows.path]
-        for suffix in ["lib/wine/x86_64-windows", "lib/wine/i386-windows", "lib/wine"] {
-            let directory = wineRoot.appendingPathComponent(suffix, isDirectory: true)
-            if FileManager.default.fileExists(atPath: directory.path) {
-                searchPath.append(directory.path)
-            }
-        }
-        environment["WINEDLLPATH"] = searchPath.joined(separator: ":")
-        onDiagnostic("WINEDLLPATH=\(environment["WINEDLLPATH"] ?? "")")
-
-        let libD3DShared = gptkRoot.appendingPathComponent("external/libd3dshared.dylib")
-        if FileManager.default.fileExists(atPath: libD3DShared.path) {
-            environment["CX_APPLEGPTK_LIBD3DSHARED_PATH"] = libD3DShared.path
-        }
-
-        // DXMT-only knobs would otherwise leak in from the profile and confuse the launch log.
-        for key in ["DXMT_CONFIG", "DXMT_CONFIG_FILE", "DXMT_LOG_PATH", "DXMT_SHADER_CACHE", "DXMT_SHADER_CACHE_PATH", "DXMT_METALFX_SPATIAL_SWAPCHAIN"] {
-            environment.removeValue(forKey: key)
-        }
-    }
-
-    /// Installs the DXMT builtin payload into the Wine runtime and clears prefix overrides.
-    private func ensureDXMTInstalled(
-        prefixDirectory: URL,
-        wineBinaryPath: String,
-        environment: [String: String],
-        onDiagnostic: (String) -> Void = { _ in }
-    ) async throws {
-        do {
-            onDiagnostic("prepare DXMT payload")
-            let extractedURL = try await prepareDXMTPayload()
-            onDiagnostic("DXMT payload path=\(extractedURL.path)")
-            let wineRoot = try wineRootDirectory(forBinaryAtPath: wineBinaryPath)
-            onDiagnostic("Wine root for DXMT=\(wineRoot.path)")
-            let wineLibrary = wineRoot.appendingPathComponent("lib/wine", isDirectory: true)
-            try await ensureDXMTWineSymbolsAvailable(wineLibrary: wineLibrary, wineBinaryPath: wineBinaryPath)
-            onDiagnostic("DXMT Wine symbols available")
-            let x64Windows = wineLibrary.appendingPathComponent("x86_64-windows", isDirectory: true)
-            let x86Windows = wineLibrary.appendingPathComponent("i386-windows", isDirectory: true)
-            let x64Unix = wineLibrary.appendingPathComponent("x86_64-unix", isDirectory: true)
-            let prefixSystem32 = prefixDirectory.appendingPathComponent("drive_c/windows/system32", isDirectory: true)
-            let prefixSyswow64 = prefixDirectory.appendingPathComponent("drive_c/windows/syswow64", isDirectory: true)
-            let markerURL = wineLibrary.appendingPathComponent(".nslauncher-dxmt-\(Self.dxmtVersion)")
-            let x64Source = extractedURL.appendingPathComponent("x86_64-windows", isDirectory: true)
-            let x86Source = extractedURL.appendingPathComponent("i386-windows", isDirectory: true)
-            let x64UnixSource = extractedURL.appendingPathComponent("x86_64-unix", isDirectory: true)
-
-            let requiredCopies = [
-                DXMTPayloadCopy(
-                    names: ["d3d10core.dll", "d3d11.dll", "dxgi.dll", "nvapi64.dll", "nvngx.dll", "winemetal.dll"],
-                    sourceDirectory: x64Source,
-                    destinationDirectory: x64Windows
-                ),
-                DXMTPayloadCopy(
-                    names: ["d3d10core.dll", "d3d11.dll", "dxgi.dll", "winemetal.dll"],
-                    sourceDirectory: x86Source,
-                    destinationDirectory: x86Windows
-                ),
-                DXMTPayloadCopy(
-                    names: ["winemetal.so"],
-                    sourceDirectory: x64UnixSource,
-                    destinationDirectory: x64Unix
-                ),
-                DXMTPayloadCopy(
-                    names: ["winemetal.dll"],
-                    sourceDirectory: x64Source,
-                    destinationDirectory: prefixSystem32
-                ),
-                DXMTPayloadCopy(
-                    names: ["winemetal.dll"],
-                    sourceDirectory: x86Source,
-                    destinationDirectory: prefixSyswow64
-                )
-            ]
-
-            if !FileManager.default.fileExists(atPath: markerURL.path) || !dxmtPayloadIsCurrent(requiredCopies) {
-                onDiagnostic("install DXMT payload into Wine library and prefix")
-                try FileManager.default.createDirectory(at: x64Windows, withIntermediateDirectories: true)
-                try FileManager.default.createDirectory(at: x86Windows, withIntermediateDirectories: true)
-                try FileManager.default.createDirectory(at: x64Unix, withIntermediateDirectories: true)
-                try FileManager.default.createDirectory(at: prefixSystem32, withIntermediateDirectories: true)
-                try FileManager.default.createDirectory(at: prefixSyswow64, withIntermediateDirectories: true)
-
-                for copy in requiredCopies {
-                    try copyDLLs(copy.names, from: copy.sourceDirectory, to: copy.destinationDirectory)
-                }
-                try Data("installed\n".utf8).write(to: markerURL, options: .atomic)
-            } else {
-                onDiagnostic("DXMT payload marker current")
-            }
-
-            // The DXMT builtin payload replaces Wine builtin DLLs, so native overrides must be absent.
-            for dllName in ["d3d10core", "d3d11", "dxgi", "nvapi64", "nvngx", "winemetal"] {
-                onDiagnostic("clear DXMT DLL override \(dllName)")
-                try await deleteDLLOverride(dllName, wineBinaryPath: wineBinaryPath, environment: environment)
-            }
-        } catch let wineError as WineServiceError {
-            throw wineError
-        } catch {
-            throw WineServiceError.dxmtBootstrapFailed(error.localizedDescription)
-        }
-    }
-
-    /// Selects the latest WineHQ Devel binary and verifies that it can host DXMT.
-    private func resolveDXMTCompatibleWineBinary(preferredPath: String) async throws -> String {
-        var attemptedPaths: [String] = []
-
-        for candidate in Self.dxmtWineCandidatePaths(preferredPath: preferredPath) {
-            guard FileManager.default.isExecutableFile(atPath: candidate) else { continue }
-            if let quarantinedPath = Self.quarantinedPath(forExecutableAtPath: candidate) {
-                throw WineServiceError.binaryQuarantined(quarantinedPath)
-            }
-
-            do {
-                let wineRoot = try wineRootDirectory(forBinaryAtPath: candidate)
-                try await ensureDXMTWineSymbolsAvailable(
-                    wineLibrary: wineRoot.appendingPathComponent("lib/wine", isDirectory: true),
-                    wineBinaryPath: candidate
-                )
-                return candidate
-            } catch WineServiceError.dxmtUnsupportedWine {
-                attemptedPaths.append(candidate)
-            } catch WineServiceError.dxmtBootstrapFailed {
-                attemptedPaths.append(candidate)
-            }
-        }
-
-        let details = attemptedPaths.isEmpty ? preferredPath : attemptedPaths.joined(separator: ", ")
-        throw WineServiceError.dxmtUnsupportedWine(details)
-    }
-
-    /// Installs DXVK into the Wine prefix once, so DirectX 11 games do not fall back to WineD3D.
-    private func ensureDXVKInstalled(
-        prefixDirectory: URL,
-        wineBinaryPath: String,
-        environment: [String: String],
-        onDiagnostic: (String) -> Void = { _ in }
-    ) async throws {
-        let markerURL = prefixDirectory.appendingPathComponent(".nslauncher-dxvk-\(Self.dxvkVersion)")
-        let system32 = prefixDirectory.appendingPathComponent("drive_c/windows/system32", isDirectory: true)
-        let syswow64 = prefixDirectory.appendingPathComponent("drive_c/windows/syswow64", isDirectory: true)
-        if FileManager.default.fileExists(atPath: markerURL.path),
-           FileManager.default.fileExists(atPath: system32.appendingPathComponent("d3d11.dll").path),
-           FileManager.default.fileExists(atPath: system32.appendingPathComponent("dxgi.dll").path) {
-            onDiagnostic("DXVK marker current")
-            return
-        }
-
-        do {
-            onDiagnostic("prepare DXVK payload")
-            let extractedURL = try await prepareDXVKPayload()
-            onDiagnostic("DXVK payload path=\(extractedURL.path)")
-            try FileManager.default.createDirectory(at: system32, withIntermediateDirectories: true)
-            try FileManager.default.createDirectory(at: syswow64, withIntermediateDirectories: true)
-
-            onDiagnostic("copy DXVK DLLs into prefix")
-            try copyDXVKDLLs(
-                from: extractedURL.appendingPathComponent("x64", isDirectory: true),
-                to: system32
-            )
-            try copyDXVKDLLs(
-                from: extractedURL.appendingPathComponent("x32", isDirectory: true),
-                to: syswow64
-            )
-
-            onDiagnostic("set DXVK DLL overrides")
-            try await setDLLOverride("d3d11", wineBinaryPath: wineBinaryPath, environment: environment)
-            try await setDLLOverride("dxgi", wineBinaryPath: wineBinaryPath, environment: environment)
-            try Data("installed\n".utf8).write(to: markerURL, options: .atomic)
-        } catch let wineError as WineServiceError {
-            throw wineError
-        } catch {
-            throw WineServiceError.dxvkBootstrapFailed(error.localizedDescription)
-        }
-    }
-
-    /// Downloads and extracts the pinned DXVK release into the launcher cache.
-    private func prepareDXVKPayload() async throws -> URL {
-        let cacheDirectory = FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent("Library/Caches/NSLauncher/DXVK", isDirectory: true)
-        let archiveURL = cacheDirectory.appendingPathComponent(Self.dxvkArchiveName)
-        let extractedURL = cacheDirectory.appendingPathComponent("dxvk-\(Self.dxvkVersion)", isDirectory: true)
-
-        if FileManager.default.fileExists(atPath: extractedURL.appendingPathComponent("x64/d3d11.dll").path),
-           FileManager.default.fileExists(atPath: extractedURL.appendingPathComponent("x64/dxgi.dll").path),
-           FileManager.default.fileExists(atPath: extractedURL.appendingPathComponent("x32/d3d11.dll").path),
-           FileManager.default.fileExists(atPath: extractedURL.appendingPathComponent("x32/dxgi.dll").path) {
-            return extractedURL
-        }
-
-        try FileManager.default.createDirectory(at: cacheDirectory, withIntermediateDirectories: true)
-        if !FileManager.default.fileExists(atPath: archiveURL.path) {
-            let (temporaryURL, response) = try await URLSession.shared.download(from: Self.dxvkArchiveURL)
-            guard let http = response as? HTTPURLResponse, 200..<300 ~= http.statusCode else {
-                throw WineServiceError.dxvkBootstrapFailed("Unable to download DXVK \(Self.dxvkVersion).")
-            }
-            if FileManager.default.fileExists(atPath: archiveURL.path) {
-                try FileManager.default.removeItem(at: archiveURL)
-            }
-            try FileManager.default.moveItem(at: temporaryURL, to: archiveURL)
-        }
-
-        if FileManager.default.fileExists(atPath: extractedURL.path) {
-            try FileManager.default.removeItem(at: extractedURL)
-        }
-        _ = try await processRunner.run(
-            executable: "/usr/bin/tar",
-            arguments: ["-xzf", archiveURL.path, "-C", cacheDirectory.path],
-            environment: [:],
-            currentDirectory: nil
-        )
-        return extractedURL
-    }
-
-    /// Downloads and extracts the pinned DXMT release into the launcher cache.
-    private func prepareDXMTPayload() async throws -> URL {
-        let cacheDirectory = FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent("Library/Caches/NSLauncher/DXMT", isDirectory: true)
-        let archiveURL = cacheDirectory.appendingPathComponent(Self.dxmtArchiveName)
-        let extractedURL = cacheDirectory.appendingPathComponent(Self.dxmtVersion, isDirectory: true)
-
-        if FileManager.default.fileExists(atPath: extractedURL.appendingPathComponent("x86_64-windows/d3d11.dll").path),
-           FileManager.default.fileExists(atPath: extractedURL.appendingPathComponent("x86_64-windows/winemetal.dll").path),
-           FileManager.default.fileExists(atPath: extractedURL.appendingPathComponent("x86_64-unix/winemetal.so").path) {
-            return extractedURL
-        }
-
-        try FileManager.default.createDirectory(at: cacheDirectory, withIntermediateDirectories: true)
-        if !FileManager.default.fileExists(atPath: archiveURL.path) {
-            let (temporaryURL, response) = try await URLSession.shared.download(from: Self.dxmtArchiveURL)
-            guard let http = response as? HTTPURLResponse, 200..<300 ~= http.statusCode else {
-                throw WineServiceError.dxmtBootstrapFailed("Unable to download DXMT \(Self.dxmtVersion).")
-            }
-            if FileManager.default.fileExists(atPath: archiveURL.path) {
-                try FileManager.default.removeItem(at: archiveURL)
-            }
-            try FileManager.default.moveItem(at: temporaryURL, to: archiveURL)
-        }
-
-        if FileManager.default.fileExists(atPath: extractedURL.path) {
-            try FileManager.default.removeItem(at: extractedURL)
-        }
-        _ = try await processRunner.run(
-            executable: "/usr/bin/tar",
-            arguments: ["-xzf", archiveURL.path, "-C", cacheDirectory.path],
-            environment: [:],
-            currentDirectory: nil
-        )
-        return extractedURL
-    }
-
-    /// Copies the DXVK D3D11 bridge DLLs into a Wine Windows system directory.
-    private func copyDXVKDLLs(from sourceDirectory: URL, to destinationDirectory: URL) throws {
-        try copyDLLs(["d3d11.dll", "dxgi.dll"], from: sourceDirectory, to: destinationDirectory)
-    }
-
-    /// Copies selected bridge DLLs into a Wine Windows system directory.
-    private func copyDLLs(_ dllNames: [String], from sourceDirectory: URL, to destinationDirectory: URL) throws {
-        for dllName in dllNames {
-            let source = sourceDirectory.appendingPathComponent(dllName)
-            guard FileManager.default.fileExists(atPath: source.path) else { continue }
-            let destination = destinationDirectory.appendingPathComponent(dllName)
-            if FileManager.default.fileExists(atPath: destination.path) {
-                try FileManager.default.removeItem(at: destination)
-            }
-            try FileManager.default.copyItem(at: source, to: destination)
-        }
-    }
-
-    /// Checks all DXMT files because users may reinstall Wine while the old marker file remains.
-    private func dxmtPayloadIsCurrent(_ copies: [DXMTPayloadCopy]) -> Bool {
-        copies.allSatisfy { copy in
-            copy.names.allSatisfy { name in
-                let source = copy.sourceDirectory.appendingPathComponent(name)
-                let destination = copy.destinationDirectory.appendingPathComponent(name)
-                return FileManager.default.fileExists(atPath: source.path)
-                    && FileManager.default.contentsEqual(atPath: source.path, andPath: destination.path)
-            }
-        }
-    }
-
-    /// DXMT needs Wine's Unix-side winemac bridge to export macOS/Metal view symbols.
-    private func ensureDXMTWineSymbolsAvailable(wineLibrary: URL, wineBinaryPath: String) async throws {
-        let unixDirectory = wineLibrary.appendingPathComponent("x86_64-unix", isDirectory: true)
-        // Stock Wine names the mac bridge `winemac.so`; CrossOver-derived builds use `winemac.drv.so`.
-        let winemacBridge = ["winemac.so", "winemac.drv.so"]
-            .map { unixDirectory.appendingPathComponent($0, isDirectory: false) }
-            .first { FileManager.default.fileExists(atPath: $0.path) }
-
-        guard let winemacBridge else {
-            throw WineServiceError.dxmtUnsupportedWine(wineBinaryPath)
-        }
-
-        do {
-            let result = try await processRunner.run(
-                executable: "/usr/bin/nm",
-                arguments: ["-gU", winemacBridge.path],
-                environment: [:],
-                currentDirectory: nil
-            )
-            // DXMT resolves the mac driver interface through the `macdrv_functions` table on modern
-            // Wine; older DXMT-patched builds exported the individual `macdrv_view_create_metal_view`
-            // symbol instead. Accept either.
-            if !result.stdout.contains("macdrv_functions"),
-               !result.stdout.contains("macdrv_view_create_metal_view") {
-                throw WineServiceError.dxmtUnsupportedWine(wineBinaryPath)
-            }
-        } catch let wineError as WineServiceError {
-            throw wineError
-        } catch {
-            throw WineServiceError.dxmtUnsupportedWine(wineBinaryPath)
-        }
-    }
-
-    /// Configures Wine to prefer the DXVK DLLs copied into the prefix.
-    private func setDLLOverride(
-        _ dllName: String,
-        wineBinaryPath: String,
-        environment: [String: String]
-    ) async throws {
-        _ = try await processRunner.run(
-            executable: wineBinaryPath,
-            arguments: [
-                "reg",
-                "add",
-                "HKEY_CURRENT_USER\\Software\\Wine\\DllOverrides",
-                "/v",
-                dllName,
-                "/d",
-                "native,builtin",
-                "/f"
-            ],
-            environment: environment,
-            currentDirectory: nil
-        )
-    }
-
-    /// Removes a Wine DLL override if it exists.
-    private func deleteDLLOverride(
-        _ dllName: String,
-        wineBinaryPath: String,
-        environment: [String: String]
-    ) async throws {
-        do {
-            _ = try await processRunner.run(
-                executable: wineBinaryPath,
-                arguments: [
-                    "reg",
-                    "delete",
-                    "HKEY_CURRENT_USER\\Software\\Wine\\DllOverrides",
-                    "/v",
-                    dllName,
-                    "/f"
-                ],
-                environment: environment,
-                currentDirectory: nil
-            )
-        } catch ProcessRunnerError.nonZeroExit {
-            // Missing values are fine; the desired state is that no override is present.
-        }
-    }
-
-    /// Resolves the Wine root directory that contains bin/wine and lib/wine.
-    private func wineRootDirectory(forBinaryAtPath path: String) throws -> URL {
-        let resolvedURL = URL(fileURLWithPath: path).resolvingSymlinksInPath()
-        let binaryDirectory = resolvedURL.deletingLastPathComponent()
-        let wineRoot = binaryDirectory.deletingLastPathComponent()
-        guard FileManager.default.fileExists(atPath: wineRoot.appendingPathComponent("lib/wine").path) else {
-            throw WineServiceError.dxmtBootstrapFailed("Unable to locate Wine lib/wine directory for \(path).")
-        }
-        return wineRoot
-    }
-
     /// Wine can return a non-zero wrapper code after successfully spawning the Windows GUI process.
     private func hasNewLaunchedExecutableProcess(_ executablePath: URL, excluding existingPIDs: Set<Int32>) async -> Bool {
         do {
@@ -943,32 +503,6 @@ struct WineService: WineServicing {
     }
 
     /// Gatekeeper quarantine commonly causes Wine to terminate before it can launch the game.
-    private static func quarantinedPath(forExecutableAtPath path: String) -> String? {
-        let resolvedURL = URL(fileURLWithPath: path).resolvingSymlinksInPath()
-        let candidatePaths = [
-            enclosingAppBundlePath(for: resolvedURL),
-            resolvedURL.path,
-            path
-        ].compactMap(\.self)
-
-        return candidatePaths.first(where: hasQuarantineAttribute)
-    }
-
-    /// Returns the enclosing .app bundle for a Wine executable nested inside one.
-    private static func enclosingAppBundlePath(for url: URL) -> String? {
-        let components = url.pathComponents
-        guard let appIndex = components.lastIndex(where: { $0.hasSuffix(".app") }) else {
-            return nil
-        }
-        return NSString.path(withComponents: Array(components.prefix(appIndex + 1)))
-    }
-
-    private static func hasQuarantineAttribute(atPath path: String) -> Bool {
-        path.withCString { fileSystemPath in
-            getxattr(fileSystemPath, "com.apple.quarantine", nil, 0, 0, 0) >= 0
-        }
-    }
-
     private static func outputIndicatesDXMTUnsupportedWine(_ output: String) -> Bool {
         output.localizedCaseInsensitiveContains("no exported symbols needed by DXMT")
     }
@@ -986,78 +520,6 @@ struct WineService: WineServicing {
             || output.contains("\"message\":\"app running\"")
     }
 
-    /// Candidate Wine binaries: the launcher-managed DXMT-patched Wine first, then the preferred
-    /// PATH binary and CrossOver/GPTK/WineHQ app bundles as fallbacks. PATH wine (e.g. Game Porting
-    /// Toolkit) may export a `macdrv_functions` table with an incompatible struct layout and crash
-    /// at load time, so the managed build must win.
-    private static func dxmtWineCandidatePaths(preferredPath: String) -> [String] {
-        let preferredPath = preferredPath.trimmingCharacters(in: .whitespacesAndNewlines)
-        let explicitCandidates = [
-            managedWineDirectory.appendingPathComponent("bin/wine64").path,
-            managedWineDirectory.appendingPathComponent("bin/wine").path,
-            preferredPath,
-            BinaryLocator.resolveExecutable(
-                preferredPath: preferredPath,
-                candidateNames: BinaryLocator.candidateNames(forExecutable: preferredPath)
-            ),
-            "/Applications/Wine Devel.app/Contents/Resources/wine/bin/wine",
-            "/Applications/CrossOver.app/Contents/SharedSupport/CrossOver/bin/wine64",
-            "/Applications/Game Porting Toolkit.app/Contents/Resources/wine/bin/wine64"
-        ].compactMap { $0 }.filter { !$0.isEmpty }
-
-        var seen = Set<String>()
-        var candidates = explicitCandidates.filter { seen.insert($0).inserted }
-
-        candidates.append(contentsOf: wineExecutables(in: managedWineDirectory, seen: &seen))
-
-        for appName in ["CrossOver.app", "Game Porting Toolkit.app", "Wine Devel.app"] {
-            for root in applicationSearchRoots() {
-                let appURL = root.appendingPathComponent(appName, isDirectory: true)
-                candidates.append(contentsOf: wineExecutables(in: appURL, seen: &seen))
-            }
-        }
-
-        return candidates
-    }
-
-    /// Launcher-managed directory where a DXMT-patched Wine can be extracted so the resolver can
-    /// pick it up without any system-wide install or PATH changes.
-    private static var managedWineDirectory: URL {
-        FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent("Library/Application Support/NSLauncher/wine", isDirectory: true)
-    }
-
-    /// Searches standard app locations without scanning the whole filesystem.
-    private static func applicationSearchRoots() -> [URL] {
-        [
-            URL(fileURLWithPath: "/Applications", isDirectory: true),
-            FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Applications", isDirectory: true)
-        ]
-    }
-
-    /// Finds wine/wine64 executables inside a known app bundle.
-    private static func wineExecutables(in appURL: URL, seen: inout Set<String>) -> [String] {
-        guard FileManager.default.fileExists(atPath: appURL.path),
-              let enumerator = FileManager.default.enumerator(
-                  at: appURL,
-                  includingPropertiesForKeys: [.isExecutableKey, .isRegularFileKey],
-                  options: [.skipsHiddenFiles]
-              ) else {
-            return []
-        }
-
-        var results: [String] = []
-        for case let url as URL in enumerator {
-            guard ["wine", "wine64"].contains(url.lastPathComponent),
-                  url.pathComponents.contains("bin"),
-                  seen.insert(url.path).inserted,
-                  FileManager.default.isExecutableFile(atPath: url.path) else {
-                continue
-            }
-            results.append(url.path)
-        }
-        return results
-    }
 }
 
 private struct DXMTPayloadCopy {
