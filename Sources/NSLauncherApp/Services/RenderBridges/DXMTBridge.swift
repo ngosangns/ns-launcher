@@ -126,6 +126,7 @@ struct DXMTBridge: RenderBridge {
         onDiagnostic: (String) -> Void
     ) async throws {
         do {
+            Self.createSupportDirectories()
             let payload = try await extractedPayload(processRunner: processRunner)
             onDiagnostic("DXMT payload path=\(payload.path)")
 
@@ -172,7 +173,7 @@ struct DXMTBridge: RenderBridge {
 
     /// Ensures the shader-cache and log directories exist; DXMT creates neither, and a missing
     /// cache path shows up only as `[CacheReader] Failed to resolve cache path`.
-    static func createSupportDirectories() {
+    private static func createSupportDirectories() {
         for directory in [shaderCacheDirectory, supportDirectory] {
             try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         }

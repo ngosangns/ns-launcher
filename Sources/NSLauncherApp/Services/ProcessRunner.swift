@@ -36,18 +36,24 @@ enum ProcessRunnerError: LocalizedError {
         case let .executableNotFound(path):
             return "Executable not found at \(path)"
         case let .nonZeroExit(result):
-            return "Process failed with code \(result.exitCode): \(result.stderr)"
+            let details = result.stderr.isEmpty ? result.stdout : result.stderr
+            return "Process failed with code \(result.exitCode): \(details)"
         }
     }
 }
 
 /// Async boundary for running external tools such as Wine.
 protocol ProcessRunning: Sendable {
+    /// - Parameter logFileURL: when set, both streams are redirected straight to this file and
+    ///   nothing is piped through the launcher. A game session writes for hours, and every chunk
+    ///   read here costs the main thread the game is competing with; the file is read back once at
+    ///   exit so failures can still be classified.
     func run(
         executable: String,
         arguments: [String],
         environment: [String: String],
         currentDirectory: URL?,
+        logFileURL: URL?,
         onOutput: (@Sendable (ProcessOutputChunk) -> Void)?
     ) async throws -> ProcessResult
 }
@@ -64,7 +70,25 @@ extension ProcessRunning {
             arguments: arguments,
             environment: environment,
             currentDirectory: currentDirectory,
+            logFileURL: nil,
             onOutput: nil
+        )
+    }
+
+    func run(
+        executable: String,
+        arguments: [String],
+        environment: [String: String],
+        currentDirectory: URL?,
+        onOutput: (@Sendable (ProcessOutputChunk) -> Void)?
+    ) async throws -> ProcessResult {
+        try await run(
+            executable: executable,
+            arguments: arguments,
+            environment: environment,
+            currentDirectory: currentDirectory,
+            logFileURL: nil,
+            onOutput: onOutput
         )
     }
 }
@@ -77,6 +101,7 @@ struct ProcessRunner: ProcessRunning {
         arguments: [String] = [],
         environment: [String: String] = [:],
         currentDirectory: URL? = nil,
+        logFileURL: URL? = nil,
         onOutput: (@Sendable (ProcessOutputChunk) -> Void)? = nil
     ) async throws -> ProcessResult {
         let resolvedExecutable = BinaryLocator.resolveExecutable(
@@ -97,34 +122,53 @@ struct ProcessRunner: ProcessRunning {
                 process.currentDirectoryURL = currentDirectory
                 process.environment = ProcessInfo.processInfo.environment.merging(environment) { _, new in new }
 
-                let stdoutPipe = Pipe()
-                let stderrPipe = Pipe()
-                process.standardOutput = stdoutPipe
-                process.standardError = stderrPipe
-                let outputBuffer = ProcessOutputBuffer()
-                stdoutPipe.fileHandleForReading.readabilityHandler = { fileHandle in
-                    let data = fileHandle.availableData
-                    guard !data.isEmpty else { return }
-                    outputBuffer.append(data, stream: .stdout)
-                    onOutput?(ProcessOutputChunk(stream: .stdout, text: String(decoding: data, as: UTF8.self)))
-                }
-                stderrPipe.fileHandleForReading.readabilityHandler = { fileHandle in
-                    let data = fileHandle.availableData
-                    guard !data.isEmpty else { return }
-                    outputBuffer.append(data, stream: .stderr)
-                    onOutput?(ProcessOutputChunk(stream: .stderr, text: String(decoding: data, as: UTF8.self)))
+                let collectResult: @Sendable (Process) -> ProcessResult
+                if let logFileURL, let logHandle = Self.openLogFile(at: logFileURL) {
+                    // Straight to disk: no pipes, no reader callbacks, nothing crossing into the
+                    // launcher while the game runs.
+                    process.standardOutput = logHandle
+                    process.standardError = logHandle
+                    collectResult = { proc in
+                        try? logHandle.close()
+                        return ProcessResult(
+                            exitCode: proc.terminationStatus,
+                            stdout: Self.boundedContents(of: logFileURL),
+                            stderr: ""
+                        )
+                    }
+                } else {
+                    let stdoutPipe = Pipe()
+                    let stderrPipe = Pipe()
+                    process.standardOutput = stdoutPipe
+                    process.standardError = stderrPipe
+                    let outputBuffer = ProcessOutputBuffer()
+                    stdoutPipe.fileHandleForReading.readabilityHandler = { fileHandle in
+                        let data = fileHandle.availableData
+                        guard !data.isEmpty else { return }
+                        outputBuffer.append(data, stream: .stdout)
+                        onOutput?(ProcessOutputChunk(stream: .stdout, text: String(decoding: data, as: UTF8.self)))
+                    }
+                    stderrPipe.fileHandleForReading.readabilityHandler = { fileHandle in
+                        let data = fileHandle.availableData
+                        guard !data.isEmpty else { return }
+                        outputBuffer.append(data, stream: .stderr)
+                        onOutput?(ProcessOutputChunk(stream: .stderr, text: String(decoding: data, as: UTF8.self)))
+                    }
+                    collectResult = { proc in
+                        stdoutPipe.fileHandleForReading.readabilityHandler = nil
+                        stderrPipe.fileHandleForReading.readabilityHandler = nil
+                        outputBuffer.append(stdoutPipe.fileHandleForReading.readDataToEndOfFile(), stream: .stdout)
+                        outputBuffer.append(stderrPipe.fileHandleForReading.readDataToEndOfFile(), stream: .stderr)
+                        return ProcessResult(
+                            exitCode: proc.terminationStatus,
+                            stdout: outputBuffer.stdout,
+                            stderr: outputBuffer.stderr
+                        )
+                    }
                 }
 
                 process.terminationHandler = { proc in
-                    stdoutPipe.fileHandleForReading.readabilityHandler = nil
-                    stderrPipe.fileHandleForReading.readabilityHandler = nil
-                    outputBuffer.append(stdoutPipe.fileHandleForReading.readDataToEndOfFile(), stream: .stdout)
-                    outputBuffer.append(stderrPipe.fileHandleForReading.readDataToEndOfFile(), stream: .stderr)
-                    let result = ProcessResult(
-                        exitCode: proc.terminationStatus,
-                        stdout: outputBuffer.stdout,
-                        stderr: outputBuffer.stderr
-                    )
+                    let result = collectResult(proc)
 
                     if Task.isCancelled {
                         continuation.resume(throwing: CancellationError())
@@ -146,6 +190,28 @@ struct ProcessRunner: ProcessRunning {
                 process.terminate()
             }
         }
+    }
+}
+
+extension ProcessRunner {
+    /// Creates the log file and opens it for writing, returning nil when the path is unusable so
+    /// the caller falls back to pipes rather than losing the launch.
+    fileprivate static func openLogFile(at url: URL) -> FileHandle? {
+        let directory = url.deletingLastPathComponent()
+        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        guard FileManager.default.createFile(atPath: url.path, contents: nil) else { return nil }
+        return try? FileHandle(forWritingTo: url)
+    }
+
+    /// Reads back a bounded head and tail of a log file for failure classification.
+    fileprivate static func boundedContents(of url: URL) -> String {
+        guard let handle = try? FileHandle(forReadingFrom: url) else { return "" }
+        defer { try? handle.close() }
+        var buffer = BoundedStreamBuffer()
+        while let chunk = try? handle.read(upToCount: 256 * 1024), !chunk.isEmpty {
+            buffer.append(chunk)
+        }
+        return buffer.text
     }
 }
 

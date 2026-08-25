@@ -130,7 +130,6 @@ struct WineService: WineServicing {
         ]
         baseEnv.merge(request.environment) { _, new in new }
         baseEnv["WINEPREFIX"] = request.prefixDirectory.path
-        DXMTBridge.createSupportDirectories()
 
         if let bridge {
             emitDiagnostic("prepare \(request.renderBackend.rawValue) runtime", request: request)
@@ -190,11 +189,16 @@ struct WineService: WineServicing {
                 processArguments = [request.executablePath.path] + request.arguments
             }
             emitDiagnostic("start process command=\(resolvedWineBinary) \(processArguments.joined(separator: " "))", request: request)
+            let gameLogURL = GameLogFile.prepare()
+            if let gameLogURL {
+                emitDiagnostic("game output -> \(gameLogURL.path)", request: request)
+            }
             launchResult = try await processRunner.run(
                 executable: resolvedWineBinary,
                 arguments: processArguments,
                 environment: env,
                 currentDirectory: request.currentDirectory,
+                logFileURL: gameLogURL,
                 onOutput: request.onOutput
             )
         } catch let ProcessRunnerError.nonZeroExit(result) {
