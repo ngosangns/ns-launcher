@@ -25,6 +25,16 @@
 
 import Foundation
 
+/// Fetches bytes over HTTP.
+///
+/// Exists so release resolution can be tested without a network. `URLSession` already has this
+/// exact shape, so conforming it costs nothing and no production code passes anything else.
+protocol HTTPDataFetching: Sendable {
+    func data(for request: URLRequest) async throws -> (Data, URLResponse)
+}
+
+extension URLSession: HTTPDataFetching {}
+
 enum WineDistribution {
     /// Human-readable name used in progress messages and error text.
     ///
@@ -127,7 +137,10 @@ enum WineDistribution {
     ///
     /// Never throws. A GitHub outage, a rate limit or a release published without a macOS archive
     /// must not be the reason a game cannot start, and the pinned release is known to work.
-    static func latestRelease(onDiagnostic: @Sendable (String) -> Void) async -> Release {
+    static func latestRelease(
+        fetcher: HTTPDataFetching = URLSession.shared,
+        onDiagnostic: @Sendable (String) -> Void
+    ) async -> Release {
         var request = URLRequest(url: latestReleaseURL)
         request.timeoutInterval = releaseLookupTimeout
         // Without this GitHub may answer with a different representation; the documented one is
@@ -135,7 +148,7 @@ enum WineDistribution {
         request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
 
         do {
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, response) = try await fetcher.data(for: request)
             guard let http = response as? HTTPURLResponse, 200..<300 ~= http.statusCode else {
                 let status = (response as? HTTPURLResponse)?.statusCode ?? 0
                 onDiagnostic("wine release lookup returned HTTP \(status); using \(pinnedFallback.tag)")
