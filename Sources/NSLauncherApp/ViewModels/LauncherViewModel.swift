@@ -79,27 +79,20 @@ final class LauncherViewModel: ObservableObject {
     private let coordinator: LauncherCoordinator
     private var currentTask: Task<Void, Never>?
     private var operationController: OperationController?
-    private var lastTransferMetricsUpdateAt: Date?
-    private var displayedSpeedText: String?
-    private var displayedEtaText: String?
-    private var transferSamples: [TransferSample] = []
-    private var lastDownloadFieldsUpdateAt: Date?
-    private var displayedDownloadFields: DownloadFieldSnapshot?
+    private var transferRate = TransferRateEstimator()
+    private var transferMetricsThrottle = TransferMetricsThrottle()
+    private var downloadFieldThrottle = DownloadFieldThrottle()
     private var activeSophonItems: [String: Date] = [:]
-    private var isSkippingMoltenVKExtensionDump = false
-    private var didSummarizeMoltenVKDump = false
     private var lastUpdateLogOverallBucket: Int?
     private var updateLoggedCompletedFiles: Set<String> = []
-    private var pendingWineLogText = ""
-    private var pendingUpdateLogText = ""
+    private var wineLogFilter = WineLogFilter()
+    private var wineLogBuffer = RunLogBuffer()
+    private var updateLogBuffer = RunLogBuffer()
     private var runLogFlushTask: Task<Void, Never>?
 
     /// How long buffered log text waits before it is published. Long enough to collapse a burst of
     /// process output, short enough that the panel still reads as live.
     private static let runLogFlushInterval: UInt64 = 250_000_000
-    /// Log size that triggers a trim, and the size the log is trimmed back to.
-    private static let runLogTrimThreshold = 120_000
-    private static let runLogRetainedCharacters = 80_000
 
     /// Creates a view model with already-loaded settings and a configured coordinator.
     init(settings: AppSettings, coordinator: LauncherCoordinator) {
@@ -115,7 +108,8 @@ final class LauncherViewModel: ObservableObject {
             settingsStore: SettingsStore(),
             sophonInstaller: GenshinSophonInstaller(),
             wineService: WineService(processRunner: processRunner),
-            macFullscreenActivator: MacNativeFullscreenActivator(processRunner: processRunner)
+            macFullscreenActivator: MacNativeFullscreenActivator(processRunner: processRunner),
+            processRunner: processRunner
         )
 
         let loadedSettings = (try? coordinator.loadSettings()) ?? .default
@@ -158,139 +152,58 @@ final class LauncherViewModel: ObservableObject {
         }
     }
 
+    /// Writes one setting and persists it.
+    ///
+    /// Replaces sixteen two-line methods that differed only in which field they assigned. Settings
+    /// that clamp or sanitize their input keep their own method below, so the sanitizing cannot be
+    /// skipped by a caller reaching for this one.
+    func update<Value>(_ keyPath: WritableKeyPath<AppSettings, Value>, to value: Value) {
+        settings[keyPath: keyPath] = value
+        persistSettings()
+    }
+
     /// Updates the UI language and persists the choice.
     func setLanguage(_ language: AppLanguage) {
-        settings.language = language
         statusText = AppText(language: language).ready
-        persistSettings()
+        update(\.language, to: language)
     }
 
-    /// Updates whether Wine launches should request a windowed or fullscreen game surface.
-    func setLaunchDisplayMode(_ mode: LaunchDisplayMode) {
-        settings.launchDisplayMode = mode
-        persistSettings()
-    }
 
-    /// Updates the voice-over language pack and persists the choice.
-    func setVoiceLanguage(_ language: VoiceLanguage) {
-        settings.voiceLanguage = language
-        persistSettings()
-    }
 
-    /// Updates the cloud-compatibility launch toggle and persists the choice.
-    func setCloudCompatibilityMode(_ enabled: Bool) {
-        settings.cloudCompatibilityMode = enabled
-        persistSettings()
-    }
 
-    /// Updates the AC patch toggle and persists the choice.
-    func setACPatchMode(_ enabled: Bool) {
-        settings.acPatchMode = enabled
-        persistSettings()
-    }
 
-    /// Updates the launch network block toggle and persists the choice.
-    func setBlockNetMode(_ enabled: Bool) {
-        settings.blockNetMode = enabled
-        persistSettings()
-    }
 
-    /// Updates the Wine network-timeout-fix toggle and persists the choice.
-    func setTimeoutFix(_ enabled: Bool) {
-        settings.timeoutFix = enabled
-        persistSettings()
-    }
 
-    /// Updates the real steam.exe parent toggle and persists the choice.
-    func setSteamPatch(_ enabled: Bool) {
-        settings.steamPatch = enabled
-        persistSettings()
-    }
 
-    /// Updates the Wine Mac Driver Retina scaling toggle and persists the choice.
-    func setMacDriverRetina(_ enabled: Bool) {
-        settings.macDriverRetina = enabled
-        persistSettings()
-    }
 
-    /// Updates the Wine Mac Driver left-Command-as-Ctrl toggle and persists the choice.
-    func setLeftCommandIsCtrl(_ enabled: Bool) {
-        settings.leftCommandIsCtrl = enabled
-        persistSettings()
-    }
 
-    /// Updates the Metal HUD overlay toggle and persists the choice.
-    func setShowMetalHUD(_ enabled: Bool) {
-        settings.showMetalHUD = enabled
-        persistSettings()
-    }
 
-    /// Updates the custom-resolution toggle and persists the choice.
-    func setResolutionCustom(_ enabled: Bool) {
-        settings.resolutionCustom = enabled
-        persistSettings()
-    }
 
     /// Updates the custom-resolution width and persists the choice.
     func setResolutionWidth(_ width: Int) {
-        settings.resolutionWidth = max(width, 1)
-        persistSettings()
+        update(\.resolutionWidth, to: max(width, 1))
     }
 
     /// Updates the custom-resolution height and persists the choice.
     func setResolutionHeight(_ height: Int) {
-        settings.resolutionHeight = max(height, 1)
-        persistSettings()
+        update(\.resolutionHeight, to: max(height, 1))
     }
 
-    /// Updates the HDR toggle and persists the choice.
-    func setEnableHDR(_ enabled: Bool) {
-        settings.enableHDR = enabled
-        persistSettings()
-    }
 
-    /// Updates the proxy toggle and persists the choice.
-    func setProxyEnabled(_ enabled: Bool) {
-        settings.proxyEnabled = enabled
-        persistSettings()
-    }
 
-    /// Updates the proxy host and persists the choice.
-    func setProxyHost(_ host: String) {
-        settings.proxyHost = host
-        persistSettings()
-    }
 
     /// Updates the optional DXMT frame-pacing cap (0 = disabled) and persists the choice.
     /// Clamped to a sane range; DXMT additionally requires the value to be a factor of the
     /// display refresh rate, which is communicated through the setting's description.
     func setMaxFrameRate(_ frameRate: Int) {
-        settings.maxFrameRate = AppSettings.sanitizedMaxFrameRate(frameRate)
-        persistSettings()
+        update(\.maxFrameRate, to: AppSettings.sanitizedMaxFrameRate(frameRate))
     }
 
-    /// Selects the Direct3D-to-Metal translation layer and persists the choice.
-    func setRenderBackend(_ backend: RenderBackendPreference) {
-        settings.renderBackend = backend
-        persistSettings()
-    }
 
-    /// Updates the opt-in msync toggle and persists the choice.
-    func setUseMsync(_ enabled: Bool) {
-        settings.useMsync = enabled
-        persistSettings()
-    }
-
-    /// Updates the DXMT MetalFX spatial upscaling toggle and persists the choice.
-    func setMetalFXUpscaling(_ enabled: Bool) {
-        settings.metalFXUpscaling = enabled
-        persistSettings()
-    }
 
     /// Updates the MetalFX spatial upscale factor and persists the choice.
     func setMetalFXScaleFactor(_ factor: Double) {
-        settings.metalFXScaleFactor = AppSettings.sanitizedMetalFXScaleFactor(factor)
-        persistSettings()
+        update(\.metalFXScaleFactor, to: AppSettings.sanitizedMetalFXScaleFactor(factor))
     }
 
     /// Refreshes local storage inventory for the selected game.
@@ -313,7 +226,7 @@ final class LauncherViewModel: ObservableObject {
                     self.statusText = self.text.ready
                 }
             } catch {
-                self.errorMessage = self.localizedErrorMessage(for: error)
+                self.errorMessage = self.text.message(for: error)
                 self.statusText = self.text.storageInventoryFailed
             }
         }
@@ -346,7 +259,7 @@ final class LauncherViewModel: ObservableObject {
                     ByteCountFormatter.string(fromByteCount: freedBytes, countStyle: .file)
                 )
             } catch {
-                self.errorMessage = self.localizedErrorMessage(for: error)
+                self.errorMessage = self.text.message(for: error)
                 self.statusText = self.text.voicePackRemoveFailed
             }
         }
@@ -390,7 +303,7 @@ final class LauncherViewModel: ObservableObject {
                         ByteCountFormatter.string(fromByteCount: freedBytes, countStyle: .file)
                     )
                 case let .failure(error):
-                    self.errorMessage = self.localizedErrorMessage(for: error)
+                    self.errorMessage = self.text.message(for: error)
                     self.statusText = self.text.cacheClearFailed
                 }
                 self.isManagingCache = false
@@ -461,7 +374,7 @@ final class LauncherViewModel: ObservableObject {
                 if error is CancellationError {
                     self.statusText = self.text.operationStopped
                 } else {
-                    self.errorMessage = self.localizedErrorMessage(for: error)
+                    self.errorMessage = self.text.message(for: error)
                     self.statusText = self.text.failedToPlanInstall
                 }
                 self.operationProgress = nil
@@ -535,7 +448,7 @@ final class LauncherViewModel: ObservableObject {
                     self.statusText = self.text.operationStopped
                     self.operationProgress = nil
                 } else {
-                    self.errorMessage = self.localizedErrorMessage(for: error)
+                    self.errorMessage = self.text.message(for: error)
                     self.statusText = self.text.installFailed
                     self.operationProgress = nil
                 }
@@ -553,6 +466,7 @@ final class LauncherViewModel: ObservableObject {
         isPaused = false
         isUpdatingGame = true
         discardBufferedRunLogs()
+        updateLogBuffer.reset()
         updateRunLog = ""
         lastUpdateLogOverallBucket = nil
         updateLoggedCompletedFiles.removeAll()
@@ -710,7 +624,7 @@ final class LauncherViewModel: ObservableObject {
                     self.statusText = self.text.operationStopped
                     self.appendUpdateLogLine(self.logText(en: "---- update stopped ----", vi: "---- đã dừng cập nhật ----"))
                 } else {
-                    let message = self.localizedErrorMessage(for: error)
+                    let message = self.text.message(for: error)
                     self.errorMessage = message
                     self.statusText = self.text.updateFailed
                     self.appendUpdateLogLine(self.logText(en: "---- update failed ----", vi: "---- cập nhật thất bại ----"))
@@ -747,9 +661,9 @@ final class LauncherViewModel: ObservableObject {
         isPaused = false
         isLaunchingWithWine = true
         discardBufferedRunLogs()
+        wineLogBuffer.reset()
         wineRunLog = ""
-        isSkippingMoltenVKExtensionDump = false
-        didSummarizeMoltenVKDump = false
+        wineLogFilter.reset()
         operationController = OperationController()
         operationProgress = OperationProgress(
             stageTitle: text.launchTitle,
@@ -824,8 +738,8 @@ final class LauncherViewModel: ObservableObject {
                     self.statusText = self.text.operationStopped
                 } else {
                     self.appendWineLogLine("---- launch failed ----")
-                    self.appendWineLogLine(self.localizedErrorMessage(for: error))
-                    self.errorMessage = self.localizedErrorMessage(for: error)
+                    self.appendWineLogLine(self.text.message(for: error))
+                    self.errorMessage = self.text.message(for: error)
                     self.statusText = self.text.launchFailed
                 }
                 self.operationProgress = nil
@@ -880,70 +794,14 @@ final class LauncherViewModel: ObservableObject {
 
     /// Appends a streamed process chunk to the Wine run log.
     private func appendWineLogChunk(_ chunk: ProcessOutputChunk) {
-        let prefix = chunk.stream == .stderr ? "[stderr] " : "[stdout] "
-        let filteredLines = chunk.text
-            .split(separator: "\n", omittingEmptySubsequences: false)
-            .compactMap { filteredWineLogLine(String($0), prefix: prefix) }
-        guard !filteredLines.isEmpty else { return }
-        let normalized = filteredLines.joined(separator: "\n")
-        appendWineLogText(normalized.hasSuffix("\n") ? normalized : normalized + "\n")
-    }
-
-    /// Removes large backend capability dumps while preserving actionable Wine/game diagnostics.
-    private func filteredWineLogLine(_ line: String, prefix: String) -> String? {
-        let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return "" }
-
-        if trimmed.contains("[mvk-info] MoltenVK version") {
-            isSkippingMoltenVKExtensionDump = true
-            if didSummarizeMoltenVKDump {
-                return nil
-            }
-            didSummarizeMoltenVKDump = true
-            return "\(prefix)[mvk-info] MoltenVK initialized; verbose Vulkan capability dump hidden"
-        }
-
-        if isSkippingMoltenVKExtensionDump {
-            if trimmed.hasPrefix("The following") || trimmed.hasPrefix("VK_") || trimmed.hasPrefix("[mvk-info] GPU device:") {
-                return nil
-            }
-            isSkippingMoltenVKExtensionDump = false
-        }
-
-        if Self.isLowSignalWineLogLine(trimmed) {
-            return nil
-        }
-
-        return prefix + line
-    }
-
-    /// Identifies repetitive graphics capability lines that hide the useful launch failure.
-    private static func isLowSignalWineLogLine(_ trimmedLine: String) -> Bool {
-        trimmedLine.hasPrefix("GPU Family ")
-            || trimmedLine.hasPrefix("model:")
-            || trimmedLine.hasPrefix("type:")
-            || trimmedLine.hasPrefix("VK_")
-            || trimmedLine.hasPrefix("[mvk-info] GPU device:")
-            || trimmedLine.hasPrefix("[mvk-info] Created VkInstance")
-            || trimmedLine.hasPrefix("Read-Write Texture Tier")
-            || trimmedLine.hasPrefix("supports the following GPU Features")
-            || trimmedLine.hasPrefix("Metal Shading Language")
-            || trimmedLine.hasPrefix("pipelineCacheUUID:")
-            || trimmedLine.hasPrefix("GPU memory available:")
-            || trimmedLine.hasPrefix("GPU memory used:")
-            || trimmedLine.hasPrefix("vendorID:")
-            || trimmedLine.hasPrefix("deviceID:")
-            || trimmedLine.contains("handle_DeviceMatchingCallback Ignoring HID device")
-            || trimmedLine.contains("kerberos_LsaApInitializePackage no Kerberos support")
-            || trimmedLine.contains("ntlm_check_version ntlm_auth was not found")
-            || trimmedLine.contains("ntlm_LsaApInitializePackage no NTLM support")
-            || trimmedLine.contains("wineserver: using server-side synchronization")
+        guard let text = wineLogFilter.filtered(chunk) else { return }
+        appendWineLogText(text)
     }
 
     /// Queues Wine diagnostics for the next coalesced flush.
     private func appendWineLogText(_ text: String) {
         emitConsoleLog(channel: "wine", text: text)
-        pendingWineLogText += text
+        wineLogBuffer.append(text)
         scheduleRunLogFlush()
     }
 
@@ -955,7 +813,7 @@ final class LauncherViewModel: ObservableObject {
     /// Queues update diagnostics for the next coalesced flush.
     private func appendUpdateLogText(_ text: String) {
         emitConsoleLog(channel: "update", text: text)
-        pendingUpdateLogText += text
+        updateLogBuffer.append(text)
         scheduleRunLogFlush()
     }
 
@@ -973,19 +831,17 @@ final class LauncherViewModel: ObservableObject {
         }
     }
 
-    /// Moves buffered text into the published logs and trims them back under the retention cap.
+    /// Publishes whatever the buffers have accumulated since the last flush.
     private func flushRunLogs() {
         runLogFlushTask?.cancel()
         runLogFlushTask = nil
-        guard !pendingWineLogText.isEmpty || !pendingUpdateLogText.isEmpty else { return }
+        guard wineLogBuffer.hasPendingText || updateLogBuffer.hasPendingText else { return }
 
-        if !pendingWineLogText.isEmpty {
-            wineRunLog = Self.trimmedRunLog(wineRunLog + pendingWineLogText)
-            pendingWineLogText = ""
+        if wineLogBuffer.flush() {
+            wineRunLog = wineLogBuffer.contents
         }
-        if !pendingUpdateLogText.isEmpty {
-            updateRunLog = Self.trimmedRunLog(updateRunLog + pendingUpdateLogText)
-            pendingUpdateLogText = ""
+        if updateLogBuffer.flush() {
+            updateRunLog = updateLogBuffer.contents
         }
         runLogVersion &+= 1
     }
@@ -994,17 +850,8 @@ final class LauncherViewModel: ObservableObject {
     private func discardBufferedRunLogs() {
         runLogFlushTask?.cancel()
         runLogFlushTask = nil
-        pendingWineLogText = ""
-        pendingUpdateLogText = ""
-    }
-
-    /// Drops the oldest text once the log grows past the trim threshold.
-    ///
-    /// Trimming down to `runLogRetainedCharacters` only when past `runLogTrimThreshold` amortizes
-    /// the O(n) copy over many appends instead of paying it on every one.
-    private static func trimmedRunLog(_ log: String) -> String {
-        guard log.count > runLogTrimThreshold else { return log }
-        return String(log.suffix(runLogRetainedCharacters))
+        wineLogBuffer.discardPending()
+        updateLogBuffer.discardPending()
     }
 
     /// Mirrors app-visible logs to stdout so terminal and Xcode console runs show the same diagnostics.
@@ -1113,20 +960,20 @@ final class LauncherViewModel: ObservableObject {
             let fileTotalText = ByteCountFormatter.string(fromByteCount: fileTotal, countStyle: .file)
             let overallFraction = overallTotal > 0 ? min(max(Double(overallReceived) / Double(overallTotal), 0), 1) : nil
             let fileFraction = fileTotal > 0 ? min(max(Double(fileReceived) / Double(fileTotal), 0), 1) : nil
-            let derivedMetrics = deriveTransferMetrics(received: overallReceived, total: overallTotal)
-            let latestSpeedText = derivedMetrics.speedBytesPerSecond.map {
+            let now = Date()
+            let estimate = transferRate.update(received: overallReceived, total: overallTotal, now: now)
+            let latestSpeedText = estimate.speedBytesPerSecond.map {
                 ByteCountFormatter.string(fromByteCount: $0, countStyle: .file) + "/s"
             }
-            let latestEtaText: String? = {
-                guard derivedMetrics.isWarmupComplete,
-                      let speedBytesPerSecond = derivedMetrics.speedBytesPerSecond,
-                      speedBytesPerSecond > 0,
-                      overallTotal > overallReceived else { return nil }
-                return formatETA(seconds: Double(overallTotal - overallReceived) / Double(speedBytesPerSecond))
-            }()
-            let transferMetrics = throttledTransferMetrics(
-                latestSpeedText: latestSpeedText,
-                latestEtaText: latestEtaText
+            // The ETA is withheld until the rolling window has warmed up; an estimate off the first
+            // second of a multi-gigabyte download is wrong by hours.
+            let latestEtaText = estimate.isWarmupComplete
+                ? estimate.etaSeconds.flatMap(ETAFormatter.text(seconds:))
+                : nil
+            let transferMetrics = transferMetricsThrottle.display(
+                speedText: latestSpeedText,
+                etaText: latestEtaText,
+                now: now
             )
             let latestDetailText = progressDetailText(
                 receivedText: overallReceivedText,
@@ -1146,13 +993,16 @@ final class LauncherViewModel: ObservableObject {
                 receivedKB: String(fileReceived / 1024),
                 totalKB: String(fileTotal / 1024)
             )
-            let throttledFields = throttledDownloadFields(
-                path: path,
-                partText: nil,
-                latestDetailText: latestDetailText,
-                latestCurrentPartDetailText: latestCurrentPartDetailText,
-                latestTotalKBText: latestTotalKBText,
-                latestCurrentPartKBText: latestCurrentPartKBText
+            let throttledFields = downloadFieldThrottle.display(
+                DownloadFieldSnapshot(
+                    path: path,
+                    partText: nil,
+                    detailText: latestDetailText,
+                    currentPartDetailText: latestCurrentPartDetailText,
+                    totalKBText: latestTotalKBText,
+                    currentPartKBText: latestCurrentPartKBText
+                ),
+                now: now
             )
             let activeItems = registerActiveSophonItem(path)
             statusText = text.downloadingSophonAsset(
@@ -1173,7 +1023,7 @@ final class LauncherViewModel: ObservableObject {
                 currentPartIsIndeterminate: fileTotal <= 0,
                 speedText: transferMetrics.speedText,
                 etaText: transferMetrics.etaText,
-                isETAWarmingUp: !derivedMetrics.isWarmupComplete && overallReceived > 0,
+                isETAWarmingUp: !estimate.isWarmupComplete && overallReceived > 0,
                 totalKBText: throttledFields.totalKBText,
                 currentPartKBText: throttledFields.currentPartKBText
             )
@@ -1240,50 +1090,6 @@ final class LauncherViewModel: ObservableObject {
         }
     }
 
-    /// Formats ETA with coarse rounding so the UI does not flicker every second.
-    private func formatETA(seconds: Double) -> String? {
-        guard seconds.isFinite, seconds > 0 else { return nil }
-        let roundedSeconds: Double
-        switch seconds {
-        case 0..<60:
-            roundedSeconds = (seconds / 5).rounded() * 5
-        case 60..<600:
-            roundedSeconds = (seconds / 15).rounded() * 15
-        case 600..<3600:
-            roundedSeconds = (seconds / 30).rounded() * 30
-        default:
-            roundedSeconds = (seconds / 60).rounded() * 60
-        }
-        let formatter = DateComponentsFormatter()
-        formatter.allowedUnits = roundedSeconds >= 3600 ? [.hour, .minute] : [.minute, .second]
-        formatter.unitsStyle = .full
-        formatter.maximumUnitCount = 2
-        return formatter.string(from: roundedSeconds)
-    }
-
-    /// Throttles speed and ETA labels independently from raw download callbacks.
-    private func throttledTransferMetrics(latestSpeedText: String?, latestEtaText: String?) -> (speedText: String?, etaText: String?) {
-        let now = Date()
-        let shouldRefresh = {
-            guard let lastTransferMetricsUpdateAt else { return true }
-            return now.timeIntervalSince(lastTransferMetricsUpdateAt) >= 1.5
-        }()
-
-        if shouldRefresh || displayedSpeedText == nil || displayedEtaText == nil {
-            displayedSpeedText = latestSpeedText
-            displayedEtaText = latestEtaText
-            lastTransferMetricsUpdateAt = now
-        } else if latestSpeedText == nil {
-            displayedSpeedText = nil
-        }
-
-        if latestEtaText == nil {
-            displayedEtaText = nil
-        }
-
-        return (displayedSpeedText, displayedEtaText)
-    }
-
     /// Formats byte progress with a percent suffix when the total is known.
     private func progressDetailText(receivedText: String, totalText: String, fraction: Double?) -> String {
         let byteText = text.progressValue(received: receivedText, total: totalText)
@@ -1297,145 +1103,15 @@ final class LauncherViewModel: ObservableObject {
 
     /// Clears cached transfer metrics when starting a new operation.
     private func resetTransferMetricsDisplay() {
-        lastTransferMetricsUpdateAt = nil
-        displayedSpeedText = nil
-        displayedEtaText = nil
-        transferSamples = []
-        lastDownloadFieldsUpdateAt = nil
-        displayedDownloadFields = nil
-    }
-
-    /// Throttles high-frequency download text fields to keep SwiftUI updates smooth.
-    private func throttledDownloadFields(
-        path: String,
-        partText: String?,
-        latestDetailText: String,
-        latestCurrentPartDetailText: String?,
-        latestTotalKBText: String?,
-        latestCurrentPartKBText: String?
-    ) -> DownloadFieldSnapshot {
-        let now = Date()
-        let latest = DownloadFieldSnapshot(
-            path: path,
-            partText: partText,
-            detailText: latestDetailText,
-            currentPartDetailText: latestCurrentPartDetailText,
-            totalKBText: latestTotalKBText,
-            currentPartKBText: latestCurrentPartKBText
-        )
-
-        let shouldRefresh = {
-            guard let displayedDownloadFields else { return true }
-            guard let lastDownloadFieldsUpdateAt else { return true }
-            if displayedDownloadFields.path != latest.path || displayedDownloadFields.partText != latest.partText {
-                return true
-            }
-            return now.timeIntervalSince(lastDownloadFieldsUpdateAt) >= 0.8
-        }()
-
-        if shouldRefresh {
-            displayedDownloadFields = latest
-            lastDownloadFieldsUpdateAt = now
-        }
-
-        return displayedDownloadFields ?? latest
-    }
-
-    /// Computes rolling transfer speed and ETA readiness from recent samples.
-    private func deriveTransferMetrics(received: Int64, total: Int64) -> (speedBytesPerSecond: Int64?, etaSeconds: Double?, isWarmupComplete: Bool) {
-        let now = Date()
-        // Keep samples dense enough for responsiveness but sparse enough to avoid noisy speed estimates.
-        let minimumSampleSpacing: TimeInterval = 0.5
-        let rollingWindow: TimeInterval = 12
-        let etaWarmupDuration: TimeInterval = 5
-
-        if let lastSample = transferSamples.last {
-            let deltaTime = now.timeIntervalSince(lastSample.date)
-            let deltaBytes = received - lastSample.receivedBytes
-            if deltaTime >= minimumSampleSpacing || deltaBytes >= 512 * 1024 || deltaBytes < 0 {
-                transferSamples.append(TransferSample(date: now, receivedBytes: received))
-            } else {
-                transferSamples[transferSamples.count - 1] = TransferSample(date: now, receivedBytes: received)
-            }
-        } else {
-            transferSamples.append(TransferSample(date: now, receivedBytes: received))
-        }
-
-        transferSamples.removeAll { now.timeIntervalSince($0.date) > rollingWindow }
-
-        guard let first = transferSamples.first, let last = transferSamples.last else {
-            return (nil, nil, false)
-        }
-
-        let elapsed = last.date.timeIntervalSince(first.date)
-        let transferredBytes = last.receivedBytes - first.receivedBytes
-        guard elapsed >= 1, transferredBytes > 0 else {
-            return (nil, nil, false)
-        }
-
-        let speed = Int64((Double(transferredBytes) / elapsed).rounded())
-        let eta: Double? = {
-            guard speed > 0, total > received else { return nil }
-            return Double(total - received) / Double(speed)
-        }()
-        return (speed, eta, elapsed >= etaWarmupDuration)
+        transferRate.reset()
+        transferMetricsThrottle.reset()
+        downloadFieldThrottle.reset()
     }
 
     /// Mutates the selected game in settings.
     private func updateSelectedGame(_ update: (inout GameDefinition) -> Void) {
         guard !settings.games.isEmpty else { return }
         update(&settings.games[0])
-    }
-
-    /// Converts domain errors into localized UI strings.
-    private func localizedErrorMessage(for error: Error) -> String {
-        switch error {
-        case let preflightError as LaunchPreflightError:
-            switch preflightError {
-            case let .missingExecutable(path):
-                return text.preflightMissingExecutable(path)
-            case .missingInstallMetadata:
-                return text.preflightMissingMetadata
-            case let .invalidInstallMetadata(detail):
-                return text.preflightInvalidMetadata(detail)
-            case let .updateRequiredBeforeLaunch(reason):
-                return text.preflightUpdateRequired(reason)
-            }
-        case let wineError as WineServiceError:
-            switch wineError {
-            case let .binaryQuarantined(path):
-                return text.wineBinaryQuarantined(path)
-            case let .dxvkBootstrapFailed(details):
-                return text.dxvkBootstrapFailed(details)
-            case let .dxmtBootstrapFailed(details):
-                return text.dxmtBootstrapFailed(details)
-            case let .dxmtUnsupportedWine(path):
-                return text.dxmtUnsupportedWine(path)
-            case let .d3dMetalUnavailable(path):
-                return text.d3dMetalUnavailable(path)
-            case let .unsupportedKernelDriver(driver):
-                return text.unsupportedKernelDriver(driver)
-            }
-        case let processError as ProcessRunnerError:
-            switch processError {
-            case let .executableNotFound(path):
-                return text.executableNotFound(path)
-            case let .nonZeroExit(result):
-                let details = result.stderr.isEmpty ? result.stdout : result.stderr
-                return text.processFailed(code: result.exitCode, details: details)
-            }
-        case let sophonError as SophonInstallerError:
-            switch sophonError {
-            case .zstdUnavailable:
-                return text.sophonZstdUnavailable
-            default:
-                return text.sophonUpdateFailed(sophonError.localizedDescription)
-            }
-        case is CancellationError:
-            return text.operationStopped
-        default:
-            return error.localizedDescription
-        }
     }
 
     /// Tracks recently active Sophon assets for the multi-file progress list.
@@ -1454,20 +1130,4 @@ final class LauncherViewModel: ObservableObject {
     private func resetActiveSophonItems() {
         activeSophonItems.removeAll()
     }
-}
-
-/// One transfer sample used for rolling speed and ETA calculations.
-private struct TransferSample {
-    let date: Date
-    let receivedBytes: Int64
-}
-
-/// Cached download text fields used to reduce UI refresh churn.
-private struct DownloadFieldSnapshot {
-    let path: String
-    let partText: String?
-    let detailText: String
-    let currentPartDetailText: String?
-    let totalKBText: String?
-    let currentPartKBText: String?
 }

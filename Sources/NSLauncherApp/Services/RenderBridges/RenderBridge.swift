@@ -1,7 +1,7 @@
 // RenderBridge.swift
 //
 // One type per Direct3D translation layer, so everything a backend needs lives together:
-// the environment the game runs with, the Wine binary it can run on, and how it is put in
+// the environment the game runs with, the Wine build it can run on, and how it is put in
 // place. Adding a backend is adding a file here, not editing branches in Models and
 // WineService.
 //
@@ -10,7 +10,11 @@
 // shared with anything else using that build, and overwriting its builtin DLLs is a one-way
 // change with no way back. Bridges that ship their own DLLs are selected by putting their
 // directory first on `WINEDLLPATH`, which is the same mechanism CrossOver uses to choose
-// between its own builtins and Apple's D3DMetal.
+// between its own builtins and a bundled translation layer.
+//
+// Bridges declare the registry state they need rather than writing it. Every `wine reg` call is a
+// whole Wine process on the launch path, so `WineService` collects the declarations and imports
+// them in one go — see `RegistryScript`.
 
 import Foundation
 
@@ -25,23 +29,56 @@ protocol RenderBridge: Sendable {
     /// when the launch later fails.
     func launchEnvironment(settings: AppSettings, displayRefreshRate: Int) -> [String: String]
 
-    /// Picks the Wine binary this bridge can run on. Bridges with no requirement of their own
-    /// return the resolved default.
-    func resolveWineBinary(
+    /// Picks the Wine build this bridge can run on, newest first.
+    ///
+    /// Throws rather than returning nil: only the bridge knows why none of the installed builds
+    /// qualified, and that reason is what the user has to act on.
+    func resolveWineBuild(
         preferredPath: String,
-        processRunner: ProcessRunning
-    ) async throws -> String
+        processRunner: ProcessRunning,
+        onDiagnostic: @escaping @Sendable (String) -> Void
+    ) async throws -> WineBuild
+
+    /// Registry state the prefix needs before the game starts.
+    ///
+    /// Applied in one batch with the launcher's own settings, so this must be idempotent — it is
+    /// re-declared on every launch rather than tracked with a marker.
+    func registryEntries() -> [RegistryEntry]
 
     /// Puts the bridge in place and contributes the environment that depends on where things
-    /// landed. Must not modify anything inside `wineRoot`.
+    /// landed. Must not modify anything inside the Wine build.
     func prepare(
-        wineRoot: URL,
-        wineBinaryPath: String,
+        wineBuild: WineBuild,
         prefixDirectory: URL,
         environment: inout [String: String],
         processRunner: ProcessRunning,
-        onDiagnostic: (String) -> Void
+        onDiagnostic: @escaping @Sendable (String) -> Void
     ) async throws
+}
+
+extension RenderBridge {
+    /// Most bridges need no registry state of their own.
+    func registryEntries() -> [RegistryEntry] { [] }
+
+    /// Default resolution: the newest usable Wine, with no extra requirement.
+    ///
+    /// Bridges that need more — DXMT's Metal symbols and version floor — override this.
+    func resolveWineBuild(
+        preferredPath: String,
+        processRunner: ProcessRunning,
+        onDiagnostic: @escaping @Sendable (String) -> Void
+    ) async throws -> WineBuild {
+        let search = await WineBinaryLocator.search(
+            preferredPath: preferredPath,
+            processRunner: processRunner,
+            onDiagnostic: onDiagnostic
+        )
+        if let build = search.builds.first { return build }
+        if let quarantined = search.quarantinedPaths.first {
+            throw WineServiceError.binaryQuarantined(quarantined)
+        }
+        throw ProcessRunnerError.executableNotFound(preferredPath)
+    }
 }
 
 /// Maps a resolved backend onto its bridge.
@@ -49,7 +86,6 @@ enum RenderBridges {
     static func bridge(for backend: RuntimeBackend) -> RenderBridge? {
         switch backend {
         case .dxmt: return DXMTBridge()
-        case .d3dMetal: return D3DMetalBridge()
         case .dxvk: return DXVKBridge()
         case .plainWine: return nil
         }
@@ -108,9 +144,11 @@ enum RenderBridgePayload {
         if FileManager.default.fileExists(atPath: extractedURL.path) {
             try FileManager.default.removeItem(at: extractedURL)
         }
+        // `-xf` rather than `-xzf`: payloads arrive gzipped, Wine distributions xz-compressed, and
+        // tar picks the decompressor from the archive itself.
         _ = try await processRunner.run(
             executable: "/usr/bin/tar",
-            arguments: ["-xzf", localArchive.path, "-C", directory.path],
+            arguments: ["-xf", localArchive.path, "-C", directory.path],
             environment: [:],
             currentDirectory: nil
         )
@@ -154,46 +192,6 @@ enum RenderBridgePayload {
                 try FileManager.default.removeItem(at: destination)
             }
             try FileManager.default.copyItem(at: source, to: destination)
-        }
-    }
-
-    /// Adds a `native,builtin` DLL override for the game's prefix.
-    static func setDLLOverride(
-        _ dllName: String,
-        wineBinaryPath: String,
-        environment: [String: String],
-        processRunner: ProcessRunning
-    ) async throws {
-        _ = try await processRunner.run(
-            executable: wineBinaryPath,
-            arguments: [
-                "reg", "add", "HKEY_CURRENT_USER\\Software\\Wine\\DllOverrides",
-                "/v", dllName, "/d", "native,builtin", "/f"
-            ],
-            environment: environment,
-            currentDirectory: nil
-        )
-    }
-
-    /// Removes a DLL override, treating "it was not there" as success.
-    static func deleteDLLOverride(
-        _ dllName: String,
-        wineBinaryPath: String,
-        environment: [String: String],
-        processRunner: ProcessRunning
-    ) async throws {
-        do {
-            _ = try await processRunner.run(
-                executable: wineBinaryPath,
-                arguments: [
-                    "reg", "delete", "HKEY_CURRENT_USER\\Software\\Wine\\DllOverrides",
-                    "/v", dllName, "/f"
-                ],
-                environment: environment,
-                currentDirectory: nil
-            )
-        } catch ProcessRunnerError.nonZeroExit {
-            // Missing values are fine; the desired state is that no override is present.
         }
     }
 }

@@ -18,7 +18,7 @@ final class SettingsStoreTests: XCTestCase {
 
     func testRoundTripsEverySetting() throws {
         var settings = AppSettings.default
-        settings.renderBackend = .d3dMetal
+        settings.metalFXUpscaling = true
         settings.maxFrameRate = 72
         settings.useMsync = true
         settings.proxyHost = "http://127.0.0.1:8080"
@@ -32,11 +32,11 @@ final class SettingsStoreTests: XCTestCase {
     /// its default rather than failing the whole decode.
     func testKeysMissingFromAnOlderFileFallBackToDefaults() throws {
         try store.save(AppSettings.default)
-        try stripKeys(["renderBackend", "useMsync", "maxFrameRate"])
+        try stripKeys(["metalFXScaleFactor", "useMsync", "maxFrameRate"])
 
         let loaded = try store.load()
 
-        XCTAssertEqual(loaded.renderBackend, .dxmt)
+        XCTAssertEqual(loaded.metalFXScaleFactor, 1.5)
         XCTAssertFalse(loaded.useMsync)
         XCTAssertEqual(loaded.maxFrameRate, 0)
     }
@@ -44,27 +44,27 @@ final class SettingsStoreTests: XCTestCase {
     /// Values the file does carry must survive the defaults merge untouched.
     func testStoredValuesWinOverDefaults() throws {
         var settings = AppSettings.default
-        settings.renderBackend = .d3dMetal
+        settings.maxFrameRate = 72
         settings.metalFXScaleFactor = 2.0
         try store.save(settings)
         try stripKeys(["useMsync"])
 
         let loaded = try store.load()
 
-        XCTAssertEqual(loaded.renderBackend, .d3dMetal)
+        XCTAssertEqual(loaded.maxFrameRate, 72)
         XCTAssertEqual(loaded.metalFXScaleFactor, 2.0)
     }
 
     /// Keys from removed settings must not break the decode.
     func testUnknownKeysFromRemovedSettingsAreIgnored() throws {
         try store.save(AppSettings.default)
-        try mutateJSON { $0["someSettingThatNoLongerExists"] = "legacy" }
+        try mutateJSON { $0["renderBackend"] = "d3dMetal" }
 
         XCTAssertNoThrow(try store.load())
     }
 
     func testCreatesDefaultsWhenNoFileExists() throws {
-        XCTAssertEqual(try store.load().renderBackend, .dxmt)
+        XCTAssertEqual(try store.load().metalFXScaleFactor, 1.5)
         XCTAssertTrue(FileManager.default.fileExists(atPath: settingsURL.path))
     }
 

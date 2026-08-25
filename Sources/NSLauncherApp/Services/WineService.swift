@@ -8,6 +8,11 @@
 // place all belong to `RenderBridge` (see Services/RenderBridges). This service only asks the
 // bridge for the backend the profile resolved and then gets on with launching.
 //
+// Every registry value a launch needs — the bridge's DLL overrides and the launcher's own Mac
+// Driver and PlayerPrefs settings — is collected and imported in a single `wine regedit` run. Each
+// `wine reg` invocation is a whole Wine process, and nine of them back to back cost 3.8s of dead
+// time before the game window could appear; see `RegistryScript`.
+//
 // Wine cannot load Windows kernel drivers, so output is scanned for known protection
 // driver names (`HoYoKProtect.sys`, `HoYoProtect.sys`, `mhyprot2.sys`) and surfaced
 // as `.unsupportedKernelDriver` instead of a generic process failure.
@@ -53,8 +58,9 @@ enum WineServiceError: LocalizedError {
     case dxvkBootstrapFailed(String)
     case dxmtBootstrapFailed(String)
     case dxmtUnsupportedWine(String)
-    case d3dMetalUnavailable(String)
+    case dxmtWineTooOld(String)
     case unsupportedKernelDriver(String)
+    case wineDistributionFailed(String)
 
     var errorDescription: String? {
         switch self {
@@ -66,10 +72,12 @@ enum WineServiceError: LocalizedError {
             return "DXMT setup failed: \(details)"
         case let .dxmtUnsupportedWine(path):
             return "Wine at \(path) does not expose the winemac.drv symbols required by DXMT."
-        case let .d3dMetalUnavailable(path):
-            return "This Wine build does not ship Apple D3DMetal at \(path); switch the render backend back to DXMT."
+        case let .dxmtWineTooOld(details):
+            return "The installed Wine is too old for DXMT: \(details)."
         case let .unsupportedKernelDriver(driver):
             return "Wine cannot load the Windows kernel driver \(driver)."
+        case let .wineDistributionFailed(details):
+            return "Installing the managed Wine build failed: \(details)"
         }
     }
 }
@@ -90,37 +98,24 @@ struct WineService: WineServicing {
 
     /// Launches the game executable through Wine and returns the completed process result.
     func launch(_ request: WineLaunchRequest) async throws -> ProcessResult {
-        Self.raiseFileDescriptorLimit(onDiagnostic: { emitDiagnostic($0, request: request) })
-        emitDiagnostic("launch request executable=\(request.executablePath.path)", request: request)
-        emitDiagnostic("launch request currentDirectory=\(request.currentDirectory?.path ?? "nil") prefix=\(request.prefixDirectory.path)", request: request)
-        emitDiagnostic("launch request runtime=\(request.runtimeRequirements.map(\.rawValue).joined(separator: ",")) args=\(request.arguments.joined(separator: " "))", request: request)
+        // Capturing only the output sink, rather than the whole request, keeps this closure
+        // Sendable — the bridges hand it to a URLSession delegate to report download progress.
+        let onOutput = request.onOutput
+        let diagnose: @Sendable (String) -> Void = { message in
+            onOutput?(ProcessOutputChunk(stream: .stdout, text: "[NSLauncher][launch-detail] \(message)\n"))
+        }
+
+        Self.raiseFileDescriptorLimit(onDiagnostic: diagnose)
+        diagnose("launch request executable=\(request.executablePath.path)")
+        diagnose("launch request currentDirectory=\(request.currentDirectory?.path ?? "nil") prefix=\(request.prefixDirectory.path)")
+        diagnose("launch request runtime=\(request.runtimeRequirements.map(\.rawValue).joined(separator: ",")) args=\(request.arguments.joined(separator: " "))")
+
         let bridge = RenderBridges.bridge(for: request.renderBackend)
-        emitDiagnostic("render backend=\(request.renderBackend.rawValue)", request: request)
-
-        let resolvedWineBinary: String
-        if let bridge {
-            emitDiagnostic("resolve Wine for \(request.renderBackend.rawValue) from preferred=\(request.wineBinaryPath)", request: request)
-            resolvedWineBinary = try await bridge.resolveWineBinary(
-                preferredPath: request.wineBinaryPath,
-                processRunner: processRunner
-            )
-        } else {
-            emitDiagnostic("resolve Wine executable preferred=\(request.wineBinaryPath)", request: request)
-            guard let binary = BinaryLocator.resolveExecutable(
-                preferredPath: request.wineBinaryPath,
-                candidateNames: BinaryLocator.candidateNames(forExecutable: request.wineBinaryPath)
-            ) else {
-                throw ProcessRunnerError.executableNotFound(request.wineBinaryPath)
-            }
-            resolvedWineBinary = binary
-        }
-        emitDiagnostic("resolved Wine binary=\(resolvedWineBinary)", request: request)
-
-        if let quarantinedPath = WineBinaryLocator.quarantinedPath(forExecutableAtPath: resolvedWineBinary) {
-            emitDiagnostic("quarantine detected path=\(quarantinedPath)", request: request)
-            throw WineServiceError.binaryQuarantined(quarantinedPath)
-        }
-        request.onOutput?(ProcessOutputChunk(stream: .stdout, text: "NSLauncher selected Wine binary: \(resolvedWineBinary)\n"))
+        diagnose("render backend=\(request.renderBackend.rawValue)")
+        diagnose("resolve Wine for \(request.renderBackend.rawValue) from preferred=\(request.wineBinaryPath)")
+        let wineBuild = try await resolveWineBuild(bridge: bridge, request: request, onDiagnostic: diagnose)
+        diagnose("resolved Wine binary=\(wineBuild.binaryPath) wine-\(wineBuild.majorVersion) root=\(wineBuild.root.path)")
+        onOutput?(ProcessOutputChunk(stream: .stdout, text: "NSLauncher selected Wine binary: \(wineBuild.binaryPath)\n"))
 
         // Caller-supplied environment values win except for WINEPREFIX, which must match settings.
         // Enforce WINEARCH and WINEDEBUG defaults if caller did not supply them.
@@ -130,39 +125,49 @@ struct WineService: WineServicing {
         ]
         baseEnv.merge(request.environment) { _, new in new }
         baseEnv["WINEPREFIX"] = request.prefixDirectory.path
+        if let crossOverRoot = WineBinaryLocator.crossOverRoot(for: wineBuild) {
+            baseEnv["CX_ROOT"] = crossOverRoot.path
+            diagnose("CX_ROOT=\(crossOverRoot.path)")
+        }
 
         if let bridge {
-            emitDiagnostic("prepare \(request.renderBackend.rawValue) runtime", request: request)
+            diagnose("prepare \(request.renderBackend.rawValue) runtime")
             try await bridge.prepare(
-                wineRoot: try WineBinaryLocator.wineRootDirectory(forBinaryAtPath: resolvedWineBinary),
-                wineBinaryPath: resolvedWineBinary,
+                wineBuild: wineBuild,
                 prefixDirectory: request.prefixDirectory,
                 environment: &baseEnv,
                 processRunner: processRunner,
-                onDiagnostic: { emitDiagnostic($0, request: request) }
+                onDiagnostic: diagnose
             )
-            emitDiagnostic("\(request.renderBackend.rawValue) runtime ready", request: request)
+            diagnose("\(request.renderBackend.rawValue) runtime ready")
         }
 
         let env = baseEnv
-        emitDiagnostic("environment WINEPREFIX=\(env["WINEPREFIX"] ?? "") WINEARCH=\(env["WINEARCH"] ?? "") WINEDEBUG=\(env["WINEDEBUG"] ?? "") customKeys=\(request.environment.keys.sorted().joined(separator: ","))", request: request)
+        diagnose("environment WINEPREFIX=\(env["WINEPREFIX"] ?? "") WINEARCH=\(env["WINEARCH"] ?? "") WINEDEBUG=\(env["WINEDEBUG"] ?? "") customKeys=\(request.environment.keys.sorted().joined(separator: ","))")
 
-        // Apply Wine Mac Driver and game registry settings (Retina, left-Cmd-as-Ctrl,
-        // custom resolution, HDR) before the game process starts. Best-effort: a registry
-        // write failure must not block the launch (mirrors YAAGL's ignore-on-error behavior).
+        // Apply the bridge's DLL overrides together with the launcher's Mac Driver and game
+        // registry settings, in one import. Best-effort: a registry write failure must not block
+        // the launch (mirrors YAAGL's ignore-on-error behavior).
+        let entries = (bridge?.registryEntries() ?? []) + Self.launchRegistryEntries(for: request)
         do {
-            try await applyRegistrySettings(
-                request: request,
-                wineBinaryPath: resolvedWineBinary,
-                environment: env
+            diagnose("apply \(entries.count) registry values in one import")
+            try await RegistryScript.apply(
+                entries,
+                wineBinaryPath: wineBuild.binaryPath,
+                environment: env,
+                processRunner: processRunner
             )
         } catch {
-            emitDiagnostic("registry settings best-effort failed: \(error.localizedDescription)", request: request)
+            diagnose("registry settings best-effort failed: \(error.localizedDescription)")
         }
 
-        emitDiagnostic("snapshot existing game processes", request: request)
-        let alreadyRunningGamePIDs = await runningExecutableProcessIDs(request.executablePath)
-        emitDiagnostic("existing game process count=\(alreadyRunningGamePIDs.count)", request: request)
+        diagnose("snapshot existing game processes")
+        let alreadyRunningGamePIDs = await GameProcessInspector.runningProcessIDs(
+            forExecutable: request.executablePath,
+            processRunner: processRunner
+        )
+        diagnose("existing game process count=\(alreadyRunningGamePIDs.count)")
+
         let launchResult: ProcessResult
         do {
             var processArguments: [String]
@@ -172,29 +177,29 @@ struct WineService: WineServicing {
                 // game's parent process is `steam.exe` and a Steam client is detected. Wine cannot load
                 // that WDF driver, so this is the working path.
                 if try await ensureSteamStub(prefixDirectory: request.prefixDirectory) {
-                    let gameWindowsPath = windowsPath(for: request.executablePath)
+                    let gameWindowsPath = GameProcessInspector.windowsPath(for: request.executablePath)
                     processArguments = ["C:\\windows\\system32\\steam.exe", gameWindowsPath] + request.arguments
-                    emitDiagnostic("launch via real steam.exe parent: \(gameWindowsPath) \(request.arguments.joined(separator: " "))", request: request)
-                } else if try ensureSteamLauncher(prefixDirectory: request.prefixDirectory, wineBinaryPath: resolvedWineBinary) {
+                    diagnose("launch via real steam.exe parent: \(gameWindowsPath) \(request.arguments.joined(separator: " "))")
+                } else if try ensureSteamLauncher(prefixDirectory: request.prefixDirectory, wineBuild: wineBuild) {
                     // Fallback: a Wine builtin `cmd.exe` copied to `steam.exe` still satisfies the
                     // parent-process name check when the real Valve stubs cannot be downloaded.
                     let commandLine = ([request.executablePath.lastPathComponent] + request.arguments).joined(separator: " ")
                     processArguments = ["C:\\windows\\system32\\steam.exe", "/c", commandLine]
-                    emitDiagnostic("launch via cmd.exe steam parent fallback: \(commandLine)", request: request)
+                    diagnose("launch via cmd.exe steam parent fallback: \(commandLine)")
                 } else {
-                    emitDiagnostic("steam.exe parent unavailable; falling back to direct launch", request: request)
+                    diagnose("steam.exe parent unavailable; falling back to direct launch")
                     processArguments = [request.executablePath.path] + request.arguments
                 }
             } else {
                 processArguments = [request.executablePath.path] + request.arguments
             }
-            emitDiagnostic("start process command=\(resolvedWineBinary) \(processArguments.joined(separator: " "))", request: request)
+            diagnose("start process command=\(wineBuild.binaryPath) \(processArguments.joined(separator: " "))")
             let gameLogURL = GameLogFile.prepare()
             if let gameLogURL {
-                emitDiagnostic("game output -> \(gameLogURL.path)", request: request)
+                diagnose("game output -> \(gameLogURL.path)")
             }
             launchResult = try await processRunner.run(
-                executable: resolvedWineBinary,
+                executable: wineBuild.binaryPath,
                 arguments: processArguments,
                 environment: env,
                 currentDirectory: request.currentDirectory,
@@ -202,55 +207,115 @@ struct WineService: WineServicing {
                 onOutput: request.onOutput
             )
         } catch let ProcessRunnerError.nonZeroExit(result) {
-            emitDiagnostic("process exited non-zero code=\(result.exitCode); checking whether game stayed alive", request: request)
+            diagnose("process exited non-zero code=\(result.exitCode); checking whether game stayed alive")
             if await hasNewLaunchedExecutableProcess(request.executablePath, excluding: alreadyRunningGamePIDs) {
-                emitDiagnostic("detected launched game process after Wine exit; treating launch as successful", request: request)
+                diagnose("detected launched game process after Wine exit; treating launch as successful")
                 launchResult = ProcessResult(exitCode: 0, stdout: result.stdout, stderr: result.stderr)
             } else if result.exitCode == 15, Self.outputIndicatesGameStarted(result.stdout + "\n" + result.stderr) {
-                emitDiagnostic("Wine exit 15 with started-game signal; treating launch as successful", request: request)
+                diagnose("Wine exit 15 with started-game signal; treating launch as successful")
                 launchResult = ProcessResult(exitCode: 0, stdout: result.stdout, stderr: result.stderr)
             } else if request.runtimeRequirements.contains(.dxmt),
                Self.outputIndicatesDXMTUnsupportedWine(result.stdout + "\n" + result.stderr) {
-                emitDiagnostic("DXMT unsupported Wine signal detected", request: request)
-                throw WineServiceError.dxmtUnsupportedWine(resolvedWineBinary)
+                diagnose("DXMT unsupported Wine signal detected")
+                throw WineServiceError.dxmtUnsupportedWine(wineBuild.binaryPath)
             } else if let driverName = Self.unsupportedKernelDriverName(in: result.stdout + "\n" + result.stderr) {
-                emitDiagnostic("unsupported kernel driver detected=\(driverName)", request: request)
+                diagnose("unsupported kernel driver detected=\(driverName)")
                 throw WineServiceError.unsupportedKernelDriver(driverName)
             } else {
-                emitDiagnostic("non-zero process exit remains failure code=\(result.exitCode)", request: request)
+                diagnose("non-zero process exit remains failure code=\(result.exitCode)")
                 throw ProcessRunnerError.nonZeroExit(result)
             }
         }
 
         // Best-effort wineserver -w: flush registry and wait for Wine processes to exit.
-        await waitForWineserver(wineBinaryPath: resolvedWineBinary, environment: env, request: request)
+        await waitForWineserver(wineBuild: wineBuild, environment: env, onDiagnostic: diagnose)
 
         return launchResult
     }
 
-    private func emitDiagnostic(_ message: String, request: WineLaunchRequest) {
-        request.onOutput?(ProcessOutputChunk(stream: .stdout, text: "[NSLauncher][launch-detail] \(message)\n"))
+    /// Resolves the Wine build for this launch.
+    ///
+    /// A bridge decides for itself, because only it knows what it additionally requires. Without
+    /// one (`plainWine`) the newest usable build wins.
+    private func resolveWineBuild(
+        bridge: RenderBridge?,
+        request: WineLaunchRequest,
+        onDiagnostic: @escaping @Sendable (String) -> Void
+    ) async throws -> WineBuild {
+        if let bridge {
+            return try await bridge.resolveWineBuild(
+                preferredPath: request.wineBinaryPath,
+                processRunner: processRunner,
+                onDiagnostic: onDiagnostic
+            )
+        }
+        let search = await WineBinaryLocator.search(
+            preferredPath: request.wineBinaryPath,
+            processRunner: processRunner,
+            onDiagnostic: onDiagnostic
+        )
+        if let build = search.builds.first { return build }
+        if let quarantined = search.quarantinedPaths.first {
+            throw WineServiceError.binaryQuarantined(quarantined)
+        }
+        throw ProcessRunnerError.executableNotFound(request.wineBinaryPath)
+    }
+
+    /// Registry values the launcher itself applies before the game starts.
+    ///
+    /// The value names with `_h<digits>` suffixes are Unity's hashed `PlayerPrefs` registry keys for
+    /// Genshin Impact (e.g. `Screenmanager Resolution Width_h182942802`, `WINDOWS_HDR_ON_h3132281285`).
+    /// They are written straight to `HKCU\Software\miHoYo\Genshin Impact` and match YAAGL's
+    /// `applyResolutionRegistry` / `applyHDRRegistry` / `setProps`. Do not rename the keys or change
+    /// the value-name suffixes without re-deriving them from Unity's hashing — the game will silently
+    /// ignore an unknown key.
+    private static func launchRegistryEntries(for request: WineLaunchRequest) -> [RegistryEntry] {
+        let macDriver = #"HKEY_CURRENT_USER\Software\Wine\Mac Driver"#
+        let genshin = #"HKEY_CURRENT_USER\Software\miHoYo\Genshin Impact"#
+
+        var entries: [RegistryEntry] = [
+            RegistryEntry(key: macDriver, name: "RetinaMode", value: .string(request.macDriverRetina ? "y" : "n")),
+            RegistryEntry(key: macDriver, name: "LeftCommandIsCtrl", value: .string(request.leftCommandIsCtrl ? "y" : "n")),
+            // Unity persists display changes made inside the game into these PlayerPrefs keys, so
+            // the flag is rewritten before every launch to keep it sticky. Both display modes run
+            // Unity windowed: the Fullscreen mode enters native macOS fullscreen at the AppKit
+            // level after launch (see MacNativeFullscreenActivator), and a persisted fullscreen
+            // flag here would fight that by making the game cover the screen borderlessly itself.
+            RegistryEntry(key: genshin, name: "Screenmanager Is Fullscreen mode_h3981298716", value: .dword(0))
+        ]
+
+        if let resolution = request.resolutionOverride {
+            entries.append(RegistryEntry(key: genshin, name: "Screenmanager Resolution Width_h182942802", value: .dword(UInt32(resolution.width))))
+            entries.append(RegistryEntry(key: genshin, name: "Screenmanager Resolution Height_h2627697771", value: .dword(UInt32(resolution.height))))
+        }
+        if request.enableHDR {
+            entries.append(RegistryEntry(key: genshin, name: "WINDOWS_HDR_ON_h3132281285", value: .dword(1)))
+        }
+        return entries
     }
 
     /// Best-effort wait for wineserver to exit, flushing registry writes and logs.
-    private func waitForWineserver(wineBinaryPath: String, environment: [String: String], request: WineLaunchRequest) async {
+    private func waitForWineserver(
+        wineBuild: WineBuild,
+        environment: [String: String],
+        onDiagnostic: @escaping @Sendable (String) -> Void
+    ) async {
+        let wineserverPath = wineBuild.root.appendingPathComponent("bin/wineserver").path
+        guard FileManager.default.isExecutableFile(atPath: wineserverPath) else {
+            onDiagnostic("wineserver not found at \(wineserverPath); skipping wait")
+            return
+        }
         do {
-            let wineRoot = try WineBinaryLocator.wineRootDirectory(forBinaryAtPath: wineBinaryPath)
-            let wineserverPath = wineRoot.appendingPathComponent("bin/wineserver").path
-            guard FileManager.default.isExecutableFile(atPath: wineserverPath) else {
-                emitDiagnostic("wineserver not found at \(wineserverPath); skipping wait", request: request)
-                return
-            }
-            emitDiagnostic("wineserver -w wait start", request: request)
+            onDiagnostic("wineserver -w wait start")
             _ = try await processRunner.run(
                 executable: wineserverPath,
                 arguments: ["-w"],
                 environment: environment,
                 currentDirectory: nil
             )
-            emitDiagnostic("wineserver -w completed", request: request)
+            onDiagnostic("wineserver -w completed")
         } catch {
-            emitDiagnostic("wineserver -w best-effort failed: \(error.localizedDescription)", request: request)
+            onDiagnostic("wineserver -w best-effort failed: \(error.localizedDescription)")
         }
     }
 
@@ -259,9 +324,8 @@ struct WineService: WineServicing {
     /// downloaded; the anti-cheat only checks the parent-process *name*, so a renamed cmd.exe is
     /// enough to satisfy it. Do not remove this fallback — if the stub download fails, the game must
     /// still get a steam.exe parent or it aborts during the anti-cheat driver-load phase.
-    private func ensureSteamLauncher(prefixDirectory: URL, wineBinaryPath: String) throws -> Bool {
-        let wineRoot = try WineBinaryLocator.wineRootDirectory(forBinaryAtPath: wineBinaryPath)
-        let source = wineRoot.appendingPathComponent("lib/wine/x86_64-windows/cmd.exe")
+    private func ensureSteamLauncher(prefixDirectory: URL, wineBuild: WineBuild) throws -> Bool {
+        let source = wineBuild.root.appendingPathComponent("lib/wine/x86_64-windows/cmd.exe")
         guard FileManager.default.fileExists(atPath: source.path) else { return false }
         let system32 = prefixDirectory.appendingPathComponent("drive_c/windows/system32", isDirectory: true)
         try FileManager.default.createDirectory(at: system32, withIntermediateDirectories: true)
@@ -338,145 +402,17 @@ struct WineService: WineServicing {
         }
     }
 
-    /// Converts a macOS absolute path into the `Z:` drive path Wine presents to Windows programs.
-    private func windowsPath(for url: URL) -> String {
-        "Z:" + url.path.replacingOccurrences(of: "/", with: "\\")
-    }
-
-    /// Writes Wine Mac Driver and game registry values (Retina scaling, left-Cmd-as-Ctrl, custom
-    /// resolution, HDR) into the prefix before the game process starts. Best-effort by design: these
-    /// are quality-of-life settings, so a registry write failure must never block the launch.
-    ///
-    /// The value names with `_h<digits>` suffixes are Unity's hashed `PlayerPrefs` registry keys for
-    /// Genshin Impact (e.g. `Screenmanager Resolution Width_h182942802`, `WINDOWS_HDR_ON_h3132281285`).
-    /// They are written straight to `HKCU\Software\miHoYo\Genshin Impact` and match YAAGL's
-    /// `applyResolutionRegistry` / `applyHDRRegistry` / `setProps`. Do not rename the keys or change
-    /// the value-name suffixes without re-deriving them from Unity's hashing — the game will silently
-    /// ignore an unknown key.
-    private func applyRegistrySettings(
-        request: WineLaunchRequest,
-        wineBinaryPath: String,
-        environment: [String: String]
-    ) async throws {
-        try await setRegistryString(
-            key: "HKEY_CURRENT_USER\\Software\\Wine\\Mac Driver",
-            valueName: "RetinaMode",
-            data: request.macDriverRetina ? "y" : "n",
-            wineBinaryPath: wineBinaryPath,
-            environment: environment
-        )
-        try await setRegistryString(
-            key: "HKEY_CURRENT_USER\\Software\\Wine\\Mac Driver",
-            valueName: "LeftCommandIsCtrl",
-            data: request.leftCommandIsCtrl ? "y" : "n",
-            wineBinaryPath: wineBinaryPath,
-            environment: environment
-        )
-
-        // Unity persists display changes made inside the game into these PlayerPrefs keys, so
-        // the flag is rewritten before every launch to keep it sticky. Both display modes run
-        // Unity windowed: the Fullscreen mode enters native macOS fullscreen at the AppKit
-        // level after launch (see MacNativeFullscreenActivator), and a persisted fullscreen
-        // flag here would fight that by making the game cover the screen borderlessly itself.
-        try await setRegistryDWord(
-            key: "HKEY_CURRENT_USER\\Software\\miHoYo\\Genshin Impact",
-            valueName: "Screenmanager Is Fullscreen mode_h3981298716",
-            data: 0,
-            wineBinaryPath: wineBinaryPath,
-            environment: environment
-        )
-        if let resolution = request.resolutionOverride {
-            try await setRegistryDWord(
-                key: "HKEY_CURRENT_USER\\Software\\miHoYo\\Genshin Impact",
-                valueName: "Screenmanager Resolution Width_h182942802",
-                data: UInt32(resolution.width),
-                wineBinaryPath: wineBinaryPath,
-                environment: environment
-            )
-            try await setRegistryDWord(
-                key: "HKEY_CURRENT_USER\\Software\\miHoYo\\Genshin Impact",
-                valueName: "Screenmanager Resolution Height_h2627697771",
-                data: UInt32(resolution.height),
-                wineBinaryPath: wineBinaryPath,
-                environment: environment
-            )
-        }
-
-        if request.enableHDR {
-            try await setRegistryDWord(
-                key: "HKEY_CURRENT_USER\\Software\\miHoYo\\Genshin Impact",
-                valueName: "WINDOWS_HDR_ON_h3132281285",
-                data: 1,
-                wineBinaryPath: wineBinaryPath,
-                environment: environment
-            )
-        }
-    }
-
-    /// Writes a REG_SZ value using `wine reg add`.
-    private func setRegistryString(
-        key: String,
-        valueName: String,
-        data: String,
-        wineBinaryPath: String,
-        environment: [String: String]
-    ) async throws {
-        _ = try await processRunner.run(
-            executable: wineBinaryPath,
-            arguments: ["reg", "add", key, "/v", valueName, "/t", "REG_SZ", "/d", data, "/f"],
-            environment: environment,
-            currentDirectory: nil
-        )
-    }
-
-    /// Writes a REG_DWORD value using `wine reg add`.
-    private func setRegistryDWord(
-        key: String,
-        valueName: String,
-        data: UInt32,
-        wineBinaryPath: String,
-        environment: [String: String]
-    ) async throws {
-        _ = try await processRunner.run(
-            executable: wineBinaryPath,
-            arguments: ["reg", "add", key, "/v", valueName, "/t", "REG_DWORD", "/d", String(data), "/f"],
-            environment: environment,
-            currentDirectory: nil
-        )
-    }
-
     /// Wine can return a non-zero wrapper code after successfully spawning the Windows GUI process.
     private func hasNewLaunchedExecutableProcess(_ executablePath: URL, excluding existingPIDs: Set<Int32>) async -> Bool {
         do {
             try await Task.sleep(nanoseconds: 2_000_000_000)
-            let currentPIDs = await runningExecutableProcessIDs(executablePath)
+            let currentPIDs = await GameProcessInspector.runningProcessIDs(
+                forExecutable: executablePath,
+                processRunner: processRunner
+            )
             return !currentPIDs.subtracting(existingPIDs).isEmpty
         } catch {
             return false
-        }
-    }
-
-    /// Returns running process IDs for the exact executable path, ignoring older unrelated Wine processes.
-    private func runningExecutableProcessIDs(_ executablePath: URL) async -> Set<Int32> {
-        do {
-            let result = try await processRunner.run(
-                executable: "/bin/ps",
-                arguments: ["axo", "pid=,command="],
-                environment: [:],
-                currentDirectory: nil
-            )
-            return Set(result.stdout
-                .split(whereSeparator: \.isNewline)
-                .compactMap { line -> Int32? in
-                    let trimmed = line.trimmingCharacters(in: .whitespaces)
-                    guard let firstSpace = trimmed.firstIndex(where: \.isWhitespace),
-                          trimmed[trimmed.index(after: firstSpace)...].contains(executablePath.path) else {
-                        return nil
-                    }
-                    return Int32(trimmed[..<firstSpace])
-                })
-        } catch {
-            return []
         }
     }
 
@@ -524,10 +460,4 @@ struct WineService: WineServicing {
             || output.contains("\"message\":\"app running\"")
     }
 
-}
-
-private struct DXMTPayloadCopy {
-    var names: [String]
-    var sourceDirectory: URL
-    var destinationDirectory: URL
 }

@@ -2,7 +2,7 @@
 //
 // DXVK: Direct3D 11 translated to Vulkan, which MoltenVK then translates to Metal.
 //
-// Two translation hops instead of one, so it is strictly more overhead than DXMT or D3DMetal on
+// Two translation hops instead of one, so it is strictly more overhead than DXMT on
 // Apple hardware. It stays available for game definitions that ask for it, but it is not the
 // choice for anything that can use a direct Metal bridge.
 //
@@ -25,26 +25,20 @@ struct DXVKBridge: RenderBridge {
         ["WINEESYNC": "1"]
     }
 
-    func resolveWineBinary(preferredPath: String, processRunner: ProcessRunning) async throws -> String {
-        guard let binary = BinaryLocator.resolveExecutable(
-            preferredPath: preferredPath,
-            candidateNames: BinaryLocator.candidateNames(forExecutable: preferredPath)
-        ) else {
-            throw ProcessRunnerError.executableNotFound(preferredPath)
-        }
-        if let quarantinedPath = WineBinaryLocator.quarantinedPath(forExecutableAtPath: binary) {
-            throw WineServiceError.binaryQuarantined(quarantinedPath)
-        }
-        return binary
+    /// DXVK's DLLs are copied into the prefix, so they need native overrides to win over the Wine
+    /// builtins. Re-declared every launch rather than tracked by the payload marker below: the
+    /// prefix registry and the copied files can drift apart, and reasserting costs nothing now
+    /// that all registry state is written in one batch.
+    func registryEntries() -> [RegistryEntry] {
+        ["d3d11", "dxgi"].map(RegistryEntry.nativeDLLOverride)
     }
 
     func prepare(
-        wineRoot: URL,
-        wineBinaryPath: String,
+        wineBuild: WineBuild,
         prefixDirectory: URL,
         environment: inout [String: String],
         processRunner: ProcessRunning,
-        onDiagnostic: (String) -> Void
+        onDiagnostic: @escaping @Sendable (String) -> Void
     ) async throws {
         let markerURL = prefixDirectory.appendingPathComponent(".nslauncher-dxvk-\(Self.version)")
         let system32 = prefixDirectory.appendingPathComponent("drive_c/windows/system32", isDirectory: true)
@@ -85,15 +79,6 @@ struct DXVKBridge: RenderBridge {
                 to: syswow64
             )
 
-            onDiagnostic("set DXVK DLL overrides")
-            for dllName in ["d3d11", "dxgi"] {
-                try await RenderBridgePayload.setDLLOverride(
-                    dllName,
-                    wineBinaryPath: wineBinaryPath,
-                    environment: environment,
-                    processRunner: processRunner
-                )
-            }
             try Data("installed\n".utf8).write(to: markerURL, options: .atomic)
         } catch let wineError as WineServiceError {
             throw wineError

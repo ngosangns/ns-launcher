@@ -19,15 +19,13 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         useMsync: Bool = false,
         maxFrameRate: Int = 0,
         metalFXUpscaling: Bool = false,
-        resolutionCustom: Bool = false,
-        renderBackend: RenderBackendPreference = .dxmt
+        resolutionCustom: Bool = false
     ) -> AppSettings {
         var settings = AppSettings.default
         settings.useMsync = useMsync
         settings.maxFrameRate = maxFrameRate
         settings.metalFXUpscaling = metalFXUpscaling
         settings.resolutionCustom = resolutionCustom
-        settings.renderBackend = renderBackend
         return settings
     }
 
@@ -130,28 +128,28 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         XCTAssertEqual(profile.environment["DXMT_METALFX_SPATIAL_SWAPCHAIN"], "1")
     }
 
-    /// D3DMetal is selected purely through the DLL search path, so none of DXMT's knobs may leak
-    /// into the launch; WineService fills in WINEDLLPATH once the Wine root is known.
-    func testD3DMetalBackendCarriesNoDXMTEnvironment() {
-        let profile = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .dxmt]),
-            settings: makeSettings(renderBackend: .d3dMetal),
-            displayRefreshRate: Self.refreshRate
-        )
-        XCTAssertEqual(profile.backend, .d3dMetal)
-        XCTAssertNil(profile.environment["DXMT_SHADER_CACHE"])
-        XCTAssertNil(profile.environment["DXMT_LOG_PATH"])
-        XCTAssertNil(profile.environment["DXMT_CONFIG"])
-        XCTAssertEqual(profile.environment["WINEESYNC"], "1")
-    }
-
-    func testRenderBackendPreferenceOnlyAppliesToGamesNeedingABridge() {
+    /// DXMT is not applied to a game that never asked for a translation layer; its environment
+    /// would otherwise follow every plain-Wine launch around.
+    func testAGameNeedingNoBridgeRunsOnPlainWine() {
         let profile = LaunchRuntimeProfile.build(
             game: makeGame(requirements: [.wine]),
-            settings: makeSettings(renderBackend: .d3dMetal),
+            settings: makeSettings(),
             displayRefreshRate: Self.refreshRate
         )
         XCTAssertEqual(profile.backend, .plainWine)
+        XCTAssertNil(profile.environment["DXMT_SHADER_CACHE"])
+        XCTAssertNil(profile.environment["DXMT_LOG_PATH"])
+    }
+
+    /// Every game that needs a Direct3D-to-Metal layer gets DXMT; there is no second choice to
+    /// fall to, so a game requiring one must never resolve to plain Wine.
+    func testEveryGameNeedingADirect3DLayerGetsDXMT() {
+        let profile = LaunchRuntimeProfile.build(
+            game: makeGame(requirements: [.wine, .dxmt]),
+            settings: makeSettings(),
+            displayRefreshRate: Self.refreshRate
+        )
+        XCTAssertEqual(profile.backend, .dxmt)
     }
 
     /// The persistent pipeline cache is what keeps a character swap from paying shader-compile

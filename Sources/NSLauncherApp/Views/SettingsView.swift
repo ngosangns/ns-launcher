@@ -51,7 +51,7 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Picker(text.voiceLanguageLabel, selection: Binding(
                     get: { viewModel.settings.voiceLanguage },
-                    set: { viewModel.setVoiceLanguage($0) }
+                    set: { viewModel.update(\.voiceLanguage, to: $0) }
                 )) {
                     ForEach(VoiceLanguage.allCases) { language in
                         Text(text.voiceLanguageName(language)).tag(language)
@@ -72,30 +72,10 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 14) {
                 voiceLanguageField
                 displayModeField
-                renderBackendField
                 pathFields(for: game)
                 voicePackageManagement
                 macDriverOptions
                 launchOptions
-            }
-        }
-    }
-
-    private var renderBackendField: some View {
-        SettingField(label: text.renderBackendLabel) {
-            VStack(alignment: .leading, spacing: 6) {
-                Picker(text.renderBackendLabel, selection: Binding(
-                    get: { viewModel.settings.renderBackend },
-                    set: { viewModel.setRenderBackend($0) }
-                )) {
-                    Text(text.renderBackendDXMT).tag(RenderBackendPreference.dxmt)
-                    Text(text.renderBackendD3DMetal).tag(RenderBackendPreference.d3dMetal)
-                }
-                .pickerStyle(.segmented)
-                .pointerOnHover()
-                Text(text.renderBackendHint)
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
             }
         }
     }
@@ -105,7 +85,7 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 6) {
                 Picker(text.displayModeLabel, selection: Binding(
                     get: { viewModel.settings.launchDisplayMode },
-                    set: { viewModel.setLaunchDisplayMode($0) }
+                    set: { viewModel.update(\.launchDisplayMode, to: $0) }
                 )) {
                     Text(text.windowedMode).tag(LaunchDisplayMode.windowed)
                     Text(text.fullscreenMode).tag(LaunchDisplayMode.fullscreen)
@@ -146,7 +126,7 @@ struct SettingsView: View {
                 detail: text.retinaDescription,
                 isOn: Binding(
                     get: { viewModel.settings.macDriverRetina },
-                    set: { viewModel.setMacDriverRetina($0) }
+                    set: { viewModel.update(\.macDriverRetina, to: $0) }
                 )
             )
             SettingToggle(
@@ -154,7 +134,7 @@ struct SettingsView: View {
                 detail: text.leftCommandDescription,
                 isOn: Binding(
                     get: { viewModel.settings.leftCommandIsCtrl },
-                    set: { viewModel.setLeftCommandIsCtrl($0) }
+                    set: { viewModel.update(\.leftCommandIsCtrl, to: $0) }
                 )
             )
             SettingToggle(
@@ -162,7 +142,7 @@ struct SettingsView: View {
                 detail: text.metalHUDDescription,
                 isOn: Binding(
                     get: { viewModel.settings.showMetalHUD },
-                    set: { viewModel.setShowMetalHUD($0) }
+                    set: { viewModel.update(\.showMetalHUD, to: $0) }
                 )
             )
             SettingToggle(
@@ -170,7 +150,7 @@ struct SettingsView: View {
                 detail: text.hdrDescription,
                 isOn: Binding(
                     get: { viewModel.settings.enableHDR },
-                    set: { viewModel.setEnableHDR($0) }
+                    set: { viewModel.update(\.enableHDR, to: $0) }
                 )
             )
 
@@ -191,7 +171,7 @@ struct SettingsView: View {
                 detail: text.metalFXUpscalingDescription,
                 isOn: Binding(
                     get: { viewModel.settings.metalFXUpscaling },
-                    set: { viewModel.setMetalFXUpscaling($0) }
+                    set: { viewModel.update(\.metalFXUpscaling, to: $0) }
                 )
             )
             if viewModel.settings.metalFXUpscaling {
@@ -239,7 +219,7 @@ struct SettingsView: View {
                 detail: text.cloudCompatibilityDescription,
                 isOn: Binding(
                     get: { viewModel.settings.cloudCompatibilityMode },
-                    set: { viewModel.setCloudCompatibilityMode($0) }
+                    set: { viewModel.update(\.cloudCompatibilityMode, to: $0) }
                 )
             )
             LaunchOption(
@@ -247,7 +227,7 @@ struct SettingsView: View {
                 detail: text.acPatchDescription,
                 isOn: Binding(
                     get: { viewModel.settings.acPatchMode },
-                    set: { viewModel.setACPatchMode($0) }
+                    set: { viewModel.update(\.acPatchMode, to: $0) }
                 )
             )
             LaunchOption(
@@ -255,7 +235,7 @@ struct SettingsView: View {
                 detail: text.blockNetDescription,
                 isOn: Binding(
                     get: { viewModel.settings.blockNetMode },
-                    set: { viewModel.setBlockNetMode($0) }
+                    set: { viewModel.update(\.blockNetMode, to: $0) }
                 )
             )
             LaunchOption(
@@ -263,7 +243,7 @@ struct SettingsView: View {
                 detail: text.timeoutFixDescription,
                 isOn: Binding(
                     get: { viewModel.settings.timeoutFix },
-                    set: { viewModel.setTimeoutFix($0) }
+                    set: { viewModel.update(\.timeoutFix, to: $0) }
                 )
             )
             LaunchOption(
@@ -271,7 +251,7 @@ struct SettingsView: View {
                 detail: text.steamPatchDescription,
                 isOn: Binding(
                     get: { viewModel.settings.steamPatch },
-                    set: { viewModel.setSteamPatch($0) }
+                    set: { viewModel.update(\.steamPatch, to: $0) }
                 )
             )
             LaunchOption(
@@ -279,7 +259,7 @@ struct SettingsView: View {
                 detail: text.useMsyncDescription,
                 isOn: Binding(
                     get: { viewModel.settings.useMsync },
-                    set: { viewModel.setUseMsync($0) }
+                    set: { viewModel.update(\.useMsync, to: $0) }
                 )
             )
             LaunchOption(
@@ -287,7 +267,7 @@ struct SettingsView: View {
                 detail: text.resolutionCustomDescription,
                 isOn: Binding(
                     get: { viewModel.settings.resolutionCustom },
-                    set: { viewModel.setResolutionCustom($0) }
+                    set: { viewModel.update(\.resolutionCustom, to: $0) }
                 )
             )
             if viewModel.settings.resolutionCustom {
@@ -301,14 +281,14 @@ struct SettingsView: View {
                 detail: text.proxyEnabledDescription,
                 isOn: Binding(
                     get: { viewModel.settings.proxyEnabled },
-                    set: { viewModel.setProxyEnabled($0) }
+                    set: { viewModel.update(\.proxyEnabled, to: $0) }
                 )
             )
             if viewModel.settings.proxyEnabled {
                 SettingField(label: text.proxyHostLabel) {
                     TextField(text.proxyHostLabel, text: Binding(
                         get: { viewModel.settings.proxyHost },
-                        set: { viewModel.setProxyHost($0) }
+                        set: { viewModel.update(\.proxyHost, to: $0) }
                     ))
                     .textFieldStyle(.roundedBorder)
                     .font(.system(.body, design: .monospaced))

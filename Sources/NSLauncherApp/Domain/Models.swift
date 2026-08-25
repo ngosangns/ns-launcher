@@ -431,8 +431,6 @@ struct AppSettings: Codable, Equatable {
     /// path with `wine client error:308`. Only meaningful on Wine builds carrying the marzent
     /// msync patches; the DXVK backend always uses esync.
     var useMsync: Bool = false
-    /// Direct3D-to-Metal translation layer used for games that require one.
-    var renderBackend: RenderBackendPreference = .dxmt
     /// Monotonic settings schema version used for one-time default migrations.
     var settingsVersion: Int = 0
 
@@ -618,31 +616,15 @@ enum InstallProgressEvent: Equatable {
 }
 
 /// Runtime backend used for DirectX translation on macOS.
+///
+/// DXMT is the only Direct3D-to-Metal layer offered. Apple's D3DMetal was an alternative until it
+/// proved to be the weaker half of the trade: it only exists inside CrossOver-derived Wine builds,
+/// so it disappears the moment the launcher installs its own Wine, and it exposes neither the frame
+/// cap nor the upscale factor that decide frame pacing.
 enum RuntimeBackend: String, Codable {
     case dxmt
-    case d3dMetal
     case dxvk
     case plainWine
-}
-
-/// Direct3D-to-Metal translation layer the user wants for games that need one.
-///
-/// Both ship with the managed CrossOver Wine, in separate directories: DXMT replaces the
-/// builtin `d3d11`/`dxgi` under `lib/wine`, while Apple's D3DMetal keeps its own copies under
-/// `lib64/apple_gptk/wine` and is selected by putting that directory first on `WINEDLLPATH`.
-/// They are alternatives, never both at once.
-enum RenderBackendPreference: String, Codable, CaseIterable, Identifiable {
-    case dxmt
-    case d3dMetal
-
-    var id: String { rawValue }
-
-    var runtimeBackend: RuntimeBackend {
-        switch self {
-        case .dxmt: return .dxmt
-        case .d3dMetal: return .d3dMetal
-        }
-    }
 }
 
 /// Describes the full runtime environment for a single game launch session.
@@ -666,7 +648,7 @@ struct LaunchRuntimeProfile {
     ) -> LaunchRuntimeProfile {
         let exe = game.installDirectory.appendingPathComponent(game.executableRelativePath)
         let backend: RuntimeBackend = {
-            if game.runtimeRequirements.contains(.dxmt) { return settings.renderBackend.runtimeBackend }
+            if game.runtimeRequirements.contains(.dxmt) { return .dxmt }
             if game.runtimeRequirements.contains(.dxvk) { return .dxvk }
             return .plainWine
         }()
@@ -733,6 +715,8 @@ enum LaunchPreflightError: LocalizedError {
     case missingInstallMetadata
     case invalidInstallMetadata(String)
     case updateRequiredBeforeLaunch(String)
+    /// The game is already running in this prefix, with the process IDs holding it.
+    case gameAlreadyRunning([Int32])
 
     var errorDescription: String? {
         switch self {
@@ -744,6 +728,8 @@ enum LaunchPreflightError: LocalizedError {
             return "Install metadata is invalid: \(detail)."
         case let .updateRequiredBeforeLaunch(reason):
             return "Update Game is required before launch: \(reason)."
+        case let .gameAlreadyRunning(pids):
+            return "The game is already running (PID \(pids.map(String.init).joined(separator: ", ")))."
         }
     }
 }

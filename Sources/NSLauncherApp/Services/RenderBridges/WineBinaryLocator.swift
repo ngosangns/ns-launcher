@@ -1,14 +1,65 @@
 // WineBinaryLocator.swift
 //
-// Finds a usable Wine binary and the root of the build it belongs to.
+// Finds usable Wine builds and ranks them newest first.
 //
 // Shared by the render bridges, which disagree about which builds they can run on — DXMT needs
-// winemac's Metal symbols, D3DMetal needs the apple_gptk tree — but agree on where to look and on
-// refusing a quarantined binary rather than letting Gatekeeper kill the launch mid-flight.
+// winemac's Metal symbols and a modern Wine ABI, DXVK only needs a loader — but agree on where to
+// look, on what counts as a usable binary, and on not letting Gatekeeper kill a launch mid-flight.
+//
+// A candidate is usable only if it answers `--version` with a `wine-<major>` string. That single
+// rule replaces a pile of per-distribution special cases: CrossOver ships `bin/wine` as a Perl
+// wrapper that reports CrossOver product info and dies when run directly, next to the real loader
+// `bin/wineloader`. The wrapper fails the probe, the loader passes, and nothing here has to know
+// the word "CrossOver".
+//
+// Ranking is by version, not by where a build was found. A hard-coded path must not let an old
+// build beat a newer one turned up by scanning: Game Porting Toolkit 1.1 is wine-7.7 and sat ahead
+// of CrossOver's wine-11.0 purely because its path was listed first.
 
 import Foundation
 
+/// A Wine build the launcher can run a game on.
+struct WineBuild: Sendable {
+    /// Executable to invoke.
+    let binaryPath: String
+    /// Root directory containing `bin/` and `lib/wine`.
+    let root: URL
+    /// Major version reported by `--version`, used to reject builds too old for a bridge's ABI.
+    let majorVersion: Int
+}
+
+/// Outcome of a Wine search: what can be used, and what macOS is holding.
+struct WineSearchResult: Sendable {
+    /// Usable builds, newest first.
+    var builds: [WineBuild] = []
+    /// Paths skipped because they are quarantined.
+    ///
+    /// Surfaced only when no build works at all. A quarantined build the launcher was never going
+    /// to pick must not abort a launch that had a working alternative — that sent people off to
+    /// run `xattr` on an app the launcher does not even use.
+    var quarantinedPaths: [String] = []
+}
+
 enum WineBinaryLocator {
+    /// Executable names a Wine build uses for its loader.
+    ///
+    /// `wineloader` is CrossOver's real binary; its `bin/wine` is a Perl wrapper that cannot run a
+    /// game directly. Both are probed and the version check picks the right one.
+    private static let loaderNames = ["wine64", "wine", "wineloader"]
+
+    /// App bundles known to carry a Wine build.
+    private static let knownWineApplications = [
+        "CrossOver.app",
+        "Wine Devel.app",
+        "Wine Stable.app",
+        "Wine Staging.app",
+        "Game Porting Toolkit.app"
+    ]
+
+    /// Upper bound on a `--version` probe. A candidate that hangs here would freeze the launch
+    /// before the game ever starts, so the probe is abandoned rather than waited on.
+    private static let versionProbeTimeoutNanoseconds: UInt64 = 5_000_000_000
+
     /// Resolves the Wine root directory that contains bin/wine and lib/wine.
     static func wineRootDirectory(forBinaryAtPath path: String) throws -> URL {
         let resolvedURL = URL(fileURLWithPath: path).resolvingSymlinksInPath()
@@ -17,6 +68,33 @@ enum WineBinaryLocator {
             throw WineServiceError.dxmtBootstrapFailed("Unable to locate Wine lib/wine directory for \(path).")
         }
         return wineRoot
+    }
+
+    /// Launcher-managed directory where a Wine build is installed so the resolver can pick it up
+    /// without any system-wide install or PATH changes. Populated by `WineDistribution`.
+    static var managedWineDirectory: URL {
+        FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent("Library/Application Support/NSLauncher/wine", isDirectory: true)
+    }
+
+    /// True when the managed slot already holds something that resolves to a Wine root.
+    ///
+    /// A symlink into a Wine installed elsewhere counts: the slot's contract is "a usable Wine
+    /// lives here", not "the launcher downloaded it".
+    static func managedBuildIsPresent() -> Bool {
+        loaderNames.contains { name in
+            let path = managedWineDirectory.appendingPathComponent("bin/\(name)").path
+            return FileManager.default.isExecutableFile(atPath: path)
+                && (try? wineRootDirectory(forBinaryAtPath: path)) != nil
+        }
+    }
+
+    /// CrossOver-derived builds locate their own DLLs and compatibility database relative to
+    /// `CX_ROOT`; without it they log `prepend_cx_root_dll_path CX_ROOT not set` and skip that
+    /// step. Returns nil for builds that do not need it.
+    static func crossOverRoot(for build: WineBuild) -> URL? {
+        let appleGPTK = build.root.appendingPathComponent("lib64/apple_gptk", isDirectory: true)
+        return FileManager.default.fileExists(atPath: appleGPTK.path) ? build.root : nil
     }
 
     static func quarantinedPath(forExecutableAtPath path: String) -> String? {
@@ -45,11 +123,56 @@ enum WineBinaryLocator {
         }
     }
 
+    /// Probes every candidate and returns the usable builds, newest first.
+    ///
+    /// Nothing throws: a candidate that is missing, quarantined, rootless or silent about its
+    /// version is reported and skipped. Deciding that the *set* is unusable belongs to the bridge,
+    /// which is the only thing that knows what it additionally requires.
+    static func search(
+        preferredPath: String,
+        processRunner: ProcessRunning,
+        onDiagnostic: (String) -> Void
+    ) async -> WineSearchResult {
+        var result = WineSearchResult()
+        var found: [WineBuild] = []
 
-    /// Candidate Wine binaries: the launcher-managed DXMT-patched Wine first, then the preferred
-    /// PATH binary and CrossOver/GPTK/WineHQ app bundles as fallbacks. PATH wine (e.g. Game Porting
-    /// Toolkit) may export a `macdrv_functions` table with an incompatible struct layout and crash
-    /// at load time, so the managed build must win.
+        for candidate in candidatePaths(preferredPath: preferredPath) {
+            guard FileManager.default.isExecutableFile(atPath: candidate) else { continue }
+            guard let root = try? wineRootDirectory(forBinaryAtPath: candidate) else {
+                onDiagnostic("wine candidate skipped (no sibling lib/wine): \(candidate)")
+                continue
+            }
+            if let quarantined = quarantinedPath(forExecutableAtPath: candidate) {
+                onDiagnostic("wine candidate skipped (quarantined at \(quarantined)): \(candidate)")
+                result.quarantinedPaths.append(quarantined)
+                continue
+            }
+            guard let major = await majorVersion(
+                ofBinaryAtPath: candidate,
+                processRunner: processRunner
+            ) else {
+                onDiagnostic("wine candidate skipped (no wine version reported): \(candidate)")
+                continue
+            }
+            onDiagnostic("wine candidate wine-\(major): \(candidate)")
+            found.append(WineBuild(binaryPath: candidate, root: root, majorVersion: major))
+        }
+
+        // Newest first. `sorted` is not stable, so discovery order is carried explicitly to break
+        // ties — within one major version the managed build still wins over a scanned bundle.
+        result.builds = found.enumerated()
+            .sorted { left, right in
+                left.element.majorVersion == right.element.majorVersion
+                    ? left.offset < right.offset
+                    : left.element.majorVersion > right.element.majorVersion
+            }
+            .map(\.element)
+        return result
+    }
+
+    /// Candidate Wine binaries in discovery order: the launcher-managed build, then the preferred
+    /// or PATH binary, then every known app bundle. Ordering here is not preference — `search`
+    /// ranks by version.
     static func candidatePaths(preferredPath: String) -> [String] {
         let preferredPath = preferredPath.trimmingCharacters(in: .whitespacesAndNewlines)
         let explicitCandidates = [
@@ -59,10 +182,7 @@ enum WineBinaryLocator {
             BinaryLocator.resolveExecutable(
                 preferredPath: preferredPath,
                 candidateNames: BinaryLocator.candidateNames(forExecutable: preferredPath)
-            ),
-            "/Applications/Wine Devel.app/Contents/Resources/wine/bin/wine",
-            "/Applications/CrossOver.app/Contents/SharedSupport/CrossOver/bin/wine64",
-            "/Applications/Game Porting Toolkit.app/Contents/Resources/wine/bin/wine64"
+            )
         ].compactMap { $0 }.filter { !$0.isEmpty }
 
         var seen = Set<String>()
@@ -70,7 +190,7 @@ enum WineBinaryLocator {
 
         candidates.append(contentsOf: wineExecutables(in: managedWineDirectory, seen: &seen))
 
-        for appName in ["CrossOver.app", "Game Porting Toolkit.app", "Wine Devel.app"] {
+        for appName in knownWineApplications {
             for root in applicationSearchRoots() {
                 let appURL = root.appendingPathComponent(appName, isDirectory: true)
                 candidates.append(contentsOf: wineExecutables(in: appURL, seen: &seen))
@@ -80,11 +200,46 @@ enum WineBinaryLocator {
         return candidates
     }
 
-    /// Launcher-managed directory where a DXMT-patched Wine can be extracted so the resolver can
-    /// pick it up without any system-wide install or PATH changes.
-    private static var managedWineDirectory: URL {
-        FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent("Library/Application Support/NSLauncher/wine", isDirectory: true)
+    /// Reads the major version a Wine loader reports, or nil when it reports something else.
+    ///
+    /// A non-zero exit still gets its output read: what matters is whether the binary identifies
+    /// itself as Wine, not how it terminated.
+    private static func majorVersion(
+        ofBinaryAtPath path: String,
+        processRunner: ProcessRunning
+    ) async -> Int? {
+        await withTaskGroup(of: String?.self) { group in
+            group.addTask {
+                do {
+                    let result = try await processRunner.run(
+                        executable: path,
+                        arguments: ["--version"],
+                        environment: [:],
+                        currentDirectory: nil
+                    )
+                    return result.stdout + result.stderr
+                } catch let ProcessRunnerError.nonZeroExit(result) {
+                    return result.stdout + result.stderr
+                } catch {
+                    return nil
+                }
+            }
+            group.addTask {
+                try? await Task.sleep(nanoseconds: versionProbeTimeoutNanoseconds)
+                return nil
+            }
+            let first = await group.next() ?? nil
+            group.cancelAll()
+            return first.flatMap(parseMajorVersion(from:))
+        }
+    }
+
+    /// Extracts the major version from a `wine-11.0-8726-g2e2f5fca349` style version string.
+    static func parseMajorVersion(from output: String) -> Int? {
+        guard let range = output.range(of: #"wine-[0-9]+"#, options: .regularExpression) else {
+            return nil
+        }
+        return Int(output[range].dropFirst("wine-".count))
     }
 
     /// Searches standard app locations without scanning the whole filesystem.
@@ -95,8 +250,14 @@ enum WineBinaryLocator {
         ]
     }
 
-    /// Finds wine/wine64 executables inside a known app bundle.
-    private static func wineExecutables(in appURL: URL, seen: inout Set<String>) -> [String] {
+    /// Finds Wine loader executables inside a known app bundle.
+    ///
+    /// A build is recognised by having a sibling `lib/wine`, the same test `wineRootDirectory`
+    /// applies. The previous filter required a `bin` component in the path, which silently dropped
+    /// CrossOver entirely: its `bin` is a symlink to `CrossOver-Hosted Application`, and
+    /// `FileManager`'s enumerator reports the real directory rather than following the link, so the
+    /// only path it ever produced had no `bin` in it.
+    static func wineExecutables(in appURL: URL, seen: inout Set<String>) -> [String] {
         guard FileManager.default.fileExists(atPath: appURL.path),
               let enumerator = FileManager.default.enumerator(
                   at: appURL,
@@ -108,10 +269,13 @@ enum WineBinaryLocator {
 
         var results: [String] = []
         for case let url as URL in enumerator {
-            guard ["wine", "wine64"].contains(url.lastPathComponent),
-                  url.pathComponents.contains("bin"),
+            // `lib/wine` and `share/wine` are directories, and directories report as executable.
+            let values = try? url.resourceValues(forKeys: [.isExecutableKey, .isRegularFileKey])
+            guard loaderNames.contains(url.lastPathComponent),
+                  values?.isRegularFile == true,
+                  values?.isExecutable == true,
                   seen.insert(url.path).inserted,
-                  FileManager.default.isExecutableFile(atPath: url.path) else {
+                  (try? wineRootDirectory(forBinaryAtPath: url.path)) != nil else {
                 continue
             }
             results.append(url.path)

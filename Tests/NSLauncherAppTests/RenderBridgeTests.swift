@@ -70,7 +70,6 @@ final class RenderBridgeTests: XCTestCase {
 
     func testEveryBackendNeedingATranslationLayerHasABridge() {
         XCTAssertEqual(RenderBridges.bridge(for: .dxmt)?.backend, .dxmt)
-        XCTAssertEqual(RenderBridges.bridge(for: .d3dMetal)?.backend, .d3dMetal)
         XCTAssertEqual(RenderBridges.bridge(for: .dxvk)?.backend, .dxvk)
         XCTAssertNil(RenderBridges.bridge(for: .plainWine))
     }

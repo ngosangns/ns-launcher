@@ -50,18 +50,22 @@ struct LauncherCoordinator: Sendable {
     private let sophonInstaller: SophonInstalling
     private let wineService: WineServicing
     private let macFullscreenActivator: MacNativeFullscreenActivator
+    /// Used by launch preflight to see whether the game is already running.
+    private let processRunner: ProcessRunning
 
     /// Injects every side-effecting service so the view model stays UI-focused.
     init(
         settingsStore: SettingsStoring,
         sophonInstaller: SophonInstalling,
         wineService: WineServicing,
-        macFullscreenActivator: MacNativeFullscreenActivator
+        macFullscreenActivator: MacNativeFullscreenActivator,
+        processRunner: ProcessRunning
     ) {
         self.settingsStore = settingsStore
         self.sophonInstaller = sophonInstaller
         self.wineService = wineService
         self.macFullscreenActivator = macFullscreenActivator
+        self.processRunner = processRunner
     }
 
     /// Loads persisted application settings.
@@ -315,6 +319,19 @@ struct LauncherCoordinator: Sendable {
         let stagingURL = game.installDirectory.appendingPathComponent(".nslauncher-sophon-staging")
         if hasLeftoverStagingWork(at: stagingURL) {
             throw LaunchPreflightError.updateRequiredBeforeLaunch("Partial update staging detected. Run Update Game to complete.")
+        }
+
+        // Preflight: the prefix must not already have this game in it.
+        //
+        // A Wine prefix is single-tenant. A second client attaching to the running wineserver
+        // deadlocks inside the loader rather than failing, so both sessions sit at 0% CPU with no
+        // error — which is indistinguishable from "still loading" and was the reported symptom.
+        let runningPIDs = await GameProcessInspector.runningProcessIDs(
+            forExecutable: profile.executablePath,
+            processRunner: processRunner
+        )
+        if !runningPIDs.isEmpty {
+            throw LaunchPreflightError.gameAlreadyRunning(runningPIDs.sorted())
         }
 
         if settings.cloudCompatibilityMode {

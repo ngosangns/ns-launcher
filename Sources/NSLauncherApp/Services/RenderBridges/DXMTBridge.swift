@@ -21,6 +21,16 @@ struct DXMTBridge: RenderBridge {
     /// Marker an older launcher left in the Wine tree after copying the payload in.
     private static let legacyMarkerName = ".nslauncher-dxmt-\(version)"
 
+    /// Oldest Wine this DXMT release can bind to.
+    ///
+    /// The symbol check below only proves `macdrv_functions` is exported, not that its fields sit
+    /// where DXMT expects them. Game Porting Toolkit 1.1 is wine-7.7 and exports the 2022 layout:
+    /// DXMT loads, then faults inside the loader while holding ntdll's loader lock, so the game
+    /// deadlocks at startup with no error at all — `RtlpWaitForCriticalSection ... loader_section`
+    /// retrying forever. A version floor is the cheap way to tell that apart from a build that
+    /// simply lacks the symbol.
+    private static let minimumWineMajorVersion = 10
+
     /// Directory holding DXMT's persistent Metal pipeline cache across launches.
     static var shaderCacheDirectory: URL {
         FileManager.default.homeDirectoryForCurrentUser
@@ -89,41 +99,91 @@ struct DXMTBridge: RenderBridge {
         return env
     }
 
-    func resolveWineBinary(preferredPath: String, processRunner: ProcessRunning) async throws -> String {
-        var attemptedPaths: [String] = []
+    func resolveWineBuild(
+        preferredPath: String,
+        processRunner: ProcessRunning,
+        onDiagnostic: @escaping @Sendable (String) -> Void
+    ) async throws -> WineBuild {
+        do {
+            return try await selectBuild(
+                preferredPath: preferredPath,
+                processRunner: processRunner,
+                onDiagnostic: onDiagnostic
+            )
+        } catch let error as WineServiceError {
+            // A quarantined build is the user's to unblock; downloading several hundred megabytes
+            // would not change the outcome.
+            if case .binaryQuarantined = error { throw error }
+            onDiagnostic("no DXMT-capable Wine installed (\(error.localizedDescription))")
+            try await WineDistribution.ensureInstalled(
+                processRunner: processRunner,
+                onDiagnostic: onDiagnostic
+            )
+            return try await selectBuild(
+                preferredPath: preferredPath,
+                processRunner: processRunner,
+                onDiagnostic: onDiagnostic
+            )
+        }
+    }
 
-        for candidate in WineBinaryLocator.candidatePaths(preferredPath: preferredPath) {
-            guard FileManager.default.isExecutableFile(atPath: candidate) else { continue }
-            if let quarantinedPath = WineBinaryLocator.quarantinedPath(forExecutableAtPath: candidate) {
-                throw WineServiceError.binaryQuarantined(quarantinedPath)
+    /// Picks the newest installed build that is both new enough and exports the Metal interface.
+    private func selectBuild(
+        preferredPath: String,
+        processRunner: ProcessRunning,
+        onDiagnostic: @escaping @Sendable (String) -> Void
+    ) async throws -> WineBuild {
+        let search = await WineBinaryLocator.search(
+            preferredPath: preferredPath,
+            processRunner: processRunner,
+            onDiagnostic: onDiagnostic
+        )
+
+        var tooOld: [String] = []
+        var withoutSymbols: [String] = []
+
+        for build in search.builds {
+            guard build.majorVersion >= Self.minimumWineMajorVersion else {
+                onDiagnostic("wine-\(build.majorVersion) is older than the wine-\(Self.minimumWineMajorVersion) DXMT \(Self.version) needs: \(build.binaryPath)")
+                tooOld.append("\(build.binaryPath) (wine-\(build.majorVersion))")
+                continue
             }
             do {
-                let wineRoot = try WineBinaryLocator.wineRootDirectory(forBinaryAtPath: candidate)
                 try await verifyMetalSymbols(
-                    wineLibrary: wineRoot.appendingPathComponent("lib/wine", isDirectory: true),
-                    wineBinaryPath: candidate,
+                    wineLibrary: build.root.appendingPathComponent("lib/wine", isDirectory: true),
+                    wineBinaryPath: build.binaryPath,
                     processRunner: processRunner
                 )
-                return candidate
-            } catch WineServiceError.dxmtUnsupportedWine {
-                attemptedPaths.append(candidate)
-            } catch WineServiceError.dxmtBootstrapFailed {
-                attemptedPaths.append(candidate)
+                return build
+            } catch {
+                onDiagnostic("winemac has no DXMT Metal symbols: \(build.binaryPath)")
+                withoutSymbols.append(build.binaryPath)
             }
         }
 
+        if let quarantined = search.quarantinedPaths.first {
+            throw WineServiceError.binaryQuarantined(quarantined)
+        }
+        if withoutSymbols.isEmpty, !tooOld.isEmpty {
+            throw WineServiceError.dxmtWineTooOld(tooOld.joined(separator: ", "))
+        }
+        let attempted = withoutSymbols + tooOld
         throw WineServiceError.dxmtUnsupportedWine(
-            attemptedPaths.isEmpty ? preferredPath : attemptedPaths.joined(separator: ", ")
+            attempted.isEmpty ? preferredPath : attempted.joined(separator: ", ")
         )
     }
 
+    /// DXMT's DLLs are builtins selected through `WINEDLLPATH`, so native overrides must be absent.
+    func registryEntries() -> [RegistryEntry] {
+        ["d3d10core", "d3d11", "dxgi", "nvapi64", "nvngx", "winemetal"].map(RegistryEntry.removingDLLOverride)
+    }
+
     func prepare(
-        wineRoot: URL,
-        wineBinaryPath: String,
+        wineBuild: WineBuild,
         prefixDirectory: URL,
         environment: inout [String: String],
         processRunner: ProcessRunning,
-        onDiagnostic: (String) -> Void
+        onDiagnostic: @escaping @Sendable (String) -> Void
     ) async throws {
         do {
             Self.createSupportDirectories()
@@ -135,7 +195,7 @@ struct DXMTBridge: RenderBridge {
                     payload.appendingPathComponent("x86_64-windows", isDirectory: true),
                     payload.appendingPathComponent("i386-windows", isDirectory: true)
                 ],
-                wineRoot: wineRoot,
+                wineRoot: wineBuild.root,
                 environment: &environment
             )
             onDiagnostic("WINEDLLPATH=\(environment["WINEDLLPATH"] ?? "")")
@@ -153,17 +213,7 @@ struct DXMTBridge: RenderBridge {
                 to: prefixDirectory.appendingPathComponent("drive_c/windows/syswow64", isDirectory: true)
             )
 
-            // DXMT's DLLs are builtins, so native overrides must be absent.
-            for dllName in ["d3d10core", "d3d11", "dxgi", "nvapi64", "nvngx", "winemetal"] {
-                try await RenderBridgePayload.deleteDLLOverride(
-                    dllName,
-                    wineBinaryPath: wineBinaryPath,
-                    environment: environment,
-                    processRunner: processRunner
-                )
-            }
-
-            reportLegacyInstall(in: wineRoot, onDiagnostic: onDiagnostic)
+            reportLegacyInstall(in: wineBuild.root, onDiagnostic: onDiagnostic)
         } catch let wineError as WineServiceError {
             throw wineError
         } catch {

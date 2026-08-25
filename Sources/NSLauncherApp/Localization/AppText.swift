@@ -96,15 +96,6 @@ struct AppText {
         case .korean: return localized(en: "Korean", vi: "Tiếng Hàn")
         }
     }
-    var renderBackendLabel: String { localized(en: "Render backend", vi: "Render backend") }
-    var renderBackendDXMT: String { localized(en: "DXMT", vi: "DXMT") }
-    var renderBackendD3DMetal: String { localized(en: "D3DMetal", vi: "D3DMetal") }
-    var renderBackendHint: String {
-        localized(
-            en: "DXMT is the default. D3DMetal is Apple's translation layer bundled with the managed Wine; it keeps its own pipeline cache and is worth trying if shader stutter persists. Changing this restarts shader compilation from scratch once.",
-            vi: "DXMT là mặc định. D3DMetal là lớp dịch của Apple đi kèm bản Wine đang dùng; nó có pipeline cache riêng, đáng thử nếu vẫn khựng do shader. Đổi lựa chọn này sẽ phải biên dịch lại shader từ đầu một lần."
-        )
-    }
     var displayModeLabel: String { localized(en: "Display mode", vi: "Chế độ hiển thị") }
     var windowedMode: String { localized(en: "Windowed", vi: "Cửa sổ") }
     var fullscreenMode: String { localized(en: "Fullscreen", vi: "Toàn màn hình") }
@@ -498,11 +489,82 @@ struct AppText {
         )
     }
 
-    /// Error text when the Wine build does not ship Apple D3DMetal.
-    func d3dMetalUnavailable(_ path: String) -> String {
+    /// Converts a domain error into the localized, actionable text shown to the user.
+    ///
+    /// Lives here rather than in the view model because every branch resolves to a string on this
+    /// type: keeping the mapping next to the strings means adding an error case and forgetting its
+    /// text is one edit away from being noticed, not two files apart.
+    func message(for error: Error) -> String {
+        switch error {
+        case let preflightError as LaunchPreflightError:
+            switch preflightError {
+            case let .missingExecutable(path):
+                return preflightMissingExecutable(path)
+            case .missingInstallMetadata:
+                return preflightMissingMetadata
+            case let .invalidInstallMetadata(detail):
+                return preflightInvalidMetadata(detail)
+            case let .updateRequiredBeforeLaunch(reason):
+                return preflightUpdateRequired(reason)
+            case let .gameAlreadyRunning(pids):
+                return preflightGameAlreadyRunning(pids)
+            }
+        case let wineError as WineServiceError:
+            switch wineError {
+            case let .binaryQuarantined(path):
+                return wineBinaryQuarantined(path)
+            case let .dxvkBootstrapFailed(details):
+                return dxvkBootstrapFailed(details)
+            case let .dxmtBootstrapFailed(details):
+                return dxmtBootstrapFailed(details)
+            case let .dxmtUnsupportedWine(path):
+                return dxmtUnsupportedWine(path)
+            case let .dxmtWineTooOld(details):
+                return dxmtWineTooOld(details)
+            case let .wineDistributionFailed(details):
+                return wineDistributionFailed(details)
+            case let .unsupportedKernelDriver(driver):
+                return unsupportedKernelDriver(driver)
+            }
+        case let processError as ProcessRunnerError:
+            switch processError {
+            case let .executableNotFound(path):
+                return executableNotFound(path)
+            case let .nonZeroExit(result):
+                let details = result.stderr.isEmpty ? result.stdout : result.stderr
+                return processFailed(code: result.exitCode, details: details)
+            }
+        case let sophonError as SophonInstallerError:
+            switch sophonError {
+            case .zstdUnavailable:
+                return sophonZstdUnavailable
+            default:
+                return sophonUpdateFailed(sophonError.localizedDescription)
+            }
+        case is CancellationError:
+            return operationStopped
+        default:
+            return error.localizedDescription
+        }
+    }
+
+    /// Error text when every installed Wine predates the DXMT ABI.
+    ///
+    /// Separate from `dxmtUnsupportedWine` on purpose: a build that exports the Metal symbols with
+    /// an old layout loads and then deadlocks, which needs a different instruction than a build
+    /// that simply lacks them.
+    func dxmtWineTooOld(_ details: String) -> String {
         localized(
-            en: "Apple D3DMetal was not found at \(path). It ships with CrossOver-derived Wine builds under lib64/apple_gptk; the managed Wine here does not have it. Switch the render backend back to DXMT in Settings.",
-            vi: "Không tìm thấy Apple D3DMetal tại \(path). D3DMetal đi kèm các bản Wine dựa trên CrossOver, nằm ở lib64/apple_gptk; bản Wine đang dùng không có. Hãy đổi render backend về DXMT trong Cài đặt."
+            en: "The installed Wine is too old for DXMT \(DXMTBridge.version): \(details). Older builds such as Game Porting Toolkit (wine-7.7) export the Metal interface with an incompatible layout, so DXMT loads and then hangs the game during startup instead of reporting an error. NSLauncher can install a current Wine automatically — launch again to let it.",
+            vi: "Bản Wine đang cài quá cũ so với DXMT \(DXMTBridge.version): \(details). Các bản cũ như Game Porting Toolkit (wine-7.7) export interface Metal với layout không tương thích, khiến DXMT nạp được rồi treo game lúc khởi động thay vì báo lỗi. NSLauncher có thể tự tải bản Wine mới — hãy bấm chạy lại để tải."
+        )
+    }
+
+    /// Error text when installing the launcher-managed Wine build fails.
+    func wineDistributionFailed(_ details: String) -> String {
+        localized(
+            en: "Installing \(WineDistribution.displayName) failed: \(details). Check the network connection and try again, or install a DXMT-compatible Wine yourself.",
+            vi: "Cài \(WineDistribution.displayName) thất bại: \(details). Hãy kiểm tra kết nối mạng rồi thử lại, hoặc tự cài một bản Wine tương thích DXMT."
         )
     }
 
@@ -537,6 +599,15 @@ struct AppText {
         localized(
             en: "Install metadata is invalid: \(detail). Run Update Game to repair.",
             vi: "Metadata cài đặt không hợp lệ: \(detail). Hãy chạy Cập nhật game để sửa."
+        )
+    }
+
+    /// Preflight error: the game is already running in this Wine prefix.
+    func preflightGameAlreadyRunning(_ pids: [Int32]) -> String {
+        let list = pids.map(String.init).joined(separator: ", ")
+        return localized(
+            en: "The game is already running (PID \(list)). A Wine prefix holds one session at a time; starting a second one makes both hang. Close the running game, or quit those processes, then launch again.",
+            vi: "Game đang chạy rồi (PID \(list)). Một prefix Wine chỉ chứa được một phiên tại một thời điểm; mở phiên thứ hai sẽ làm cả hai treo. Hãy đóng game đang chạy, hoặc tắt các tiến trình đó, rồi mở lại."
         )
     }
 
