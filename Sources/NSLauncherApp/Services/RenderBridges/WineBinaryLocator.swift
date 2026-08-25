@@ -123,6 +123,13 @@ enum WineBinaryLocator {
         }
     }
 
+    /// One candidate that passed the cheap filesystem checks and is waiting on a `--version` probe.
+    private struct VersionProbeCandidate: Sendable {
+        let index: Int
+        let path: String
+        let root: URL
+    }
+
     /// Probes every candidate and returns the usable builds, newest first.
     ///
     /// Nothing throws: a candidate that is missing, quarantined, rootless or silent about its
@@ -134,9 +141,11 @@ enum WineBinaryLocator {
         onDiagnostic: (String) -> Void
     ) async -> WineSearchResult {
         var result = WineSearchResult()
-        var found: [WineBuild] = []
 
-        for candidate in candidatePaths(preferredPath: preferredPath) {
+        // Filesystem checks are cheap stat calls; run them sequentially and keep only candidates
+        // worth a version probe.
+        var toProbe: [VersionProbeCandidate] = []
+        for (index, candidate) in (await candidatePaths(preferredPath: preferredPath)).enumerated() {
             guard FileManager.default.isExecutableFile(atPath: candidate) else { continue }
             guard let root = try? wineRootDirectory(forBinaryAtPath: candidate) else {
                 onDiagnostic("wine candidate skipped (no sibling lib/wine): \(candidate)")
@@ -147,15 +156,42 @@ enum WineBinaryLocator {
                 result.quarantinedPaths.append(quarantined)
                 continue
             }
-            guard let major = await majorVersion(
-                ofBinaryAtPath: candidate,
-                processRunner: processRunner
-            ) else {
-                onDiagnostic("wine candidate skipped (no wine version reported): \(candidate)")
-                continue
+            toProbe.append(VersionProbeCandidate(index: index, path: candidate, root: root))
+        }
+
+        // `--version` is a whole process spawn per candidate, each bounded by its own 5s timeout.
+        // Probing them one at a time meant a machine with several Wine installs paid every timeout
+        // back to back before the game could even start loading; the candidates are independent of
+        // each other, so they run concurrently instead.
+        let probed = await withTaskGroup(of: (Int, WineBuild?).self) { group -> [Int: WineBuild] in
+            for candidate in toProbe {
+                group.addTask {
+                    guard let major = await majorVersion(
+                        ofBinaryAtPath: candidate.path,
+                        processRunner: processRunner
+                    ) else {
+                        return (candidate.index, nil)
+                    }
+                    return (candidate.index, WineBuild(binaryPath: candidate.path, root: candidate.root, majorVersion: major))
+                }
             }
-            onDiagnostic("wine candidate wine-\(major): \(candidate)")
-            found.append(WineBuild(binaryPath: candidate, root: root, majorVersion: major))
+            var results: [Int: WineBuild] = [:]
+            for await (index, build) in group {
+                if let build { results[index] = build }
+            }
+            return results
+        }
+
+        // Diagnostics and `found` are assembled back in discovery order, unaffected by which probe
+        // finished first, so logs stay deterministic and the tie-break below still means what it says.
+        var found: [WineBuild] = []
+        for candidate in toProbe {
+            if let build = probed[candidate.index] {
+                onDiagnostic("wine candidate wine-\(build.majorVersion): \(candidate.path)")
+                found.append(build)
+            } else {
+                onDiagnostic("wine candidate skipped (no wine version reported): \(candidate.path)")
+            }
         }
 
         // Newest first. `sorted` is not stable, so discovery order is carried explicitly to break
@@ -173,7 +209,7 @@ enum WineBinaryLocator {
     /// Candidate Wine binaries in discovery order: the launcher-managed build, then the preferred
     /// or PATH binary, then every known app bundle. Ordering here is not preference — `search`
     /// ranks by version.
-    static func candidatePaths(preferredPath: String) -> [String] {
+    static func candidatePaths(preferredPath: String) async -> [String] {
         let preferredPath = preferredPath.trimmingCharacters(in: .whitespacesAndNewlines)
         let explicitCandidates = [
             managedWineDirectory.appendingPathComponent("bin/wine64").path,
@@ -190,10 +226,30 @@ enum WineBinaryLocator {
 
         candidates.append(contentsOf: wineExecutables(in: managedWineDirectory, seen: &seen))
 
-        for appName in knownWineApplications {
-            for root in applicationSearchRoots() {
-                let appURL = root.appendingPathComponent(appName, isDirectory: true)
-                candidates.append(contentsOf: wineExecutables(in: appURL, seen: &seen))
+        // Each known app bundle is an independent directory tree — CrossOver.app alone carries
+        // thousands of files under lib/wine — and scanning them one after another on every launch
+        // added their cost up serially. They share nothing until the results are merged below (each
+        // scan gets its own local `seen`, only used to dedupe within that one bundle), so they scan
+        // concurrently and are merged back in the original app/root order afterward.
+        let bundleRoots = knownWineApplications.flatMap { appName in
+            applicationSearchRoots().map { root in root.appendingPathComponent(appName, isDirectory: true) }
+        }
+        let scans = await withTaskGroup(of: (Int, [String]).self) { group -> [[String]] in
+            for (index, appURL) in bundleRoots.enumerated() {
+                group.addTask {
+                    var localSeen = Set<String>()
+                    return (index, wineExecutables(in: appURL, seen: &localSeen))
+                }
+            }
+            var ordered = [[String]](repeating: [], count: bundleRoots.count)
+            for await (index, paths) in group {
+                ordered[index] = paths
+            }
+            return ordered
+        }
+        for paths in scans {
+            for path in paths where seen.insert(path).inserted {
+                candidates.append(path)
             }
         }
 
