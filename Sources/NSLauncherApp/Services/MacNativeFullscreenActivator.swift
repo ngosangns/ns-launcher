@@ -25,40 +25,53 @@ struct MacNativeFullscreenActivator: Sendable {
 
     let processRunner: ProcessRunning
 
-    /// Sets AXFullScreen on the first window of any Wine process and reads the value
+    /// Sets AXFullScreen on the first window of a matching process and reads the value
     /// back to confirm the window actually entered native fullscreen. Prints `true`
     /// on confirmed success, `false` when no eligible window exists yet. Exits
     /// non-zero when macOS refuses the automation (missing permission).
+    ///
+    /// Matches on process name containing "wine" (stock/WineHQ builds report themselves
+    /// this way) OR containing the game's own executable name. CrossOver-derived Wine —
+    /// required for DXMT (see `RuntimeBackend`) — renames its window-owning process to the
+    /// wrapped Windows executable (e.g. `GenshinImpact.exe`), which never contains "wine",
+    /// so relying on the "wine" match alone silently never finds the window on those builds.
     private static let fullscreenScript = """
-    tell application "System Events"
-        repeat with wineProcess in (application processes whose name contains "wine")
-            try
-                if (count of windows of wineProcess) > 0 then
-                    set targetWindow to window 1 of wineProcess
-                    set value of attribute "AXFullScreen" of targetWindow to true
-                    delay 0.3
-                    if (value of attribute "AXFullScreen" of targetWindow) as boolean then
-                        return true
+    on run argv
+        set gameHint to item 1 of argv
+        tell application "System Events"
+            repeat with wineProcess in (application processes whose (name contains "wine" or name contains gameHint))
+                try
+                    if (count of windows of wineProcess) > 0 then
+                        set targetWindow to window 1 of wineProcess
+                        set value of attribute "AXFullScreen" of targetWindow to true
+                        delay 0.3
+                        if (value of attribute "AXFullScreen" of targetWindow) as boolean then
+                            return true
+                        end if
                     end if
-                end if
-            end try
-        end repeat
-        return false
-    end tell
+                end try
+            end repeat
+            return false
+        end tell
+    end run
     """
 
     /// Starts polling in the background and returns the task handle. Best-effort by
     /// design: fullscreen is cosmetic, so failures only emit diagnostics and never
     /// affect the launch result.
+    /// - Parameter gameExecutablePath: the launched game's executable; its basename (without
+    ///   extension) is used to recognize the window-owning process on CrossOver-derived Wine.
     func activateWhenWindowAppears(
+        gameExecutablePath: URL,
         onOutput: (@Sendable (ProcessOutputChunk) -> Void)?
     ) -> Task<Void, Never> {
-        Task.detached(priority: .utility) {
-            await run(onOutput: onOutput)
+        let gameHint = gameExecutablePath.deletingPathExtension().lastPathComponent
+        return Task.detached(priority: .utility) {
+            await run(gameHint: gameHint, onOutput: onOutput)
         }
     }
 
-    private func run(onOutput: (@Sendable (ProcessOutputChunk) -> Void)?) async {
+    private func run(gameHint: String, onOutput: (@Sendable (ProcessOutputChunk) -> Void)?) async {
         emit("waiting for the game window to apply native macOS fullscreen", onOutput: onOutput)
         try? await Task.sleep(nanoseconds: UInt64(Self.initialDelay * 1_000_000_000))
         let deadline = Date().addingTimeInterval(Self.timeout)
@@ -66,7 +79,7 @@ struct MacNativeFullscreenActivator: Sendable {
             do {
                 let result = try await processRunner.run(
                     executable: "/usr/bin/osascript",
-                    arguments: ["-e", Self.fullscreenScript],
+                    arguments: ["-e", Self.fullscreenScript, gameHint],
                     environment: [:],
                     currentDirectory: nil
                 )

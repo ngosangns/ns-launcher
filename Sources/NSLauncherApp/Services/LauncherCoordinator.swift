@@ -388,7 +388,10 @@ struct LauncherCoordinator: Sendable {
             // The game starts windowed on purpose (see LaunchDisplayMode.fullscreen); flip its
             // window into native macOS fullscreen once it appears. Detached because the awaited
             // launch below blocks until the game session ends.
-            _ = macFullscreenActivator.activateWhenWindowAppears(onOutput: onOutput)
+            _ = macFullscreenActivator.activateWhenWindowAppears(
+                gameExecutablePath: profile.executablePath,
+                onOutput: onOutput
+            )
         }
         return try await wineService.launch(request)
     }
