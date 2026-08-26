@@ -329,10 +329,7 @@ struct LauncherCoordinator: Sendable {
         // A Wine prefix is single-tenant. A second client attaching to the running wineserver
         // deadlocks inside the loader rather than failing, so both sessions sit at 0% CPU with no
         // error — which is indistinguishable from "still loading" and was the reported symptom.
-        let runningPIDs = await GameProcessInspector.runningProcessIDs(
-            forExecutable: profile.executablePath,
-            processRunner: processRunner
-        )
+        let runningPIDs = await GameProcessInspector.runningProcessIDs(forExecutable: profile.executablePath)
         if !runningPIDs.isEmpty {
             throw LaunchPreflightError.gameAlreadyRunning(runningPIDs.sorted())
         }

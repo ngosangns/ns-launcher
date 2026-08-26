@@ -177,10 +177,7 @@ struct WineService: WineServicing {
         }
 
         diagnose("snapshot existing game processes")
-        let alreadyRunningGamePIDs = await GameProcessInspector.runningProcessIDs(
-            forExecutable: request.executablePath,
-            processRunner: processRunner
-        )
+        let alreadyRunningGamePIDs = await GameProcessInspector.runningProcessIDs(forExecutable: request.executablePath)
         diagnose("existing game process count=\(alreadyRunningGamePIDs.count)")
 
         let launchResult: ProcessResult
@@ -438,10 +435,7 @@ struct WineService: WineServicing {
     private func hasNewLaunchedExecutableProcess(_ executablePath: URL, excluding existingPIDs: Set<Int32>) async -> Bool {
         do {
             try await Task.sleep(nanoseconds: 2_000_000_000)
-            let currentPIDs = await GameProcessInspector.runningProcessIDs(
-                forExecutable: executablePath,
-                processRunner: processRunner
-            )
+            let currentPIDs = await GameProcessInspector.runningProcessIDs(forExecutable: executablePath)
             return !currentPIDs.subtracting(existingPIDs).isEmpty
         } catch {
             return false
