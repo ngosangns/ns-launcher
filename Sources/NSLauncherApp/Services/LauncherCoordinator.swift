@@ -37,10 +37,11 @@
 //     after login ("ClearOnDisconnect" then kicked back to the title/waiting screen),
 //     because the client cannot re-dispatch to a game server. YAAGL only blocks it
 //     for the anti-cheat init window, then unblocks it.
-//   - Enabling msync (`WINEMSYNC`) instead of esync -> `wine client error:308:
-//     partial wakeup read 0` followed by `err:virtual:virtual_setup_exception`
-//     (a render-path crash). msync therefore stays opt-in via the advanced
-//     `useMsync` setting; see `LaunchRuntimeProfile.build`.
+//   - msync (`WINEMSYNC`) crashed twice on this stack — once as `wine client error:308:
+//     partial wakeup read 0` + `err:virtual:virtual_setup_exception` (render-path crash)
+//     on an earlier Wine pin, and once again after being re-tried unconditionally, killing
+//     the game with exit code 5 during shader translation. Both render bridges therefore
+//     stay on esync (`WINEESYNC`); see `D3DMetalBridge.launchEnvironment`.
 
 import Foundation
 
@@ -49,7 +50,6 @@ struct LauncherCoordinator: Sendable {
     private let settingsStore: SettingsStoring
     private let sophonInstaller: SophonInstalling
     private let wineService: WineServicing
-    private let macFullscreenActivator: MacNativeFullscreenActivator
     /// Used by launch preflight to see whether the game is already running.
     private let processRunner: ProcessRunning
 
@@ -58,13 +58,11 @@ struct LauncherCoordinator: Sendable {
         settingsStore: SettingsStoring,
         sophonInstaller: SophonInstalling,
         wineService: WineServicing,
-        macFullscreenActivator: MacNativeFullscreenActivator,
         processRunner: ProcessRunning
     ) {
         self.settingsStore = settingsStore
         self.sophonInstaller = sophonInstaller
         self.wineService = wineService
-        self.macFullscreenActivator = macFullscreenActivator
         self.processRunner = processRunner
     }
 
@@ -82,7 +80,6 @@ struct LauncherCoordinator: Sendable {
     func fetchInstallPlan(for game: GameDefinition, settings: AppSettings) async throws -> InstallPlan {
         let build = try await sophonInstaller.fetchBuild(
             language: settings.language,
-            voiceMatchingField: settings.voiceLanguage.sophonMatchingField,
             onEvent: nil
         )
         let plan = try await sophonInstaller.planUpdate(for: game, build: build, installedMetadata: nil, onEvent: nil)
@@ -107,7 +104,6 @@ struct LauncherCoordinator: Sendable {
     ) async throws {
         let build = try await sophonInstaller.fetchBuild(
             language: settings.language,
-            voiceMatchingField: settings.voiceLanguage.sophonMatchingField,
             onEvent: onEvent
         )
         let plan = try await sophonInstaller.planUpdate(for: game, build: build, installedMetadata: nil, onEvent: onEvent)
@@ -122,7 +118,6 @@ struct LauncherCoordinator: Sendable {
     ) async throws -> GameUpdatePlan {
         let build = try await sophonInstaller.fetchBuild(
             language: settings.language,
-            voiceMatchingField: settings.voiceLanguage.sophonMatchingField,
             onEvent: onEvent
         )
         return try await sophonInstaller.planUpdate(
@@ -172,6 +167,14 @@ struct LauncherCoordinator: Sendable {
         return freed
     }
 
+    /// Installs CrossOver via Homebrew so `D3DMetalBridge` has a build to select. Only ever called
+    /// from an explicit user action — see `CrossOverInstaller` for why this must never run on its
+    /// own (a paid trial and, if Homebrew is missing, a system-level installer this launcher will
+    /// not run on the user's behalf).
+    func installCrossOverViaHomebrew(onDiagnostic: @escaping @Sendable (String) -> Void) async throws {
+        try await CrossOverInstaller.install(processRunner: processRunner, onDiagnostic: onDiagnostic)
+    }
+
     /// A cache target: either everything inside a directory, or a single archive file.
     private enum CacheLocation {
         case directoryContents(URL)
@@ -217,7 +220,7 @@ struct LauncherCoordinator: Sendable {
     private static func launcherDownloadArchiveLocations() -> [CacheLocation] {
         let cacheRoot = FileManager.default.homeDirectoryForCurrentUser
             .appendingPathComponent("Library/Caches/NSLauncher", isDirectory: true)
-        let directories = ["DXMT", "DXVK", "Wine"].map { cacheRoot.appendingPathComponent($0, isDirectory: true) }
+        let directories = ["DXVK", "Wine"].map { cacheRoot.appendingPathComponent($0, isDirectory: true) }
         var locations: [CacheLocation] = []
         for directory in directories {
             guard let enumerator = FileManager.default.enumerator(at: directory, includingPropertiesForKeys: nil) else { continue }
@@ -382,17 +385,9 @@ struct LauncherCoordinator: Sendable {
             leftCommandIsCtrl: settings.leftCommandIsCtrl,
             resolutionOverride: resolutionOverride,
             enableHDR: settings.enableHDR,
+            captureDisplaysForFullscreen: settings.launchDisplayMode == .fullscreen,
             onOutput: onOutput
         )
-        if settings.launchDisplayMode == .fullscreen {
-            // The game starts windowed on purpose (see LaunchDisplayMode.fullscreen); flip its
-            // window into native macOS fullscreen once it appears. Detached because the awaited
-            // launch below blocks until the game session ends.
-            _ = macFullscreenActivator.activateWhenWindowAppears(
-                gameExecutablePath: profile.executablePath,
-                onOutput: onOutput
-            )
-        }
         return try await wineService.launch(request)
     }
 
@@ -421,9 +416,9 @@ struct LauncherCoordinator: Sendable {
     /// Files YAAGL hides for Genshin global during launch (crash reporter and Vulkan fallback).
     ///
     /// These are moved to `.bak` for the launch and restored afterwards. The crash reporters would
-    /// otherwise fire (and their upload would fail) when the game hits the benign Wine/DXMT errors;
-    /// hiding `vulkan-1.dll` keeps Unity from trying its Vulkan fallback path, which does not work
-    /// through DXMT. This list matches YAAGL's `removed[]` for hk4e_global exactly. DO NOT remove
+    /// otherwise fire (and their upload would fail) when the game hits the benign Wine/D3DMetal
+    /// errors; hiding `vulkan-1.dll` keeps Unity from trying its Vulkan fallback path, which does
+    /// not work through D3DMetal. This list matches YAAGL's `removed[]` for hk4e_global exactly. DO NOT remove
     /// entries from here without checking YAAGL's current `server.removed` — the set is deliberate.
     private static let acPatchRemovedFiles = [
         "GenshinImpact_Data/upload_crash.exe",

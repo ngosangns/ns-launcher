@@ -6,7 +6,9 @@
 // against an empty local root):
 //   1. getGameBranches → live branch (package id, branch, password, tag).
 //   2. getBuild → category manifests (game resources + voice-over packs).
-//   3. Select the "game" manifest plus the user-selected voice manifest.
+//   3. Select only the "game" manifest. No voice-over pack is ever installed — voice
+//      audio is several GB per locale that most players never asked for, and the
+//      pruning step below removes any pack a previous launcher version left behind.
 //   4. Download zstd-compressed protobuf manifests; verify compressed size,
 //      decompressed size, and manifest MD5.
 //   5. Decode assets/chunks; plan changed assets by local size + asset MD5.
@@ -79,7 +81,6 @@ enum SophonInstallerError: LocalizedError {
 protocol SophonInstalling: Sendable {
     func fetchBuild(
         language: AppLanguage,
-        voiceMatchingField: String,
         onEvent: (@Sendable (InstallProgressEvent) async -> Void)?
     ) async throws -> SophonBuild
     /// Builds local storage inventory from the live Sophon manifests.
@@ -150,7 +151,6 @@ actor GenshinSophonInstaller: SophonInstalling {
     /// Fetches and decodes the selected Genshin Sophon build.
     func fetchBuild(
         language: AppLanguage,
-        voiceMatchingField: String,
         onEvent: (@Sendable (InstallProgressEvent) async -> Void)? = nil
     ) async throws -> SophonBuild {
         await onEvent?(.diagnostic("fetch branch metadata language=\(language.officialMetadataLanguageCode)"))
@@ -158,7 +158,7 @@ actor GenshinSophonInstaller: SophonInstalling {
         await onEvent?(.diagnostic("branch resolved package=\(branch.packageID) tag=\(branch.tag) branch=\(branch.branch.isEmpty ? "main" : branch.branch)"))
         await onEvent?(.diagnostic("fetch Sophon build metadata"))
         let buildResponse = try await fetchBuildResponse(branch: branch)
-        let selectedIdentities = selectInstallIdentities(from: buildResponse.data.manifests, voiceMatchingField: voiceMatchingField)
+        let selectedIdentities = selectInstallIdentities(from: buildResponse.data.manifests)
         await onEvent?(.diagnostic("build tag=\(buildResponse.data.tag.isEmpty ? branch.tag : buildResponse.data.tag) manifests total=\(buildResponse.data.manifests.count) selected=\(selectedIdentities.map(\.matchingField).joined(separator: ","))"))
         guard !selectedIdentities.isEmpty else {
             throw SophonInstallerError.buildUnavailable
@@ -792,13 +792,12 @@ actor GenshinSophonInstaller: SophonInstalling {
         return decoded
     }
 
+    /// Voice-over packs are never installed: only the base "game" category ships assets, which
+    /// keeps installs and updates to a fraction of what downloading every locale's audio would cost.
     private func selectInstallIdentities(
-        from identities: [SophonBuildIdentity],
-        voiceMatchingField: String
+        from identities: [SophonBuildIdentity]
     ) -> [SophonBuildIdentity] {
-        identities.filter { identity in
-            identity.matchingField == "game" || identity.matchingField == voiceMatchingField
-        }
+        identities.filter { $0.matchingField == "game" }
     }
 
     private func fetchCategoryManifest(

@@ -1,8 +1,9 @@
 import XCTest
 @testable import NSLauncherApp
 
-/// Guards the two decisions that let DXMT v0.80 load into wine-7.7 and deadlock the game at
-/// startup: reading a build's version, and recognising a build's loader at all.
+/// Guards the two decisions that once let a Direct3D-to-Metal layer load into an old, incompatible
+/// Wine and deadlock the game at startup: reading a build's version, and recognising a build's
+/// loader at all.
 final class WineBuildDiscoveryTests: XCTestCase {
 
     // MARK: - Version parsing

@@ -176,22 +176,6 @@ struct QuestButtonStyle: ButtonStyle {
     }
 }
 
-struct StatusPill: View {
-    let title: String
-    var tint: Color = LauncherPalette.success
-
-    var body: some View {
-        Label(title, systemImage: "circle.fill")
-            .font(.system(.caption2, design: .rounded, weight: .bold))
-            .foregroundStyle(tint)
-            .labelStyle(.titleAndIcon)
-            .symbolRenderingMode(.hierarchical)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 7)
-            .background(tint.opacity(0.12), in: Capsule())
-    }
-}
-
 struct GoldenProgressBar: View {
     let value: Double?
 

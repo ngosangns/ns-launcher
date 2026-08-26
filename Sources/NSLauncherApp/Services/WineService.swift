@@ -49,6 +49,11 @@ struct WineLaunchRequest {
     var resolutionOverride: (width: Int, height: Int)? = nil
     /// Enable the game's HDR registry flag.
     var enableHDR: Bool = false
+    /// Wine Mac Driver: let macdrv capture the display for real fullscreen (hidden menu bar/dock,
+    /// exclusive access) whenever a window's frame ends up covering the whole screen. Off by
+    /// default because an ordinary window that happens to be maximized should not seize the
+    /// display; the launcher only turns it on for `LaunchDisplayMode.fullscreen`.
+    var captureDisplaysForFullscreen: Bool = false
     var onOutput: (@Sendable (ProcessOutputChunk) -> Void)?
 }
 
@@ -56,11 +61,10 @@ struct WineLaunchRequest {
 enum WineServiceError: LocalizedError {
     case binaryQuarantined(String)
     case dxvkBootstrapFailed(String)
-    case dxmtBootstrapFailed(String)
-    case dxmtUnsupportedWine(String)
-    case dxmtWineTooOld(String)
+    case d3dMetalUnavailable(String)
     case unsupportedKernelDriver(String)
     case wineDistributionFailed(String)
+    case wineRootNotFound(String)
 
     var errorDescription: String? {
         switch self {
@@ -68,16 +72,14 @@ enum WineServiceError: LocalizedError {
             return "Wine is blocked by macOS quarantine at \(path)."
         case let .dxvkBootstrapFailed(details):
             return "DXVK setup failed: \(details)"
-        case let .dxmtBootstrapFailed(details):
-            return "DXMT setup failed: \(details)"
-        case let .dxmtUnsupportedWine(path):
-            return "Wine at \(path) does not expose the winemac.drv symbols required by DXMT."
-        case let .dxmtWineTooOld(details):
-            return "The installed Wine is too old for DXMT: \(details)."
+        case let .d3dMetalUnavailable(path):
+            return "No Wine build with Apple D3DMetal was found. Checked: \(path). D3DMetal ships only inside CrossOver — install it, then try again."
         case let .unsupportedKernelDriver(driver):
             return "Wine cannot load the Windows kernel driver \(driver)."
         case let .wineDistributionFailed(details):
             return "Installing the managed Wine build failed: \(details)"
+        case let .wineRootNotFound(path):
+            return "Unable to locate Wine's lib/wine directory for \(path)."
         }
     }
 }
@@ -121,13 +123,26 @@ struct WineService: WineServicing {
         // Enforce WINEARCH and WINEDEBUG defaults if caller did not supply them.
         var baseEnv: [String: String] = [
             "WINEARCH": "win64",
-            "WINEDEBUG": "fixme-all,err-unwind,+timestamp"
+            // See LaunchRuntimeProfile.build's WINEDEBUG comment for why `err` stays on
+            // (the launcher's own failure detection reads it) while everything else is off.
+            "WINEDEBUG": "-all,+err,err-unwind"
         ]
         baseEnv.merge(request.environment) { _, new in new }
         baseEnv["WINEPREFIX"] = request.prefixDirectory.path
-        if let crossOverRoot = WineBinaryLocator.crossOverRoot(for: wineBuild) {
+        // CX_ROOT is what lets a CrossOver-derived build find its compatibility database, and that
+        // database's `set_graphics_backend` step prepends whichever Direct3D layer the CrossOver
+        // BOTTLE is configured for to the DLL search path — which may not agree with the backend
+        // this launch resolved (e.g. a bottle set to DXVK when D3DMetal was requested). That prepend
+        // lands ahead of the bridge's own `WINEDLLPATH` entries, so the game would silently render on
+        // whatever CrossOver's bottle config picked instead. A bridge always sets its own
+        // `WINEDLLPATH` explicitly (see `D3DMetalBridge`/`DXVKBridge`), so CX_ROOT is withheld to
+        // keep that choice authoritative; CrossOver then logs `prepend_cx_root_dll_path CX_ROOT not
+        // set` and skips the prepend. Plain Wine launches have nothing to shadow, so they still get it.
+        if let crossOverRoot = Self.crossOverRootToApply(for: wineBuild, bridge: bridge) {
             baseEnv["CX_ROOT"] = crossOverRoot.path
             diagnose("CX_ROOT=\(crossOverRoot.path)")
+        } else if WineBinaryLocator.crossOverRoot(for: wineBuild) != nil {
+            diagnose("CX_ROOT withheld so CrossOver's own graphics backend cannot shadow \(request.renderBackend.rawValue)")
         }
 
         if let bridge {
@@ -214,10 +229,6 @@ struct WineService: WineServicing {
             } else if result.exitCode == 15, Self.outputIndicatesGameStarted(result.stdout + "\n" + result.stderr) {
                 diagnose("Wine exit 15 with started-game signal; treating launch as successful")
                 launchResult = ProcessResult(exitCode: 0, stdout: result.stdout, stderr: result.stderr)
-            } else if request.runtimeRequirements.contains(.dxmt),
-               Self.outputIndicatesDXMTUnsupportedWine(result.stdout + "\n" + result.stderr) {
-                diagnose("DXMT unsupported Wine signal detected")
-                throw WineServiceError.dxmtUnsupportedWine(wineBuild.binaryPath)
             } else if let driverName = Self.unsupportedKernelDriverName(in: result.stdout + "\n" + result.stderr) {
                 diagnose("unsupported kernel driver detected=\(driverName)")
                 throw WineServiceError.unsupportedKernelDriver(driverName)
@@ -261,6 +272,17 @@ struct WineService: WineServicing {
         throw ProcessRunnerError.executableNotFound(request.wineBinaryPath)
     }
 
+    /// The CrossOver root to expose as `CX_ROOT`, or nil when it must be withheld.
+    ///
+    /// Only plain-Wine launches get it. A launch that goes through a render bridge must not, for the
+    /// reason spelled out at the call site: CrossOver's compatibility database prepends its own
+    /// Direct3D layer ahead of the bridge's `WINEDLLPATH`, which silently replaces the backend the
+    /// launcher just installed and tuned.
+    static func crossOverRootToApply(for build: WineBuild, bridge: RenderBridge?) -> URL? {
+        guard bridge == nil else { return nil }
+        return WineBinaryLocator.crossOverRoot(for: build)
+    }
+
     /// Registry values the launcher itself applies before the game starts.
     ///
     /// The value names with `_h<digits>` suffixes are Unity's hashed `PlayerPrefs` registry keys for
@@ -276,11 +298,21 @@ struct WineService: WineServicing {
         var entries: [RegistryEntry] = [
             RegistryEntry(key: macDriver, name: "RetinaMode", value: .string(request.macDriverRetina ? "y" : "n")),
             RegistryEntry(key: macDriver, name: "LeftCommandIsCtrl", value: .string(request.leftCommandIsCtrl ? "y" : "n")),
+            // `CaptureDisplaysForFullscreen` (undocumented outside Wine's own source, see
+            // dlls/winemac.drv/macdrv_main.c) is off by default in macdrv. Without it, a window
+            // whose frame covers the whole screen is still just an ordinary borderless window —
+            // the menu bar and dock stay interactive on top of it, and macdrv never seizes the
+            // display. Turning it on is what makes `-screen-fullscreen 1` (see
+            // `LaunchDisplayMode.fullscreen`) actually behave like fullscreen instead of a
+            // full-size window. This does NOT depend on AppKit's Spaces-based fullscreen — that
+            // path requires the window to carry `NSWindowStyleMaskResizable`, which Unity's
+            // player window never does, so `-toggleFullScreen:`/`AXFullScreen` can never succeed
+            // on it (confirmed against macdrv's `adjustFullScreenBehavior:`). Do not reintroduce
+            // an AXFullScreen-based flip for this reason.
+            RegistryEntry(key: macDriver, name: "CaptureDisplaysForFullscreen", value: .string(request.captureDisplaysForFullscreen ? "y" : "n")),
             // Unity persists display changes made inside the game into these PlayerPrefs keys, so
-            // the flag is rewritten before every launch to keep it sticky. Both display modes run
-            // Unity windowed: the Fullscreen mode enters native macOS fullscreen at the AppKit
-            // level after launch (see MacNativeFullscreenActivator), and a persisted fullscreen
-            // flag here would fight that by making the game cover the screen borderlessly itself.
+            // the flag is rewritten before every launch to keep it sticky, seeded instead from the
+            // `-screen-fullscreen` command-line argument on each run.
             RegistryEntry(key: genshin, name: "Screenmanager Is Fullscreen mode_h3981298716", value: .dword(0))
         ]
 
@@ -416,12 +448,11 @@ struct WineService: WineServicing {
         }
     }
 
-    /// Wine's esync (`WINEESYNC=1`, used by both the DXMT and DXVK backends) allocates a file
-    /// descriptor per sync object. A GUI app launched via Finder/LaunchServices inherits launchd's
-    /// default soft limit of 256 — far below what esync needs under load — even though a Terminal
-    /// shell on the same machine typically has a much higher limit from its profile. Raise the
-    /// soft limit once before spawning Wine so esync does not degrade. Best-effort: this must never
-    /// block the launch.
+    /// Wine still opens more file descriptors under load than launchd's default soft limit of 256
+    /// comfortably covers — esync (both bridges' sync primitive) allocates one fd per sync object.
+    /// A GUI app launched via Finder/LaunchServices inherits that 256 limit, unlike a Terminal
+    /// shell's usually higher one. Raise the soft limit once before spawning Wine. Best-effort:
+    /// this must never block the launch.
     private static func raiseFileDescriptorLimit(onDiagnostic: (String) -> Void) {
         var limit = rlimit()
         guard getrlimit(RLIMIT_NOFILE, &limit) == 0 else {
@@ -440,11 +471,6 @@ struct WineService: WineServicing {
         } else {
             onDiagnostic("setrlimit failed to raise file descriptor limit to \(target)")
         }
-    }
-
-    /// Gatekeeper quarantine commonly causes Wine to terminate before it can launch the game.
-    private static func outputIndicatesDXMTUnsupportedWine(_ output: String) -> Bool {
-        output.localizedCaseInsensitiveContains("no exported symbols needed by DXMT")
     }
 
     /// Detects Windows kernel drivers that Wine cannot load, most commonly anti-cheat/protection drivers.

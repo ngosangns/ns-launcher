@@ -2,9 +2,10 @@
 //
 // Finds usable Wine builds and ranks them newest first.
 //
-// Shared by the render bridges, which disagree about which builds they can run on — DXMT needs
-// winemac's Metal symbols and a modern Wine ABI, DXVK only needs a loader — but agree on where to
-// look, on what counts as a usable binary, and on not letting Gatekeeper kill a launch mid-flight.
+// Shared by the render bridges, which disagree about which builds they can run on — D3DMetal needs
+// a build carrying Apple's Game Porting Toolkit payload, DXVK only needs a loader — but agree on
+// where to look, on what counts as a usable binary, and on not letting Gatekeeper kill a launch
+// mid-flight.
 //
 // A candidate is usable only if it answers `--version` with a `wine-<major>` string. That single
 // rule replaces a pile of per-distribution special cases: CrossOver ships `bin/wine` as a Perl
@@ -65,7 +66,7 @@ enum WineBinaryLocator {
         let resolvedURL = URL(fileURLWithPath: path).resolvingSymlinksInPath()
         let wineRoot = resolvedURL.deletingLastPathComponent().deletingLastPathComponent()
         guard FileManager.default.fileExists(atPath: wineRoot.appendingPathComponent("lib/wine").path) else {
-            throw WineServiceError.dxmtBootstrapFailed("Unable to locate Wine lib/wine directory for \(path).")
+            throw WineServiceError.wineRootNotFound(path)
         }
         return wineRoot
     }

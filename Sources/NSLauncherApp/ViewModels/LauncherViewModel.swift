@@ -75,6 +75,8 @@ final class LauncherViewModel: ObservableObject {
     @Published var cacheReport: [RemovableCache] = []
     /// True while cache sizes are being refreshed or a category is being cleared.
     @Published var isManagingCache = false
+    /// True while CrossOver is being installed through Homebrew.
+    @Published var isInstallingCrossOver = false
 
     private let coordinator: LauncherCoordinator
     private var currentTask: Task<Void, Never>?
@@ -108,7 +110,6 @@ final class LauncherViewModel: ObservableObject {
             settingsStore: SettingsStore(),
             sophonInstaller: GenshinSophonInstaller(),
             wineService: WineService(processRunner: processRunner),
-            macFullscreenActivator: MacNativeFullscreenActivator(processRunner: processRunner),
             processRunner: processRunner
         )
 
@@ -189,23 +190,6 @@ final class LauncherViewModel: ObservableObject {
         update(\.resolutionHeight, to: max(height, 1))
     }
 
-
-
-
-    /// Updates the optional DXMT frame-pacing cap (0 = disabled) and persists the choice.
-    /// Clamped to a sane range; DXMT additionally requires the value to be a factor of the
-    /// display refresh rate, which is communicated through the setting's description.
-    func setMaxFrameRate(_ frameRate: Int) {
-        update(\.maxFrameRate, to: AppSettings.sanitizedMaxFrameRate(frameRate))
-    }
-
-
-
-    /// Updates the MetalFX spatial upscale factor and persists the choice.
-    func setMetalFXScaleFactor(_ factor: Double) {
-        update(\.metalFXScaleFactor, to: AppSettings.sanitizedMetalFXScaleFactor(factor))
-    }
-
     /// Refreshes local storage inventory for the selected game.
     func refreshVoicePackages() {
         guard !isManagingVoicePacks, let game = selectedGame else { return }
@@ -232,14 +216,11 @@ final class LauncherViewModel: ObservableObject {
         }
     }
 
-    /// Removes the local files of one non-selected voice pack.
+    /// Removes the local files of a voice pack. The launcher no longer downloads any voice pack
+    /// itself, so every pack found on disk is leftover and safe to remove.
     func removeVoicePack(_ package: VoicePackage) {
         guard !isManagingVoicePacks else { return }
         guard let game = selectedGame else { return }
-        if package.voiceLanguage == settings.voiceLanguage {
-            errorMessage = text.voicePackAlreadySelected
-            return
-        }
 
         isManagingVoicePacks = true
         statusText = text.removingVoicePack
@@ -307,6 +288,37 @@ final class LauncherViewModel: ObservableObject {
                     self.statusText = self.text.cacheClearFailed
                 }
                 self.isManagingCache = false
+            }
+        }
+    }
+
+    /// True once a CrossOver carrying Apple D3DMetal is installed — hides the install action in
+    /// Settings once it is no longer needed.
+    var isCrossOverInstalled: Bool { CrossOverInstaller.isInstalled }
+
+    /// Installs CrossOver through Homebrew so the D3DMetal render backend has a build to select.
+    ///
+    /// Only ever triggered by an explicit tap in Settings — see `CrossOverInstaller` for why this
+    /// installs a paid trial and must never run on its own.
+    func installCrossOverViaHomebrew() {
+        guard !isInstallingCrossOver else { return }
+        isInstallingCrossOver = true
+        errorMessage = nil
+        statusText = text.installingCrossOver
+
+        Task { [weak self] in
+            guard let self else { return }
+            defer { self.isInstallingCrossOver = false }
+            do {
+                try await self.coordinator.installCrossOverViaHomebrew { [weak self] line in
+                    Task { @MainActor [weak self] in
+                        self?.statusText = line
+                    }
+                }
+                self.statusText = self.text.crossOverInstalled
+            } catch {
+                self.errorMessage = self.text.message(for: error)
+                self.statusText = self.text.crossOverInstallFailedStatus
             }
         }
     }

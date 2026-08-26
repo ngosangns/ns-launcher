@@ -218,9 +218,9 @@ extension ProcessRunner {
 /// Retains a bounded head and tail of one stream.
 ///
 /// A game session runs for hours and Wine writes to stderr the whole time, so retaining every byte
-/// grows without limit. Callers classify failures from launch-time signals (`ensureDXMTInstalled`,
-/// `unsupportedKernelDriverName`) and from whatever the process said last, so the head and the tail
-/// are what matter; the middle is dropped once the stream grows past the cap.
+/// grows without limit. Callers classify failures from launch-time signals (see `RenderBridge`'s
+/// `prepare`, `unsupportedKernelDriverName`) and from whatever the process said last, so the head
+/// and the tail are what matter; the middle is dropped once the stream grows past the cap.
 struct BoundedStreamBuffer {
     /// Bytes kept from the start of the stream, where startup diagnostics appear.
     private static let headLimit = 512 * 1024

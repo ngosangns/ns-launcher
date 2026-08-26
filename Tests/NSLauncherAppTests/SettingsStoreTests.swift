@@ -19,8 +19,7 @@ final class SettingsStoreTests: XCTestCase {
     func testRoundTripsEverySetting() throws {
         var settings = AppSettings.default
         settings.metalFXUpscaling = true
-        settings.maxFrameRate = 72
-        settings.useMsync = true
+        settings.showMetalHUD = true
         settings.proxyHost = "http://127.0.0.1:8080"
 
         try store.save(settings)
@@ -32,39 +31,54 @@ final class SettingsStoreTests: XCTestCase {
     /// its default rather than failing the whole decode.
     func testKeysMissingFromAnOlderFileFallBackToDefaults() throws {
         try store.save(AppSettings.default)
-        try stripKeys(["metalFXScaleFactor", "useMsync", "maxFrameRate"])
+        try stripKeys(["metalFXUpscaling", "resolutionWidth"])
 
         let loaded = try store.load()
 
-        XCTAssertEqual(loaded.metalFXScaleFactor, 1.5)
-        XCTAssertFalse(loaded.useMsync)
-        XCTAssertEqual(loaded.maxFrameRate, 0)
+        XCTAssertEqual(loaded.metalFXUpscaling, false)
+        XCTAssertEqual(loaded.resolutionWidth, 1920)
     }
 
     /// Values the file does carry must survive the defaults merge untouched.
     func testStoredValuesWinOverDefaults() throws {
         var settings = AppSettings.default
-        settings.maxFrameRate = 72
-        settings.metalFXScaleFactor = 2.0
+        settings.metalFXUpscaling = true
+        settings.resolutionWidth = 2560
         try store.save(settings)
-        try stripKeys(["useMsync"])
 
         let loaded = try store.load()
 
-        XCTAssertEqual(loaded.maxFrameRate, 72)
-        XCTAssertEqual(loaded.metalFXScaleFactor, 2.0)
+        XCTAssertEqual(loaded.metalFXUpscaling, true)
+        XCTAssertEqual(loaded.resolutionWidth, 2560)
     }
 
     /// Keys from removed settings must not break the decode.
     func testUnknownKeysFromRemovedSettingsAreIgnored() throws {
         try store.save(AppSettings.default)
-        try mutateJSON { $0["renderBackend"] = "d3dMetal" }
+        try mutateJSON { $0["maxFrameRate"] = 72 }
 
         XCTAssertNoThrow(try store.load())
     }
 
+    /// `dxmt` is `RuntimeRequirement`'s raw value before the D3DMetal rename. A settings file
+    /// written by an older launcher version still carries it in a game's `runtimeRequirements`,
+    /// and a decode failure there resets the whole settings file to defaults (see `SettingsStore`
+    /// header), so it has to keep loading as the equivalent `.d3dMetal` requirement.
+    func testLegacyDXMTRuntimeRequirementDecodesAsD3DMetal() throws {
+        try store.save(AppSettings.default)
+        try mutateJSON { json in
+            guard var games = json["games"] as? [[String: Any]] else { return XCTFail("no games in default settings") }
+            games[0]["runtimeRequirements"] = ["wine", "dxmt"]
+            json["games"] = games
+        }
+
+        let loaded = try store.load()
+
+        XCTAssertEqual(loaded.games.first?.runtimeRequirements, [.wine, .d3dMetal])
+    }
+
     func testCreatesDefaultsWhenNoFileExists() throws {
-        XCTAssertEqual(try store.load().metalFXScaleFactor, 1.5)
+        XCTAssertEqual(try store.load().metalFXUpscaling, false)
         XCTAssertTrue(FileManager.default.fileExists(atPath: settingsURL.path))
     }
 

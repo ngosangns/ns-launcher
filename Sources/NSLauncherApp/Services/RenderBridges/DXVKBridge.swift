@@ -2,11 +2,11 @@
 //
 // DXVK: Direct3D 11 translated to Vulkan, which MoltenVK then translates to Metal.
 //
-// Two translation hops instead of one, so it is strictly more overhead than DXMT on
+// Two translation hops instead of one, so it is strictly more overhead than D3DMetal on
 // Apple hardware. It stays available for game definitions that ask for it, but it is not the
 // choice for anything that can use a direct Metal bridge.
 //
-// Unlike the Metal bridges, DXVK ships plain Windows DLLs with no Unix-side counterpart, so it is
+// Unlike D3DMetal, DXVK ships plain Windows DLLs with no Unix-side counterpart, so it is
 // installed into the game's own Wine prefix as native overrides rather than selected through
 // `WINEDLLPATH`. The prefix belongs to the launcher; the Wine installation is still untouched.
 
@@ -19,9 +19,7 @@ struct DXVKBridge: RenderBridge {
 
     let backend: RuntimeBackend = .dxvk
 
-    func launchEnvironment(settings: AppSettings, displayRefreshRate: Int) -> [String: String] {
-        // msync only exists on Wine builds carrying the marzent patches (the DXMT-managed wine);
-        // generic DXVK setups stay on esync regardless of the setting.
+    func launchEnvironment(settings: AppSettings) -> [String: String] {
         ["WINEESYNC": "1"]
     }
 

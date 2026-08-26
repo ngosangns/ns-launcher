@@ -69,12 +69,12 @@ final class RegistryScriptTests: XCTestCase {
         XCTAssertFalse(RegistryScript.render([]).contains("["))
     }
 
-    /// DXMT selects its DLLs through WINEDLLPATH, so a leftover native override would shadow them;
-    /// DXVK copies its DLLs into the prefix and needs the opposite.
+    /// D3DMetal selects its DLLs through WINEDLLPATH, so a leftover native override would shadow
+    /// them; DXVK copies its DLLs into the prefix and needs the opposite.
     func testBridgesDeclareTheOverrideDirectionTheyDependOn() {
-        let dxmt = DXMTBridge().registryEntries()
-        XCTAssertEqual(dxmt.count, 6)
-        XCTAssertTrue(dxmt.allSatisfy { if case .remove = $0.value { return true } else { return false } })
+        let d3dMetal = D3DMetalBridge().registryEntries()
+        XCTAssertEqual(d3dMetal.count, 5)
+        XCTAssertTrue(d3dMetal.allSatisfy { if case .remove = $0.value { return true } else { return false } })
 
         let dxvk = DXVKBridge().registryEntries()
         XCTAssertEqual(dxvk.count, 2)

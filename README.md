@@ -30,9 +30,10 @@ It already includes:
   cannot observe;
 - a Settings screen limited to language, install root, executable path, and
   display mode;
-- Wine launch bootstrap that installs DXMT or DXVK when required;
-- filtered Wine diagnostics with targeted messages for DXMT and unsupported
-  Windows kernel-driver failures.
+- Wine launch bootstrap that selects Apple D3DMetal or installs DXVK when
+  required;
+- filtered Wine diagnostics with targeted messages for D3DMetal availability
+  and unsupported Windows kernel-driver failures.
 
 ## Sophon Install Flow
 

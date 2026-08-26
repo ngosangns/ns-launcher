@@ -84,10 +84,8 @@ struct AppText {
     var languageLabel: String { localized(en: "Language", vi: "Ngôn ngữ") }
     var english: String { localized(en: "English", vi: "Tiếng Anh") }
     var vietnamese: String { localized(en: "Vietnamese", vi: "Tiếng Việt") }
-    var voiceLanguageLabel: String { localized(en: "Voice Pack", vi: "Gói lồng tiếng") }
-    var voiceLanguageDescription: String { localized(en: "Voice-over language downloaded with game resources. Keep one pack to minimize install and update size.", vi: "Ngôn ngữ lồng tiếng tải cùng tài nguyên game. Chỉ giữ một gói để giảm dung lượng cài đặt và cập nhật.") }
-
-    /// Localized display name for a voice-over language.
+    /// Localized display name for a voice-over language, used to label leftover voice packs found
+    /// on disk in the storage inventory (the launcher itself no longer downloads any voice pack).
     func voiceLanguageName(_ language: VoiceLanguage) -> String {
         switch language {
         case .english: return localized(en: "English", vi: "Tiếng Anh")
@@ -140,13 +138,6 @@ struct AppText {
             vi: "Chạy game qua tiến trình cha steam.exe + lsteamclient.dll thật để anti-cheat bỏ qua việc nạp kernel driver. File stub chỉ tải một lần và được lưu cache."
         )
     }
-    var useMsyncLabel: String { localized(en: "msync (advanced)", vi: "msync (nâng cao)") }
-    var useMsyncDescription: String {
-        localized(
-            en: "Replace esync with msync (WINEMSYNC) for Wine synchronization. Known to crash this DXMT-patched Wine build with \"wine client error:308\" — leave off unless you switched to a Wine build where msync works.",
-            vi: "Thay esync bằng msync (WINEMSYNC) cho đồng bộ hóa của Wine. Đã biết gây crash trên bản Wine patch DXMT hiện tại với lỗi \"wine client error:308\" — để tắt trừ khi bạn đã đổi sang bản Wine mà msync hoạt động."
-        )
-    }
     var retinaLabel: String { localized(en: "Retina scaling", vi: "Hiển thị Retina") }
     var retinaDescription: String {
         localized(
@@ -193,31 +184,11 @@ struct AppText {
     }
     var proxyHostLabel: String { localized(en: "Proxy host", vi: "Địa chỉ proxy") }
     var displayOptionsLabel: String { localized(en: "Display & input", vi: "Hiển thị & nhập liệu") }
-    var maxFrameRateLabel: String { localized(en: "Frame rate cap", vi: "Giới hạn FPS") }
-    var maxFrameRateDescription: String {
-        localized(
-            en: "Optional Metal frame-pacing cap for DXMT. Must be a factor of your display refresh rate (e.g. 60 on a 60/120 Hz display). Set 0 to disable.",
-            vi: "Giới hạn FPS qua Metal frame pacing cho DXMT (tùy chọn). Phải là ước số của tần số quét màn hình (vd: 60 trên màn 60/120 Hz). Đặt 0 để tắt."
-        )
-    }
     var metalFXUpscalingLabel: String { localized(en: "MetalFX upscaling (experimental)", vi: "MetalFX upscaling (thử nghiệm)") }
     var metalFXUpscalingDescription: String {
         localized(
-            en: "DXMT renders at the game's own resolution and lets Metal upscale to the window size. Only has an effect if you also lower the resolution below your display's native size (use Custom windowed resolution above).",
-            vi: "DXMT sẽ render ở độ phân giải game đang đặt rồi để Metal upscale lên kích thước cửa sổ. Chỉ có tác dụng nếu bạn cũng hạ độ phân giải thấp hơn màn hình (dùng Custom windowed resolution ở trên)."
-        )
-    }
-    var metalFXScaleFactorLabel: String { localized(en: "Upscale factor", vi: "Hệ số upscale") }
-    var metalFXScaleFactorDescription: String {
-        localized(
-            en: "Multiplier applied to the game's render resolution to reach the window size (e.g. 1.5 = render at ~67% scale).",
-            vi: "Hệ số nhân từ độ phân giải render của game lên kích thước cửa sổ (vd: 1.5 = render ở khoảng 67% độ phân giải)."
-        )
-    }
-    func metalFXRenderResolutionHint(renderWidth: Int, renderHeight: Int, outputWidth: Int, outputHeight: Int) -> String {
-        localized(
-            en: "Renders at \(renderWidth)×\(renderHeight) and upscales to \(outputWidth)×\(outputHeight) — lower render resolution also means lower memory usage.",
-            vi: "Render ở \(renderWidth)×\(renderHeight) rồi upscale lên \(outputWidth)×\(outputHeight) — độ phân giải render thấp hơn cũng nghĩa là tốn ít bộ nhớ hơn."
+            en: "D3DMetal renders at the game's own resolution and lets Metal upscale to the window size. Only has an effect if you also lower the resolution below your display's native size (use Custom windowed resolution above).",
+            vi: "D3DMetal sẽ render ở độ phân giải game đang đặt rồi để Metal upscale lên kích thước cửa sổ. Chỉ có tác dụng nếu bạn cũng hạ độ phân giải thấp hơn màn hình (dùng Custom windowed resolution ở trên)."
         )
     }
     var metalFXNeedsCustomResolutionWarning: String {
@@ -255,7 +226,6 @@ struct AppText {
     }
     var voicePacksLabel: String { localized(en: "Voice packs", vi: "Gói lồng tiếng") }
     var refreshVoicePacksTitle: String { localized(en: "Refresh", vi: "Làm mới") }
-    var selectedVoicePackBadge: String { localized(en: "Selected", vi: "Đang chọn") }
     var removeVoicePackTitle: String { localized(en: "Remove", vi: "Gỡ") }
     var voicePackSizeLabel: String { localized(en: "Size", vi: "Dung lượng") }
     var voicePackFilesLabel: String { localized(en: "Files", vi: "Số file") }
@@ -268,7 +238,6 @@ struct AppText {
         localized(en: "Removed voice pack. Freed \(freedBytes).", vi: "Đã gỡ gói lồng tiếng. Giải phóng \(freedBytes).")
     }
     var voicePackRemoveFailed: String { localized(en: "Failed to remove voice pack", vi: "Gỡ gói lồng tiếng thất bại") }
-    var voicePackAlreadySelected: String { localized(en: "This voice pack is selected and cannot be removed.", vi: "Gói lồng tiếng này đang được chọn nên không thể gỡ.") }
 
     // MARK: - Cache Management
 
@@ -283,6 +252,46 @@ struct AppText {
     var cacheClearFailed: String { localized(en: "Failed to clear cache", vi: "Xóa cache thất bại") }
     var noRemovableCache: String { localized(en: "No removable cache found. Refresh after the game is installed.", vi: "Chưa có cache nào có thể xóa. Hãy làm mới sau khi game được cài đặt.") }
     var totalRemovableCacheLabel: String { localized(en: "Total", vi: "Tổng cộng") }
+
+    // MARK: - D3DMetal Setup
+
+    var d3dMetalSetupTitle: String { localized(en: "D3DMetal (render backend)", vi: "D3DMetal (render backend)") }
+    var d3dMetalAlreadyInstalled: String {
+        localized(
+            en: "CrossOver with Apple D3DMetal is installed.",
+            vi: "Đã cài CrossOver kèm Apple D3DMetal."
+        )
+    }
+    var d3dMetalSetupDescription: String {
+        localized(
+            en: "Genshin needs a Direct3D-to-Metal layer to run. Apple's D3DMetal ships only inside CrossOver, which this button installs through Homebrew as a 14-day trial — after that CrossOver needs a license purchased from CodeWeavers to keep running. This downloads about 1 GB and installs CrossOver.app into /Applications.",
+            vi: "Genshin cần một lớp dịch Direct3D-to-Metal để chạy. Apple D3DMetal chỉ đi kèm CrossOver, và nút này cài CrossOver qua Homebrew dưới dạng dùng thử 14 ngày — sau đó CrossOver cần mua license từ CodeWeavers để tiếp tục dùng. Việc này tải khoảng 1 GB và cài CrossOver.app vào /Applications."
+        )
+    }
+    var installCrossOverButtonTitle: String { localized(en: "Install CrossOver via Homebrew", vi: "Cài CrossOver qua Homebrew") }
+    var installingCrossOver: String { localized(en: "Installing CrossOver via Homebrew...", vi: "Đang cài CrossOver qua Homebrew...") }
+    var crossOverInstalled: String { localized(en: "CrossOver installed.", vi: "Đã cài CrossOver.") }
+    var crossOverInstallFailedStatus: String { localized(en: "Installing CrossOver failed", vi: "Cài CrossOver thất bại") }
+
+    /// Error text when Homebrew itself is not installed.
+    ///
+    /// The launcher never installs Homebrew itself — its official installer runs arbitrary code
+    /// via `curl | bash` and asks for the user's password, which needs the user to review and run
+    /// it directly rather than a GUI app triggering it silently.
+    func homebrewNotFound() -> String {
+        localized(
+            en: "Homebrew is not installed. Install it yourself from https://brew.sh, then try again.",
+            vi: "Chưa cài Homebrew. Hãy tự cài từ https://brew.sh rồi thử lại."
+        )
+    }
+
+    /// Error text when `brew install --cask crossover` ran but left no usable CrossOver behind.
+    func crossOverInstallFailed(_ details: String) -> String {
+        localized(
+            en: "Installing CrossOver through Homebrew failed: \(details)",
+            vi: "Cài CrossOver qua Homebrew thất bại: \(details)"
+        )
+    }
     func cacheKindLabel(_ kind: RemovableCache.Kind) -> String {
         switch kind {
         case .cutsceneVideos: return localized(en: "Cutscene videos", vi: "Video cutscene")
@@ -316,8 +325,8 @@ struct AppText {
             )
         case .launcherDownloadArchives:
             return localized(
-                en: "Compressed archives left after extraction (DXMT/DXVK/Wine).",
-                vi: "Archive nén còn lại sau khi giải nén (DXMT/DXVK/Wine)."
+                en: "Compressed archives left after extraction (DXVK/Wine).",
+                vi: "Archive nén còn lại sau khi giải nén (DXVK/Wine)."
             )
         }
     }
@@ -473,19 +482,17 @@ struct AppText {
         )
     }
 
-    /// Error text for automatic DXMT setup failures.
-    func dxmtBootstrapFailed(_ details: String) -> String {
+    /// Error text when no installed Wine build carries Apple D3DMetal.
+    ///
+    /// Only CrossOver is named as a remedy: the popular `game-porting-toolkit` Homebrew cask
+    /// (`gcenx/wine` tap) ships the open-source DXMT project relabeled, not Apple's real D3DMetal,
+    /// and Apple's own Game Porting Toolkit is gated behind an Apple Developer sign-in with no
+    /// public download to point at. Use the Settings screen's install button for CrossOver instead
+    /// of typing a command here.
+    func d3dMetalUnavailable(_ path: String) -> String {
         localized(
-            en: "DXMT setup failed before launching Wine: \(details)",
-            vi: "Thiết lập DXMT trước khi chạy Wine thất bại: \(details)"
-        )
-    }
-
-    /// Error text when the selected Wine build cannot host DXMT.
-    func dxmtUnsupportedWine(_ path: String) -> String {
-        localized(
-            en: "No DXMT-compatible Wine binary was found. Checked: \(path). DXMT needs winemac to export the macdrv_functions Metal interface (or macdrv_view_create_metal_view), which only DXMT-patched Wine builds (Wine 9.9+/11.x, e.g. yaagl/anime-game-wine or 3Shain/wine) provide — stock WineHQ and Game Porting Toolkit do not. Install a DXMT-patched Wine, then try again.",
-            vi: "Chưa tìm thấy Wine binary tương thích DXMT. Đã kiểm tra: \(path). DXMT cần winemac export interface Metal macdrv_functions (hoặc macdrv_view_create_metal_view), chỉ có ở Wine đã patch DXMT (Wine 9.9+/11.x, ví dụ yaagl/anime-game-wine hoặc 3Shain/wine) — WineHQ thường và Game Porting Toolkit đều không có. Hãy cài Wine patch DXMT rồi thử lại."
+            en: "No Wine build with Apple D3DMetal was found. Checked: \(path). D3DMetal ships only inside CrossOver (CodeWeavers) — NSLauncher cannot download it on its own. Install CrossOver from Settings, then try again.",
+            vi: "Chưa tìm thấy bản Wine nào có Apple D3DMetal. Đã kiểm tra: \(path). D3DMetal chỉ đi kèm CrossOver (CodeWeavers) — NSLauncher không thể tự tải D3DMetal. Hãy cài CrossOver từ màn hình Cài đặt rồi thử lại."
         )
     }
 
@@ -515,16 +522,21 @@ struct AppText {
                 return wineBinaryQuarantined(path)
             case let .dxvkBootstrapFailed(details):
                 return dxvkBootstrapFailed(details)
-            case let .dxmtBootstrapFailed(details):
-                return dxmtBootstrapFailed(details)
-            case let .dxmtUnsupportedWine(path):
-                return dxmtUnsupportedWine(path)
-            case let .dxmtWineTooOld(details):
-                return dxmtWineTooOld(details)
+            case let .d3dMetalUnavailable(path):
+                return d3dMetalUnavailable(path)
             case let .wineDistributionFailed(details):
                 return wineDistributionFailed(details)
+            case let .wineRootNotFound(path):
+                return wineRootNotFound(path)
             case let .unsupportedKernelDriver(driver):
                 return unsupportedKernelDriver(driver)
+            }
+        case let crossOverError as CrossOverInstallError:
+            switch crossOverError {
+            case .homebrewNotFound:
+                return homebrewNotFound()
+            case let .installFailed(details):
+                return crossOverInstallFailed(details)
             }
         case let processError as ProcessRunnerError:
             switch processError {
@@ -548,23 +560,20 @@ struct AppText {
         }
     }
 
-    /// Error text when every installed Wine predates the DXMT ABI.
-    ///
-    /// Separate from `dxmtUnsupportedWine` on purpose: a build that exports the Metal symbols with
-    /// an old layout loads and then deadlocks, which needs a different instruction than a build
-    /// that simply lacks them.
-    func dxmtWineTooOld(_ details: String) -> String {
-        localized(
-            en: "The installed Wine is too old for DXMT \(DXMTBridge.version): \(details). Older builds such as Game Porting Toolkit (wine-7.7) export the Metal interface with an incompatible layout, so DXMT loads and then hangs the game during startup instead of reporting an error. NSLauncher can install a current Wine automatically — launch again to let it.",
-            vi: "Bản Wine đang cài quá cũ so với DXMT \(DXMTBridge.version): \(details). Các bản cũ như Game Porting Toolkit (wine-7.7) export interface Metal với layout không tương thích, khiến DXMT nạp được rồi treo game lúc khởi động thay vì báo lỗi. NSLauncher có thể tự tải bản Wine mới — hãy bấm chạy lại để tải."
-        )
-    }
-
     /// Error text when installing the launcher-managed Wine build fails.
     func wineDistributionFailed(_ details: String) -> String {
         localized(
-            en: "Installing \(WineDistribution.displayName) failed: \(details). Check the network connection and try again, or install a DXMT-compatible Wine yourself.",
-            vi: "Cài \(WineDistribution.displayName) thất bại: \(details). Hãy kiểm tra kết nối mạng rồi thử lại, hoặc tự cài một bản Wine tương thích DXMT."
+            en: "Installing \(WineDistribution.displayName) failed: \(details). Check the network connection and try again.",
+            vi: "Cài \(WineDistribution.displayName) thất bại: \(details). Hãy kiểm tra kết nối mạng rồi thử lại."
+        )
+    }
+
+    /// Error text when a Wine binary has no sibling `lib/wine` directory, so its install root
+    /// cannot be located.
+    func wineRootNotFound(_ path: String) -> String {
+        localized(
+            en: "Unable to locate the Wine installation for \(path).",
+            vi: "Không xác định được thư mục cài đặt Wine cho \(path)."
         )
     }
 

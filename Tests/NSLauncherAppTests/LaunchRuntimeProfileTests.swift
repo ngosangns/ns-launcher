@@ -16,203 +16,140 @@ final class LaunchRuntimeProfileTests: XCTestCase {
     }
 
     private func makeSettings(
-        useMsync: Bool = false,
-        maxFrameRate: Int = 0,
         metalFXUpscaling: Bool = false,
-        resolutionCustom: Bool = false
+        resolutionCustom: Bool = false,
+        showMetalHUD: Bool = false
     ) -> AppSettings {
         var settings = AppSettings.default
-        settings.useMsync = useMsync
-        settings.maxFrameRate = maxFrameRate
         settings.metalFXUpscaling = metalFXUpscaling
         settings.resolutionCustom = resolutionCustom
+        settings.showMetalHUD = showMetalHUD
         return settings
     }
 
-    /// Pinned so the frame cap under test never depends on the display the tests run on.
-    private static let refreshRate = 120
-
-    func testDXMTBackendDefaultsToEsync() {
+    func testD3DMetalBackendDefaultsToEsync() {
         let profile = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .dxmt]),
-            settings: makeSettings(),
-            displayRefreshRate: Self.refreshRate
+            game: makeGame(requirements: [.wine, .d3dMetal]),
+            settings: makeSettings()
         )
-        XCTAssertEqual(profile.backend, .dxmt)
+        XCTAssertEqual(profile.backend, .d3dMetal)
         XCTAssertEqual(profile.environment["WINEESYNC"], "1")
         XCTAssertNil(profile.environment["WINEMSYNC"])
-        // The empty override list keeps the DXMT builtin D3D DLLs authoritative.
+        // The empty override list keeps D3DMetal's builtin D3D DLLs authoritative.
         XCTAssertEqual(profile.environment["WINEDLLOVERRIDES"], "")
     }
 
-    func testUseMsyncOptsIntoMSyncOnDXMT() {
-        let profile = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .dxmt]),
-            settings: makeSettings(useMsync: true),
-            displayRefreshRate: Self.refreshRate
-        )
-        XCTAssertEqual(profile.environment["WINEMSYNC"], "1")
-        XCTAssertNil(profile.environment["WINEESYNC"])
-    }
-
-    func testMaxFrameRateIsForwardedAsDXMTConfig() {
-        let profile = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .dxmt]),
-            settings: makeSettings(maxFrameRate: 120),
-            displayRefreshRate: Self.refreshRate
-        )
-        XCTAssertEqual(
-            profile.environment["DXMT_CONFIG"]?.contains("d3d11.preferredMaxFrameRate=120;"),
-            true
-        )
-    }
-
-    func testDisabledMaxFrameRateOmitsDXMTConfig() {
-        let profile = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .dxmt]),
-            settings: makeSettings(maxFrameRate: 0),
-            displayRefreshRate: Self.refreshRate
-        )
-        XCTAssertNil(profile.environment["DXMT_CONFIG"])
-    }
-
-    func testDXVKBackendAlwaysUsesEsyncEvenWhenMSyncRequested() {
+    func testDXVKBackendAlsoDefaultsToEsync() {
         let profile = LaunchRuntimeProfile.build(
             game: makeGame(requirements: [.wine, .dxvk]),
-            settings: makeSettings(useMsync: true),
-            displayRefreshRate: Self.refreshRate
+            settings: makeSettings()
         )
         XCTAssertEqual(profile.backend, .dxvk)
         XCTAssertEqual(profile.environment["WINEESYNC"], "1")
         XCTAssertNil(profile.environment["WINEMSYNC"])
     }
 
-    func testFrameCapSnapsDownToAFactorOfTheRefreshRate() {
-        // 60 is not a factor of 144, which is what made a hardcoded 60 unsafe.
-        XCTAssertEqual(AppSettings.supportedFrameCap(requested: 60, refreshRate: 144), 48)
-        XCTAssertEqual(AppSettings.supportedFrameCap(requested: 60, refreshRate: 120), 60)
-        XCTAssertEqual(AppSettings.supportedFrameCap(requested: 100, refreshRate: 60), 60)
-        XCTAssertEqual(AppSettings.supportedFrameCap(requested: 0, refreshRate: 144), 0)
-        XCTAssertEqual(AppSettings.supportedFrameCap(requested: 60, refreshRate: 0), 0)
-    }
-
-    func testFrameCapIsSnappedBeforeReachingDXMTConfig() {
-        let profile = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .dxmt]),
-            settings: makeSettings(maxFrameRate: 60),
-            displayRefreshRate: 144
-        )
-        XCTAssertEqual(
-            profile.environment["DXMT_CONFIG"]?.contains("d3d11.preferredMaxFrameRate=48;"),
-            true
-        )
-    }
-
     /// MetalFX only upscales something when the game is told to render below the window size,
     /// which is what `resolutionCustom` sets up; otherwise the pass is pure GPU cost.
     func testMetalFXIsWithheldWithoutACustomRenderResolution() {
         let profile = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .dxmt]),
-            settings: makeSettings(metalFXUpscaling: true, resolutionCustom: false),
-            displayRefreshRate: Self.refreshRate
+            game: makeGame(requirements: [.wine, .d3dMetal]),
+            settings: makeSettings(metalFXUpscaling: true, resolutionCustom: false)
         )
-        XCTAssertNil(profile.environment["DXMT_METALFX_SPATIAL_SWAPCHAIN"])
+        XCTAssertNil(profile.environment["D3DM_ENABLE_METALFX"])
     }
 
     func testMetalFXIsAppliedWithACustomRenderResolution() {
         let profile = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .dxmt]),
-            settings: makeSettings(metalFXUpscaling: true, resolutionCustom: true),
-            displayRefreshRate: Self.refreshRate
+            game: makeGame(requirements: [.wine, .d3dMetal]),
+            settings: makeSettings(metalFXUpscaling: true, resolutionCustom: true)
         )
-        XCTAssertEqual(profile.environment["DXMT_METALFX_SPATIAL_SWAPCHAIN"], "1")
+        XCTAssertEqual(profile.environment["D3DM_ENABLE_METALFX"], "1")
     }
 
-    /// DXMT is not applied to a game that never asked for a translation layer; its environment
+    func testMetalHUDStatsFollowTheShowMetalHUDSetting() {
+        let profile = LaunchRuntimeProfile.build(
+            game: makeGame(requirements: [.wine, .d3dMetal]),
+            settings: makeSettings(showMetalHUD: true)
+        )
+        XCTAssertEqual(profile.environment["D3DM_SHOW_HUD_STATS"], "1")
+    }
+
+    /// D3DMetal is not applied to a game that never asked for a translation layer; its environment
     /// would otherwise follow every plain-Wine launch around.
     func testAGameNeedingNoBridgeRunsOnPlainWine() {
         let profile = LaunchRuntimeProfile.build(
             game: makeGame(requirements: [.wine]),
-            settings: makeSettings(),
-            displayRefreshRate: Self.refreshRate
+            settings: makeSettings()
         )
         XCTAssertEqual(profile.backend, .plainWine)
-        XCTAssertNil(profile.environment["DXMT_SHADER_CACHE"])
-        XCTAssertNil(profile.environment["DXMT_LOG_PATH"])
+        XCTAssertNil(profile.environment["D3DM_ENABLE_METALFX"])
+        XCTAssertNil(profile.environment["WINEDLLOVERRIDES"])
     }
 
-    /// Every game that needs a Direct3D-to-Metal layer gets DXMT; there is no second choice to
+    /// Every game that needs a Direct3D-to-Metal layer gets D3DMetal; there is no second choice to
     /// fall to, so a game requiring one must never resolve to plain Wine.
-    func testEveryGameNeedingADirect3DLayerGetsDXMT() {
+    func testEveryGameNeedingADirect3DLayerGetsD3DMetal() {
         let profile = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .dxmt]),
-            settings: makeSettings(),
-            displayRefreshRate: Self.refreshRate
+            game: makeGame(requirements: [.wine, .d3dMetal]),
+            settings: makeSettings()
         )
-        XCTAssertEqual(profile.backend, .dxmt)
+        XCTAssertEqual(profile.backend, .d3dMetal)
     }
 
-    /// The persistent pipeline cache is what keeps a character swap from paying shader-compile
-    /// cost again on every session; DXMT ships it off by default.
-    func testPersistentShaderCacheIsEnabled() {
+    /// Everything but `err` is off by default; the kernel-driver names the launcher scans for rely
+    /// on Wine's err-class output surviving.
+    func testWineDebugKeepsErrEnabledEverywhereExceptUnwind() {
         let profile = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .dxmt]),
-            settings: makeSettings(),
-            displayRefreshRate: Self.refreshRate
+            game: makeGame(requirements: [.wine, .d3dMetal]),
+            settings: makeSettings()
         )
-        XCTAssertEqual(profile.environment["DXMT_SHADER_CACHE"], "1")
-        XCTAssertEqual(
-            profile.environment["DXMT_SHADER_CACHE_PATH"],
-            DXMTBridge.shaderCacheDirectory.path
-        )
+        XCTAssertEqual(profile.environment["WINEDEBUG"], "-all,+err,err-unwind")
     }
 
-    /// The cache must not sit under `Library/Caches`, which macOS purges under disk pressure.
-    func testShaderCacheSurvivesCachePurges() {
-        XCTAssertFalse(DXMTBridge.shaderCacheDirectory.path.contains("/Library/Caches/"))
+    func testWindowedModeDefaultsTo1280x720WithoutACustomResolution() {
+        var settings = AppSettings.default
+        settings.launchDisplayMode = .windowed
+        settings.resolutionCustom = false
+
+        let arguments = settings.launchArguments(for: makeGame(requirements: [.wine, .d3dMetal]))
+
+        XCTAssertEqual(arguments, ["-screen-fullscreen", "0", "-screen-width", "1280", "-screen-height", "720"])
     }
 
-    /// DXMT appends `d3d11.log` to this path, so it has to name a directory.
-    func testDXMTLogPathIsADirectory() {
-        let profile = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .dxmt]),
-            settings: makeSettings(),
-            displayRefreshRate: Self.refreshRate
-        )
-        XCTAssertEqual(profile.environment["DXMT_LOG_PATH"]?.hasSuffix("/DXMT"), true)
-        XCTAssertEqual(profile.environment["DXMT_CONFIG_FILE"]?.hasSuffix("/DXMT/dxmt.conf"), true)
+    /// The bug this guards against: a custom resolution only ever applied in fullscreen mode,
+    /// so choosing Windowed silently locked the game to 1280x720 no matter what was configured.
+    func testWindowedModeAppliesACustomResolutionWhenSet() {
+        var settings = AppSettings.default
+        settings.launchDisplayMode = .windowed
+        settings.resolutionCustom = true
+        settings.resolutionWidth = 2560
+        settings.resolutionHeight = 1440
+
+        let arguments = settings.launchArguments(for: makeGame(requirements: [.wine, .d3dMetal]))
+
+        XCTAssertEqual(arguments, ["-screen-fullscreen", "0", "-screen-width", "2560", "-screen-height", "1440"])
     }
 
-    func testSanitizedMaxFrameRateClampsOutOfRangeValues() {
-        XCTAssertEqual(AppSettings.sanitizedMaxFrameRate(-5), 0)
-        XCTAssertEqual(AppSettings.sanitizedMaxFrameRate(0), 0)
-        XCTAssertEqual(AppSettings.sanitizedMaxFrameRate(60), 60)
-        XCTAssertEqual(AppSettings.sanitizedMaxFrameRate(1000), 360)
+    func testFullscreenModeOmitsResolutionFlagsWithoutACustomResolution() {
+        var settings = AppSettings.default
+        settings.launchDisplayMode = .fullscreen
+        settings.resolutionCustom = false
+
+        let arguments = settings.launchArguments(for: makeGame(requirements: [.wine, .d3dMetal]))
+
+        XCTAssertEqual(arguments, ["-screen-fullscreen", "1"])
     }
 
-    func testSanitizedMetalFXScaleFactorClampsOutOfRangeValues() {
-        XCTAssertEqual(AppSettings.sanitizedMetalFXScaleFactor(0.5), 1.0)
-        XCTAssertEqual(AppSettings.sanitizedMetalFXScaleFactor(1.5), 1.5)
-        XCTAssertEqual(AppSettings.sanitizedMetalFXScaleFactor(10.0), 4.0)
-    }
+    func testFullscreenModeAppliesACustomResolutionWhenSet() {
+        var settings = AppSettings.default
+        settings.launchDisplayMode = .fullscreen
+        settings.resolutionCustom = true
+        settings.resolutionWidth = 3440
+        settings.resolutionHeight = 1440
 
-    func testMetalFXRenderResolutionDividesOutputByFactor() {
-        let resolution = AppSettings.metalFXRenderResolution(
-            outputWidth: 1920,
-            outputHeight: 1080,
-            factor: 1.5
-        )
-        XCTAssertEqual(resolution.width, 1280)
-        XCTAssertEqual(resolution.height, 720)
-    }
+        let arguments = settings.launchArguments(for: makeGame(requirements: [.wine, .d3dMetal]))
 
-    func testMetalFXRenderResolutionNeverReturnsZero() {
-        let resolution = AppSettings.metalFXRenderResolution(
-            outputWidth: 100,
-            outputHeight: 100,
-            factor: 4.0
-        )
-        XCTAssertGreaterThanOrEqual(resolution.width, 1)
-        XCTAssertGreaterThanOrEqual(resolution.height, 1)
+        XCTAssertEqual(arguments, ["-screen-fullscreen", "1", "-screen-width", "3440", "-screen-height", "1440"])
     }
 }

@@ -27,7 +27,7 @@ protocol RenderBridge: Sendable {
     ///
     /// Called while building the launch profile, so the values show up in the launch log even
     /// when the launch later fails.
-    func launchEnvironment(settings: AppSettings, displayRefreshRate: Int) -> [String: String]
+    func launchEnvironment(settings: AppSettings) -> [String: String]
 
     /// Picks the Wine build this bridge can run on, newest first.
     ///
@@ -62,7 +62,7 @@ extension RenderBridge {
 
     /// Default resolution: the newest usable Wine, with no extra requirement.
     ///
-    /// Bridges that need more — DXMT's Metal symbols and version floor — override this.
+    /// Bridges that need more — D3DMetal's `lib64/apple_gptk` requirement — override this.
     func resolveWineBuild(
         preferredPath: String,
         processRunner: ProcessRunning,
@@ -85,19 +85,15 @@ extension RenderBridge {
 enum RenderBridges {
     static func bridge(for backend: RuntimeBackend) -> RenderBridge? {
         switch backend {
-        case .dxmt: return DXMTBridge()
+        case .d3dMetal: return D3DMetalBridge()
         case .dxvk: return DXVKBridge()
         case .plainWine: return nil
         }
     }
 
     /// Environment for a backend, or nothing when it needs no translation layer.
-    static func launchEnvironment(
-        for backend: RuntimeBackend,
-        settings: AppSettings,
-        displayRefreshRate: Int
-    ) -> [String: String] {
-        bridge(for: backend)?.launchEnvironment(settings: settings, displayRefreshRate: displayRefreshRate) ?? [:]
+    static func launchEnvironment(for backend: RuntimeBackend, settings: AppSettings) -> [String: String] {
+        bridge(for: backend)?.launchEnvironment(settings: settings) ?? [:]
     }
 }
 

@@ -1,23 +1,20 @@
 // WineDistribution.swift
 //
-// Installs the Wine build the launcher runs games on, into the slot `WineBinaryLocator` has always
-// looked in first.
+// Installs a Wine build into the slot `WineBinaryLocator` has always looked in first.
 //
-// Until now that slot was only ever read. With nothing to fill it, DXMT fell through to whatever
-// Wine happened to be on the machine, and on a machine with Game Porting Toolkit that meant DXMT
-// v0.80 loaded into wine-7.7 — a combination that faults inside the loader while holding ntdll's
-// loader lock, so the game deadlocks at startup and never reports an error. YAAGL avoids this by
-// shipping its own Wine and pinning it to a DXMT version; this does the same thing.
+// Currently unused — no bridge calls `ensureInstalled`. It was written so DXMT (a Direct3D-to-Metal
+// layer the launcher downloaded and installed itself) always had a Wine new enough to load into;
+// without it DXMT could fall through to an old Game Porting Toolkit Wine and deadlock at startup
+// with no error at all. The launcher's current backend, Apple D3DMetal (`D3DMetalBridge`), ships
+// only inside CrossOver-derived Wine builds it cannot download on its own, so installing this build
+// (a plain `yaagl/anime-game-wine` Wine with no Apple Game Porting Toolkit payload) would not make
+// D3DMetal available — kept in the tree rather than deleted in case a future backend needs the same
+// "ensure some usable Wine is present" bootstrap this provides.
 //
 // The build is whatever `yaagl/anime-game-wine` currently publishes as its latest release, resolved
-// at install time rather than pinned. That is a deliberate trade: a pinned tag guarantees DXMT runs
-// against a Wine it was released with, and resolving latest gives that up in exchange for picking
-// up new Wine builds without a launcher update. The version floor in `DXMTBridge` is the only thing
-// still checking the pairing, and it is a compile-time constant — so a future Wine that breaks DXMT
-// would get installed here and rejected there, surfacing as `dxmtWineTooOld` rather than a hang.
-//
-// `pinnedFallback` is the last known-good release. It is used when GitHub cannot be reached or
-// answers with something unusable, so a launch never fails purely because an API call did.
+// at install time rather than pinned, falling back to `pinnedFallback` — the last known-good
+// release — when GitHub cannot be reached or answers with something unusable, so a launch never
+// fails purely because an API call did.
 //
 // Non-destructive: an existing usable build in the slot is left alone, including a symlink into a
 // Wine installed elsewhere. The slot's contract is "a usable Wine lives here", not "the launcher

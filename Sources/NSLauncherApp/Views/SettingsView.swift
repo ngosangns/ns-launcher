@@ -19,6 +19,7 @@ struct SettingsView: View {
                         storageSection
                         cacheSection(for: game)
                     }
+                    d3dMetalSetupSection
                 }
                 .frame(maxWidth: 1_080)
                 .padding(.horizontal, 34)
@@ -46,31 +47,9 @@ struct SettingsView: View {
         .padding(.vertical, 8)
     }
 
-    private var voiceLanguageField: some View {
-        SettingField(label: text.voiceLanguageLabel) {
-            VStack(alignment: .leading, spacing: 8) {
-                Picker(text.voiceLanguageLabel, selection: Binding(
-                    get: { viewModel.settings.voiceLanguage },
-                    set: { viewModel.update(\.voiceLanguage, to: $0) }
-                )) {
-                    ForEach(VoiceLanguage.allCases) { language in
-                        Text(text.voiceLanguageName(language)).tag(language)
-                    }
-                }
-                .pickerStyle(.menu)
-                .pointerOnHover()
-
-                Text(text.voiceLanguageDescription)
-                    .font(.caption)
-                    .foregroundStyle(LauncherPalette.mist.opacity(0.72))
-            }
-        }
-    }
-
     private func gameSection(for game: GameDefinition) -> some View {
         SettingsSection(title: text.selectedGame) {
             VStack(alignment: .leading, spacing: 14) {
-                voiceLanguageField
                 displayModeField
                 pathFields(for: game)
                 voicePackageManagement
@@ -154,18 +133,6 @@ struct SettingsView: View {
                 )
             )
 
-            VStack(alignment: .leading, spacing: 6) {
-                numericField(
-                    label: text.maxFrameRateLabel,
-                    value: viewModel.settings.maxFrameRate,
-                    set: viewModel.setMaxFrameRate
-                )
-                Text(text.maxFrameRateDescription)
-                    .font(.caption)
-                    .foregroundStyle(LauncherPalette.mist.opacity(0.72))
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-
             SettingToggle(
                 title: text.metalFXUpscalingLabel,
                 detail: text.metalFXUpscalingDescription,
@@ -174,35 +141,11 @@ struct SettingsView: View {
                     set: { viewModel.update(\.metalFXUpscaling, to: $0) }
                 )
             )
-            if viewModel.settings.metalFXUpscaling {
-                VStack(alignment: .leading, spacing: 6) {
-                    numericField(
-                        label: text.metalFXScaleFactorLabel,
-                        value: viewModel.settings.metalFXScaleFactor,
-                        set: viewModel.setMetalFXScaleFactor
-                    )
-                    if viewModel.settings.resolutionCustom {
-                        let renderResolution = AppSettings.metalFXRenderResolution(
-                            outputWidth: viewModel.settings.resolutionWidth,
-                            outputHeight: viewModel.settings.resolutionHeight,
-                            factor: viewModel.settings.metalFXScaleFactor
-                        )
-                        Text(text.metalFXRenderResolutionHint(
-                            renderWidth: renderResolution.width,
-                            renderHeight: renderResolution.height,
-                            outputWidth: viewModel.settings.resolutionWidth,
-                            outputHeight: viewModel.settings.resolutionHeight
-                        ))
-                        .font(.caption)
-                        .foregroundStyle(LauncherPalette.mist.opacity(0.72))
-                        .fixedSize(horizontal: false, vertical: true)
-                    } else {
-                        Text(text.metalFXNeedsCustomResolutionWarning)
-                            .font(.caption)
-                            .foregroundStyle(LauncherPalette.gold.opacity(0.85))
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                }
+            if viewModel.settings.metalFXUpscaling, !viewModel.settings.resolutionCustom {
+                Text(text.metalFXNeedsCustomResolutionWarning)
+                    .font(.caption)
+                    .foregroundStyle(LauncherPalette.gold.opacity(0.85))
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
     }
@@ -255,14 +198,6 @@ struct SettingsView: View {
                 )
             )
             LaunchOption(
-                title: text.useMsyncLabel,
-                detail: text.useMsyncDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.useMsync },
-                    set: { viewModel.update(\.useMsync, to: $0) }
-                )
-            )
-            LaunchOption(
                 title: text.resolutionCustomLabel,
                 detail: text.resolutionCustomDescription,
                 isOn: Binding(
@@ -307,22 +242,6 @@ struct SettingsView: View {
                 get: { value },
                 set: { set($0) }
             ), format: .number)
-            .textFieldStyle(.roundedBorder)
-            .font(.system(.body, design: .monospaced))
-            .frame(maxWidth: 160)
-        }
-    }
-
-    private func numericField(label: String, value: Double, set: @escaping (Double) -> Void) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(label.uppercased())
-                .font(.system(.caption2, design: .rounded, weight: .bold))
-                .tracking(0.8)
-                .foregroundStyle(LauncherPalette.gold.opacity(0.88))
-            TextField(label, value: Binding(
-                get: { value },
-                set: { set($0) }
-            ), format: .number.precision(.fractionLength(1)))
             .textFieldStyle(.roundedBorder)
             .font(.system(.body, design: .monospaced))
             .frame(maxWidth: 160)
@@ -450,6 +369,37 @@ struct SettingsView: View {
         }
     }
 
+    private var d3dMetalSetupSection: some View {
+        SettingsSection(title: text.d3dMetalSetupTitle) {
+            VStack(alignment: .leading, spacing: 12) {
+                if viewModel.isCrossOverInstalled {
+                    Label(text.d3dMetalAlreadyInstalled, systemImage: "checkmark.seal.fill")
+                        .font(.subheadline)
+                        .foregroundStyle(LauncherPalette.mist.opacity(0.82))
+                } else {
+                    Text(text.d3dMetalSetupDescription)
+                        .font(.caption)
+                        .foregroundStyle(LauncherPalette.mist.opacity(0.72))
+                        .fixedSize(horizontal: false, vertical: true)
+                    Button(text.installCrossOverButtonTitle) {
+                        viewModel.installCrossOverViaHomebrew()
+                    }
+                    .buttonStyle(QuestButtonStyle(role: .primary))
+                    .disabled(viewModel.isInstallingCrossOver)
+                    .pointerOnHover(enabled: !viewModel.isInstallingCrossOver)
+                    if viewModel.isInstallingCrossOver {
+                        HStack(spacing: 8) {
+                            ProgressView().controlSize(.small)
+                            Text(viewModel.statusText)
+                                .font(.caption)
+                                .foregroundStyle(LauncherPalette.mist.opacity(0.72))
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private var cacheTotalRow: some View {
         let total = viewModel.cacheReport.reduce(Int64(0)) { $0 + $1.sizeBytes }
         return HStack {
@@ -532,13 +482,12 @@ struct SettingsView: View {
     }
 
     private func voicePackageRow(_ package: VoicePackage) -> some View {
-        let isSelected = package.voiceLanguage == viewModel.settings.voiceLanguage
         let name = package.voiceLanguage.map { text.voiceLanguageName($0) } ?? package.categoryName
 
         return HStack(spacing: 14) {
-            Image(systemName: isSelected ? "waveform.circle.fill" : "waveform.circle")
+            Image(systemName: "waveform.circle")
                 .font(.title3)
-                .foregroundStyle(isSelected ? LauncherPalette.success : LauncherPalette.mist.opacity(0.72))
+                .foregroundStyle(LauncherPalette.mist.opacity(0.72))
             VStack(alignment: .leading, spacing: 4) {
                 Text(name)
                     .font(.system(.body, design: .rounded, weight: .semibold))
@@ -548,16 +497,12 @@ struct SettingsView: View {
                     .foregroundStyle(LauncherPalette.mist.opacity(0.72))
             }
             Spacer()
-            if isSelected {
-                StatusPill(title: text.selectedVoicePackBadge, tint: LauncherPalette.success)
-            } else {
-                Button(text.removeVoicePackTitle) {
-                    viewModel.removeVoicePack(package)
-                }
-                .buttonStyle(QuestButtonStyle(role: .quiet))
-                .disabled(viewModel.isManagingVoicePacks)
-                .pointerOnHover(enabled: !viewModel.isManagingVoicePacks)
+            Button(text.removeVoicePackTitle) {
+                viewModel.removeVoicePack(package)
             }
+            .buttonStyle(QuestButtonStyle(role: .quiet))
+            .disabled(viewModel.isManagingVoicePacks)
+            .pointerOnHover(enabled: !viewModel.isManagingVoicePacks)
         }
         .padding(.vertical, 10)
         .overlay(alignment: .bottom) {

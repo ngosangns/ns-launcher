@@ -8,13 +8,15 @@ final class ErrorMessageTests: XCTestCase {
     private let vietnamese = AppText(language: .vietnamese)
     private let english = AppText(language: .english)
 
-    /// The failure this whole Wine-selection change set was written for. Its text has to name the
-    /// remedy, because the symptom it replaces is a game that hangs with no error at all.
-    func testTheWineTooOldErrorExplainsWhatToDo() {
-        let message = english.message(for: WineServiceError.dxmtWineTooOld("/opt/wine (wine-7.7)"))
-        XCTAssertTrue(message.contains("/opt/wine (wine-7.7)"))
-        XCTAssertTrue(message.contains(DXMTBridge.version))
-        XCTAssertFalse(message.contains("D3DMetal"), "the D3DMetal fallback no longer exists")
+    /// D3DMetal cannot be downloaded by the launcher, so its unavailability error has to name the
+    /// remedy (installing CrossOver) rather than just failing. Apple's Game Porting Toolkit is
+    /// deliberately not named here: the popular Homebrew cask that goes by that name ships DXMT
+    /// relabeled, not Apple's real D3DMetal, so naming it would send users to the wrong fix.
+    func testTheD3DMetalUnavailableErrorExplainsWhatToDo() {
+        let message = english.message(for: WineServiceError.d3dMetalUnavailable("/opt/wine"))
+        XCTAssertTrue(message.contains("/opt/wine"))
+        XCTAssertTrue(message.contains("CrossOver"))
+        XCTAssertFalse(message.contains("Game Porting Toolkit"))
     }
 
     /// A prefix is single-tenant; the message has to carry the PIDs so the user can act on it.
@@ -61,11 +63,12 @@ final class ErrorMessageTests: XCTestCase {
             LaunchPreflightError.gameAlreadyRunning([1]),
             WineServiceError.binaryQuarantined("/p"),
             WineServiceError.dxvkBootstrapFailed("d"),
-            WineServiceError.dxmtBootstrapFailed("d"),
-            WineServiceError.dxmtUnsupportedWine("/p"),
-            WineServiceError.dxmtWineTooOld("d"),
+            WineServiceError.d3dMetalUnavailable("/p"),
             WineServiceError.wineDistributionFailed("d"),
+            WineServiceError.wineRootNotFound("/p"),
             WineServiceError.unsupportedKernelDriver("HoYoKProtect.sys"),
+            CrossOverInstallError.homebrewNotFound,
+            CrossOverInstallError.installFailed("d"),
             ProcessRunnerError.executableNotFound("/p"),
             SophonInstallerError.zstdUnavailable
         ]

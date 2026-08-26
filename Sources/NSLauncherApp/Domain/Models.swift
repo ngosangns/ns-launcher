@@ -187,10 +187,27 @@ enum InstallerStrategy: String, Codable, CaseIterable, Identifiable {
 enum RuntimeRequirement: String, Codable, CaseIterable, Identifiable {
     case wine
     case dxvk
-    case dxmt
+    case d3dMetal
     case reshade
 
     var id: String { rawValue }
+
+    /// `dxmt` is this case's raw value before the DXMT-to-D3DMetal switch. Existing settings files
+    /// still carry it in `GameDefinition.runtimeRequirements`, and a decode failure there resets
+    /// the whole settings file to defaults (see `SettingsStore`), so the legacy value is aliased
+    /// rather than left to fail.
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let raw = try container.decode(String.self)
+        if raw == "dxmt" {
+            self = .d3dMetal
+            return
+        }
+        guard let value = RuntimeRequirement(rawValue: raw) else {
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unknown RuntimeRequirement '\(raw)'")
+        }
+        self = value
+    }
 }
 
 /// User-selected display mode for games launched through Wine.
@@ -202,17 +219,21 @@ enum LaunchDisplayMode: String, Codable, CaseIterable, Identifiable {
 
     /// Unity-compatible launch arguments used by Genshin Impact and similar games.
     ///
-    /// Fullscreen deliberately starts windowed: Wine's Mac driver renders Win32
-    /// fullscreen as a borderless screen-covering window instead of real macOS
-    /// fullscreen, so the launcher flips the window into native macOS fullscreen
-    /// after launch (see MacNativeFullscreenActivator). A windowed Unity surface
-    /// is required for that flip to work.
+    /// Fullscreen uses Wine's real Win32 exclusive fullscreen (`-screen-fullscreen 1`), not
+    /// AppKit's Spaces-based fullscreen: Unity's player window never carries
+    /// `NSWindowStyleMaskResizable`, and Wine's Mac driver only grants a window the
+    /// `NSWindowCollectionBehaviorFullScreenPrimary` a Space-fullscreen toggle needs when the
+    /// window is resizable (see `adjustFullScreenBehavior:` in macdrv's `cocoa_window.m`) — so
+    /// `-toggleFullScreen:`/`AXFullScreen` can never succeed on it. Win32 exclusive fullscreen
+    /// does not need that: once the window's frame covers the whole screen, macdrv's own
+    /// `CaptureDisplaysForFullscreen` registry option (see `WineService`) makes it seize the
+    /// display for real, independent of AppKit's resizable-window gate.
     var launchArguments: [String] {
         switch self {
         case .windowed:
-            return ["-screen-fullscreen", "0", "-screen-width", "1280", "-screen-height", "720"]
-        case .fullscreen:
             return ["-screen-fullscreen", "0"]
+        case .fullscreen:
+            return ["-screen-fullscreen", "1"]
         }
     }
 }
@@ -377,11 +398,15 @@ struct AppSettings: Codable, Equatable {
     var games: [GameDefinition] = []
     var selectedGameID: String?
     var language: AppLanguage = .english
-    /// Voice-over language pack selected for Sophon downloads.
-    var voiceLanguage: VoiceLanguage = .english
     var launchDisplayMode: LaunchDisplayMode = .windowed
     /// Wine Mac Driver registry: enable Retina scaling for HiDPI displays.
-    var macDriverRetina: Bool = true
+    ///
+    /// Off by default: on a Retina display this makes the render backend draw at the full physical pixel
+    /// count (2x the logical size in each dimension, ~4x the pixels), which is the single
+    /// biggest render-side cost in the whole pipeline and the main driver of stutter once the
+    /// window fills the screen in `LaunchDisplayMode.fullscreen`. Users on capable hardware can
+    /// turn it back on for sharper output.
+    var macDriverRetina: Bool = false
     /// Wine Mac Driver registry: treat the left Command key as Ctrl for games that assume Windows bindings.
     var leftCommandIsCtrl: Bool = false
     /// Debug overlay: set `MTL_HUD_ENABLED=1` at launch to show the Metal performance HUD.
@@ -417,64 +442,13 @@ struct AppSettings: Codable, Equatable {
     /// Route the game through an HTTP/HTTPS proxy.
     var proxyEnabled: Bool = false
     var proxyHost: String = ""
-    /// Optional Metal frame-pacing cap for DXMT (0 = disabled). The value must be a factor of the
-    /// display refresh rate (e.g. 60 on a 60/120 Hz display).
-    var maxFrameRate: Int = 0
-    /// DXMT MetalFX spatial upscaling (DXMT only): renders at the game's own resolution and lets
-    /// Metal upscale to the window size by `metalFXScaleFactor`. Only has a visible effect when the
-    /// game itself renders below the window's native resolution (pair with `resolutionCustom`).
+    /// Apple D3DMetal's MetalFX spatial upscaling toggle (`D3DM_ENABLE_METALFX`): renders at the
+    /// game's own resolution and lets Metal upscale to the window size. Only has a visible effect
+    /// when the game itself renders below the window's native resolution (pair with
+    /// `resolutionCustom`). Unlike DXMT, D3DMetal exposes no upscale factor to tune — Metal picks it.
     var metalFXUpscaling: Bool = false
-    /// Upscale factor applied when `metalFXUpscaling` is enabled (e.g. 1.5 = render at 2/3 scale).
-    var metalFXScaleFactor: Double = 1.5
-    /// Opt-in escape hatch replacing esync (`WINEESYNC=1`) with msync (`WINEMSYNC=1`) on the DXMT
-    /// backend. Off by default: on the current DXMT-patched Wine build msync crashed the render
-    /// path with `wine client error:308`. Only meaningful on Wine builds carrying the marzent
-    /// msync patches; the DXVK backend always uses esync.
-    var useMsync: Bool = false
     /// Monotonic settings schema version used for one-time default migrations.
     var settingsVersion: Int = 0
-
-    /// Sanitizes a user-entered frame-rate cap: negative values and nonsensically large ones
-    /// collapse into range (DXMT still requires the value to be a factor of the refresh rate).
-    static func sanitizedMaxFrameRate(_ value: Int) -> Int {
-        min(max(value, 0), 360)
-    }
-
-    /// Snaps a requested frame cap onto a value DXMT accepts.
-    ///
-    /// `d3d11.preferredMaxFrameRate` must be a FACTOR of the display refresh rate; a non-factor
-    /// value contributed to the render crash that made this setting opt-in. A request that is not
-    /// a factor is lowered to the largest factor below it (60 becomes 48 on a 144 Hz display),
-    /// which caps at or under what the user asked for rather than above it. Returns 0 when the cap
-    /// is disabled or the refresh rate is unknown, leaving `DXMT_CONFIG` without the key.
-    static func supportedFrameCap(requested: Int, refreshRate: Int) -> Int {
-        let sanitized = sanitizedMaxFrameRate(requested)
-        guard sanitized > 0, refreshRate > 0 else { return 0 }
-        if sanitized >= refreshRate { return refreshRate }
-        return stride(from: sanitized, through: 1, by: -1).first { refreshRate % $0 == 0 } ?? 0
-    }
-
-    /// Sanitizes a user-entered MetalFX upscale factor: DXMT expects a value above 1.0 (otherwise
-    /// there is nothing to upscale) and anything past 4.0 renders at a uselessly tiny fraction of
-    /// the output size.
-    static func sanitizedMetalFXScaleFactor(_ value: Double) -> Double {
-        min(max(value, 1.0), 4.0)
-    }
-
-    /// Computes the actual render resolution implied by a MetalFX spatial upscale factor over the
-    /// given output (window/custom) size. This is what determines the unified-memory footprint:
-    /// render targets and textures scale down with these dimensions.
-    static func metalFXRenderResolution(
-        outputWidth: Int,
-        outputHeight: Int,
-        factor: Double
-    ) -> (width: Int, height: Int) {
-        let safeFactor = sanitizedMetalFXScaleFactor(factor)
-        return (
-            width: max(Int((Double(outputWidth) / safeFactor).rounded()), 1),
-            height: max(Int((Double(outputHeight) / safeFactor).rounded()), 1)
-        )
-    }
 
     /// Resolved Wine executable path, falling back to a PATH lookup name.
     var wineBinaryPath: String {
@@ -496,15 +470,14 @@ struct AppSettings: Codable, Equatable {
                     executableRelativePath: genshinStreamingExecutablePath,
                     winePrefixDirectory: root.appendingPathComponent(".wine", isDirectory: true),
                     installerStrategy: .sophon,
-                    runtimeRequirements: [.wine, .dxmt],
+                    runtimeRequirements: [.wine, .d3dMetal],
                     launchArguments: []
                 )
             ],
             selectedGameID: genshinGameID,
             language: .english,
-            voiceLanguage: .english,
             launchDisplayMode: .windowed,
-            macDriverRetina: true,
+            macDriverRetina: false,
             leftCommandIsCtrl: false,
             showMetalHUD: false,
             useBatchWrapper: false,
@@ -519,11 +492,8 @@ struct AppSettings: Codable, Equatable {
             enableHDR: false,
             proxyEnabled: false,
             proxyHost: "",
-            maxFrameRate: 0,
             metalFXUpscaling: false,
-            metalFXScaleFactor: 1.5,
-            useMsync: false,
-            settingsVersion: 2
+            settingsVersion: 3
         )
     }
 
@@ -549,14 +519,24 @@ struct AppSettings: Codable, Equatable {
             copy.settingsVersion = 2
         }
 
+        // One-time migration: turn off Retina scaling for settings that predate this performance
+        // default. It was previously on and produced stutter once the game window filled the
+        // screen (uncapped, full physical pixel count on a Retina display); see the property
+        // comment above. Guarded the same way so users who want the old behavior can turn it
+        // back on.
+        if copy.settingsVersion < 3 {
+            copy.macDriverRetina = false
+            copy.settingsVersion = 3
+        }
+
         guard let index = copy.games.firstIndex(where: { $0.id == Self.genshinGameID }) else {
             return copy
         }
 
         copy.games[index].installerStrategy = .sophon
         copy.games[index].runtimeRequirements.removeAll { $0 == .dxvk }
-        if !copy.games[index].runtimeRequirements.contains(.dxmt) {
-            copy.games[index].runtimeRequirements.append(.dxmt)
+        if !copy.games[index].runtimeRequirements.contains(.d3dMetal) {
+            copy.games[index].runtimeRequirements.append(.d3dMetal)
         }
         if copy.games[index].executableRelativePath == Self.genshinLegacyNestedExecutablePath {
             copy.games[index].executableRelativePath = Self.genshinStreamingExecutablePath
@@ -568,10 +548,14 @@ struct AppSettings: Codable, Equatable {
     /// Builds launch arguments with display mode controlled by settings rather than stale game flags.
     func launchArguments(for game: GameDefinition) -> [String] {
         var arguments = Self.filteredUnityDisplayArguments(game.launchArguments) + launchDisplayMode.launchArguments
-        if launchDisplayMode == .fullscreen, resolutionCustom {
-            // Start windowed at the custom render size; native fullscreen scaling happens at
-            // the AppKit level after launch and DXMT/Metal upscales to the screen.
+        if resolutionCustom {
+            // Start windowed at the custom render size in either display mode; in fullscreen,
+            // native fullscreen scaling happens at the AppKit level after launch and D3DMetal
+            // upscales to the screen.
             arguments += ["-screen-width", String(resolutionWidth), "-screen-height", String(resolutionHeight)]
+        } else if launchDisplayMode == .windowed {
+            // Default windowed size when no custom resolution is set.
+            arguments += ["-screen-width", "1280", "-screen-height", "720"]
         }
         return arguments
     }
@@ -617,12 +601,12 @@ enum InstallProgressEvent: Equatable {
 
 /// Runtime backend used for DirectX translation on macOS.
 ///
-/// DXMT is the only Direct3D-to-Metal layer offered. Apple's D3DMetal was an alternative until it
-/// proved to be the weaker half of the trade: it only exists inside CrossOver-derived Wine builds,
-/// so it disappears the moment the launcher installs its own Wine, and it exposes neither the frame
-/// cap nor the upscale factor that decide frame pacing.
+/// Apple's D3DMetal is the only Direct3D-to-Metal layer offered. It ships only inside
+/// CrossOver-derived Wine builds (CrossOver itself, or Apple's Game Porting Toolkit) under
+/// `lib64/apple_gptk`, so — unlike DXMT — the launcher cannot download and install it itself; see
+/// `D3DMetalBridge`.
 enum RuntimeBackend: String, Codable {
-    case dxmt
+    case d3dMetal
     case dxvk
     case plainWine
 }
@@ -639,33 +623,31 @@ struct LaunchRuntimeProfile {
     var runtimeRequirements: [RuntimeRequirement]
 
     /// Builds a profile from game definition and app settings.
-    /// - Parameter displayRefreshRate: refresh rate of the display the game will run on, used to
-    ///   snap the DXMT frame cap onto a value DXMT accepts. Defaults to the main display.
     static func build(
         game: GameDefinition,
-        settings: AppSettings,
-        displayRefreshRate: Int = DisplayRefreshRate.mainDisplay
+        settings: AppSettings
     ) -> LaunchRuntimeProfile {
         let exe = game.installDirectory.appendingPathComponent(game.executableRelativePath)
         let backend: RuntimeBackend = {
-            if game.runtimeRequirements.contains(.dxmt) { return .dxmt }
+            if game.runtimeRequirements.contains(.d3dMetal) { return .d3dMetal }
             if game.runtimeRequirements.contains(.dxvk) { return .dxvk }
             return .plainWine
         }()
 
         var env: [String: String] = [
             "WINEARCH": "win64",
-            "WINEDEBUG": "fixme-all,err-unwind,+timestamp"
+            // Disable every debug class by default, then re-enable `err` (where the launcher's own
+            // failure detection lives) except on `unwind`, whose err output is exception-unwinding
+            // noise rather than an actionable failure. `fixme`/`warn`/`trace` stay off across every
+            // channel: Wine's internal chatter on these was the bulk of what got formatted and
+            // written per frame, none of it something the launcher reads.
+            "WINEDEBUG": "-all,+err,err-unwind"
         ]
 
         // Everything specific to a translation layer — its variables, its cache, its quirks —
         // belongs to that layer's RenderBridge, so this stays generic launch environment.
         env.merge(
-            RenderBridges.launchEnvironment(
-                for: backend,
-                settings: settings,
-                displayRefreshRate: displayRefreshRate
-            )
+            RenderBridges.launchEnvironment(for: backend, settings: settings)
         ) { _, bridgeValue in bridgeValue }
 
         // YAAGL's network-timeout fix: prevents the macOS Wine socket timeout that drops the game
