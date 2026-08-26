@@ -147,6 +147,23 @@ struct SettingsView: View {
                     .foregroundStyle(LauncherPalette.gold.opacity(0.85))
                     .fixedSize(horizontal: false, vertical: true)
             }
+
+            SettingToggle(
+                title: text.d3dMetalAsyncCommitLabel,
+                detail: text.d3dMetalAsyncCommitDescription,
+                isOn: Binding(
+                    get: { viewModel.settings.d3dMetalAsyncCommit },
+                    set: { viewModel.update(\.d3dMetalAsyncCommit, to: $0) }
+                )
+            )
+            SettingToggle(
+                title: text.d3dMetalMultithreadedInterfaceLabel,
+                detail: text.d3dMetalMultithreadedInterfaceDescription,
+                isOn: Binding(
+                    get: { viewModel.settings.d3dMetalMultithreadedInterface },
+                    set: { viewModel.update(\.d3dMetalMultithreadedInterface, to: $0) }
+                )
+            )
         }
     }
 

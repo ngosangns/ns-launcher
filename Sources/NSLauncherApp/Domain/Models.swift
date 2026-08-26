@@ -447,6 +447,17 @@ struct AppSettings: Codable, Equatable {
     /// when the game itself renders below the window's native resolution (pair with
     /// `resolutionCustom`). Unlike DXMT, D3DMetal exposes no upscale factor to tune — Metal picks it.
     var metalFXUpscaling: Bool = false
+    /// Apple D3DMetal's async command-buffer commit (`D3DM_ENABLE_ASYNC_COMMIT`, experimental):
+    /// expected to overlap encoding the next Metal command buffer with submitting the previous
+    /// one instead of stalling the CPU thread on each submit. Confirmed to exist in a real
+    /// D3DMetal.framework binary; its exact effect is not — see `D3DMetalBridge`. Default on, but
+    /// toggleable so a stutter/instability report can be isolated to this flag without a rebuild.
+    var d3dMetalAsyncCommit: Bool = true
+    /// Apple D3DMetal's multithreaded D3D11 interface (`D3DM_MULTITHREADED_INTERFACE_ENABLE`,
+    /// experimental): expected to stop D3DMetal serializing D3D11 context access more
+    /// conservatively than the game's own threading needs. Same caveat and reason for being
+    /// toggleable as `d3dMetalAsyncCommit` — see `D3DMetalBridge`.
+    var d3dMetalMultithreadedInterface: Bool = true
     /// Monotonic settings schema version used for one-time default migrations.
     var settingsVersion: Int = 0
 
@@ -493,6 +504,8 @@ struct AppSettings: Codable, Equatable {
             proxyEnabled: false,
             proxyHost: "",
             metalFXUpscaling: false,
+            d3dMetalAsyncCommit: true,
+            d3dMetalMultithreadedInterface: true,
             settingsVersion: 3
         )
     }

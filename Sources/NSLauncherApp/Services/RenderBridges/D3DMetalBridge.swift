@@ -28,8 +28,28 @@ struct D3DMetalBridge: RenderBridge {
         // prevents any shell-level WINEDLLOVERRIDES from leaking into the launch.
         env["WINEDLLOVERRIDES"] = ""
 
-        // D3DMetal maintains its own on-disk pipeline cache with no configuration at all, unlike
-        // DXMT's cache which needed an explicit path — nothing to set here.
+        // Both confirmed by reading the strings in a real D3DMetal.framework binary — CrossOver's
+        // own D3DM_* variables have no public documentation, so their exact effect is inferred from
+        // the name alone. Async commit is expected to overlap encoding the next Metal command
+        // buffer with submitting the previous one instead of stalling the CPU thread on each
+        // submit; the multithreaded interface flag is expected to stop D3DMetal serializing D3D11
+        // context access more conservatively than the game's own threading needs. Default on, but
+        // gated on settings (rather than unconditional) so a stutter/instability report can be
+        // isolated to one of these flags without a rebuild — see AppSettings.d3dMetalAsyncCommit.
+        if settings.d3dMetalAsyncCommit {
+            env["D3DM_ENABLE_ASYNC_COMMIT"] = "1"
+        }
+        if settings.d3dMetalMultithreadedInterface {
+            env["D3DM_MULTITHREADED_INTERFACE_ENABLE"] = "1"
+        }
+
+        // D3DMetal maintains its own on-disk pipeline cache with no configuration at all — verified
+        // by running `strings` on a real D3DMetal.framework binary installed via CrossOver: every
+        // `D3DM_*` string it contains (device identity spoofing, NaN/RTZ float handling, DXR
+        // support, the two flags above, etc.) was enumerated, and none of them is a cache path,
+        // pre-warm switch, or any other shader/pipeline-cache control. This is a closed line of
+        // investigation, not an oversight — don't re-derive it from the name of some other D3DM_*
+        // string without re-running the same check against the actual binary.
 
         // MetalFX spatial upscaling only does something when the game is told to render below the
         // window size, which is what `resolutionCustom` sets up. Without it the game still renders

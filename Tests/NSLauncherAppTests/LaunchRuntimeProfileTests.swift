@@ -18,12 +18,16 @@ final class LaunchRuntimeProfileTests: XCTestCase {
     private func makeSettings(
         metalFXUpscaling: Bool = false,
         resolutionCustom: Bool = false,
-        showMetalHUD: Bool = false
+        showMetalHUD: Bool = false,
+        d3dMetalAsyncCommit: Bool = true,
+        d3dMetalMultithreadedInterface: Bool = true
     ) -> AppSettings {
         var settings = AppSettings.default
         settings.metalFXUpscaling = metalFXUpscaling
         settings.resolutionCustom = resolutionCustom
         settings.showMetalHUD = showMetalHUD
+        settings.d3dMetalAsyncCommit = d3dMetalAsyncCommit
+        settings.d3dMetalMultithreadedInterface = d3dMetalMultithreadedInterface
         return settings
     }
 
@@ -37,6 +41,35 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         XCTAssertNil(profile.environment["WINEMSYNC"])
         // The empty override list keeps D3DMetal's builtin D3D DLLs authoritative.
         XCTAssertEqual(profile.environment["WINEDLLOVERRIDES"], "")
+    }
+
+    /// Confirmed real `D3DM_*` variables (found in a real D3DMetal.framework binary's strings) that
+    /// reduce Metal command-submission stalls — see `D3DMetalBridge.launchEnvironment`. Default on.
+    func testD3DMetalEnablesAsyncCommitAndMultithreadingByDefault() {
+        let profile = LaunchRuntimeProfile.build(
+            game: makeGame(requirements: [.wine, .d3dMetal]),
+            settings: makeSettings()
+        )
+        XCTAssertEqual(profile.environment["D3DM_ENABLE_ASYNC_COMMIT"], "1")
+        XCTAssertEqual(profile.environment["D3DM_MULTITHREADED_INTERFACE_ENABLE"], "1")
+    }
+
+    /// Both flags are unproven (inferred from their names, not documented), so each must be
+    /// independently switchable to isolate a stutter/instability report without a rebuild.
+    func testD3DMetalAsyncCommitAndMultithreadingCanBeDisabledIndependently() {
+        let asyncCommitOff = LaunchRuntimeProfile.build(
+            game: makeGame(requirements: [.wine, .d3dMetal]),
+            settings: makeSettings(d3dMetalAsyncCommit: false, d3dMetalMultithreadedInterface: true)
+        )
+        XCTAssertNil(asyncCommitOff.environment["D3DM_ENABLE_ASYNC_COMMIT"])
+        XCTAssertEqual(asyncCommitOff.environment["D3DM_MULTITHREADED_INTERFACE_ENABLE"], "1")
+
+        let multithreadedOff = LaunchRuntimeProfile.build(
+            game: makeGame(requirements: [.wine, .d3dMetal]),
+            settings: makeSettings(d3dMetalAsyncCommit: true, d3dMetalMultithreadedInterface: false)
+        )
+        XCTAssertEqual(multithreadedOff.environment["D3DM_ENABLE_ASYNC_COMMIT"], "1")
+        XCTAssertNil(multithreadedOff.environment["D3DM_MULTITHREADED_INTERFACE_ENABLE"])
     }
 
     func testDXVKBackendAlsoDefaultsToEsync() {
