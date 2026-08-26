@@ -133,6 +133,27 @@ struct SettingsView: View {
                 )
             )
 
+            // Only shown when the selected game actually declares DXMT support — the picker would
+            // otherwise let a user select a backend LaunchRuntimeProfile.build silently ignores.
+            if viewModel.selectedGame?.runtimeRequirements.contains(.dxmt) == true {
+                SettingField(label: text.renderBackendLabel) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Picker(text.renderBackendLabel, selection: Binding(
+                            get: { viewModel.settings.metalRenderBackend },
+                            set: { viewModel.update(\.metalRenderBackend, to: $0) }
+                        )) {
+                            Text(text.renderBackendD3DMetal).tag(RuntimeBackend.d3dMetal)
+                            Text(text.renderBackendDXMT).tag(RuntimeBackend.dxmt)
+                        }
+                        .pickerStyle(.segmented)
+                        .pointerOnHover()
+                        Text(text.renderBackendDescription)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+
             SettingToggle(
                 title: text.metalFXUpscalingLabel,
                 detail: text.metalFXUpscalingDescription,
@@ -141,7 +162,12 @@ struct SettingsView: View {
                     set: { viewModel.update(\.metalFXUpscaling, to: $0) }
                 )
             )
-            if viewModel.settings.metalFXUpscaling, !viewModel.settings.resolutionCustom {
+            if viewModel.settings.metalFXUpscaling, viewModel.settings.metalRenderBackend == .dxmt {
+                Text(text.metalFXNotSupportedOnDXMTWarning)
+                    .font(.caption)
+                    .foregroundStyle(LauncherPalette.gold.opacity(0.85))
+                    .fixedSize(horizontal: false, vertical: true)
+            } else if viewModel.settings.metalFXUpscaling, !viewModel.settings.resolutionCustom {
                 Text(text.metalFXNeedsCustomResolutionWarning)
                     .font(.caption)
                     .foregroundStyle(LauncherPalette.gold.opacity(0.85))

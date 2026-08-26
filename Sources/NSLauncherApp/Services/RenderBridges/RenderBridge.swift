@@ -83,12 +83,61 @@ extension RenderBridge {
 
 /// Maps a resolved backend onto its bridge.
 enum RenderBridges {
+    /// Picks the backend a game actually launches with: the user's Metal-native preference when
+    /// the game declares support for it, otherwise whatever the game does support.
+    ///
+    /// Lives here rather than as an `if`-chain in `LaunchRuntimeProfile.build` so that adding a
+    /// backend stays "add a file" (see this file's header comment) — a new preference-eligible
+    /// backend only needs a new `case` here, not a new branch threaded through `Models.swift`.
+    static func resolveBackend(requirements: [RuntimeRequirement], preferred: RuntimeBackend) -> RuntimeBackend {
+        let preferredRequirement: RuntimeRequirement? = {
+            switch preferred {
+            case .d3dMetal: return .d3dMetal
+            case .dxmt: return .dxmt
+            case .dxvk, .plainWine: return nil
+            }
+        }()
+        if let preferredRequirement, requirements.contains(preferredRequirement) {
+            return preferred
+        }
+        if requirements.contains(.d3dMetal) { return .d3dMetal }
+        if requirements.contains(.dxvk) { return .dxvk }
+        return .plainWine
+    }
+
     static func bridge(for backend: RuntimeBackend) -> RenderBridge? {
         switch backend {
         case .d3dMetal: return D3DMetalBridge()
+        case .dxmt: return DXMTBridge()
         case .dxvk: return DXVKBridge()
         case .plainWine: return nil
         }
+    }
+
+    /// Environment every Metal-native backend (D3DMetal, DXMT) needs, regardless of which one:
+    /// esync, and vulkan-1 disabled outright.
+    ///
+    /// `vulkan-1=` (empty right-hand side, Wine's syntax for "disabled entirely") blocks Unity's
+    /// Vulkan fallback path at the Wine level. `LauncherCoordinator.applyACPatch` already hides the
+    /// game's own `GenshinImpact_Data/Plugins/vulkan-1.dll`, but that alone is not enough:
+    /// CrossOver's own Wine build ships its own `vulkan-1.dll` (MoltenVK-backed) in
+    /// `system32`/`syswow64`, so normal DLL search order finds THAT copy once the game's local one
+    /// is missing, and Unity happily initializes it. Confirmed by a real crash signature —
+    /// `[mvk-error] SPIR-V to MSL conversion error: Vertex attribute type mismatch between host and
+    /// shader` flooding the game log, which is MoltenVK's own error prefix, not either Metal-native
+    /// backend's — meaning the game had silently fallen into Vulkan-via-MoltenVK, whose shader
+    /// translation does not agree with either backend's own vertex layouts, producing exactly the
+    /// reported "missing models / wrong colors" symptom. Disabling `vulkan-1` outright removes the
+    /// DLL from both locations at once, so Unity's probe fails cleanly and it never leaves whichever
+    /// Metal-native backend is actually running.
+    ///
+    /// Shared here — not restated per bridge — so a future third Metal-native backend inherits it
+    /// automatically instead of a maintainer having to remember to copy it in.
+    static func baseMetalNativeEnvironment() -> [String: String] {
+        [
+            "WINEESYNC": "1",
+            "WINEDLLOVERRIDES": "vulkan-1="
+        ]
     }
 
     /// Environment for a backend, or nothing when it needs no translation layer.

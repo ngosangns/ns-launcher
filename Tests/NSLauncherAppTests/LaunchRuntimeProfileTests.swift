@@ -20,7 +20,8 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         resolutionCustom: Bool = false,
         showMetalHUD: Bool = false,
         d3dMetalAsyncCommit: Bool = true,
-        d3dMetalMultithreadedInterface: Bool = true
+        d3dMetalMultithreadedInterface: Bool = true,
+        metalRenderBackend: RuntimeBackend = .d3dMetal
     ) -> AppSettings {
         var settings = AppSettings.default
         settings.metalFXUpscaling = metalFXUpscaling
@@ -28,6 +29,7 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         settings.showMetalHUD = showMetalHUD
         settings.d3dMetalAsyncCommit = d3dMetalAsyncCommit
         settings.d3dMetalMultithreadedInterface = d3dMetalMultithreadedInterface
+        settings.metalRenderBackend = metalRenderBackend
         return settings
     }
 
@@ -39,8 +41,11 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         XCTAssertEqual(profile.backend, .d3dMetal)
         XCTAssertEqual(profile.environment["WINEESYNC"], "1")
         XCTAssertNil(profile.environment["WINEMSYNC"])
-        // The empty override list keeps D3DMetal's builtin D3D DLLs authoritative.
-        XCTAssertEqual(profile.environment["WINEDLLOVERRIDES"], "")
+        // D3DMetal's builtin D3D DLLs stay authoritative, and vulkan-1 is disabled outright so
+        // Unity's Vulkan fallback (broken under D3DMetal) can never kick in even via CrossOver's
+        // own system32 copy — see D3DMetalBridge.launchEnvironment for the crash signature this
+        // prevents.
+        XCTAssertEqual(profile.environment["WINEDLLOVERRIDES"], "vulkan-1=")
     }
 
     /// Confirmed real `D3DM_*` variables (found in a real D3DMetal.framework binary's strings) that
@@ -70,6 +75,39 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         )
         XCTAssertEqual(multithreadedOff.environment["D3DM_ENABLE_ASYNC_COMMIT"], "1")
         XCTAssertNil(multithreadedOff.environment["D3DM_MULTITHREADED_INTERFACE_ENABLE"])
+    }
+
+    /// The user's DXMT preference only wins when the game actually declares support for it.
+    func testDXMTIsUsedWhenPreferredAndSupported() {
+        let profile = LaunchRuntimeProfile.build(
+            game: makeGame(requirements: [.wine, .d3dMetal, .dxmt]),
+            settings: makeSettings(metalRenderBackend: .dxmt)
+        )
+        XCTAssertEqual(profile.backend, .dxmt)
+        XCTAssertEqual(profile.environment["WINEESYNC"], "1")
+        // Same Vulkan-fallback block as D3DMetal — Unity's broken Vulkan path is not specific to
+        // one backend.
+        XCTAssertEqual(profile.environment["WINEDLLOVERRIDES"], "vulkan-1=")
+    }
+
+    /// A game that never declared DXMT support must not silently get it just because the user's
+    /// global preference says DXMT — falls back to whatever the game does declare.
+    func testDXMTPreferenceIsIgnoredWhenTheGameDoesNotDeclareSupportForIt() {
+        let profile = LaunchRuntimeProfile.build(
+            game: makeGame(requirements: [.wine, .d3dMetal]),
+            settings: makeSettings(metalRenderBackend: .dxmt)
+        )
+        XCTAssertEqual(profile.backend, .d3dMetal)
+    }
+
+    /// Default preference stays D3DMetal even for a game that declares both, so existing users see
+    /// no behavior change.
+    func testD3DMetalStaysTheDefaultPreferenceWhenBothAreDeclared() {
+        let profile = LaunchRuntimeProfile.build(
+            game: makeGame(requirements: [.wine, .d3dMetal, .dxmt]),
+            settings: makeSettings()
+        )
+        XCTAssertEqual(profile.backend, .d3dMetal)
     }
 
     func testDXVKBackendAlsoDefaultsToEsync() {

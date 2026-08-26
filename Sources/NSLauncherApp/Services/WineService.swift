@@ -62,6 +62,7 @@ enum WineServiceError: LocalizedError {
     case binaryQuarantined(String)
     case dxvkBootstrapFailed(String)
     case d3dMetalUnavailable(String)
+    case dxmtUnavailable(String)
     case unsupportedKernelDriver(String)
     case wineDistributionFailed(String)
     case wineRootNotFound(String)
@@ -74,6 +75,8 @@ enum WineServiceError: LocalizedError {
             return "DXVK setup failed: \(details)"
         case let .d3dMetalUnavailable(path):
             return "No Wine build with Apple D3DMetal was found. Checked: \(path). D3DMetal ships only inside CrossOver — install it, then try again."
+        case let .dxmtUnavailable(path):
+            return "No Wine build with DXMT was found. Checked: \(path). DXMT ships only inside CrossOver — install it, then try again."
         case let .unsupportedKernelDriver(driver):
             return "Wine cannot load the Windows kernel driver \(driver)."
         case let .wineDistributionFailed(details):

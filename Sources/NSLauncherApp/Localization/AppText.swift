@@ -152,6 +152,15 @@ struct AppText {
             vi: "Dùng phím Command trái như phím Ctrl cho game dùng phím tắt kiểu Windows."
         )
     }
+    var renderBackendLabel: String { localized(en: "Render backend", vi: "Backend render") }
+    var renderBackendD3DMetal: String { localized(en: "D3DMetal", vi: "D3DMetal") }
+    var renderBackendDXMT: String { localized(en: "DXMT (experimental)", vi: "DXMT (thử nghiệm)") }
+    var renderBackendDescription: String {
+        localized(
+            en: "D3DMetal (Apple's own translator) is the recommended default. D3DMetal has a confirmed shader-translation bug that shows up as wrong colors on specific effects or objects (texture_buffer<uint> misread as float); switch to DXMT, a different open-source translator bundled the same way, if you hit that.",
+            vi: "D3DMetal (của Apple) là lựa chọn mặc định khuyến nghị. D3DMetal có lỗi dịch shader đã xác nhận gây sai màu ở một số hiệu ứng/vật thể cụ thể (đọc nhầm texture_buffer<uint> thành float); chuyển sang DXMT — một trình dịch mã nguồn mở khác, đóng gói theo cùng cách — nếu bạn gặp hiện tượng này."
+        )
+    }
     var metalHUDLabel: String { localized(en: "Metal HUD overlay", vi: "Hiển thị Metal HUD") }
     var metalHUDDescription: String {
         localized(
@@ -195,6 +204,12 @@ struct AppText {
         localized(
             en: "No effect yet: turn on Custom windowed resolution and set it below your display's native size, otherwise the game still renders at full resolution.",
             vi: "Chưa có tác dụng: bật Custom windowed resolution và đặt thấp hơn độ phân giải gốc của màn hình, nếu không game vẫn render ở độ phân giải đầy đủ."
+        )
+    }
+    var metalFXNotSupportedOnDXMTWarning: String {
+        localized(
+            en: "No effect: MetalFX upscaling is D3DMetal-only. Switch the render backend back to D3DMetal above to use it, or turn this off while using DXMT.",
+            vi: "Không có tác dụng: MetalFX upscaling chỉ dùng được với D3DMetal. Đổi lại backend render sang D3DMetal ở trên để dùng, hoặc tắt mục này khi đang dùng DXMT."
         )
     }
     var d3dMetalAsyncCommitLabel: String { localized(en: "Async command commit (experimental)", vi: "Async command commit (thử nghiệm)") }
@@ -336,8 +351,8 @@ struct AppText {
             )
         case .gameWorldAssetCache:
             return localized(
-                en: "Open-world scenery (Persistent/AssetBundles) the client streams in and re-downloads incrementally as you explore. If old terrain, props, or lighting keep showing up after an update, this cache has fallen out of sync — clearing it forces a fresh incremental re-download (typically well under its full size shown here) the next time you visit each area.",
-                vi: "Cảnh vật thế giới mở (Persistent/AssetBundles) mà client tự tải và cập nhật dần khi bạn khám phá. Nếu địa hình, vật thể, hoặc ánh sáng cũ vẫn hiện ra sau khi update, cache này đã lệch đồng bộ — xoá nó sẽ buộc tải lại dần (thường ít hơn nhiều so với dung lượng hiển thị ở đây) mỗi khi bạn ghé lại từng khu vực."
+                en: "Open-world scenery (Persistent/AssetBundles) the client streams in and re-downloads incrementally as you explore, together with the version counters that track it. If old terrain/props/lighting, missing models, or wrong-looking textures keep showing up, this cache and its version counters have fallen out of sync with each other — clearing both together resets it to a consistent state, forcing a fresh incremental re-download (typically well under its full size shown here) the next time you visit each area.",
+                vi: "Cảnh vật thế giới mở (Persistent/AssetBundles) mà client tự tải và cập nhật dần khi bạn khám phá, cùng với các bộ đếm version theo dõi nó. Nếu địa hình/vật thể/ánh sáng cũ, model biến mất, hoặc texture sai màu vẫn hiện ra, cache này và bộ đếm version của nó đã lệch nhau — xoá cả hai cùng lúc sẽ đưa về trạng thái nhất quán, buộc tải lại dần (thường ít hơn nhiều so với dung lượng hiển thị ở đây) mỗi khi bạn ghé lại từng khu vực."
             )
         case .winePrefixTemp:
             return localized(
@@ -521,6 +536,12 @@ struct AppText {
             vi: "Chưa tìm thấy bản Wine nào có Apple D3DMetal. Đã kiểm tra: \(path). D3DMetal chỉ đi kèm CrossOver (CodeWeavers) — NSLauncher không thể tự tải D3DMetal. Hãy cài CrossOver từ màn hình Cài đặt rồi thử lại."
         )
     }
+    func dxmtUnavailable(_ path: String) -> String {
+        localized(
+            en: "No Wine build with DXMT was found. Checked: \(path). DXMT ships only inside CrossOver (CodeWeavers) — NSLauncher cannot download it on its own. Install CrossOver from Settings, then try again.",
+            vi: "Chưa tìm thấy bản Wine nào có DXMT. Đã kiểm tra: \(path). DXMT chỉ đi kèm CrossOver (CodeWeavers) — NSLauncher không thể tự tải DXMT. Hãy cài CrossOver từ màn hình Cài đặt rồi thử lại."
+        )
+    }
 
     /// Converts a domain error into the localized, actionable text shown to the user.
     ///
@@ -550,6 +571,8 @@ struct AppText {
                 return dxvkBootstrapFailed(details)
             case let .d3dMetalUnavailable(path):
                 return d3dMetalUnavailable(path)
+            case let .dxmtUnavailable(path):
+                return dxmtUnavailable(path)
             case let .wineDistributionFailed(details):
                 return wineDistributionFailed(details)
             case let .wineRootNotFound(path):

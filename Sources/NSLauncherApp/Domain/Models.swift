@@ -166,6 +166,15 @@ struct RemovableCache: Identifiable, Hashable {
         /// requested escape hatch for when the client's own version check on these blocks falls
         /// out of sync and stale terrain/props/lighting keep showing up after an update. Clearing
         /// it is the same fix HoYoverse's own support docs give for that symptom on Windows.
+        ///
+        /// Must also clear `Persistent`'s own revision/version-manifest files (see
+        /// `LauncherCoordinator.gameWorldAssetCacheLocations`) — leaving them behind while wiping
+        /// the block data they point to is worse than not clearing at all: the client believes it
+        /// is already on the revision those counters name, finds no block data for it, and shows
+        /// missing models or wrong textures instead of a clean re-download. Matched by name prefix,
+        /// not a fixed list — a real install was observed switching from
+        /// `res_revision`/`res_versions_persist` to `base_revision`/`res_versions_remote` between
+        /// two ordinary launches, with an old-scheme file left uncleaned next to its replacement.
         case gameWorldAssetCache
         case winePrefixTemp
         case launcherDownloadArchives
@@ -206,6 +215,11 @@ enum RuntimeRequirement: String, Codable, CaseIterable, Identifiable {
     case dxvk
     case d3dMetal
     case reshade
+    /// CrossOver's bundled DXMT (`lib/dxmt`), reintroduced as a second Metal-native backend
+    /// alongside D3DMetal — see `DXMTBridge`. Raw value is NOT `"dxmt"`: that string is already
+    /// hard-aliased to `.d3dMetal` below for pre-rename settings.json files, and reusing it here
+    /// would make old and new meanings collide.
+    case dxmt = "dxmtBundled"
 
     var id: String { rawValue }
 
@@ -475,6 +489,15 @@ struct AppSettings: Codable, Equatable {
     /// conservatively than the game's own threading needs. Same caveat and reason for being
     /// toggleable as `d3dMetalAsyncCommit` — see `D3DMetalBridge`.
     var d3dMetalMultithreadedInterface: Bool = true
+    /// Which Metal-native D3D translation layer to launch with, for a game that declares support
+    /// for more than one (see `RuntimeRequirement.dxmt`). Default D3DMetal; DXMT is the escape
+    /// hatch for the shader-translation bugs D3DMetal itself has — see `DXMTBridge`.
+    ///
+    /// Typed as `RuntimeBackend` rather than a narrower dedicated enum: it already has exactly
+    /// the two Metal-native cases this preference needs, `.dxvk`/`.plainWine` included alongside
+    /// them cost nothing (the Settings Picker simply never offers them as rows), and reusing it
+    /// avoids a second enum `RenderBridges.resolveBackend` would otherwise have to translate.
+    var metalRenderBackend: RuntimeBackend = .d3dMetal
     /// Monotonic settings schema version used for one-time default migrations.
     var settingsVersion: Int = 0
 
@@ -498,7 +521,7 @@ struct AppSettings: Codable, Equatable {
                     executableRelativePath: genshinStreamingExecutablePath,
                     winePrefixDirectory: root.appendingPathComponent(".wine", isDirectory: true),
                     installerStrategy: .sophon,
-                    runtimeRequirements: [.wine, .d3dMetal],
+                    runtimeRequirements: [.wine, .d3dMetal, .dxmt],
                     launchArguments: []
                 )
             ],
@@ -523,6 +546,7 @@ struct AppSettings: Codable, Equatable {
             metalFXUpscaling: false,
             d3dMetalAsyncCommit: true,
             d3dMetalMultithreadedInterface: true,
+            metalRenderBackend: .d3dMetal,
             settingsVersion: 3
         )
     }
@@ -567,6 +591,9 @@ struct AppSettings: Codable, Equatable {
         copy.games[index].runtimeRequirements.removeAll { $0 == .dxvk }
         if !copy.games[index].runtimeRequirements.contains(.d3dMetal) {
             copy.games[index].runtimeRequirements.append(.d3dMetal)
+        }
+        if !copy.games[index].runtimeRequirements.contains(.dxmt) {
+            copy.games[index].runtimeRequirements.append(.dxmt)
         }
         if copy.games[index].executableRelativePath == Self.genshinLegacyNestedExecutablePath {
             copy.games[index].executableRelativePath = Self.genshinStreamingExecutablePath
@@ -631,12 +658,14 @@ enum InstallProgressEvent: Equatable {
 
 /// Runtime backend used for DirectX translation on macOS.
 ///
-/// Apple's D3DMetal is the only Direct3D-to-Metal layer offered. It ships only inside
-/// CrossOver-derived Wine builds (CrossOver itself, or Apple's Game Porting Toolkit) under
-/// `lib64/apple_gptk`, so — unlike DXMT — the launcher cannot download and install it itself; see
-/// `D3DMetalBridge`.
+/// `.d3dMetal` and `.dxmt` are both Metal-native translation layers, bundled the same
+/// non-downloadable way inside CrossOver-derived Wine builds (`lib64/apple_gptk` and `lib/dxmt`
+/// respectively) — the launcher cannot fetch either on its own; see `D3DMetalBridge`/`DXMTBridge`.
+/// Which of the two a game launches with is `AppSettings.metalRenderBackend`, resolved against
+/// what the game declares support for by `RenderBridges.resolveBackend`.
 enum RuntimeBackend: String, Codable {
     case d3dMetal
+    case dxmt
     case dxvk
     case plainWine
 }
@@ -658,11 +687,10 @@ struct LaunchRuntimeProfile {
         settings: AppSettings
     ) -> LaunchRuntimeProfile {
         let exe = game.installDirectory.appendingPathComponent(game.executableRelativePath)
-        let backend: RuntimeBackend = {
-            if game.runtimeRequirements.contains(.d3dMetal) { return .d3dMetal }
-            if game.runtimeRequirements.contains(.dxvk) { return .dxvk }
-            return .plainWine
-        }()
+        let backend = RenderBridges.resolveBackend(
+            requirements: game.runtimeRequirements,
+            preferred: settings.metalRenderBackend
+        )
 
         var env: [String: String] = [
             "WINEARCH": "win64",

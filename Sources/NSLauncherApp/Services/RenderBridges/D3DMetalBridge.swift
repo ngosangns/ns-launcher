@@ -20,14 +20,9 @@ struct D3DMetalBridge: RenderBridge {
     let backend: RuntimeBackend = .d3dMetal
 
     func launchEnvironment(settings: AppSettings) -> [String: String] {
-        var env: [String: String] = [:]
-
-        // esync is the safe default; see DXVKBridge for the same choice and why msync is not
-        // offered here.
-        env["WINEESYNC"] = "1"
-        // An empty override list keeps D3DMetal's builtin D3D10/D3D11/DXGI DLLs authoritative and
-        // prevents any shell-level WINEDLLOVERRIDES from leaking into the launch.
-        env["WINEDLLOVERRIDES"] = ""
+        // esync + vulkan-1 disabled — shared by every Metal-native backend; see
+        // RenderBridges.baseMetalNativeEnvironment for why both are needed.
+        var env = RenderBridges.baseMetalNativeEnvironment()
 
         // Both confirmed by reading the strings in a real D3DMetal.framework binary — CrossOver's
         // own D3DM_* variables have no public documentation, so their exact effect is inferred from
