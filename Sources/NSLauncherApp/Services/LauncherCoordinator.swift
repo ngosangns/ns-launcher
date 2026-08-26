@@ -191,10 +191,16 @@ struct LauncherCoordinator: Sendable {
             return [.directoryContents(dataDir.appendingPathComponent("webCaches", isDirectory: true))]
         case .gameSDKCache:
             return [.directoryContents(dataDir.appendingPathComponent("SDKCaches", isDirectory: true))]
+        case .gameWorldAssetCache:
+            return [.directoryContents(dataDir.appendingPathComponent("Persistent/AssetBundles", isDirectory: true))]
         case .winePrefixTemp:
             return winePrefixTempLocations(prefixDirectory: game.winePrefixDirectory)
         case .launcherDownloadArchives:
             return launcherDownloadArchiveLocations()
+        case .d3dMetalShaderCache:
+            let executableName = URL(fileURLWithPath: game.executableRelativePath).lastPathComponent
+            guard let directory = D3DMetalBridge.shaderCacheDirectory(forExecutable: executableName) else { return [] }
+            return [.directoryContents(directory)]
         }
     }
 

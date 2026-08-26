@@ -158,8 +158,25 @@ struct RemovableCache: Identifiable, Hashable {
         case cutsceneVideos
         case gameWebCache
         case gameSDKCache
+        /// `Persistent/AssetBundles`: the open-world block cache the client streams in on demand
+        /// as you explore, and re-downloads incrementally rather than trusting what is already
+        /// there. `GenshinSophonInstaller.gameOwnedRuntimeDirectories` protects this same
+        /// directory from the *automatic* update prune (deleting it there would force a
+        /// multi-gigabyte re-download on every single update); this is the separate, user-
+        /// requested escape hatch for when the client's own version check on these blocks falls
+        /// out of sync and stale terrain/props/lighting keep showing up after an update. Clearing
+        /// it is the same fix HoYoverse's own support docs give for that symptom on Windows.
+        case gameWorldAssetCache
         case winePrefixTemp
         case launcherDownloadArchives
+        /// D3DMetal's on-disk compiled-shader cache (pipeline/bytecode/root-signature/stage
+        /// `.bin` files under `$(confstr DARWIN_USER_CACHE_DIR)/d3dm/<exe>/shaders.cache/` — see
+        /// `D3DMetalBridge.shaderCacheDirectory`). Regenerated automatically the next time each
+        /// shader is used, so clearing it is safe; the trade-off is a fresh round of
+        /// compile-on-first-use stutter, which is worth it if the cache itself is stale or
+        /// corrupted (D3DMetal falls back to disabling its disk cache entirely when it can't
+        /// parse an entry, which is worse for stutter than a clean cache).
+        case d3dMetalShaderCache
 
         var id: String { rawValue }
     }

@@ -13,6 +13,7 @@
 // `lib64/apple_gptk/wine/x86_64-windows` first on `WINEDLLPATH`, ahead of the build's own
 // `lib/wine` builtins, and this does the same.
 
+import Darwin
 import Foundation
 
 struct D3DMetalBridge: RenderBridge {
@@ -43,13 +44,18 @@ struct D3DMetalBridge: RenderBridge {
             env["D3DM_MULTITHREADED_INTERFACE_ENABLE"] = "1"
         }
 
-        // D3DMetal maintains its own on-disk pipeline cache with no configuration at all — verified
-        // by running `strings` on a real D3DMetal.framework binary installed via CrossOver: every
-        // `D3DM_*` string it contains (device identity spoofing, NaN/RTZ float handling, DXR
-        // support, the two flags above, etc.) was enumerated, and none of them is a cache path,
-        // pre-warm switch, or any other shader/pipeline-cache control. This is a closed line of
-        // investigation, not an oversight — don't re-derive it from the name of some other D3DM_*
-        // string without re-running the same check against the actual binary.
+        // D3DMetal maintains its own on-disk pipeline cache with no *environment* configuration at
+        // all — verified by running `strings` on a real D3DMetal.framework binary installed via
+        // CrossOver: every `D3DM_*` string it contains (device identity spoofing, NaN/RTZ float
+        // handling, DXR support, the two flags above, etc.) was enumerated, and none of them is a
+        // cache path, pre-warm switch, or any other shader/pipeline-cache control. This is a closed
+        // line of investigation, not an oversight — don't re-derive it from the name of some other
+        // D3DM_* string without re-running the same check against the actual binary.
+        //
+        // The cache still lives at a fixed, discoverable *location* though (same binary's strings:
+        // `%s/d3dm/%s/shaders.cache/`, holding `pipeline_cache.bin`/`bytecode_cache.bin`/
+        // `rootsignature_cache.bin`/`stage_cache.bin` per Metal GPU family) — see
+        // `shaderCacheDirectory` below, which is what the launcher's cache-clearing feature uses.
 
         // MetalFX spatial upscaling only does something when the game is told to render below the
         // window size, which is what `resolutionCustom` sets up. Without it the game still renders
@@ -137,5 +143,27 @@ struct D3DMetalBridge: RenderBridge {
         return FileManager.default.fileExists(atPath: directory.appendingPathComponent("d3d11.dll").path)
             ? directory
             : nil
+    }
+
+    /// Where D3DMetal keeps its compiled-shader cache for one game executable, or nil if this
+    /// process's Darwin per-user cache directory cannot be resolved.
+    ///
+    /// Derived from the `%s/d3dm/%s/shaders.cache/` format string in a real D3DMetal.framework
+    /// binary: the first `%s` is macOS's per-user cache directory (`confstr(3)` with
+    /// `_CS_DARWIN_USER_CACHE_DIR` — NOT `~/Library/Caches`, this is the `/var/folders/.../C/`
+    /// directory `getconf DARWIN_USER_CACHE_DIR` prints), the second is the executable's own file
+    /// name (`GenshinImpact.exe`, matching what was found on disk at
+    /// `.../C/d3dm/GenshinImpact.exe/shaders.cache/`). D3DMetal recreates every file under this
+    /// directory the next time each shader is used, so removing it only costs a fresh round of
+    /// compile-on-first-use stutter — worth it if the cache itself has gone stale or corrupt.
+    static func shaderCacheDirectory(forExecutable executableName: String) -> URL? {
+        var buffer = [Int8](repeating: 0, count: Int(PATH_MAX))
+        let length = confstr(_CS_DARWIN_USER_CACHE_DIR, &buffer, buffer.count)
+        guard length > 0, length <= buffer.count else { return nil }
+        let path = buffer.withUnsafeBufferPointer { String(cString: $0.baseAddress!) }
+        let cacheRoot = URL(fileURLWithPath: path, isDirectory: true)
+        return cacheRoot
+            .appendingPathComponent("d3dm", isDirectory: true)
+            .appendingPathComponent(executableName, isDirectory: true)
     }
 }

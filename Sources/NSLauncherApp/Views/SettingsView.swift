@@ -436,8 +436,10 @@ struct SettingsView: View {
         case .cutsceneVideos: return "film"
         case .gameWebCache: return "globe"
         case .gameSDKCache: return "square.stack.3d.up"
+        case .gameWorldAssetCache: return "globe.americas"
         case .winePrefixTemp: return "wineglass"
         case .launcherDownloadArchives: return "archivebox"
+        case .d3dMetalShaderCache: return "cpu"
         }
     }
 
