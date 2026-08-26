@@ -192,7 +192,7 @@ struct LauncherCoordinator: Sendable {
         case .gameSDKCache:
             return [.directoryContents(dataDir.appendingPathComponent("SDKCaches", isDirectory: true))]
         case .gameWorldAssetCache:
-            return [.directoryContents(dataDir.appendingPathComponent("Persistent/AssetBundles", isDirectory: true))]
+            return gameWorldAssetCacheLocations(dataDir: dataDir)
         case .winePrefixTemp:
             return winePrefixTempLocations(prefixDirectory: game.winePrefixDirectory)
         case .launcherDownloadArchives:
@@ -202,6 +202,46 @@ struct LauncherCoordinator: Sendable {
             guard let directory = D3DMetalBridge.shaderCacheDirectory(forExecutable: executableName) else { return [] }
             return [.directoryContents(directory)]
         }
+    }
+
+    /// Everything that tracks the version of `Persistent/AssetBundles`, alongside the block data
+    /// itself.
+    ///
+    /// The client keeps its own revision/version-manifest files in `Persistent/` that say which
+    /// revision of world-block data it believes it already has cached — separate from (and
+    /// normally ahead of) the counters baked into `StreamingAssets/AssetBundles` at install time.
+    /// Deleting only the block data while leaving these counters behind is worse than not clearing
+    /// at all: the client still believes it is on the newer revision the counters name, tries to
+    /// use block data for that revision, and finds none — producing missing models and wrong
+    /// textures instead of a clean re-download. Every location here must be cleared together so
+    /// the client falls back to a consistent state (matching `StreamingAssets`) and re-derives
+    /// everything from there, rather than a state no revision ever actually had.
+    ///
+    /// The exact file names are not stable: a real prefix (`ngosangns`) install was observed to
+    /// rename `res_revision`/`data_revision`/`res_versions_persist`/`data_versions_persist` to
+    /// `base_revision`/`res_versions_remote`/`data_versions_remote`/`cache_versions_<revision>`
+    /// between two launches a couple hours apart, with the old-scheme `silence_data_versions_persist`
+    /// left behind uncleaned next to the new `silence_data_versions_remote` — the client's own
+    /// migration between schemes is not itself reliably clean. Matching by name prefix rather than
+    /// a fixed list is what survives a scheme the client switches to next.
+    private static func gameWorldAssetCacheLocations(dataDir: URL) -> [CacheLocation] {
+        let persistent = dataDir.appendingPathComponent("Persistent", isDirectory: true)
+        let versionFilePrefixes = [
+            "res_revision", "data_revision", "silence_revision", "base_revision", "base_res_version_hash",
+            "res_versions_", "data_versions_", "silence_data_versions_", "cache_versions_", "ctable.dat"
+        ]
+        let entries = (try? FileManager.default.contentsOfDirectory(
+            at: persistent,
+            includingPropertiesForKeys: [.isDirectoryKey],
+            options: [.skipsHiddenFiles]
+        )) ?? []
+        let versionFileLocations = entries.compactMap { url -> CacheLocation? in
+            let name = url.lastPathComponent
+            guard versionFilePrefixes.contains(where: { name.hasPrefix($0) }) else { return nil }
+            guard (try? url.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory != true else { return nil }
+            return .file(url)
+        }
+        return [.directoryContents(persistent.appendingPathComponent("AssetBundles", isDirectory: true))] + versionFileLocations
     }
 
     /// Temporary files inside the Wine prefix: the Windows temp dir plus each user's Temp dir.
