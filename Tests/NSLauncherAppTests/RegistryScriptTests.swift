@@ -8,10 +8,10 @@ final class RegistryScriptTests: XCTestCase {
 
     func testGroupsEntriesUnderEachKeyInFirstSeenOrder() {
         let macDriver = #"HKEY_CURRENT_USER\Software\Wine\Mac Driver"#
-        let overrides = #"HKEY_CURRENT_USER\Software\Wine\DllOverrides"#
+        let genshin = #"HKEY_CURRENT_USER\Software\miHoYo\Genshin Impact"#
         let script = RegistryScript.render([
             RegistryEntry(key: macDriver, name: "RetinaMode", value: .string("y")),
-            RegistryEntry(key: overrides, name: "d3d11", value: .remove),
+            RegistryEntry(key: genshin, name: "WINDOWS_HDR_ON_h3132281285", value: .dword(1)),
             RegistryEntry(key: macDriver, name: "LeftCommandIsCtrl", value: .string("n"))
         ])
 
@@ -23,15 +23,8 @@ final class RegistryScriptTests: XCTestCase {
         XCTAssertEqual(macSection?.contains("\"LeftCommandIsCtrl\"=\"n\""), true)
         XCTAssertLessThan(
             try XCTUnwrap(script.range(of: "[\(macDriver)]")).lowerBound,
-            try XCTUnwrap(script.range(of: "[\(overrides)]")).lowerBound
+            try XCTUnwrap(script.range(of: "[\(genshin)]")).lowerBound
         )
-    }
-
-    /// `"name"=-` is how a `.reg` import deletes a value. Without it the DLL-override removals
-    /// DXMT depends on would silently become no-ops.
-    func testRemovalUsesTheDeletionSyntax() {
-        let script = RegistryScript.render([.removingDLLOverride("d3d11")])
-        XCTAssertTrue(script.contains("\"d3d11\"=-"))
     }
 
     func testDWordsAreWrittenAsEightHexDigits() {
@@ -69,17 +62,4 @@ final class RegistryScriptTests: XCTestCase {
         XCTAssertFalse(RegistryScript.render([]).contains("["))
     }
 
-    /// D3DMetal selects its DLLs through WINEDLLPATH, so a leftover native override would shadow
-    /// them; DXVK copies its DLLs into the prefix and needs the opposite.
-    func testBridgesDeclareTheOverrideDirectionTheyDependOn() {
-        let d3dMetal = D3DMetalBridge().registryEntries()
-        XCTAssertEqual(d3dMetal.count, 5)
-        XCTAssertTrue(d3dMetal.allSatisfy { if case .remove = $0.value { return true } else { return false } })
-
-        let dxvk = DXVKBridge().registryEntries()
-        XCTAssertEqual(dxvk.count, 2)
-        XCTAssertTrue(dxvk.allSatisfy {
-            if case let .string(value) = $0.value { return value == "native,builtin" } else { return false }
-        })
-    }
 }

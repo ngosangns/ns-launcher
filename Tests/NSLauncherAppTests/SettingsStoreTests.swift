@@ -21,6 +21,7 @@ final class SettingsStoreTests: XCTestCase {
         settings.metalFXUpscaling = true
         settings.showMetalHUD = true
         settings.proxyHost = "http://127.0.0.1:8080"
+        settings.metalRenderBackend = .dxvk
 
         try store.save(settings)
 
@@ -31,12 +32,13 @@ final class SettingsStoreTests: XCTestCase {
     /// its default rather than failing the whole decode.
     func testKeysMissingFromAnOlderFileFallBackToDefaults() throws {
         try store.save(AppSettings.default)
-        try stripKeys(["metalFXUpscaling", "resolutionWidth"])
+        try stripKeys(["metalFXUpscaling", "resolutionWidth", "metalRenderBackend"])
 
         let loaded = try store.load()
 
         XCTAssertEqual(loaded.metalFXUpscaling, false)
         XCTAssertEqual(loaded.resolutionWidth, 1920)
+        XCTAssertEqual(loaded.metalRenderBackend, .d3dMetal)
     }
 
     /// Values the file does carry must survive the defaults merge untouched.

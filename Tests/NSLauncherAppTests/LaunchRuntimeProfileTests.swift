@@ -41,11 +41,10 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         XCTAssertEqual(profile.backend, .d3dMetal)
         XCTAssertEqual(profile.environment["WINEESYNC"], "1")
         XCTAssertNil(profile.environment["WINEMSYNC"])
-        // D3DMetal's builtin D3D DLLs stay authoritative, and vulkan-1 is disabled outright so
-        // Unity's Vulkan fallback (broken under D3DMetal) can never kick in even via CrossOver's
-        // own system32 copy — see D3DMetalBridge.launchEnvironment for the crash signature this
-        // prevents.
-        XCTAssertEqual(profile.environment["WINEDLLOVERRIDES"], "vulkan-1=")
+        // The regression this guards against: without a builtin override, Wine loaded a stale native
+        // DXVK left in the prefix instead of D3DMetal, and the game rendered through MoltenVK — 16154
+        // [mvk-error] lines in 120s of play, versus zero with the override.
+        XCTAssertEqual(profile.environment["WINEDLLOVERRIDES"], "d3d10,d3d10_1,d3d10core,d3d11,dxgi=b")
     }
 
     /// Confirmed real `D3DM_*` variables (found in a real D3DMetal.framework binary's strings) that
@@ -85,9 +84,8 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         )
         XCTAssertEqual(profile.backend, .dxmt)
         XCTAssertEqual(profile.environment["WINEESYNC"], "1")
-        // Same Vulkan-fallback block as D3DMetal — Unity's broken Vulkan path is not specific to
-        // one backend.
-        XCTAssertEqual(profile.environment["WINEDLLOVERRIDES"], "vulkan-1=")
+        // Same builtin override as D3DMetal: the stale native DXVK shadows either one.
+        XCTAssertEqual(profile.environment["WINEDLLOVERRIDES"], "d3d10,d3d10_1,d3d10core,d3d11,dxgi=b")
     }
 
     /// A game that never declared DXMT support must not silently get it just because the user's
@@ -108,6 +106,47 @@ final class LaunchRuntimeProfileTests: XCTestCase {
             settings: makeSettings()
         )
         XCTAssertEqual(profile.backend, .d3dMetal)
+    }
+
+    func testBundledGenshinDefaultsIncludeDXVKForNewAndExistingSettings() {
+        XCTAssertEqual(AppSettings.default.games.first?.runtimeRequirements.contains(.dxvk), true)
+
+        var existing = AppSettings.default
+        existing.games[0].runtimeRequirements.removeAll { $0 == .dxvk }
+
+        let migrated = existing.applyingBundledGenshinDefaultsIfNeeded()
+        XCTAssertEqual(migrated.games.first?.runtimeRequirements.contains(.dxvk), true)
+    }
+
+    func testDXMTOnlyRequirementFallsBackToDXMT() {
+        let profile = LaunchRuntimeProfile.build(
+            game: makeGame(requirements: [.wine, .dxmt]),
+            settings: makeSettings()
+        )
+        XCTAssertEqual(profile.backend, .dxmt)
+    }
+
+    func testDXVKIsUsedWhenPreferredAndSupported() {
+        let profile = LaunchRuntimeProfile.build(
+            game: makeGame(requirements: [.wine, .d3dMetal, .dxmt, .dxvk]),
+            settings: makeSettings(metalRenderBackend: .dxvk)
+        )
+        XCTAssertEqual(profile.backend, .dxvk)
+        XCTAssertEqual(profile.environment["WINEESYNC"], "1")
+        XCTAssertNil(profile.environment["D3DM_ENABLE_METALFX"])
+        XCTAssertEqual(
+            profile.environment["WINEDLLOVERRIDES"],
+            "d3d10,d3d10_1,d3d10core,d3d11,dxgi=b"
+        )
+    }
+
+    func testDXVKPreferenceIsIgnoredWhenTheGameDoesNotDeclareSupportForIt() {
+        let profile = LaunchRuntimeProfile.build(
+            game: makeGame(requirements: [.wine, .d3dMetal, .dxmt]),
+            settings: makeSettings(metalRenderBackend: .dxvk)
+        )
+        XCTAssertEqual(profile.backend, .d3dMetal)
+        XCTAssertEqual(profile.environment["WINEDLLOVERRIDES"], "d3d10,d3d10_1,d3d10core,d3d11,dxgi=b")
     }
 
     func testDXVKBackendAlsoDefaultsToEsync() {

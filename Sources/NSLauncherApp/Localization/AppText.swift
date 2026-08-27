@@ -17,10 +17,8 @@ struct AppText {
 
     // MARK: - Static Labels
 
-    var appTitle: String { localized(en: "NS Launcher", vi: "NS Launcher") }
     var settingsTitle: String { localized(en: "Settings", vi: "Cài đặt") }
     var close: String { localized(en: "Close", vi: "Đóng") }
-    var openSettings: String { localized(en: "Open Settings", vi: "Mở cài đặt") }
     var open: String { localized(en: "Open", vi: "Mở") }
     var browse: String { localized(en: "Browse", vi: "Chọn") }
     var games: String { localized(en: "Games", vi: "Trò chơi") }
@@ -28,23 +26,15 @@ struct AppText {
     var ok: String { localized(en: "OK", vi: "Đóng") }
     var installDirectory: String { localized(en: "Install Directory", vi: "Thư mục cài đặt") }
     var executable: String { localized(en: "Executable", vi: "File chạy") }
-    var winePrefix: String { localized(en: "Wine Prefix", vi: "Tiền tố Wine") }
     var format: String { localized(en: "Format", vi: "Định dạng") }
-    var installPlanner: String { localized(en: "Install Planner", vi: "Kế hoạch cài đặt") }
     var status: String { localized(en: "Status", vi: "Trạng thái") }
-    var currentStepLabel: String { localized(en: "Current step", vi: "Bước hiện tại") }
     var currentItemLabel: String { localized(en: "Current item", vi: "Mục đang xử lý") }
     var currentItemsLabel: String { localized(en: "Current items", vi: "Các mục đang xử lý") }
-    var currentPartLabel: String { localized(en: "Current part", vi: "Part hiện tại") }
-    var resumePointLabel: String { localized(en: "Resume point", vi: "Điểm tiếp tục") }
     var currentPartProgressLabel: String { localized(en: "Current part progress", vi: "Tiến độ part hiện tại") }
     var totalProgressLabel: String { localized(en: "Overall progress", vi: "Tiến độ toàn bộ") }
-    var transferDetailsLabel: String { localized(en: "Transfer details", vi: "Chi tiết truyền tải") }
     var speedLabel: String { localized(en: "Speed", vi: "Tốc độ") }
     var etaLabel: String { localized(en: "ETA", vi: "Thời gian còn lại") }
     var etaWarmupMessage: String { localized(en: "Stabilizing time estimate...", vi: "Đang ổn định ước tính thời gian...") }
-    var totalSizeKBLabel: String { localized(en: "Overall size (KB)", vi: "Dung lượng tổng (KB)") }
-    var partSizeKBLabel: String { localized(en: "Current part size (KB)", vi: "Dung lượng part hiện tại (KB)") }
     var progressLabel: String { localized(en: "Progress", vi: "Tiến độ") }
     var pauseTitle: String { localized(en: "Pause", vi: "Tạm dừng") }
     var playTitle: String { localized(en: "Play", vi: "Chơi") }
@@ -61,27 +51,17 @@ struct AppText {
     var validatingStage: String { localized(en: "Validating", vi: "Đang kiểm tra") }
     var completedStage: String { localized(en: "Completed", vi: "Hoàn tất") }
     var waitingForProgress: String { localized(en: "Working...", vi: "Đang xử lý...") }
-    var waitingForFirstDownloadBytes: String { localized(en: "Waiting for the first download data from the server...", vi: "Đang chờ dữ liệu tải đầu tiên từ máy chủ...") }
     var operationPaused: String { localized(en: "Operation paused", vi: "Đã tạm dừng thao tác") }
     var operationResumed: String { localized(en: "Operation resumed", vi: "Đã tiếp tục thao tác") }
     var operationStopped: String { localized(en: "Operation stopped", vi: "Đã dừng thao tác") }
     var error: String { localized(en: "Error", vi: "Lỗi") }
     var ready: String { localized(en: "Ready", vi: "Sẵn sàng") }
-    var installPlanReady: String { localized(en: "Install plan ready", vi: "Đã sẵn sàng kế hoạch cài đặt") }
-    var failedToPlanInstall: String { localized(en: "Failed to plan install", vi: "Không lập được kế hoạch cài đặt") }
-    var versionLabel: String { localized(en: "Version", vi: "Phiên bản") }
-    var downloadLabel: String { localized(en: "Download", vi: "Tải về") }
-    var peakTempLabel: String { localized(en: "Peak temp", vi: "Bộ nhớ tạm tối đa") }
-    var stepsLabel: String { localized(en: "Steps", vi: "Số bước") }
-    var installCompleted: String { localized(en: "Install completed", vi: "Đã cài đặt xong") }
     var installFailed: String { localized(en: "Install failed", vi: "Cài đặt thất bại") }
     var updateCompleted: String { localized(en: "Update completed", vi: "Đã cập nhật xong") }
     var updateFailed: String { localized(en: "Update failed", vi: "Cập nhật thất bại") }
     var launchFailed: String { localized(en: "Launch failed", vi: "Mở game thất bại") }
     var gameExitedNormally: String { localized(en: "Game exited normally", vi: "Game đã thoát bình thường") }
     var selectedGame: String { localized(en: "Selected Game", vi: "Game đang chọn") }
-    var toolPaths: String { localized(en: "Tool Paths", vi: "Đường dẫn công cụ") }
-    var languageLabel: String { localized(en: "Language", vi: "Ngôn ngữ") }
     var english: String { localized(en: "English", vi: "Tiếng Anh") }
     var vietnamese: String { localized(en: "Vietnamese", vi: "Tiếng Việt") }
     /// Localized display name for a voice-over language, used to label leftover voice packs found
@@ -155,10 +135,11 @@ struct AppText {
     var renderBackendLabel: String { localized(en: "Render backend", vi: "Backend render") }
     var renderBackendD3DMetal: String { localized(en: "D3DMetal", vi: "D3DMetal") }
     var renderBackendDXMT: String { localized(en: "DXMT (experimental)", vi: "DXMT (thử nghiệm)") }
+    var renderBackendDXVK: String { localized(en: "DXVK (experimental)", vi: "DXVK (thử nghiệm)") }
     var renderBackendDescription: String {
         localized(
-            en: "D3DMetal (Apple's own translator) is the recommended default. D3DMetal has a confirmed shader-translation bug that shows up as wrong colors on specific effects or objects (texture_buffer<uint> misread as float); switch to DXMT, a different open-source translator bundled the same way, if you hit that.",
-            vi: "D3DMetal (của Apple) là lựa chọn mặc định khuyến nghị. D3DMetal có lỗi dịch shader đã xác nhận gây sai màu ở một số hiệu ứng/vật thể cụ thể (đọc nhầm texture_buffer<uint> thành float); chuyển sang DXMT — một trình dịch mã nguồn mở khác, đóng gói theo cùng cách — nếu bạn gặp hiện tượng này."
+            en: "D3DMetal is the recommended default. DXMT is a different Metal translator worth trying when a specific effect renders wrong. DXVK translates through Vulkan and MoltenVK, so it may be slower, and its shader translation is the least reliable of the three on Apple GPUs.",
+            vi: "D3DMetal là lựa chọn mặc định khuyến nghị. DXMT là một translator Metal khác, đáng thử khi một hiệu ứng cụ thể render sai. DXVK dịch qua Vulkan và MoltenVK nên có thể chậm hơn, và phần dịch shader của nó là kém tin cậy nhất trong ba lựa chọn trên GPU Apple."
         )
     }
     var metalHUDLabel: String { localized(en: "Metal HUD overlay", vi: "Hiển thị Metal HUD") }
@@ -206,10 +187,10 @@ struct AppText {
             vi: "Chưa có tác dụng: bật Custom windowed resolution và đặt thấp hơn độ phân giải gốc của màn hình, nếu không game vẫn render ở độ phân giải đầy đủ."
         )
     }
-    var metalFXNotSupportedOnDXMTWarning: String {
+    var metalFXUnsupportedBackendWarning: String {
         localized(
-            en: "No effect: MetalFX upscaling is D3DMetal-only. Switch the render backend back to D3DMetal above to use it, or turn this off while using DXMT.",
-            vi: "Không có tác dụng: MetalFX upscaling chỉ dùng được với D3DMetal. Đổi lại backend render sang D3DMetal ở trên để dùng, hoặc tắt mục này khi đang dùng DXMT."
+            en: "No effect: MetalFX upscaling is D3DMetal-only. Switch the render backend to D3DMetal above to use it, or turn this off with the current backend.",
+            vi: "Không có tác dụng: MetalFX upscaling chỉ dùng được với D3DMetal. Đổi backend render sang D3DMetal ở trên để dùng, hoặc tắt mục này với backend hiện tại."
         )
     }
     var d3dMetalAsyncCommitLabel: String { localized(en: "Async command commit (experimental)", vi: "Async command commit (thử nghiệm)") }
@@ -229,9 +210,6 @@ struct AppText {
     var name: String { localized(en: "Name", vi: "Tên") }
     var installRoot: String { localized(en: "Install root", vi: "Thư mục cài đặt") }
     var executablePath: String { localized(en: "Executable path", vi: "Đường dẫn file chạy") }
-    var wineBinary: String { localized(en: "Wine binary", vi: "File Wine") }
-    var officialSophonSource: String { localized(en: "Official Sophon chunk source", vi: "Nguồn chunk Sophon chính thức") }
-    var selectedSource: String { localized(en: "Selected source", vi: "Nguồn đang chọn") }
 
     // MARK: - Storage Management
 
@@ -259,7 +237,6 @@ struct AppText {
     var voicePackSizeLabel: String { localized(en: "Size", vi: "Dung lượng") }
     var voicePackFilesLabel: String { localized(en: "Files", vi: "Số file") }
     var noVoicePacksFound: String { localized(en: "No voice packs found. Run Refresh after the game is installed.", vi: "Chưa có gói lồng tiếng. Hãy bấm Làm mới sau khi game đã cài đặt.") }
-    var checkingVoicePacks: String { localized(en: "Checking voice packs...", vi: "Đang kiểm tra gói lồng tiếng...") }
     var checkingStorageInventory: String { localized(en: "Checking game storage...", vi: "Đang kiểm tra dung lượng game...") }
     var storageInventoryFailed: String { localized(en: "Failed to check game storage", vi: "Kiểm tra dung lượng game thất bại") }
     var removingVoicePack: String { localized(en: "Removing voice pack...", vi: "Đang gỡ gói lồng tiếng...") }
@@ -374,24 +351,8 @@ struct AppText {
 
     // MARK: - Action Labels
 
-    var planInstallTitle: String { localized(en: "Plan Install", vi: "Lập kế hoạch") }
-    var planInstallDescription: String { localized(en: "Estimate download size, temporary space, and planned steps.", vi: "Ước tính dung lượng tải, bộ nhớ tạm và các bước cài đặt.") }
-    var downloadInstallTitle: String { localized(en: "Download & Install", vi: "Tải và cài đặt") }
-    var downloadInstallDescription: String { localized(en: "Download and reconstruct game assets from official Sophon chunks.", vi: "Tải và dựng asset game từ chunk Sophon chính thức.") }
     var updateGameTitle: String { localized(en: "Update Game", vi: "Cập nhật game") }
-    var updateGameDescription: String { localized(en: "Check the latest Sophon build and download only changed assets.", vi: "Kiểm tra build Sophon mới nhất và chỉ tải asset thay đổi.") }
     var launchTitle: String { localized(en: "Launch via Wine", vi: "Chạy qua Wine") }
-    var launchDescription: String { localized(en: "Start the configured Windows executable with the current Wine path.", vi: "Chạy file Windows đã cấu hình bằng đường dẫn Wine hiện tại.") }
-
-    /// Formats the multiline install plan summary.
-    func installPlanSummary(version: String, download: String, peakTemp: String, steps: Int) -> String {
-        """
-        \(versionLabel): \(version)
-        \(downloadLabel): \(download)
-        \(peakTempLabel): \(peakTemp)
-        \(stepsLabel): \(steps)
-        """
-    }
 
     /// Formats the multiline update plan summary.
     func updatePlanSummary(currentVersion: String, latestVersion: String, download: String, files: Int, skipped: Int) -> String {
@@ -402,11 +363,6 @@ struct AppText {
     }
 
     // MARK: - Status Messages
-
-    /// Status text shown while the planner is running.
-    func planningInstall(for gameName: String) -> String {
-        localized(en: "Planning install for \(gameName)...", vi: "Đang lập kế hoạch cài đặt cho \(gameName)...")
-    }
 
     /// Status text shown during Sophon installs.
     func installing(_ gameName: String) -> String {
@@ -476,16 +432,6 @@ struct AppText {
     /// KB progress value used by detailed status tiles.
     func progressValueKB(receivedKB: String, totalKB: String) -> String {
         localized(en: "\(receivedKB) KB / \(totalKB) KB", vi: "\(receivedKB) KB / \(totalKB) KB")
-    }
-
-    /// Pass-through hook reserved for future localized speed formatting.
-    func speedValue(_ value: String) -> String {
-        localized(en: value, vi: value)
-    }
-
-    /// Error text for a missing configured executable.
-    func missingExpectedExecutable(_ path: String) -> String {
-        localized(en: "Missing expected executable at \(path)", vi: "Không tìm thấy file chạy mong đợi tại \(path)")
     }
 
     // MARK: - Error Messages
@@ -573,8 +519,6 @@ struct AppText {
                 return d3dMetalUnavailable(path)
             case let .dxmtUnavailable(path):
                 return dxmtUnavailable(path)
-            case let .wineDistributionFailed(details):
-                return wineDistributionFailed(details)
             case let .wineRootNotFound(path):
                 return wineRootNotFound(path)
             case let .unsupportedKernelDriver(driver):
@@ -607,14 +551,6 @@ struct AppText {
         default:
             return error.localizedDescription
         }
-    }
-
-    /// Error text when installing the launcher-managed Wine build fails.
-    func wineDistributionFailed(_ details: String) -> String {
-        localized(
-            en: "Installing \(WineDistribution.displayName) failed: \(details). Check the network connection and try again.",
-            vi: "Cài \(WineDistribution.displayName) thất bại: \(details). Hãy kiểm tra kết nối mạng rồi thử lại."
-        )
     }
 
     /// Error text when a Wine binary has no sibling `lib/wine` directory, so its install root
@@ -691,10 +627,6 @@ struct AppText {
             en: "Sophon update failed: \(details)",
             vi: "Cập nhật Sophon thất bại: \(details)"
         )
-    }
-
-    var serverInvalidResponse: String {
-        localized(en: "The server returned an invalid response.", vi: "Máy chủ trả về phản hồi không hợp lệ.")
     }
 
     /// Error text for manifest checksum mismatches.

@@ -23,13 +23,13 @@ It already includes:
 - chunk download, decompression, chunk MD5 verification, asset reconstruction,
   final asset MD5 verification, and atomic replacement;
 - `.nslauncher-sophon-staging` resume sidecars for interrupted Sophon assets;
-- install/update planning that skips assets already matching size plus MD5;
+- update planning that skips assets already matching size plus MD5;
 - a full-manifest target set: nothing is withheld from the install, because the
   game re-downloads anything missing into `GenshinImpact_Data/Persistent` on its
   own, which saves no space and moves the bytes onto a slower path the launcher
   cannot observe;
-- a Settings screen limited to language, install root, executable path, and
-  display mode;
+- a Settings screen limited to language, install root, display mode, render
+  backend, and cache management;
 - Wine launch bootstrap that selects Apple D3DMetal or installs DXVK when
   required;
 - filtered Wine diagnostics with targeted messages for D3DMetal availability

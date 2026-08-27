@@ -65,7 +65,6 @@ final class ErrorMessageTests: XCTestCase {
             WineServiceError.dxvkBootstrapFailed("d"),
             WineServiceError.d3dMetalUnavailable("/p"),
             WineServiceError.dxmtUnavailable("/p"),
-            WineServiceError.wineDistributionFailed("d"),
             WineServiceError.wineRootNotFound("/p"),
             WineServiceError.unsupportedKernelDriver("HoYoKProtect.sys"),
             CrossOverInstallError.homebrewNotFound,

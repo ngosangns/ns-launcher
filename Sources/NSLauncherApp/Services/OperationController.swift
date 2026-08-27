@@ -3,8 +3,8 @@
 // Cooperative pause/stop control for long-running install/update/launch tasks.
 //
 // Swift concurrency has no built-in "pause", so long loops call `checkpoint()` to
-// (a) throw on cancellation/stop and (b) sleep while paused. Handlers let APIs that
-// need explicit cancellation (URLSession, Process) react to pause/stop requests.
+// (a) throw on cancellation/stop and (b) sleep while paused. Purely cooperative: nothing is
+// interrupted mid-flight, an operation only yields at its next checkpoint.
 
 import Foundation
 
@@ -12,38 +12,21 @@ import Foundation
 actor OperationController {
     private var isPaused = false
     private var isStopped = false
-    private var pauseHandler: (@Sendable () -> Void)?
-    private var resumeHandler: (@Sendable () -> Void)?
-    private var stopHandler: (@Sendable () -> Void)?
 
-    /// Registers operation-specific handlers for APIs that need explicit cancellation.
-    func setHandlers(
-        pause: (@Sendable () -> Void)?,
-        resume: (@Sendable () -> Void)?,
-        stop: (@Sendable () -> Void)?
-    ) {
-        self.pauseHandler = pause
-        self.resumeHandler = resume
-        self.stopHandler = stop
-    }
-
-    /// Requests a pause and lets the active operation persist any resume state.
+    /// Requests a pause; the operation stops at its next checkpoint.
     func pause() {
         isPaused = true
-        pauseHandler?()
     }
 
     /// Clears the pause flag so checkpoint loops can continue.
     func resume() {
         isPaused = false
-        resumeHandler?()
     }
 
-    /// Requests a terminal stop and triggers operation-specific cleanup.
+    /// Requests a terminal stop; the next checkpoint throws `CancellationError`.
     func stop() {
         isStopped = true
         isPaused = false
-        stopHandler?()
     }
 
     /// Throws on cancellation/stop and waits while the operation is paused.

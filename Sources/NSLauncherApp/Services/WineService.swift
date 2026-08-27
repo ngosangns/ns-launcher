@@ -64,7 +64,6 @@ enum WineServiceError: LocalizedError {
     case d3dMetalUnavailable(String)
     case dxmtUnavailable(String)
     case unsupportedKernelDriver(String)
-    case wineDistributionFailed(String)
     case wineRootNotFound(String)
 
     var errorDescription: String? {
@@ -79,8 +78,6 @@ enum WineServiceError: LocalizedError {
             return "No Wine build with DXMT was found. Checked: \(path). DXMT ships only inside CrossOver — install it, then try again."
         case let .unsupportedKernelDriver(driver):
             return "Wine cannot load the Windows kernel driver \(driver)."
-        case let .wineDistributionFailed(details):
-            return "Installing the managed Wine build failed: \(details)"
         case let .wineRootNotFound(path):
             return "Unable to locate Wine's lib/wine directory for \(path)."
         }
@@ -132,20 +129,32 @@ struct WineService: WineServicing {
         ]
         baseEnv.merge(request.environment) { _, new in new }
         baseEnv["WINEPREFIX"] = request.prefixDirectory.path
-        // CX_ROOT is what lets a CrossOver-derived build find its compatibility database, and that
-        // database's `set_graphics_backend` step prepends whichever Direct3D layer the CrossOver
-        // BOTTLE is configured for to the DLL search path — which may not agree with the backend
-        // this launch resolved (e.g. a bottle set to DXVK when D3DMetal was requested). That prepend
-        // lands ahead of the bridge's own `WINEDLLPATH` entries, so the game would silently render on
-        // whatever CrossOver's bottle config picked instead. A bridge always sets its own
-        // `WINEDLLPATH` explicitly (see `D3DMetalBridge`/`DXVKBridge`), so CX_ROOT is withheld to
-        // keep that choice authoritative; CrossOver then logs `prepend_cx_root_dll_path CX_ROOT not
-        // set` and skips the prepend. Plain Wine launches have nothing to shadow, so they still get it.
+        // CX_ROOT is what lets a CrossOver-derived build find its compatibility database, whose
+        // `set_graphics_backend` step is the only thing that actually puts a translation layer on the
+        // DLL search path. Without CX_ROOT it logs `prepend_cx_root_dll_path CX_ROOT not set` and
+        // skips that step, and the game runs on whatever `d3d11.dll` happens to resolve. Which layer
+        // it picks would otherwise come from the CrossOver BOTTLE config, so the backend this launch
+        // resolved is pinned explicitly right after.
         if let crossOverRoot = Self.crossOverRootToApply(for: wineBuild, bridge: bridge) {
             baseEnv["CX_ROOT"] = crossOverRoot.path
             diagnose("CX_ROOT=\(crossOverRoot.path)")
-        } else if WineBinaryLocator.crossOverRoot(for: wineBuild) != nil {
-            diagnose("CX_ROOT withheld so CrossOver's own graphics backend cannot shadow \(request.renderBackend.rawValue)")
+            if let graphicsBackend = bridge?.crossOverGraphicsBackend {
+                baseEnv["CX_GRAPHICS_BACKEND"] = graphicsBackend
+                diagnose("CX_GRAPHICS_BACKEND=\(graphicsBackend)")
+            }
+        }
+
+        var d3dMetalCacheGeneration: String?
+        if request.renderBackend == .d3dMetal {
+            do {
+                d3dMetalCacheGeneration = try D3DMetalBridge.prepareShaderCache(
+                    forExecutable: request.executablePath.lastPathComponent,
+                    wineBuild: wineBuild,
+                    onDiagnostic: diagnose
+                )
+            } catch {
+                diagnose("D3DMetal cache prepare best-effort failed: \(error.localizedDescription)")
+            }
         }
 
         if let bridge {
@@ -166,7 +175,7 @@ struct WineService: WineServicing {
         // Apply the bridge's DLL overrides together with the launcher's Mac Driver and game
         // registry settings, in one import. Best-effort: a registry write failure must not block
         // the launch (mirrors YAAGL's ignore-on-error behavior).
-        let entries = (bridge?.registryEntries() ?? []) + Self.launchRegistryEntries(for: request)
+        let entries = Self.launchRegistryEntries(for: request)
         do {
             diagnose("apply \(entries.count) registry values in one import")
             try await RegistryScript.apply(
@@ -238,8 +247,32 @@ struct WineService: WineServicing {
             }
         }
 
-        // Best-effort wineserver -w: flush registry and wait for Wine processes to exit.
-        await waitForWineserver(wineBuild: wineBuild, environment: env, onDiagnostic: diagnose)
+        // A durable snapshot is safe only after wineserver confirms every writer has exited.
+        let wineServerStopped = await Self.waitForWineserver(
+            wineBuild: wineBuild,
+            environment: env,
+            processRunner: processRunner,
+            onDiagnostic: diagnose
+        )
+
+        if request.renderBackend == .d3dMetal,
+           wineServerStopped,
+           let d3dMetalCacheGeneration {
+            do {
+                try D3DMetalBridge.checkpointShaderCache(
+                    forExecutable: request.executablePath.lastPathComponent,
+                    wineBuild: wineBuild,
+                    expectedGeneration: d3dMetalCacheGeneration,
+                    onDiagnostic: diagnose
+                )
+            } catch {
+                diagnose("D3DMetal cache checkpoint best-effort failed: \(error.localizedDescription)")
+            }
+        } else if request.renderBackend == .d3dMetal, wineServerStopped {
+            diagnose("D3DMetal cache checkpoint skipped: prepare generation unavailable")
+        } else if request.renderBackend == .d3dMetal {
+            diagnose("D3DMetal cache checkpoint skipped: Wine shutdown not confirmed")
+        }
 
         return launchResult
     }
@@ -272,15 +305,17 @@ struct WineService: WineServicing {
         throw ProcessRunnerError.executableNotFound(request.wineBinaryPath)
     }
 
-    /// The CrossOver root to expose as `CX_ROOT`, or nil when it must be withheld.
+    /// The CrossOver root to expose as `CX_ROOT`, or nil for a build that is not CrossOver-derived.
     ///
-    /// Only plain-Wine launches get it. A launch that goes through a render bridge must not, for the
-    /// reason spelled out at the call site: CrossOver's compatibility database prepends its own
-    /// Direct3D layer ahead of the bridge's `WINEDLLPATH`, which silently replaces the backend the
-    /// launcher just installed and tuned.
+    /// Every launch gets it, bridged or not. This used to be withheld from bridged launches, to stop
+    /// CrossOver's compatibility database from prepending the bottle's own Direct3D layer ahead of
+    /// the bridge's `WINEDLLPATH`. That inverted the truth: `cxcompatdb.so` is the *only* thing that
+    /// selects a translation layer, and withholding `CX_ROOT` disabled it — leaving the game on
+    /// whatever `d3d11.dll` happened to resolve, never on the backend the user picked. The bottle
+    /// config is no longer a hazard because the backend is now pinned explicitly through
+    /// `CX_GRAPHICS_BACKEND`; see `RenderBridge.crossOverGraphicsBackend`.
     static func crossOverRootToApply(for build: WineBuild, bridge: RenderBridge?) -> URL? {
-        guard bridge == nil else { return nil }
-        return WineBinaryLocator.crossOverRoot(for: build)
+        WineBinaryLocator.crossOverRoot(for: build)
     }
 
     /// Registry values the launcher itself applies before the game starts.
@@ -326,16 +361,17 @@ struct WineService: WineServicing {
         return entries
     }
 
-    /// Best-effort wait for wineserver to exit, flushing registry writes and logs.
-    private func waitForWineserver(
+    /// Waits for wineserver to exit, returning true only when cache writers are confirmed quiescent.
+    static func waitForWineserver(
         wineBuild: WineBuild,
         environment: [String: String],
+        processRunner: ProcessRunning,
         onDiagnostic: @escaping @Sendable (String) -> Void
-    ) async {
+    ) async -> Bool {
         let wineserverPath = wineBuild.root.appendingPathComponent("bin/wineserver").path
         guard FileManager.default.isExecutableFile(atPath: wineserverPath) else {
             onDiagnostic("wineserver not found at \(wineserverPath); skipping wait")
-            return
+            return false
         }
         do {
             onDiagnostic("wineserver -w wait start")
@@ -346,8 +382,10 @@ struct WineService: WineServicing {
                 currentDirectory: nil
             )
             onDiagnostic("wineserver -w completed")
+            return true
         } catch {
             onDiagnostic("wineserver -w best-effort failed: \(error.localizedDescription)")
+            return false
         }
     }
 

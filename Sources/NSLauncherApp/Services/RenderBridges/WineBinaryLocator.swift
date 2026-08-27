@@ -71,23 +71,11 @@ enum WineBinaryLocator {
         return wineRoot
     }
 
-    /// Launcher-managed directory where a Wine build is installed so the resolver can pick it up
-    /// without any system-wide install or PATH changes. Populated by `WineDistribution`.
+    /// Launcher-managed slot the resolver also scans, so a Wine build symlinked or unpacked here is
+    /// picked up without any system-wide install or PATH change. Nothing populates it automatically.
     static var managedWineDirectory: URL {
         FileManager.default.homeDirectoryForCurrentUser
             .appendingPathComponent("Library/Application Support/NSLauncher/wine", isDirectory: true)
-    }
-
-    /// True when the managed slot already holds something that resolves to a Wine root.
-    ///
-    /// A symlink into a Wine installed elsewhere counts: the slot's contract is "a usable Wine
-    /// lives here", not "the launcher downloaded it".
-    static func managedBuildIsPresent() -> Bool {
-        loaderNames.contains { name in
-            let path = managedWineDirectory.appendingPathComponent("bin/\(name)").path
-            return FileManager.default.isExecutableFile(atPath: path)
-                && (try? wineRootDirectory(forBinaryAtPath: path)) != nil
-        }
     }
 
     /// CrossOver-derived builds locate their own DLLs and compatibility database relative to

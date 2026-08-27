@@ -214,7 +214,6 @@ enum RuntimeRequirement: String, Codable, CaseIterable, Identifiable {
     case wine
     case dxvk
     case d3dMetal
-    case reshade
     /// CrossOver's bundled DXMT (`lib/dxmt`), reintroduced as a second Metal-native backend
     /// alongside D3DMetal — see `DXMTBridge`. Raw value is NOT `"dxmt"`: that string is already
     /// hard-aliased to `.d3dMetal` below for pre-rename settings.json files, and reusing it here
@@ -278,12 +277,6 @@ struct InstalledGameMetadata: Codable, Hashable {
     var version: String?
 }
 
-/// Coarse install state used by UI or future persistence.
-enum InstallState: String, Codable {
-    case notInstalled
-    case installed
-}
-
 /// Static configuration for one launchable game.
 struct GameDefinition: Identifiable, Codable, Hashable {
     let id: String
@@ -294,14 +287,6 @@ struct GameDefinition: Identifiable, Codable, Hashable {
     var installerStrategy: InstallerStrategy
     var runtimeRequirements: [RuntimeRequirement]
     var launchArguments: [String]
-}
-
-/// User-facing estimate of the operations required for an install.
-struct InstallPlan: Hashable {
-    var version: String
-    var steps: [InstallStep]
-    var estimatedBytesToDownload: Int64
-    var peakTemporaryBytes: Int64
 }
 
 /// Delta plan for bringing an existing Sophon install up to the latest version.
@@ -397,29 +382,6 @@ struct SophonChunk: Hashable, Identifiable {
     }
 }
 
-/// One planned install operation.
-struct InstallStep: Hashable, Identifiable {
-    /// Type of file-system or network action represented by this step.
-    enum Kind: Hashable {
-        case createDirectory
-        case downloadFile
-        case moveIntoPlace
-        case verifyChecksum
-        case writeMetadata
-    }
-
-    let id = UUID()
-    var kind: Kind
-    var relativePath: String
-    var bytes: Int64
-}
-
-/// Launch-time arguments and environment that can be persisted or derived.
-struct LaunchConfiguration: Codable, Hashable {
-    var gameArguments: [String]
-    var environment: [String: String]
-}
-
 /// User settings and bundled game defaults persisted to disk.
 struct AppSettings: Codable, Equatable {
     private static let genshinGameID = "genshin-global"
@@ -489,14 +451,12 @@ struct AppSettings: Codable, Equatable {
     /// conservatively than the game's own threading needs. Same caveat and reason for being
     /// toggleable as `d3dMetalAsyncCommit` — see `D3DMetalBridge`.
     var d3dMetalMultithreadedInterface: Bool = true
-    /// Which Metal-native D3D translation layer to launch with, for a game that declares support
-    /// for more than one (see `RuntimeRequirement.dxmt`). Default D3DMetal; DXMT is the escape
-    /// hatch for the shader-translation bugs D3DMetal itself has — see `DXMTBridge`.
+    /// Which D3D translation backend to prefer when a game declares more than one supported
+    /// option. D3DMetal remains the default; DXMT and DXVK are compatibility fallbacks for
+    /// backend-specific rendering bugs.
     ///
-    /// Typed as `RuntimeBackend` rather than a narrower dedicated enum: it already has exactly
-    /// the two Metal-native cases this preference needs, `.dxvk`/`.plainWine` included alongside
-    /// them cost nothing (the Settings Picker simply never offers them as rows), and reusing it
-    /// avoids a second enum `RenderBridges.resolveBackend` would otherwise have to translate.
+    /// The persisted property name predates DXVK becoming selectable. Keep it stable so existing
+    /// settings retain their chosen backend.
     var metalRenderBackend: RuntimeBackend = .d3dMetal
     /// Monotonic settings schema version used for one-time default migrations.
     var settingsVersion: Int = 0
@@ -521,7 +481,7 @@ struct AppSettings: Codable, Equatable {
                     executableRelativePath: genshinStreamingExecutablePath,
                     winePrefixDirectory: root.appendingPathComponent(".wine", isDirectory: true),
                     installerStrategy: .sophon,
-                    runtimeRequirements: [.wine, .d3dMetal, .dxmt],
+                    runtimeRequirements: [.wine, .d3dMetal, .dxmt, .dxvk],
                     launchArguments: []
                 )
             ],
@@ -588,12 +548,14 @@ struct AppSettings: Codable, Equatable {
         }
 
         copy.games[index].installerStrategy = .sophon
-        copy.games[index].runtimeRequirements.removeAll { $0 == .dxvk }
         if !copy.games[index].runtimeRequirements.contains(.d3dMetal) {
             copy.games[index].runtimeRequirements.append(.d3dMetal)
         }
         if !copy.games[index].runtimeRequirements.contains(.dxmt) {
             copy.games[index].runtimeRequirements.append(.dxmt)
+        }
+        if !copy.games[index].runtimeRequirements.contains(.dxvk) {
+            copy.games[index].runtimeRequirements.append(.dxvk)
         }
         if copy.games[index].executableRelativePath == Self.genshinLegacyNestedExecutablePath {
             copy.games[index].executableRelativePath = Self.genshinStreamingExecutablePath
@@ -658,11 +620,10 @@ enum InstallProgressEvent: Equatable {
 
 /// Runtime backend used for DirectX translation on macOS.
 ///
-/// `.d3dMetal` and `.dxmt` are both Metal-native translation layers, bundled the same
-/// non-downloadable way inside CrossOver-derived Wine builds (`lib64/apple_gptk` and `lib/dxmt`
-/// respectively) — the launcher cannot fetch either on its own; see `D3DMetalBridge`/`DXMTBridge`.
-/// Which of the two a game launches with is `AppSettings.metalRenderBackend`, resolved against
-/// what the game declares support for by `RenderBridges.resolveBackend`.
+/// D3DMetal, DXMT and DXVK all require payloads matched to a CrossOver-derived Wine build.
+/// D3DMetal and DXMT translate directly to Metal; DXVK translates through Vulkan and MoltenVK.
+/// `AppSettings.metalRenderBackend` stores the user's preference; `RenderBridges.resolveBackend`
+/// validates it against the backends declared by the selected game.
 enum RuntimeBackend: String, Codable {
     case d3dMetal
     case dxmt

@@ -169,17 +169,6 @@ final class LauncherViewModel: ObservableObject {
         update(\.language, to: language)
     }
 
-
-
-
-
-
-
-
-
-
-
-
     /// Updates the custom-resolution width and persists the choice.
     func setResolutionWidth(_ width: Int) {
         update(\.resolutionWidth, to: max(width, 1))
@@ -319,151 +308,6 @@ final class LauncherViewModel: ObservableObject {
             } catch {
                 self.errorMessage = self.text.message(for: error)
                 self.statusText = self.text.crossOverInstallFailedStatus
-            }
-        }
-    }
-
-    /// Builds an install plan for the selected game.
-    func refreshPlan() {
-        guard let game = selectedGame else { return }
-        resetTransferMetricsDisplay()
-        resetActiveSophonItems()
-        currentTask?.cancel()
-        isBusy = true
-        isPaused = false
-        operationController = OperationController()
-        operationProgress = OperationProgress(
-            stageTitle: text.planInstallTitle,
-            itemPath: game.displayName,
-            partText: nil,
-            detailText: nil,
-            fractionCompleted: nil,
-            isIndeterminate: true,
-            currentPartDetailText: nil,
-            currentPartFractionCompleted: nil,
-            currentPartIsIndeterminate: true,
-            speedText: nil,
-            etaText: nil,
-            totalKBText: nil,
-            currentPartKBText: nil
-        )
-        statusText = text.planningInstall(for: game.displayName)
-        errorMessage = nil
-
-        currentTask = Task { [weak self] in
-            guard let self else { return }
-            defer {
-                self.isBusy = false
-                self.isPaused = false
-                self.currentTask = nil
-                self.operationController = nil
-            }
-            do {
-                let plan = try await coordinator.fetchInstallPlan(for: game, settings: self.settings)
-                lastPlanSummary = text.installPlanSummary(
-                    version: plan.version,
-                    download: ByteCountFormatter.string(fromByteCount: plan.estimatedBytesToDownload, countStyle: .file),
-                    peakTemp: ByteCountFormatter.string(fromByteCount: plan.peakTemporaryBytes, countStyle: .file),
-                    steps: plan.steps.count
-                )
-                statusText = text.installPlanReady
-                operationProgress = OperationProgress(
-                    stageTitle: text.planInstallTitle,
-                    itemPath: game.displayName,
-                    partText: nil,
-                    detailText: text.installPlanReady,
-                    fractionCompleted: 1,
-                    isIndeterminate: false,
-                    currentPartDetailText: nil,
-                    currentPartFractionCompleted: nil,
-                    currentPartIsIndeterminate: false,
-                    speedText: nil,
-                    etaText: nil,
-                    totalKBText: nil,
-                    currentPartKBText: nil
-                )
-            } catch {
-                if error is CancellationError {
-                    self.statusText = self.text.operationStopped
-                } else {
-                    self.errorMessage = self.text.message(for: error)
-                    self.statusText = self.text.failedToPlanInstall
-                }
-                self.operationProgress = nil
-            }
-        }
-    }
-
-    /// Installs the selected game from Sophon chunk metadata.
-    func installSelectedGame() {
-        guard let game = selectedGame else { return }
-        resetTransferMetricsDisplay()
-        resetActiveSophonItems()
-        currentTask?.cancel()
-        isBusy = true
-        isPaused = false
-        operationController = OperationController()
-        operationProgress = OperationProgress(
-            stageTitle: text.downloadInstallTitle,
-            itemPath: text.officialSophonSource,
-            partText: nil,
-            detailText: text.checkingForUpdates(game.displayName),
-            fractionCompleted: nil,
-            isIndeterminate: true,
-            currentPartDetailText: nil,
-            currentPartFractionCompleted: nil,
-            currentPartIsIndeterminate: true,
-            speedText: nil,
-            etaText: nil,
-            totalKBText: nil,
-            currentPartKBText: nil
-        )
-        statusText = text.installing(game.displayName)
-        errorMessage = nil
-
-        currentTask = Task { [weak self] in
-            guard let self else { return }
-            defer {
-                self.isBusy = false
-                self.isPaused = false
-                self.currentTask = nil
-                self.operationController = nil
-            }
-            do {
-                try await self.coordinator.installGame(
-                    game,
-                    settings: self.settings,
-                    operationController: self.operationController
-                ) { [weak self] event in
-                    await MainActor.run {
-                        self?.apply(event: event)
-                    }
-                }
-                self.statusText = self.text.installCompleted
-                self.operationProgress = OperationProgress(
-                    stageTitle: self.text.downloadInstallTitle,
-                    itemPath: game.displayName,
-                    partText: nil,
-                    detailText: self.text.installCompleted,
-                    fractionCompleted: 1,
-                    isIndeterminate: false,
-                    currentPartDetailText: nil,
-                    currentPartFractionCompleted: nil,
-                    currentPartIsIndeterminate: false,
-                    speedText: nil,
-                    etaText: nil,
-                    totalKBText: nil,
-                    currentPartKBText: nil
-                )
-            } catch {
-                if error is CancellationError {
-                    self.statusText = self.text.operationStopped
-                    self.operationProgress = nil
-                } else {
-                    self.errorMessage = self.text.message(for: error)
-                    self.statusText = self.text.installFailed
-                    self.operationProgress = nil
-                }
             }
         }
     }
@@ -652,14 +496,6 @@ final class LauncherViewModel: ObservableObject {
         updateSelectedGame { game in
             game.installDirectory = url
             game.winePrefixDirectory = url.appendingPathComponent(".wine", isDirectory: true)
-        }
-        persistSettings()
-    }
-
-    /// Updates the executable path relative to the install root.
-    func setExecutableRelativePathForSelectedGame(_ path: String) {
-        updateSelectedGame { game in
-            game.executableRelativePath = path
         }
         persistSettings()
     }

@@ -8,8 +8,8 @@
 // the same values imported as a single `.reg` file cost 1.0s. All of it is spent before the game
 // window can appear, which is why it is worth collapsing.
 //
-// Bridges contribute entries rather than running commands (see `RenderBridge.registryEntries`), so
-// there is exactly one place that talks to the registry and exactly one process to pay for.
+// Callers contribute entries rather than running commands, so there is exactly one place that talks
+// to the registry and exactly one process to pay for.
 
 import Foundation
 
@@ -18,28 +18,11 @@ struct RegistryEntry: Sendable {
     enum Value: Sendable {
         case string(String)
         case dword(UInt32)
-        /// Remove the value; absence is success.
-        case remove
     }
 
     var key: String
     var name: String
     var value: Value
-}
-
-extension RegistryEntry {
-    /// Wine's per-prefix DLL override table.
-    private static let dllOverridesKey = #"HKEY_CURRENT_USER\Software\Wine\DllOverrides"#
-
-    /// Removes a DLL override so the Wine build's own builtin wins.
-    static func removingDLLOverride(_ dllName: String) -> RegistryEntry {
-        RegistryEntry(key: dllOverridesKey, name: dllName, value: .remove)
-    }
-
-    /// Prefers a DLL copied into the prefix over the Wine builtin.
-    static func nativeDLLOverride(_ dllName: String) -> RegistryEntry {
-        RegistryEntry(key: dllOverridesKey, name: dllName, value: .string("native,builtin"))
-    }
 }
 
 /// Renders registry entries as a `.reg` script and imports them in one `wine regedit` run.
@@ -100,8 +83,6 @@ enum RegistryScript {
             return "\"\(escape(text))\""
         case let .dword(number):
             return String(format: "dword:%08x", number)
-        case .remove:
-            return "-"
         }
     }
 

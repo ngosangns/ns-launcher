@@ -1,34 +1,57 @@
 // DXVKBridge.swift
 //
-// DXVK: Direct3D 11 translated to Vulkan, which MoltenVK then translates to Metal.
+// DXVK: Direct3D 11 translated to Vulkan, which CrossOver's MoltenVK then translates to Metal.
 //
-// Two translation hops instead of one, so it is strictly more overhead than D3DMetal on
-// Apple hardware. It stays available for game definitions that ask for it, but it is not the
-// choice for anything that can use a direct Metal bridge.
+// Use only the DXVK build bundled with the selected CrossOver-derived Wine. Upstream DXVK 2.7.1
+// rejects Apple GPUs because MoltenVK does not expose Vulkan geometryShader, even for games that
+// do not use geometry shaders. CrossOver ships a different DXVK build matched to its Wine and
+// MoltenVK stack under `lib/dxvk`; mixing the upstream DLLs with that stack fails during adapter
+// discovery before the game starts.
 //
-// Unlike D3DMetal, DXVK ships plain Windows DLLs with no Unix-side counterpart, so it is
-// installed into the game's own Wine prefix as native overrides rather than selected through
-// `WINEDLLPATH`. The prefix belongs to the launcher; the Wine installation is still untouched.
+// Selection is non-destructive: `CX_GRAPHICS_BACKEND=dxvk` points CrossOver's own selector at the
+// bundled payload, so nothing is copied into the shared Wine installation or the game prefix.
 
 import Foundation
 
 struct DXVKBridge: RenderBridge {
-    private static let version = "2.7.1"
-    private static let archiveName = "dxvk-2.7.1.tar.gz"
-    private static let archiveURL = URL(string: "https://github.com/doitsujin/dxvk/releases/download/v2.7.1/dxvk-2.7.1.tar.gz")!
-
     let backend: RuntimeBackend = .dxvk
+    let crossOverGraphicsBackend = "dxvk"
 
     func launchEnvironment(settings: AppSettings) -> [String: String] {
-        ["WINEESYNC": "1"]
+        [
+            "WINEESYNC": "1",
+            // Force Wine builtins so CrossOver's selected payload wins even when an older launcher
+            // left upstream DXVK DLLs in the prefix.
+            "WINEDLLOVERRIDES": RenderBridges.builtinD3DOverrides()
+        ]
     }
 
-    /// DXVK's DLLs are copied into the prefix, so they need native overrides to win over the Wine
-    /// builtins. Re-declared every launch rather than tracked by the payload marker below: the
-    /// prefix registry and the copied files can drift apart, and reasserting costs nothing now
-    /// that all registry state is written in one batch.
-    func registryEntries() -> [RegistryEntry] {
-        ["d3d11", "dxgi"].map(RegistryEntry.nativeDLLOverride)
+    /// Picks the newest installed Wine build carrying CrossOver's matched DXVK payload.
+    func resolveWineBuild(
+        preferredPath: String,
+        processRunner: ProcessRunning,
+        onDiagnostic: @escaping @Sendable (String) -> Void
+    ) async throws -> WineBuild {
+        let search = await WineBinaryLocator.search(
+            preferredPath: preferredPath,
+            processRunner: processRunner,
+            onDiagnostic: onDiagnostic
+        )
+
+        for build in search.builds {
+            if Self.dxvkWindowsDirectory(for: build) != nil {
+                return build
+            }
+            onDiagnostic("no compatible DXVK payload under lib/dxvk: \(build.binaryPath)")
+        }
+
+        if let quarantined = search.quarantinedPaths.first {
+            throw WineServiceError.binaryQuarantined(quarantined)
+        }
+        let checked = search.builds.isEmpty ? preferredPath : search.builds.map(\.binaryPath).joined(separator: ", ")
+        throw WineServiceError.dxvkBootstrapFailed(
+            "No CrossOver Wine build with bundled DXVK was found. Checked: \(checked)"
+        )
     }
 
     func prepare(
@@ -38,50 +61,19 @@ struct DXVKBridge: RenderBridge {
         processRunner: ProcessRunning,
         onDiagnostic: @escaping @Sendable (String) -> Void
     ) async throws {
-        let markerURL = prefixDirectory.appendingPathComponent(".nslauncher-dxvk-\(Self.version)")
-        let system32 = prefixDirectory.appendingPathComponent("drive_c/windows/system32", isDirectory: true)
-        let syswow64 = prefixDirectory.appendingPathComponent("drive_c/windows/syswow64", isDirectory: true)
-        if FileManager.default.fileExists(atPath: markerURL.path),
-           FileManager.default.fileExists(atPath: system32.appendingPathComponent("d3d11.dll").path),
-           FileManager.default.fileExists(atPath: system32.appendingPathComponent("dxgi.dll").path) {
-            onDiagnostic("DXVK marker current")
-            return
+        guard let dxvkWindows = Self.dxvkWindowsDirectory(for: wineBuild) else {
+            throw WineServiceError.dxvkBootstrapFailed(
+                "No compatible DXVK payload under lib/dxvk in \(wineBuild.root.path)"
+            )
         }
 
-        do {
-            let payload = try await RenderBridgePayload.extractedPayload(
-                archiveURL: Self.archiveURL,
-                archiveName: Self.archiveName,
-                into: RenderBridgePayload.root.appendingPathComponent("DXVK", isDirectory: true),
-                extractedDirectoryName: "dxvk-\(Self.version)",
-                isComplete: { url in
-                    ["x64/d3d11.dll", "x64/dxgi.dll", "x32/d3d11.dll", "x32/dxgi.dll"]
-                        .allSatisfy { FileManager.default.fileExists(atPath: url.appendingPathComponent($0).path) }
-                },
-                processRunner: processRunner,
-                failure: { WineServiceError.dxvkBootstrapFailed($0) }
-            )
-            onDiagnostic("DXVK payload path=\(payload.path)")
+        onDiagnostic("DXVK bundled payload=\(dxvkWindows.path)")
+    }
 
-            try FileManager.default.createDirectory(at: system32, withIntermediateDirectories: true)
-            try FileManager.default.createDirectory(at: syswow64, withIntermediateDirectories: true)
-            onDiagnostic("copy DXVK DLLs into prefix")
-            try RenderBridgePayload.copyDLLs(
-                ["d3d11.dll", "dxgi.dll"],
-                from: payload.appendingPathComponent("x64", isDirectory: true),
-                to: system32
-            )
-            try RenderBridgePayload.copyDLLs(
-                ["d3d11.dll", "dxgi.dll"],
-                from: payload.appendingPathComponent("x32", isDirectory: true),
-                to: syswow64
-            )
-
-            try Data("installed\n".utf8).write(to: markerURL, options: .atomic)
-        } catch let wineError as WineServiceError {
-            throw wineError
-        } catch {
-            throw WineServiceError.dxvkBootstrapFailed(error.localizedDescription)
-        }
+    private static func dxvkWindowsDirectory(for build: WineBuild) -> URL? {
+        let directory = build.root.appendingPathComponent("lib/dxvk/x86_64-windows", isDirectory: true)
+        return FileManager.default.fileExists(atPath: directory.appendingPathComponent("d3d11.dll").path)
+            ? directory
+            : nil
     }
 }

@@ -13,6 +13,8 @@ DerivedData/
 *.xcscmblueprint
 
 # Local tooling and credentials
+.claude/
+.task/
 .netrc
 .mcp.json
 .tools/

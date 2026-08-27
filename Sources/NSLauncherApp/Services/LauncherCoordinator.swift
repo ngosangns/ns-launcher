@@ -76,40 +76,6 @@ struct LauncherCoordinator: Sendable {
         try settingsStore.save(settings)
     }
 
-    /// Builds a Sophon install plan for the selected game.
-    func fetchInstallPlan(for game: GameDefinition, settings: AppSettings) async throws -> InstallPlan {
-        let build = try await sophonInstaller.fetchBuild(
-            language: settings.language,
-            onEvent: nil
-        )
-        let plan = try await sophonInstaller.planUpdate(for: game, build: build, installedMetadata: nil, onEvent: nil)
-        return InstallPlan(
-            version: plan.latestVersion,
-            steps: [
-                InstallStep(kind: .downloadFile, relativePath: "Sophon chunks", bytes: plan.bytesToDownload),
-                InstallStep(kind: .verifyChecksum, relativePath: "Sophon assets", bytes: plan.decompressedBytesToWrite),
-                InstallStep(kind: .writeMetadata, relativePath: ".nslauncher-install.json", bytes: 0)
-            ],
-            estimatedBytesToDownload: plan.bytesToDownload,
-            peakTemporaryBytes: plan.peakTemporaryBytes
-        )
-    }
-
-    /// Runs a fresh Sophon install.
-    func installGame(
-        _ game: GameDefinition,
-        settings: AppSettings,
-        operationController: OperationController? = nil,
-        onEvent: @escaping @Sendable (InstallProgressEvent) async -> Void
-    ) async throws {
-        let build = try await sophonInstaller.fetchBuild(
-            language: settings.language,
-            onEvent: onEvent
-        )
-        let plan = try await sophonInstaller.planUpdate(for: game, build: build, installedMetadata: nil, onEvent: onEvent)
-        try await applySophonPlan(game, plan: plan, operationController: operationController, onEvent: onEvent)
-    }
-
     /// Builds a Sophon delta update plan for an existing game install.
     func fetchUpdatePlan(
         for game: GameDefinition,
@@ -159,6 +125,11 @@ struct LauncherCoordinator: Sendable {
 
     /// Removes one removable cache category and returns the number of bytes freed.
     func clearCache(_ kind: RemovableCache.Kind, for game: GameDefinition) throws -> Int64 {
+        if kind == .d3dMetalShaderCache {
+            let executableName = URL(fileURLWithPath: game.executableRelativePath).lastPathComponent
+            return try D3DMetalBridge.clearShaderCaches(forExecutable: executableName)
+        }
+
         let locations = Self.cacheLocations(for: kind, game: game)
         let freed = locations.reduce(0) { $0 + Self.sizeBytes(of: $1) }
         for location in locations {
@@ -201,6 +172,8 @@ struct LauncherCoordinator: Sendable {
             let executableName = URL(fileURLWithPath: game.executableRelativePath).lastPathComponent
             guard let directory = D3DMetalBridge.shaderCacheDirectory(forExecutable: executableName) else { return [] }
             return [.directoryContents(directory)]
+                + D3DMetalBridge.durableCacheDirectories(forExecutable: executableName)
+                    .map(CacheLocation.directoryContents)
         }
     }
 

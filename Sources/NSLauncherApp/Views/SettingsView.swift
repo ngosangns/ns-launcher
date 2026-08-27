@@ -6,6 +6,14 @@ struct SettingsView: View {
 
     private var text: AppText { viewModel.text }
 
+    private var selectedRenderBackend: RuntimeBackend {
+        guard let game = viewModel.selectedGame else { return .plainWine }
+        return RenderBridges.resolveBackend(
+            requirements: game.runtimeRequirements,
+            preferred: viewModel.settings.metalRenderBackend
+        )
+    }
+
     var body: some View {
         ZStack {
             CelestialBackdrop()
@@ -133,17 +141,24 @@ struct SettingsView: View {
                 )
             )
 
-            // Only shown when the selected game actually declares DXMT support — the picker would
-            // otherwise let a user select a backend LaunchRuntimeProfile.build silently ignores.
-            if viewModel.selectedGame?.runtimeRequirements.contains(.dxmt) == true {
+            // Offer only backends the selected game declares, and only when there is a choice.
+            if let requirements = viewModel.selectedGame?.runtimeRequirements,
+               [RuntimeRequirement.d3dMetal, .dxmt, .dxvk].filter({ requirements.contains($0) }).count > 1 {
                 SettingField(label: text.renderBackendLabel) {
                     VStack(alignment: .leading, spacing: 6) {
                         Picker(text.renderBackendLabel, selection: Binding(
-                            get: { viewModel.settings.metalRenderBackend },
+                            get: { selectedRenderBackend },
                             set: { viewModel.update(\.metalRenderBackend, to: $0) }
                         )) {
-                            Text(text.renderBackendD3DMetal).tag(RuntimeBackend.d3dMetal)
-                            Text(text.renderBackendDXMT).tag(RuntimeBackend.dxmt)
+                            if requirements.contains(.d3dMetal) {
+                                Text(text.renderBackendD3DMetal).tag(RuntimeBackend.d3dMetal)
+                            }
+                            if requirements.contains(.dxmt) {
+                                Text(text.renderBackendDXMT).tag(RuntimeBackend.dxmt)
+                            }
+                            if requirements.contains(.dxvk) {
+                                Text(text.renderBackendDXVK).tag(RuntimeBackend.dxvk)
+                            }
                         }
                         .pickerStyle(.segmented)
                         .pointerOnHover()
@@ -162,8 +177,8 @@ struct SettingsView: View {
                     set: { viewModel.update(\.metalFXUpscaling, to: $0) }
                 )
             )
-            if viewModel.settings.metalFXUpscaling, viewModel.settings.metalRenderBackend == .dxmt {
-                Text(text.metalFXNotSupportedOnDXMTWarning)
+            if viewModel.settings.metalFXUpscaling, selectedRenderBackend != .d3dMetal {
+                Text(text.metalFXUnsupportedBackendWarning)
                     .font(.caption)
                     .foregroundStyle(LauncherPalette.gold.opacity(0.85))
                     .fixedSize(horizontal: false, vertical: true)
