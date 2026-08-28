@@ -623,13 +623,22 @@ final class LauncherViewModel: ObservableObject {
         Task {
             await operationController?.stop()
         }
-        if isLaunchingWithWine {
+        if isLaunchingWithWine, let game = selectedGame {
             appendWineLogLine("---- stop requested ----")
+            // Cancelling the launch SIGTERMs the Wine wrapper, but the game may
+            // survive under wineserver; terminate the game processes themselves so
+            // the "stopped" state truly means stopped.
+            let coordinator = self.coordinator
+            currentTask?.cancel()
+            Task {
+                await coordinator.terminateRunningGame(game)
+            }
+        } else {
+            if isUpdatingGame {
+                appendUpdateLogLine(logText(en: "---- stop requested ----", vi: "---- đã yêu cầu dừng ----"))
+            }
+            currentTask?.cancel()
         }
-        if isUpdatingGame {
-            appendUpdateLogLine(logText(en: "---- stop requested ----", vi: "---- đã yêu cầu dừng ----"))
-        }
-        currentTask?.cancel()
         statusText = text.operationStopped
         isPaused = false
         operationProgress = nil

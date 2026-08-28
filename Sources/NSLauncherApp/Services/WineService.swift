@@ -192,7 +192,16 @@ struct WineService: WineServicing {
         let alreadyRunningGamePIDs = await GameProcessInspector.runningProcessIDs(forExecutable: request.executablePath)
         diagnose("existing game process count=\(alreadyRunningGamePIDs.count)")
 
-        let launchResult: ProcessResult
+        // The game process — not the Wine wrapper — is the source of truth for a
+        // running session. The wrapper can outlive the game (in-game quit) or die
+        // while the game keeps running under wineserver.
+        let gameMonitor = GameProcessMonitor(
+            isGameRunning: {
+                await GameProcessInspector.runningProcessIDs(forExecutable: request.executablePath).isEmpty == false
+            }
+        )
+
+        var launchResult: ProcessResult
         do {
             var processArguments: [String]
             if request.useSteamLauncher {
@@ -222,13 +231,15 @@ struct WineService: WineServicing {
             if let gameLogURL {
                 diagnose("game output -> \(gameLogURL.path)")
             }
-            launchResult = try await processRunner.run(
-                executable: wineBuild.binaryPath,
+            launchResult = try await runGameSession(
+                wineBinaryPath: wineBuild.binaryPath,
                 arguments: processArguments,
                 environment: env,
                 currentDirectory: request.currentDirectory,
                 logFileURL: gameLogURL,
-                onOutput: request.onOutput
+                gameMonitor: gameMonitor,
+                onOutput: request.onOutput,
+                onDiagnostic: diagnose
             )
         } catch let ProcessRunnerError.nonZeroExit(result) {
             diagnose("process exited non-zero code=\(result.exitCode); checking whether game stayed alive")
@@ -245,6 +256,19 @@ struct WineService: WineServicing {
                 diagnose("non-zero process exit remains failure code=\(result.exitCode)")
                 throw ProcessRunnerError.nonZeroExit(result)
             }
+        }
+
+        // Session truth: if the actual game executable is still running after the
+        // Wine wrapper exited (wrapper detached early, or Wine returned non-zero
+        // while the game kept going), keep the launch session alive until the game
+        // itself stops. Otherwise the launcher would flip back to "Play" while the
+        // game is still up — or, conversely, stay on "Stop" because a lingering
+        // wrapper never exits. Cancellation (user Stop) propagates from here.
+        if await gameMonitor.isGameRunning() {
+            diagnose("game process still running after Wine exit; monitoring until it stops")
+            try await gameMonitor.waitUntilStopped()
+            diagnose("game process stopped; ending launch session")
+            launchResult = ProcessResult(exitCode: 0, stdout: launchResult.stdout, stderr: launchResult.stderr)
         }
 
         // A durable snapshot is safe only after wineserver confirms every writer has exited.
@@ -481,6 +505,66 @@ struct WineService: WineServicing {
         } catch {
             return false
         }
+    }
+
+    /// Runs the Wine wrapper and the game-process monitor as a race, so the
+    /// launch session ends on whichever stops first: the wrapper exiting (today's
+    /// behavior) or the actual game process disappearing (an in-game quit while
+    /// the wrapper lingers). A worker failure (non-zero Wine exit) surfaces
+    /// through the group's `next()` and is classified by the caller exactly as
+    /// before. When the game exits first the wrapper is cancelled so Wine
+    /// unwinds, and a clean result is returned.
+    private func runGameSession(
+        wineBinaryPath: String,
+        arguments: [String],
+        environment: [String: String],
+        currentDirectory: URL?,
+        logFileURL: URL?,
+        gameMonitor: GameProcessMonitor,
+        onOutput: (@Sendable (ProcessOutputChunk) -> Void)?,
+        onDiagnostic: @escaping @Sendable (String) -> Void
+    ) async throws -> ProcessResult {
+        struct GameSessionEnd: Sendable {
+            var result: ProcessResult
+            var endedViaGameProcess: Bool
+        }
+
+        let processRunner = self.processRunner
+        let end = try await withThrowingTaskGroup(of: GameSessionEnd.self) { group in
+            group.addTask {
+                GameSessionEnd(
+                    result: try await processRunner.run(
+                        executable: wineBinaryPath,
+                        arguments: arguments,
+                        environment: environment,
+                        currentDirectory: currentDirectory,
+                        logFileURL: logFileURL,
+                        onOutput: onOutput
+                    ),
+                    endedViaGameProcess: false
+                )
+            }
+            group.addTask {
+                try await gameMonitor.waitUntilRunning()
+                try await gameMonitor.waitUntilStopped()
+                return GameSessionEnd(
+                    result: ProcessResult(exitCode: 0, stdout: "", stderr: ""),
+                    endedViaGameProcess: true
+                )
+            }
+
+            guard let first = try await group.next() else {
+                throw CancellationError()
+            }
+            // Whichever branch ended the session first is the truth; stop the other.
+            group.cancelAll()
+            return first
+        }
+
+        if end.endedViaGameProcess {
+            onDiagnostic("game process exited while Wine wrapper still alive; wrapper cancelled")
+        }
+        return end.result
     }
 
     /// Wine still opens more file descriptors under load than launchd's default soft limit of 256

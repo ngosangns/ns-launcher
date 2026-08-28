@@ -45,6 +45,8 @@
 
 import Foundation
 
+import Darwin
+
 /// Facade that coordinates persistence, the Sophon installer, and Wine launching.
 struct LauncherCoordinator: Sendable {
     private let settingsStore: SettingsStoring
@@ -405,6 +407,23 @@ struct LauncherCoordinator: Sendable {
             onOutput: onOutput
         )
         return try await wineService.launch(request)
+    }
+
+    /// Terminates every running instance of the game executable so a stopped
+    /// launcher really means stopped. Cancelling the launch only SIGTERMs the
+    /// Wine wrapper, which does not reliably tear down the Windows process tree
+    /// under wineserver; signal the game processes themselves — SIGTERM first,
+    /// SIGKILL the survivors after a grace period.
+    func terminateRunningGame(_ game: GameDefinition) async {
+        let executable = game.installDirectory.appendingPathComponent(game.executableRelativePath)
+        let pids = await GameProcessInspector.runningProcessIDs(forExecutable: executable)
+        guard !pids.isEmpty else { return }
+
+        for pid in pids { kill(pid, SIGTERM) }
+        try? await Task.sleep(nanoseconds: 2_000_000_000)
+
+        let survivors = await GameProcessInspector.runningProcessIDs(forExecutable: executable)
+        for pid in survivors { kill(pid, SIGKILL) }
     }
 
     /// Copies the game's protection driver into the Wine prefix system32 so the driver-load step does
