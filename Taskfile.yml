@@ -19,7 +19,12 @@ tasks:
       - Sources/**/*.swift
       - Package.swift
     cmds:
-      - swift run
+      # `swift run` launches the app as a detached child process, so killing the
+      # `dev:run` command on the next watch cycle does not close the previous
+      # window — without this it pkills nothing on the first run and every
+      # instance from then on stacks up instead of being replaced.
+      - pkill -x NSLauncherApp || true
+      - swift run NSLauncherApp
 
   build:
     desc: Build the optimized release binary.
