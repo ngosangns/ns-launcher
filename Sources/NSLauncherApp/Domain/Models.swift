@@ -38,6 +38,17 @@ enum AppLanguage: String, Codable, CaseIterable, Identifiable {
             return "vi-vn"
         }
     }
+
+    /// This language's own name, spelled in that language rather than translated into whichever
+    /// language is currently active — the language switcher always reads "English" / "Tiếng Việt".
+    var nativeName: String {
+        switch self {
+        case .english:
+            return "English"
+        case .vietnamese:
+            return "Tiếng Việt"
+        }
+    }
 }
 
 /// Voice-over language pack downloaded alongside game resources.
