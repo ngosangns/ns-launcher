@@ -350,9 +350,21 @@ struct LauncherCoordinator: Sendable {
         // A Wine prefix is single-tenant. A second client attaching to the running wineserver
         // deadlocks inside the loader rather than failing, so both sessions sit at 0% CPU with no
         // error — which is indistinguishable from "still loading" and was the reported symptom.
+        // Rather than surface that as an error, Play kills the leftover instance itself — an old
+        // session (crashed wrapper, force-quit launcher, force-quit game) commonly leaves the game
+        // executable running with nothing left to stop it from the UI. This check only covers the
+        // game's own executable; a stale wineserver from a *previous* session left running by an
+        // old build (see `WineService.waitForWineserver`, now `-k` instead of `-w`) still gets
+        // silently reused by this launch. If a prefix somehow still carries one from before that
+        // fix, its leftover `winedevice.exe`/`services.exe` should be killed by hand once
+        // (`pkill -f winedevice.exe`) — the prefix does not self-heal.
         let runningPIDs = await GameProcessInspector.runningProcessIDs(forExecutable: profile.executablePath)
         if !runningPIDs.isEmpty {
-            throw LaunchPreflightError.gameAlreadyRunning(runningPIDs.sorted())
+            await Self.terminate(pids: runningPIDs, executable: profile.executablePath)
+            let survivors = await GameProcessInspector.runningProcessIDs(forExecutable: profile.executablePath)
+            if !survivors.isEmpty {
+                throw LaunchPreflightError.gameAlreadyRunning(survivors.sorted())
+            }
         }
 
         if settings.cloudCompatibilityMode {
@@ -417,6 +429,12 @@ struct LauncherCoordinator: Sendable {
     func terminateRunningGame(_ game: GameDefinition) async {
         let executable = game.installDirectory.appendingPathComponent(game.executableRelativePath)
         let pids = await GameProcessInspector.runningProcessIDs(forExecutable: executable)
+        await Self.terminate(pids: pids, executable: executable)
+    }
+
+    /// SIGTERMs the given PIDs, then SIGKILLs whatever of `executable` is still running after a
+    /// grace period. Shared by the explicit Stop action and the launch preflight below.
+    private static func terminate(pids: Set<Int32>, executable: URL) async {
         guard !pids.isEmpty else { return }
 
         for pid in pids { kill(pid, SIGTERM) }
@@ -496,10 +514,17 @@ struct LauncherCoordinator: Sendable {
     /// blocks it for the 10-second anti-cheat init window and then unblocks it — that behaviour is
     /// implemented via `dispatchBlockHost` + `unblockDispatchHost` below. Do not "simplify" the two
     /// lists back into one; the different lifetimes are load-bearing.
+    ///
+    /// DO NOT ADD `overseauspider.yuanshen.com` BACK TO THIS LIST either. Despite the name reading
+    /// like a telemetry crawler, blocking it for the whole launch reproduced a real symptom: login
+    /// and scene-init succeed, but `MonoLevelMap.ShowLevelMiniMap`'s `SyncLoadFromBundle` call times
+    /// out ("HK4EUpload: case t u w timeout") and the client sits on the loading screen forever —
+    /// confirmed live by clearing the block from a stuck session's prefix hosts file, which let
+    /// loading immediately continue. It is evidently consulted for in-world resource loading too,
+    /// not only telemetry.
     private static let blockedHosts = [
         "log-upload-os.hoyoverse.com",
-        "sg-public-data-api.hoyoverse.com",
-        "overseauspider.yuanshen.com"
+        "sg-public-data-api.hoyoverse.com"
     ]
 
     /// Dispatch host blocked only during the anti-cheat init window, then unblocked so the game can

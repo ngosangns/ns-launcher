@@ -264,11 +264,24 @@ struct WineService: WineServicing {
         // itself stops. Otherwise the launcher would flip back to "Play" while the
         // game is still up — or, conversely, stay on "Stop" because a lingering
         // wrapper never exits. Cancellation (user Stop) propagates from here.
-        if await gameMonitor.isGameRunning() {
-            diagnose("game process still running after Wine exit; monitoring until it stops")
-            try await gameMonitor.waitUntilStopped()
-            diagnose("game process stopped; ending launch session")
-            launchResult = ProcessResult(exitCode: 0, stdout: launchResult.stdout, stderr: launchResult.stderr)
+        do {
+            if await gameMonitor.isGameRunning() {
+                diagnose("game process still running after Wine exit; monitoring until it stops")
+                try await gameMonitor.waitUntilStopped()
+                diagnose("game process stopped; ending launch session")
+                launchResult = ProcessResult(exitCode: 0, stdout: launchResult.stdout, stderr: launchResult.stderr)
+            }
+        } catch {
+            // `waitUntilStopped()` throws `CancellationError` on Stop, which used to skip the
+            // wineserver shutdown below entirely (a thrown error unwinds past the rest of this
+            // function). wineserver never exits on its own once winedevice.exe/services.exe are
+            // attached to it, so every Stop leaked that wineserver — and its now-orphaned service
+            // processes — for the lifetime of the Mac session. Each later launch then reused that
+            // same increasingly stale, single-tenant-violating wineserver instead of a clean one.
+            // Kill it here too before rethrowing, so a stopped launch tears down exactly like a
+            // completed one.
+            _ = await Self.waitForWineserver(wineBuild: wineBuild, environment: env, processRunner: processRunner, onDiagnostic: diagnose)
+            throw error
         }
 
         // A durable snapshot is safe only after wineserver confirms every writer has exited.
@@ -385,7 +398,15 @@ struct WineService: WineServicing {
         return entries
     }
 
-    /// Waits for wineserver to exit, returning true only when cache writers are confirmed quiescent.
+    /// Shuts wineserver down for this prefix, returning true only when cache writers are confirmed
+    /// quiescent.
+    ///
+    /// Uses `-k` (kill), not `-w` (wait-only). Wine auto-starts background service processes
+    /// (`winedevice.exe`, `services.exe`, `plugplay.exe`) under wineserver that never exit on their
+    /// own — `-w` would block on those forever instead of confirming shutdown, and previously left
+    /// wineserver (and those services) running indefinitely after every launch, silently violating
+    /// the single-tenant-prefix assumption documented on `LauncherCoordinator`'s preflight check for
+    /// every subsequent launch. `-k` terminates the server and all its clients outright.
     static func waitForWineserver(
         wineBuild: WineBuild,
         environment: [String: String],
@@ -394,21 +415,21 @@ struct WineService: WineServicing {
     ) async -> Bool {
         let wineserverPath = wineBuild.root.appendingPathComponent("bin/wineserver").path
         guard FileManager.default.isExecutableFile(atPath: wineserverPath) else {
-            onDiagnostic("wineserver not found at \(wineserverPath); skipping wait")
+            onDiagnostic("wineserver not found at \(wineserverPath); skipping shutdown")
             return false
         }
         do {
-            onDiagnostic("wineserver -w wait start")
+            onDiagnostic("wineserver -k shutdown start")
             _ = try await processRunner.run(
                 executable: wineserverPath,
-                arguments: ["-w"],
+                arguments: ["-k"],
                 environment: environment,
                 currentDirectory: nil
             )
-            onDiagnostic("wineserver -w completed")
+            onDiagnostic("wineserver -k completed")
             return true
         } catch {
-            onDiagnostic("wineserver -w best-effort failed: \(error.localizedDescription)")
+            onDiagnostic("wineserver -k best-effort failed: \(error.localizedDescription)")
             return false
         }
     }
