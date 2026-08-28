@@ -138,18 +138,33 @@ struct QuestButtonStyle: ButtonStyle {
     let role: Role
 
     func makeBody(configuration: Configuration) -> some View {
+        QuestButtonBody(role: role, configuration: configuration)
+    }
+}
+
+/// Separated from `QuestButtonStyle` so hover state can live in `@State` — `ButtonStyle.makeBody`
+/// itself can't hold state across renders.
+private struct QuestButtonBody: View {
+    let role: QuestButtonStyle.Role
+    let configuration: QuestButtonStyle.Configuration
+    @State private var isHovering = false
+
+    var body: some View {
         configuration.label
             .font(.system(.subheadline, design: .rounded, weight: .bold))
             .foregroundStyle(foreground)
-            .padding(.horizontal, role == .quiet ? 12 : 18)
-            .padding(.vertical, role == .quiet ? 9 : 13)
-            .background(background(configuration.isPressed), in: Capsule())
+            .padding(.horizontal, role == .quiet ? 14 : 18)
+            .padding(.vertical, role == .quiet ? 10 : 13)
+            .background(background, in: Capsule())
             .overlay {
                 Capsule()
                     .stroke(border, lineWidth: role == .quiet ? 0.8 : 1)
             }
-            .scaleEffect(configuration.isPressed ? 0.98 : 1)
+            .shadow(color: shadowColor, radius: isHovering ? 16 : 6, y: isHovering ? 7 : 3)
+            .scaleEffect(configuration.isPressed ? 0.96 : (isHovering ? 1.03 : 1))
             .animation(.easeOut(duration: 0.16), value: configuration.isPressed)
+            .animation(.easeOut(duration: 0.2), value: isHovering)
+            .onHover { isHovering = $0 }
     }
 
     private var foreground: Color {
@@ -162,17 +177,236 @@ struct QuestButtonStyle: ButtonStyle {
     private var border: Color {
         switch role {
         case .primary: LauncherPalette.goldHighlight.opacity(0.92)
-        case .secondary: LauncherPalette.gold.opacity(0.62)
-        case .quiet: LauncherPalette.mist.opacity(0.34)
+        case .secondary: LauncherPalette.gold.opacity(isHovering ? 0.9 : 0.62)
+        case .quiet: LauncherPalette.mist.opacity(isHovering ? 0.55 : 0.34)
         }
     }
 
-    private func background(_ isPressed: Bool) -> Color {
+    private var shadowColor: Color {
         switch role {
-        case .primary: isPressed ? LauncherPalette.gold : LauncherPalette.goldHighlight
-        case .secondary: isPressed ? LauncherPalette.sky.opacity(0.44) : LauncherPalette.twilight.opacity(0.70)
-        case .quiet: isPressed ? LauncherPalette.mist.opacity(0.18) : LauncherPalette.night.opacity(0.32)
+        case .primary: LauncherPalette.gold.opacity(isHovering ? 0.55 : 0.28)
+        case .secondary: LauncherPalette.twilight.opacity(isHovering ? 0.6 : 0.3)
+        case .quiet: .clear
         }
+    }
+
+    private var background: Color {
+        switch role {
+        case .primary: configuration.isPressed ? LauncherPalette.gold : LauncherPalette.goldHighlight
+        case .secondary:
+            configuration.isPressed
+                ? LauncherPalette.sky.opacity(0.44)
+                : LauncherPalette.twilight.opacity(isHovering ? 0.88 : 0.70)
+        case .quiet:
+            configuration.isPressed
+                ? LauncherPalette.mist.opacity(0.18)
+                : LauncherPalette.night.opacity(isHovering ? 0.48 : 0.32)
+        }
+    }
+}
+
+extension View {
+    /// Applies the quest button chrome and its matching pointer/disabled state in one call —
+    /// every call site paired `.disabled(x)` with `.pointerOnHover(enabled: !x)` by hand before.
+    func quest(_ role: QuestButtonStyle.Role, disabled: Bool = false) -> some View {
+        buttonStyle(QuestButtonStyle(role: role))
+            .disabled(disabled)
+            .pointerOnHover(enabled: !disabled)
+    }
+}
+
+/// Thin gold corner brackets framing the whole window, echoing a HUD/quest-log border.
+struct WindowFrameOrnament: View {
+    var body: some View {
+        GeometryReader { proxy in
+            let length: CGFloat = 26
+            let inset: CGFloat = 14
+            let corners: [(CGPoint, (CGFloat, CGFloat), (CGFloat, CGFloat))] = [
+                (CGPoint(x: inset, y: inset), (1, 0), (0, 1)),
+                (CGPoint(x: proxy.size.width - inset, y: inset), (-1, 0), (0, 1)),
+                (CGPoint(x: inset, y: proxy.size.height - inset), (1, 0), (0, -1)),
+                (CGPoint(x: proxy.size.width - inset, y: proxy.size.height - inset), (-1, 0), (0, -1))
+            ]
+            Canvas { context, _ in
+                for (origin, dx, dy) in corners {
+                    var path = Path()
+                    path.move(to: CGPoint(x: origin.x + length * dx.0, y: origin.y + length * dx.1))
+                    path.addLine(to: origin)
+                    path.addLine(to: CGPoint(x: origin.x + length * dy.0, y: origin.y + length * dy.1))
+                    context.stroke(path, with: .color(LauncherPalette.gold.opacity(0.55)), lineWidth: 1.4)
+                }
+            }
+        }
+        .allowsHitTesting(false)
+        .ignoresSafeArea()
+    }
+}
+
+/// A pill-shaped tab used for the app's Home/Settings switch and the settings sidebar list.
+struct SidebarTabButton: View {
+    let title: String
+    let systemImage: String
+    let isSelected: Bool
+    let action: () -> Void
+
+    @State private var isHovering = false
+
+    var body: some View {
+        Button(action: action) {
+            Label(title, systemImage: systemImage)
+                .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                .foregroundStyle(isSelected ? LauncherPalette.ink : LauncherPalette.parchment.opacity(0.86))
+                .padding(.horizontal, 14)
+                .padding(.vertical, 9)
+                .frame(maxWidth: .infinity, minHeight: 22, alignment: .leading)
+                .background(
+                    isSelected
+                        ? LauncherPalette.goldHighlight
+                        : LauncherPalette.night.opacity(isHovering ? 0.48 : 0.30),
+                    in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+                )
+        }
+        .buttonStyle(.plain)
+        .scaleEffect(isHovering && !isSelected ? 1.02 : 1)
+        .animation(.easeOut(duration: 0.16), value: isSelected)
+        .animation(.easeOut(duration: 0.16), value: isHovering)
+        .pointerOnHover()
+        .onHover { isHovering = $0 }
+    }
+}
+
+/// A large circular action button (Play/Stop) with a gold progress ring — the launcher's primary
+/// call to action, styled after a game launcher's single "start" control rather than a toolbar pill.
+struct CircularActionButton: View {
+    let systemImage: String
+    let title: String
+    /// Progress fraction 0...1, or nil for an indeterminate spinner ring.
+    let progress: Double?
+    let isActive: Bool
+    let action: () -> Void
+
+    private let diameter: CGFloat = 132
+
+    @State private var spinnerAngle: Double = 0
+    @State private var isHovering = false
+    @State private var isPressed = false
+
+    var body: some View {
+        Button(action: action) {
+            ZStack {
+                Circle()
+                    .stroke(LauncherPalette.mist.opacity(0.14), lineWidth: 5)
+
+                if let progress {
+                    Circle()
+                        .trim(from: 0, to: max(0.02, min(progress, 1)))
+                        .stroke(
+                            LinearGradient(colors: [LauncherPalette.gold, LauncherPalette.goldHighlight], startPoint: .top, endPoint: .bottom),
+                            style: StrokeStyle(lineWidth: 5, lineCap: .round)
+                        )
+                        .rotationEffect(.degrees(-90))
+                        .animation(.easeOut(duration: 0.25), value: progress)
+                } else if isActive {
+                    Circle()
+                        .trim(from: 0, to: 0.22)
+                        .stroke(LauncherPalette.goldHighlight, style: StrokeStyle(lineWidth: 5, lineCap: .round))
+                        .rotationEffect(.degrees(spinnerAngle))
+                        .animation(.linear(duration: 1.1).repeatForever(autoreverses: false), value: spinnerAngle)
+                }
+
+                Circle()
+                    .fill(LauncherPalette.goldHighlight)
+                    .frame(width: diameter - 22, height: diameter - 22)
+                    .shadow(color: LauncherPalette.gold.opacity(isHovering ? 0.75 : 0.5), radius: isHovering ? 26 : 18, y: 6)
+
+                VStack(spacing: 6) {
+                    Image(systemName: systemImage)
+                        .font(.system(size: 26, weight: .bold))
+                        .contentTransition(.symbolEffect(.replace))
+                    Text(title.uppercased())
+                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .tracking(1.1)
+                        .contentTransition(.opacity)
+                }
+                .foregroundStyle(LauncherPalette.ink)
+            }
+            .frame(width: diameter, height: diameter)
+        }
+        .buttonStyle(.plain)
+        .scaleEffect(isPressed ? 0.96 : (isHovering ? 1.035 : 1))
+        .animation(.easeOut(duration: 0.15), value: isPressed)
+        .animation(.easeOut(duration: 0.2), value: isHovering)
+        .animation(.easeOut(duration: 0.2), value: title)
+        .pointerOnHover()
+        .onHover { isHovering = $0 }
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in isPressed = true }
+                .onEnded { _ in isPressed = false }
+        )
+        .onAppear { if isActive { spinnerAngle = 360 } }
+        .onChange(of: isActive) { _, active in spinnerAngle = active ? 360 : 0 }
+    }
+}
+
+/// Generic icon + title + subtitle-lines row used across Settings for cache, voice-pack, and
+/// storage listings — the three used to be near-identical copies of the same layout.
+struct InventoryRow<Trailing: View>: View {
+    let icon: String
+    let title: String
+    let subtitleLines: [String]
+    @ViewBuilder let trailing: () -> Trailing
+
+    @State private var isHovering = false
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 14) {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundStyle(LauncherPalette.goldHighlight)
+                .frame(width: 26)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.system(.body, design: .rounded, weight: .semibold))
+                    .foregroundStyle(LauncherPalette.parchment)
+                ForEach(subtitleLines, id: \.self) { line in
+                    Text(line)
+                        .font(.caption)
+                        .foregroundStyle(LauncherPalette.mist.opacity(0.72))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            Spacer(minLength: 12)
+            trailing()
+        }
+        .padding(.vertical, 10)
+        .padding(.horizontal, 10)
+        .background(
+            LauncherPalette.gold.opacity(isHovering ? 0.08 : 0),
+            in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+        )
+        .animation(.easeOut(duration: 0.15), value: isHovering)
+        .onHover { isHovering = $0 }
+    }
+}
+
+private struct HoverLiftModifier: ViewModifier {
+    let scale: CGFloat
+    @State private var isHovering = false
+
+    func body(content: Content) -> some View {
+        content
+            .scaleEffect(isHovering ? scale : 1)
+            .animation(.easeOut(duration: 0.15), value: isHovering)
+            .onHover { isHovering = $0 }
+    }
+}
+
+extension View {
+    /// A subtle hover scale for non-button cards (toggles, fields) so the whole surface feels
+    /// interactive without borrowing `QuestButtonStyle`'s button chrome.
+    func hoverLift(scale: CGFloat = 1.012) -> some View {
+        modifier(HoverLiftModifier(scale: scale))
     }
 }
 

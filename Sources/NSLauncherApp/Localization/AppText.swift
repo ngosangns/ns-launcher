@@ -17,6 +17,7 @@ struct AppText {
 
     // MARK: - Static Labels
 
+    var homeTitle: String { localized(en: "Home", vi: "Trang chủ") }
     var settingsTitle: String { localized(en: "Settings", vi: "Cài đặt") }
     var close: String { localized(en: "Close", vi: "Đóng") }
     var open: String { localized(en: "Open", vi: "Mở") }
