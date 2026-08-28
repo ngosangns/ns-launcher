@@ -70,8 +70,7 @@ The raw release binary is produced by SwiftPM at:
 `Package.swift` defines the `NSLauncherApp` executable target, the
 `AppIconKit` library shared between the app and icon tooling, the `IconGen`
 executable that renders `AppIconKit`'s icon into `AppIcon.icns` for `task
-bundle`, and the `NSLauncherAppTests` test target. `Vendor/yaagl` is a
-separate submodule and is not compiled by this Swift package.
+bundle`, and the `NSLauncherAppTests` test target.
 
 ## Install And Update Flow
 
