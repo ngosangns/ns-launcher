@@ -17,6 +17,7 @@ struct AppText {
 
     // MARK: - Static Labels
 
+    var homeTitle: String { localized(en: "Home", vi: "Trang chủ") }
     var settingsTitle: String { localized(en: "Settings", vi: "Cài đặt") }
     var close: String { localized(en: "Close", vi: "Đóng") }
     var open: String { localized(en: "Open", vi: "Mở") }
@@ -62,8 +63,6 @@ struct AppText {
     var launchFailed: String { localized(en: "Launch failed", vi: "Mở game thất bại") }
     var gameExitedNormally: String { localized(en: "Game exited normally", vi: "Game đã thoát bình thường") }
     var selectedGame: String { localized(en: "Selected Game", vi: "Game đang chọn") }
-    var english: String { localized(en: "English", vi: "Tiếng Anh") }
-    var vietnamese: String { localized(en: "Vietnamese", vi: "Tiếng Việt") }
     /// Localized display name for a voice-over language, used to label leftover voice packs found
     /// on disk in the storage inventory (the launcher itself no longer downloads any voice pack).
     func voiceLanguageName(_ language: VoiceLanguage) -> String {

@@ -41,12 +41,13 @@ jobs:
           APP_BUNDLE="$BIN_PATH/$APP_NAME.app"
 
           rm -rf "$APP_BUNDLE"
-          mkdir -p "$APP_BUNDLE/Contents/MacOS"
+          mkdir -p "$APP_BUNDLE/Contents/MacOS" "$APP_BUNDLE/Contents/Resources"
 
           plutil -replace CFBundleShortVersionString -string "$VERSION" Resources/Info.plist -o "$APP_BUNDLE/Contents/Info.plist"
           plutil -replace CFBundleVersion -string "$VERSION" "$APP_BUNDLE/Contents/Info.plist"
 
           cp "$BIN_PATH/NSLauncherApp" "$APP_BUNDLE/Contents/MacOS/$BIN_NAME"
+          "$BIN_PATH/IconGen" "$APP_BUNDLE/Contents/Resources/AppIcon.icns"
 
           codesign --force --sign - "$APP_BUNDLE"
           codesign --verify --strict "$APP_BUNDLE"

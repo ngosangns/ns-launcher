@@ -5,6 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key><string>en</string>
 	<key>CFBundleDisplayName</key><string>NS Launcher</string>
 	<key>CFBundleExecutable</key><string>NSLauncher</string>
+	<key>CFBundleIconFile</key><string>AppIcon</string>
 	<key>CFBundleIdentifier</key><string>com.ns.launcher</string>
 	<key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
 	<key>CFBundleName</key><string>NS Launcher</string>

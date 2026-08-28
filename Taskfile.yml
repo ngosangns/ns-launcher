@@ -19,7 +19,12 @@ tasks:
       - Sources/**/*.swift
       - Package.swift
     cmds:
-      - swift run
+      # `swift run` launches the app as a detached child process, so killing the
+      # `dev:run` command on the next watch cycle does not close the previous
+      # window — without this it pkills nothing on the first run and every
+      # instance from then on stacks up instead of being replaced.
+      - pkill -x NSLauncherApp || true
+      - swift run NSLauncherApp
 
   build:
     desc: Build the optimized release binary.
@@ -32,9 +37,10 @@ tasks:
     dir: '{{.BIN_PATH}}'
     cmds:
       - rm -rf '{{.APP_NAME}}.app'
-      - mkdir -p '{{.APP_NAME}}.app/Contents/MacOS'
+      - mkdir -p '{{.APP_NAME}}.app/Contents/MacOS' '{{.APP_NAME}}.app/Contents/Resources'
       - cp '{{.ROOT_DIR}}/Resources/Info.plist' '{{.APP_NAME}}.app/Contents/Info.plist'
       - cp 'NSLauncherApp' '{{.APP_NAME}}.app/Contents/MacOS/{{.BIN_NAME}}'
+      - ./IconGen '{{.APP_NAME}}.app/Contents/Resources/AppIcon.icns'
       - codesign --force --sign - '{{.APP_NAME}}.app'
       - codesign --verify --strict '{{.APP_NAME}}.app'
 

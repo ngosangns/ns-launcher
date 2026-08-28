@@ -1,7 +1,7 @@
 import AppKit
 
-enum AppIcon {
-    static func make(size: CGFloat = 512) -> NSImage {
+public enum AppIcon {
+    public static func make(size: CGFloat = 512) -> NSImage {
         let image = NSImage(size: NSSize(width: size, height: size))
         image.lockFocus()
 

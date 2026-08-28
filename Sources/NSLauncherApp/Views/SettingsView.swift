@@ -1,8 +1,36 @@
 import AppKit
 import SwiftUI
 
+private enum SettingsTab: CaseIterable {
+    case general
+    case display
+    case launchOptions
+    case cache
+
+    func title(_ text: AppText) -> String {
+        switch self {
+        case .general: return text.selectedGame
+        case .display: return text.displayOptionsLabel
+        case .launchOptions: return text.launchOptionsTitle
+        case .cache: return text.cacheManagementTitle
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .general: return "gamecontroller.fill"
+        case .display: return "display"
+        case .launchOptions: return "flag.checkered"
+        case .cache: return "trash.fill"
+        }
+    }
+}
+
+/// Settings screen: a sidebar table of contents plus the selected section's panel, in place of
+/// one long scroll through six stacked sections.
 struct SettingsView: View {
     @ObservedObject var viewModel: LauncherViewModel
+    @State private var activeSection: SettingsTab = .general
 
     private var text: AppText { viewModel.text }
 
@@ -15,56 +43,68 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        ZStack {
-            CelestialBackdrop()
+        HStack(alignment: .top, spacing: 0) {
+            sidebar
+                .frame(width: 232)
+                .padding(.leading, 34)
+                .padding(.trailing, 18)
+                .padding(.vertical, 28)
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 22) {
-                    settingsHeader
-
                     if let game = viewModel.selectedGame {
-                        gameSection(for: game)
-                        storageSection
-                        cacheSection(for: game)
+                        sectionContent(for: game)
                     }
-                    d3dMetalSetupSection
                 }
-                .frame(maxWidth: 1_080)
-                .padding(.horizontal, 34)
+                .frame(maxWidth: 860)
+                .padding(.trailing, 34)
                 .padding(.vertical, 28)
-                .frame(maxWidth: .infinity)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .navigationTitle(text.settingsTitle)
+        .onAppear { viewModel.refreshCacheReport() }
     }
 
-    private var settingsHeader: some View {
-        HStack(alignment: .top, spacing: 20) {
-            VStack(alignment: .leading, spacing: 8) {
-                Label(text.settingsTitle.uppercased(), systemImage: "gearshape.2.fill")
-                    .font(.system(.caption, design: .rounded, weight: .bold))
-                    .tracking(1.4)
-                    .foregroundStyle(LauncherPalette.goldHighlight)
-                Text(text.settingsTitle)
-                    .font(.system(size: 36, weight: .bold, design: .serif))
-                    .foregroundStyle(LauncherPalette.parchment)
+    private var sidebar: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            ForEach(SettingsTab.allCases, id: \.self) { tab in
+                SidebarTabButton(
+                    title: tab.title(text),
+                    systemImage: tab.systemImage,
+                    isSelected: activeSection == tab
+                ) {
+                    activeSection = tab
+                }
             }
-
-            Spacer()
         }
-        .padding(.vertical, 8)
     }
 
-    private func gameSection(for game: GameDefinition) -> some View {
-        SettingsSection(title: text.selectedGame) {
-            VStack(alignment: .leading, spacing: 14) {
-                displayModeField
-                pathFields(for: game)
-                voicePackageManagement
-                macDriverOptions
-                launchOptions
+    @ViewBuilder
+    private func sectionContent(for game: GameDefinition) -> some View {
+        Group {
+            switch activeSection {
+            case .general:
+                SettingsSection(title: SettingsTab.general.title(text)) {
+                    pathFields(for: game)
+                }
+            case .display:
+                SettingsSection(title: SettingsTab.display.title(text)) {
+                    VStack(alignment: .leading, spacing: 14) {
+                        displayModeField
+                        macDriverOptions
+                    }
+                }
+            case .launchOptions:
+                SettingsSection(title: SettingsTab.launchOptions.title(text)) {
+                    launchOptions
+                }
+            case .cache:
+                cacheSection(for: game)
             }
         }
+        .id(activeSection)
+        .transition(.opacity)
+        .animation(.easeOut(duration: 0.18), value: activeSection)
     }
 
     private var displayModeField: some View {
@@ -103,11 +143,6 @@ struct SettingsView: View {
 
     private var macDriverOptions: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(text.displayOptionsLabel)
-                .font(.system(.caption, design: .rounded, weight: .bold))
-                .tracking(1)
-                .foregroundStyle(LauncherPalette.gold.opacity(0.88))
-
             SettingToggle(
                 title: text.retinaLabel,
                 detail: text.retinaDescription,
@@ -146,22 +181,27 @@ struct SettingsView: View {
                [RuntimeRequirement.d3dMetal, .dxmt, .dxvk].filter({ requirements.contains($0) }).count > 1 {
                 SettingField(label: text.renderBackendLabel) {
                     VStack(alignment: .leading, spacing: 6) {
-                        Picker(text.renderBackendLabel, selection: Binding(
-                            get: { selectedRenderBackend },
-                            set: { viewModel.update(\.metalRenderBackend, to: $0) }
-                        )) {
-                            if requirements.contains(.d3dMetal) {
-                                Text(text.renderBackendD3DMetal).tag(RuntimeBackend.d3dMetal)
+                        HStack {
+                            Picker(text.renderBackendLabel, selection: Binding(
+                                get: { selectedRenderBackend },
+                                set: { viewModel.update(\.metalRenderBackend, to: $0) }
+                            )) {
+                                if requirements.contains(.d3dMetal) {
+                                    Text(text.renderBackendD3DMetal).tag(RuntimeBackend.d3dMetal)
+                                }
+                                if requirements.contains(.dxmt) {
+                                    Text(text.renderBackendDXMT).tag(RuntimeBackend.dxmt)
+                                }
+                                if requirements.contains(.dxvk) {
+                                    Text(text.renderBackendDXVK).tag(RuntimeBackend.dxvk)
+                                }
                             }
-                            if requirements.contains(.dxmt) {
-                                Text(text.renderBackendDXMT).tag(RuntimeBackend.dxmt)
-                            }
-                            if requirements.contains(.dxvk) {
-                                Text(text.renderBackendDXVK).tag(RuntimeBackend.dxvk)
-                            }
+                            .pickerStyle(.segmented)
+                            .fixedSize()
+                            .pointerOnHover()
+
+                            Spacer(minLength: 0)
                         }
-                        .pickerStyle(.segmented)
-                        .pointerOnHover()
                         Text(text.renderBackendDescription)
                             .font(.caption2)
                             .foregroundStyle(.secondary)
@@ -210,11 +250,6 @@ struct SettingsView: View {
 
     private var launchOptions: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(text.launchOptionsTitle)
-                .font(.system(.caption, design: .rounded, weight: .bold))
-                .tracking(1)
-                .foregroundStyle(LauncherPalette.gold.opacity(0.88))
-
             LaunchOption(
                 title: text.cloudCompatibilityLabel,
                 detail: text.cloudCompatibilityDescription,
@@ -306,60 +341,6 @@ struct SettingsView: View {
         }
     }
 
-    private var voicePackageManagement: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text(text.voicePacksLabel)
-                    .font(.system(.caption, design: .rounded, weight: .bold))
-                    .tracking(1)
-                    .foregroundStyle(LauncherPalette.gold.opacity(0.88))
-                Spacer()
-                Button(text.refreshVoicePacksTitle) {
-                    viewModel.refreshVoicePackages()
-                }
-                .buttonStyle(QuestButtonStyle(role: .quiet))
-                .disabled(viewModel.isManagingVoicePacks)
-                .pointerOnHover(enabled: !viewModel.isManagingVoicePacks)
-            }
-
-            if viewModel.voicePackages.isEmpty {
-                Label(text.noVoicePacksFound, systemImage: "tray")
-                    .font(.subheadline)
-                    .foregroundStyle(LauncherPalette.mist.opacity(0.74))
-                    .padding(.vertical, 8)
-            } else {
-                ForEach(viewModel.voicePackages) { package in
-                    voicePackageRow(package)
-                }
-            }
-        }
-    }
-
-    private var storageSection: some View {
-        SettingsSection(title: text.storageSectionTitle) {
-            VStack(alignment: .leading, spacing: 12) {
-                Text(text.installedContentLabel)
-                    .font(.system(.caption, design: .rounded, weight: .bold))
-                    .tracking(1)
-                    .foregroundStyle(LauncherPalette.gold.opacity(0.88))
-
-                if viewModel.storageInventory.contentGroups.isEmpty {
-                    Label(text.noStorageContentFound, systemImage: "externaldrive")
-                        .font(.subheadline)
-                        .foregroundStyle(LauncherPalette.mist.opacity(0.74))
-                        .padding(.vertical, 8)
-                } else {
-                    ForEach(viewModel.storageInventory.contentGroups) { group in
-                        storageGroupRow(group)
-                    }
-                }
-
-                Divider().overlay(LauncherPalette.mist.opacity(0.14))
-                questAssetAnalysis(viewModel.storageInventory.questAssetAnalysis)
-            }
-        }
-    }
-
     private func cacheSection(for game: GameDefinition) -> some View {
         SettingsSection(title: text.cacheManagementTitle, subtitle: text.cacheManagementSubtitle) {
             VStack(alignment: .leading, spacing: 12) {
@@ -372,9 +353,7 @@ struct SettingsView: View {
                     Button(text.refreshVoicePacksTitle) {
                         viewModel.refreshCacheReport()
                     }
-                    .buttonStyle(QuestButtonStyle(role: .quiet))
-                    .disabled(viewModel.isManagingCache)
-                    .pointerOnHover(enabled: !viewModel.isManagingCache)
+                    .quest(.quiet, disabled: viewModel.isManagingCache)
                 }
 
                 if viewModel.cacheReport.isEmpty {
@@ -390,25 +369,14 @@ struct SettingsView: View {
                 }
             }
         }
-        .onAppear { viewModel.refreshCacheReport() }
     }
 
     private func cacheRow(_ item: RemovableCache) -> some View {
-        HStack(alignment: .top, spacing: 14) {
-            Image(systemName: Self.cacheIcon(for: item.kind))
-                .font(.title3)
-                .foregroundStyle(LauncherPalette.goldHighlight)
-                .frame(width: 26)
-            VStack(alignment: .leading, spacing: 4) {
-                Text(text.cacheKindLabel(item.kind))
-                    .font(.system(.body, design: .rounded, weight: .semibold))
-                    .foregroundStyle(LauncherPalette.parchment)
-                Text(text.cacheKindDescription(item.kind))
-                    .font(.caption)
-                    .foregroundStyle(LauncherPalette.mist.opacity(0.72))
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            Spacer(minLength: 12)
+        InventoryRow(
+            icon: Self.cacheIcon(for: item.kind),
+            title: text.cacheKindLabel(item.kind),
+            subtitleLines: [text.cacheKindDescription(item.kind)]
+        ) {
             VStack(alignment: .trailing, spacing: 6) {
                 Text(ByteCountFormatter.string(fromByteCount: item.sizeBytes, countStyle: .file))
                     .font(.system(.caption, design: .monospaced))
@@ -416,44 +384,7 @@ struct SettingsView: View {
                 Button(text.clearCacheTitle) {
                     viewModel.clearCache(item.kind)
                 }
-                .buttonStyle(QuestButtonStyle(role: .quiet))
-                .disabled(viewModel.isManagingCache || item.sizeBytes == 0)
-                .pointerOnHover(enabled: !viewModel.isManagingCache && item.sizeBytes > 0)
-            }
-        }
-        .padding(.vertical, 10)
-        .overlay(alignment: .bottom) {
-            Rectangle().fill(LauncherPalette.mist.opacity(0.12)).frame(height: 1)
-        }
-    }
-
-    private var d3dMetalSetupSection: some View {
-        SettingsSection(title: text.d3dMetalSetupTitle) {
-            VStack(alignment: .leading, spacing: 12) {
-                if viewModel.isCrossOverInstalled {
-                    Label(text.d3dMetalAlreadyInstalled, systemImage: "checkmark.seal.fill")
-                        .font(.subheadline)
-                        .foregroundStyle(LauncherPalette.mist.opacity(0.82))
-                } else {
-                    Text(text.d3dMetalSetupDescription)
-                        .font(.caption)
-                        .foregroundStyle(LauncherPalette.mist.opacity(0.72))
-                        .fixedSize(horizontal: false, vertical: true)
-                    Button(text.installCrossOverButtonTitle) {
-                        viewModel.installCrossOverViaHomebrew()
-                    }
-                    .buttonStyle(QuestButtonStyle(role: .primary))
-                    .disabled(viewModel.isInstallingCrossOver)
-                    .pointerOnHover(enabled: !viewModel.isInstallingCrossOver)
-                    if viewModel.isInstallingCrossOver {
-                        HStack(spacing: 8) {
-                            ProgressView().controlSize(.small)
-                            Text(viewModel.statusText)
-                                .font(.caption)
-                                .foregroundStyle(LauncherPalette.mist.opacity(0.72))
-                        }
-                    }
-                }
+                .quest(.quiet, disabled: viewModel.isManagingCache || item.sizeBytes == 0)
             }
         }
     }
@@ -481,92 +412,6 @@ struct SettingsView: View {
         case .winePrefixTemp: return "wineglass"
         case .launcherDownloadArchives: return "archivebox"
         case .d3dMetalShaderCache: return "cpu"
-        }
-    }
-
-    private func storageGroupRow(_ group: StorageContentGroup) -> some View {
-        HStack(alignment: .top, spacing: 14) {
-            Image(systemName: "speaker.wave.2")
-                .font(.title3)
-                .foregroundStyle(LauncherPalette.goldHighlight)
-                .frame(width: 26)
-            VStack(alignment: .leading, spacing: 4) {
-                Text(text.audioStorageLabel)
-                    .font(.system(.body, design: .rounded, weight: .semibold))
-                    .foregroundStyle(LauncherPalette.parchment)
-                Text("\(text.localStorageLabel): \(ByteCountFormatter.string(fromByteCount: group.localBytes, countStyle: .file))  ·  \(text.storageFilesLabel): \(group.localFileCount)")
-                    .font(.caption)
-                    .foregroundStyle(LauncherPalette.mist.opacity(0.72))
-                Text("\(text.availableStorageLabel): \(ByteCountFormatter.string(fromByteCount: group.availableBytes, countStyle: .file))  ·  \(text.storageFilesLabel): \(group.availableFileCount)")
-                    .font(.caption)
-                    .foregroundStyle(LauncherPalette.mist.opacity(0.72))
-            }
-            Spacer(minLength: 0)
-        }
-        .padding(.vertical, 10)
-        .overlay(alignment: .bottom) {
-            Rectangle().fill(LauncherPalette.mist.opacity(0.12)).frame(height: 1)
-        }
-    }
-
-    private func questAssetAnalysis(_ analysis: QuestAssetAnalysis) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Label(text.questResourceAnalysisLabel, systemImage: "questionmark.folder")
-                .font(.system(.caption, design: .rounded, weight: .bold))
-                .tracking(1)
-                .foregroundStyle(LauncherPalette.gold.opacity(0.88))
-            Text(text.questResourceMappingUnavailable)
-                .font(.caption)
-                .foregroundStyle(LauncherPalette.warning.opacity(0.88))
-                .fixedSize(horizontal: false, vertical: true)
-
-            if !analysis.containerGroups.isEmpty {
-                Text(text.runtimeContainersLabel)
-                    .font(.caption)
-                    .foregroundStyle(LauncherPalette.mist.opacity(0.74))
-                    .padding(.top, 2)
-                ForEach(analysis.containerGroups) { group in
-                    HStack(spacing: 8) {
-                        Text(text.questAssetContainerLabel(group.kind))
-                            .font(.caption)
-                            .foregroundStyle(LauncherPalette.parchment.opacity(0.92))
-                        Spacer(minLength: 8)
-                        Text("\(ByteCountFormatter.string(fromByteCount: group.localBytes, countStyle: .file)) · \(group.localFileCount)")
-                            .font(.system(.caption, design: .monospaced))
-                            .foregroundStyle(LauncherPalette.mist.opacity(0.72))
-                    }
-                }
-            }
-        }
-        .padding(.vertical, 4)
-    }
-
-    private func voicePackageRow(_ package: VoicePackage) -> some View {
-        let name = package.voiceLanguage.map { text.voiceLanguageName($0) } ?? package.categoryName
-
-        return HStack(spacing: 14) {
-            Image(systemName: "waveform.circle")
-                .font(.title3)
-                .foregroundStyle(LauncherPalette.mist.opacity(0.72))
-            VStack(alignment: .leading, spacing: 4) {
-                Text(name)
-                    .font(.system(.body, design: .rounded, weight: .semibold))
-                    .foregroundStyle(LauncherPalette.parchment)
-                Text("\(text.voicePackSizeLabel): \(ByteCountFormatter.string(fromByteCount: package.localBytes, countStyle: .file))  ·  \(text.voicePackFilesLabel): \(package.localFileCount)")
-                    .font(.caption)
-                    .foregroundStyle(LauncherPalette.mist.opacity(0.72))
-            }
-            Spacer()
-            Button(text.removeVoicePackTitle) {
-                viewModel.removeVoicePack(package)
-            }
-            .buttonStyle(QuestButtonStyle(role: .quiet))
-            .disabled(viewModel.isManagingVoicePacks)
-            .pointerOnHover(enabled: !viewModel.isManagingVoicePacks)
-        }
-        .padding(.vertical, 10)
-        .overlay(alignment: .bottom) {
-            Rectangle().fill(LauncherPalette.mist.opacity(0.12)).frame(height: 1)
         }
     }
 
@@ -667,6 +512,7 @@ private struct LaunchOption: View {
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(LauncherPalette.warning.opacity(0.09), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
+        .hoverLift()
         .overlay {
             RoundedRectangle(cornerRadius: 15, style: .continuous)
                 .stroke(LauncherPalette.warning.opacity(0.28), lineWidth: 1)
@@ -698,6 +544,7 @@ private struct SettingToggle: View {
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(LauncherPalette.ink.opacity(0.30), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
+        .hoverLift()
     }
 }
 
@@ -722,14 +569,11 @@ private struct PathInputRow: View {
                         value = chosen
                     }
                 }
-                .buttonStyle(QuestButtonStyle(role: .quiet))
-                .pointerOnHover()
+                .quest(.quiet)
 
                 if let secondaryButtonTitle, let secondaryAction {
                     Button(secondaryButtonTitle, action: secondaryAction)
-                        .buttonStyle(QuestButtonStyle(role: .quiet))
-                        .disabled(isSecondaryButtonDisabled)
-                        .pointerOnHover(enabled: !isSecondaryButtonDisabled)
+                        .quest(.quiet, disabled: isSecondaryButtonDisabled)
                 }
             }
         }
