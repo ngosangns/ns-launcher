@@ -11,6 +11,7 @@
 // GenshinSophonInstaller + WineService) is assembled once in
 // `LauncherViewModel.bootstrap()` and injected into the root window.
 
+import AppIconKit
 import AppKit
 import SwiftUI
 

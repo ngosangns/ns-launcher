@@ -8,9 +8,19 @@ let package = Package(
         .macOS(.v14)
     ],
     targets: [
+        .target(
+            name: "AppIconKit",
+            path: "Sources/AppIconKit"
+        ),
         .executableTarget(
             name: "NSLauncherApp",
+            dependencies: ["AppIconKit"],
             path: "Sources/NSLauncherApp"
+        ),
+        .executableTarget(
+            name: "IconGen",
+            dependencies: ["AppIconKit"],
+            path: "Sources/IconGen"
         ),
         .testTarget(
             name: "NSLauncherAppTests",

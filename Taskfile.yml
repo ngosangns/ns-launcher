@@ -32,9 +32,10 @@ tasks:
     dir: '{{.BIN_PATH}}'
     cmds:
       - rm -rf '{{.APP_NAME}}.app'
-      - mkdir -p '{{.APP_NAME}}.app/Contents/MacOS'
+      - mkdir -p '{{.APP_NAME}}.app/Contents/MacOS' '{{.APP_NAME}}.app/Contents/Resources'
       - cp '{{.ROOT_DIR}}/Resources/Info.plist' '{{.APP_NAME}}.app/Contents/Info.plist'
       - cp 'NSLauncherApp' '{{.APP_NAME}}.app/Contents/MacOS/{{.BIN_NAME}}'
+      - ./IconGen '{{.APP_NAME}}.app/Contents/Resources/AppIcon.icns'
       - codesign --force --sign - '{{.APP_NAME}}.app'
       - codesign --verify --strict '{{.APP_NAME}}.app'
 
