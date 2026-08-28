@@ -45,3 +45,8 @@ tasks:
       - rm -rf '/Applications/{{.APP_NAME}}.app'
       - ditto '{{.BIN_PATH}}/{{.APP_NAME}}.app' '/Applications/{{.APP_NAME}}.app'
       - codesign --verify --strict '/Applications/{{.APP_NAME}}.app'
+
+  screenshots:
+    desc: Launch the app, start the game, and capture screenshots into Screenshots/.
+    cmds:
+      - ./scripts/capture-screenshots.sh

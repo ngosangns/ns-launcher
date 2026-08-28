@@ -3,6 +3,12 @@
 Native macOS launcher prototype built with `Swift + SwiftUI`, designed to install,
 update, and launch Genshin Impact through Wine.
 
+## Screenshots
+
+![NS Launcher](Screenshots/launcher.jpg)
+
+![In-game](Screenshots/in-game.jpg)
+
 ## Goals
 
 - Native macOS app shell instead of a webview-based desktop wrapper.
@@ -96,4 +102,3 @@ For a debug build and run loop during development:
 ```bash
 swift run
 ```
-
