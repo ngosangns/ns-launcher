@@ -136,7 +136,7 @@ struct HomeView: View {
                 }
             }
         }
-        .transition(.move(edge: .top).combined(with: .opacity))
+        .transition(.opacity)
     }
 
     private var statusHeader: some View {
