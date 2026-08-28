@@ -1,0 +1,60 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+env:
+  APP_NAME: NSLauncher
+  BIN_NAME: NSLauncher
+
+jobs:
+  release:
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show Swift/Xcode version
+        run: |
+          swift --version
+          xcodebuild -version
+
+      - name: Build release binary
+        run: swift build -c release
+
+      - name: Assemble app bundle
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          BIN_PATH="$(swift build -c release --show-bin-path)"
+          APP_BUNDLE="$BIN_PATH/$APP_NAME.app"
+
+          rm -rf "$APP_BUNDLE"
+          mkdir -p "$APP_BUNDLE/Contents/MacOS"
+
+          plutil -replace CFBundleShortVersionString -string "$VERSION" Resources/Info.plist -o "$APP_BUNDLE/Contents/Info.plist"
+          plutil -replace CFBundleVersion -string "$VERSION" "$APP_BUNDLE/Contents/Info.plist"
+
+          cp "$BIN_PATH/NSLauncherApp" "$APP_BUNDLE/Contents/MacOS/$BIN_NAME"
+
+          codesign --force --sign - "$APP_BUNDLE"
+          codesign --verify --strict "$APP_BUNDLE"
+
+          echo "APP_BUNDLE=$APP_BUNDLE" >> "$GITHUB_ENV"
+
+      - name: Archive app bundle
+        run: |
+          ARCHIVE="$APP_NAME-${GITHUB_REF_NAME}-macos.tar.gz"
+          tar -C "$(dirname "$APP_BUNDLE")" -zcf "$ARCHIVE" "$(basename "$APP_BUNDLE")"
+          echo "ARCHIVE=$ARCHIVE" >> "$GITHUB_ENV"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "NS Launcher ${{ github.ref_name }}"
+          generate_release_notes: true
+          files: ${{ env.ARCHIVE }}
