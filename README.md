@@ -29,8 +29,39 @@ The installer uses the game resource manifest for installation and update
 planning. Voice manifests are inspected for installed voice-pack inventory and
 removal, but voice packs are not downloaded by the launcher.
 
-See [developer.md](developer.md) for setup details, architecture, test commands,
-runtime paths, and release workflows.
+## Requirements
+
+- macOS 14 or later.
+- A compatible Wine build, normally from CrossOver or Game Porting Toolkit. NS
+  Launcher can install CrossOver for you from its Settings screen if you don't
+  already have one.
+- Internet access for HoYoPlay metadata and game chunks.
+
+## Installation
+
+1. Download the latest `NSLauncher-vX.Y.Z-macos.tar.gz` from the
+   [Releases page](https://github.com/ngosangns/ns-launcher/releases).
+2. Unpack it and move `NSLauncher.app` into `/Applications`.
+3. The app is ad-hoc signed, not notarized. On first launch, macOS Gatekeeper
+   will block it — right-click the app, choose **Open**, then confirm **Open**
+   again in the dialog. This is only needed once.
+4. On first run, install or select a Wine runtime from Settings if one isn't
+   detected automatically.
+
+## Using The Launcher
+
+- The Home tab shows the game hero with **Play**, **Update**, and a
+  diagnostics drawer for the current operation's progress and logs.
+- Installing or updating downloads and verifies game assets directly from
+  HoYoPlay's Sophon CDN; you don't need the official launcher installed.
+- Settings covers the Wine runtime, render backend (D3DMetal, DXMT, DXVK, or
+  plain Wine), compatibility toggles (cloud compatibility, Steam-parent mode,
+  AC patching, network blocking, proxy, HDR, Retina, Metal HUD, resolution,
+  timeout fixes), install location, and cache management.
+
+These Wine-based workarounds are not supported by HoYoverse and may carry
+account or stability risks. Runtime behavior depends on the installed Wine
+build.
 
 ## Sophon Install Flow
 
@@ -52,59 +83,7 @@ The launcher uses HoYoPlay Sophon metadata for both fresh install and update:
 Archive packages, local archive install, generic JSON manifests, and the old
 `pkg_version`/file-level streaming path are no longer product paths.
 
-## Requirements
+## Building From Source Or Contributing
 
-- macOS 14 or later;
-- Swift 6.2 or later;
-- a compatible Wine build, normally from CrossOver or Game Porting Toolkit;
-- internet access for HoYoPlay metadata and game chunks;
-- `go-task` for the Taskfile commands.
-
-`zstd` is an optional Homebrew fallback when the system zstd library cannot be
-loaded. Screenshot automation also requires Accessibility/Automation permission.
-
-## Build And Run
-
-Run the test suite:
-
-```bash
-swift test
-```
-
-Run a debug build:
-
-```bash
-swift run
-```
-
-For an automatic rebuild and relaunch loop, use `task dev`.
-
-Build the optimized release binary:
-
-```bash
-task build
-```
-
-Assemble a signed `NSLauncher.app` bundle (release build + Info.plist +
-ad-hoc codesign) into the SwiftPM release binary directory:
-
-```bash
-task bundle
-```
-
-Build and move `NSLauncher.app` into `/Applications` (replaces any existing
-copy):
-
-```bash
-task install
-```
-
-`task install` replaces `/Applications/NSLauncher.app`. The bundle is ad-hoc
-signed and is assembled in SwiftPM's release binary directory.
-
-Without Taskfile, run the raw release binary produced by SwiftPM:
-
-```bash
-swift build -c release
-"$(swift build -c release --show-bin-path)/NSLauncherApp"
-```
+See [developer.md](developer.md) for build setup, architecture, test commands,
+runtime data paths, and the release workflow.

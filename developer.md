@@ -1,7 +1,29 @@
 # Developer Guide
 
-This document covers the local development workflow and the boundaries of the
-NS Launcher implementation.
+This document covers the local development workflow, contribution process,
+and the boundaries of the NS Launcher implementation. For an end-user
+overview, see [README.md](README.md).
+
+## Contributing
+
+1. Fork the repository and branch off `main`. Use a descriptive branch name
+   (e.g. `fix/launch-reliability`, `feat/launcher-ui-and-icon`).
+2. Keep changes focused: one logical change per pull request.
+3. Follow the existing architecture and naming conventions (see
+   [Architecture](#architecture) below) instead of introducing new patterns
+   for the same problem.
+4. Run `swift test` before opening a pull request; add or update tests when
+   you touch installer, Wine runtime, or persistence logic (see
+   [Tests And Boundaries](#tests-and-boundaries)).
+5. Write commit messages using
+   [Conventional Commits](https://www.conventionalcommits.org/)
+   (`fix(scope): ...`, `feat(scope): ...`, `chore: ...`), matching the
+   existing git history.
+6. Open a pull request against `main` describing what changed and why. Link
+   any related issue.
+7. Do not commit secrets, machine-specific paths, or generated build output
+   (`.build/`, `.swiftpm/`, etc.). Only update `Screenshots/` when the UI
+   actually changed, via `task screenshots`.
 
 ## Prerequisites
 
