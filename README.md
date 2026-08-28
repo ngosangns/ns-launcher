@@ -1,7 +1,7 @@
 # NS Launcher
 
-Native macOS launcher prototype built with `Swift + SwiftUI`, designed to install,
-update, and launch Genshin Impact through Wine.
+Native macOS launcher built with `Swift + SwiftUI` for installing, updating, and
+launching the global version of Genshin Impact through Wine.
 
 ## Screenshots
 
@@ -9,44 +9,35 @@ update, and launch Genshin Impact through Wine.
 
 ![In-game](Screenshots/in-game.jpg)
 
-## Goals
+## What It Does
 
-- Native macOS app shell instead of a webview-based desktop wrapper.
-- Sophon-only game download flow for current HoYoPlay Genshin builds.
-- Clear separation between UI, game definitions, Sophon install planning, Wine
-  runtime integration, and process execution.
+- Discovers current HoYoPlay branches and Sophon builds.
+- Installs and updates assets with chunk verification, resumable staging, and
+  atomic replacement.
+- Finds CrossOver or Game Porting Toolkit Wine runtimes and configures D3DMetal,
+  DXMT, DXVK, or plain Wine when available.
+- Monitors the actual game process and captures filtered Wine diagnostics.
+- Manages launcher settings, selected caches, logs, render snapshots, and
+  runtime/container size information.
 
-## Current Scope
+## Current Status
 
-This repository is a starter project, not a full production launcher yet.
+This is an early-stage launcher for one bundled game definition,
+`genshin-global`. It is not a general-purpose game catalog.
 
-It already includes:
+The installer uses the game resource manifest for installation and update
+planning. Voice manifests are inspected for installed voice-pack inventory and
+removal, but voice packs are not downloaded by the launcher.
 
-- a native SwiftUI app;
-- a single bundled `genshin-global` definition;
-- Sophon build discovery through HoYoPlay branch/build metadata;
-- zstd-compressed Sophon manifest decoding;
-- chunk download, decompression, chunk MD5 verification, asset reconstruction,
-  final asset MD5 verification, and atomic replacement;
-- `.nslauncher-sophon-staging` resume sidecars for interrupted Sophon assets;
-- update planning that skips assets already matching size plus MD5;
-- a full-manifest target set: nothing is withheld from the install, because the
-  game re-downloads anything missing into `GenshinImpact_Data/Persistent` on its
-  own, which saves no space and moves the bytes onto a slower path the launcher
-  cannot observe;
-- a Settings screen limited to language, install root, display mode, render
-  backend, and cache management;
-- Wine launch bootstrap that selects Apple D3DMetal or installs DXVK when
-  required;
-- filtered Wine diagnostics with targeted messages for D3DMetal availability
-  and unsupported Windows kernel-driver failures.
+See [developer.md](developer.md) for setup details, architecture, test commands,
+runtime paths, and release workflows.
 
 ## Sophon Install Flow
 
 The launcher uses HoYoPlay Sophon metadata for both fresh install and update:
 
 1. fetch `getGameBranches` and Sophon `getBuild`;
-2. select the game resource manifest plus the user-selected voice manifest;
+2. select the game resource manifest and inspect the user-selected voice manifest;
 3. download and decode zstd-compressed protobuf manifests;
 4. compare local assets by size and MD5;
 5. prune files outside the target Sophon asset set while protecting the Wine
@@ -64,9 +55,29 @@ Archive packages, local archive install, generic JSON manifests, and the old
 ## Requirements
 
 - macOS 14 or later;
-- Swift 6.2 or later.
+- Swift 6.2 or later;
+- a compatible Wine build, normally from CrossOver or Game Porting Toolkit;
+- internet access for HoYoPlay metadata and game chunks;
+- `go-task` for the Taskfile commands.
 
-## Production Build
+`zstd` is an optional Homebrew fallback when the system zstd library cannot be
+loaded. Screenshot automation also requires Accessibility/Automation permission.
+
+## Build And Run
+
+Run the test suite:
+
+```bash
+swift test
+```
+
+Run a debug build:
+
+```bash
+swift run
+```
+
+For an automatic rebuild and relaunch loop, use `task dev`.
 
 Build the optimized release binary:
 
@@ -88,17 +99,12 @@ copy):
 task install
 ```
 
+`task install` replaces `/Applications/NSLauncher.app`. The bundle is ad-hoc
+signed and is assembled in SwiftPM's release binary directory.
+
 Without Taskfile, run the raw release binary produced by SwiftPM:
 
 ```bash
 swift build -c release
 "$(swift build -c release --show-bin-path)/NSLauncherApp"
-```
-
-## Development
-
-For a debug build and run loop during development:
-
-```bash
-swift run
 ```
