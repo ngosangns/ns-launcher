@@ -259,6 +259,17 @@ struct WineService: WineServicing {
             }
         }
 
+        // Belt-and-suspenders: spawn a detached watchdog that outlives this launcher process, so
+        // wineserver still gets torn down even if the launcher quits before the game does. See
+        // `WineShutdownWatchdog` — this does not replace the in-process cleanup below, which still
+        // drives the UI's Play/Stop state and the D3DMetal shader cache checkpoint.
+        WineShutdownWatchdog.spawn(
+            executablePath: request.executablePath,
+            wineserverPath: wineBuild.root.appendingPathComponent("bin/wineserver").path,
+            prefixDirectory: request.prefixDirectory,
+            onDiagnostic: diagnose
+        )
+
         // Session truth: if the actual game executable is still running after the
         // Wine wrapper exited (wrapper detached early, or Wine returned non-zero
         // while the game kept going), keep the launch session alive until the game
