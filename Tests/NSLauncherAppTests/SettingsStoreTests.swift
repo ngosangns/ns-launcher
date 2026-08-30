@@ -21,7 +21,7 @@ final class SettingsStoreTests: XCTestCase {
         settings.metalFXUpscaling = true
         settings.showMetalHUD = true
         settings.proxyHost = "http://127.0.0.1:8080"
-        settings.metalRenderBackend = .dxvk
+        settings.metalRenderBackend = .dxmt
 
         try store.save(settings)
 

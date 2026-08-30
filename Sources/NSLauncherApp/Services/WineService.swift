@@ -64,7 +64,6 @@ struct WineLaunchRequest {
 /// Wine launch failures that need targeted user remediation.
 enum WineServiceError: LocalizedError {
     case binaryQuarantined(String)
-    case dxvkBootstrapFailed(String)
     case d3dMetalUnavailable(String)
     case dxmtUnavailable(String)
     case unsupportedKernelDriver(String)
@@ -74,8 +73,6 @@ enum WineServiceError: LocalizedError {
         switch self {
         case let .binaryQuarantined(path):
             return "Wine is blocked by macOS quarantine at \(path)."
-        case let .dxvkBootstrapFailed(details):
-            return "DXVK setup failed: \(details)"
         case let .d3dMetalUnavailable(path):
             return "No Wine build with Apple D3DMetal was found. Checked: \(path). D3DMetal ships only inside CrossOver — install it, then try again."
         case let .dxmtUnavailable(path):

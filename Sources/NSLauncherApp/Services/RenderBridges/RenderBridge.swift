@@ -92,7 +92,6 @@ enum RenderBridges {
             switch preferred {
             case .d3dMetal: return .d3dMetal
             case .dxmt: return .dxmt
-            case .dxvk: return .dxvk
             case .plainWine: return nil
             }
         }()
@@ -101,7 +100,6 @@ enum RenderBridges {
         }
         if requirements.contains(.d3dMetal) { return .d3dMetal }
         if requirements.contains(.dxmt) { return .dxmt }
-        if requirements.contains(.dxvk) { return .dxvk }
         return .plainWine
     }
 
@@ -109,7 +107,6 @@ enum RenderBridges {
         switch backend {
         case .d3dMetal: return D3DMetalBridge()
         case .dxmt: return DXMTBridge()
-        case .dxvk: return DXVKBridge()
         case .plainWine: return nil
         }
     }

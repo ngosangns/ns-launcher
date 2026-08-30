@@ -193,7 +193,7 @@ struct SettingsView: View {
 
             // Offer only backends the selected game declares, and only when there is a choice.
             if let requirements = viewModel.selectedGame?.runtimeRequirements,
-               [RuntimeRequirement.d3dMetal, .dxmt, .dxvk].filter({ requirements.contains($0) }).count > 1 {
+               [RuntimeRequirement.d3dMetal, .dxmt].filter({ requirements.contains($0) }).count > 1 {
                 SettingField(label: text.renderBackendLabel) {
                     VStack(alignment: .leading, spacing: 6) {
                         HStack {
@@ -206,9 +206,6 @@ struct SettingsView: View {
                                 }
                                 if requirements.contains(.dxmt) {
                                     Text(text.renderBackendDXMT).tag(RuntimeBackend.dxmt)
-                                }
-                                if requirements.contains(.dxvk) {
-                                    Text(text.renderBackendDXVK).tag(RuntimeBackend.dxvk)
                                 }
                             }
                             .pickerStyle(.segmented)

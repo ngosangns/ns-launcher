@@ -108,16 +108,6 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         XCTAssertEqual(profile.backend, .d3dMetal)
     }
 
-    func testBundledGenshinDefaultsIncludeDXVKForNewAndExistingSettings() {
-        XCTAssertEqual(AppSettings.default.games.first?.runtimeRequirements.contains(.dxvk), true)
-
-        var existing = AppSettings.default
-        existing.games[0].runtimeRequirements.removeAll { $0 == .dxvk }
-
-        let migrated = existing.applyingBundledGenshinDefaultsIfNeeded()
-        XCTAssertEqual(migrated.games.first?.runtimeRequirements.contains(.dxvk), true)
-    }
-
     func testDXMTOnlyRequirementFallsBackToDXMT() {
         let profile = LaunchRuntimeProfile.build(
             game: makeGame(requirements: [.wine, .dxmt]),
@@ -126,37 +116,14 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         XCTAssertEqual(profile.backend, .dxmt)
     }
 
-    func testDXVKIsUsedWhenPreferredAndSupported() {
-        let profile = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .d3dMetal, .dxmt, .dxvk]),
-            settings: makeSettings(metalRenderBackend: .dxvk)
-        )
-        XCTAssertEqual(profile.backend, .dxvk)
-        XCTAssertEqual(profile.environment["WINEESYNC"], "1")
-        XCTAssertNil(profile.environment["D3DM_ENABLE_METALFX"])
-        XCTAssertEqual(
-            profile.environment["WINEDLLOVERRIDES"],
-            "d3d10,d3d10_1,d3d10core,d3d11,dxgi=b"
-        )
-    }
-
-    func testDXVKPreferenceIsIgnoredWhenTheGameDoesNotDeclareSupportForIt() {
-        let profile = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .d3dMetal, .dxmt]),
-            settings: makeSettings(metalRenderBackend: .dxvk)
-        )
-        XCTAssertEqual(profile.backend, .d3dMetal)
-        XCTAssertEqual(profile.environment["WINEDLLOVERRIDES"], "d3d10,d3d10_1,d3d10core,d3d11,dxgi=b")
-    }
-
-    func testDXVKBackendAlsoDefaultsToEsync() {
-        let profile = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .dxvk]),
-            settings: makeSettings()
-        )
-        XCTAssertEqual(profile.backend, .dxvk)
-        XCTAssertEqual(profile.environment["WINEESYNC"], "1")
-        XCTAssertNil(profile.environment["WINEMSYNC"])
+    /// DXVK was removed as a selectable backend (its Vulkan/MoltenVK hop made shader translation
+    /// the least reliable of the three on Apple GPUs, with no lever to fix it from here). A
+    /// settings.json that still has it recorded as the preferred backend must fall back to
+    /// D3DMetal rather than fail to decode and reset the whole settings file.
+    func testLegacyDXVKBackendPreferenceDecodesAsD3DMetal() throws {
+        let json = Data(#"["dxvk"]"#.utf8)
+        let decoded = try JSONDecoder().decode([RuntimeBackend].self, from: json)
+        XCTAssertEqual(decoded, [.d3dMetal])
     }
 
     /// MetalFX only upscales something when the game is told to render below the window size,

@@ -223,6 +223,10 @@ enum InstallerStrategy: String, Codable, CaseIterable, Identifiable {
 /// Runtime components the launcher may need before a game can run correctly.
 enum RuntimeRequirement: String, Codable, CaseIterable, Identifiable {
     case wine
+    /// The DXVK backend was removed (see `RuntimeBackend`) and this requirement is no longer
+    /// produced by any code path. The case stays only so existing settings.json files that still
+    /// list it in `GameDefinition.runtimeRequirements` keep decoding instead of resetting to
+    /// defaults (see `SettingsStore`).
     case dxvk
     case d3dMetal
     /// CrossOver's bundled DXMT (`lib/dxmt`), reintroduced as a second Metal-native backend
@@ -503,11 +507,11 @@ struct AppSettings: Codable, Equatable {
     var d3dMetalForceRTZTextureWrite: Bool = false
     var d3dMetalPositionInvariance: Bool = false
     /// Which D3D translation backend to prefer when a game declares more than one supported
-    /// option. D3DMetal remains the default; DXMT and DXVK are compatibility fallbacks for
+    /// option. D3DMetal remains the default; DXMT is a compatibility fallback for
     /// backend-specific rendering bugs.
     ///
-    /// The persisted property name predates DXVK becoming selectable. Keep it stable so existing
-    /// settings retain their chosen backend.
+    /// The persisted property name predates DXVK becoming selectable (and later removed — see
+    /// `RuntimeBackend`). Keep it stable so existing settings retain their chosen backend.
     var metalRenderBackend: RuntimeBackend = .d3dMetal
     /// Monotonic settings schema version used for one-time default migrations.
     var settingsVersion: Int = 0
@@ -532,7 +536,7 @@ struct AppSettings: Codable, Equatable {
                     executableRelativePath: genshinStreamingExecutablePath,
                     winePrefixDirectory: root.appendingPathComponent(".wine", isDirectory: true),
                     installerStrategy: .sophon,
-                    runtimeRequirements: [.wine, .d3dMetal, .dxmt, .dxvk],
+                    runtimeRequirements: [.wine, .d3dMetal, .dxmt],
                     launchArguments: []
                 )
             ],
@@ -604,9 +608,6 @@ struct AppSettings: Codable, Equatable {
         }
         if !copy.games[index].runtimeRequirements.contains(.dxmt) {
             copy.games[index].runtimeRequirements.append(.dxmt)
-        }
-        if !copy.games[index].runtimeRequirements.contains(.dxvk) {
-            copy.games[index].runtimeRequirements.append(.dxvk)
         }
         if copy.games[index].executableRelativePath == Self.genshinLegacyNestedExecutablePath {
             copy.games[index].executableRelativePath = Self.genshinStreamingExecutablePath
@@ -695,15 +696,34 @@ enum InstallProgressEvent: Equatable {
 
 /// Runtime backend used for DirectX translation on macOS.
 ///
-/// D3DMetal, DXMT and DXVK all require payloads matched to a CrossOver-derived Wine build.
-/// D3DMetal and DXMT translate directly to Metal; DXVK translates through Vulkan and MoltenVK.
-/// `AppSettings.metalRenderBackend` stores the user's preference; `RenderBridges.resolveBackend`
-/// validates it against the backends declared by the selected game.
+/// D3DMetal and DXMT both require payloads matched to a CrossOver-derived Wine build and both
+/// translate directly to Metal. `AppSettings.metalRenderBackend` stores the user's preference;
+/// `RenderBridges.resolveBackend` validates it against the backends declared by the selected game.
+///
+/// DXVK (D3D11 through Vulkan then MoltenVK) was removed: the extra Vulkan/SPIRV-Cross hop made
+/// its shader translation the least reliable of the three on Apple GPUs, with no lever to fix it
+/// from here. Existing settings that had it selected fall back to D3DMetal — see `init(from:)`.
 enum RuntimeBackend: String, Codable {
     case d3dMetal
     case dxmt
-    case dxvk
     case plainWine
+
+    /// `dxvk` is the raw value of the removed case. Existing settings.json files can still carry
+    /// it in `metalRenderBackend`, and a decode failure there resets the whole settings file to
+    /// defaults (see `SettingsStore`), so the legacy value is aliased to D3DMetal rather than left
+    /// to fail.
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let raw = try container.decode(String.self)
+        if raw == "dxvk" {
+            self = .d3dMetal
+            return
+        }
+        guard let value = RuntimeBackend(rawValue: raw) else {
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unknown RuntimeBackend '\(raw)'")
+        }
+        self = value
+    }
 }
 
 /// Describes the full runtime environment for a single game launch session.

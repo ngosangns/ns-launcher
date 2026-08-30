@@ -134,11 +134,10 @@ struct AppText {
     var renderBackendLabel: String { localized(en: "Render backend", vi: "Backend render") }
     var renderBackendD3DMetal: String { localized(en: "D3DMetal", vi: "D3DMetal") }
     var renderBackendDXMT: String { localized(en: "DXMT (experimental)", vi: "DXMT (thử nghiệm)") }
-    var renderBackendDXVK: String { localized(en: "DXVK (experimental)", vi: "DXVK (thử nghiệm)") }
     var renderBackendDescription: String {
         localized(
-            en: "D3DMetal is the recommended default. DXMT is a different Metal translator worth trying when a specific effect renders wrong. DXVK translates through Vulkan and MoltenVK, so it may be slower, and its shader translation is the least reliable of the three on Apple GPUs.",
-            vi: "D3DMetal là lựa chọn mặc định khuyến nghị. DXMT là một translator Metal khác, đáng thử khi một hiệu ứng cụ thể render sai. DXVK dịch qua Vulkan và MoltenVK nên có thể chậm hơn, và phần dịch shader của nó là kém tin cậy nhất trong ba lựa chọn trên GPU Apple."
+            en: "D3DMetal is the recommended default. DXMT is a different Metal translator worth trying when a specific effect renders wrong.",
+            vi: "D3DMetal là lựa chọn mặc định khuyến nghị. DXMT là một translator Metal khác, đáng thử khi một hiệu ứng cụ thể render sai."
         )
     }
     var metalHUDLabel: String { localized(en: "Metal HUD overlay", vi: "Hiển thị Metal HUD") }
@@ -503,14 +502,6 @@ struct AppText {
         )
     }
 
-    /// Error text for automatic DXVK setup failures.
-    func dxvkBootstrapFailed(_ details: String) -> String {
-        localized(
-            en: "DXVK setup failed before launching Wine: \(details)",
-            vi: "Thiết lập DXVK trước khi chạy Wine thất bại: \(details)"
-        )
-    }
-
     /// Error text when no installed Wine build carries Apple D3DMetal.
     ///
     /// Only CrossOver is named as a remedy: the popular `game-porting-toolkit` Homebrew cask
@@ -555,8 +546,6 @@ struct AppText {
             switch wineError {
             case let .binaryQuarantined(path):
                 return wineBinaryQuarantined(path)
-            case let .dxvkBootstrapFailed(details):
-                return dxvkBootstrapFailed(details)
             case let .d3dMetalUnavailable(path):
                 return d3dMetalUnavailable(path)
             case let .dxmtUnavailable(path):
