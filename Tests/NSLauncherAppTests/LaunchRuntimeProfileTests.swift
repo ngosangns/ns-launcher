@@ -217,12 +217,14 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         XCTAssertEqual(profile.environment["WINEDEBUG"], "-all,+err,err-unwind")
     }
 
+    private let display = RenderSize(width: 1512, height: 982)
+
     func testWindowedModeDefaultsTo1280x720WithoutACustomResolution() {
         var settings = AppSettings.default
         settings.launchDisplayMode = .windowed
         settings.resolutionCustom = false
 
-        let arguments = settings.launchArguments(for: makeGame(requirements: [.wine, .d3dMetal]))
+        let arguments = settings.launchArguments(for: makeGame(requirements: [.wine, .d3dMetal]), displaySize: display)
 
         XCTAssertEqual(arguments, ["-screen-fullscreen", "0", "-screen-width", "1280", "-screen-height", "720"])
     }
@@ -236,17 +238,33 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         settings.resolutionWidth = 2560
         settings.resolutionHeight = 1440
 
-        let arguments = settings.launchArguments(for: makeGame(requirements: [.wine, .d3dMetal]))
+        let arguments = settings.launchArguments(for: makeGame(requirements: [.wine, .d3dMetal]), displaySize: display)
 
         XCTAssertEqual(arguments, ["-screen-fullscreen", "0", "-screen-width", "2560", "-screen-height", "1440"])
     }
 
-    func testFullscreenModeOmitsResolutionFlagsWithoutACustomResolution() {
+    /// The stretched-image bug: with no size on the command line, Unity started fullscreen at
+    /// whatever resolution it had last persisted, and macdrv — holding the captured display —
+    /// scanned that out over a display whose mode has a different aspect ratio. Naming the
+    /// display's own mode is what keeps the launch on a mode macOS does not have to synthesise.
+    func testFullscreenModeWithoutACustomResolutionAsksForTheDisplaysOwnMode() {
         var settings = AppSettings.default
         settings.launchDisplayMode = .fullscreen
         settings.resolutionCustom = false
 
-        let arguments = settings.launchArguments(for: makeGame(requirements: [.wine, .d3dMetal]))
+        let arguments = settings.launchArguments(for: makeGame(requirements: [.wine, .d3dMetal]), displaySize: display)
+
+        XCTAssertEqual(arguments, ["-screen-fullscreen", "1", "-screen-width", "1512", "-screen-height", "982"])
+    }
+
+    /// Nothing is invented when the display geometry cannot be read: the game keeps its own size
+    /// rather than being sent to a resolution nobody measured.
+    func testFullscreenModeOmitsResolutionFlagsWhenTheDisplaySizeIsUnknown() {
+        var settings = AppSettings.default
+        settings.launchDisplayMode = .fullscreen
+        settings.resolutionCustom = false
+
+        let arguments = settings.launchArguments(for: makeGame(requirements: [.wine, .d3dMetal]), displaySize: nil)
 
         XCTAssertEqual(arguments, ["-screen-fullscreen", "1"])
     }
@@ -258,8 +276,34 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         settings.resolutionWidth = 3440
         settings.resolutionHeight = 1440
 
-        let arguments = settings.launchArguments(for: makeGame(requirements: [.wine, .d3dMetal]))
+        let arguments = settings.launchArguments(for: makeGame(requirements: [.wine, .d3dMetal]), displaySize: display)
 
         XCTAssertEqual(arguments, ["-screen-fullscreen", "1", "-screen-width", "3440", "-screen-height", "1440"])
+    }
+
+    /// The registry values written before launch have to be the same numbers the command line
+    /// carries; the profile is where both come from.
+    func testProfileCarriesTheSameRenderSizeItPutsOnTheCommandLine() {
+        var settings = AppSettings.default
+        settings.launchDisplayMode = .fullscreen
+        settings.resolutionCustom = false
+
+        let profile = LaunchRuntimeProfile.build(
+            game: makeGame(requirements: [.wine, .d3dMetal]),
+            settings: settings,
+            displaySize: display
+        )
+
+        XCTAssertEqual(profile.renderSize, display)
+        XCTAssertTrue(profile.fullscreen)
+        XCTAssertTrue(profile.arguments.contains("1512"))
+    }
+
+    /// Guards the tolerance: real display modes are not exact ratios (1512x982 is not exactly
+    /// 16:10), but a 16:9 size on that panel has to count as stretched.
+    func testStretchDetectionAcceptsModeRoundingAndRejectsADifferentShape() {
+        XCTAssertFalse(RenderSize(width: 1512, height: 982).isStretched(onto: display))
+        XCTAssertFalse(RenderSize(width: 756, height: 491).isStretched(onto: display))
+        XCTAssertTrue(RenderSize(width: 1920, height: 1080).isStretched(onto: display))
     }
 }

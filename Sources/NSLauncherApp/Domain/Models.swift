@@ -251,6 +251,31 @@ enum RuntimeRequirement: String, Codable, CaseIterable, Identifiable {
     }
 }
 
+/// A render size in the unit Wine's Mac driver reports display modes in.
+///
+/// Whether that unit is points or backing pixels depends on `AppSettings.macDriverRetina` — see
+/// `DisplayGeometry.mainDisplaySize(retina:)`. Both the Unity `-screen-width`/`-screen-height`
+/// arguments and the `Screenmanager Resolution *` registry values are expressed in it, so they can
+/// never disagree with each other.
+struct RenderSize: Equatable, Sendable {
+    var width: Int
+    var height: Int
+
+    /// Ratio used to compare a configured size against the display it will be stretched onto.
+    var aspectRatio: Double {
+        height > 0 ? Double(width) / Double(height) : 0
+    }
+
+    /// Whether filling `display` with this size distorts the image.
+    ///
+    /// The tolerance covers the rounding in real display modes (1512x982 is not exactly 16:10)
+    /// without accepting a genuinely different shape, such as 16:9 on a 16:10 Mac panel.
+    func isStretched(onto display: RenderSize, tolerance: Double = 0.01) -> Bool {
+        guard height > 0, display.height > 0 else { return false }
+        return abs(aspectRatio - display.aspectRatio) > tolerance
+    }
+}
+
 /// User-selected display mode for games launched through Wine.
 enum LaunchDisplayMode: String, Codable, CaseIterable, Identifiable {
     case windowed
@@ -575,17 +600,41 @@ struct AppSettings: Codable, Equatable {
         return copy
     }
 
-    /// Builds launch arguments with display mode controlled by settings rather than stale game flags.
-    func launchArguments(for game: GameDefinition) -> [String] {
-        var arguments = Self.filteredUnityDisplayArguments(game.launchArguments) + launchDisplayMode.launchArguments
+    /// The size the game is told to render at, in the unit Wine reports display modes in.
+    ///
+    /// Every launch names one. Leaving it to the game was the source of both reported rendering
+    /// faults: Unity persists whatever resolution was last used into its `Screenmanager` PlayerPrefs
+    /// (including changes made inside the game), and `LaunchDisplayMode.fullscreen` then asks
+    /// macdrv — with `CaptureDisplaysForFullscreen` on — to seize the display for that stale size.
+    /// When it does not match the display's own mode, macOS switches to a synthesised stretched
+    /// mode: a 16:9 size on a 16:10 Mac panel is exactly the "models look stretched" symptom, and
+    /// the captured mode change is also what shifts the colour rendition, because the display's
+    /// profile no longer applies to the mode being scanned out. Naming the display's current mode
+    /// keeps the aspect ratio honest and leaves the mode — and its colour profile — untouched.
+    ///
+    /// Returns nil only when fullscreen is selected and the display geometry could not be read;
+    /// the launch then omits the arguments rather than inventing a size.
+    func renderSize(displaySize: RenderSize?) -> RenderSize? {
         if resolutionCustom {
-            // Start windowed at the custom render size in either display mode; in fullscreen,
-            // native fullscreen scaling happens at the AppKit level after launch and D3DMetal
-            // upscales to the screen.
-            arguments += ["-screen-width", String(resolutionWidth), "-screen-height", String(resolutionHeight)]
-        } else if launchDisplayMode == .windowed {
-            // Default windowed size when no custom resolution is set.
-            arguments += ["-screen-width", "1280", "-screen-height", "720"]
+            return RenderSize(width: max(resolutionWidth, 1), height: max(resolutionHeight, 1))
+        }
+        switch launchDisplayMode {
+        case .fullscreen:
+            // A window covering the whole screen at the screen's own mode: no mode switch, so
+            // nothing to stretch and no profile change.
+            return displaySize
+        case .windowed:
+            // Default windowed size when no custom resolution is set. A window is drawn at its own
+            // size, so an aspect ratio different from the display's costs nothing here.
+            return RenderSize(width: 1280, height: 720)
+        }
+    }
+
+    /// Builds launch arguments with display mode controlled by settings rather than stale game flags.
+    func launchArguments(for game: GameDefinition, displaySize: RenderSize?) -> [String] {
+        var arguments = Self.filteredUnityDisplayArguments(game.launchArguments) + launchDisplayMode.launchArguments
+        if let size = renderSize(displaySize: displaySize) {
+            arguments += ["-screen-width", String(size.width), "-screen-height", String(size.height)]
         }
         return arguments
     }
@@ -652,12 +701,24 @@ struct LaunchRuntimeProfile {
     var backend: RuntimeBackend
     var environment: [String: String]
     var runtimeRequirements: [RuntimeRequirement]
+    /// Size the launch arguments ask the game to render at, carried here so the registry values
+    /// written before launch can be the same numbers rather than a second, independently derived
+    /// set that can drift out of agreement with them.
+    var renderSize: RenderSize?
+    /// Whether this launch runs the game in Win32 exclusive fullscreen.
+    var fullscreen: Bool
 
     /// Builds a profile from game definition and app settings.
+    ///
+    /// `displaySize` is the geometry of the display the game will run on; passing nil reads the
+    /// main display's current mode, which is what production callers want. Tests pass an explicit
+    /// value so the profile they build does not depend on the machine running them.
     static func build(
         game: GameDefinition,
-        settings: AppSettings
+        settings: AppSettings,
+        displaySize: RenderSize? = nil
     ) -> LaunchRuntimeProfile {
+        let displaySize = displaySize ?? DisplayGeometry.mainDisplaySize(retina: settings.macDriverRetina)
         let exe = game.installDirectory.appendingPathComponent(game.executableRelativePath)
         let backend = RenderBridges.resolveBackend(
             requirements: game.runtimeRequirements,
@@ -700,7 +761,7 @@ struct LaunchRuntimeProfile {
             env["HTTPS_PROXY"] = settings.proxyHost
         }
 
-        var launchArguments = settings.launchArguments(for: game)
+        var launchArguments = settings.launchArguments(for: game, displaySize: displaySize)
         if settings.cloudCompatibilityMode {
             // YAAGL-style cloud-gaming mode: the game skips the local anti-cheat requirement.
             // DO NOT remove these flags; without them the client aborts during the anti-cheat
@@ -716,7 +777,9 @@ struct LaunchRuntimeProfile {
             arguments: launchArguments,
             backend: backend,
             environment: env,
-            runtimeRequirements: game.runtimeRequirements
+            runtimeRequirements: game.runtimeRequirements,
+            renderSize: settings.renderSize(displaySize: displaySize),
+            fullscreen: settings.launchDisplayMode == .fullscreen
         )
     }
 }

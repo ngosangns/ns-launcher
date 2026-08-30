@@ -78,8 +78,8 @@ struct AppText {
     var fullscreenMode: String { localized(en: "Fullscreen", vi: "Toàn màn hình") }
     var fullscreenHint: String {
         localized(
-            en: "Fullscreen enters native macOS fullscreen after the game window appears. macOS may ask for Automation and Accessibility permission on first launch.",
-            vi: "Toàn màn hình sẽ vào fullscreen thật của macOS sau khi cửa sổ game xuất hiện. macOS có thể hỏi quyền Automation và Accessibility ở lần chạy đầu."
+            en: "Fullscreen runs the game in exclusive fullscreen at your display's own resolution, so the picture is never stretched to fit the screen.",
+            vi: "Toàn màn hình chạy game ở chế độ fullscreen độc quyền theo đúng độ phân giải màn hình, nên hình không bị kéo dãn cho vừa màn hình."
         )
     }
     var cloudCompatibilityLabel: String { localized(en: "Cloud compatibility mode", vi: "Chế độ tương thích cloud") }
@@ -151,8 +151,14 @@ struct AppText {
     var resolutionCustomLabel: String { localized(en: "Custom resolution", vi: "Độ phân giải tùy chỉnh") }
     var resolutionCustomDescription: String {
         localized(
-            en: "Write a starting resolution into the game's registry before launch. With Fullscreen display mode the game always relaunches fullscreen, even after changing resolution in-game.",
-            vi: "Ghi độ phân giải khởi đầu vào registry của game trước khi chạy. Ở chế độ Fullscreen, game luôn được chạy lại ở toàn màn hình kể cả sau khi đổi độ phân giải trong game."
+            en: "Render at a resolution you choose instead of the one the launcher picks. Left off, Fullscreen runs at your display's own resolution and Windowed at 1280x720; either way the size is rewritten before every launch, so a resolution changed in-game cannot carry over.",
+            vi: "Render ở độ phân giải bạn chọn thay vì độ phân giải launcher tự chọn. Nếu tắt, chế độ Fullscreen chạy đúng độ phân giải màn hình còn Windowed chạy 1280x720; dù chọn cách nào thì kích thước cũng được ghi lại trước mỗi lần chạy, nên độ phân giải đổi trong game không còn dính sang lần sau."
+        )
+    }
+    func resolutionAspectMismatchWarning(displayWidth: Int, displayHeight: Int) -> String {
+        localized(
+            en: "This is a different shape from your display (\(displayWidth)×\(displayHeight)). In Fullscreen the screen is filled by stretching it, which distorts models. Match your display's aspect ratio, or turn this off to render at the display's own resolution.",
+            vi: "Tỉ lệ này khác với màn hình của bạn (\(displayWidth)×\(displayHeight)). Ở chế độ Fullscreen, hình sẽ bị kéo dãn cho đầy màn hình nên model bị méo. Hãy chọn đúng tỉ lệ màn hình, hoặc tắt mục này để game render đúng độ phân giải của màn hình."
         )
     }
     var resolutionWidthLabel: String { localized(en: "Width", vi: "Chiều rộng") }
@@ -160,8 +166,8 @@ struct AppText {
     var hdrLabel: String { localized(en: "Enable HDR", vi: "Bật HDR") }
     var hdrDescription: String {
         localized(
-            en: "Set the game's HDR registry flag before launch.",
-            vi: "Bật cờ HDR trong registry của game trước khi chạy."
+            en: "Set the game's HDR registry flag before launch. Leave it off unless you want HDR: the flag is rewritten on every launch, so turning it off here also clears an HDR mode enabled inside the game — which on Wine renders with washed-out, wrong-looking colour.",
+            vi: "Bật cờ HDR trong registry của game trước khi chạy. Nên để tắt nếu bạn không cần HDR: cờ này được ghi lại mỗi lần chạy, nên tắt ở đây cũng tắt luôn chế độ HDR đã bật trong game — trên Wine chế độ đó làm màu bị bợt và sai."
         )
     }
     var proxyEnabledLabel: String { localized(en: "Proxy", vi: "Proxy") }

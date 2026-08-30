@@ -34,6 +34,21 @@ struct SettingsView: View {
 
     private var text: AppText { viewModel.text }
 
+    /// The display a fullscreen launch would stretch the configured custom resolution onto, or nil
+    /// when the two have the same shape (or the launch would not be fullscreen at all).
+    private var stretchingDisplay: RenderSize? {
+        guard viewModel.settings.resolutionCustom,
+              viewModel.settings.launchDisplayMode == .fullscreen,
+              let display = DisplayGeometry.mainDisplaySize(retina: viewModel.settings.macDriverRetina) else {
+            return nil
+        }
+        let configured = RenderSize(
+            width: viewModel.settings.resolutionWidth,
+            height: viewModel.settings.resolutionHeight
+        )
+        return configured.isStretched(onto: display) ? display : nil
+    }
+
     private var selectedRenderBackend: RuntimeBackend {
         guard let game = viewModel.selectedGame else { return .plainWine }
         return RenderBridges.resolveBackend(
@@ -302,6 +317,15 @@ struct SettingsView: View {
                 HStack(spacing: 12) {
                     numericField(label: text.resolutionWidthLabel, value: viewModel.settings.resolutionWidth, set: viewModel.setResolutionWidth)
                     numericField(label: text.resolutionHeightLabel, value: viewModel.settings.resolutionHeight, set: viewModel.setResolutionHeight)
+                }
+                // The one stretched-image case the launcher cannot resolve on the user's behalf:
+                // fullscreen fills the screen by scaling, so a custom size of a different shape is
+                // distorted by definition. Say so here rather than letting it be discovered in-game.
+                if let display = stretchingDisplay {
+                    Text(text.resolutionAspectMismatchWarning(displayWidth: display.width, displayHeight: display.height))
+                        .font(.caption)
+                        .foregroundStyle(LauncherPalette.gold.opacity(0.85))
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
             LaunchOption(
