@@ -21,7 +21,7 @@ final class RenderBridgeTests: XCTestCase {
 
     func testEveryBackendNeedingATranslationLayerHasABridge() {
         XCTAssertEqual(RenderBridges.bridge(for: .d3dMetal)?.backend, .d3dMetal)
-        XCTAssertEqual(RenderBridges.bridge(for: .dxvk)?.backend, .dxvk)
+        XCTAssertEqual(RenderBridges.bridge(for: .dxmt)?.backend, .dxmt)
         XCTAssertNil(RenderBridges.bridge(for: .plainWine))
     }
 
@@ -36,7 +36,7 @@ final class RenderBridgeTests: XCTestCase {
         let build = try makeCrossOverStyleBuild()
 
         XCTAssertEqual(WineService.crossOverRootToApply(for: build, bridge: D3DMetalBridge()), build.root)
-        XCTAssertEqual(WineService.crossOverRootToApply(for: build, bridge: DXVKBridge()), build.root)
+        XCTAssertEqual(WineService.crossOverRootToApply(for: build, bridge: DXMTBridge()), build.root)
     }
 
     /// The backend has to be pinned explicitly, otherwise CX_ROOT lets the bottle's own configuration
@@ -44,7 +44,6 @@ final class RenderBridgeTests: XCTestCase {
     func testEachBridgeNamesTheBackendCrossOverRecognises() {
         XCTAssertEqual(D3DMetalBridge().crossOverGraphicsBackend, "d3dmetal")
         XCTAssertEqual(DXMTBridge().crossOverGraphicsBackend, "dxmt")
-        XCTAssertEqual(DXVKBridge().crossOverGraphicsBackend, "dxvk")
     }
 
     /// A plain-Wine launch needs CX_ROOT to find its own compatibility database too.
@@ -111,47 +110,6 @@ final class RenderBridgeTests: XCTestCase {
             )
             XCTFail("expected d3dMetalUnavailable")
         } catch WineServiceError.d3dMetalUnavailable {
-            // expected
-        } catch {
-            XCTFail("unexpected error: \(error)")
-        }
-    }
-
-    // MARK: - DXVKBridge payload detection
-
-    /// Same contract as D3DMetal's: prove the bundled payload exists, leave `WINEDLLPATH` untouched.
-    func testDXVKPrepareAcceptsTheBundledPayloadAndLeavesDLLPathAlone() async throws {
-        let dxvkWindows = wineRoot.appendingPathComponent("lib/dxvk/x86_64-windows", isDirectory: true)
-        try FileManager.default.createDirectory(at: dxvkWindows, withIntermediateDirectories: true)
-        FileManager.default.createFile(atPath: dxvkWindows.appendingPathComponent("d3d11.dll").path, contents: nil)
-        let build = WineBuild(binaryPath: wineRoot.appendingPathComponent("bin/wineloader").path, root: wineRoot, majorVersion: 11)
-
-        var environment: [String: String] = [:]
-        try await DXVKBridge().prepare(
-            wineBuild: build,
-            prefixDirectory: wineRoot,
-            environment: &environment,
-            processRunner: ProcessRunner(),
-            onDiagnostic: { _ in }
-        )
-
-        XCTAssertNil(environment["WINEDLLPATH"])
-    }
-
-    func testDXVKPrepareRejectsWineWithoutBundledPayload() async {
-        let build = WineBuild(binaryPath: wineRoot.appendingPathComponent("bin/wineloader").path, root: wineRoot, majorVersion: 11)
-        var environment: [String: String] = [:]
-
-        do {
-            try await DXVKBridge().prepare(
-                wineBuild: build,
-                prefixDirectory: wineRoot,
-                environment: &environment,
-                processRunner: ProcessRunner(),
-                onDiagnostic: { _ in }
-            )
-            XCTFail("expected dxvkBootstrapFailed")
-        } catch WineServiceError.dxvkBootstrapFailed {
             // expected
         } catch {
             XCTFail("unexpected error: \(error)")

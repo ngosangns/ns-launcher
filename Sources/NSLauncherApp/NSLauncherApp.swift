@@ -33,6 +33,15 @@ struct NSLauncherApp: App {
     /// Shared view model for the launcher window.
     @StateObject private var viewModel = LauncherViewModel.bootstrap()
 
+    /// Re-invoking this same binary with `WineShutdownWatchdog.launchArgument` runs the watchdog
+    /// instead of the UI — see `WineShutdownWatchdog` for why it needs to be the same executable
+    /// rather than a separate bundled tool. Must exit before any SwiftUI/AppKit setup below runs.
+    init() {
+        if CommandLine.arguments.contains(WineShutdownWatchdog.launchArgument) {
+            exit(WineShutdownWatchdog.runBlocking(arguments: CommandLine.arguments))
+        }
+    }
+
     var body: some Scene {
         WindowGroup("NS Launcher") {
             ContentView(viewModel: viewModel)

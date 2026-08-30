@@ -34,6 +34,21 @@ struct SettingsView: View {
 
     private var text: AppText { viewModel.text }
 
+    /// The display a fullscreen launch would stretch the configured custom resolution onto, or nil
+    /// when the two have the same shape (or the launch would not be fullscreen at all).
+    private var stretchingDisplay: RenderSize? {
+        guard viewModel.settings.resolutionCustom,
+              viewModel.settings.launchDisplayMode == .fullscreen,
+              let display = DisplayGeometry.mainDisplaySize(retina: viewModel.settings.macDriverRetina) else {
+            return nil
+        }
+        let configured = RenderSize(
+            width: viewModel.settings.resolutionWidth,
+            height: viewModel.settings.resolutionHeight
+        )
+        return configured.isStretched(onto: display) ? display : nil
+    }
+
     private var selectedRenderBackend: RuntimeBackend {
         guard let game = viewModel.selectedGame else { return .plainWine }
         return RenderBridges.resolveBackend(
@@ -178,7 +193,7 @@ struct SettingsView: View {
 
             // Offer only backends the selected game declares, and only when there is a choice.
             if let requirements = viewModel.selectedGame?.runtimeRequirements,
-               [RuntimeRequirement.d3dMetal, .dxmt, .dxvk].filter({ requirements.contains($0) }).count > 1 {
+               [RuntimeRequirement.d3dMetal, .dxmt].filter({ requirements.contains($0) }).count > 1 {
                 SettingField(label: text.renderBackendLabel) {
                     VStack(alignment: .leading, spacing: 6) {
                         HStack {
@@ -191,9 +206,6 @@ struct SettingsView: View {
                                 }
                                 if requirements.contains(.dxmt) {
                                     Text(text.renderBackendDXMT).tag(RuntimeBackend.dxmt)
-                                }
-                                if requirements.contains(.dxvk) {
-                                    Text(text.renderBackendDXVK).tag(RuntimeBackend.dxvk)
                                 }
                             }
                             .pickerStyle(.segmented)
@@ -245,6 +257,59 @@ struct SettingsView: View {
                     set: { viewModel.update(\.d3dMetalMultithreadedInterface, to: $0) }
                 )
             )
+            d3dMetalShaderCompatibilityOptions
+        }
+    }
+
+    /// D3DMetal's float-behaviour overrides, grouped under one heading because they are diagnostic
+    /// switches rather than preferences: they exist to be tried one at a time against a model that
+    /// renders wrong, and mean nothing on any other backend.
+    @ViewBuilder
+    private var d3dMetalShaderCompatibilityOptions: some View {
+        if selectedRenderBackend == .d3dMetal {
+            VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(text.d3dMetalShaderCompatibilityTitle)
+                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .foregroundStyle(LauncherPalette.gold.opacity(0.88))
+                    Text(text.d3dMetalShaderCompatibilityDescription)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                SettingToggle(
+                    title: text.d3dMetalSampleNaNToZeroLabel,
+                    detail: text.d3dMetalSampleNaNToZeroDescription,
+                    isOn: Binding(
+                        get: { viewModel.settings.d3dMetalSampleNaNToZero },
+                        set: { viewModel.update(\.d3dMetalSampleNaNToZero, to: $0) }
+                    )
+                )
+                SettingToggle(
+                    title: text.d3dMetalFlushPositiveInfinityToNaNLabel,
+                    detail: text.d3dMetalFlushPositiveInfinityToNaNDescription,
+                    isOn: Binding(
+                        get: { viewModel.settings.d3dMetalFlushPositiveInfinityToNaN },
+                        set: { viewModel.update(\.d3dMetalFlushPositiveInfinityToNaN, to: $0) }
+                    )
+                )
+                SettingToggle(
+                    title: text.d3dMetalForceRTZTextureWriteLabel,
+                    detail: text.d3dMetalForceRTZTextureWriteDescription,
+                    isOn: Binding(
+                        get: { viewModel.settings.d3dMetalForceRTZTextureWrite },
+                        set: { viewModel.update(\.d3dMetalForceRTZTextureWrite, to: $0) }
+                    )
+                )
+                SettingToggle(
+                    title: text.d3dMetalPositionInvarianceLabel,
+                    detail: text.d3dMetalPositionInvarianceDescription,
+                    isOn: Binding(
+                        get: { viewModel.settings.d3dMetalPositionInvariance },
+                        set: { viewModel.update(\.d3dMetalPositionInvariance, to: $0) }
+                    )
+                )
+            }
         }
     }
 
@@ -302,6 +367,15 @@ struct SettingsView: View {
                 HStack(spacing: 12) {
                     numericField(label: text.resolutionWidthLabel, value: viewModel.settings.resolutionWidth, set: viewModel.setResolutionWidth)
                     numericField(label: text.resolutionHeightLabel, value: viewModel.settings.resolutionHeight, set: viewModel.setResolutionHeight)
+                }
+                // The one stretched-image case the launcher cannot resolve on the user's behalf:
+                // fullscreen fills the screen by scaling, so a custom size of a different shape is
+                // distorted by definition. Say so here rather than letting it be discovered in-game.
+                if let display = stretchingDisplay {
+                    Text(text.resolutionAspectMismatchWarning(displayWidth: display.width, displayHeight: display.height))
+                        .font(.caption)
+                        .foregroundStyle(LauncherPalette.gold.opacity(0.85))
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
             LaunchOption(

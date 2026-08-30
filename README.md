@@ -15,7 +15,7 @@ launching the global version of Genshin Impact through Wine.
 - Installs and updates assets with chunk verification, resumable staging, and
   atomic replacement.
 - Finds CrossOver or Game Porting Toolkit Wine runtimes and configures D3DMetal,
-  DXMT, DXVK, or plain Wine when available.
+  DXMT, or plain Wine when available.
 - Monitors the actual game process and captures filtered Wine diagnostics.
 - Manages launcher settings, selected caches, logs, render snapshots, and
   runtime/container size information.
@@ -54,7 +54,7 @@ removal, but voice packs are not downloaded by the launcher.
   diagnostics drawer for the current operation's progress and logs.
 - Installing or updating downloads and verifies game assets directly from
   HoYoPlay's Sophon CDN; you don't need the official launcher installed.
-- Settings covers the Wine runtime, render backend (D3DMetal, DXMT, DXVK, or
+- Settings covers the Wine runtime, render backend (D3DMetal, DXMT, or
   plain Wine), compatibility toggles (cloud compatibility, Steam-parent mode,
   AC patching, network blocking, proxy, HDR, Retina, Metal HUD, resolution,
   timeout fixes), install location, and cache management.

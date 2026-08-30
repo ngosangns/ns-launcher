@@ -542,9 +542,8 @@ final class LauncherViewModel: ObservableObject {
         if !game.runtimeRequirements.isEmpty {
             appendWineLogLine("Runtime requirements: \(game.runtimeRequirements.map(\.rawValue).joined(separator: ", "))")
         }
-        let effectiveArguments = settings.launchArguments(for: game)
-        if !effectiveArguments.isEmpty {
-            appendWineLogLine("Arguments: \(effectiveArguments.joined(separator: " "))")
+        if !profile.arguments.isEmpty {
+            appendWineLogLine("Arguments: \(profile.arguments.joined(separator: " "))")
         }
         appendWineLogLine("---- process output ----")
 

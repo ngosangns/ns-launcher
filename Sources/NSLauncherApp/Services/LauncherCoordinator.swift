@@ -397,10 +397,6 @@ struct LauncherCoordinator: Sendable {
             }
         }
 
-        let resolutionOverride: (width: Int, height: Int)? = settings.resolutionCustom
-            ? (settings.resolutionWidth, settings.resolutionHeight)
-            : nil
-
         let request = WineLaunchRequest(
             wineBinaryPath: profile.wineBinaryPath,
             prefixDirectory: profile.prefixDirectory,
@@ -413,9 +409,10 @@ struct LauncherCoordinator: Sendable {
             useSteamLauncher: settings.steamPatch,
             macDriverRetina: settings.macDriverRetina,
             leftCommandIsCtrl: settings.leftCommandIsCtrl,
-            resolutionOverride: resolutionOverride,
+            // Same size the launch arguments carry, so the registry cannot contradict them.
+            renderSize: profile.renderSize,
             enableHDR: settings.enableHDR,
-            captureDisplaysForFullscreen: settings.launchDisplayMode == .fullscreen,
+            fullscreen: profile.fullscreen,
             onOutput: onOutput
         )
         return try await wineService.launch(request)

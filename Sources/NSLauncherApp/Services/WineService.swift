@@ -45,22 +45,25 @@ struct WineLaunchRequest {
     var macDriverRetina: Bool = true
     /// Wine Mac Driver: treat the left Command key as Ctrl for games that assume Windows bindings.
     var leftCommandIsCtrl: Bool = false
-    /// Custom starting resolution written to the game's registry keys before launch.
-    var resolutionOverride: (width: Int, height: Int)? = nil
+    /// Starting resolution written to the game's registry keys before launch — the same size the
+    /// launch arguments ask for (see `LaunchRuntimeProfile.renderSize`).
+    var renderSize: RenderSize? = nil
     /// Enable the game's HDR registry flag.
     var enableHDR: Bool = false
-    /// Wine Mac Driver: let macdrv capture the display for real fullscreen (hidden menu bar/dock,
-    /// exclusive access) whenever a window's frame ends up covering the whole screen. Off by
-    /// default because an ordinary window that happens to be maximized should not seize the
-    /// display; the launcher only turns it on for `LaunchDisplayMode.fullscreen`.
-    var captureDisplaysForFullscreen: Bool = false
+    /// Run the game in Win32 exclusive fullscreen.
+    ///
+    /// Drives both halves of it: Unity's own persisted fullscreen flag, and macdrv's
+    /// `CaptureDisplaysForFullscreen`, which lets macdrv capture the display for real fullscreen
+    /// (hidden menu bar/dock, exclusive access) once the window's frame covers the whole screen.
+    /// They have to move together — a captured display with the game believing it is windowed is
+    /// how a stale window size ends up scanned out stretched across the screen.
+    var fullscreen: Bool = false
     var onOutput: (@Sendable (ProcessOutputChunk) -> Void)?
 }
 
 /// Wine launch failures that need targeted user remediation.
 enum WineServiceError: LocalizedError {
     case binaryQuarantined(String)
-    case dxvkBootstrapFailed(String)
     case d3dMetalUnavailable(String)
     case dxmtUnavailable(String)
     case unsupportedKernelDriver(String)
@@ -70,8 +73,6 @@ enum WineServiceError: LocalizedError {
         switch self {
         case let .binaryQuarantined(path):
             return "Wine is blocked by macOS quarantine at \(path)."
-        case let .dxvkBootstrapFailed(details):
-            return "DXVK setup failed: \(details)"
         case let .d3dMetalUnavailable(path):
             return "No Wine build with Apple D3DMetal was found. Checked: \(path). D3DMetal ships only inside CrossOver — install it, then try again."
         case let .dxmtUnavailable(path):
@@ -258,6 +259,17 @@ struct WineService: WineServicing {
             }
         }
 
+        // Belt-and-suspenders: spawn a detached watchdog that outlives this launcher process, so
+        // wineserver still gets torn down even if the launcher quits before the game does. See
+        // `WineShutdownWatchdog` — this does not replace the in-process cleanup below, which still
+        // drives the UI's Play/Stop state and the D3DMetal shader cache checkpoint.
+        WineShutdownWatchdog.spawn(
+            executablePath: request.executablePath,
+            wineserverPath: wineBuild.root.appendingPathComponent("bin/wineserver").path,
+            prefixDirectory: request.prefixDirectory,
+            onDiagnostic: diagnose
+        )
+
         // Session truth: if the actual game executable is still running after the
         // Wine wrapper exited (wrapper detached early, or Wine returned non-zero
         // while the game kept going), keep the launch session alive until the game
@@ -363,7 +375,15 @@ struct WineService: WineServicing {
     /// `applyResolutionRegistry` / `applyHDRRegistry` / `setProps`. Do not rename the keys or change
     /// the value-name suffixes without re-deriving them from Unity's hashing — the game will silently
     /// ignore an unknown key.
-    private static func launchRegistryEntries(for request: WineLaunchRequest) -> [RegistryEntry] {
+    ///
+    /// Every value here is written on every launch, including the "off" state. None of these is a
+    /// value the launcher alone owns: Unity writes its own `Screenmanager` keys back whenever the
+    /// display is changed inside the game, and the HDR flag is likewise set by the game's own
+    /// graphics settings. Writing a value only when the setting is on therefore does not mean "leave
+    /// it alone", it means "let whatever the game last wrote win" — which is how turning the
+    /// launcher's HDR toggle off left the game still rendering through its HDR path, and how a
+    /// resolution picked in-game survived into a fullscreen launch it does not fit.
+    static func launchRegistryEntries(for request: WineLaunchRequest) -> [RegistryEntry] {
         let macDriver = #"HKEY_CURRENT_USER\Software\Wine\Mac Driver"#
         let genshin = #"HKEY_CURRENT_USER\Software\miHoYo\Genshin Impact"#
 
@@ -381,19 +401,31 @@ struct WineService: WineServicing {
             // player window never does, so `-toggleFullScreen:`/`AXFullScreen` can never succeed
             // on it (confirmed against macdrv's `adjustFullScreenBehavior:`). Do not reintroduce
             // an AXFullScreen-based flip for this reason.
-            RegistryEntry(key: macDriver, name: "CaptureDisplaysForFullscreen", value: .string(request.captureDisplaysForFullscreen ? "y" : "n")),
+            RegistryEntry(key: macDriver, name: "CaptureDisplaysForFullscreen", value: .string(request.fullscreen ? "y" : "n")),
             // Unity persists display changes made inside the game into these PlayerPrefs keys, so
-            // the flag is rewritten before every launch to keep it sticky, seeded instead from the
-            // `-screen-fullscreen` command-line argument on each run.
-            RegistryEntry(key: genshin, name: "Screenmanager Is Fullscreen mode_h3981298716", value: .dword(0))
+            // the flag is rewritten before every launch to keep it sticky, seeded from the same
+            // display mode that produced the `-screen-fullscreen` command-line argument.
+            //
+            // It used to be pinned to 0 regardless. That was correct while fullscreen was entered at
+            // the AppKit level with the game itself windowed, and became wrong when fullscreen moved
+            // to Win32 exclusive mode: the game was then told to go fullscreen on the command line
+            // while its persisted state said windowed, so anything that made Unity re-apply its
+            // saved display state mid-session (the in-game graphics settings do) dropped it back to
+            // a window while macdrv still held the captured display — a small backbuffer scanned out
+            // stretched over the whole screen.
+            RegistryEntry(key: genshin, name: "Screenmanager Is Fullscreen mode_h3981298716", value: .dword(request.fullscreen ? 1 : 0)),
+            // Always written, never merely when enabled: the game turns this on itself from its own
+            // graphics settings, and once on it renders through an HDR path whose output the Wine
+            // swapchain presents unconverted — washed-out, wrong-looking colour. Writing 0 is what
+            // makes the launcher's toggle able to turn it back off.
+            RegistryEntry(key: genshin, name: "WINDOWS_HDR_ON_h3132281285", value: .dword(request.enableHDR ? 1 : 0))
         ]
 
-        if let resolution = request.resolutionOverride {
-            entries.append(RegistryEntry(key: genshin, name: "Screenmanager Resolution Width_h182942802", value: .dword(UInt32(resolution.width))))
-            entries.append(RegistryEntry(key: genshin, name: "Screenmanager Resolution Height_h2627697771", value: .dword(UInt32(resolution.height))))
-        }
-        if request.enableHDR {
-            entries.append(RegistryEntry(key: genshin, name: "WINDOWS_HDR_ON_h3132281285", value: .dword(1)))
+        if let renderSize = request.renderSize {
+            // Clamped rather than converted: these come from a persisted settings file that a user
+            // can edit by hand, and a plain UInt32 conversion traps on a value outside its range.
+            entries.append(RegistryEntry(key: genshin, name: "Screenmanager Resolution Width_h182942802", value: .dword(UInt32(clamping: renderSize.width))))
+            entries.append(RegistryEntry(key: genshin, name: "Screenmanager Resolution Height_h2627697771", value: .dword(UInt32(clamping: renderSize.height))))
         }
         return entries
     }

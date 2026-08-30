@@ -113,7 +113,7 @@ They are not an install source.
 ## Wine And Rendering
 
 Wine discovery scans managed and known CrossOver/Game Porting Toolkit locations.
-The launch path can configure Apple D3DMetal, DXMT, DXVK, or plain Wine based on
+The launch path can configure Apple D3DMetal, DXMT, or plain Wine based on
 the selected render backend and the payloads available in the selected runtime.
 The launch profile also carries optional compatibility settings such as cloud
 compatibility, Steam-parent mode, AC patching, network blocking, proxy, HDR,

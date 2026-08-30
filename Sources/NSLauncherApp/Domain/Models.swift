@@ -223,6 +223,10 @@ enum InstallerStrategy: String, Codable, CaseIterable, Identifiable {
 /// Runtime components the launcher may need before a game can run correctly.
 enum RuntimeRequirement: String, Codable, CaseIterable, Identifiable {
     case wine
+    /// The DXVK backend was removed (see `RuntimeBackend`) and this requirement is no longer
+    /// produced by any code path. The case stays only so existing settings.json files that still
+    /// list it in `GameDefinition.runtimeRequirements` keep decoding instead of resetting to
+    /// defaults (see `SettingsStore`).
     case dxvk
     case d3dMetal
     /// CrossOver's bundled DXMT (`lib/dxmt`), reintroduced as a second Metal-native backend
@@ -248,6 +252,31 @@ enum RuntimeRequirement: String, Codable, CaseIterable, Identifiable {
             throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unknown RuntimeRequirement '\(raw)'")
         }
         self = value
+    }
+}
+
+/// A render size in the unit Wine's Mac driver reports display modes in.
+///
+/// Whether that unit is points or backing pixels depends on `AppSettings.macDriverRetina` — see
+/// `DisplayGeometry.mainDisplaySize(retina:)`. Both the Unity `-screen-width`/`-screen-height`
+/// arguments and the `Screenmanager Resolution *` registry values are expressed in it, so they can
+/// never disagree with each other.
+struct RenderSize: Equatable, Sendable {
+    var width: Int
+    var height: Int
+
+    /// Ratio used to compare a configured size against the display it will be stretched onto.
+    var aspectRatio: Double {
+        height > 0 ? Double(width) / Double(height) : 0
+    }
+
+    /// Whether filling `display` with this size distorts the image.
+    ///
+    /// The tolerance covers the rounding in real display modes (1512x982 is not exactly 16:10)
+    /// without accepting a genuinely different shape, such as 16:9 on a 16:10 Mac panel.
+    func isStretched(onto display: RenderSize, tolerance: Double = 0.01) -> Bool {
+        guard height > 0, display.height > 0 else { return false }
+        return abs(aspectRatio - display.aspectRatio) > tolerance
     }
 }
 
@@ -462,12 +491,27 @@ struct AppSettings: Codable, Equatable {
     /// conservatively than the game's own threading needs. Same caveat and reason for being
     /// toggleable as `d3dMetalAsyncCommit` — see `D3DMetalBridge`.
     var d3dMetalMultithreadedInterface: Bool = true
+    /// Apple D3DMetal float-behaviour overrides, for shading that comes out wrong on some models
+    /// while the rest of the frame looks right.
+    ///
+    /// All four names are real `D3DM_*` strings in an installed D3DMetal.framework binary — the
+    /// same check that produced `d3dMetalAsyncCommit` — but Apple documents none of them, so what
+    /// each one does is read from its name and nothing more. That is exactly why they are settings:
+    /// a D3D11 shader whose result depends on how NaN, infinity, rounding or cross-pass position
+    /// invariance are handled renders differently on Metal than it did on the hardware it was
+    /// written for, and only trying them one at a time on the affected model says which (if any) is
+    /// the one in play. Default off: each changes the numeric behaviour of every shader in the
+    /// game, so none of them should be on without a fault it visibly fixes.
+    var d3dMetalSampleNaNToZero: Bool = false
+    var d3dMetalFlushPositiveInfinityToNaN: Bool = false
+    var d3dMetalForceRTZTextureWrite: Bool = false
+    var d3dMetalPositionInvariance: Bool = false
     /// Which D3D translation backend to prefer when a game declares more than one supported
-    /// option. D3DMetal remains the default; DXMT and DXVK are compatibility fallbacks for
+    /// option. D3DMetal remains the default; DXMT is a compatibility fallback for
     /// backend-specific rendering bugs.
     ///
-    /// The persisted property name predates DXVK becoming selectable. Keep it stable so existing
-    /// settings retain their chosen backend.
+    /// The persisted property name predates DXVK becoming selectable (and later removed — see
+    /// `RuntimeBackend`). Keep it stable so existing settings retain their chosen backend.
     var metalRenderBackend: RuntimeBackend = .d3dMetal
     /// Monotonic settings schema version used for one-time default migrations.
     var settingsVersion: Int = 0
@@ -492,7 +536,7 @@ struct AppSettings: Codable, Equatable {
                     executableRelativePath: genshinStreamingExecutablePath,
                     winePrefixDirectory: root.appendingPathComponent(".wine", isDirectory: true),
                     installerStrategy: .sophon,
-                    runtimeRequirements: [.wine, .d3dMetal, .dxmt, .dxvk],
+                    runtimeRequirements: [.wine, .d3dMetal, .dxmt],
                     launchArguments: []
                 )
             ],
@@ -565,9 +609,6 @@ struct AppSettings: Codable, Equatable {
         if !copy.games[index].runtimeRequirements.contains(.dxmt) {
             copy.games[index].runtimeRequirements.append(.dxmt)
         }
-        if !copy.games[index].runtimeRequirements.contains(.dxvk) {
-            copy.games[index].runtimeRequirements.append(.dxvk)
-        }
         if copy.games[index].executableRelativePath == Self.genshinLegacyNestedExecutablePath {
             copy.games[index].executableRelativePath = Self.genshinStreamingExecutablePath
         }
@@ -575,17 +616,41 @@ struct AppSettings: Codable, Equatable {
         return copy
     }
 
-    /// Builds launch arguments with display mode controlled by settings rather than stale game flags.
-    func launchArguments(for game: GameDefinition) -> [String] {
-        var arguments = Self.filteredUnityDisplayArguments(game.launchArguments) + launchDisplayMode.launchArguments
+    /// The size the game is told to render at, in the unit Wine reports display modes in.
+    ///
+    /// Every launch names one. Leaving it to the game was the source of both reported rendering
+    /// faults: Unity persists whatever resolution was last used into its `Screenmanager` PlayerPrefs
+    /// (including changes made inside the game), and `LaunchDisplayMode.fullscreen` then asks
+    /// macdrv — with `CaptureDisplaysForFullscreen` on — to seize the display for that stale size.
+    /// When it does not match the display's own mode, macOS switches to a synthesised stretched
+    /// mode: a 16:9 size on a 16:10 Mac panel is exactly the "models look stretched" symptom, and
+    /// the captured mode change is also what shifts the colour rendition, because the display's
+    /// profile no longer applies to the mode being scanned out. Naming the display's current mode
+    /// keeps the aspect ratio honest and leaves the mode — and its colour profile — untouched.
+    ///
+    /// Returns nil only when fullscreen is selected and the display geometry could not be read;
+    /// the launch then omits the arguments rather than inventing a size.
+    func renderSize(displaySize: RenderSize?) -> RenderSize? {
         if resolutionCustom {
-            // Start windowed at the custom render size in either display mode; in fullscreen,
-            // native fullscreen scaling happens at the AppKit level after launch and D3DMetal
-            // upscales to the screen.
-            arguments += ["-screen-width", String(resolutionWidth), "-screen-height", String(resolutionHeight)]
-        } else if launchDisplayMode == .windowed {
-            // Default windowed size when no custom resolution is set.
-            arguments += ["-screen-width", "1280", "-screen-height", "720"]
+            return RenderSize(width: max(resolutionWidth, 1), height: max(resolutionHeight, 1))
+        }
+        switch launchDisplayMode {
+        case .fullscreen:
+            // A window covering the whole screen at the screen's own mode: no mode switch, so
+            // nothing to stretch and no profile change.
+            return displaySize
+        case .windowed:
+            // Default windowed size when no custom resolution is set. A window is drawn at its own
+            // size, so an aspect ratio different from the display's costs nothing here.
+            return RenderSize(width: 1280, height: 720)
+        }
+    }
+
+    /// Builds launch arguments with display mode controlled by settings rather than stale game flags.
+    func launchArguments(for game: GameDefinition, displaySize: RenderSize?) -> [String] {
+        var arguments = Self.filteredUnityDisplayArguments(game.launchArguments) + launchDisplayMode.launchArguments
+        if let size = renderSize(displaySize: displaySize) {
+            arguments += ["-screen-width", String(size.width), "-screen-height", String(size.height)]
         }
         return arguments
     }
@@ -631,15 +696,34 @@ enum InstallProgressEvent: Equatable {
 
 /// Runtime backend used for DirectX translation on macOS.
 ///
-/// D3DMetal, DXMT and DXVK all require payloads matched to a CrossOver-derived Wine build.
-/// D3DMetal and DXMT translate directly to Metal; DXVK translates through Vulkan and MoltenVK.
-/// `AppSettings.metalRenderBackend` stores the user's preference; `RenderBridges.resolveBackend`
-/// validates it against the backends declared by the selected game.
+/// D3DMetal and DXMT both require payloads matched to a CrossOver-derived Wine build and both
+/// translate directly to Metal. `AppSettings.metalRenderBackend` stores the user's preference;
+/// `RenderBridges.resolveBackend` validates it against the backends declared by the selected game.
+///
+/// DXVK (D3D11 through Vulkan then MoltenVK) was removed: the extra Vulkan/SPIRV-Cross hop made
+/// its shader translation the least reliable of the three on Apple GPUs, with no lever to fix it
+/// from here. Existing settings that had it selected fall back to D3DMetal — see `init(from:)`.
 enum RuntimeBackend: String, Codable {
     case d3dMetal
     case dxmt
-    case dxvk
     case plainWine
+
+    /// `dxvk` is the raw value of the removed case. Existing settings.json files can still carry
+    /// it in `metalRenderBackend`, and a decode failure there resets the whole settings file to
+    /// defaults (see `SettingsStore`), so the legacy value is aliased to D3DMetal rather than left
+    /// to fail.
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let raw = try container.decode(String.self)
+        if raw == "dxvk" {
+            self = .d3dMetal
+            return
+        }
+        guard let value = RuntimeBackend(rawValue: raw) else {
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unknown RuntimeBackend '\(raw)'")
+        }
+        self = value
+    }
 }
 
 /// Describes the full runtime environment for a single game launch session.
@@ -652,12 +736,24 @@ struct LaunchRuntimeProfile {
     var backend: RuntimeBackend
     var environment: [String: String]
     var runtimeRequirements: [RuntimeRequirement]
+    /// Size the launch arguments ask the game to render at, carried here so the registry values
+    /// written before launch can be the same numbers rather than a second, independently derived
+    /// set that can drift out of agreement with them.
+    var renderSize: RenderSize?
+    /// Whether this launch runs the game in Win32 exclusive fullscreen.
+    var fullscreen: Bool
 
     /// Builds a profile from game definition and app settings.
+    ///
+    /// `displaySize` is the geometry of the display the game will run on; passing nil reads the
+    /// main display's current mode, which is what production callers want. Tests pass an explicit
+    /// value so the profile they build does not depend on the machine running them.
     static func build(
         game: GameDefinition,
-        settings: AppSettings
+        settings: AppSettings,
+        displaySize: RenderSize? = nil
     ) -> LaunchRuntimeProfile {
+        let displaySize = displaySize ?? DisplayGeometry.mainDisplaySize(retina: settings.macDriverRetina)
         let exe = game.installDirectory.appendingPathComponent(game.executableRelativePath)
         let backend = RenderBridges.resolveBackend(
             requirements: game.runtimeRequirements,
@@ -700,7 +796,7 @@ struct LaunchRuntimeProfile {
             env["HTTPS_PROXY"] = settings.proxyHost
         }
 
-        var launchArguments = settings.launchArguments(for: game)
+        var launchArguments = settings.launchArguments(for: game, displaySize: displaySize)
         if settings.cloudCompatibilityMode {
             // YAAGL-style cloud-gaming mode: the game skips the local anti-cheat requirement.
             // DO NOT remove these flags; without them the client aborts during the anti-cheat
@@ -716,7 +812,9 @@ struct LaunchRuntimeProfile {
             arguments: launchArguments,
             backend: backend,
             environment: env,
-            runtimeRequirements: game.runtimeRequirements
+            runtimeRequirements: game.runtimeRequirements,
+            renderSize: settings.renderSize(displaySize: displaySize),
+            fullscreen: settings.launchDisplayMode == .fullscreen
         )
     }
 }

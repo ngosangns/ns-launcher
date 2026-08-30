@@ -62,7 +62,6 @@ final class ErrorMessageTests: XCTestCase {
             LaunchPreflightError.updateRequiredBeforeLaunch("version drift"),
             LaunchPreflightError.gameAlreadyRunning([1]),
             WineServiceError.binaryQuarantined("/p"),
-            WineServiceError.dxvkBootstrapFailed("d"),
             WineServiceError.d3dMetalUnavailable("/p"),
             WineServiceError.dxmtUnavailable("/p"),
             WineServiceError.wineRootNotFound("/p"),

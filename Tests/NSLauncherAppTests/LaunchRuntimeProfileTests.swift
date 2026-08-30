@@ -108,16 +108,6 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         XCTAssertEqual(profile.backend, .d3dMetal)
     }
 
-    func testBundledGenshinDefaultsIncludeDXVKForNewAndExistingSettings() {
-        XCTAssertEqual(AppSettings.default.games.first?.runtimeRequirements.contains(.dxvk), true)
-
-        var existing = AppSettings.default
-        existing.games[0].runtimeRequirements.removeAll { $0 == .dxvk }
-
-        let migrated = existing.applyingBundledGenshinDefaultsIfNeeded()
-        XCTAssertEqual(migrated.games.first?.runtimeRequirements.contains(.dxvk), true)
-    }
-
     func testDXMTOnlyRequirementFallsBackToDXMT() {
         let profile = LaunchRuntimeProfile.build(
             game: makeGame(requirements: [.wine, .dxmt]),
@@ -126,37 +116,14 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         XCTAssertEqual(profile.backend, .dxmt)
     }
 
-    func testDXVKIsUsedWhenPreferredAndSupported() {
-        let profile = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .d3dMetal, .dxmt, .dxvk]),
-            settings: makeSettings(metalRenderBackend: .dxvk)
-        )
-        XCTAssertEqual(profile.backend, .dxvk)
-        XCTAssertEqual(profile.environment["WINEESYNC"], "1")
-        XCTAssertNil(profile.environment["D3DM_ENABLE_METALFX"])
-        XCTAssertEqual(
-            profile.environment["WINEDLLOVERRIDES"],
-            "d3d10,d3d10_1,d3d10core,d3d11,dxgi=b"
-        )
-    }
-
-    func testDXVKPreferenceIsIgnoredWhenTheGameDoesNotDeclareSupportForIt() {
-        let profile = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .d3dMetal, .dxmt]),
-            settings: makeSettings(metalRenderBackend: .dxvk)
-        )
-        XCTAssertEqual(profile.backend, .d3dMetal)
-        XCTAssertEqual(profile.environment["WINEDLLOVERRIDES"], "d3d10,d3d10_1,d3d10core,d3d11,dxgi=b")
-    }
-
-    func testDXVKBackendAlsoDefaultsToEsync() {
-        let profile = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .dxvk]),
-            settings: makeSettings()
-        )
-        XCTAssertEqual(profile.backend, .dxvk)
-        XCTAssertEqual(profile.environment["WINEESYNC"], "1")
-        XCTAssertNil(profile.environment["WINEMSYNC"])
+    /// DXVK was removed as a selectable backend (its Vulkan/MoltenVK hop made shader translation
+    /// the least reliable of the three on Apple GPUs, with no lever to fix it from here). A
+    /// settings.json that still has it recorded as the preferred backend must fall back to
+    /// D3DMetal rather than fail to decode and reset the whole settings file.
+    func testLegacyDXVKBackendPreferenceDecodesAsD3DMetal() throws {
+        let json = Data(#"["dxvk"]"#.utf8)
+        let decoded = try JSONDecoder().decode([RuntimeBackend].self, from: json)
+        XCTAssertEqual(decoded, [.d3dMetal])
     }
 
     /// MetalFX only upscales something when the game is told to render below the window size,
@@ -217,12 +184,14 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         XCTAssertEqual(profile.environment["WINEDEBUG"], "-all,+err,err-unwind")
     }
 
+    private let display = RenderSize(width: 1512, height: 982)
+
     func testWindowedModeDefaultsTo1280x720WithoutACustomResolution() {
         var settings = AppSettings.default
         settings.launchDisplayMode = .windowed
         settings.resolutionCustom = false
 
-        let arguments = settings.launchArguments(for: makeGame(requirements: [.wine, .d3dMetal]))
+        let arguments = settings.launchArguments(for: makeGame(requirements: [.wine, .d3dMetal]), displaySize: display)
 
         XCTAssertEqual(arguments, ["-screen-fullscreen", "0", "-screen-width", "1280", "-screen-height", "720"])
     }
@@ -236,17 +205,33 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         settings.resolutionWidth = 2560
         settings.resolutionHeight = 1440
 
-        let arguments = settings.launchArguments(for: makeGame(requirements: [.wine, .d3dMetal]))
+        let arguments = settings.launchArguments(for: makeGame(requirements: [.wine, .d3dMetal]), displaySize: display)
 
         XCTAssertEqual(arguments, ["-screen-fullscreen", "0", "-screen-width", "2560", "-screen-height", "1440"])
     }
 
-    func testFullscreenModeOmitsResolutionFlagsWithoutACustomResolution() {
+    /// The stretched-image bug: with no size on the command line, Unity started fullscreen at
+    /// whatever resolution it had last persisted, and macdrv — holding the captured display —
+    /// scanned that out over a display whose mode has a different aspect ratio. Naming the
+    /// display's own mode is what keeps the launch on a mode macOS does not have to synthesise.
+    func testFullscreenModeWithoutACustomResolutionAsksForTheDisplaysOwnMode() {
         var settings = AppSettings.default
         settings.launchDisplayMode = .fullscreen
         settings.resolutionCustom = false
 
-        let arguments = settings.launchArguments(for: makeGame(requirements: [.wine, .d3dMetal]))
+        let arguments = settings.launchArguments(for: makeGame(requirements: [.wine, .d3dMetal]), displaySize: display)
+
+        XCTAssertEqual(arguments, ["-screen-fullscreen", "1", "-screen-width", "1512", "-screen-height", "982"])
+    }
+
+    /// Nothing is invented when the display geometry cannot be read: the game keeps its own size
+    /// rather than being sent to a resolution nobody measured.
+    func testFullscreenModeOmitsResolutionFlagsWhenTheDisplaySizeIsUnknown() {
+        var settings = AppSettings.default
+        settings.launchDisplayMode = .fullscreen
+        settings.resolutionCustom = false
+
+        let arguments = settings.launchArguments(for: makeGame(requirements: [.wine, .d3dMetal]), displaySize: nil)
 
         XCTAssertEqual(arguments, ["-screen-fullscreen", "1"])
     }
@@ -258,8 +243,85 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         settings.resolutionWidth = 3440
         settings.resolutionHeight = 1440
 
-        let arguments = settings.launchArguments(for: makeGame(requirements: [.wine, .d3dMetal]))
+        let arguments = settings.launchArguments(for: makeGame(requirements: [.wine, .d3dMetal]), displaySize: display)
 
         XCTAssertEqual(arguments, ["-screen-fullscreen", "1", "-screen-width", "3440", "-screen-height", "1440"])
+    }
+
+    /// The registry values written before launch have to be the same numbers the command line
+    /// carries; the profile is where both come from.
+    func testProfileCarriesTheSameRenderSizeItPutsOnTheCommandLine() {
+        var settings = AppSettings.default
+        settings.launchDisplayMode = .fullscreen
+        settings.resolutionCustom = false
+
+        let profile = LaunchRuntimeProfile.build(
+            game: makeGame(requirements: [.wine, .d3dMetal]),
+            settings: settings,
+            displaySize: display
+        )
+
+        XCTAssertEqual(profile.renderSize, display)
+        XCTAssertTrue(profile.fullscreen)
+        XCTAssertTrue(profile.arguments.contains("1512"))
+    }
+
+    /// Guards the tolerance: real display modes are not exact ratios (1512x982 is not exactly
+    /// 16:10), but a 16:9 size on that panel has to count as stretched.
+    func testStretchDetectionAcceptsModeRoundingAndRejectsADifferentShape() {
+        XCTAssertFalse(RenderSize(width: 1512, height: 982).isStretched(onto: display))
+        XCTAssertFalse(RenderSize(width: 756, height: 491).isStretched(onto: display))
+        XCTAssertTrue(RenderSize(width: 1920, height: 1080).isStretched(onto: display))
+    }
+
+    /// The shader-compatibility switches are diagnostic: off unless asked for, because each one
+    /// changes numeric behaviour for every shader in the game, and each isolatable on its own so a
+    /// wrongly shaded model can be attributed to exactly one of them.
+    func testD3DMetalShaderCompatibilityFlagsAreOffByDefaultAndSetIndependently() {
+        let game = makeGame(requirements: [.wine, .d3dMetal])
+        let names = [
+            "D3DM_SAMPLE_NAN_TO_ZERO",
+            "D3DM_FLUSH_POS_INF_TO_NAN",
+            "D3DM_FORCE_RTZ_TEXWRITE",
+            "D3DM_POSITION_INVARIANCE"
+        ]
+
+        let defaults = LaunchRuntimeProfile.build(game: game, settings: makeSettings(), displaySize: display)
+        for name in names {
+            XCTAssertNil(defaults.environment[name], "\(name) must stay off until it is asked for")
+        }
+
+        var settings = makeSettings()
+        settings.d3dMetalSampleNaNToZero = true
+        let nanToZero = LaunchRuntimeProfile.build(game: game, settings: settings, displaySize: display)
+        XCTAssertEqual(nanToZero.environment["D3DM_SAMPLE_NAN_TO_ZERO"], "1")
+        for name in names.dropFirst() {
+            XCTAssertNil(nanToZero.environment[name])
+        }
+
+        var all = makeSettings()
+        all.d3dMetalSampleNaNToZero = true
+        all.d3dMetalFlushPositiveInfinityToNaN = true
+        all.d3dMetalForceRTZTextureWrite = true
+        all.d3dMetalPositionInvariance = true
+        let everything = LaunchRuntimeProfile.build(game: game, settings: all, displaySize: display)
+        for name in names {
+            XCTAssertEqual(everything.environment[name], "1")
+        }
+    }
+
+    /// A backend that is not D3DMetal must not inherit its private variables.
+    func testShaderCompatibilityFlagsAreNotSetOnOtherBackends() {
+        var settings = makeSettings(metalRenderBackend: .dxmt)
+        settings.d3dMetalSampleNaNToZero = true
+
+        let profile = LaunchRuntimeProfile.build(
+            game: makeGame(requirements: [.wine, .d3dMetal, .dxmt]),
+            settings: settings,
+            displaySize: display
+        )
+
+        XCTAssertEqual(profile.backend, .dxmt)
+        XCTAssertNil(profile.environment["D3DM_SAMPLE_NAN_TO_ZERO"])
     }
 }

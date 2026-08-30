@@ -78,8 +78,8 @@ struct AppText {
     var fullscreenMode: String { localized(en: "Fullscreen", vi: "Toàn màn hình") }
     var fullscreenHint: String {
         localized(
-            en: "Fullscreen enters native macOS fullscreen after the game window appears. macOS may ask for Automation and Accessibility permission on first launch.",
-            vi: "Toàn màn hình sẽ vào fullscreen thật của macOS sau khi cửa sổ game xuất hiện. macOS có thể hỏi quyền Automation và Accessibility ở lần chạy đầu."
+            en: "Fullscreen runs the game in exclusive fullscreen at your display's own resolution, so the picture is never stretched to fit the screen.",
+            vi: "Toàn màn hình chạy game ở chế độ fullscreen độc quyền theo đúng độ phân giải màn hình, nên hình không bị kéo dãn cho vừa màn hình."
         )
     }
     var cloudCompatibilityLabel: String { localized(en: "Cloud compatibility mode", vi: "Chế độ tương thích cloud") }
@@ -134,11 +134,10 @@ struct AppText {
     var renderBackendLabel: String { localized(en: "Render backend", vi: "Backend render") }
     var renderBackendD3DMetal: String { localized(en: "D3DMetal", vi: "D3DMetal") }
     var renderBackendDXMT: String { localized(en: "DXMT (experimental)", vi: "DXMT (thử nghiệm)") }
-    var renderBackendDXVK: String { localized(en: "DXVK (experimental)", vi: "DXVK (thử nghiệm)") }
     var renderBackendDescription: String {
         localized(
-            en: "D3DMetal is the recommended default. DXMT is a different Metal translator worth trying when a specific effect renders wrong. DXVK translates through Vulkan and MoltenVK, so it may be slower, and its shader translation is the least reliable of the three on Apple GPUs.",
-            vi: "D3DMetal là lựa chọn mặc định khuyến nghị. DXMT là một translator Metal khác, đáng thử khi một hiệu ứng cụ thể render sai. DXVK dịch qua Vulkan và MoltenVK nên có thể chậm hơn, và phần dịch shader của nó là kém tin cậy nhất trong ba lựa chọn trên GPU Apple."
+            en: "D3DMetal is the recommended default. DXMT is a different Metal translator worth trying when a specific effect renders wrong.",
+            vi: "D3DMetal là lựa chọn mặc định khuyến nghị. DXMT là một translator Metal khác, đáng thử khi một hiệu ứng cụ thể render sai."
         )
     }
     var metalHUDLabel: String { localized(en: "Metal HUD overlay", vi: "Hiển thị Metal HUD") }
@@ -151,8 +150,14 @@ struct AppText {
     var resolutionCustomLabel: String { localized(en: "Custom resolution", vi: "Độ phân giải tùy chỉnh") }
     var resolutionCustomDescription: String {
         localized(
-            en: "Write a starting resolution into the game's registry before launch. With Fullscreen display mode the game always relaunches fullscreen, even after changing resolution in-game.",
-            vi: "Ghi độ phân giải khởi đầu vào registry của game trước khi chạy. Ở chế độ Fullscreen, game luôn được chạy lại ở toàn màn hình kể cả sau khi đổi độ phân giải trong game."
+            en: "Render at a resolution you choose instead of the one the launcher picks. Left off, Fullscreen runs at your display's own resolution and Windowed at 1280x720; either way the size is rewritten before every launch, so a resolution changed in-game cannot carry over.",
+            vi: "Render ở độ phân giải bạn chọn thay vì độ phân giải launcher tự chọn. Nếu tắt, chế độ Fullscreen chạy đúng độ phân giải màn hình còn Windowed chạy 1280x720; dù chọn cách nào thì kích thước cũng được ghi lại trước mỗi lần chạy, nên độ phân giải đổi trong game không còn dính sang lần sau."
+        )
+    }
+    func resolutionAspectMismatchWarning(displayWidth: Int, displayHeight: Int) -> String {
+        localized(
+            en: "This is a different shape from your display (\(displayWidth)×\(displayHeight)). In Fullscreen the screen is filled by stretching it, which distorts models. Match your display's aspect ratio, or turn this off to render at the display's own resolution.",
+            vi: "Tỉ lệ này khác với màn hình của bạn (\(displayWidth)×\(displayHeight)). Ở chế độ Fullscreen, hình sẽ bị kéo dãn cho đầy màn hình nên model bị méo. Hãy chọn đúng tỉ lệ màn hình, hoặc tắt mục này để game render đúng độ phân giải của màn hình."
         )
     }
     var resolutionWidthLabel: String { localized(en: "Width", vi: "Chiều rộng") }
@@ -160,8 +165,8 @@ struct AppText {
     var hdrLabel: String { localized(en: "Enable HDR", vi: "Bật HDR") }
     var hdrDescription: String {
         localized(
-            en: "Set the game's HDR registry flag before launch.",
-            vi: "Bật cờ HDR trong registry của game trước khi chạy."
+            en: "Set the game's HDR registry flag before launch. Leave it off unless you want HDR: the flag is rewritten on every launch, so turning it off here also clears an HDR mode enabled inside the game — which on Wine renders with washed-out, wrong-looking colour.",
+            vi: "Bật cờ HDR trong registry của game trước khi chạy. Nên để tắt nếu bạn không cần HDR: cờ này được ghi lại mỗi lần chạy, nên tắt ở đây cũng tắt luôn chế độ HDR đã bật trong game — trên Wine chế độ đó làm màu bị bợt và sai."
         )
     }
     var proxyEnabledLabel: String { localized(en: "Proxy", vi: "Proxy") }
@@ -204,6 +209,43 @@ struct AppText {
         localized(
             en: "D3DM_MULTITHREADED_INTERFACE_ENABLE: stops D3DMetal serializing D3D11 context access more conservatively than the game's own threading needs. On by default; turn off if you suspect it is causing stutter or instability.",
             vi: "D3DM_MULTITHREADED_INTERFACE_ENABLE: ngăn D3DMetal khoá truy cập D3D11 context chặt hơn mức game thực sự cần khi đa luồng. Mặc định bật; tắt đi nếu nghi ngờ nó gây giật hoặc mất ổn định."
+        )
+    }
+    var d3dMetalShaderCompatibilityTitle: String {
+        localized(en: "Shader compatibility (experimental)", vi: "Tương thích shader (thử nghiệm)")
+    }
+    var d3dMetalShaderCompatibilityDescription: String {
+        localized(
+            en: "For shading that comes out wrong on some models while the rest of the frame looks right. These change how D3DMetal handles NaN, infinity, rounding and cross-pass vertex positions — the cases where a shader written for Direct3D hardware behaves differently on Metal. Apple documents none of them, so turn on one at a time and look at the affected model; leave them off if none makes a difference.",
+            vi: "Dành cho trường hợp một số model bị sai màu/sai shader trong khi phần còn lại vẫn đúng. Các tuỳ chọn này đổi cách D3DMetal xử lý NaN, vô cực, làm tròn và vị trí đỉnh giữa các pass — đúng những chỗ shader viết cho phần cứng Direct3D chạy khác đi trên Metal. Apple không có tài liệu cho chúng, nên hãy bật từng cái một rồi nhìn lại model bị lỗi; nếu không cái nào thay đổi thì để tắt hết."
+        )
+    }
+    var d3dMetalSampleNaNToZeroLabel: String { localized(en: "Sampled NaN reads as zero", vi: "NaN khi sample đọc thành 0") }
+    var d3dMetalSampleNaNToZeroDescription: String {
+        localized(
+            en: "D3DM_SAMPLE_NAN_TO_ZERO: a NaN coming out of a texture sample becomes zero instead of propagating through the rest of the shader. Try this first when a material is the wrong colour rather than the wrong shape.",
+            vi: "D3DM_SAMPLE_NAN_TO_ZERO: giá trị NaN đọc ra từ texture sẽ thành 0 thay vì lan tiếp trong shader. Thử cái này trước khi một material bị sai màu (không phải sai hình)."
+        )
+    }
+    var d3dMetalFlushPositiveInfinityToNaNLabel: String { localized(en: "Flush positive infinity to NaN", vi: "Chuyển vô cực dương thành NaN") }
+    var d3dMetalFlushPositiveInfinityToNaNDescription: String {
+        localized(
+            en: "D3DM_FLUSH_POS_INF_TO_NAN: changes what an overflow to positive infinity turns into, which decides whether it is clamped later or poisons the value. Pairs with the option above for blown-out or black materials.",
+            vi: "D3DM_FLUSH_POS_INF_TO_NAN: đổi kết quả khi giá trị tràn thành vô cực dương, quyết định nó bị kẹp lại sau đó hay làm hỏng luôn giá trị. Đi kèm với tuỳ chọn trên cho material bị cháy sáng hoặc đen thui."
+        )
+    }
+    var d3dMetalForceRTZTextureWriteLabel: String { localized(en: "Round texture writes toward zero", vi: "Làm tròn về 0 khi ghi texture") }
+    var d3dMetalForceRTZTextureWriteDescription: String {
+        localized(
+            en: "D3DM_FORCE_RTZ_TEXWRITE: writes to a texture round toward zero instead of to nearest, matching how some Direct3D hardware stored intermediate render targets. Worth trying for banding or a slight colour shift that builds up across effect passes.",
+            vi: "D3DM_FORCE_RTZ_TEXWRITE: khi ghi vào texture sẽ làm tròn về 0 thay vì làm tròn gần nhất, giống cách một số phần cứng Direct3D lưu render target trung gian. Đáng thử khi bị banding hoặc màu lệch nhẹ tích luỹ qua nhiều pass hiệu ứng."
+        )
+    }
+    var d3dMetalPositionInvarianceLabel: String { localized(en: "Invariant vertex position", vi: "Cố định vị trí đỉnh giữa các pass") }
+    var d3dMetalPositionInvarianceDescription: String {
+        localized(
+            en: "D3DM_POSITION_INVARIANCE: forces a vertex to land on exactly the same position in every pass that draws it. Try this when a model is patchy, flickering or shaded in stripes rather than uniformly wrong — that pattern comes from a depth pre-pass disagreeing with the pass being shaded.",
+            vi: "D3DM_POSITION_INVARIANCE: buộc một đỉnh phải ra đúng cùng một vị trí ở mọi pass vẽ nó. Thử khi model bị loang lổ, nhấp nháy hoặc sọc chứ không phải sai màu đều — kiểu đó đến từ depth pre-pass lệch với pass đang tô."
         )
     }
     var name: String { localized(en: "Name", vi: "Tên") }
@@ -460,14 +502,6 @@ struct AppText {
         )
     }
 
-    /// Error text for automatic DXVK setup failures.
-    func dxvkBootstrapFailed(_ details: String) -> String {
-        localized(
-            en: "DXVK setup failed before launching Wine: \(details)",
-            vi: "Thiết lập DXVK trước khi chạy Wine thất bại: \(details)"
-        )
-    }
-
     /// Error text when no installed Wine build carries Apple D3DMetal.
     ///
     /// Only CrossOver is named as a remedy: the popular `game-porting-toolkit` Homebrew cask
@@ -512,8 +546,6 @@ struct AppText {
             switch wineError {
             case let .binaryQuarantined(path):
                 return wineBinaryQuarantined(path)
-            case let .dxvkBootstrapFailed(details):
-                return dxvkBootstrapFailed(details)
             case let .d3dMetalUnavailable(path):
                 return d3dMetalUnavailable(path)
             case let .dxmtUnavailable(path):
