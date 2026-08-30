@@ -306,4 +306,55 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         XCTAssertFalse(RenderSize(width: 756, height: 491).isStretched(onto: display))
         XCTAssertTrue(RenderSize(width: 1920, height: 1080).isStretched(onto: display))
     }
+
+    /// The shader-compatibility switches are diagnostic: off unless asked for, because each one
+    /// changes numeric behaviour for every shader in the game, and each isolatable on its own so a
+    /// wrongly shaded model can be attributed to exactly one of them.
+    func testD3DMetalShaderCompatibilityFlagsAreOffByDefaultAndSetIndependently() {
+        let game = makeGame(requirements: [.wine, .d3dMetal])
+        let names = [
+            "D3DM_SAMPLE_NAN_TO_ZERO",
+            "D3DM_FLUSH_POS_INF_TO_NAN",
+            "D3DM_FORCE_RTZ_TEXWRITE",
+            "D3DM_POSITION_INVARIANCE"
+        ]
+
+        let defaults = LaunchRuntimeProfile.build(game: game, settings: makeSettings(), displaySize: display)
+        for name in names {
+            XCTAssertNil(defaults.environment[name], "\(name) must stay off until it is asked for")
+        }
+
+        var settings = makeSettings()
+        settings.d3dMetalSampleNaNToZero = true
+        let nanToZero = LaunchRuntimeProfile.build(game: game, settings: settings, displaySize: display)
+        XCTAssertEqual(nanToZero.environment["D3DM_SAMPLE_NAN_TO_ZERO"], "1")
+        for name in names.dropFirst() {
+            XCTAssertNil(nanToZero.environment[name])
+        }
+
+        var all = makeSettings()
+        all.d3dMetalSampleNaNToZero = true
+        all.d3dMetalFlushPositiveInfinityToNaN = true
+        all.d3dMetalForceRTZTextureWrite = true
+        all.d3dMetalPositionInvariance = true
+        let everything = LaunchRuntimeProfile.build(game: game, settings: all, displaySize: display)
+        for name in names {
+            XCTAssertEqual(everything.environment[name], "1")
+        }
+    }
+
+    /// A backend that is not D3DMetal must not inherit its private variables.
+    func testShaderCompatibilityFlagsAreNotSetOnOtherBackends() {
+        var settings = makeSettings(metalRenderBackend: .dxmt)
+        settings.d3dMetalSampleNaNToZero = true
+
+        let profile = LaunchRuntimeProfile.build(
+            game: makeGame(requirements: [.wine, .d3dMetal, .dxmt]),
+            settings: settings,
+            displaySize: display
+        )
+
+        XCTAssertEqual(profile.backend, .dxmt)
+        XCTAssertNil(profile.environment["D3DM_SAMPLE_NAN_TO_ZERO"])
+    }
 }

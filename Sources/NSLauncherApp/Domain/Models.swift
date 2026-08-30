@@ -487,6 +487,21 @@ struct AppSettings: Codable, Equatable {
     /// conservatively than the game's own threading needs. Same caveat and reason for being
     /// toggleable as `d3dMetalAsyncCommit` — see `D3DMetalBridge`.
     var d3dMetalMultithreadedInterface: Bool = true
+    /// Apple D3DMetal float-behaviour overrides, for shading that comes out wrong on some models
+    /// while the rest of the frame looks right.
+    ///
+    /// All four names are real `D3DM_*` strings in an installed D3DMetal.framework binary — the
+    /// same check that produced `d3dMetalAsyncCommit` — but Apple documents none of them, so what
+    /// each one does is read from its name and nothing more. That is exactly why they are settings:
+    /// a D3D11 shader whose result depends on how NaN, infinity, rounding or cross-pass position
+    /// invariance are handled renders differently on Metal than it did on the hardware it was
+    /// written for, and only trying them one at a time on the affected model says which (if any) is
+    /// the one in play. Default off: each changes the numeric behaviour of every shader in the
+    /// game, so none of them should be on without a fault it visibly fixes.
+    var d3dMetalSampleNaNToZero: Bool = false
+    var d3dMetalFlushPositiveInfinityToNaN: Bool = false
+    var d3dMetalForceRTZTextureWrite: Bool = false
+    var d3dMetalPositionInvariance: Bool = false
     /// Which D3D translation backend to prefer when a game declares more than one supported
     /// option. D3DMetal remains the default; DXMT and DXVK are compatibility fallbacks for
     /// backend-specific rendering bugs.

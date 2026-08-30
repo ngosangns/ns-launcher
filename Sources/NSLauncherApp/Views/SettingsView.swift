@@ -260,6 +260,59 @@ struct SettingsView: View {
                     set: { viewModel.update(\.d3dMetalMultithreadedInterface, to: $0) }
                 )
             )
+            d3dMetalShaderCompatibilityOptions
+        }
+    }
+
+    /// D3DMetal's float-behaviour overrides, grouped under one heading because they are diagnostic
+    /// switches rather than preferences: they exist to be tried one at a time against a model that
+    /// renders wrong, and mean nothing on any other backend.
+    @ViewBuilder
+    private var d3dMetalShaderCompatibilityOptions: some View {
+        if selectedRenderBackend == .d3dMetal {
+            VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(text.d3dMetalShaderCompatibilityTitle)
+                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .foregroundStyle(LauncherPalette.gold.opacity(0.88))
+                    Text(text.d3dMetalShaderCompatibilityDescription)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                SettingToggle(
+                    title: text.d3dMetalSampleNaNToZeroLabel,
+                    detail: text.d3dMetalSampleNaNToZeroDescription,
+                    isOn: Binding(
+                        get: { viewModel.settings.d3dMetalSampleNaNToZero },
+                        set: { viewModel.update(\.d3dMetalSampleNaNToZero, to: $0) }
+                    )
+                )
+                SettingToggle(
+                    title: text.d3dMetalFlushPositiveInfinityToNaNLabel,
+                    detail: text.d3dMetalFlushPositiveInfinityToNaNDescription,
+                    isOn: Binding(
+                        get: { viewModel.settings.d3dMetalFlushPositiveInfinityToNaN },
+                        set: { viewModel.update(\.d3dMetalFlushPositiveInfinityToNaN, to: $0) }
+                    )
+                )
+                SettingToggle(
+                    title: text.d3dMetalForceRTZTextureWriteLabel,
+                    detail: text.d3dMetalForceRTZTextureWriteDescription,
+                    isOn: Binding(
+                        get: { viewModel.settings.d3dMetalForceRTZTextureWrite },
+                        set: { viewModel.update(\.d3dMetalForceRTZTextureWrite, to: $0) }
+                    )
+                )
+                SettingToggle(
+                    title: text.d3dMetalPositionInvarianceLabel,
+                    detail: text.d3dMetalPositionInvarianceDescription,
+                    isOn: Binding(
+                        get: { viewModel.settings.d3dMetalPositionInvariance },
+                        set: { viewModel.update(\.d3dMetalPositionInvariance, to: $0) }
+                    )
+                )
+            }
         }
     }
 

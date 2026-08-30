@@ -212,6 +212,43 @@ struct AppText {
             vi: "D3DM_MULTITHREADED_INTERFACE_ENABLE: ngăn D3DMetal khoá truy cập D3D11 context chặt hơn mức game thực sự cần khi đa luồng. Mặc định bật; tắt đi nếu nghi ngờ nó gây giật hoặc mất ổn định."
         )
     }
+    var d3dMetalShaderCompatibilityTitle: String {
+        localized(en: "Shader compatibility (experimental)", vi: "Tương thích shader (thử nghiệm)")
+    }
+    var d3dMetalShaderCompatibilityDescription: String {
+        localized(
+            en: "For shading that comes out wrong on some models while the rest of the frame looks right. These change how D3DMetal handles NaN, infinity, rounding and cross-pass vertex positions — the cases where a shader written for Direct3D hardware behaves differently on Metal. Apple documents none of them, so turn on one at a time and look at the affected model; leave them off if none makes a difference.",
+            vi: "Dành cho trường hợp một số model bị sai màu/sai shader trong khi phần còn lại vẫn đúng. Các tuỳ chọn này đổi cách D3DMetal xử lý NaN, vô cực, làm tròn và vị trí đỉnh giữa các pass — đúng những chỗ shader viết cho phần cứng Direct3D chạy khác đi trên Metal. Apple không có tài liệu cho chúng, nên hãy bật từng cái một rồi nhìn lại model bị lỗi; nếu không cái nào thay đổi thì để tắt hết."
+        )
+    }
+    var d3dMetalSampleNaNToZeroLabel: String { localized(en: "Sampled NaN reads as zero", vi: "NaN khi sample đọc thành 0") }
+    var d3dMetalSampleNaNToZeroDescription: String {
+        localized(
+            en: "D3DM_SAMPLE_NAN_TO_ZERO: a NaN coming out of a texture sample becomes zero instead of propagating through the rest of the shader. Try this first when a material is the wrong colour rather than the wrong shape.",
+            vi: "D3DM_SAMPLE_NAN_TO_ZERO: giá trị NaN đọc ra từ texture sẽ thành 0 thay vì lan tiếp trong shader. Thử cái này trước khi một material bị sai màu (không phải sai hình)."
+        )
+    }
+    var d3dMetalFlushPositiveInfinityToNaNLabel: String { localized(en: "Flush positive infinity to NaN", vi: "Chuyển vô cực dương thành NaN") }
+    var d3dMetalFlushPositiveInfinityToNaNDescription: String {
+        localized(
+            en: "D3DM_FLUSH_POS_INF_TO_NAN: changes what an overflow to positive infinity turns into, which decides whether it is clamped later or poisons the value. Pairs with the option above for blown-out or black materials.",
+            vi: "D3DM_FLUSH_POS_INF_TO_NAN: đổi kết quả khi giá trị tràn thành vô cực dương, quyết định nó bị kẹp lại sau đó hay làm hỏng luôn giá trị. Đi kèm với tuỳ chọn trên cho material bị cháy sáng hoặc đen thui."
+        )
+    }
+    var d3dMetalForceRTZTextureWriteLabel: String { localized(en: "Round texture writes toward zero", vi: "Làm tròn về 0 khi ghi texture") }
+    var d3dMetalForceRTZTextureWriteDescription: String {
+        localized(
+            en: "D3DM_FORCE_RTZ_TEXWRITE: writes to a texture round toward zero instead of to nearest, matching how some Direct3D hardware stored intermediate render targets. Worth trying for banding or a slight colour shift that builds up across effect passes.",
+            vi: "D3DM_FORCE_RTZ_TEXWRITE: khi ghi vào texture sẽ làm tròn về 0 thay vì làm tròn gần nhất, giống cách một số phần cứng Direct3D lưu render target trung gian. Đáng thử khi bị banding hoặc màu lệch nhẹ tích luỹ qua nhiều pass hiệu ứng."
+        )
+    }
+    var d3dMetalPositionInvarianceLabel: String { localized(en: "Invariant vertex position", vi: "Cố định vị trí đỉnh giữa các pass") }
+    var d3dMetalPositionInvarianceDescription: String {
+        localized(
+            en: "D3DM_POSITION_INVARIANCE: forces a vertex to land on exactly the same position in every pass that draws it. Try this when a model is patchy, flickering or shaded in stripes rather than uniformly wrong — that pattern comes from a depth pre-pass disagreeing with the pass being shaded.",
+            vi: "D3DM_POSITION_INVARIANCE: buộc một đỉnh phải ra đúng cùng một vị trí ở mọi pass vẽ nó. Thử khi model bị loang lổ, nhấp nháy hoặc sọc chứ không phải sai màu đều — kiểu đó đến từ depth pre-pass lệch với pass đang tô."
+        )
+    }
     var name: String { localized(en: "Name", vi: "Tên") }
     var installRoot: String { localized(en: "Install root", vi: "Thư mục cài đặt") }
     var executablePath: String { localized(en: "Executable path", vi: "Đường dẫn file chạy") }

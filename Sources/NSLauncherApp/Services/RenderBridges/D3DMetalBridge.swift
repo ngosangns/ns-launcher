@@ -44,6 +44,23 @@ struct D3DMetalBridge: RenderBridge {
             env["D3DM_MULTITHREADED_INTERFACE_ENABLE"] = "1"
         }
 
+        // Float-behaviour overrides for shading faults that hit some models and not others. Set
+        // only when asked for: each one changes numeric behaviour for every shader in the game, so
+        // the default has to be D3DMetal's own. See `AppSettings.d3dMetalSampleNaNToZero` for why
+        // these are exposed at all rather than picked here.
+        if settings.d3dMetalSampleNaNToZero {
+            env["D3DM_SAMPLE_NAN_TO_ZERO"] = "1"
+        }
+        if settings.d3dMetalFlushPositiveInfinityToNaN {
+            env["D3DM_FLUSH_POS_INF_TO_NAN"] = "1"
+        }
+        if settings.d3dMetalForceRTZTextureWrite {
+            env["D3DM_FORCE_RTZ_TEXWRITE"] = "1"
+        }
+        if settings.d3dMetalPositionInvariance {
+            env["D3DM_POSITION_INVARIANCE"] = "1"
+        }
+
         // D3DMetal maintains its own on-disk pipeline cache with no *environment* configuration at
         // all — verified by running `strings` on a real D3DMetal.framework binary installed via
         // CrossOver: every `D3DM_*` string it contains (device identity spoofing, NaN/RTZ float
