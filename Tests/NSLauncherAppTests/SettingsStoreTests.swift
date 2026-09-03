@@ -18,8 +18,8 @@ final class SettingsStoreTests: XCTestCase {
 
     func testRoundTripsEverySetting() throws {
         var settings = AppSettings.default
-        settings.metalFXUpscaling = true
-        settings.showMetalHUD = true
+        settings.enableHDR = true
+        settings.macDriverRetina = true
         settings.proxyHost = "http://127.0.0.1:8080"
         settings.metalRenderBackend = .dxmt
 
@@ -32,11 +32,11 @@ final class SettingsStoreTests: XCTestCase {
     /// its default rather than failing the whole decode.
     func testKeysMissingFromAnOlderFileFallBackToDefaults() throws {
         try store.save(AppSettings.default)
-        try stripKeys(["metalFXUpscaling", "resolutionWidth", "metalRenderBackend"])
+        try stripKeys(["enableHDR", "resolutionWidth", "metalRenderBackend"])
 
         let loaded = try store.load()
 
-        XCTAssertEqual(loaded.metalFXUpscaling, false)
+        XCTAssertEqual(loaded.enableHDR, false)
         XCTAssertEqual(loaded.resolutionWidth, 1920)
         XCTAssertEqual(loaded.metalRenderBackend, .d3dMetal)
     }
@@ -44,20 +44,25 @@ final class SettingsStoreTests: XCTestCase {
     /// Values the file does carry must survive the defaults merge untouched.
     func testStoredValuesWinOverDefaults() throws {
         var settings = AppSettings.default
-        settings.metalFXUpscaling = true
+        settings.enableHDR = true
         settings.resolutionWidth = 2560
         try store.save(settings)
 
         let loaded = try store.load()
 
-        XCTAssertEqual(loaded.metalFXUpscaling, true)
+        XCTAssertEqual(loaded.enableHDR, true)
         XCTAssertEqual(loaded.resolutionWidth, 2560)
     }
 
-    /// Keys from removed settings must not break the decode.
+    /// Keys from removed settings must not break the decode — older settings.json files still
+    /// carry the removed Mac Driver / D3DMetal toggles, and a decode failure there would reset the
+    /// whole settings file to defaults.
     func testUnknownKeysFromRemovedSettingsAreIgnored() throws {
         try store.save(AppSettings.default)
-        try mutateJSON { $0["maxFrameRate"] = 72 }
+        try mutateJSON { json in
+            json["leftCommandIsCtrl"] = true
+            json["showMetalHUD"] = true
+        }
 
         XCTAssertNoThrow(try store.load())
     }
@@ -80,7 +85,7 @@ final class SettingsStoreTests: XCTestCase {
     }
 
     func testCreatesDefaultsWhenNoFileExists() throws {
-        XCTAssertEqual(try store.load().metalFXUpscaling, false)
+        XCTAssertEqual(try store.load().enableHDR, false)
         XCTAssertTrue(FileManager.default.fileExists(atPath: settingsURL.path))
     }
 

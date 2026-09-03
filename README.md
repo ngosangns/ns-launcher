@@ -56,8 +56,8 @@ removal, but voice packs are not downloaded by the launcher.
   HoYoPlay's Sophon CDN; you don't need the official launcher installed.
 - Settings covers the Wine runtime, render backend (D3DMetal, DXMT, or
   plain Wine), compatibility toggles (cloud compatibility, Steam-parent mode,
-  AC patching, network blocking, proxy, HDR, Retina, Metal HUD, resolution,
-  timeout fixes), install location, and cache management.
+  AC patching, network blocking, proxy, HDR, Retina, resolution, timeout
+  fixes), install location, and cache management.
 
 These Wine-based workarounds are not supported by HoYoverse and may carry
 account or stability risks. Runtime behavior depends on the installed Wine

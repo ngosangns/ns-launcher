@@ -29,21 +29,6 @@ struct D3DMetalBridge: RenderBridge {
         // RenderBridges.baseMetalNativeEnvironment.
         var env = RenderBridges.baseMetalNativeEnvironment()
 
-        // Both confirmed by reading the strings in a real D3DMetal.framework binary — CrossOver's
-        // own D3DM_* variables have no public documentation, so their exact effect is inferred from
-        // the name alone. Async commit is expected to overlap encoding the next Metal command
-        // buffer with submitting the previous one instead of stalling the CPU thread on each
-        // submit; the multithreaded interface flag is expected to stop D3DMetal serializing D3D11
-        // context access more conservatively than the game's own threading needs. Default on, but
-        // gated on settings (rather than unconditional) so a stutter/instability report can be
-        // isolated to one of these flags without a rebuild — see AppSettings.d3dMetalAsyncCommit.
-        if settings.d3dMetalAsyncCommit {
-            env["D3DM_ENABLE_ASYNC_COMMIT"] = "1"
-        }
-        if settings.d3dMetalMultithreadedInterface {
-            env["D3DM_MULTITHREADED_INTERFACE_ENABLE"] = "1"
-        }
-
         // Float-behaviour overrides for shading faults that hit some models and not others. Set
         // only when asked for: each one changes numeric behaviour for every shader in the game, so
         // the default has to be D3DMetal's own. See `AppSettings.d3dMetalSampleNaNToZero` for why
@@ -64,26 +49,16 @@ struct D3DMetalBridge: RenderBridge {
         // D3DMetal maintains its own on-disk pipeline cache with no *environment* configuration at
         // all — verified by running `strings` on a real D3DMetal.framework binary installed via
         // CrossOver: every `D3DM_*` string it contains (device identity spoofing, NaN/RTZ float
-        // handling, DXR support, the two flags above, etc.) was enumerated, and none of them is a
-        // cache path, pre-warm switch, or any other shader/pipeline-cache control. This is a closed
-        // line of investigation, not an oversight — don't re-derive it from the name of some other
+        // handling, DXR support, the float-behaviour flags above, etc.) was enumerated, and none
+        // of them is a cache path, pre-warm switch, or any other shader/pipeline-cache control.
+        // This is a closed line of investigation, not an oversight — don't re-derive it from the
+        // name of some other
         // D3DM_* string without re-running the same check against the actual binary.
         //
         // The cache still lives at a fixed, discoverable *location* though (same binary's strings:
         // `%s/d3dm/%s/shaders.cache/`, holding `pipeline_cache.bin`/`bytecode_cache.bin`/
         // `rootsignature_cache.bin`/`stage_cache.bin` per Metal GPU family) — see
         // `shaderCacheDirectory` below, which is what the launcher's cache-clearing feature uses.
-
-        // MetalFX spatial upscaling only does something when the game is told to render below the
-        // window size, which is what `resolutionCustom` sets up. Without it the game still renders
-        // at its own resolution and the MetalFX pass is pure GPU cost. D3DMetal exposes no upscale
-        // factor of its own — Metal picks it — unlike DXMT's `metalSpatialUpscaleFactor`.
-        if settings.metalFXUpscaling, settings.resolutionCustom {
-            env["D3DM_ENABLE_METALFX"] = "1"
-        }
-        if settings.showMetalHUD {
-            env["D3DM_SHOW_HUD_STATS"] = "1"
-        }
 
         // Rank GStreamer's H.264 decoders (Apple AudioToolbox + FFmpeg) so in-game/cutscene video
         // never selects a broken decoder. Mirrors YAAGL's always-on launch config.

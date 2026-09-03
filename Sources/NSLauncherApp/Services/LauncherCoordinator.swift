@@ -408,7 +408,6 @@ struct LauncherCoordinator: Sendable {
             renderBackend: profile.backend,
             useSteamLauncher: settings.steamPatch,
             macDriverRetina: settings.macDriverRetina,
-            leftCommandIsCtrl: settings.leftCommandIsCtrl,
             // Same size the launch arguments carry, so the registry cannot contradict them.
             renderSize: profile.renderSize,
             enableHDR: settings.enableHDR,

@@ -167,22 +167,6 @@ struct SettingsView: View {
                 )
             )
             SettingToggle(
-                title: text.leftCommandLabel,
-                detail: text.leftCommandDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.leftCommandIsCtrl },
-                    set: { viewModel.update(\.leftCommandIsCtrl, to: $0) }
-                )
-            )
-            SettingToggle(
-                title: text.metalHUDLabel,
-                detail: text.metalHUDDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.showMetalHUD },
-                    set: { viewModel.update(\.showMetalHUD, to: $0) }
-                )
-            )
-            SettingToggle(
                 title: text.hdrLabel,
                 detail: text.hdrDescription,
                 isOn: Binding(
@@ -221,42 +205,6 @@ struct SettingsView: View {
                 }
             }
 
-            SettingToggle(
-                title: text.metalFXUpscalingLabel,
-                detail: text.metalFXUpscalingDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.metalFXUpscaling },
-                    set: { viewModel.update(\.metalFXUpscaling, to: $0) }
-                )
-            )
-            if viewModel.settings.metalFXUpscaling, selectedRenderBackend != .d3dMetal {
-                Text(text.metalFXUnsupportedBackendWarning)
-                    .font(.caption)
-                    .foregroundStyle(LauncherPalette.gold.opacity(0.85))
-                    .fixedSize(horizontal: false, vertical: true)
-            } else if viewModel.settings.metalFXUpscaling, !viewModel.settings.resolutionCustom {
-                Text(text.metalFXNeedsCustomResolutionWarning)
-                    .font(.caption)
-                    .foregroundStyle(LauncherPalette.gold.opacity(0.85))
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-
-            SettingToggle(
-                title: text.d3dMetalAsyncCommitLabel,
-                detail: text.d3dMetalAsyncCommitDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.d3dMetalAsyncCommit },
-                    set: { viewModel.update(\.d3dMetalAsyncCommit, to: $0) }
-                )
-            )
-            SettingToggle(
-                title: text.d3dMetalMultithreadedInterfaceLabel,
-                detail: text.d3dMetalMultithreadedInterfaceDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.d3dMetalMultithreadedInterface },
-                    set: { viewModel.update(\.d3dMetalMultithreadedInterface, to: $0) }
-                )
-            )
             d3dMetalShaderCompatibilityOptions
         }
     }

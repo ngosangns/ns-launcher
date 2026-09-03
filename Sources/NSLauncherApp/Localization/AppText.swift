@@ -124,13 +124,6 @@ struct AppText {
             vi: "Bật render Retina độ phân giải cao qua registry Mac Driver của Wine."
         )
     }
-    var leftCommandLabel: String { localized(en: "Left Command as Ctrl", vi: "Command trái thành Ctrl") }
-    var leftCommandDescription: String {
-        localized(
-            en: "Treat the left Command key as Ctrl for games that assume Windows keyboard bindings.",
-            vi: "Dùng phím Command trái như phím Ctrl cho game dùng phím tắt kiểu Windows."
-        )
-    }
     var renderBackendLabel: String { localized(en: "Render backend", vi: "Backend render") }
     var renderBackendD3DMetal: String { localized(en: "D3DMetal", vi: "D3DMetal") }
     var renderBackendDXMT: String { localized(en: "DXMT (experimental)", vi: "DXMT (thử nghiệm)") }
@@ -138,13 +131,6 @@ struct AppText {
         localized(
             en: "D3DMetal is the recommended default. DXMT is a different Metal translator worth trying when a specific effect renders wrong.",
             vi: "D3DMetal là lựa chọn mặc định khuyến nghị. DXMT là một translator Metal khác, đáng thử khi một hiệu ứng cụ thể render sai."
-        )
-    }
-    var metalHUDLabel: String { localized(en: "Metal HUD overlay", vi: "Hiển thị Metal HUD") }
-    var metalHUDDescription: String {
-        localized(
-            en: "Show the Metal performance HUD during launch (MTL_HUD_ENABLED).",
-            vi: "Hiện bảng thông số hiệu năng Metal khi chạy game (MTL_HUD_ENABLED)."
         )
     }
     var resolutionCustomLabel: String { localized(en: "Custom resolution", vi: "Độ phân giải tùy chỉnh") }
@@ -178,39 +164,6 @@ struct AppText {
     }
     var proxyHostLabel: String { localized(en: "Proxy host", vi: "Địa chỉ proxy") }
     var displayOptionsLabel: String { localized(en: "Display & input", vi: "Hiển thị & nhập liệu") }
-    var metalFXUpscalingLabel: String { localized(en: "MetalFX upscaling (experimental)", vi: "MetalFX upscaling (thử nghiệm)") }
-    var metalFXUpscalingDescription: String {
-        localized(
-            en: "D3DMetal renders at the game's own resolution and lets Metal upscale to the window size. Only has an effect if you also lower the resolution below your display's native size (use Custom windowed resolution above). Lowering the render resolution this way also reduces stutter when the game has to compile new shaders — rotating the camera, loading a new scene, or switching characters — since there is less GPU work competing with that compile.",
-            vi: "D3DMetal sẽ render ở độ phân giải game đang đặt rồi để Metal upscale lên kích thước cửa sổ. Chỉ có tác dụng nếu bạn cũng hạ độ phân giải thấp hơn màn hình (dùng Custom windowed resolution ở trên). Hạ độ phân giải render theo cách này cũng giảm giật khi game phải biên dịch shader mới — lúc xoay camera, load cảnh mới, hoặc đổi nhân vật — vì GPU có ít việc hơn để tranh chấp với lúc biên dịch đó."
-        )
-    }
-    var metalFXNeedsCustomResolutionWarning: String {
-        localized(
-            en: "No effect yet: turn on Custom windowed resolution and set it below your display's native size, otherwise the game still renders at full resolution.",
-            vi: "Chưa có tác dụng: bật Custom windowed resolution và đặt thấp hơn độ phân giải gốc của màn hình, nếu không game vẫn render ở độ phân giải đầy đủ."
-        )
-    }
-    var metalFXUnsupportedBackendWarning: String {
-        localized(
-            en: "No effect: MetalFX upscaling is D3DMetal-only. Switch the render backend to D3DMetal above to use it, or turn this off with the current backend.",
-            vi: "Không có tác dụng: MetalFX upscaling chỉ dùng được với D3DMetal. Đổi backend render sang D3DMetal ở trên để dùng, hoặc tắt mục này với backend hiện tại."
-        )
-    }
-    var d3dMetalAsyncCommitLabel: String { localized(en: "Async command commit (experimental)", vi: "Async command commit (thử nghiệm)") }
-    var d3dMetalAsyncCommitDescription: String {
-        localized(
-            en: "D3DM_ENABLE_ASYNC_COMMIT: lets D3DMetal overlap encoding the next frame with submitting the previous one instead of stalling the CPU on each submit. On by default; turn off if you suspect it is causing stutter or instability.",
-            vi: "D3DM_ENABLE_ASYNC_COMMIT: cho phép D3DMetal chồng lấn việc encode frame kế tiếp với việc submit frame trước, thay vì để CPU chờ ở mỗi lần submit. Mặc định bật; tắt đi nếu nghi ngờ nó gây giật hoặc mất ổn định."
-        )
-    }
-    var d3dMetalMultithreadedInterfaceLabel: String { localized(en: "Multithreaded D3D11 interface (experimental)", vi: "Multithreaded D3D11 interface (thử nghiệm)") }
-    var d3dMetalMultithreadedInterfaceDescription: String {
-        localized(
-            en: "D3DM_MULTITHREADED_INTERFACE_ENABLE: stops D3DMetal serializing D3D11 context access more conservatively than the game's own threading needs. On by default; turn off if you suspect it is causing stutter or instability.",
-            vi: "D3DM_MULTITHREADED_INTERFACE_ENABLE: ngăn D3DMetal khoá truy cập D3D11 context chặt hơn mức game thực sự cần khi đa luồng. Mặc định bật; tắt đi nếu nghi ngờ nó gây giật hoặc mất ổn định."
-        )
-    }
     var d3dMetalShaderCompatibilityTitle: String {
         localized(en: "Shader compatibility (experimental)", vi: "Tương thích shader (thử nghiệm)")
     }

@@ -43,8 +43,6 @@ struct WineLaunchRequest {
     var useSteamLauncher: Bool = false
     /// Wine Mac Driver: enable Retina scaling for HiDPI displays.
     var macDriverRetina: Bool = true
-    /// Wine Mac Driver: treat the left Command key as Ctrl for games that assume Windows bindings.
-    var leftCommandIsCtrl: Bool = false
     /// Starting resolution written to the game's registry keys before launch — the same size the
     /// launch arguments ask for (see `LaunchRuntimeProfile.renderSize`).
     var renderSize: RenderSize? = nil
@@ -389,7 +387,6 @@ struct WineService: WineServicing {
 
         var entries: [RegistryEntry] = [
             RegistryEntry(key: macDriver, name: "RetinaMode", value: .string(request.macDriverRetina ? "y" : "n")),
-            RegistryEntry(key: macDriver, name: "LeftCommandIsCtrl", value: .string(request.leftCommandIsCtrl ? "y" : "n")),
             // `CaptureDisplaysForFullscreen` (undocumented outside Wine's own source, see
             // dlls/winemac.drv/macdrv_main.c) is off by default in macdrv. Without it, a window
             // whose frame covers the whole screen is still just an ordinary borderless window —

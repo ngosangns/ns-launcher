@@ -117,7 +117,7 @@ The launch path can configure Apple D3DMetal, DXMT, or plain Wine based on
 the selected render backend and the payloads available in the selected runtime.
 The launch profile also carries optional compatibility settings such as cloud
 compatibility, Steam-parent mode, AC patching, network blocking, proxy, HDR,
-Retina, Metal HUD, resolution, and timeout fixes.
+Retina, resolution, and timeout fixes.
 
 These workarounds are not supported by HoYoverse and may carry account or
 stability risks. Runtime behavior depends on the installed Wine build.

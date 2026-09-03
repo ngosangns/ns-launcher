@@ -440,10 +440,6 @@ struct AppSettings: Codable, Equatable {
     /// window fills the screen in `LaunchDisplayMode.fullscreen`. Users on capable hardware can
     /// turn it back on for sharper output.
     var macDriverRetina: Bool = false
-    /// Wine Mac Driver registry: treat the left Command key as Ctrl for games that assume Windows bindings.
-    var leftCommandIsCtrl: Bool = false
-    /// Debug overlay: set `MTL_HUD_ENABLED=1` at launch to show the Metal performance HUD.
-    var showMetalHUD: Bool = false
     /// Optional `cmd /c` batch wrapper that runs `cd /d <game_dir>` before launching the executable.
     var useBatchWrapper: Bool = false
     /// YAAGL-style cloud-gaming launch (enabled by default): adds `CLOUD_THIRD_PARTY_PC` flags and
@@ -475,27 +471,12 @@ struct AppSettings: Codable, Equatable {
     /// Route the game through an HTTP/HTTPS proxy.
     var proxyEnabled: Bool = false
     var proxyHost: String = ""
-    /// Apple D3DMetal's MetalFX spatial upscaling toggle (`D3DM_ENABLE_METALFX`): renders at the
-    /// game's own resolution and lets Metal upscale to the window size. Only has a visible effect
-    /// when the game itself renders below the window's native resolution (pair with
-    /// `resolutionCustom`). Unlike DXMT, D3DMetal exposes no upscale factor to tune — Metal picks it.
-    var metalFXUpscaling: Bool = false
-    /// Apple D3DMetal's async command-buffer commit (`D3DM_ENABLE_ASYNC_COMMIT`, experimental):
-    /// expected to overlap encoding the next Metal command buffer with submitting the previous
-    /// one instead of stalling the CPU thread on each submit. Confirmed to exist in a real
-    /// D3DMetal.framework binary; its exact effect is not — see `D3DMetalBridge`. Default on, but
-    /// toggleable so a stutter/instability report can be isolated to this flag without a rebuild.
-    var d3dMetalAsyncCommit: Bool = true
-    /// Apple D3DMetal's multithreaded D3D11 interface (`D3DM_MULTITHREADED_INTERFACE_ENABLE`,
-    /// experimental): expected to stop D3DMetal serializing D3D11 context access more
-    /// conservatively than the game's own threading needs. Same caveat and reason for being
-    /// toggleable as `d3dMetalAsyncCommit` — see `D3DMetalBridge`.
-    var d3dMetalMultithreadedInterface: Bool = true
     /// Apple D3DMetal float-behaviour overrides, for shading that comes out wrong on some models
     /// while the rest of the frame looks right.
     ///
-    /// All four names are real `D3DM_*` strings in an installed D3DMetal.framework binary — the
-    /// same check that produced `d3dMetalAsyncCommit` — but Apple documents none of them, so what
+    /// All four names are real `D3DM_*` strings in an installed D3DMetal.framework binary —
+    /// confirmed by the same string scan that produced the bridge's other variables — but Apple
+    /// documents none of them, so what
     /// each one does is read from its name and nothing more. That is exactly why they are settings:
     /// a D3D11 shader whose result depends on how NaN, infinity, rounding or cross-pass position
     /// invariance are handled renders differently on Metal than it did on the hardware it was
@@ -544,8 +525,6 @@ struct AppSettings: Codable, Equatable {
             language: .english,
             launchDisplayMode: .windowed,
             macDriverRetina: false,
-            leftCommandIsCtrl: false,
-            showMetalHUD: false,
             useBatchWrapper: false,
             cloudCompatibilityMode: true,
             acPatchMode: true,
@@ -558,9 +537,6 @@ struct AppSettings: Codable, Equatable {
             enableHDR: false,
             proxyEnabled: false,
             proxyHost: "",
-            metalFXUpscaling: false,
-            d3dMetalAsyncCommit: true,
-            d3dMetalMultithreadedInterface: true,
             metalRenderBackend: .d3dMetal,
             settingsVersion: 3
         )
@@ -781,13 +757,6 @@ struct LaunchRuntimeProfile {
         // (the managed wine does); a harmless no-op elsewhere. Keep it default-on for Genshin.
         if settings.timeoutFix {
             env["WINE_ENABLE_TIMEOUT_FIX"] = "1"
-        }
-
-        // Metal performance HUD (debug overlay). Off by default; enabling it floods the launch log
-        // with `[libMTLHud]`/`NSEventModifierFlagFunction` noise and adds Metal pipeline overhead,
-        // so it should stay off for normal play.
-        if settings.showMetalHUD {
-            env["MTL_HUD_ENABLED"] = "1"
         }
 
         // Optional HTTP/HTTPS proxy forwarded to the Windows client.

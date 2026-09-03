@@ -16,19 +16,11 @@ final class LaunchRuntimeProfileTests: XCTestCase {
     }
 
     private func makeSettings(
-        metalFXUpscaling: Bool = false,
         resolutionCustom: Bool = false,
-        showMetalHUD: Bool = false,
-        d3dMetalAsyncCommit: Bool = true,
-        d3dMetalMultithreadedInterface: Bool = true,
         metalRenderBackend: RuntimeBackend = .d3dMetal
     ) -> AppSettings {
         var settings = AppSettings.default
-        settings.metalFXUpscaling = metalFXUpscaling
         settings.resolutionCustom = resolutionCustom
-        settings.showMetalHUD = showMetalHUD
-        settings.d3dMetalAsyncCommit = d3dMetalAsyncCommit
-        settings.d3dMetalMultithreadedInterface = d3dMetalMultithreadedInterface
         settings.metalRenderBackend = metalRenderBackend
         return settings
     }
@@ -45,35 +37,6 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         // DXVK left in the prefix instead of D3DMetal, and the game rendered through MoltenVK — 16154
         // [mvk-error] lines in 120s of play, versus zero with the override.
         XCTAssertEqual(profile.environment["WINEDLLOVERRIDES"], "d3d10,d3d10_1,d3d10core,d3d11,dxgi=b")
-    }
-
-    /// Confirmed real `D3DM_*` variables (found in a real D3DMetal.framework binary's strings) that
-    /// reduce Metal command-submission stalls — see `D3DMetalBridge.launchEnvironment`. Default on.
-    func testD3DMetalEnablesAsyncCommitAndMultithreadingByDefault() {
-        let profile = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .d3dMetal]),
-            settings: makeSettings()
-        )
-        XCTAssertEqual(profile.environment["D3DM_ENABLE_ASYNC_COMMIT"], "1")
-        XCTAssertEqual(profile.environment["D3DM_MULTITHREADED_INTERFACE_ENABLE"], "1")
-    }
-
-    /// Both flags are unproven (inferred from their names, not documented), so each must be
-    /// independently switchable to isolate a stutter/instability report without a rebuild.
-    func testD3DMetalAsyncCommitAndMultithreadingCanBeDisabledIndependently() {
-        let asyncCommitOff = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .d3dMetal]),
-            settings: makeSettings(d3dMetalAsyncCommit: false, d3dMetalMultithreadedInterface: true)
-        )
-        XCTAssertNil(asyncCommitOff.environment["D3DM_ENABLE_ASYNC_COMMIT"])
-        XCTAssertEqual(asyncCommitOff.environment["D3DM_MULTITHREADED_INTERFACE_ENABLE"], "1")
-
-        let multithreadedOff = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .d3dMetal]),
-            settings: makeSettings(d3dMetalAsyncCommit: true, d3dMetalMultithreadedInterface: false)
-        )
-        XCTAssertEqual(multithreadedOff.environment["D3DM_ENABLE_ASYNC_COMMIT"], "1")
-        XCTAssertNil(multithreadedOff.environment["D3DM_MULTITHREADED_INTERFACE_ENABLE"])
     }
 
     /// The user's DXMT preference only wins when the game actually declares support for it.
@@ -126,32 +89,6 @@ final class LaunchRuntimeProfileTests: XCTestCase {
         XCTAssertEqual(decoded, [.d3dMetal])
     }
 
-    /// MetalFX only upscales something when the game is told to render below the window size,
-    /// which is what `resolutionCustom` sets up; otherwise the pass is pure GPU cost.
-    func testMetalFXIsWithheldWithoutACustomRenderResolution() {
-        let profile = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .d3dMetal]),
-            settings: makeSettings(metalFXUpscaling: true, resolutionCustom: false)
-        )
-        XCTAssertNil(profile.environment["D3DM_ENABLE_METALFX"])
-    }
-
-    func testMetalFXIsAppliedWithACustomRenderResolution() {
-        let profile = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .d3dMetal]),
-            settings: makeSettings(metalFXUpscaling: true, resolutionCustom: true)
-        )
-        XCTAssertEqual(profile.environment["D3DM_ENABLE_METALFX"], "1")
-    }
-
-    func testMetalHUDStatsFollowTheShowMetalHUDSetting() {
-        let profile = LaunchRuntimeProfile.build(
-            game: makeGame(requirements: [.wine, .d3dMetal]),
-            settings: makeSettings(showMetalHUD: true)
-        )
-        XCTAssertEqual(profile.environment["D3DM_SHOW_HUD_STATS"], "1")
-    }
-
     /// D3DMetal is not applied to a game that never asked for a translation layer; its environment
     /// would otherwise follow every plain-Wine launch around.
     func testAGameNeedingNoBridgeRunsOnPlainWine() {
@@ -160,7 +97,6 @@ final class LaunchRuntimeProfileTests: XCTestCase {
             settings: makeSettings()
         )
         XCTAssertEqual(profile.backend, .plainWine)
-        XCTAssertNil(profile.environment["D3DM_ENABLE_METALFX"])
         XCTAssertNil(profile.environment["WINEDLLOVERRIDES"])
     }
 
