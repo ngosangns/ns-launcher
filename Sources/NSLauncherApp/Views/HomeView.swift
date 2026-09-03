@@ -69,15 +69,20 @@ struct HomeView: View {
 
     private var actionRow: some View {
         HStack(alignment: .center, spacing: 24) {
+            let gameIsRunning = viewModel.isLaunchingWithWine || viewModel.isGameRunning
             let playDisabled = viewModel.isBusy && !viewModel.isLaunchingWithWine
             CircularActionButton(
-                systemImage: viewModel.isLaunchingWithWine ? "stop.fill" : "play.fill",
-                title: viewModel.isLaunchingWithWine ? text.stopTitle : text.playTitle,
+                systemImage: gameIsRunning ? "stop.fill" : "play.fill",
+                title: gameIsRunning ? text.stopTitle : text.playTitle,
                 progress: nil,
-                isActive: viewModel.isLaunchingWithWine
+                isActive: gameIsRunning
             ) {
-                if viewModel.isLaunchingWithWine {
-                    viewModel.stopCurrentOperation()
+                if gameIsRunning {
+                    if viewModel.isLaunchingWithWine {
+                        viewModel.stopCurrentOperation()
+                    } else {
+                        viewModel.stopRunningGame()
+                    }
                 } else {
                     viewModel.launchSelectedGame()
                 }

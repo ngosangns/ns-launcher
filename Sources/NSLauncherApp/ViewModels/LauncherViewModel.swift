@@ -55,6 +55,10 @@ final class LauncherViewModel: ObservableObject {
     @Published var isPaused = false
     /// True while the selected game is being launched through Wine.
     @Published var isLaunchingWithWine = false
+    /// True while the selected game's executable is running, whether this session launched it or
+    /// it was already running when the launcher started. Drives the Home button's Play/Stop state
+    /// so a leftover session reads *Stop* and is stoppable instead of re-launchable.
+    @Published private(set) var isGameRunning = false
     /// Streaming diagnostic log for the latest Wine launch.
     @Published var wineRunLog = ""
     /// Streaming diagnostic log for the latest game update.
@@ -91,6 +95,9 @@ final class LauncherViewModel: ObservableObject {
     private var wineLogBuffer = RunLogBuffer()
     private var updateLogBuffer = RunLogBuffer()
     private var runLogFlushTask: Task<Void, Never>?
+    /// Watches an instance found already running at startup until it exits; nil when none was
+    /// found or the instance has stopped.
+    private var gameRunningMonitorTask: Task<Void, Never>?
 
     /// How long buffered log text waits before it is published. Long enough to collapse a burst of
     /// process output, short enough that the panel still reads as live.
@@ -118,7 +125,9 @@ final class LauncherViewModel: ObservableObject {
         if settings != loadedSettings {
             try? coordinator.saveSettings(settings)
         }
-        return LauncherViewModel(settings: settings, coordinator: coordinator)
+        let viewModel = LauncherViewModel(settings: settings, coordinator: coordinator)
+        viewModel.checkForRunningGameAtStartup()
+        return viewModel
     }
 
     /// Games configured in settings.
@@ -508,6 +517,7 @@ final class LauncherViewModel: ObservableObject {
         isBusy = true
         isPaused = false
         isLaunchingWithWine = true
+        isGameRunning = true
         discardBufferedRunLogs()
         wineLogBuffer.reset()
         wineRunLog = ""
@@ -553,6 +563,7 @@ final class LauncherViewModel: ObservableObject {
                 self.isBusy = false
                 self.isPaused = false
                 self.isLaunchingWithWine = false
+                self.isGameRunning = false
                 self.currentTask = nil
                 self.operationController = nil
                 self.flushRunLogs()
@@ -641,6 +652,50 @@ final class LauncherViewModel: ObservableObject {
         statusText = text.operationStopped
         isPaused = false
         operationProgress = nil
+    }
+
+    /// Startup check for a game instance left running outside this session — a crashed or
+    /// force-quit launcher, or a game the user started another way. The Home button must read
+    /// *Stop*, not *Play*, so the leftover session can be terminated from here; the monitor keeps
+    /// watching it so the button flips back to *Play* the moment that instance exits (same signal
+    /// WineService uses during its own launches, so the two cannot disagree about the game).
+    func checkForRunningGameAtStartup() {
+        guard gameRunningMonitorTask == nil, let game = selectedGame else { return }
+        let executable = game.installDirectory.appendingPathComponent(game.executableRelativePath)
+        gameRunningMonitorTask = Task { [weak self] in
+            let monitor = GameProcessMonitor(isGameRunning: {
+                await GameProcessInspector.runningProcessIDs(forExecutable: executable).isEmpty == false
+            })
+            guard await monitor.isGameRunning() else {
+                self?.gameRunningMonitorTask = nil
+                return
+            }
+            self?.isGameRunning = true
+            do {
+                try await monitor.waitUntilStopped()
+            } catch {
+                // Cancelled by `stopRunningGame` or app teardown; nothing left to update.
+                return
+            }
+            guard !Task.isCancelled, let self else { return }
+            self.isGameRunning = false
+            self.gameRunningMonitorTask = nil
+        }
+    }
+
+    /// Stops a game instance that was already running when the launcher started — one this
+    /// session did not launch, so there is no operation to cancel, only the game to terminate.
+    /// The launch path's Stop goes through `stopCurrentOperation()` instead.
+    func stopRunningGame() {
+        guard isGameRunning, !isLaunchingWithWine, let game = selectedGame else { return }
+        gameRunningMonitorTask?.cancel()
+        gameRunningMonitorTask = nil
+        let coordinator = self.coordinator
+        Task {
+            await coordinator.terminateRunningGame(game)
+        }
+        isGameRunning = false
+        statusText = text.operationStopped
     }
 
     /// Appends one complete line to the Wine run log.
