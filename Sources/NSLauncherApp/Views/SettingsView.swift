@@ -80,7 +80,10 @@ struct SettingsView: View {
                 }
             case .display:
                 SettingsSection(title: SettingsTab.display.title(text)) {
-                    displayModeField
+                    VStack(alignment: .leading, spacing: 14) {
+                        displayModeField
+                        playtimeReminderField
+                    }
                 }
             case .cache:
                 cacheSection(for: game)
@@ -104,6 +107,26 @@ struct SettingsView: View {
                 .pickerStyle(.segmented)
                 .pointerOnHover()
                 Text(text.fullscreenHint)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private var playtimeReminderField: some View {
+        SettingField(label: text.playtimeReminderLabel) {
+            VStack(alignment: .leading, spacing: 6) {
+                Stepper(
+                    text.playtimeReminderHoursValue(viewModel.settings.playtimeReminderHours),
+                    value: Binding(
+                        get: { viewModel.settings.playtimeReminderHours },
+                        set: { viewModel.update(\.playtimeReminderHours, to: $0) }
+                    ),
+                    in: 0.5...12,
+                    step: 0.5
+                )
+                .pointerOnHover()
+                Text(text.playtimeReminderDescription)
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }

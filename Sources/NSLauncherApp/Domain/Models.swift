@@ -410,6 +410,9 @@ struct AppSettings: Codable, Equatable {
     var launchDisplayMode: LaunchDisplayMode = .windowed
     /// Optional `cmd /c` batch wrapper that runs `cd /d <game_dir>` before launching the executable.
     var useBatchWrapper: Bool = false
+    /// Hours after launch the Home screen's playtime countdown reaches zero. Advisory only — it
+    /// never stops the game, only flags the reminder as due (see `LauncherViewModel`).
+    var playtimeReminderHours: Double = 3
     /// Monotonic settings schema version used for one-time default migrations.
     var settingsVersion: Int = 0
 
@@ -441,6 +444,7 @@ struct AppSettings: Codable, Equatable {
             language: .english,
             launchDisplayMode: .windowed,
             useBatchWrapper: false,
+            playtimeReminderHours: 3,
             settingsVersion: 3
         )
     }

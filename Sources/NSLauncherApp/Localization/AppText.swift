@@ -85,6 +85,21 @@ struct AppText {
             vi: "Toàn màn hình chạy game ở chế độ fullscreen độc quyền theo đúng độ phân giải màn hình, nên hình không bị kéo dãn cho vừa màn hình."
         )
     }
+    var playtimeReminderLabel: String { localized(en: "Playtime reminder", vi: "Nhắc nhở giờ chơi") }
+    var playtimeReminderDescription: String {
+        localized(
+            en: "Shows a countdown on the Home screen after Play and flags it once it runs out. Advisory only — it never stops the game.",
+            vi: "Hiện đồng hồ đếm ngược ở Trang chủ sau khi bấm Chơi và báo khi hết giờ. Chỉ mang tính nhắc nhở — không tự tắt game."
+        )
+    }
+    /// Formats the Stepper's current value, e.g. "3h" / "3 giờ" or "2.5h" / "2.5 giờ".
+    func playtimeReminderHoursValue(_ hours: Double) -> String {
+        let formatted = hours.truncatingRemainder(dividingBy: 1) == 0
+            ? String(format: "%.0f", hours)
+            : String(format: "%.1f", hours)
+        return localized(en: "\(formatted)h", vi: "\(formatted) giờ")
+    }
+    var playtimeReminderDue: String { localized(en: "Reminder time's up", vi: "Đã hết giờ nhắc nhở") }
     var displayOptionsLabel: String { localized(en: "Display & input", vi: "Hiển thị & nhập liệu") }
     var name: String { localized(en: "Name", vi: "Tên") }
     var installRoot: String { localized(en: "Install root", vi: "Thư mục cài đặt") }

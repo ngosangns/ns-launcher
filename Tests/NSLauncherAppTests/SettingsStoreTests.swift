@@ -20,6 +20,7 @@ final class SettingsStoreTests: XCTestCase {
         var settings = AppSettings.default
         settings.language = .vietnamese
         settings.launchDisplayMode = .fullscreen
+        settings.playtimeReminderHours = 2.5
 
         try store.save(settings)
 

@@ -81,6 +81,12 @@ final class LauncherViewModel: ObservableObject {
     @Published var isManagingCache = false
     /// True while CrossOver is being installed through Homebrew.
     @Published var isInstallingCrossOver = false
+    /// Seconds left in the current playtime reminder countdown, started fresh on every launch; nil
+    /// when no countdown is running. Advisory only — reaching zero never stops the game.
+    @Published private(set) var playtimeRemainingSeconds: Int?
+    /// True once the countdown has reached zero, so the Home screen can flag it without the text
+    /// itself having to double as the signal.
+    @Published private(set) var isPlaytimeReminderDue = false
 
     private let coordinator: LauncherCoordinator
     private var currentTask: Task<Void, Never>?
@@ -98,6 +104,9 @@ final class LauncherViewModel: ObservableObject {
     /// Watches an instance found already running at startup until it exits; nil when none was
     /// found or the instance has stopped.
     private var gameRunningMonitorTask: Task<Void, Never>?
+    /// Ticks `playtimeRemainingSeconds` down once a second while a launch this session started is
+    /// running; nil when no countdown is active.
+    private var playtimeReminderTask: Task<Void, Never>?
 
     /// How long buffered log text waits before it is published. Long enough to collapse a burst of
     /// process output, short enough that the panel still reads as live.
@@ -508,6 +517,7 @@ final class LauncherViewModel: ObservableObject {
         isPaused = false
         isLaunchingWithWine = true
         isGameRunning = true
+        startPlaytimeReminder()
         discardBufferedRunLogs()
         wineLogBuffer.reset()
         wineRunLog = ""
@@ -556,6 +566,7 @@ final class LauncherViewModel: ObservableObject {
                 self.isGameRunning = false
                 self.currentTask = nil
                 self.operationController = nil
+                self.stopPlaytimeReminder()
                 self.flushRunLogs()
             }
             do {
@@ -686,6 +697,56 @@ final class LauncherViewModel: ObservableObject {
         }
         isGameRunning = false
         statusText = text.operationStopped
+    }
+
+    /// Formatted remaining time for the Home screen, or nil while no countdown is running.
+    var playtimeRemainingText: String? {
+        playtimeRemainingSeconds.map(Self.formattedCountdown)
+    }
+
+    /// Starts a fresh countdown from `settings.playtimeReminderHours` for this launch.
+    ///
+    /// Purely advisory: reaching zero only flips `isPlaytimeReminderDue` for the Home screen to
+    /// flag, it never stops the game. The duration is read once here, so changing the setting
+    /// mid-session does not retroactively change a countdown already running.
+    private func startPlaytimeReminder() {
+        playtimeReminderTask?.cancel()
+        isPlaytimeReminderDue = false
+        let totalSeconds = max(1, Int((settings.playtimeReminderHours * 3_600).rounded()))
+        playtimeRemainingSeconds = totalSeconds
+
+        playtimeReminderTask = Task { [weak self] in
+            while true {
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                guard let self, !Task.isCancelled else { return }
+                guard let remaining = self.playtimeRemainingSeconds, remaining > 0 else { return }
+                let next = remaining - 1
+                self.playtimeRemainingSeconds = next
+                if next == 0 {
+                    self.isPlaytimeReminderDue = true
+                }
+            }
+        }
+    }
+
+    /// Cancels the countdown and clears it from the Home screen. Called once the launch session
+    /// ends, however it ends (normal exit, failure, or Stop).
+    private func stopPlaytimeReminder() {
+        playtimeReminderTask?.cancel()
+        playtimeReminderTask = nil
+        playtimeRemainingSeconds = nil
+        isPlaytimeReminderDue = false
+    }
+
+    /// Formats a countdown as `H:MM:SS`, or `M:SS` under an hour. `nonisolated` and internal (not
+    /// private) so tests can verify it directly, synchronously, instead of through the timer.
+    nonisolated static func formattedCountdown(_ totalSeconds: Int) -> String {
+        let hours = totalSeconds / 3_600
+        let minutes = (totalSeconds % 3_600) / 60
+        let seconds = totalSeconds % 60
+        return hours > 0
+            ? String(format: "%d:%02d:%02d", hours, minutes, seconds)
+            : String(format: "%d:%02d", minutes, seconds)
     }
 
     /// Appends one complete line to the Wine run log.

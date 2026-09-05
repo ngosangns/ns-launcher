@@ -98,6 +98,17 @@ struct HomeView: View {
                 .font(.system(.subheadline, design: .rounded, weight: .semibold))
                 .foregroundStyle(LauncherPalette.mist.opacity(0.78))
                 .lineLimit(1)
+            playtimeReminderBadge
+        }
+    }
+
+    @ViewBuilder
+    private var playtimeReminderBadge: some View {
+        if let remaining = viewModel.playtimeRemainingText {
+            Text(viewModel.isPlaytimeReminderDue ? text.playtimeReminderDue : "· \(remaining)")
+                .font(.system(.caption, design: .monospaced, weight: .semibold))
+                .foregroundStyle(viewModel.isPlaytimeReminderDue ? LauncherPalette.warning : LauncherPalette.mist.opacity(0.55))
+                .lineLimit(1)
         }
     }
 
