@@ -20,8 +20,12 @@ struct ContentView: View {
 
             VStack(spacing: 0) {
                 topBar
-                    .padding(.horizontal, 24)
-                    .padding(.top, 16)
+                    // Horizontal and top padding must clear WindowFrameOrnament's corner brackets,
+                    // which occupy a 16-40pt band from each window edge — see HomeView's matching
+                    // comment. Bottom is untouched: the top bar never gets near the window's bottom
+                    // corners.
+                    .padding(.horizontal, 44)
+                    .padding(.top, 44)
                     .padding(.bottom, 12)
 
                 Group {

@@ -83,10 +83,19 @@ struct OrnamentalPanel<Content: View>: View {
     private let content: Content
     private let padding: CGFloat
     private let tone: Color
+    /// Panels whose top-right corner carries its own controls opt out of the mark so the two don't
+    /// overlap — and so only one mark shows per screen.
+    private let showsMark: Bool
 
-    init(padding: CGFloat = 22, tone: Color = LauncherPalette.night.opacity(0.54), @ViewBuilder content: () -> Content) {
+    init(
+        padding: CGFloat = 22,
+        tone: Color = LauncherPalette.night.opacity(0.54),
+        showsMark: Bool = true,
+        @ViewBuilder content: () -> Content
+    ) {
         self.padding = padding
         self.tone = tone
+        self.showsMark = showsMark
         self.content = content()
     }
 
@@ -107,9 +116,11 @@ struct OrnamentalPanel<Content: View>: View {
                     )
             }
             .overlay(alignment: .topTrailing) {
-                CelestialMark()
-                    .padding(14)
-                    .opacity(0.66)
+                if showsMark {
+                    CelestialMark()
+                        .padding(14)
+                        .opacity(0.66)
+                }
             }
             .shadow(color: LauncherPalette.night.opacity(0.26), radius: 24, y: 12)
     }

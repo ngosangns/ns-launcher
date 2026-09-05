@@ -28,7 +28,6 @@ struct AppText {
     var installDirectory: String { localized(en: "Install Directory", vi: "Thư mục cài đặt") }
     var executable: String { localized(en: "Executable", vi: "File chạy") }
     var format: String { localized(en: "Format", vi: "Định dạng") }
-    var status: String { localized(en: "Status", vi: "Trạng thái") }
     var currentItemLabel: String { localized(en: "Current item", vi: "Mục đang xử lý") }
     var currentItemsLabel: String { localized(en: "Current items", vi: "Các mục đang xử lý") }
     var currentPartProgressLabel: String { localized(en: "Current part progress", vi: "Tiến độ part hiện tại") }
@@ -41,10 +40,15 @@ struct AppText {
     var playTitle: String { localized(en: "Play", vi: "Chơi") }
     var resumeTitle: String { localized(en: "Resume", vi: "Tiếp tục") }
     var stopTitle: String { localized(en: "Stop", vi: "Dừng") }
-    var wineRunLogTitle: String { localized(en: "Wine run log (filtered)", vi: "Log chạy Wine (đã lọc)") }
+    var wineRunLogTitle: String { localized(en: "Wine log (filtered)", vi: "Log Wine (đã lọc)") }
     var updateRunLogTitle: String { localized(en: "Update log", vi: "Log cập nhật") }
-    var showDiagnostics: String { localized(en: "Show diagnostics", vi: "Hiện chẩn đoán") }
-    var hideDiagnostics: String { localized(en: "Hide diagnostics", vi: "Ẩn chẩn đoán") }
+    var diagnosticsTitle: String { localized(en: "Diagnostics", vi: "Chẩn đoán") }
+    var noDiagnosticsYet: String {
+        localized(
+            en: "No diagnostics yet. Logs appear here while the game updates or launches.",
+            vi: "Chưa có chẩn đoán. Log sẽ hiện ở đây khi game cập nhật hoặc khởi chạy."
+        )
+    }
     var launchOptionsTitle: String { localized(en: "Launch options", vi: "Tùy chọn khởi chạy") }
     var preparingStage: String { localized(en: "Preparing", vi: "Chuẩn bị") }
     var downloadingStage: String { localized(en: "Downloading", vi: "Đang tải") }

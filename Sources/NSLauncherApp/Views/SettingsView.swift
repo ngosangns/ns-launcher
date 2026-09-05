@@ -46,7 +46,9 @@ struct SettingsView: View {
         HStack(alignment: .top, spacing: 0) {
             sidebar
                 .frame(width: 232)
-                .padding(.leading, 34)
+                // Leading/trailing must clear WindowFrameOrnament's corner brackets, which occupy a
+                // 16-40pt band from each window edge — see HomeView's matching comment.
+                .padding(.leading, 44)
                 .padding(.trailing, 18)
                 .padding(.vertical, 28)
 
@@ -57,7 +59,7 @@ struct SettingsView: View {
                     }
                 }
                 .frame(maxWidth: 860)
-                .padding(.trailing, 34)
+                .padding(.trailing, 44)
                 .padding(.vertical, 28)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
