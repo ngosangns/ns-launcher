@@ -13,8 +13,7 @@
 // process, not a Task: it survives the launcher quitting exactly the way the game/wineserver
 // process tree already does (macOS reparents orphaned children to launchd rather than killing
 // them). It is a belt-and-suspenders backstop, not a replacement — `WineService`'s in-process
-// cleanup still runs the show whenever the launcher stays open (UI Play/Stop state, D3DMetal shader
-// cache checkpointing).
+// cleanup still runs the show whenever the launcher stays open (UI Play/Stop state).
 
 import Foundation
 

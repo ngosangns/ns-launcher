@@ -49,7 +49,6 @@ struct AppText {
             vi: "Chưa có chẩn đoán. Log sẽ hiện ở đây khi game cập nhật hoặc khởi chạy."
         )
     }
-    var launchOptionsTitle: String { localized(en: "Launch options", vi: "Tùy chọn khởi chạy") }
     var preparingStage: String { localized(en: "Preparing", vi: "Chuẩn bị") }
     var downloadingStage: String { localized(en: "Downloading", vi: "Đang tải") }
     var verifyingStage: String { localized(en: "Verifying", vi: "Đang xác thực") }
@@ -86,110 +85,7 @@ struct AppText {
             vi: "Toàn màn hình chạy game ở chế độ fullscreen độc quyền theo đúng độ phân giải màn hình, nên hình không bị kéo dãn cho vừa màn hình."
         )
     }
-    var cloudCompatibilityLabel: String { localized(en: "Cloud compatibility mode", vi: "Chế độ tương thích cloud") }
-    var cloudCompatibilityDescription: String {
-        localized(
-            en: "Launch the Windows client in cloud-gaming mode and place a protection-driver stub so it can start under Wine. Unsupported by HoYoverse and may risk your account.",
-            vi: "Chạy client Windows ở chế độ cloud-gaming và đặt driver protection giả để game khởi động được dưới Wine. HoYoverse không hỗ trợ và có thể khiến tài khoản gặp rủi ro."
-        )
-    }
-    var acPatchLabel: String { localized(en: "AC patch (hide crash/Vulkan files)", vi: "AC patch (ẩn file crash/Vulkan)") }
-    var acPatchDescription: String {
-        localized(
-            en: "Temporarily move the crash reporter and Vulkan fallback files out of the way during launch, then restore them. Mirrors YAAGL's current Genshin behavior.",
-            vi: "Tạm di chuyển file crash reporter và Vulkan fallback ra chỗ khác trong lúc chạy game, rồi khôi phục sau. Theo đúng hành vi Genshin hiện tại của YAAGL."
-        )
-    }
-    var blockNetLabel: String { localized(en: "Launch network block", vi: "Chặn mạng lúc mở game") }
-    var blockNetDescription: String {
-        localized(
-            en: "Temporarily block the anti-cheat and telemetry hosts in the Wine prefix hosts file for the whole launch, then restore. No administrator password required.",
-            vi: "Tạm chặn host anti-cheat và telemetry trong file hosts của Wine prefix suốt phiên game, rồi khôi phục. Không cần mật khẩu quản trị."
-        )
-    }
-    var timeoutFixLabel: String { localized(en: "Network timeout fix", vi: "Sửa lỗi timeout mạng") }
-    var timeoutFixDescription: String {
-        localized(
-            en: "Set WINE_ENABLE_TIMEOUT_FIX so YAAGL-patched Wine keeps sockets from dropping the game back to the title screen mid-session. Ignored by Wine builds without the patch.",
-            vi: "Bật WINE_ENABLE_TIMEOUT_FIX để Wine bản YAAGL không làm rớt kết nối khiến game quay về màn hình chờ giữa lúc chơi. Bản Wine không có patch sẽ bỏ qua."
-        )
-    }
-    var steamPatchLabel: String { localized(en: "Steam parent patch", vi: "Steam parent patch") }
-    var steamPatchDescription: String {
-        localized(
-            en: "Launch through a real steam.exe + lsteamclient.dll parent so the anti-cheat skips loading its kernel driver. The stubs are downloaded once and cached.",
-            vi: "Chạy game qua tiến trình cha steam.exe + lsteamclient.dll thật để anti-cheat bỏ qua việc nạp kernel driver. File stub chỉ tải một lần và được lưu cache."
-        )
-    }
-    var retinaLabel: String { localized(en: "Retina scaling", vi: "Hiển thị Retina") }
-    var retinaDescription: String {
-        localized(
-            en: "Enable HiDPI Retina rendering through the Wine Mac Driver registry.",
-            vi: "Bật render Retina độ phân giải cao qua registry Mac Driver của Wine."
-        )
-    }
-    var renderBackendLabel: String { localized(en: "Render backend", vi: "Backend render") }
-    var renderBackendD3DMetal: String { localized(en: "D3DMetal", vi: "D3DMetal") }
-    var renderBackendDXMT: String { localized(en: "DXMT (experimental)", vi: "DXMT (thử nghiệm)") }
-    var renderBackendDescription: String {
-        localized(
-            en: "D3DMetal is the recommended default. DXMT is a different Metal translator worth trying when a specific effect renders wrong.",
-            vi: "D3DMetal là lựa chọn mặc định khuyến nghị. DXMT là một translator Metal khác, đáng thử khi một hiệu ứng cụ thể render sai."
-        )
-    }
-    var hdrLabel: String { localized(en: "Enable HDR", vi: "Bật HDR") }
-    var hdrDescription: String {
-        localized(
-            en: "Set the game's HDR registry flag before launch. Leave it off unless you want HDR: the flag is rewritten on every launch, so turning it off here also clears an HDR mode enabled inside the game — which on Wine renders with washed-out, wrong-looking colour.",
-            vi: "Bật cờ HDR trong registry của game trước khi chạy. Nên để tắt nếu bạn không cần HDR: cờ này được ghi lại mỗi lần chạy, nên tắt ở đây cũng tắt luôn chế độ HDR đã bật trong game — trên Wine chế độ đó làm màu bị bợt và sai."
-        )
-    }
-    var proxyEnabledLabel: String { localized(en: "Proxy", vi: "Proxy") }
-    var proxyEnabledDescription: String {
-        localized(
-            en: "Route the game through an HTTP/HTTPS proxy.",
-            vi: "Định tuyến game qua proxy HTTP/HTTPS."
-        )
-    }
-    var proxyHostLabel: String { localized(en: "Proxy host", vi: "Địa chỉ proxy") }
     var displayOptionsLabel: String { localized(en: "Display & input", vi: "Hiển thị & nhập liệu") }
-    var d3dMetalShaderCompatibilityTitle: String {
-        localized(en: "Shader compatibility (experimental)", vi: "Tương thích shader (thử nghiệm)")
-    }
-    var d3dMetalShaderCompatibilityDescription: String {
-        localized(
-            en: "For shading that comes out wrong on some models while the rest of the frame looks right. These change how D3DMetal handles NaN, infinity, rounding and cross-pass vertex positions — the cases where a shader written for Direct3D hardware behaves differently on Metal. Apple documents none of them, so turn on one at a time and look at the affected model; leave them off if none makes a difference.",
-            vi: "Dành cho trường hợp một số model bị sai màu/sai shader trong khi phần còn lại vẫn đúng. Các tuỳ chọn này đổi cách D3DMetal xử lý NaN, vô cực, làm tròn và vị trí đỉnh giữa các pass — đúng những chỗ shader viết cho phần cứng Direct3D chạy khác đi trên Metal. Apple không có tài liệu cho chúng, nên hãy bật từng cái một rồi nhìn lại model bị lỗi; nếu không cái nào thay đổi thì để tắt hết."
-        )
-    }
-    var d3dMetalSampleNaNToZeroLabel: String { localized(en: "Sampled NaN reads as zero", vi: "NaN khi sample đọc thành 0") }
-    var d3dMetalSampleNaNToZeroDescription: String {
-        localized(
-            en: "D3DM_SAMPLE_NAN_TO_ZERO: a NaN coming out of a texture sample becomes zero instead of propagating through the rest of the shader. Try this first when a material is the wrong colour rather than the wrong shape.",
-            vi: "D3DM_SAMPLE_NAN_TO_ZERO: giá trị NaN đọc ra từ texture sẽ thành 0 thay vì lan tiếp trong shader. Thử cái này trước khi một material bị sai màu (không phải sai hình)."
-        )
-    }
-    var d3dMetalFlushPositiveInfinityToNaNLabel: String { localized(en: "Flush positive infinity to NaN", vi: "Chuyển vô cực dương thành NaN") }
-    var d3dMetalFlushPositiveInfinityToNaNDescription: String {
-        localized(
-            en: "D3DM_FLUSH_POS_INF_TO_NAN: changes what an overflow to positive infinity turns into, which decides whether it is clamped later or poisons the value. Pairs with the option above for blown-out or black materials.",
-            vi: "D3DM_FLUSH_POS_INF_TO_NAN: đổi kết quả khi giá trị tràn thành vô cực dương, quyết định nó bị kẹp lại sau đó hay làm hỏng luôn giá trị. Đi kèm với tuỳ chọn trên cho material bị cháy sáng hoặc đen thui."
-        )
-    }
-    var d3dMetalForceRTZTextureWriteLabel: String { localized(en: "Round texture writes toward zero", vi: "Làm tròn về 0 khi ghi texture") }
-    var d3dMetalForceRTZTextureWriteDescription: String {
-        localized(
-            en: "D3DM_FORCE_RTZ_TEXWRITE: writes to a texture round toward zero instead of to nearest, matching how some Direct3D hardware stored intermediate render targets. Worth trying for banding or a slight colour shift that builds up across effect passes.",
-            vi: "D3DM_FORCE_RTZ_TEXWRITE: khi ghi vào texture sẽ làm tròn về 0 thay vì làm tròn gần nhất, giống cách một số phần cứng Direct3D lưu render target trung gian. Đáng thử khi bị banding hoặc màu lệch nhẹ tích luỹ qua nhiều pass hiệu ứng."
-        )
-    }
-    var d3dMetalPositionInvarianceLabel: String { localized(en: "Invariant vertex position", vi: "Cố định vị trí đỉnh giữa các pass") }
-    var d3dMetalPositionInvarianceDescription: String {
-        localized(
-            en: "D3DM_POSITION_INVARIANCE: forces a vertex to land on exactly the same position in every pass that draws it. Try this when a model is patchy, flickering or shaded in stripes rather than uniformly wrong — that pattern comes from a depth pre-pass disagreeing with the pass being shaded.",
-            vi: "D3DM_POSITION_INVARIANCE: buộc một đỉnh phải ra đúng cùng một vị trí ở mọi pass vẽ nó. Thử khi model bị loang lổ, nhấp nháy hoặc sọc chứ không phải sai màu đều — kiểu đó đến từ depth pre-pass lệch với pass đang tô."
-        )
-    }
     var name: String { localized(en: "Name", vi: "Tên") }
     var installRoot: String { localized(en: "Install root", vi: "Thư mục cài đặt") }
     var executablePath: String { localized(en: "Executable path", vi: "Đường dẫn file chạy") }
@@ -242,21 +138,8 @@ struct AppText {
     var noRemovableCache: String { localized(en: "No removable cache found. Refresh after the game is installed.", vi: "Chưa có cache nào có thể xóa. Hãy làm mới sau khi game được cài đặt.") }
     var totalRemovableCacheLabel: String { localized(en: "Total", vi: "Tổng cộng") }
 
-    // MARK: - D3DMetal Setup
+    // MARK: - CrossOver Setup
 
-    var d3dMetalSetupTitle: String { localized(en: "D3DMetal (render backend)", vi: "D3DMetal (render backend)") }
-    var d3dMetalAlreadyInstalled: String {
-        localized(
-            en: "CrossOver with Apple D3DMetal is installed.",
-            vi: "Đã cài CrossOver kèm Apple D3DMetal."
-        )
-    }
-    var d3dMetalSetupDescription: String {
-        localized(
-            en: "Genshin needs a Direct3D-to-Metal layer to run. Apple's D3DMetal ships only inside CrossOver, which this button installs through Homebrew as a 14-day trial — after that CrossOver needs a license purchased from CodeWeavers to keep running. This downloads about 1 GB and installs CrossOver.app into /Applications.",
-            vi: "Genshin cần một lớp dịch Direct3D-to-Metal để chạy. Apple D3DMetal chỉ đi kèm CrossOver, và nút này cài CrossOver qua Homebrew dưới dạng dùng thử 14 ngày — sau đó CrossOver cần mua license từ CodeWeavers để tiếp tục dùng. Việc này tải khoảng 1 GB và cài CrossOver.app vào /Applications."
-        )
-    }
     var installCrossOverButtonTitle: String { localized(en: "Install CrossOver via Homebrew", vi: "Cài CrossOver qua Homebrew") }
     var installingCrossOver: String { localized(en: "Installing CrossOver via Homebrew...", vi: "Đang cài CrossOver qua Homebrew...") }
     var crossOverInstalled: String { localized(en: "CrossOver installed.", vi: "Đã cài CrossOver.") }
@@ -289,7 +172,6 @@ struct AppText {
         case .gameWorldAssetCache: return localized(en: "World asset cache", vi: "Cache tài nguyên thế giới")
         case .winePrefixTemp: return localized(en: "Wine temporary files", vi: "File tạm Wine")
         case .launcherDownloadArchives: return localized(en: "Download archives", vi: "Archive tải về")
-        case .d3dMetalShaderCache: return localized(en: "Render (D3DMetal) shader cache", vi: "Cache shader render (D3DMetal)")
         }
     }
     func cacheKindDescription(_ kind: RemovableCache.Kind) -> String {
@@ -323,11 +205,6 @@ struct AppText {
             return localized(
                 en: "Compressed archives left after extraction (DXVK/Wine).",
                 vi: "Archive nén còn lại sau khi giải nén (DXVK/Wine)."
-            )
-        case .d3dMetalShaderCache:
-            return localized(
-                en: "Compiled shaders D3DMetal caches on disk. Rebuilt automatically as the game runs; clearing it can fix stutter or crashes caused by a stale or corrupted cache, at the cost of a fresh round of one-time compile stutter on the next launch.",
-                vi: "Shader đã biên dịch mà D3DMetal lưu trên đĩa. Tự tạo lại khi game chạy; xóa cache này có thể khắc phục giật hoặc crash do cache cũ/hỏng, đổi lại là một đợt giật biên dịch lại từ đầu ở lần chạy kế tiếp."
             )
         }
     }
@@ -444,19 +321,12 @@ struct AppText {
         )
     }
 
-    /// Error text when no installed Wine build carries Apple D3DMetal.
+    /// Error text when no installed Wine build carries DXMT.
     ///
     /// Only CrossOver is named as a remedy: the popular `game-porting-toolkit` Homebrew cask
-    /// (`gcenx/wine` tap) ships the open-source DXMT project relabeled, not Apple's real D3DMetal,
-    /// and Apple's own Game Porting Toolkit is gated behind an Apple Developer sign-in with no
-    /// public download to point at. Use the Settings screen's install button for CrossOver instead
-    /// of typing a command here.
-    func d3dMetalUnavailable(_ path: String) -> String {
-        localized(
-            en: "No Wine build with Apple D3DMetal was found. Checked: \(path). D3DMetal ships only inside CrossOver (CodeWeavers) — NSLauncher cannot download it on its own. Install CrossOver from Settings, then try again.",
-            vi: "Chưa tìm thấy bản Wine nào có Apple D3DMetal. Đã kiểm tra: \(path). D3DMetal chỉ đi kèm CrossOver (CodeWeavers) — NSLauncher không thể tự tải D3DMetal. Hãy cài CrossOver từ màn hình Cài đặt rồi thử lại."
-        )
-    }
+    /// (`gcenx/wine` tap) ships the open-source DXMT project relabeled, and Apple's own Game
+    /// Porting Toolkit is gated behind an Apple Developer sign-in with no public download to point
+    /// at. Use the Settings screen's install button for CrossOver instead of typing a command here.
     func dxmtUnavailable(_ path: String) -> String {
         localized(
             en: "No Wine build with DXMT was found. Checked: \(path). DXMT ships only inside CrossOver (CodeWeavers) — NSLauncher cannot download it on its own. Install CrossOver from Settings, then try again.",
@@ -488,8 +358,6 @@ struct AppText {
             switch wineError {
             case let .binaryQuarantined(path):
                 return wineBinaryQuarantined(path)
-            case let .d3dMetalUnavailable(path):
-                return d3dMetalUnavailable(path)
             case let .dxmtUnavailable(path):
                 return dxmtUnavailable(path)
             case let .wineRootNotFound(path):

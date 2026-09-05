@@ -9,24 +9,24 @@
 // Genshin cannot run under Wine without several coordinated workarounds. Each step
 // below fixes a DIFFERENT, independently-observed failure, so none of them is
 // redundant and none may be removed without re-introducing that specific failure.
-// They are all unsupported by HoYoverse and risk the account; they are isolated
-// here and gated by settings flags that can be turned off.
+// They are all unsupported by HoYoverse and risk the account. They always run —
+// there is no setting to turn any of them off.
 //
 // Launch path, in order:
 //   1. Build the runtime profile and run preflight checks (executable exists, valid
 //      `.nslauncher-install.json` with matching game id, no partial staging).
-//   2. Cloud compatibility (default-on): install a `HoYoKProtect.sys` stub into the
-//      Wine prefix AND launch with `-platform_type CLOUD_THIRD_PARTY_PC -is_cloud 1`
-//      (the flags are appended in `LaunchRuntimeProfile.build`). Without this the
-//      Windows client aborts early because Wine cannot load the real kernel driver.
-//   3. AC patch (default-on): temporarily move the crash reporter and Vulkan fallback
-//      files to `.bak` for the launch, restored via `defer`. Mirrors YAAGL's current
+//   2. Cloud compatibility: install a `HoYoKProtect.sys` stub into the Wine prefix
+//      AND launch with `-platform_type CLOUD_THIRD_PARTY_PC -is_cloud 1` (the flags
+//      are appended in `LaunchRuntimeProfile.build`). Without this the Windows
+//      client aborts early because Wine cannot load the real kernel driver.
+//   3. AC patch: temporarily move the crash reporter and Vulkan fallback files to
+//      `.bak` for the launch, restored via `defer`. Mirrors YAAGL's current
 //      Genshin-global `removed[]` list (its binary xdelta3 `patched[]` list is empty,
 //      so no binary diff is applied here).
-//   4. Network block (default-on): write anti-cheat/telemetry hosts into the Wine
-//      prefix hosts file, removed via `defer` after the game exits. CRITICAL DETAIL:
-//      the dispatch host is blocked for only 10 seconds (see `dispatchBlockHost`),
-//      NOT for the whole launch — see the warning on `blockedHosts` below.
+//   4. Network block: write anti-cheat/telemetry hosts into the Wine prefix hosts
+//      file, removed via `defer` after the game exits. CRITICAL DETAIL: the dispatch
+//      host is blocked for only 10 seconds (see `dispatchBlockHost`), NOT for the
+//      whole launch — see the warning on `blockedHosts` below.
 //
 // Known failure signatures each step prevents (kept here so future edits know what
 // breaks if a step is removed):
@@ -40,8 +40,8 @@
 //   - msync (`WINEMSYNC`) crashed twice on this stack — once as `wine client error:308:
 //     partial wakeup read 0` + `err:virtual:virtual_setup_exception` (render-path crash)
 //     on an earlier Wine pin, and once again after being re-tried unconditionally, killing
-//     the game with exit code 5 during shader translation. Both render bridges therefore
-//     stay on esync (`WINEESYNC`); see `D3DMetalBridge.launchEnvironment`.
+//     the game with exit code 5 during shader translation. The render bridge therefore
+//     stays on esync (`WINEESYNC`); see `DXMTBridge.launchEnvironment`.
 
 import Foundation
 
@@ -127,11 +127,6 @@ struct LauncherCoordinator: Sendable {
 
     /// Removes one removable cache category and returns the number of bytes freed.
     func clearCache(_ kind: RemovableCache.Kind, for game: GameDefinition) throws -> Int64 {
-        if kind == .d3dMetalShaderCache {
-            let executableName = URL(fileURLWithPath: game.executableRelativePath).lastPathComponent
-            return try D3DMetalBridge.clearShaderCaches(forExecutable: executableName)
-        }
-
         let locations = Self.cacheLocations(for: kind, game: game)
         let freed = locations.reduce(0) { $0 + Self.sizeBytes(of: $1) }
         for location in locations {
@@ -140,7 +135,7 @@ struct LauncherCoordinator: Sendable {
         return freed
     }
 
-    /// Installs CrossOver via Homebrew so `D3DMetalBridge` has a build to select. Only ever called
+    /// Installs CrossOver via Homebrew so `DXMTBridge` has a build to select. Only ever called
     /// from an explicit user action — see `CrossOverInstaller` for why this must never run on its
     /// own (a paid trial and, if Homebrew is missing, a system-level installer this launcher will
     /// not run on the user's behalf).
@@ -170,12 +165,6 @@ struct LauncherCoordinator: Sendable {
             return winePrefixTempLocations(prefixDirectory: game.winePrefixDirectory)
         case .launcherDownloadArchives:
             return launcherDownloadArchiveLocations()
-        case .d3dMetalShaderCache:
-            let executableName = URL(fileURLWithPath: game.executableRelativePath).lastPathComponent
-            guard let directory = D3DMetalBridge.shaderCacheDirectory(forExecutable: executableName) else { return [] }
-            return [.directoryContents(directory)]
-                + D3DMetalBridge.durableCacheDirectories(forExecutable: executableName)
-                    .map(CacheLocation.directoryContents)
         }
     }
 
@@ -367,34 +356,24 @@ struct LauncherCoordinator: Sendable {
             }
         }
 
-        if settings.cloudCompatibilityMode {
-            try installProtectionDriverStub(for: game, prefixDirectory: profile.prefixDirectory)
+        try installProtectionDriverStub(for: game, prefixDirectory: profile.prefixDirectory)
+
+        try applyACPatch(for: game, apply: true)
+        defer {
+            try? applyACPatch(for: game, apply: false)
         }
 
-        if settings.acPatchMode {
-            try applyACPatch(for: game, apply: true)
+        try installHostsBlock(in: profile.prefixDirectory)
+        // YAAGL blocks the dispatch host only during the anti-cheat init window, then unblocks it
+        // so the game can re-dispatch without being kicked back to the title screen. The telemetry
+        // hosts stay blocked for the whole launch.
+        let prefixDirectory = profile.prefixDirectory
+        Task.detached {
+            try? await Task.sleep(nanoseconds: Self.dispatchBlockDurationNanoseconds)
+            try? Self.unblockDispatchHost(in: prefixDirectory)
         }
         defer {
-            if settings.acPatchMode {
-                try? applyACPatch(for: game, apply: false)
-            }
-        }
-
-        if settings.blockNetMode {
-            try installHostsBlock(in: profile.prefixDirectory)
-            // YAAGL blocks the dispatch host only during the anti-cheat init window, then unblocks it
-            // so the game can re-dispatch without being kicked back to the title screen. The telemetry
-            // hosts stay blocked for the whole launch.
-            let prefixDirectory = profile.prefixDirectory
-            Task.detached {
-                try? await Task.sleep(nanoseconds: Self.dispatchBlockDurationNanoseconds)
-                try? Self.unblockDispatchHost(in: prefixDirectory)
-            }
-        }
-        defer {
-            if settings.blockNetMode {
-                try? removeHostsBlock(in: profile.prefixDirectory)
-            }
+            try? removeHostsBlock(in: profile.prefixDirectory)
         }
 
         let request = WineLaunchRequest(
@@ -406,11 +385,14 @@ struct LauncherCoordinator: Sendable {
             currentDirectory: profile.currentDirectory,
             runtimeRequirements: profile.runtimeRequirements,
             renderBackend: profile.backend,
-            useSteamLauncher: settings.steamPatch,
-            macDriverRetina: settings.macDriverRetina,
+            // Real steam.exe parent (miHoYo anti-cheat workaround, see WineService) — always on.
+            useSteamLauncher: true,
+            // Retina scaling and HDR are not settings — always off; see `LaunchRuntimeProfile.build`
+            // and `WineService.launchRegistryEntries`.
+            macDriverRetina: false,
             // Same size the launch arguments carry, so the registry cannot contradict them.
             renderSize: profile.renderSize,
-            enableHDR: settings.enableHDR,
+            enableHDR: false,
             fullscreen: profile.fullscreen,
             onOutput: onOutput
         )
@@ -465,10 +447,11 @@ struct LauncherCoordinator: Sendable {
     /// Files YAAGL hides for Genshin global during launch (crash reporter and Vulkan fallback).
     ///
     /// These are moved to `.bak` for the launch and restored afterwards. The crash reporters would
-    /// otherwise fire (and their upload would fail) when the game hits the benign Wine/D3DMetal
-    /// errors; hiding `vulkan-1.dll` keeps Unity from trying its Vulkan fallback path, which does
-    /// not work through D3DMetal. This list matches YAAGL's `removed[]` for hk4e_global exactly. DO NOT remove
-    /// entries from here without checking YAAGL's current `server.removed` — the set is deliberate.
+    /// otherwise fire (and their upload would fail) when the game hits benign Wine errors; hiding
+    /// `vulkan-1.dll` keeps Unity from trying its Vulkan fallback path, which does not work through
+    /// the Metal-native render bridge. This list matches YAAGL's `removed[]` for hk4e_global
+    /// exactly. DO NOT remove entries from here without checking YAAGL's current `server.removed`
+    /// — the set is deliberate.
     private static let acPatchRemovedFiles = [
         "GenshinImpact_Data/upload_crash.exe",
         "GenshinImpact_Data/Plugins/crashreport.exe",

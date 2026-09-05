@@ -63,7 +63,6 @@ struct WineLaunchRequest {
 /// Wine launch failures that need targeted user remediation.
 enum WineServiceError: LocalizedError {
     case binaryQuarantined(String)
-    case d3dMetalUnavailable(String)
     case dxmtUnavailable(String)
     case unsupportedKernelDriver(String)
     case wineRootNotFound(String)
@@ -72,8 +71,6 @@ enum WineServiceError: LocalizedError {
         switch self {
         case let .binaryQuarantined(path):
             return "Wine is blocked by macOS quarantine at \(path)."
-        case let .d3dMetalUnavailable(path):
-            return "No Wine build with Apple D3DMetal was found. Checked: \(path). D3DMetal ships only inside CrossOver — install it, then try again."
         case let .dxmtUnavailable(path):
             return "No Wine build with DXMT was found. Checked: \(path). DXMT ships only inside CrossOver — install it, then try again."
         case let .unsupportedKernelDriver(driver):
@@ -141,19 +138,6 @@ struct WineService: WineServicing {
             if let graphicsBackend = bridge?.crossOverGraphicsBackend {
                 baseEnv["CX_GRAPHICS_BACKEND"] = graphicsBackend
                 diagnose("CX_GRAPHICS_BACKEND=\(graphicsBackend)")
-            }
-        }
-
-        var d3dMetalCacheGeneration: String?
-        if request.renderBackend == .d3dMetal {
-            do {
-                d3dMetalCacheGeneration = try D3DMetalBridge.prepareShaderCache(
-                    forExecutable: request.executablePath.lastPathComponent,
-                    wineBuild: wineBuild,
-                    onDiagnostic: diagnose
-                )
-            } catch {
-                diagnose("D3DMetal cache prepare best-effort failed: \(error.localizedDescription)")
             }
         }
 
@@ -282,7 +266,7 @@ struct WineService: WineServicing {
         // Belt-and-suspenders: spawn a detached watchdog that outlives this launcher process, so
         // wineserver still gets torn down even if the launcher quits before the game does. See
         // `WineShutdownWatchdog` — this does not replace the in-process cleanup below, which still
-        // drives the UI's Play/Stop state and the D3DMetal shader cache checkpoint.
+        // drives the UI's Play/Stop state.
         WineShutdownWatchdog.spawn(
             executablePath: request.executablePath,
             wineserverPath: wineBuild.root.appendingPathComponent("bin/wineserver").path,
@@ -315,32 +299,15 @@ struct WineService: WineServicing {
             throw error
         }
 
-        // A durable snapshot is safe only after wineserver confirms every writer has exited.
-        let wineServerStopped = await Self.waitForWineserver(
+        // Clean up wineserver and its service processes after a normal exit, same as the
+        // leftover-session sweep at the start of this function, so a finished game does not leave
+        // them idle until the next Play.
+        _ = await Self.waitForWineserver(
             wineBuild: wineBuild,
             environment: env,
             processRunner: processRunner,
             onDiagnostic: diagnose
         )
-
-        if request.renderBackend == .d3dMetal,
-           wineServerStopped,
-           let d3dMetalCacheGeneration {
-            do {
-                try D3DMetalBridge.checkpointShaderCache(
-                    forExecutable: request.executablePath.lastPathComponent,
-                    wineBuild: wineBuild,
-                    expectedGeneration: d3dMetalCacheGeneration,
-                    onDiagnostic: diagnose
-                )
-            } catch {
-                diagnose("D3DMetal cache checkpoint best-effort failed: \(error.localizedDescription)")
-            }
-        } else if request.renderBackend == .d3dMetal, wineServerStopped {
-            diagnose("D3DMetal cache checkpoint skipped: prepare generation unavailable")
-        } else if request.renderBackend == .d3dMetal {
-            diagnose("D3DMetal cache checkpoint skipped: Wine shutdown not confirmed")
-        }
 
         return launchResult
     }

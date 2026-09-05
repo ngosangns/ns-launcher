@@ -4,14 +4,12 @@ import SwiftUI
 private enum SettingsTab: CaseIterable {
     case general
     case display
-    case launchOptions
     case cache
 
     func title(_ text: AppText) -> String {
         switch self {
         case .general: return text.selectedGame
         case .display: return text.displayOptionsLabel
-        case .launchOptions: return text.launchOptionsTitle
         case .cache: return text.cacheManagementTitle
         }
     }
@@ -20,7 +18,6 @@ private enum SettingsTab: CaseIterable {
         switch self {
         case .general: return "gamecontroller.fill"
         case .display: return "display"
-        case .launchOptions: return "flag.checkered"
         case .cache: return "trash.fill"
         }
     }
@@ -33,14 +30,6 @@ struct SettingsView: View {
     @State private var activeSection: SettingsTab = .general
 
     private var text: AppText { viewModel.text }
-
-    private var selectedRenderBackend: RuntimeBackend {
-        guard let game = viewModel.selectedGame else { return .plainWine }
-        return RenderBridges.resolveBackend(
-            requirements: game.runtimeRequirements,
-            preferred: viewModel.settings.metalRenderBackend
-        )
-    }
 
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
@@ -91,14 +80,7 @@ struct SettingsView: View {
                 }
             case .display:
                 SettingsSection(title: SettingsTab.display.title(text)) {
-                    VStack(alignment: .leading, spacing: 14) {
-                        displayModeField
-                        macDriverOptions
-                    }
-                }
-            case .launchOptions:
-                SettingsSection(title: SettingsTab.launchOptions.title(text)) {
-                    launchOptions
+                    displayModeField
                 }
             case .cache:
                 cacheSection(for: game)
@@ -141,174 +123,6 @@ struct SettingsView: View {
             secondaryAction: { openDirectory(game.installDirectory.path) },
             choose: chooseDirectoryPath
         )
-    }
-
-    private var macDriverOptions: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            SettingToggle(
-                title: text.retinaLabel,
-                detail: text.retinaDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.macDriverRetina },
-                    set: { viewModel.update(\.macDriverRetina, to: $0) }
-                )
-            )
-            SettingToggle(
-                title: text.hdrLabel,
-                detail: text.hdrDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.enableHDR },
-                    set: { viewModel.update(\.enableHDR, to: $0) }
-                )
-            )
-
-            // Offer only backends the selected game declares, and only when there is a choice.
-            if let requirements = viewModel.selectedGame?.runtimeRequirements,
-               [RuntimeRequirement.d3dMetal, .dxmt].filter({ requirements.contains($0) }).count > 1 {
-                SettingField(label: text.renderBackendLabel) {
-                    VStack(alignment: .leading, spacing: 6) {
-                        HStack {
-                            Picker(text.renderBackendLabel, selection: Binding(
-                                get: { selectedRenderBackend },
-                                set: { viewModel.update(\.metalRenderBackend, to: $0) }
-                            )) {
-                                if requirements.contains(.d3dMetal) {
-                                    Text(text.renderBackendD3DMetal).tag(RuntimeBackend.d3dMetal)
-                                }
-                                if requirements.contains(.dxmt) {
-                                    Text(text.renderBackendDXMT).tag(RuntimeBackend.dxmt)
-                                }
-                            }
-                            .pickerStyle(.segmented)
-                            .fixedSize()
-                            .pointerOnHover()
-
-                            Spacer(minLength: 0)
-                        }
-                        Text(text.renderBackendDescription)
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-
-            d3dMetalShaderCompatibilityOptions
-        }
-    }
-
-    /// D3DMetal's float-behaviour overrides, grouped under one heading because they are diagnostic
-    /// switches rather than preferences: they exist to be tried one at a time against a model that
-    /// renders wrong, and mean nothing on any other backend.
-    @ViewBuilder
-    private var d3dMetalShaderCompatibilityOptions: some View {
-        if selectedRenderBackend == .d3dMetal {
-            VStack(alignment: .leading, spacing: 10) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(text.d3dMetalShaderCompatibilityTitle)
-                        .font(.system(.caption, design: .rounded, weight: .bold))
-                        .foregroundStyle(LauncherPalette.gold.opacity(0.88))
-                    Text(text.d3dMetalShaderCompatibilityDescription)
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                SettingToggle(
-                    title: text.d3dMetalSampleNaNToZeroLabel,
-                    detail: text.d3dMetalSampleNaNToZeroDescription,
-                    isOn: Binding(
-                        get: { viewModel.settings.d3dMetalSampleNaNToZero },
-                        set: { viewModel.update(\.d3dMetalSampleNaNToZero, to: $0) }
-                    )
-                )
-                SettingToggle(
-                    title: text.d3dMetalFlushPositiveInfinityToNaNLabel,
-                    detail: text.d3dMetalFlushPositiveInfinityToNaNDescription,
-                    isOn: Binding(
-                        get: { viewModel.settings.d3dMetalFlushPositiveInfinityToNaN },
-                        set: { viewModel.update(\.d3dMetalFlushPositiveInfinityToNaN, to: $0) }
-                    )
-                )
-                SettingToggle(
-                    title: text.d3dMetalForceRTZTextureWriteLabel,
-                    detail: text.d3dMetalForceRTZTextureWriteDescription,
-                    isOn: Binding(
-                        get: { viewModel.settings.d3dMetalForceRTZTextureWrite },
-                        set: { viewModel.update(\.d3dMetalForceRTZTextureWrite, to: $0) }
-                    )
-                )
-                SettingToggle(
-                    title: text.d3dMetalPositionInvarianceLabel,
-                    detail: text.d3dMetalPositionInvarianceDescription,
-                    isOn: Binding(
-                        get: { viewModel.settings.d3dMetalPositionInvariance },
-                        set: { viewModel.update(\.d3dMetalPositionInvariance, to: $0) }
-                    )
-                )
-            }
-        }
-    }
-
-    private var launchOptions: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            LaunchOption(
-                title: text.cloudCompatibilityLabel,
-                detail: text.cloudCompatibilityDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.cloudCompatibilityMode },
-                    set: { viewModel.update(\.cloudCompatibilityMode, to: $0) }
-                )
-            )
-            LaunchOption(
-                title: text.acPatchLabel,
-                detail: text.acPatchDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.acPatchMode },
-                    set: { viewModel.update(\.acPatchMode, to: $0) }
-                )
-            )
-            LaunchOption(
-                title: text.blockNetLabel,
-                detail: text.blockNetDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.blockNetMode },
-                    set: { viewModel.update(\.blockNetMode, to: $0) }
-                )
-            )
-            LaunchOption(
-                title: text.timeoutFixLabel,
-                detail: text.timeoutFixDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.timeoutFix },
-                    set: { viewModel.update(\.timeoutFix, to: $0) }
-                )
-            )
-            LaunchOption(
-                title: text.steamPatchLabel,
-                detail: text.steamPatchDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.steamPatch },
-                    set: { viewModel.update(\.steamPatch, to: $0) }
-                )
-            )
-            LaunchOption(
-                title: text.proxyEnabledLabel,
-                detail: text.proxyEnabledDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.proxyEnabled },
-                    set: { viewModel.update(\.proxyEnabled, to: $0) }
-                )
-            )
-            if viewModel.settings.proxyEnabled {
-                SettingField(label: text.proxyHostLabel) {
-                    TextField(text.proxyHostLabel, text: Binding(
-                        get: { viewModel.settings.proxyHost },
-                        set: { viewModel.update(\.proxyHost, to: $0) }
-                    ))
-                    .textFieldStyle(.roundedBorder)
-                    .font(.system(.body, design: .monospaced))
-                }
-            }
-        }
     }
 
     private func cacheSection(for game: GameDefinition) -> some View {
@@ -381,7 +195,6 @@ struct SettingsView: View {
         case .gameWorldAssetCache: return "globe.americas"
         case .winePrefixTemp: return "wineglass"
         case .launcherDownloadArchives: return "archivebox"
-        case .d3dMetalShaderCache: return "cpu"
         }
     }
 
@@ -455,66 +268,6 @@ private struct SettingField<Content: View>: View {
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(LauncherPalette.ink.opacity(0.30), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
-    }
-}
-
-private struct LaunchOption: View {
-    let title: String
-    let detail: String
-    @Binding var isOn: Bool
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Toggle(isOn: $isOn) {
-                Text(title)
-                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
-                    .foregroundStyle(LauncherPalette.parchment)
-            }
-            .toggleStyle(.switch)
-            .tint(LauncherPalette.gold)
-            .pointerOnHover()
-
-            Text(detail)
-                .font(.caption)
-                .foregroundStyle(LauncherPalette.mist.opacity(0.72))
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(LauncherPalette.warning.opacity(0.09), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
-        .hoverLift()
-        .overlay {
-            RoundedRectangle(cornerRadius: 15, style: .continuous)
-                .stroke(LauncherPalette.warning.opacity(0.28), lineWidth: 1)
-        }
-    }
-}
-
-private struct SettingToggle: View {
-    let title: String
-    let detail: String
-    @Binding var isOn: Bool
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Toggle(isOn: $isOn) {
-                Text(title)
-                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
-                    .foregroundStyle(LauncherPalette.parchment)
-            }
-            .toggleStyle(.switch)
-            .tint(LauncherPalette.gold)
-            .pointerOnHover()
-
-            Text(detail)
-                .font(.caption)
-                .foregroundStyle(LauncherPalette.mist.opacity(0.72))
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(LauncherPalette.ink.opacity(0.30), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
-        .hoverLift()
     }
 }
 

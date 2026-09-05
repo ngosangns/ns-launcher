@@ -1,14 +1,14 @@
 // CrossOverInstaller.swift
 //
-// Installs CrossOver through Homebrew so `D3DMetalBridge` has a Wine build carrying Apple's real
-// D3DMetal to select.
+// Installs CrossOver through Homebrew so `DXMTBridge` has a genuine Wine build to select.
 //
-// D3DMetal is Apple's own redistributable and ships only inside CrossOver-derived Wine builds
-// under `lib64/apple_gptk` — the launcher cannot download and install it on its own (see
-// `D3DMetalBridge`). The Homebrew cask `crossover` is the only verified way to get a genuine copy:
-// the community `gcenx/wine` tap's "game-porting-toolkit" cask, despite the name, ships a Wine
-// build with the open-source DXMT project compiled in as its own `d3d11.dll`/`dxgi.dll` — the exact
-// backend this launcher moved away from — and carries no `lib64/apple_gptk` at all.
+// CrossOver-derived Wine builds carry Apple's own D3DMetal payload under `lib64/apple_gptk`
+// alongside CrossOver's bundled DXMT — the launcher cannot download and install either on its own.
+// `isInstalled` checks for `apple_gptk` specifically because it is what tells a genuine CrossOver
+// install apart from the impostor: the community `gcenx/wine` tap's "game-porting-toolkit" cask,
+// despite the name, ships a Wine build with the open-source DXMT project compiled in as its own
+// `d3d11.dll`/`dxgi.dll` and carries no `lib64/apple_gptk` at all, so it fails this check exactly
+// as it should — this launcher needs CrossOver's own DXMT payload, not that one.
 //
 // CrossOver itself is CodeWeavers' commercial product: the cask installs a full trial that expires
 // after 14 days and then needs a purchased license to keep running. This is why installing it is
@@ -43,14 +43,14 @@ enum CrossOverInstaller {
     /// scans for it.
     private static let appPath = "/Applications/CrossOver.app"
 
-    /// The Wine root inside the CrossOver bundle, and where D3DMetal's payload has to be for
-    /// `D3DMetalBridge` to pick this installation up.
+    /// The Wine root inside the CrossOver bundle, and where Apple's D3DMetal payload has to be for
+    /// this to be a genuine CrossOver install rather than the impostor cask — see the file header.
     private static var appleGPTKMarker: String {
         appPath + "/Contents/SharedSupport/CrossOver/lib64/apple_gptk/wine/x86_64-windows/d3d11.dll"
     }
 
-    /// True once a CrossOver carrying D3DMetal is in place. Used to hide the install action once
-    /// it is no longer needed, and to confirm an install actually left a usable copy behind.
+    /// True once a genuine CrossOver install is in place. Used to hide the install action once it
+    /// is no longer needed, and to confirm an install actually left a usable copy behind.
     static var isInstalled: Bool {
         FileManager.default.fileExists(atPath: appleGPTKMarker)
     }
@@ -86,6 +86,6 @@ enum CrossOverInstaller {
                 "brew reported success but \(appleGPTKMarker) is still missing."
             )
         }
-        onDiagnostic("CrossOver installed with D3DMetal at \(appPath)")
+        onDiagnostic("CrossOver installed at \(appPath)")
     }
 }

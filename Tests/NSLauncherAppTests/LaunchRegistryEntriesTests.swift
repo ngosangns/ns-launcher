@@ -20,7 +20,7 @@ final class LaunchRegistryEntriesTests: XCTestCase {
             arguments: [],
             environment: [:],
             currentDirectory: URL(fileURLWithPath: "/tmp/game"),
-            runtimeRequirements: [.wine, .d3dMetal],
+            runtimeRequirements: [.wine, .dxmt],
             renderSize: renderSize,
             enableHDR: enableHDR,
             fullscreen: fullscreen

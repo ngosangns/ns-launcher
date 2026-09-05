@@ -113,11 +113,12 @@ They are not an install source.
 ## Wine And Rendering
 
 Wine discovery scans managed and known CrossOver/Game Porting Toolkit locations.
-The launch path can configure Apple D3DMetal, DXMT, or plain Wine based on
-the selected render backend and the payloads available in the selected runtime.
-The launch profile also carries optional compatibility settings such as cloud
-compatibility, Steam-parent mode, AC patching, network blocking, proxy, HDR,
-Retina, resolution, and timeout fixes.
+The launch path resolves DXMT or plain Wine based on the payloads available in
+the selected runtime. HDR and Retina scaling are hardcoded off (Wine's HDR
+path renders wrong colour; Retina is the single biggest render-side cost),
+alongside the always-on YAAGL-style launch workarounds: cloud compatibility,
+Steam-parent mode, AC patching, network blocking, and the network timeout fix.
+None of these are user-configurable — they run on every launch.
 
 These workarounds are not supported by HoYoverse and may carry account or
 stability risks. Runtime behavior depends on the installed Wine build.
@@ -130,7 +131,6 @@ stability risks. Runtime behavior depends on the installed Wine build.
 | Managed Wine         | `~/Library/Application Support/NSLauncher/wine`                  |
 | Game logs            | `~/Library/Logs/NSLauncher`                                      |
 | Download/cache data  | `~/Library/Caches/NSLauncher`                                    |
-| D3DMetal snapshots   | `~/Library/Application Support/NSLauncher/RenderCaches/D3DMetal` |
 | Default game install | `~/Games/Genshin Impact`                                         |
 | Wine prefix          | `<install root>/.wine`                                           |
 | Install metadata     | `<install root>/.nslauncher-install.json`                        |
@@ -139,9 +139,9 @@ stability risks. Runtime behavior depends on the installed Wine build.
 ## Tests And Boundaries
 
 The test suite covers settings migration, launch profiles, render backend
-selection, D3DMetal cache locking and snapshots, Wine discovery, process
-inspection and monitoring, registry rendering, logging, transfer metrics,
-protobuf decoding, pruning, and Sophon concurrency.
+selection, Wine discovery, process inspection and monitoring, registry
+rendering, logging, transfer metrics, protobuf decoding, pruning, and Sophon
+concurrency.
 
 There are no end-to-end tests for live HoYoPlay downloads, real Wine launches,
 CrossOver installation, Steam stub downloads, or actual Genshin startup.

@@ -11,12 +11,10 @@
 // Notable pieces:
 // - `VoiceLanguage`/`VoicePackage`: the four voice-over categories advertised by
 //   Sophon (`en-us`, `zh-cn`, `ja-jp`, `ko-kr`) and the per-pack storage removal.
-// - `AppSettings`: persisted config plus three YAAGL-style launch toggles
-//   (`cloudCompatibilityMode`, `acPatchMode`, `blockNetMode`), enabled by default and
-//   applied under Wine before launch. These are unsupported by HoYoverse and risk the
-//   account; users can still turn each one off in Settings.
-// - `LaunchRuntimeProfile.build`: computes Wine args/environment, appending the
-//   cloud-gaming flags when `cloudCompatibilityMode` is on.
+// - `AppSettings`: persisted config. The YAAGL-style launch workarounds (cloud
+//   compatibility, AC patch, network block, timeout fix, steam parent) are not
+//   settings — they always run; see `LaunchRuntimeProfile.build` and
+//   `LauncherCoordinator.launchGame`.
 // - Sophon models (`SophonBuild`, `SophonCategoryManifest`, `SophonAsset`,
 //   `SophonChunk`): the decoded shape of the official chunk manifests.
 
@@ -189,15 +187,6 @@ struct RemovableCache: Identifiable, Hashable {
         case gameWorldAssetCache
         case winePrefixTemp
         case launcherDownloadArchives
-        /// D3DMetal's on-disk compiled-shader cache (pipeline/bytecode/root-signature/stage
-        /// `.bin` files under `$(confstr DARWIN_USER_CACHE_DIR)/d3dm/<exe>/shaders.cache/` — see
-        /// `D3DMetalBridge.shaderCacheDirectory`). Regenerated automatically the next time each
-        /// shader is used, so clearing it is safe; the trade-off is a fresh round of
-        /// compile-on-first-use stutter, which is worth it if the cache itself is stale or
-        /// corrupted (D3DMetal falls back to disabling its disk cache entirely when it can't
-        /// parse an entry, which is worse for stutter than a clean cache).
-        case d3dMetalShaderCache
-
         var id: String { rawValue }
     }
 
@@ -228,24 +217,23 @@ enum RuntimeRequirement: String, Codable, CaseIterable, Identifiable {
     /// list it in `GameDefinition.runtimeRequirements` keep decoding instead of resetting to
     /// defaults (see `SettingsStore`).
     case dxvk
-    case d3dMetal
-    /// CrossOver's bundled DXMT (`lib/dxmt`), reintroduced as a second Metal-native backend
-    /// alongside D3DMetal — see `DXMTBridge`. Raw value is NOT `"dxmt"`: that string is already
-    /// hard-aliased to `.d3dMetal` below for pre-rename settings.json files, and reusing it here
-    /// would make old and new meanings collide.
+    /// CrossOver's bundled DXMT (`lib/dxmt`) — see `DXMTBridge`. Raw value is NOT `"dxmt"`: that
+    /// string is aliased below to `.dxmt` for settings.json files predating this raw value's
+    /// rename, and reusing it here would make old and new meanings collide.
     case dxmt = "dxmtBundled"
 
     var id: String { rawValue }
 
-    /// `dxmt` is this case's raw value before the DXMT-to-D3DMetal switch. Existing settings files
-    /// still carry it in `GameDefinition.runtimeRequirements`, and a decode failure there resets
-    /// the whole settings file to defaults (see `SettingsStore`), so the legacy value is aliased
-    /// rather than left to fail.
+    /// `dxmt` is this case's own raw value before it was renamed to `dxmtBundled`, and `d3dMetal`
+    /// is the raw value of the removed Apple D3DMetal backend requirement — existing settings.json
+    /// files can still carry either in `GameDefinition.runtimeRequirements`, and a decode failure
+    /// there resets the whole settings file to defaults (see `SettingsStore`), so both legacy
+    /// values are aliased to the remaining Metal-native backend rather than left to fail.
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let raw = try container.decode(String.self)
-        if raw == "dxmt" {
-            self = .d3dMetal
+        if raw == "dxmt" || raw == "d3dMetal" {
+            self = .dxmt
             return
         }
         guard let value = RuntimeRequirement(rawValue: raw) else {
@@ -257,8 +245,9 @@ enum RuntimeRequirement: String, Codable, CaseIterable, Identifiable {
 
 /// A render size in the unit Wine's Mac driver reports display modes in.
 ///
-/// Whether that unit is points or backing pixels depends on `AppSettings.macDriverRetina` — see
-/// `DisplayGeometry.mainDisplaySize(retina:)`. Both the Unity `-screen-width`/`-screen-height`
+/// Whether that unit is points or backing pixels depends on the `retina` flag passed to
+/// `DisplayGeometry.mainDisplaySize(retina:)` — always `false` (Retina scaling is not offered as a
+/// setting; see `LaunchRuntimeProfile.build`). Both the Unity `-screen-width`/`-screen-height`
 /// arguments and the `Screenmanager Resolution *` registry values are expressed in it, so they can
 /// never disagree with each other.
 struct RenderSize: Equatable, Sendable {
@@ -419,64 +408,8 @@ struct AppSettings: Codable, Equatable {
     var selectedGameID: String?
     var language: AppLanguage = .english
     var launchDisplayMode: LaunchDisplayMode = .windowed
-    /// Wine Mac Driver registry: enable Retina scaling for HiDPI displays.
-    ///
-    /// Off by default: on a Retina display this makes the render backend draw at the full physical pixel
-    /// count (2x the logical size in each dimension, ~4x the pixels), which is the single
-    /// biggest render-side cost in the whole pipeline and the main driver of stutter once the
-    /// window fills the screen in `LaunchDisplayMode.fullscreen`. Users on capable hardware can
-    /// turn it back on for sharper output.
-    var macDriverRetina: Bool = false
     /// Optional `cmd /c` batch wrapper that runs `cd /d <game_dir>` before launching the executable.
     var useBatchWrapper: Bool = false
-    /// YAAGL-style cloud-gaming launch (enabled by default): adds `CLOUD_THIRD_PARTY_PC` flags and
-    /// installs a protection-driver stub so the Windows client can start under Wine. Unsupported by
-    /// HoYoverse and may risk the account.
-    var cloudCompatibilityMode: Bool = false
-    /// AC patch (enabled by default): temporarily hide the crash reporter and Vulkan fallback files
-    /// during launch, then restore them afterwards (mirrors YAAGL's current Genshin behavior).
-    var acPatchMode: Bool = false
-    /// Launch network block (enabled by default): block the anti-cheat/telemetry hosts in the Wine
-    /// prefix hosts file for the duration of the launch, then restore. The dispatch host is only
-    /// blocked for the first 10 seconds (see `LauncherCoordinator.dispatchBlockHost`) so the game can
-    /// still re-dispatch — blocking it for the whole launch causes a disconnect back to the title
-    /// screen ~10 minutes after login.
-    var blockNetMode: Bool = false
-    /// Wine network-timeout fix (enabled by default): set `WINE_ENABLE_TIMEOUT_FIX=1` so YAAGL-patched
-    /// Wine avoids the macOS socket timeout that drops the game back to the title screen mid-session.
-    /// Harmless (ignored) on Wine builds without that patch.
-    var timeoutFix: Bool = false
-    /// Steam patch (enabled by default): launch through a real `steam.exe` + `lsteamclient.dll` parent
-    /// so the anti-cheat skips loading its kernel driver.
-    var steamPatch: Bool = false
-    /// Enable the game's HDR registry flag.
-    var enableHDR: Bool = false
-    /// Route the game through an HTTP/HTTPS proxy.
-    var proxyEnabled: Bool = false
-    var proxyHost: String = ""
-    /// Apple D3DMetal float-behaviour overrides, for shading that comes out wrong on some models
-    /// while the rest of the frame looks right.
-    ///
-    /// All four names are real `D3DM_*` strings in an installed D3DMetal.framework binary —
-    /// confirmed by the same string scan that produced the bridge's other variables — but Apple
-    /// documents none of them, so what
-    /// each one does is read from its name and nothing more. That is exactly why they are settings:
-    /// a D3D11 shader whose result depends on how NaN, infinity, rounding or cross-pass position
-    /// invariance are handled renders differently on Metal than it did on the hardware it was
-    /// written for, and only trying them one at a time on the affected model says which (if any) is
-    /// the one in play. Default off: each changes the numeric behaviour of every shader in the
-    /// game, so none of them should be on without a fault it visibly fixes.
-    var d3dMetalSampleNaNToZero: Bool = false
-    var d3dMetalFlushPositiveInfinityToNaN: Bool = false
-    var d3dMetalForceRTZTextureWrite: Bool = false
-    var d3dMetalPositionInvariance: Bool = false
-    /// Which D3D translation backend to prefer when a game declares more than one supported
-    /// option. D3DMetal remains the default; DXMT is a compatibility fallback for
-    /// backend-specific rendering bugs.
-    ///
-    /// The persisted property name predates DXVK becoming selectable (and later removed — see
-    /// `RuntimeBackend`). Keep it stable so existing settings retain their chosen backend.
-    var metalRenderBackend: RuntimeBackend = .d3dMetal
     /// Monotonic settings schema version used for one-time default migrations.
     var settingsVersion: Int = 0
 
@@ -500,68 +433,33 @@ struct AppSettings: Codable, Equatable {
                     executableRelativePath: genshinStreamingExecutablePath,
                     winePrefixDirectory: root.appendingPathComponent(".wine", isDirectory: true),
                     installerStrategy: .sophon,
-                    runtimeRequirements: [.wine, .d3dMetal, .dxmt],
+                    runtimeRequirements: [.wine, .dxmt],
                     launchArguments: []
                 )
             ],
             selectedGameID: genshinGameID,
             language: .english,
             launchDisplayMode: .windowed,
-            macDriverRetina: false,
             useBatchWrapper: false,
-            cloudCompatibilityMode: true,
-            acPatchMode: true,
-            blockNetMode: true,
-            timeoutFix: true,
-            steamPatch: true,
-            enableHDR: false,
-            proxyEnabled: false,
-            proxyHost: "",
-            metalRenderBackend: .d3dMetal,
             settingsVersion: 3
         )
     }
 
     /// Migrates older settings to the Sophon-only bundled Genshin strategy.
+    ///
+    /// settingsVersion 1 through 3 previously migrated launch toggles (cloud compatibility, AC
+    /// patch, network block, timeout fix, steam parent) and Retina scaling that are now hardcoded
+    /// rather than persisted settings — see `LaunchRuntimeProfile.build` and
+    /// `LauncherCoordinator.launchGame`. No migration reads `settingsVersion` left; it stays only
+    /// for a future one to gate against.
     func applyingBundledGenshinDefaultsIfNeeded() -> AppSettings {
         var copy = self
-
-        // One-time migration: enable the YAAGL-style launch toggles for pre-existing settings that
-        // predate the default-on change. `settingsVersion` guards this so users can still turn them
-        // back off afterwards without the next launch re-enabling them.
-        if copy.settingsVersion < 1 {
-            copy.cloudCompatibilityMode = true
-            copy.acPatchMode = true
-            copy.blockNetMode = true
-            copy.settingsVersion = 1
-        }
-
-        // One-time migration: enable the timeout fix and real steam.exe parent for settings that
-        // predate these default-on toggles.
-        if copy.settingsVersion < 2 {
-            copy.timeoutFix = true
-            copy.steamPatch = true
-            copy.settingsVersion = 2
-        }
-
-        // One-time migration: turn off Retina scaling for settings that predate this performance
-        // default. It was previously on and produced stutter once the game window filled the
-        // screen (uncapped, full physical pixel count on a Retina display); see the property
-        // comment above. Guarded the same way so users who want the old behavior can turn it
-        // back on.
-        if copy.settingsVersion < 3 {
-            copy.macDriverRetina = false
-            copy.settingsVersion = 3
-        }
 
         guard let index = copy.games.firstIndex(where: { $0.id == Self.genshinGameID }) else {
             return copy
         }
 
         copy.games[index].installerStrategy = .sophon
-        if !copy.games[index].runtimeRequirements.contains(.d3dMetal) {
-            copy.games[index].runtimeRequirements.append(.d3dMetal)
-        }
         if !copy.games[index].runtimeRequirements.contains(.dxmt) {
             copy.games[index].runtimeRequirements.append(.dxmt)
         }
@@ -649,34 +547,17 @@ enum InstallProgressEvent: Equatable {
 
 /// Runtime backend used for DirectX translation on macOS.
 ///
-/// D3DMetal and DXMT both require payloads matched to a CrossOver-derived Wine build and both
-/// translate directly to Metal. `AppSettings.metalRenderBackend` stores the user's preference;
-/// `RenderBridges.resolveBackend` validates it against the backends declared by the selected game.
+/// DXMT requires a payload matched to a CrossOver-derived Wine build and translates directly to
+/// Metal. `RenderBridges.resolveBackend` picks it when the selected game declares support for it,
+/// falling back to plain Wine otherwise.
 ///
-/// DXVK (D3D11 through Vulkan then MoltenVK) was removed: the extra Vulkan/SPIRV-Cross hop made
-/// its shader translation the least reliable of the three on Apple GPUs, with no lever to fix it
-/// from here. Existing settings that had it selected fall back to D3DMetal — see `init(from:)`.
-enum RuntimeBackend: String, Codable {
-    case d3dMetal
+/// Apple's own D3DMetal backend and DXVK (D3D11 through Vulkan then MoltenVK) were both removed —
+/// D3DMetal for a Wine payload issue with no lever to fix from here, DXVK because the extra
+/// Vulkan/SPIRV-Cross hop made its shader translation the least reliable of the three on Apple
+/// GPUs. Not persisted, so no settings.json migration is needed for either removal.
+enum RuntimeBackend: String {
     case dxmt
     case plainWine
-
-    /// `dxvk` is the raw value of the removed case. Existing settings.json files can still carry
-    /// it in `metalRenderBackend`, and a decode failure there resets the whole settings file to
-    /// defaults (see `SettingsStore`), so the legacy value is aliased to D3DMetal rather than left
-    /// to fail.
-    init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let raw = try container.decode(String.self)
-        if raw == "dxvk" {
-            self = .d3dMetal
-            return
-        }
-        guard let value = RuntimeBackend(rawValue: raw) else {
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unknown RuntimeBackend '\(raw)'")
-        }
-        self = value
-    }
 }
 
 /// Describes the full runtime environment for a single game launch session.
@@ -706,12 +587,14 @@ struct LaunchRuntimeProfile {
         settings: AppSettings,
         displaySize: RenderSize? = nil
     ) -> LaunchRuntimeProfile {
-        let displaySize = displaySize ?? DisplayGeometry.mainDisplaySize(retina: settings.macDriverRetina)
+        // Retina scaling is not offered as a setting: it is the single biggest render-side cost in
+        // the whole pipeline and the main driver of stutter once the window fills the screen in
+        // `LaunchDisplayMode.fullscreen`.
+        let displaySize = displaySize ?? DisplayGeometry.mainDisplaySize(retina: false)
         let exe = game.installDirectory.appendingPathComponent(game.executableRelativePath)
-        let backend = RenderBridges.resolveBackend(
-            requirements: game.runtimeRequirements,
-            preferred: settings.metalRenderBackend
-        )
+        // DXMT is the only Metal-native backend left (Apple D3DMetal was removed); `resolveBackend`
+        // falls back to plain Wine on a game that does not declare support for it.
+        let backend = RenderBridges.resolveBackend(requirements: game.runtimeRequirements, preferred: .dxmt)
 
         var env: [String: String] = [
             "WINEARCH": "win64",
@@ -731,24 +614,14 @@ struct LaunchRuntimeProfile {
 
         // YAAGL's network-timeout fix: prevents the macOS Wine socket timeout that drops the game
         // back to the title screen mid-session. Only effective on Wine builds carrying the patch
-        // (the managed wine does); a harmless no-op elsewhere. Keep it default-on for Genshin.
-        if settings.timeoutFix {
-            env["WINE_ENABLE_TIMEOUT_FIX"] = "1"
-        }
+        // (the managed wine does); a harmless no-op elsewhere. Always on for Genshin.
+        env["WINE_ENABLE_TIMEOUT_FIX"] = "1"
 
-        // Optional HTTP/HTTPS proxy forwarded to the Windows client.
-        if settings.proxyEnabled, !settings.proxyHost.isEmpty {
-            env["HTTP_PROXY"] = settings.proxyHost
-            env["HTTPS_PROXY"] = settings.proxyHost
-        }
-
-        var launchArguments = settings.launchArguments(for: game, displaySize: displaySize)
-        if settings.cloudCompatibilityMode {
-            // YAAGL-style cloud-gaming mode: the game skips the local anti-cheat requirement.
-            // DO NOT remove these flags; without them the client aborts during the anti-cheat
-            // driver-load phase (see LauncherCoordinator for the full bypass stack).
-            launchArguments += ["-platform_type", "CLOUD_THIRD_PARTY_PC", "-is_cloud", "1"]
-        }
+        // YAAGL-style cloud-gaming mode: the game skips the local anti-cheat requirement. DO NOT
+        // remove these flags; without them the client aborts during the anti-cheat driver-load
+        // phase (see LauncherCoordinator for the full bypass stack). Always on for Genshin.
+        let launchArguments = settings.launchArguments(for: game, displaySize: displaySize)
+            + ["-platform_type", "CLOUD_THIRD_PARTY_PC", "-is_cloud", "1"]
 
         return LaunchRuntimeProfile(
             wineBinaryPath: settings.wineBinaryPath,

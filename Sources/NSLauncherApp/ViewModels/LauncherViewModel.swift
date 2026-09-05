@@ -280,11 +280,11 @@ final class LauncherViewModel: ObservableObject {
         }
     }
 
-    /// True once a CrossOver carrying Apple D3DMetal is installed — hides the install action in
-    /// Settings once it is no longer needed.
+    /// True once a CrossOver carrying DXMT is installed — hides the install action in Settings
+    /// once it is no longer needed.
     var isCrossOverInstalled: Bool { CrossOverInstaller.isInstalled }
 
-    /// Installs CrossOver through Homebrew so the D3DMetal render backend has a build to select.
+    /// Installs CrossOver through Homebrew so the DXMT render backend has a build to select.
     ///
     /// Only ever triggered by an explicit tap in Settings — see `CrossOverInstaller` for why this
     /// installs a paid trial and must never run on its own.

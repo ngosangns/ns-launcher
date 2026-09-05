@@ -14,8 +14,8 @@ launching the global version of Genshin Impact through Wine.
 - Discovers current HoYoPlay branches and Sophon builds.
 - Installs and updates assets with chunk verification, resumable staging, and
   atomic replacement.
-- Finds CrossOver or Game Porting Toolkit Wine runtimes and configures D3DMetal,
-  DXMT, or plain Wine when available.
+- Finds CrossOver or Game Porting Toolkit Wine runtimes and configures DXMT,
+  or plain Wine when available.
 - Monitors the actual game process and captures filtered Wine diagnostics.
 - Manages launcher settings, selected caches, logs, render snapshots, and
   runtime/container size information.
@@ -54,10 +54,12 @@ removal, but voice packs are not downloaded by the launcher.
   diagnostics drawer for the current operation's progress and logs.
 - Installing or updating downloads and verifies game assets directly from
   HoYoPlay's Sophon CDN; you don't need the official launcher installed.
-- Settings covers the Wine runtime, render backend (D3DMetal, DXMT, or
-  plain Wine), compatibility toggles (cloud compatibility, Steam-parent mode,
-  AC patching, network blocking, proxy, HDR, Retina, resolution, timeout
-  fixes), install location, and cache management.
+- Settings covers the Wine runtime, display mode, install location, and
+  cache management. HDR and Retina scaling stay off (Wine's HDR path
+  renders wrong colour, and Retina is the single biggest render-side
+  cost). The YAAGL-style launch workarounds (cloud compatibility, AC
+  patching, network blocking, timeout fixes, Steam-parent mode) always run.
+  None of these are user-configurable.
 
 These Wine-based workarounds are not supported by HoYoverse and may carry
 account or stability risks. Runtime behavior depends on the installed Wine
