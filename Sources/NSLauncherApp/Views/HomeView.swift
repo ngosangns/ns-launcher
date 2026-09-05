@@ -21,16 +21,15 @@ struct HomeView: View {
 
     private func gameHome(for game: GameDefinition) -> some View {
         ScrollView(showsIndicators: false) {
-            VStack(spacing: 22) {
+            VStack(spacing: 14) {
                 hero(for: game)
                 if isDrawerVisible {
                     statusDrawer
                 }
             }
-            .animation(.easeOut(duration: 0.22), value: isDrawerVisible)
             .frame(maxWidth: 1_180)
-            .padding(.horizontal, 34)
-            .padding(.vertical, 28)
+            .padding(.horizontal, 24)
+            .padding(.vertical, 18)
             .frame(maxWidth: .infinity)
         }
     }
@@ -40,23 +39,15 @@ struct HomeView: View {
     }
 
     private func hero(for game: GameDefinition) -> some View {
-        OrnamentalPanel(padding: 34, tone: LauncherPalette.twilight.opacity(0.60)) {
-            VStack(alignment: .leading, spacing: 26) {
-                HStack(alignment: .top) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(game.displayName)
-                            .font(.system(size: 46, weight: .bold, design: .serif))
-                            .foregroundStyle(LauncherPalette.parchment)
-                        Text(viewModel.statusText)
-                            .font(.system(.subheadline, design: .rounded, weight: .semibold))
-                            .foregroundStyle(LauncherPalette.mist.opacity(0.78))
-                    }
-
-                    Spacer(minLength: 20)
-
-                    CelestialMark()
-                        .scaleEffect(1.55)
-                        .padding(8)
+        OrnamentalPanel(padding: 20, tone: LauncherPalette.twilight.opacity(0.60)) {
+            VStack(alignment: .leading, spacing: 14) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(game.displayName)
+                        .font(.system(size: 28, weight: .bold, design: .serif))
+                        .foregroundStyle(LauncherPalette.parchment)
+                    Text(viewModel.statusText)
+                        .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                        .foregroundStyle(LauncherPalette.mist.opacity(0.78))
                 }
 
                 Divider()
@@ -68,7 +59,7 @@ struct HomeView: View {
     }
 
     private var actionRow: some View {
-        HStack(alignment: .center, spacing: 24) {
+        HStack(alignment: .center, spacing: 16) {
             let gameIsRunning = viewModel.isLaunchingWithWine || viewModel.isGameRunning
             let playDisabled = viewModel.isBusy && !viewModel.isLaunchingWithWine
             CircularActionButton(
@@ -90,7 +81,7 @@ struct HomeView: View {
             .disabled(playDisabled)
             .opacity(playDisabled ? 0.5 : 1)
 
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 6) {
                 let updateDisabled = viewModel.isBusy || !viewModel.canUpdateSelectedGame
                 Button {
                     viewModel.updateSelectedGame()
@@ -101,9 +92,7 @@ struct HomeView: View {
 
                 if !viewModel.isLaunchingWithWine {
                     Button {
-                        withAnimation(.easeOut(duration: 0.2)) {
-                            isShowingDiagnostics.toggle()
-                        }
+                        isShowingDiagnostics.toggle()
                     } label: {
                         Label(
                             isShowingDiagnostics ? text.hideDiagnostics : text.showDiagnostics,
@@ -119,8 +108,8 @@ struct HomeView: View {
     }
 
     private var statusDrawer: some View {
-        OrnamentalPanel(padding: 24, tone: LauncherPalette.night.opacity(0.66)) {
-            VStack(alignment: .leading, spacing: 18) {
+        OrnamentalPanel(padding: 16, tone: LauncherPalette.night.opacity(0.66)) {
+            VStack(alignment: .leading, spacing: 12) {
                 if viewModel.isBusy || viewModel.isLaunchingWithWine {
                     statusHeader
                 }
@@ -141,18 +130,17 @@ struct HomeView: View {
                 }
             }
         }
-        .transition(.opacity)
     }
 
     private var statusHeader: some View {
-        HStack(alignment: .center, spacing: 14) {
+        HStack(alignment: .center, spacing: 10) {
             ZStack {
                 Circle()
                     .fill(statusTint.opacity(0.14))
-                    .frame(width: 42, height: 42)
+                    .frame(width: 32, height: 32)
                 if viewModel.isPaused {
                     Image(systemName: "pause.fill")
-                        .font(.system(.title3, weight: .semibold))
+                        .font(.system(.callout, weight: .semibold))
                         .foregroundStyle(statusTint)
                 } else {
                     ProgressView()
@@ -161,13 +149,13 @@ struct HomeView: View {
                 }
             }
 
-            VStack(alignment: .leading, spacing: 5) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text(text.status.uppercased())
                     .font(.system(.caption2, design: .rounded, weight: .bold))
                     .tracking(1.2)
                     .foregroundStyle(LauncherPalette.goldHighlight)
                 Text(viewModel.statusText)
-                    .font(.system(.title3, design: .rounded, weight: .bold))
+                    .font(.system(.callout, design: .rounded, weight: .bold))
                     .foregroundStyle(LauncherPalette.parchment)
                     .lineLimit(2)
             }
@@ -197,7 +185,7 @@ struct HomeView: View {
     }
 
     private func progressDetails(_ progress: OperationProgress) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 10) {
             progressLine(
                 title: text.totalProgressLabel,
                 detail: progress.detailText ?? text.waitingForProgress,
@@ -227,7 +215,7 @@ struct HomeView: View {
     }
 
     private func progressLine(title: String, detail: String, value: Double?) -> some View {
-        VStack(alignment: .leading, spacing: 9) {
+        VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .firstTextBaseline) {
                 Text(title.uppercased())
                     .font(.system(.caption2, design: .rounded, weight: .bold))
@@ -253,10 +241,10 @@ struct HomeView: View {
             HStack(alignment: .top, spacing: 24) { transferMetrics(progress) }
             VStack(alignment: .leading, spacing: 12) { transferMetrics(progress) }
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 12)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(LauncherPalette.ink.opacity(0.26), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .background(LauncherPalette.ink.opacity(0.26), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 
     @ViewBuilder
@@ -283,7 +271,7 @@ struct HomeView: View {
     }
 
     private func activeItemList(_ paths: [String]) -> some View {
-        VStack(alignment: .leading, spacing: 9) {
+        VStack(alignment: .leading, spacing: 6) {
             Text(paths.count > 1 ? text.currentItemsLabel : text.currentItemLabel)
                 .font(.system(.caption2, design: .rounded, weight: .bold))
                 .tracking(0.8)
@@ -301,12 +289,12 @@ struct HomeView: View {
                 }
             }
         }
-        .padding(14)
-        .background(LauncherPalette.ink.opacity(0.20), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .padding(10)
+        .background(LauncherPalette.ink.opacity(0.20), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 
     private var logsSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 8) {
             if !viewModel.updateRunLog.isEmpty {
                 logPanel(title: text.updateRunLogTitle, contents: viewModel.updateRunLog, bottomID: "update-log")
             }
@@ -322,7 +310,7 @@ struct HomeView: View {
     }
 
     private func logPanel(title: String, contents: String, bottomID: String) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 6) {
             Text(title)
                 .font(.system(.caption, design: .rounded, weight: .bold))
                 .foregroundStyle(LauncherPalette.gold.opacity(0.86))
@@ -340,9 +328,9 @@ struct HomeView: View {
                     proxy.scrollTo(bottomID, anchor: .bottom)
                 }
             }
-            .frame(minHeight: 130, maxHeight: 230)
-            .padding(12)
-            .background(LauncherPalette.ink.opacity(0.48), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .frame(minHeight: 90, maxHeight: 160)
+            .padding(10)
+            .background(LauncherPalette.ink.opacity(0.48), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         }
     }
 }

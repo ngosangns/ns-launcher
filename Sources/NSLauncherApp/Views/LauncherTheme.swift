@@ -160,10 +160,7 @@ private struct QuestButtonBody: View {
                 Capsule()
                     .stroke(border, lineWidth: role == .quiet ? 0.8 : 1)
             }
-            .shadow(color: shadowColor, radius: isHovering ? 16 : 6, y: isHovering ? 7 : 3)
-            .scaleEffect(configuration.isPressed ? 0.96 : (isHovering ? 1.03 : 1))
-            .animation(.easeOut(duration: 0.16), value: configuration.isPressed)
-            .animation(.easeOut(duration: 0.2), value: isHovering)
+            .shadow(color: shadowColor, radius: isHovering ? 10 : 6, y: 3)
             .onHover { isHovering = $0 }
     }
 
@@ -217,10 +214,17 @@ extension View {
 
 /// Thin gold corner brackets framing the whole window, echoing a HUD/quest-log border.
 struct WindowFrameOrnament: View {
+    /// Distance from the true window edge. Deliberately NOT `.ignoresSafeArea()`: that made this
+    /// view's `GeometryReader` measure a taller region than the `ZStack` it sits in actually
+    /// renders at (the window's own titlebar already claims that space), so the bottom pair of
+    /// brackets landed below the visible window and the top pair sat too high — both effectively
+    /// off-window. Matching the same bounds every other child of that `ZStack` gets keeps all four
+    /// brackets anchored to the corners actually on screen.
+    private let inset: CGFloat = 16
+    private let length: CGFloat = 24
+
     var body: some View {
         GeometryReader { proxy in
-            let length: CGFloat = 26
-            let inset: CGFloat = 14
             let corners: [(CGPoint, (CGFloat, CGFloat), (CGFloat, CGFloat))] = [
                 (CGPoint(x: inset, y: inset), (1, 0), (0, 1)),
                 (CGPoint(x: proxy.size.width - inset, y: inset), (-1, 0), (0, 1)),
@@ -238,7 +242,6 @@ struct WindowFrameOrnament: View {
             }
         }
         .allowsHitTesting(false)
-        .ignoresSafeArea()
     }
 }
 
@@ -267,9 +270,6 @@ struct SidebarTabButton: View {
                 )
         }
         .buttonStyle(.plain)
-        .scaleEffect(isHovering && !isSelected ? 1.02 : 1)
-        .animation(.easeOut(duration: 0.16), value: isSelected)
-        .animation(.easeOut(duration: 0.16), value: isHovering)
         .pointerOnHover()
         .onHover { isHovering = $0 }
     }
@@ -285,9 +285,8 @@ struct CircularActionButton: View {
     let isActive: Bool
     let action: () -> Void
 
-    private let diameter: CGFloat = 132
+    private let diameter: CGFloat = 92
 
-    @State private var spinnerAngle: Double = 0
     @State private var isHovering = false
     @State private var isPressed = false
 
@@ -295,48 +294,39 @@ struct CircularActionButton: View {
         Button(action: action) {
             ZStack {
                 Circle()
-                    .stroke(LauncherPalette.mist.opacity(0.14), lineWidth: 5)
+                    .stroke(LauncherPalette.mist.opacity(0.14), lineWidth: 4)
 
                 if let progress {
                     Circle()
                         .trim(from: 0, to: max(0.02, min(progress, 1)))
                         .stroke(
                             LinearGradient(colors: [LauncherPalette.gold, LauncherPalette.goldHighlight], startPoint: .top, endPoint: .bottom),
-                            style: StrokeStyle(lineWidth: 5, lineCap: .round)
+                            style: StrokeStyle(lineWidth: 4, lineCap: .round)
                         )
                         .rotationEffect(.degrees(-90))
-                        .animation(.easeOut(duration: 0.25), value: progress)
                 } else if isActive {
                     Circle()
-                        .trim(from: 0, to: 0.22)
-                        .stroke(LauncherPalette.goldHighlight, style: StrokeStyle(lineWidth: 5, lineCap: .round))
-                        .rotationEffect(.degrees(spinnerAngle))
-                        .animation(.linear(duration: 1.1).repeatForever(autoreverses: false), value: spinnerAngle)
+                        .stroke(LauncherPalette.goldHighlight.opacity(0.85), lineWidth: 4)
                 }
 
                 Circle()
                     .fill(LauncherPalette.goldHighlight)
-                    .frame(width: diameter - 22, height: diameter - 22)
-                    .shadow(color: LauncherPalette.gold.opacity(isHovering ? 0.75 : 0.5), radius: isHovering ? 26 : 18, y: 6)
+                    .frame(width: diameter - 16, height: diameter - 16)
+                    .shadow(color: LauncherPalette.gold.opacity(isHovering ? 0.65 : 0.5), radius: isHovering ? 14 : 12, y: 4)
 
-                VStack(spacing: 6) {
+                VStack(spacing: 4) {
                     Image(systemName: systemImage)
-                        .font(.system(size: 26, weight: .bold))
-                        .contentTransition(.symbolEffect(.replace))
+                        .font(.system(size: 19, weight: .bold))
                     Text(title.uppercased())
-                        .font(.system(.caption, design: .rounded, weight: .bold))
-                        .tracking(1.1)
-                        .contentTransition(.opacity)
+                        .font(.system(.caption2, design: .rounded, weight: .bold))
+                        .tracking(1.0)
                 }
                 .foregroundStyle(LauncherPalette.ink)
             }
             .frame(width: diameter, height: diameter)
         }
         .buttonStyle(.plain)
-        .scaleEffect(isPressed ? 0.96 : (isHovering ? 1.035 : 1))
-        .animation(.easeOut(duration: 0.15), value: isPressed)
-        .animation(.easeOut(duration: 0.2), value: isHovering)
-        .animation(.easeOut(duration: 0.2), value: title)
+        .opacity(isPressed ? 0.92 : 1)
         .pointerOnHover()
         .onHover { isHovering = $0 }
         .simultaneousGesture(
@@ -344,8 +334,6 @@ struct CircularActionButton: View {
                 .onChanged { _ in isPressed = true }
                 .onEnded { _ in isPressed = false }
         )
-        .onAppear { if isActive { spinnerAngle = 360 } }
-        .onChange(of: isActive) { _, active in spinnerAngle = active ? 360 : 0 }
     }
 }
 

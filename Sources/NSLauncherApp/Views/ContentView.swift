@@ -20,9 +20,9 @@ struct ContentView: View {
 
             VStack(spacing: 0) {
                 topBar
-                    .padding(.horizontal, 34)
-                    .padding(.top, 22)
-                    .padding(.bottom, 16)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 16)
+                    .padding(.bottom, 12)
 
                 Group {
                     switch activeTab {
@@ -33,8 +33,6 @@ struct ContentView: View {
                     }
                 }
                 .id(activeTab)
-                .transition(.opacity)
-                .animation(.easeOut(duration: 0.2), value: activeTab)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
 
