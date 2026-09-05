@@ -6,6 +6,7 @@
 // because readability/termination handlers run on background queues, and bounded
 // because a game session streams output for hours.
 
+import Darwin
 import Foundation
 
 /// Captured output and exit status from an external process.
@@ -181,6 +182,13 @@ struct ProcessRunner: ProcessRunning {
 
                 do {
                     try process.run()
+                    // Move the child into its own process group so a signal aimed at the launcher's
+                    // group (Ctrl+C from a `swift run` terminal, a closed terminal's SIGHUP) does not
+                    // also reach it. Wine/wineserver/the game must survive the launcher's own exit —
+                    // see `WineShutdownWatchdog` — and inheriting the launcher's process group defeats
+                    // that the moment the launcher is stopped from a terminal rather than quit via the
+                    // Dock/Cmd+Q.
+                    setpgid(process.processIdentifier, 0)
                 } catch {
                     continuation.resume(throwing: error)
                 }

@@ -25,6 +25,7 @@
 // DO NOT launch the game directly as the default path; without the steam.exe parent the
 // client aborts during the anti-cheat driver-load phase.
 
+import Darwin
 import Foundation
 
 /// Complete request needed to launch a Windows executable through Wine.
@@ -171,6 +172,27 @@ struct WineService: WineServicing {
         let env = baseEnv
         diagnose("environment WINEPREFIX=\(env["WINEPREFIX"] ?? "") WINEARCH=\(env["WINEARCH"] ?? "") WINEDEBUG=\(env["WINEDEBUG"] ?? "") customKeys=\(request.environment.keys.sorted().joined(separator: ","))")
 
+        // A prior session's Stop (or a launcher quit mid-game) no longer kills wineserver eagerly —
+        // see the cancellation handling below — so a wineserver from that session can still be alive
+        // here. A Wine prefix is single-tenant: a second client attaching to a running wineserver
+        // deadlocks in the loader instead of failing (see the preflight comment on
+        // `LauncherCoordinator.launchGame`). Clear any leftover before starting a new session.
+        if await Self.isWineserverRunning(wineserverPath: wineBuild.root.appendingPathComponent("bin/wineserver").path) {
+            diagnose("leftover wineserver detected from a previous session; shutting it down before this launch")
+            _ = await Self.waitForWineserver(wineBuild: wineBuild, environment: env, processRunner: processRunner, onDiagnostic: diagnose)
+        }
+
+        // `wineserver -k` above does not reliably take `winedevice.exe`/`services.exe`/
+        // `plugplay.exe` down with it — confirmed in the wild: processes from sessions days old
+        // were still running, reparented to launchd, with no wineserver left to own them at all.
+        // Scoped to this prefix by current working directory (see `GameProcessInspector
+        // .currentWorkingDirectory`) so a Wine/CrossOver bottle for a different app on the same Mac
+        // is never touched.
+        let sweptOrphans = await Self.killLingeringWineServiceProcesses(prefixDirectory: request.prefixDirectory)
+        if sweptOrphans > 0 {
+            diagnose("swept \(sweptOrphans) orphaned Wine service process(es) left over from previous sessions")
+        }
+
         // Apply the bridge's DLL overrides together with the launcher's Mac Driver and game
         // registry settings, in one import. Best-effort: a registry write failure must not block
         // the launch (mirrors YAAGL's ignore-on-error behavior).
@@ -282,15 +304,14 @@ struct WineService: WineServicing {
                 launchResult = ProcessResult(exitCode: 0, stdout: launchResult.stdout, stderr: launchResult.stderr)
             }
         } catch {
-            // `waitUntilStopped()` throws `CancellationError` on Stop, which used to skip the
-            // wineserver shutdown below entirely (a thrown error unwinds past the rest of this
-            // function). wineserver never exits on its own once winedevice.exe/services.exe are
-            // attached to it, so every Stop leaked that wineserver — and its now-orphaned service
-            // processes — for the lifetime of the Mac session. Each later launch then reused that
-            // same increasingly stale, single-tenant-violating wineserver instead of a clean one.
-            // Kill it here too before rethrowing, so a stopped launch tears down exactly like a
-            // completed one.
-            _ = await Self.waitForWineserver(wineBuild: wineBuild, environment: env, processRunner: processRunner, onDiagnostic: diagnose)
+            // `waitUntilStopped()` throws `CancellationError` on Stop. Stop means "stop this game",
+            // not "tear down Wine" — `LauncherCoordinator.terminateRunningGame` already kills the game
+            // process itself, and wineserver is left running on purpose so the next Play can attach to
+            // a warm prefix instead of paying Wine's startup cost again. `WineShutdownWatchdog`
+            // (spawned above) is what actually shuts wineserver down, once it independently confirms
+            // the game process is gone; if a new launch starts before that happens, the leftover-
+            // wineserver check right before this session started handles it. Do not kill wineserver
+            // here — that used to make every Stop indistinguishable from quitting Wine entirely.
             throw error
         }
 
@@ -425,6 +446,57 @@ struct WineService: WineServicing {
             entries.append(RegistryEntry(key: genshin, name: "Screenmanager Resolution Height_h2627697771", value: .dword(UInt32(clamping: renderSize.height))))
         }
         return entries
+    }
+
+    /// Whether a wineserver process for this build is still alive, e.g. left behind by a Stop from a
+    /// previous session (see the cancellation handling in `launch`).
+    ///
+    /// Matched by binary path only, not by prefix: `WINEPREFIX` lives in the candidate's
+    /// environment, which current macOS no longer lets another same-UID process read back (see
+    /// `GameProcessInspector.currentWorkingDirectory`), and wineserver's own working directory is
+    /// whatever launched Wine (this launcher's game install directory), not the prefix — so there is
+    /// no reliable per-prefix signal available for wineserver itself. Scoped instead to the exact
+    /// Wine build binary this launch resolved, which already rules out an unrelated Wine
+    /// installation; a false match against a different prefix using the identical binary is a rare
+    /// edge case and, at worst, costs an extra `wineserver -k` against something already idle.
+    static func isWineserverRunning(wineserverPath: String) async -> Bool {
+        GameProcessInspector.allPIDs().contains { pid in
+            GameProcessInspector.commandLine(forPID: pid)?.contains(wineserverPath) == true
+        }
+    }
+
+    /// Wine's own background services survive plain `wineserver -k` often enough in practice
+    /// (SIGTERM is ignored by a translated Windows process; only SIGKILL reliably takes them down),
+    /// so a sweep before every launch is what actually keeps a single-prefix launcher from
+    /// accumulating them.
+    ///
+    /// Scoped by current working directory rather than `WINEPREFIX` (unreadable cross-process on
+    /// current macOS — see `GameProcessInspector.currentWorkingDirectory`): Wine starts these
+    /// service processes with their POSIX cwd set to `<prefix>/drive_c/windows/system32`, so a
+    /// candidate whose cwd does not fall under this prefix's `drive_c` belongs to a different
+    /// Wine/CrossOver bottle and is left alone. Returns the number of processes killed, for
+    /// diagnostics.
+    @discardableResult
+    static func killLingeringWineServiceProcesses(prefixDirectory: URL) async -> Int {
+        let serviceExecutableNames = ["winedevice.exe", "services.exe", "plugplay.exe"]
+        // `resolvingSymlinksInPath()` does not canonicalize a symlinked ancestor component (e.g.
+        // `/var` -> `/private/var`) the way the kernel's `getcwd()` behind `currentWorkingDirectory`
+        // always does — confirmed empirically — so match with `realpath(3)` instead of a path shape
+        // Foundation does not actually produce.
+        let driveCComponent = prefixDirectory.appendingPathComponent("drive_c", isDirectory: true).path
+        var resolvedBuffer = [Int8](repeating: 0, count: Int(PATH_MAX))
+        let driveCPath = realpath(driveCComponent, &resolvedBuffer).map { String(cString: $0) } ?? driveCComponent
+        var killedCount = 0
+        for pid in GameProcessInspector.allPIDs() {
+            guard let commandLine = GameProcessInspector.commandLine(forPID: pid) else { continue }
+            guard serviceExecutableNames.contains(where: { commandLine.contains($0) }) else { continue }
+            guard let cwd = GameProcessInspector.currentWorkingDirectory(forPID: pid),
+                  cwd.hasPrefix(driveCPath) else { continue }
+            if kill(pid, SIGKILL) == 0 {
+                killedCount += 1
+            }
+        }
+        return killedCount
     }
 
     /// Shuts wineserver down for this prefix, returning true only when cache writers are confirmed
