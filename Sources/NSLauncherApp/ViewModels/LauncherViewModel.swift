@@ -178,16 +178,6 @@ final class LauncherViewModel: ObservableObject {
         update(\.language, to: language)
     }
 
-    /// Updates the custom-resolution width and persists the choice.
-    func setResolutionWidth(_ width: Int) {
-        update(\.resolutionWidth, to: max(width, 1))
-    }
-
-    /// Updates the custom-resolution height and persists the choice.
-    func setResolutionHeight(_ height: Int) {
-        update(\.resolutionHeight, to: max(height, 1))
-    }
-
     /// Refreshes local storage inventory for the selected game.
     func refreshVoicePackages() {
         guard !isManagingVoicePacks, let game = selectedGame else { return }

@@ -265,19 +265,6 @@ struct RenderSize: Equatable, Sendable {
     var width: Int
     var height: Int
 
-    /// Ratio used to compare a configured size against the display it will be stretched onto.
-    var aspectRatio: Double {
-        height > 0 ? Double(width) / Double(height) : 0
-    }
-
-    /// Whether filling `display` with this size distorts the image.
-    ///
-    /// The tolerance covers the rounding in real display modes (1512x982 is not exactly 16:10)
-    /// without accepting a genuinely different shape, such as 16:9 on a 16:10 Mac panel.
-    func isStretched(onto display: RenderSize, tolerance: Double = 0.01) -> Bool {
-        guard height > 0, display.height > 0 else { return false }
-        return abs(aspectRatio - display.aspectRatio) > tolerance
-    }
 }
 
 /// User-selected display mode for games launched through Wine.
@@ -462,10 +449,6 @@ struct AppSettings: Codable, Equatable {
     /// Steam patch (enabled by default): launch through a real `steam.exe` + `lsteamclient.dll` parent
     /// so the anti-cheat skips loading its kernel driver.
     var steamPatch: Bool = false
-    /// Apply a custom windowed resolution through the game's registry keys.
-    var resolutionCustom: Bool = false
-    var resolutionWidth: Int = 1920
-    var resolutionHeight: Int = 1080
     /// Enable the game's HDR registry flag.
     var enableHDR: Bool = false
     /// Route the game through an HTTP/HTTPS proxy.
@@ -531,9 +514,6 @@ struct AppSettings: Codable, Equatable {
             blockNetMode: true,
             timeoutFix: true,
             steamPatch: true,
-            resolutionCustom: false,
-            resolutionWidth: 1920,
-            resolutionHeight: 1080,
             enableHDR: false,
             proxyEnabled: false,
             proxyHost: "",
@@ -607,17 +587,14 @@ struct AppSettings: Codable, Equatable {
     /// Returns nil only when fullscreen is selected and the display geometry could not be read;
     /// the launch then omits the arguments rather than inventing a size.
     func renderSize(displaySize: RenderSize?) -> RenderSize? {
-        if resolutionCustom {
-            return RenderSize(width: max(resolutionWidth, 1), height: max(resolutionHeight, 1))
-        }
         switch launchDisplayMode {
         case .fullscreen:
             // A window covering the whole screen at the screen's own mode: no mode switch, so
             // nothing to stretch and no profile change.
             return displaySize
         case .windowed:
-            // Default windowed size when no custom resolution is set. A window is drawn at its own
-            // size, so an aspect ratio different from the display's costs nothing here.
+            // Default windowed size. A window is drawn at its own size, so an aspect ratio
+            // different from the display's costs nothing here.
             return RenderSize(width: 1280, height: 720)
         }
     }

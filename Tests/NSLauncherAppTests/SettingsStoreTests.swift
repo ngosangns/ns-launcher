@@ -32,12 +32,12 @@ final class SettingsStoreTests: XCTestCase {
     /// its default rather than failing the whole decode.
     func testKeysMissingFromAnOlderFileFallBackToDefaults() throws {
         try store.save(AppSettings.default)
-        try stripKeys(["enableHDR", "resolutionWidth", "metalRenderBackend"])
+        try stripKeys(["enableHDR", "steamPatch", "metalRenderBackend"])
 
         let loaded = try store.load()
 
         XCTAssertEqual(loaded.enableHDR, false)
-        XCTAssertEqual(loaded.resolutionWidth, 1920)
+        XCTAssertEqual(loaded.steamPatch, true)
         XCTAssertEqual(loaded.metalRenderBackend, .d3dMetal)
     }
 
@@ -45,13 +45,13 @@ final class SettingsStoreTests: XCTestCase {
     func testStoredValuesWinOverDefaults() throws {
         var settings = AppSettings.default
         settings.enableHDR = true
-        settings.resolutionWidth = 2560
+        settings.steamPatch = false
         try store.save(settings)
 
         let loaded = try store.load()
 
         XCTAssertEqual(loaded.enableHDR, true)
-        XCTAssertEqual(loaded.resolutionWidth, 2560)
+        XCTAssertEqual(loaded.steamPatch, false)
     }
 
     /// Keys from removed settings must not break the decode — older settings.json files still

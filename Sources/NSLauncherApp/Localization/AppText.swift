@@ -133,21 +133,6 @@ struct AppText {
             vi: "D3DMetal là lựa chọn mặc định khuyến nghị. DXMT là một translator Metal khác, đáng thử khi một hiệu ứng cụ thể render sai."
         )
     }
-    var resolutionCustomLabel: String { localized(en: "Custom resolution", vi: "Độ phân giải tùy chỉnh") }
-    var resolutionCustomDescription: String {
-        localized(
-            en: "Render at a resolution you choose instead of the one the launcher picks. Left off, Fullscreen runs at your display's own resolution and Windowed at 1280x720; either way the size is rewritten before every launch, so a resolution changed in-game cannot carry over.",
-            vi: "Render ở độ phân giải bạn chọn thay vì độ phân giải launcher tự chọn. Nếu tắt, chế độ Fullscreen chạy đúng độ phân giải màn hình còn Windowed chạy 1280x720; dù chọn cách nào thì kích thước cũng được ghi lại trước mỗi lần chạy, nên độ phân giải đổi trong game không còn dính sang lần sau."
-        )
-    }
-    func resolutionAspectMismatchWarning(displayWidth: Int, displayHeight: Int) -> String {
-        localized(
-            en: "This is a different shape from your display (\(displayWidth)×\(displayHeight)). In Fullscreen the screen is filled by stretching it, which distorts models. Match your display's aspect ratio, or turn this off to render at the display's own resolution.",
-            vi: "Tỉ lệ này khác với màn hình của bạn (\(displayWidth)×\(displayHeight)). Ở chế độ Fullscreen, hình sẽ bị kéo dãn cho đầy màn hình nên model bị méo. Hãy chọn đúng tỉ lệ màn hình, hoặc tắt mục này để game render đúng độ phân giải của màn hình."
-        )
-    }
-    var resolutionWidthLabel: String { localized(en: "Width", vi: "Chiều rộng") }
-    var resolutionHeightLabel: String { localized(en: "Height", vi: "Chiều cao") }
     var hdrLabel: String { localized(en: "Enable HDR", vi: "Bật HDR") }
     var hdrDescription: String {
         localized(
