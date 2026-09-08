@@ -19,6 +19,7 @@ struct AppText {
 
     var homeTitle: String { localized(en: "Home", vi: "Trang chủ") }
     var settingsTitle: String { localized(en: "Settings", vi: "Cài đặt") }
+    var storyTitle: String { localized(en: "Story", vi: "Cốt truyện") }
     var close: String { localized(en: "Close", vi: "Đóng") }
     var open: String { localized(en: "Open", vi: "Mở") }
     var browse: String { localized(en: "Browse", vi: "Chọn") }
@@ -488,6 +489,51 @@ struct AppText {
     /// Error text for manifest checksum mismatches.
     func checksumMismatch(_ path: String) -> String {
         localized(en: "Checksum mismatch for \(path)", vi: "Checksum không khớp cho \(path)")
+    }
+
+    // MARK: - Story Tab
+
+    var storyLoadingLabel: String { localized(en: "Loading story content...", vi: "Đang tải nội dung cốt truyện...") }
+    var storySearchPlaceholder: String {
+        localized(en: "Search characters, chapters, quests...", vi: "Tìm nhân vật, chương, nhiệm vụ...")
+    }
+    var storyChaptersLabel: String { localized(en: "Story", vi: "Cốt truyện") }
+    var storyEntitiesLabel: String { localized(en: "Characters & Events", vi: "Nhân vật & sự kiện") }
+    var storyQuestsLabel: String { localized(en: "Quest Reference", vi: "Nhiệm vụ") }
+    var storyAppearsInLabel: String { localized(en: "Appears in", vi: "Xuất hiện trong") }
+    var storyRelatedQuestsLabel: String { localized(en: "Related quests", vi: "Liên quan trong nhiệm vụ") }
+    var storyNoSummaryLabel: String { localized(en: "No summary yet.", vi: "Chưa có tóm tắt.") }
+    var storyAlsoKnownAsLabel: String { localized(en: "Also known as", vi: "Còn được gọi là") }
+    var storyEmptySearchResult: String { localized(en: "No results.", vi: "Không tìm thấy kết quả.") }
+    var storySelectAPrompt: String {
+        localized(en: "Pick a chapter, character, or quest on the left.", vi: "Chọn một chương, nhân vật, hoặc nhiệm vụ ở bên trái.")
+    }
+
+    func storyEntityKindLabel(_ kind: StoryEntity.Kind) -> String {
+        switch kind {
+        case .character: return localized(en: "Character", vi: "Nhân vật")
+        case .archon: return localized(en: "Archon", vi: "Archon")
+        case .faction: return localized(en: "Faction", vi: "Phe phái")
+        case .nation: return localized(en: "Nation", vi: "Quốc gia")
+        case .event: return localized(en: "Event", vi: "Sự kiện")
+        case .concept: return localized(en: "Concept", vi: "Khái niệm")
+        }
+    }
+
+    /// Shown once at the top of the Story tab — required alongside the fan
+    /// content itself, not just in repo documentation, since this ships to
+    /// end users.
+    var storyCopyrightNotice: String {
+        localized(
+            en: "Genshin Impact and its characters, locations, and original "
+                + "story are property of HoYoverse. This tab is a personal, "
+                + "non-commercial retelling for reference — not a translation "
+                + "or reproduction of in-game text.",
+            vi: "Genshin Impact cùng nhân vật, địa danh và cốt truyện gốc "
+                + "thuộc bản quyền HoYoverse. Tab này chỉ là bản diễn giải cá "
+                + "nhân, phi lợi nhuận để tham khảo — không phải bản dịch hay "
+                + "tái bản nội dung trong game."
+        )
     }
 
     /// Returns the string for the currently selected language.

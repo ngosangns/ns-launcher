@@ -15,7 +15,10 @@ let package = Package(
         .executableTarget(
             name: "NSLauncherApp",
             dependencies: ["AppIconKit"],
-            path: "Sources/NSLauncherApp"
+            path: "Sources/NSLauncherApp",
+            resources: [
+                .copy("Resources/Story")
+            ]
         ),
         .executableTarget(
             name: "IconGen",

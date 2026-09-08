@@ -38,6 +38,9 @@ tasks:
       - cp '{{.ROOT_DIR}}/Resources/Info.plist' '{{.APP_NAME}}.app/Contents/Info.plist'
       - cp 'NSLauncherApp' '{{.APP_NAME}}.app/Contents/MacOS/{{.BIN_NAME}}'
       - ./IconGen '{{.APP_NAME}}.app/Contents/Resources/AppIcon.icns'
+      # SwiftPM's own resource bundle (Resources/Story/, declared in Package.swift)
+      # — `Bundle.module` looks for it under Contents/Resources at runtime.
+      - cp -R ns-launcher_NSLauncherApp.bundle '{{.APP_NAME}}.app/Contents/Resources/'
       - codesign --force --sign - '{{.APP_NAME}}.app'
       - codesign --verify --strict '{{.APP_NAME}}.app'
 

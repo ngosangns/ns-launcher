@@ -3,6 +3,7 @@ import SwiftUI
 private enum AppTab: Hashable {
     case home
     case settings
+    case story
 }
 
 /// App shell: pinned chrome (wordmark, tab switch, language) plus the active tab's content.
@@ -11,6 +12,9 @@ private enum AppTab: Hashable {
 struct ContentView: View {
     @ObservedObject var viewModel: LauncherViewModel
     @State private var activeTab: AppTab = .home
+    // Held here, above the `.id(activeTab)` switch below, so switching away from
+    // and back to Story doesn't re-parse Resources/Story/ every time.
+    @StateObject private var storyViewModel = StoryViewModel()
 
     private var text: AppText { viewModel.text }
 
@@ -34,6 +38,8 @@ struct ContentView: View {
                         HomeView(viewModel: viewModel)
                     case .settings:
                         SettingsView(viewModel: viewModel)
+                    case .story:
+                        StoryView(viewModel: storyViewModel, text: text)
                     }
                 }
                 .id(activeTab)
@@ -87,6 +93,9 @@ struct ContentView: View {
             }
             SidebarTabButton(title: text.settingsTitle, systemImage: "gearshape.fill", isSelected: activeTab == .settings) {
                 activeTab = .settings
+            }
+            SidebarTabButton(title: text.storyTitle, systemImage: "book.closed.fill", isSelected: activeTab == .story) {
+                activeTab = .story
             }
         }
         .fixedSize()

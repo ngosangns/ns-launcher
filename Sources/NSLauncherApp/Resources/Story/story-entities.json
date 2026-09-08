@@ -1,0 +1,921 @@
+[
+  {
+    "id": "aino",
+    "kind": "character",
+    "displayName": "Aino",
+    "aliases": [],
+    "summary": "Cỗ máy đi tìm nhà và cô bé phát minh đã hồi sinh nó. Mạch truyện phụ nhưng giữ đúng chủ đề chung của chương: cái gì làm nên một \"nhà\", và ai có quyền quyết định điều đó.",
+    "homeDocument": "06-nod-krai",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "albedo",
+    "kind": "character",
+    "displayName": "Albedo",
+    "aliases": [],
+    "summary": "Không phải người được sinh ra mà là một Homunculus do nhà giả kim Rhinedottir (\"Gold\"), người gốc Khaenri'ah, tạo ra. Rhinedottir chính là kẻ đứng sau nhiều quái vật từng gieo rắc kinh hoàng lên Teyvat trong thảm họa Cataclysm. Albedo gần như không có ký ức trước khi theo chân bà, và là một trong số ít nhân vật nhận ra Traveler không thực sự thuộc về Teyvat.",
+    "homeDocument": "00-mo-dau-mondstadt",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "alhaitham",
+    "kind": "character",
+    "displayName": "Alhaitham",
+    "aliases": [],
+    "summary": "Học giả lạnh lùng, duy lý của phân viện Haravatat, giữ chức Scribe của Akademiya nhưng luôn hoài nghi chính hệ thống mình phục vụ. Mối quan hệ bạn cùng phòng đầy tranh cãi với kiến trúc sư Kaveh là trục cảm xúc chính, thể hiện hai thái cực: một người tin vào lý tưởng phụng sự đến kiệt sức, một người giữ khoảng cách lý trí với mọi thể chế.",
+    "homeDocument": "03-sumeru",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "alice",
+    "kind": "character",
+    "displayName": "Alice",
+    "aliases": [],
+    "summary": "Alice là nhà thám hiểm nổi tiếng, người sáng lập hội phù thủy Hexenzirkel và là mẹ của Klee; bà có khả năng thao túng cả một quần đảo (Golden Apple Archipelago) như món quà để lại cho con gái trong lúc vắng nhà dài ngày.",
+    "homeDocument": "00-mo-dau-mondstadt",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "alyosha",
+    "kind": "character",
+    "displayName": "Alyosha",
+    "aliases": [],
+    "summary": "Thợ săn, thành viên Rokot, người dẫn đường thật sự của Traveler ở Snezhnaya. Chăm sóc một bà cụ lẫn trí nhớ chỉ vì hai người cùng gốc gác từ một thị trấn đã bị bỏ hoang. Việc Ronova chọn khuôn mặt ông để đội lốt là lựa chọn tàn nhẫn có tính toán.",
+    "homeDocument": "07-snezhnaya",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "arataki-itto",
+    "kind": "character",
+    "displayName": "Arataki Itto",
+    "aliases": [],
+    "summary": "Câu chuyện của anh khai thác truyền thuyết dân gian về Oni Đỏ và Oni Xanh, qua đó giúp một hậu duệ oni khác nhận ra rằng oni ngày nay hoàn toàn có quyền tự quyết định số phận, không còn bị ràng buộc bởi lời nguyền hay bổn phận từ quá khứ.",
+    "homeDocument": "02-inazuma",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "arlecchino",
+    "kind": "character",
+    "displayName": "Arlecchino",
+    "aliases": [],
+    "summary": "Ba anh em mồ côi lớn lên tại \"House of the Hearth\", cô nhi viện do Fatui Harbinger Arlecchino (\"The Knave\") đứng đầu. Tên thật Peruere, Arlecchino từng lớn lên dưới quyền một \"Mẹ\" tiền nhiệm cai trị bằng bạo lực, giết bà để giải thoát những đứa trẻ trong nhà, rồi được chính Tsaritsa ân xá và phong làm Knave mới — một trong số ít Harbinger thể hiện rõ mặt nhân tính giữa guồng máy Fatui.",
+    "homeDocument": "04-fontaine",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "ayaka",
+    "kind": "character",
+    "displayName": "Ayaka",
+    "aliases": [
+      "Kamisato Ayaka"
+    ],
+    "summary": "Vì vị trí đại diện chính thức, Ayaka không thể công khai chống Sắc lệnh Săn Thị Kiến nên âm thầm giúp nạn nhân mất Vision; Ayato dùng mưu kế chính trị để hóa giải âm mưu tranh giành quyền lực trong nội bộ giới quý tộc mà không cần đối đầu trực diện. Cả hai cho thấy gia tộc Kamisato vận hành song song hai mặt: công khai tuân phục, ngầm chống lại bất công.",
+    "homeDocument": "02-inazuma",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "ayato",
+    "kind": "character",
+    "displayName": "Ayato",
+    "aliases": [
+      "Kamisato Ayato"
+    ],
+    "summary": "Vì vị trí đại diện chính thức, Ayaka không thể công khai chống Sắc lệnh Săn Thị Kiến nên âm thầm giúp nạn nhân mất Vision; Ayato dùng mưu kế chính trị để hóa giải âm mưu tranh giành quyền lực trong nội bộ giới quý tộc mà không cần đối đầu trực diện. Cả hai cho thấy gia tộc Kamisato vận hành song song hai mặt: công khai tuân phục, ngầm chống lại bất công.",
+    "homeDocument": "02-inazuma",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "ba-mat-trang",
+    "kind": "concept",
+    "displayName": "Ba Mặt Trăng",
+    "aliases": [
+      "kuuvahki"
+    ],
+    "summary": "Hệ thống ba mặt trăng gắn với lời nguyền và bí mật xuyên suốt mạch truyện Nod-Krai — trung tâm của khái niệm \"kuuvahki\" mà các nhân vật như Columbina và Lauma đều dính líu.",
+    "homeDocument": "08-buc-tranh-lon",
+    "homeHeading": "Ba Mặt Trăng & kuuvahki"
+  },
+  {
+    "id": "baizhu",
+    "kind": "character",
+    "displayName": "Baizhu",
+    "aliases": [],
+    "summary": "Người thừa kế giao kèo nhiều đời với linh xà trắng Changsheng: đổi lấy thuật y học bí truyền, người mang giao kèo phải trả giá bằng sức khỏe của chính mình (tiền nhiệm của Baizhu chết trẻ vì điều này). Một vụ đầu độc bí ẩn trong quest riêng của anh dẫn về nguồn gốc là máu của quái vật Chi — sinh vật từng bị chính Rex Lapis phong ấn sâu dưới làng Qingce.",
+    "homeDocument": "01-liyue",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "beidou",
+    "kind": "character",
+    "displayName": "Beidou",
+    "aliases": [],
+    "summary": "Từ trẻ mồ côi lang thang, lớn lên thành thuyền trưởng hạm đội Crux, nổi tiếng vì tinh thần trượng nghĩa — từng đích thân hạ gục quái vật biển Haishan.",
+    "homeDocument": "01-liyue",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "bennett",
+    "kind": "character",
+    "displayName": "Bennett",
+    "aliases": [],
+    "summary": "Trẻ mồ côi gốc Natlan, được một nhóm nhà thám hiểm về hưu nuôi lớn tại Mondstadt, luôn gặp vận rủi kỳ lạ; một nội dung mở rộng gần đây hé lộ cậu nghe thấy tiếng gọi từ vùng đất Mare Jivari, ám chỉ một số phận gắn với cậu từ trước.",
+    "homeDocument": "00-mo-dau-mondstadt",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "candace",
+    "kind": "character",
+    "displayName": "Candace",
+    "aliases": [],
+    "summary": "Chủ yếu khắc họa tính cách và văn hóa Sumeru (nghệ thuật múa, hậu duệ vua Deshret, chiêm tinh học, sinh thái rừng), không hé lộ reveal lớn mới cho mạch truyện chung.",
+    "homeDocument": "03-sumeru",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "cataclysm",
+    "kind": "event",
+    "displayName": "Cataclysm",
+    "aliases": [],
+    "summary": "Thảm họa 500 năm trước hủy diệt Khaenri'ah, đẩy Tsaritsa lập ra Fatui và để lại di chứng khắp Teyvat — từ The Chasm ở Liyue đến những quái vật của Rhinedottir ở Mondstadt.",
+    "homeDocument": "08-buc-tranh-lon",
+    "homeHeading": "Khaenri'ah"
+  },
+  {
+    "id": "celestia",
+    "kind": "concept",
+    "displayName": "Celestia",
+    "aliases": [
+      "Nguyên Lý Thiên Đường"
+    ],
+    "summary": "Cõi trời đứng sau các Archon, vận hành theo \"Nguyên Lý Thiên Đường\" — cơ chế được cho là sẽ can thiệp mỗi khi một đột phá công nghệ hay quyền năng nào đó đủ sức đe dọa vị thế của nó.",
+    "homeDocument": "08-buc-tranh-lon",
+    "homeHeading": "Celestia & Nguyên Lý Thiên Đường"
+  },
+  {
+    "id": "chasca",
+    "kind": "character",
+    "displayName": "Chasca",
+    "aliases": [],
+    "summary": "Mỗi người gắn với một bộ tộc riêng của Natlan (Hoa-Lông Vũ, Tập Thể Sung Túc, Người của Dòng Suối), chủ yếu khắc họa văn hóa và mối gắn bó cộng sinh giữa người Natlan với các Saurian, không có reveal lớn mới cho mạch truyện chung.",
+    "homeDocument": "05-natlan",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "chevreuse",
+    "kind": "character",
+    "displayName": "Chevreuse",
+    "aliases": [],
+    "summary": "Hai đại diện cho hệ thống thực thi luật pháp Fontaine: Clorinde là đấu sĩ vô địch từng đích thân kết liễu Callas theo đúng ý nguyện ông; Chevreuse chỉ huy đội tuần tra an ninh đặc biệt, cứng rắn nhưng không cứng nhắc.",
+    "homeDocument": "04-fontaine",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "chiori",
+    "kind": "character",
+    "displayName": "Chiori",
+    "aliases": [],
+    "summary": "Nhà thiết kế thời trang gốc Inazuma, rời quê hương khi Sắc lệnh Săn Thị Kiến và Tỏa Quốc ban hành, sang Fontaine lập nghiệp lại. *(Charlotte, Escoffier: chủ yếu vai trò nhân chứng/phóng viên xuyên suốt các tuyến quest khác, không có một chuỗi story quest lore riêng biệt đáng kể được tìm thấy.)*",
+    "homeDocument": "04-fontaine",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "citlali",
+    "kind": "character",
+    "displayName": "Citlali",
+    "aliases": [],
+    "summary": "Khi Vực Thẳm phát động xâm lăng, cô phát hiện một kẻ thuộc phe Vực Thẳm đang dụ dỗ một thành viên bộ tộc khác để dò la thông tin về \"Mare Jivari\" — một địa danh/khái niệm bí ẩn liên quan Vực Thẳm mà cô giải cứu được nạn nhân nhưng để kẻ chủ mưu trốn thoát.",
+    "homeDocument": "05-natlan",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "clorinde",
+    "kind": "character",
+    "displayName": "Clorinde",
+    "aliases": [],
+    "summary": "Hai đại diện cho hệ thống thực thi luật pháp Fontaine: Clorinde là đấu sĩ vô địch từng đích thân kết liễu Callas theo đúng ý nguyện ông; Chevreuse chỉ huy đội tuần tra an ninh đặc biệt, cứng rắn nhưng không cứng nhắc.",
+    "homeDocument": "04-fontaine",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "collei",
+    "kind": "character",
+    "displayName": "Collei",
+    "aliases": [],
+    "summary": "Trước khi tới Mondstadt gặp Amber, Collei là nạn nhân của Fatui: mắc bệnh Eleazar từ nhỏ, bị một tổ chức núp danh nghĩa từ thiện do Fatui dựng lên đưa vào thí nghiệm người, cấy sức mạnh lửa đen vào cơ thể khiến cô vô tình gây hại cho người khác — một trong những bằng chứng rõ nhất về mặt trái tàn nhẫn của Fatui: sẵn sàng dùng trẻ em bệnh tật làm vật thí nghiệm.",
+    "homeDocument": "03-sumeru",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "columbina",
+    "kind": "character",
+    "displayName": "Columbina",
+    "aliases": [],
+    "summary": "Trục cảm xúc của cả chương. Một vị thần không tên, không ký ức, bị lần lượt các \"nhà\" cũ đối xử như một nguồn sức mạnh: Frostmoon Scions cầu xin câu trả lời, Fatui cần quyền năng. Chỉ khi được gọi đúng một cái tên do chính mình chọn, cô mới thực sự tồn tại. Cuối truyện cô chọn sống cùng Frostmoon Scions thay vì trở về mặt trăng.",
+    "homeDocument": "06-nod-krai",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "cyno",
+    "kind": "character",
+    "displayName": "Cyno",
+    "aliases": [],
+    "summary": "Đại Pháp Quan cầm đầu lực lượng Matra, nỗi khiếp sợ của giới học giả lạm dụng tri thức cấm. Mọi hành động của anh bị hệ thống Akasha (mạng lưới tri thức/dự đoán của Akademiya) ghi lại và phân tích, nhưng theo thời gian anh trở nên khó đoán hơn với chính hệ thống ấy.",
+    "homeDocument": "03-sumeru",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "dehya",
+    "kind": "character",
+    "displayName": "Dehya",
+    "aliases": [],
+    "summary": "Gắn liền với cộng đồng Eremite du mục sa mạc và ký ức về vương quốc cổ Deshret. Cha ruột cô từng cầm đầu tổ chức Eremite lớn nhất, duy trì quyền lực bằng cách nắm hồ sơ tống tiền chính đồng đội — di sản nặng nề mà Dehya phải đối diện sau khi ông qua đời.",
+    "homeDocument": "03-sumeru",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "diluc",
+    "kind": "character",
+    "displayName": "Diluc",
+    "aliases": [],
+    "summary": "Cha anh, Crepus, chết vì một Delusion phản chủ khi chống lại quái vật tấn công đoàn hộ tống. Ngay sau đó, Kaeya thú nhận nguồn gốc Khaenri'ah của mình, khiến Diluc vừa mất cha vừa phát hiện người anh em thân thiết nhất mang dòng máu kẻ thù các vị thần — cú sốc kép khiến anh rời Đoàn Kỵ Sĩ để tự mình truy quét bất công.",
+    "homeDocument": "00-mo-dau-mondstadt",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "emilie",
+    "kind": "character",
+    "displayName": "Emilie",
+    "aliases": [],
+    "summary": "Thợ chế nước hoa, điều tra sự hồi sinh bí ẩn của \"Auguste\" — dòng nước hoa huyền thoại từng tuyệt chủng sau khi vườn hoa nguyên liệu bị thiêu rụi 20 năm trước. Thiên về bí ẩn cá nhân hơn là mạch lore lớn.",
+    "homeDocument": "04-fontaine",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "eula",
+    "kind": "character",
+    "displayName": "Eula",
+    "aliases": [],
+    "summary": "Hậu duệ gia tộc Lawrence từng cai trị Mondstadt bằng bàn tay sắt trước khi có chính quyền hiện tại; việc cô gia nhập Kỵ Sĩ Đoàn khiến gia tộc coi cô là kẻ phản bội. Chú của cô sau này còn cấu kết với Fatui âm mưu đưa Mondstadt về \"trật tự cũ\" nhưng bị chính Eula ngăn chặn.",
+    "homeDocument": "00-mo-dau-mondstadt",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "faruzan",
+    "kind": "character",
+    "displayName": "Faruzan",
+    "aliases": [],
+    "summary": "Chủ yếu khắc họa tính cách và văn hóa Sumeru (nghệ thuật múa, hậu duệ vua Deshret, chiêm tinh học, sinh thái rừng), không hé lộ reveal lớn mới cho mạch truyện chung.",
+    "homeDocument": "03-sumeru",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "fatui",
+    "kind": "faction",
+    "displayName": "Fatui",
+    "aliases": [],
+    "summary": "Tổ chức do Tsaritsa lập ra sau Cataclysm, vận hành qua các Harbinger đầy quyền lực và mục tiêu riêng. Không phải một khối thống nhất — nhiều Harbinger theo đuổi những kế hoạch khác hẳn nhau, đôi khi mâu thuẫn với chính Tsaritsa.",
+    "homeDocument": "08-buc-tranh-lon",
+    "homeHeading": "Fatui & Tsaritsa"
+  },
+  {
+    "id": "fischl",
+    "kind": "character",
+    "displayName": "Fischl",
+    "aliases": [],
+    "summary": "Tên thật là Amy; \"vương quốc Immernachtreich\" và danh xưng \"Công chúa Kết án\" là thế giới tưởng tượng cô tự dựng, và Oz — người hầu quạ của cô — là hiện thân tiềm thức từ sức mạnh Vision mà cô tin là thật.",
+    "homeDocument": "00-mo-dau-mondstadt",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "flins",
+    "kind": "character",
+    "displayName": "Flins",
+    "aliases": [],
+    "summary": "Lightkeeper, thực chất là một fae 600–700 tuổi từng muốn tự kết liễu sau khi mất tất cả, rồi tìm lại lý do sống khi thấy con người dám đối đầu Wild Hunt. Giữ trái tim của Rerir trong đèn lồng suốt nhiều thế kỷ để không ai khác dùng được nó.",
+    "homeDocument": "06-nod-krai",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "fontaine",
+    "kind": "nation",
+    "displayName": "Fontaine",
+    "aliases": [],
+    "summary": "Quốc gia Công Lý, thờ Hydro Archon Furina (Focalors).",
+    "homeDocument": "04-fontaine",
+    "homeHeading": "Vụ án mở màn"
+  },
+  {
+    "id": "freminet",
+    "kind": "character",
+    "displayName": "Freminet",
+    "aliases": [],
+    "summary": "Ba anh em mồ côi lớn lên tại \"House of the Hearth\", cô nhi viện do Fatui Harbinger Arlecchino (\"The Knave\") đứng đầu. Tên thật Peruere, Arlecchino từng lớn lên dưới quyền một \"Mẹ\" tiền nhiệm cai trị bằng bạo lực, giết bà để giải thoát những đứa trẻ trong nhà, rồi được chính Tsaritsa ân xá và phong làm Knave mới — một trong số ít Harbinger thể hiện rõ mặt nhân tính giữa guồng máy Fatui.",
+    "homeDocument": "04-fontaine",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "furina",
+    "kind": "archon",
+    "displayName": "Furina",
+    "aliases": [
+      "Focalors",
+      "Hydro Archon"
+    ],
+    "summary": "Gương mặt công khai của Hydro Archon suốt 500 năm, thực chất là phần nhân tính được Focalors tách ra để gánh tội thay cho Fontaine. Từ bỏ ngôi vị ngay khi phiên tòa cuối cùng khép lại.",
+    "homeDocument": "04-fontaine",
+    "homeHeading": "Vết nứt sau vương miện"
+  },
+  {
+    "id": "ganyu",
+    "kind": "character",
+    "displayName": "Ganyu",
+    "aliases": [],
+    "summary": "Hồn thú lai nửa người nửa kỳ lân (một dạng Adepti), âm thầm trông coi Liyue Harbor suốt 3.700 năm và từng chiến đấu bên cạnh Rex Lapis trong Archon War — nay là thư ký của Qixing, cầu nối giữa thế giới Adepti cổ xưa và bộ máy hành chính hiện đại.",
+    "homeDocument": "01-liyue",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "hu-tao",
+    "kind": "character",
+    "displayName": "Hu Tao",
+    "aliases": [],
+    "summary": "Đời giám đốc thứ 77 của Wangsheng Funeral Parlor, tiệm mai táng do một dòng họ sáng lập từ thời Archon War. Lớn lên giữa ranh giới sống-chết, cô xem cái chết là điều tự nhiên chứ không phải điều cần sợ hãi — còn Zhongli, cố vấn kỳ cựu nhất của tiệm, âm thầm là người biết mọi bí mật đằng sau văn hóa ấy.",
+    "homeDocument": "01-liyue",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "iansan",
+    "kind": "character",
+    "displayName": "Iansan",
+    "aliases": [],
+    "summary": "Mỗi người gắn với một bộ tộc riêng của Natlan (Hoa-Lông Vũ, Tập Thể Sung Túc, Người của Dòng Suối), chủ yếu khắc họa văn hóa và mối gắn bó cộng sinh giữa người Natlan với các Saurian, không có reveal lớn mới cho mạch truyện chung.",
+    "homeDocument": "05-natlan",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "il-dottore",
+    "kind": "character",
+    "displayName": "Il Dottore",
+    "aliases": [
+      "Dottore"
+    ],
+    "summary": "Phản diện chính. Không tìm báo thù hay quyền lực chính trị, mà muốn trở thành đấng sáng tạo mới của Teyvat và viết lại luật chơi mà các vị thần đặt ra. Chết hai lần trong cùng một chương: một lần ở Nod-Krai, một lần trong Irminsul, cả hai đều do chính những gì hắn tạo ra.",
+    "homeDocument": "06-nod-krai",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "inazuma",
+    "kind": "nation",
+    "displayName": "Inazuma",
+    "aliases": [],
+    "summary": "Quốc gia Vĩnh Hằng, thờ Electro Archon Raiden Shogun.",
+    "homeDocument": "02-inazuma",
+    "homeHeading": "Con rối và vị thần thật"
+  },
+  {
+    "id": "ineffa",
+    "kind": "character",
+    "displayName": "Ineffa",
+    "aliases": [],
+    "summary": "Cỗ máy đi tìm nhà và cô bé phát minh đã hồi sinh nó. Mạch truyện phụ nhưng giữ đúng chủ đề chung của chương: cái gì làm nên một \"nhà\", và ai có quyền quyết định điều đó.",
+    "homeDocument": "06-nod-krai",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "irminsul",
+    "kind": "concept",
+    "displayName": "Irminsul",
+    "aliases": [
+      "Aaru"
+    ],
+    "summary": "Mạng lưới ký ức lưu trữ lịch sử và định hình nhận thức tập thể của Teyvat. Khi Dottore xâm nhập được vào Irminsul, Nahida buộc phải cân nhắc giữa bảo vệ nó nguyên vẹn và bảo vệ loài người khỏi chính nó.",
+    "homeDocument": "08-buc-tranh-lon",
+    "homeHeading": "Irminsul → Aaru"
+  },
+  {
+    "id": "jean",
+    "kind": "character",
+    "displayName": "Jean",
+    "aliases": [],
+    "summary": "Xem Vennessa — người sáng lập Đoàn Kỵ Sĩ Favonius, từng lật đổ giới quý tộc áp bức thời xưa rồi được truyền tụng là hóa thần — như hình mẫu lý tưởng đời mình.",
+    "homeDocument": "00-mo-dau-mondstadt",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "kachina",
+    "kind": "character",
+    "displayName": "Kachina",
+    "aliases": [],
+    "summary": "Hướng dẫn viên đầu tiên của Traveler khi tới Natlan, giới thiệu văn hóa \"Cuộc Hành Hương\" — nghi thức mọi người dân Natlan lớn lên đều mơ ước tham gia để trở thành chiến binh bảo vệ đất nước. Xung đột nội tâm xuyên suốt của cô: \"liệu một người như mình có xứng đáng có Ancient Name hay không?\" — câu hỏi càng nặng nề hơn sau khi cô bị Vực Thẳm bắt giữ, sự kiện khiến nghi thức hồi sinh thất bại (đã nêu ở phần chính).",
+    "homeDocument": "05-natlan",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "kaedehara-kazuha",
+    "kind": "character",
+    "displayName": "Kaedehara Kazuha",
+    "aliases": [],
+    "summary": "Gia tộc Kaedehara từng là chư hầu danh giá của gia tộc Kamisato nhưng sa sút sau khi bị tịch thu nhà cửa: một trăm năm trước, ông nội Kazuha chạm trán một kẻ lang thang tự xưng Kunikuzushi (chính là Scaramouche thời trẻ) — kẻ đã đánh bại họ và đe dọa hủy diệt kiếm pháp gia truyền; gia tộc Kamisato ra lệnh ỉm đi vụ việc, khiến gia tộc Kazuha phải gánh tội thay. Khi Sắc lệnh Săn Thị Kiến ban hành, Kazuha chứng kiến bạn thân thách thức Shogun và bị giết nên rời Inazuma, gia nhập đoàn thuyền của Beidou tại Liyue. *(Yoimiya, Sayu, Shikanoin Heizou, Kuki Shinobu, Gorou, Thoma, Kirara: chủ yếu chỉ có Hangout Event mang tính đời thường, không hé lộ lore quan trọng liên quan Khaenri'ah/Celestia/Fatui.)*",
+    "homeDocument": "02-inazuma",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "kaeya",
+    "kind": "character",
+    "displayName": "Kaeya",
+    "aliases": [],
+    "summary": "Được Crepus, cha của Diluc, nhận nuôi, nhưng bí mật lớn nhất đời anh là gốc gác Khaenri'ah — vương quốc không thần linh đã bị hủy diệt. Anh giấu kín thân phận này nhiều năm, chỉ thú nhận với Diluc ngay sau khi Crepus qua đời, dẫn đến một trận đánh nhau và khoảng cách chưa từng lành hẳn giữa hai anh em. Dù mang huyết thống kẻ thù truyền kiếp của các Archon, Kaeya vẫn chọn phục vụ Đoàn Kỵ Sĩ Mondstadt đến cùng.",
+    "homeDocument": "00-mo-dau-mondstadt",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "kaveh",
+    "kind": "character",
+    "displayName": "Kaveh",
+    "aliases": [],
+    "summary": "Kiến trúc sư thiết kế Cung điện Alcazarzaray, công trình bị hiện tượng Withering (khô héo) phá hủy gần lúc hoàn thành, buộc anh vay nợ để xây lại và phải sống chung với Alhaitham. Đằng sau vẻ ngoài lý tưởng hóa, anh mang mặc cảm về cái chết của cha và sự nghèo khó.",
+    "homeDocument": "03-sumeru",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "keqing",
+    "kind": "character",
+    "displayName": "Keqing",
+    "aliases": [],
+    "summary": "Ngự Sử (Yuheng) của Qixing, hoài nghi công khai tín ngưỡng thờ Rex Lapis, tin con người phải tự quyết định vận mệnh thay vì phó thác cho thần thánh/Adepti — một tư tưởng trớ trêu lại được chính các vị thần đánh giá cao.",
+    "homeDocument": "01-liyue",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "khaenriah",
+    "kind": "nation",
+    "displayName": "Khaenri'ah",
+    "aliases": [],
+    "summary": "Vương quốc ngầm không thờ thần linh, bị Celestia hủy diệt trong biến cố Cataclysm 500 năm trước. Hậu duệ và di sản của nó (Kaeya, Albedo, Dottore, Traveler...) rải khắp Teyvat.",
+    "homeDocument": "08-buc-tranh-lon",
+    "homeHeading": "Khaenri'ah"
+  },
+  {
+    "id": "kinich",
+    "kind": "character",
+    "displayName": "Kinich",
+    "aliases": [],
+    "summary": "Thợ săn Saurian phát hiện tàn tích rồng cổ và gặp Ajaw, vị \"vua rồng\" sống sót từ thời đại loài rồng hàng thiên niên kỷ trước. Hai bên lập giao kèo cộng sinh: Ajaw cho mượn sức mạnh, đổi lại khi Kinich chết, thân xác cậu sẽ thuộc về Ajaw.",
+    "homeDocument": "05-natlan",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "klee",
+    "kind": "character",
+    "displayName": "Klee",
+    "aliases": [],
+    "summary": "Alice là nhà thám hiểm nổi tiếng, người sáng lập hội phù thủy Hexenzirkel và là mẹ của Klee; bà có khả năng thao túng cả một quần đảo (Golden Apple Archipelago) như món quà để lại cho con gái trong lúc vắng nhà dài ngày.",
+    "homeDocument": "00-mo-dau-mondstadt",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "kujou-sara",
+    "kind": "character",
+    "displayName": "Kujou Sara",
+    "aliases": [],
+    "summary": "Sau khi phát hiện cha nuôi cấu kết với Fatui để trục lợi từ Sắc lệnh Săn Thị Kiến, Sara buộc phải định nghĩa lại lòng trung thành: không còn là phục tùng mù quáng một huyết thống hay mệnh lệnh, mà là trung thành với lý tưởng \"vĩnh hằng\" của Shogun.",
+    "homeDocument": "02-inazuma",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "lauma",
+    "kind": "character",
+    "displayName": "Lauma",
+    "aliases": [],
+    "summary": "Moonchanter biết sự thật rằng bầu trời là giả nhưng giấu tộc mình vì sợ họ mất chỗ dựa. Cô chữa bệnh cho dân bằng chính máu bạc của mình, và cuối cùng chọn nói ra sự thật dù mất một phần tín đồ. Nói chuyện được với muông thú.",
+    "homeDocument": "06-nod-krai",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "layla",
+    "kind": "character",
+    "displayName": "Layla",
+    "aliases": [],
+    "summary": "Chủ yếu khắc họa tính cách và văn hóa Sumeru (nghệ thuật múa, hậu duệ vua Deshret, chiêm tinh học, sinh thái rừng), không hé lộ reveal lớn mới cho mạch truyện chung.",
+    "homeDocument": "03-sumeru",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "lisa",
+    "kind": "character",
+    "displayName": "Lisa",
+    "aliases": [],
+    "summary": "Từng là học sinh xuất sắc nhất Akademiya Sumeru trong hai thế kỷ, nhưng vỡ mộng trước sự cuồng vọng tri thức của bạn học và nỗi sợ cái giá phải trả cho tri thức, nên rời bỏ con đường học giả để làm thủ thư ở Mondstadt. *(Sucrose, Noelle, Amber, Mika, Barbara: story quest chủ yếu khắc họa tính cách, không có reveal lore lớn liên quan mạch truyện chung.)*",
+    "homeDocument": "00-mo-dau-mondstadt",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "liyue",
+    "kind": "nation",
+    "displayName": "Liyue",
+    "aliases": [],
+    "summary": "Quốc gia Hợp Đồng, thờ Geo Archon Zhongli (Morax).",
+    "homeDocument": "01-liyue",
+    "homeHeading": "Bí mật của Zhongli"
+  },
+  {
+    "id": "lynette",
+    "kind": "character",
+    "displayName": "Lynette",
+    "aliases": [],
+    "summary": "Ba anh em mồ côi lớn lên tại \"House of the Hearth\", cô nhi viện do Fatui Harbinger Arlecchino (\"The Knave\") đứng đầu. Tên thật Peruere, Arlecchino từng lớn lên dưới quyền một \"Mẹ\" tiền nhiệm cai trị bằng bạo lực, giết bà để giải thoát những đứa trẻ trong nhà, rồi được chính Tsaritsa ân xá và phong làm Knave mới — một trong số ít Harbinger thể hiện rõ mặt nhân tính giữa guồng máy Fatui.",
+    "homeDocument": "04-fontaine",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "lyney",
+    "kind": "character",
+    "displayName": "Lyney",
+    "aliases": [],
+    "summary": "Ba anh em mồ côi lớn lên tại \"House of the Hearth\", cô nhi viện do Fatui Harbinger Arlecchino (\"The Knave\") đứng đầu. Tên thật Peruere, Arlecchino từng lớn lên dưới quyền một \"Mẹ\" tiền nhiệm cai trị bằng bạo lực, giết bà để giải thoát những đứa trẻ trong nhà, rồi được chính Tsaritsa ân xá và phong làm Knave mới — một trong số ít Harbinger thể hiện rõ mặt nhân tính giữa guồng máy Fatui.",
+    "homeDocument": "04-fontaine",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "mavuika",
+    "kind": "archon",
+    "displayName": "Mavuika",
+    "aliases": [
+      "Pyro Archon"
+    ],
+    "summary": "Pyro Archon của Natlan, người kế thừa lời thề bảo vệ vùng đất khỏi Vực Thẳm. Sức mạnh của bà suy yếu nghiêm trọng sau nhiều trận chiến ngầm, dẫn tới hy sinh ở cao trào chương Natlan.",
+    "homeDocument": "05-natlan",
+    "homeHeading": "Lời thề 500 năm trước"
+  },
+  {
+    "id": "mitya",
+    "kind": "character",
+    "displayName": "Mitya",
+    "aliases": [],
+    "summary": "Chuyên gia năng lượng của Armory Palace, người duy nhất chết rồi mà vẫn tiếp tục đi làm, đi xem hát và ghi chép. Ký hiệu con mắt đỏ — dấu của Ronova — được ông vẽ bằng máu lên chính linh hồn mình để không quên lần nữa.",
+    "homeDocument": "07-snezhnaya",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "mona",
+    "kind": "character",
+    "displayName": "Mona",
+    "aliases": [],
+    "summary": "Đến Mondstadt trong cảnh túng thiếu; đáng chú ý, cô biết Traveler không thuộc về Teyvat và ngỏ ý xem thiên mệnh giúp họ. Quest cũng hé lộ thầy cũ của cô từng gửi nhật ký cho Alice — mẹ của Klee — 50 năm trước.",
+    "homeDocument": "00-mo-dau-mondstadt",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "mondstadt",
+    "kind": "nation",
+    "displayName": "Mondstadt",
+    "aliases": [],
+    "summary": "Quốc gia Tự Do, thờ Anemo Archon Venti (Barbatos).",
+    "homeDocument": "00-mo-dau-mondstadt",
+    "homeHeading": "Âm mưu quanh cây đàn thần"
+  },
+  {
+    "id": "mualani",
+    "kind": "character",
+    "displayName": "Mualani",
+    "aliases": [],
+    "summary": "Mỗi người gắn với một bộ tộc riêng của Natlan (Hoa-Lông Vũ, Tập Thể Sung Túc, Người của Dòng Suối), chủ yếu khắc họa văn hóa và mối gắn bó cộng sinh giữa người Natlan với các Saurian, không có reveal lớn mới cho mạch truyện chung.",
+    "homeDocument": "05-natlan",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "nahida",
+    "kind": "archon",
+    "displayName": "Nahida",
+    "aliases": [
+      "Kusanali",
+      "Dendro Archon"
+    ],
+    "summary": "Dendro Archon của Sumeru, mang hình hài một cô bé vì phần lớn sức mạnh thật bị phong ấn. Sau khi hóa giải hận thù với Scaramouche và ngăn Fatui chiếm đoạt Irminsul, Nahida được công nhận là Archon đúng nghĩa.",
+    "homeDocument": "03-sumeru",
+    "homeHeading": "Con rối bị vứt bỏ"
+  },
+  {
+    "id": "natlan",
+    "kind": "nation",
+    "displayName": "Natlan",
+    "aliases": [],
+    "summary": "Quốc gia Chiến Tranh, thờ Pyro Archon Mavuika.",
+    "homeDocument": "05-natlan",
+    "homeHeading": "Ngọn lửa bị ăn mòn"
+  },
+  {
+    "id": "nefer",
+    "kind": "character",
+    "displayName": "Nefer",
+    "aliases": [],
+    "summary": "Chủ Curatorium of Secrets, gốc Eremite sa mạc Sumeru. Bộ tộc nuôi cô bị diệt vì một sai lầm nhỏ của cha nuôi; Akademiya từng phớt lờ thư của ông. Người duy nhất trả lời được câu đố của Thoth — không bằng đáp án King Deshret muốn, mà bằng đáp án của riêng cô: *thời gian*.",
+    "homeDocument": "06-nod-krai",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "nilou",
+    "kind": "character",
+    "displayName": "Nilou",
+    "aliases": [],
+    "summary": "Chủ yếu khắc họa tính cách và văn hóa Sumeru (nghệ thuật múa, hậu duệ vua Deshret, chiêm tinh học, sinh thái rừng), không hé lộ reveal lớn mới cho mạch truyện chung.",
+    "homeDocument": "03-sumeru",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "nod-krai",
+    "kind": "nation",
+    "displayName": "Nod-Krai",
+    "aliases": [],
+    "summary": "Quần đảo dưới bóng Ba Mặt Trăng, trung tâm mạch truyện \"Song of the Welkin Moon\".",
+    "homeDocument": "06-nod-krai",
+    "homeHeading": "Mở đầu — cỗ máy đi tìm nhà"
+  },
+  {
+    "id": "odette",
+    "kind": "character",
+    "displayName": "Odette",
+    "aliases": [],
+    "summary": "Vũ công ballet kiêm Fatuus kiêm Lelek. Cha cô là một Fatuus chết trong giai đoạn đầu của thứ sau này thành Project Stuzha; mẹ cô là diễn viên ballet nổi tiếng, gãy chân vì suy sụp và không bao giờ múa lại. Cô vào Fatui vì tiền, dưới chính sách của Capitano, do Signora sắp xếp theo gợi ý của Arlecchino. Cuối chương cô tới viếng mộ Signora và chọn sống tiếp với cả hai thân phận.",
+    "homeDocument": "07-snezhnaya",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "ororon",
+    "kind": "character",
+    "displayName": "Ororon",
+    "aliases": [],
+    "summary": "Bị một linh hồn người Khaenri'ah tên Guthred nhập vào, dẫn tới đối đầu trực tiếp với Capitano. Qua quá trình giành lại quyền kiểm soát cơ thể, cậu được công nhận là người mang một trong các \"Ancient Name\" cổ xưa.",
+    "homeDocument": "05-natlan",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "paimon",
+    "kind": "character",
+    "displayName": "Paimon",
+    "aliases": [],
+    "summary": "Bạn đồng hành nhỏ bé của Traveler, có nguồn gốc từ Celestia nhưng bị \"kéo\" xuống Khaenri'ah từ trước Cataclysm ít nhất 500 năm — không mang quyền năng của Celestia và không nhớ gì về gốc gác thật của mình.",
+    "homeDocument": "08-buc-tranh-lon",
+    "homeHeading": "Traveler, người song sinh & Paimon"
+  },
+  {
+    "id": "pierro",
+    "kind": "character",
+    "displayName": "Pierro",
+    "aliases": [],
+    "summary": "Xuất hiện đầu chương như một người lạ đắp chăn cho Paimon, và cuối chương như người duy nhất dám đứng chắn trước một Chủ Tể. Là mảnh Khaenri'ah còn lại lâu nhất, và là người phát ngôn cho tham vọng thật của Tsaritsa.",
+    "homeDocument": "07-snezhnaya",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "qiqi",
+    "kind": "character",
+    "displayName": "Qiqi",
+    "aliases": [],
+    "summary": "Một xác chết được các Adepti hồi sinh thành zombie, sống dưới sự chăm sóc của Baizhu. Khác với hầu hết zombie phải phục tùng người đánh thức mình, Qiqi tự tỉnh dậy nên tự làm chủ bản thân; \"tam hồn\" của cô đã bị cắt đứt, chỉ còn một mảnh hồn không trọn vẹn được lá bùa trên trán giữ ổn định — lý do cô mất trí nhớ nghiêm trọng.",
+    "homeDocument": "01-liyue",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "raiden-shogun",
+    "kind": "archon",
+    "displayName": "Raiden Shogun",
+    "aliases": [
+      "Raiden Ei",
+      "Ei"
+    ],
+    "summary": "Electro Archon của Inazuma. Con rối \"Raiden Shogun\" cai trị thay cho vị thần thật đã lui vào Plane of Euthymia để đau buồn cho người chị song sinh mất tích từ thời Cataclysm; Traveler giúp Ei đối diện quá khứ và quay lại nắm quyền.",
+    "homeDocument": "02-inazuma",
+    "homeHeading": "Con rối và vị thần thật"
+  },
+  {
+    "id": "rerir",
+    "kind": "character",
+    "displayName": "Rerir",
+    "aliases": [],
+    "summary": "Phản diện đầu chương, nhưng bi kịch hơn là ác. Bị vua Irmin giao nhiệm vụ giết chính vị hôn thê của mình; chọn sức mạnh Vực Thẳm chỉ để tìm lại cô. Khi rũ bỏ được Vực Thẳm, hắn tỉnh táo trở lại và nhờ Columbina chuyển lời tới Tholindis.",
+    "homeDocument": "06-nod-krai",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "ronova",
+    "kind": "character",
+    "displayName": "Ronova",
+    "aliases": [],
+    "summary": "Phản diện của chương, nhưng không hẳn là kẻ ác: bà chỉ đang thi hành đúng quy định, kể cả cái quy định chỉ cho phép giết hai người mỗi ngày. Chi tiết đáng chú ý nhất: linh hồn của một Descender không thể bị đưa vào Ley Lines, và bà tuyên bố không có ý định dính líu tới Descender.",
+    "homeDocument": "07-snezhnaya",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "rosaria",
+    "kind": "character",
+    "displayName": "Rosaria",
+    "aliases": [],
+    "summary": "Bị bắt cóc bởi băng cướp từ nhỏ, huấn luyện thành sát thủ, sau khi băng cướp bị tiêu diệt được đưa về cải tạo tại Nhà thờ Favonius. Cô tự nhận mình là \"đứa con của ánh trăng\" chứ không thuộc về ánh sáng — mâu thuẫn giữa vỏ bọc tôn giáo và bản chất thật.",
+    "homeDocument": "00-mo-dau-mondstadt",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "sandrone",
+    "kind": "character",
+    "displayName": "Sandrone",
+    "aliases": [
+      "Marionette"
+    ],
+    "summary": "Harbinger thứ Bảy, lạnh lùng và không tin ai, nhưng là người tính toán ra đường sống duy nhất cho cả nhóm và trả bằng mạng mình. Di nguyện của cô: lõi của cô và Pulonia được giao cho Viện Nghiên Cứu Fontaine, và Columbina không được biết chuyện này.",
+    "homeDocument": "06-nod-krai",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "sangonomiya-kokomi",
+    "kind": "character",
+    "displayName": "Sangonomiya Kokomi",
+    "aliases": [],
+    "summary": "Chuỗi quest mở rộng sau Archon Quest: trong lúc đàm phán hòa bình giữa Watatsumi và Tenryou Commission sắp diễn ra, Kokomi phát hiện một số binh sĩ Tenryou vẫn còn bị tàn dư Fatui tiếp cận vì mục đích trả thù — cho thấy dư âm của Fatui tại Inazuma chưa hoàn toàn dứt sau Archon Quest.",
+    "homeDocument": "02-inazuma",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "shenhe",
+    "kind": "character",
+    "displayName": "Shenhe",
+    "aliases": [],
+    "summary": "Shenhe là đệ tử của Cloud Retainer, được bà truyền thuật trừ tà sau khi phát hiện cô đơn độc hạ gục tàn dư của một vị thần đã chết. Cloud Retainer chọn mang hình hài người và cái tên \"Xianyun\" để tập hòa nhập vào xã hội loài người.",
+    "homeDocument": "01-liyue",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "sigewinne",
+    "kind": "character",
+    "displayName": "Sigewinne",
+    "aliases": [],
+    "summary": "Y tá trưởng Fortress of Meropide, vốn là một Melusine. Từng bị kết án và đày vào chính nhà tù mình đang phục vụ vì vi phạm đạo luật cổ cấm \"đổi loài\" — cô tự nguyện thay đổi hình dạng để cứu một người bạn con người. Sau khi được ân xá, cô chọn ở lại chăm sóc tù nhân.",
+    "homeDocument": "04-fontaine",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "snezhnaya",
+    "kind": "nation",
+    "displayName": "Snezhnaya",
+    "aliases": [],
+    "summary": "Quê hương Fatui và Tsaritsa, quốc gia Chiến Tranh lạnh giá ở phương Bắc.",
+    "homeDocument": "07-snezhnaya",
+    "homeHeading": "Kẻ đi vào mùa đông"
+  },
+  {
+    "id": "sumeru",
+    "kind": "nation",
+    "displayName": "Sumeru",
+    "aliases": [],
+    "summary": "Quốc gia Trí Tuệ, thờ Dendro Archon Nahida.",
+    "homeDocument": "03-sumeru",
+    "homeHeading": "Vị thần bị giam trong chính tâm trí mình"
+  },
+  {
+    "id": "tighnari",
+    "kind": "character",
+    "displayName": "Tighnari",
+    "aliases": [],
+    "summary": "Chủ yếu khắc họa tính cách và văn hóa Sumeru (nghệ thuật múa, hậu duệ vua Deshret, chiêm tinh học, sinh thái rừng), không hé lộ reveal lớn mới cho mạch truyện chung.",
+    "homeDocument": "03-sumeru",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "traveler",
+    "kind": "character",
+    "displayName": "Traveler",
+    "aliases": [],
+    "summary": "Du hành giữa các thế giới cùng người song sinh trước khi bị một vị thần vô danh chia cắt và ném xuống Teyvat. Hành trình tìm lại người kia dẫn Traveler qua mọi quốc gia, vô tình trở thành nhân chứng cho các biến cố lớn nhất lục địa.",
+    "homeDocument": "08-buc-tranh-lon",
+    "homeHeading": "Traveler, người song sinh & Paimon"
+  },
+  {
+    "id": "tsaritsa",
+    "kind": "archon",
+    "displayName": "Tsaritsa",
+    "aliases": [
+      "Cryo Archon",
+      "Anastasya Feodorovna"
+    ],
+    "summary": "Cryo Archon, người cai trị Snezhnaya và lập ra Fatui sau khi chứng kiến Khaenri'ah sụp đổ trong Cataclysm. Cắt đứt quan hệ với các Archon khác, theo đuổi mục tiêu chống lại Nguyên Lý Thiên Đường của Celestia bằng con đường riêng.",
+    "homeDocument": "08-buc-tranh-lon",
+    "homeHeading": "Fatui & Tsaritsa"
+  },
+  {
+    "id": "varesa",
+    "kind": "character",
+    "displayName": "Varesa",
+    "aliases": [],
+    "summary": "Mỗi người gắn với một bộ tộc riêng của Natlan (Hoa-Lông Vũ, Tập Thể Sung Túc, Người của Dòng Suối), chủ yếu khắc họa văn hóa và mối gắn bó cộng sinh giữa người Natlan với các Saurian, không có reveal lớn mới cho mạch truyện chung.",
+    "homeDocument": "05-natlan",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "venti",
+    "kind": "archon",
+    "displayName": "Venti",
+    "aliases": [
+      "Barbatos"
+    ],
+    "summary": "Story Quest riêng \"Carmen Dei Chapter\": Traveler và Paimon gặp một bé gái đang chơi với \"người bạn tưởng tượng\", gợi Traveler nhớ tới việc người song sinh của mình từng có một người bạn tưởng tượng tương tự thời thơ ấu. Venti mang theo một thiết bị đặc biệt để dò tìm dấu vết một người bạn cũ đã khuất từ lâu — khắc họa khía cạnh cô đơn, hoài niệm của một vị Archon đã sống qua nhiều thế kỷ, đối lập với vẻ ngoài phóng khoáng anh thể hiện trong Archon Quest chính.",
+    "homeDocument": "00-mo-dau-mondstadt",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "vodyanitsa",
+    "kind": "character",
+    "displayName": "Vodyanitsa",
+    "aliases": [],
+    "summary": "Ca sĩ chính của đoàn kịch, một Water Imp, đồng đội Rokot của Alyosha. Trong nhà hát, cô là người duy nhất chủ động kéo Traveler ra khỏi cõi chết và tự nhận vai \"thiên thần hộ mệnh\" trước khi tới lượt mình.",
+    "homeDocument": "07-snezhnaya",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "wanderer",
+    "kind": "character",
+    "displayName": "Wanderer",
+    "aliases": [
+      "Scaramouche"
+    ],
+    "summary": "Sau khi được Nahida cảm hóa, Scaramouche quay lại dưới danh tính mới nhưng ban đầu sống vô định. Nahida giúp hắn nhận ra phần lớn nỗi phản bội hắn từng gán cho các Archon thực chất là thủ đoạn dàn dựng của Fatui Harbinger El Dottore. Sau khi làm hòa với quá khứ, hắn ở lại Sumeru làm sinh viên kiêm trợ lý không chính thức cho Nahida.",
+    "homeDocument": "03-sumeru",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "wriothesley",
+    "kind": "character",
+    "displayName": "Wriothesley",
+    "aliases": [],
+    "summary": "Từng bị chính Neuvillette tuyên án và đày vào Fortress of Meropide, nhưng sau đó thách đấu quản ngục cũ và giành quyền kiểm soát, cải tổ nhà tù thành một hệ thống trật tự hơn. Khi nước biển nguyên thủy đe dọa nhấn chìm Meropide, chính anh là người sơ tán tù nhân trong lúc Neuvillette dùng sức mạnh thật của mình để tái phong ấn dòng nước.",
+    "homeDocument": "04-fontaine",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "xianyun",
+    "kind": "character",
+    "displayName": "Xianyun",
+    "aliases": [
+      "Cloud Retainer"
+    ],
+    "summary": "Shenhe là đệ tử của Cloud Retainer, được bà truyền thuật trừ tà sau khi phát hiện cô đơn độc hạ gục tàn dư của một vị thần đã chết. Cloud Retainer chọn mang hình hài người và cái tên \"Xianyun\" để tập hòa nhập vào xã hội loài người.",
+    "homeDocument": "01-liyue",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "xiao",
+    "kind": "character",
+    "displayName": "Xiao",
+    "aliases": [],
+    "summary": "Yaksha cuối cùng còn sống trong số năm vị được Morax triệu tập sau Archon War để dọn dẹp tàn dư hỗn loạn của các vị thần đã ngã xuống. Việc liên tục tước đoạt sinh mạng khiến các Yaksha tích tụ \"nghiệp chướng\" gặm nhấm chính họ; bốn vị còn lại đều đã gục ngã vì điều đó. Sự cô độc của Xiao là cái giá trực tiếp cho việc giữ hòa bình lâu dài cho Liyue.",
+    "homeDocument": "01-liyue",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "xilonen",
+    "kind": "character",
+    "displayName": "Xilonen",
+    "aliases": [],
+    "summary": "Thợ rèn phụ trách rèn \"Ancient Name\" cho Traveler. Qua câu chuyện của cô, sự thật đáng lo được hé lộ: Ley Lines của Natlan vốn rất yếu, khiến vận mệnh cả vùng đất phụ thuộc gần như hoàn toàn vào Vương Quốc Bóng Đêm.",
+    "homeDocument": "05-natlan",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "xingqiu",
+    "kind": "character",
+    "displayName": "Xingqiu",
+    "aliases": [],
+    "summary": "Con trai thứ Feiyun Commerce Guild; quest riêng cho thấy Fatui từng nhúng tay vào một vụ ép giá thương mại nhỏ ở Liyue, ví dụ cho thấy Fatui can thiệp vào đời sống Liyue ở tầm vi mô, không chỉ ở cấp độ chính trị lớn.",
+    "homeDocument": "01-liyue",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "yae-miko",
+    "kind": "character",
+    "displayName": "Yae Miko",
+    "aliases": [],
+    "summary": "Hồ ly chín đuôi, bạn lâu năm và tin cẩn nhất của Raiden Shogun. Câu chuyện của cô hé lộ khoảng thời gian cô đơn kéo dài 5 thế kỷ: sau khi những người bạn cùng thời (trong đó có Makoto trước khi hy sinh để trở thành Archon) lần lượt qua đời hay biến mất trong biến cố 500 năm trước.",
+    "homeDocument": "02-inazuma",
+    "homeHeading": "Chân dung nhân vật"
+  },
+  {
+    "id": "yanfei",
+    "kind": "character",
+    "displayName": "Yanfei",
+    "aliases": [],
+    "summary": "Half-Adeptus như Ganyu, nhưng cha cô là một loại thần thú tượng trưng cho công lý (xiezhi) từng theo Rex Lapis chinh chiến. Vì sinh ra trong thời bình, Yanfei không ký hợp đồng với Rex Lapis như Ganyu, đối trọng cho thấy không phải mọi hậu duệ Adepti đều mang gánh nặng lời thề cổ.",
+    "homeDocument": "01-liyue",
+    "homeHeading": "Chân dung nhân vật (bổ sung)"
+  },
+  {
+    "id": "zhongli",
+    "kind": "archon",
+    "displayName": "Zhongli",
+    "aliases": [
+      "Morax",
+      "Rex Lapis"
+    ],
+    "summary": "Câu chuyện riêng của ông đào sâu hơn thời Archon War và vai trò các Adepti dưới quyền, đồng thời củng cố rằng việc trao Gnosis cho Fatui là một nước cờ có tính toán, đánh dấu việc Liyue chính thức chuyển giao quyền lực từ thần thánh sang con người.",
+    "homeDocument": "01-liyue",
+    "homeHeading": "Chân dung nhân vật"
+  }
+]
