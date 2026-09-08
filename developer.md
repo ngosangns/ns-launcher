@@ -87,7 +87,7 @@ The raw release binary is produced by SwiftPM at:
 | Sophon installer        | `Services/Installer/`                                                            | Manifest decoding, planning, downloads, verification, staging, and pruning      |
 | Wine runtime            | `Services/WineService.swift`, `Services/RenderBridges/`                          | Runtime discovery, render backend setup, launch arguments, and registry changes |
 | Process and diagnostics | `ProcessRunner.swift`, `GameProcess*.swift`, `RunLog.swift`, `GameLogFile.swift` | Process execution, monitoring, bounded output, and logs                         |
-| Abyss team planner      | `Domain/Abyss/`, `Services/Abyss/`, `Views/Abyss/`                               | Spiral Abyss data, damage model, team search, and roster editing                |
+| Abyss team planner      | `Domain/Abyss/`, `Services/Abyss/`, `Views/Abyss/`                               | Spiral Abyss data, damage model, team search, artifact advice, roster editing   |
 | Localization            | `Localization/AppText.swift`                                                     | User-facing localized strings                                                   |
 
 `Package.swift` defines the `NSLauncherApp` executable target, the
@@ -130,6 +130,7 @@ stability risks. Runtime behavior depends on the installed Wine build.
 | -------------------- | ---------------------------------------------------------------- |
 | Settings             | `~/Library/Application Support/NSLauncher/settings.json`         |
 | Abyss roster         | `~/Library/Application Support/NSLauncher/abyss-roster.json`     |
+| Abyss showcase cache | `~/Library/Application Support/NSLauncher/abyss-showcase.json`   |
 | Abyss cycle override | `~/Library/Application Support/NSLauncher/abyss-cycles/*.json`   |
 | Managed Wine         | `~/Library/Application Support/NSLauncher/wine`                  |
 | Game logs            | `~/Library/Logs/NSLauncher`                                      |
@@ -195,6 +196,82 @@ in `toi-uu-doi-hinh/`. `toi-uu-doi-hinh/optimizer/` holds the Python reference
 implementation the Swift engine was ported from — it reads the same data and the
 same `tuning.json`, and it generates `Tests/NSLauncherAppTests/Fixtures/abyss-golden.json`,
 which pins the Swift engine to the Python's numbers.
+
+The search runs in two passes. The first ranks characters and gear on neutral
+ground — level 95 enemies, baseline resistance, no team — because it has to
+compare everyone against everyone before it knows which four end up together,
+and then enumerates every 4-character combination. The second,
+`AbyssArtifactAdvisor`, re-picks the artifacts of the teams that survived, this
+time against the floor they will actually fight and the three characters they
+will stand next to, and re-ranks on the result. It is a coordinate-ascent sweep
+over the members, it only ever accepts a strict improvement, and it costs a few
+hundred milliseconds because it runs over a shortlist rather than over every
+team.
+
+That second pass has **no counterpart in the Python**, which is why the golden
+fixture runs with `refinesArtifacts: false`. Do not "fix" that flag to make the
+fixture cover more: with it on, the fixture would stop pinning the port.
+
+Adding it also forced a correction in `AbyssScorer.partyBuffs`: an artifact
+set's party-wide buff is now counted once no matter how many members wear it.
+The reference implementation sums them, which is invisible while gear is chosen
+on solo damage — a party buff is then worth no more than a selfish one — and
+becomes the highest-scoring build the moment anything optimises the *team*
+score. The first thing the artifact pass recommended was Tenacity of the
+Millelith on three characters for a fictional +60% party ATK. The golden fixture
+is unchanged by the fix, so the two implementations still agree on every team it
+pins; a future rotation where a top team does share such a set would diverge,
+and the Python should be corrected then. Buffs from weapons and talents are
+still summed, so two different weapons granting the same buff still
+double-count — rarer, and it needs source tracking `AbyssStats` does not carry.
+
+Most of the gain the tab reports for the artifact pass is not exotic: it is the
+supports being handed sets that buff the party, which the neutral first pass
+cannot value because it scores every character alone.
+
+### Showcase import
+
+`AbyssEnkaClient` reads a player's Character Showcase from Enka.Network given
+only their UID — no login, and no server picker, because the UID's first digit
+is the region and the response says which. Enka's terms are honoured in the
+client: an identifying `User-Agent`, no UID enumeration, and the response's
+`ttl` respected (`AbyssViewModel.importFromUID` refuses to re-fetch a UID whose
+data cannot have changed yet).
+
+Two limits are structural, not implementation gaps. The showcase is **at most
+eight characters**, and only exists if the player enabled "Show Character
+Details" in game. A full roster is not available to anyone without the account's
+own login session, and putting a HoYoLAB session cookie in a launcher is not a
+trade this app makes.
+
+What the import is worth is the *stats*. Enka returns `fightPropMap`, the
+character screen's own numbers, already split into base, percentage and flat
+parts — the same shape `AbyssStats` uses, so the conversion is a rename and
+`base × (1 + percent) + flat` reproduces the totals the game displays (a test
+asserts it). An imported character is therefore scored on the artifacts they
+actually rolled rather than on `tuning.json`'s standardised build, and the
+artifact advice becomes "this beats what you are wearing, by this much".
+
+The delicate part is `AbyssBuildAssembler.showcaseStats`. A measured sheet
+already contains the player's set bonuses, so comparing it against a candidate
+set would double-count one side; the worn set's *unconditional* bonuses are
+subtracted first, leaving their real main stats and substats, and `applySets`
+then puts a full set effect back for any candidate. The split between
+conditional and unconditional matters in both directions: the game's character
+screen shows the always-on bonuses and not the qualified ones, which is also why
+only conditional and stacking weapon passives are added on top.
+
+Because a measured build and a modelled one are different kinds of claim,
+`AbyssGearOption.statSource` carries which, the tab badges every character, and
+a team that mixes the two gets an `.mixedStatSources` note. Do not remove that:
+a well-built imported character and an assumed one are not comparable, and the
+score does not know the difference.
+
+`Resources/Abyss/game-ids.json` maps the game's numeric ids to the data's slugs.
+Regenerate it with `scripts/generate-abyss-game-ids.py` whenever characters,
+weapons or artifact sets are added — a stale table makes an import quietly
+return fewer characters. The script refuses to write a table that lost entries,
+and `AbyssShowcaseImportTests` pins it to the data set.
 
 Two things to know before changing the engine:
 

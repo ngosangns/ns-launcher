@@ -154,6 +154,78 @@ struct AppText {
     var noRemovableCache: String { localized(en: "No removable cache found. Refresh after the game is installed.", vi: "Chưa có cache nào có thể xóa. Hãy làm mới sau khi game được cài đặt.") }
     var totalRemovableCacheLabel: String { localized(en: "Total", vi: "Tổng cộng") }
 
+    // MARK: - Cutscene Browser
+
+    var cutscenesTitle: String { localized(en: "Cutscenes", vi: "Cutscene") }
+    var cutscenesSubtitle: String {
+        localized(
+            en: "Every cutscene video installed under StreamingAssets, for you to review yourself. NS Launcher cannot tell which quest or Traveler-gender variant a file belongs to, so nothing here is selected automatically — open a file to check it, then delete only what you're sure you don't need.",
+            vi: "Toàn bộ video cutscene đã cài trong StreamingAssets, để bạn tự xem lại. NS Launcher không thể biết một file thuộc nhiệm vụ nào hay biến thể giới tính Traveler nào, nên không có gì được chọn sẵn — hãy mở file để kiểm tra rồi chỉ xóa những gì bạn chắc chắn không cần."
+        )
+    }
+    var travelerGenderLabel: String { localized(en: "Traveler gender", vi: "Giới tính Traveler") }
+    var travelerGenderHint: String {
+        localized(
+            en: "For your own reference while reviewing the list below — it does not filter or select anything.",
+            vi: "Chỉ để bạn tham khảo khi xem danh sách bên dưới — không dùng để lọc hay chọn file nào cả."
+        )
+    }
+    func travelerGenderName(_ gender: TravelerGender) -> String {
+        switch gender {
+        case .aether: return localized(en: "Aether (Boy)", vi: "Aether (Nam)")
+        case .lumine: return localized(en: "Lumine (Girl)", vi: "Lumine (Nữ)")
+        }
+    }
+    var cutsceneSearchPlaceholder: String { localized(en: "Filter by filename", vi: "Lọc theo tên file") }
+    var refreshCutscenesTitle: String { localized(en: "Refresh", vi: "Làm mới") }
+    var openCutsceneTitle: String { localized(en: "Open", vi: "Mở") }
+    var revealCutsceneTitle: String { localized(en: "Reveal in Finder", vi: "Hiện trong Finder") }
+    var deleteCutsceneTitle: String { localized(en: "Delete", vi: "Xóa") }
+    var deleteCutsceneConfirmTitle: String { localized(en: "Delete this cutscene?", vi: "Xóa cutscene này?") }
+    func deleteCutsceneConfirmMessage(_ filename: String) -> String {
+        localized(
+            en: "\"\(filename)\" will be moved to the Trash. You can recover it from there if you change your mind.",
+            vi: "\"\(filename)\" sẽ được chuyển vào Thùng rác. Bạn có thể khôi phục lại nếu đổi ý."
+        )
+    }
+    func cutsceneDeleted(_ filename: String) -> String {
+        localized(en: "Moved \"\(filename)\" to the Trash.", vi: "Đã chuyển \"\(filename)\" vào Thùng rác.")
+    }
+    var noCutscenesFound: String { localized(en: "No cutscene files found. Refresh after the game is installed.", vi: "Chưa tìm thấy cutscene nào. Hãy làm mới sau khi game được cài đặt.") }
+    var cancel: String { localized(en: "Cancel", vi: "Hủy") }
+    var giCutscenesPathLabel: String { localized(en: "GI-cutscenes tool path", vi: "Đường dẫn công cụ GI-cutscenes") }
+    var giCutscenesPathHint: String {
+        localized(
+            en: "A separate tool you install yourself (github.com/ToaHartor/GI-cutscenes). NS Launcher does not bundle it or any decryption logic — Open just runs the binary at this path to decrypt a cutscene, then opens the result.",
+            vi: "Một công cụ riêng bạn tự cài (github.com/ToaHartor/GI-cutscenes). NS Launcher không đóng gói công cụ này hay logic giải mã nào — nút Mở chỉ chạy binary tại đường dẫn này để giải mã cutscene rồi mở kết quả."
+        )
+    }
+    var decryptingCutscene: String { localized(en: "Decrypting cutscene...", vi: "Đang giải mã cutscene...") }
+    var cutsceneDecryptFailed: String { localized(en: "Failed to decrypt cutscene", vi: "Giải mã cutscene thất bại") }
+    var cutsceneDecryptOutputMissing: String {
+        localized(
+            en: "GI-cutscenes ran but did not produce a playable file. Check its output settings.",
+            vi: "GI-cutscenes đã chạy nhưng không tạo ra file phát được. Hãy kiểm tra lại cấu hình output của công cụ."
+        )
+    }
+    var deleteOppositeGenderCutscenesTitle: String { localized(en: "Delete opposite-gender cutscenes", vi: "Xóa cutscene giới tính khác") }
+    func deleteOppositeGenderCutscenesSummary(_ count: Int, _ size: String) -> String {
+        localized(en: "\(count) files · \(size)", vi: "\(count) file · \(size)")
+    }
+    var noOppositeGenderCutscenes: String {
+        localized(
+            en: "No opposite-gender cutscene files found.",
+            vi: "Không tìm thấy file cutscene giới tính khác."
+        )
+    }
+    var deleteOppositeGenderConfirmTitle: String { localized(en: "Delete opposite-gender cutscenes?", vi: "Xóa cutscene giới tính khác?") }
+    func deleteOppositeGenderConfirmMessage(_ count: Int, _ size: String) -> String {
+        localized(
+            en: "\(count) files (\(size)) ending in \"Boy.usm\" or \"Girl.usm\" that don't match your selected Traveler gender will be moved to the Trash. You can recover them from there if you change your mind.",
+            vi: "\(count) file (\(size)) có đuôi \"Boy.usm\" hoặc \"Girl.usm\" không khớp giới tính Traveler bạn đã chọn sẽ được chuyển vào Thùng rác. Bạn có thể khôi phục lại nếu đổi ý."
+        )
+    }
+
     // MARK: - CrossOver Setup
 
     var installCrossOverButtonTitle: String { localized(en: "Install CrossOver via Homebrew", vi: "Cài CrossOver qua Homebrew") }
@@ -396,6 +468,11 @@ struct AppText {
                 let details = result.stderr.isEmpty ? result.stdout : result.stderr
                 return processFailed(code: result.exitCode, details: details)
             }
+        case let decryptionError as CutsceneDecryptionError:
+            switch decryptionError {
+            case .decryptedFileNotProduced:
+                return cutsceneDecryptOutputMissing
+            }
         case let sophonError as SophonInstallerError:
             switch sophonError {
             case .zstdUnavailable:
@@ -546,8 +623,20 @@ struct AppText {
     var abyssCharactersTab: String { localized(en: "Characters", vi: "Nhân vật") }
     var abyssWeaponsTab: String { localized(en: "Weapons", vi: "Vũ khí") }
 
-    var abyssSearchPlaceholder: String { localized(en: "Search", vi: "Tìm kiếm") }
+    var abyssSearchCharacters: String { localized(en: "Search characters", vi: "Tìm nhân vật") }
+    var abyssSearchWeapons: String { localized(en: "Search weapons", vi: "Tìm vũ khí") }
+    var abyssClearSearch: String { localized(en: "Clear search", vi: "Xoá ô tìm kiếm") }
+    var abyssClearFilters: String { localized(en: "Clear filters", vi: "Bỏ bộ lọc") }
+    var abyssAllWeaponTypes: String { localized(en: "All types", vi: "Mọi loại") }
     var abyssOwnedOnly: String { localized(en: "Owned only", vi: "Chỉ đồ đang có") }
+
+    func abyssShowingCount(shown: Int, total: Int) -> String {
+        localized(en: "\(shown) of \(total)", vi: "\(shown) / \(total)")
+    }
+
+    var abyssNoMatches: String {
+        localized(en: "Nothing matches that search", vi: "Không có gì khớp với tìm kiếm")
+    }
     var abyssRecompute: String { localized(en: "Find teams", vi: "Tìm đội hình") }
     var abyssRecomputing: String { localized(en: "Searching...", vi: "Đang tìm...") }
     var abyssCancel: String { localized(en: "Stop", vi: "Dừng") }
@@ -680,6 +769,170 @@ struct AppText {
             return localized(
                 en: "Roster is short a weapon: \(names) is assigned to more than one character",
                 vi: "Roster thiếu vũ khí: \(names) đang xếp cho nhiều nhân vật")
+        case .mixedStatSources:
+            return localized(
+                en: "Mixes imported and assumed builds — the score is not a like-for-like comparison",
+                vi: "Trộn nhân vật có chỉ số thật với nhân vật build giả định — điểm không so ngang được")
+        }
+    }
+
+    // MARK: - Abyss showcase import
+
+    var abyssImportFromUID: String { localized(en: "Import from UID", vi: "Nhập từ UID") }
+    var abyssUIDPlaceholder: String { localized(en: "UID (9-10 digits)", vi: "UID (9-10 chữ số)") }
+    var abyssFetching: String { localized(en: "Fetching...", vi: "Đang tải...") }
+    var abyssClearShowcase: String { localized(en: "Forget import", vi: "Xoá dữ liệu đã nhập") }
+    var abyssMeasuredBadge: String { localized(en: "your build", vi: "chỉ số thật") }
+    var abyssModelledBadge: String { localized(en: "assumed build", vi: "build giả định") }
+
+    /// The UID is enough — its first digit is the region — so the tab never
+    /// asks which server the account is on.
+    var abyssUIDHint: String {
+        localized(
+            en: "Reads your Character Showcase from Enka.Network — no login, and no server to pick: "
+                + "your UID already says which one. It shows at most 8 characters, and only if "
+                + "\"Show Character Details\" is on in your in-game profile.",
+            vi: "Đọc Showcase nhân vật của bạn qua Enka.Network — không cần đăng nhập và không phải "
+                + "chọn server: UID đã cho biết server. Chỉ lấy được tối đa 8 nhân vật, và phải bật "
+                + "\"Hiển thị chi tiết nhân vật\" trong hồ sơ trong game.")
+    }
+
+    func abyssShowcaseSummary(nickname: String, count: Int) -> String {
+        localized(en: "\(nickname) — \(count) characters imported with their real stats",
+                  vi: "\(nickname) — đã nhập \(count) nhân vật kèm chỉ số thật")
+    }
+
+    func abyssShowcaseFetchedAt(_ date: String) -> String {
+        localized(en: "Last fetched \(date)", vi: "Lấy lúc \(date)")
+    }
+
+    func abyssShowcaseUnmapped(_ ids: [String]) -> String {
+        localized(en: "Newer than the bundled data, skipped: \(ids.joined(separator: ", "))",
+                  vi: "Mới hơn dữ liệu đi kèm nên bỏ qua: \(ids.joined(separator: ", "))")
+    }
+
+    func abyssShowcaseTooSoon(_ seconds: Int) -> String {
+        localized(en: "Enka has no newer data yet — try again in \(seconds)s",
+                  vi: "Enka chưa có dữ liệu mới — thử lại sau \(seconds)s")
+    }
+
+    func abyssEnkaError(_ error: AbyssEnkaError) -> String {
+        switch error {
+        case .malformedUID:
+            return localized(en: "That is not a valid UID.", vi: "UID không hợp lệ.")
+        case .notFound:
+            return localized(en: "No player with that UID.", vi: "Không tìm thấy người chơi với UID này.")
+        case .showcaseEmpty:
+            return localized(
+                en: "That showcase is empty or hidden. In game, open your profile, edit the "
+                    + "Character Showcase, and turn on \"Show Character Details\".",
+                vi: "Showcase trống hoặc đang ẩn. Trong game, mở hồ sơ, sửa Showcase nhân vật và bật "
+                    + "\"Hiển thị chi tiết nhân vật\".")
+        case .rateLimited:
+            return localized(en: "Enka.Network is rate-limiting requests. Try again shortly.",
+                             vi: "Enka.Network đang giới hạn truy cập. Thử lại sau ít phút.")
+        case .gameMaintenance:
+            return localized(en: "The game server is in maintenance.", vi: "Máy chủ game đang bảo trì.")
+        case .serviceUnavailable:
+            return localized(en: "Enka.Network is unavailable right now.",
+                             vi: "Enka.Network hiện không truy cập được.")
+        case .badResponse(let status):
+            return localized(en: "Enka.Network answered with HTTP \(status).",
+                             vi: "Enka.Network trả về HTTP \(status).")
+        case .transport(let message):
+            return localized(en: "Could not reach Enka.Network: \(message)",
+                             vi: "Không kết nối được Enka.Network: \(message)")
+        }
+    }
+
+    /// Imported characters carry their own artifacts, so the advice for them is
+    /// a comparison rather than a suggestion.
+    func abyssArtifactUpgrade(from current: String, gain: Double) -> String {
+        let percent = String(format: "%.1f", gain * 100)
+        return localized(en: "You have \(current) — switching is worth +\(percent)%",
+                         vi: "Bạn đang đeo \(current) — đổi sang bộ này hơn +\(percent)%")
+    }
+
+    func abyssArtifactAlreadyBest(_ name: String) -> String {
+        localized(en: "You already have \(name) — nothing better for this floor",
+                  vi: "Bạn đã đeo \(name) — không có bộ nào tốt hơn cho tầng này")
+    }
+
+    var abyssShowcaseNotice: String {
+        localized(
+            en: "Imported characters are scored on the artifacts you actually rolled; everyone "
+                + "else is scored on a standard build. Teams that mix the two are flagged.",
+            vi: "Nhân vật đã nhập được chấm bằng thánh di vật thật của bạn; những người còn lại "
+                + "dùng build chuẩn giả định. Đội trộn cả hai loại sẽ được đánh dấu.")
+    }
+
+    // MARK: - Abyss artifact advice
+
+    var abyssArtifactsLabel: String { localized(en: "Artifacts", vi: "Thánh di vật") }
+    var abyssSandsSlot: String { localized(en: "Sands", vi: "Đồng hồ") }
+    var abyssGobletSlot: String { localized(en: "Goblet", vi: "Ly") }
+    var abyssCircletSlot: String { localized(en: "Circlet", vi: "Mũ") }
+    var abyssSubstatsLabel: String { localized(en: "Substats", vi: "Chỉ số phụ") }
+
+    /// The set was chosen for this floor and these team mates, which is the
+    /// whole point of showing it per team rather than once per character.
+    func abyssArtifactGain(_ gain: Double) -> String {
+        let percent = String(format: "%.1f", gain * 100)
+        return localized(en: "+\(percent)% over the generic pick",
+                         vi: "+\(percent)% so với bộ chọn chung")
+    }
+
+    func abyssArtifactAlternative(_ names: String, gap: Double) -> String {
+        let percent = String(format: "%.1f", gap * 100)
+        return localized(en: "Or \(names) (−\(percent)%)", vi: "Hoặc \(names) (−\(percent)%)")
+    }
+
+    func abyssTeamArtifactGain(_ gain: Double) -> String {
+        let percent = String(format: "%.1f", gain * 100)
+        return localized(en: "artifacts +\(percent)%", vi: "thánh di vật +\(percent)%")
+    }
+
+    var abyssArtifactAdviceNotice: String {
+        localized(
+            en: "Artifacts are picked per team and per floor, so the same character can want a "
+                + "different set depending on who they are with and what the enemies resist. Most "
+                + "of the gain shown is supports being given sets that buff the party instead of "
+                + "sets that raise their own damage.",
+            vi: "Thánh di vật được chọn riêng cho từng đội và từng tầng, nên cùng một nhân vật có "
+                + "thể cần bộ khác nhau tuỳ đồng đội và tuỳ kháng của quái. Phần lớn mức tăng hiển "
+                + "thị đến từ việc nhân vật hỗ trợ được đổi sang bộ buff cả đội thay vì bộ tăng sát "
+                + "thương của riêng họ.")
+    }
+
+    func abyssMainStatName(_ stat: AbyssMainStat) -> String {
+        switch stat {
+        case .atkPercent: return "ATK%"
+        case .hpPercent: return "HP%"
+        case .defPercent: return "DEF%"
+        case .elementalMastery: return localized(en: "EM", vi: "Tinh Thông")
+        case .energyRecharge: return localized(en: "ER", vi: "Hồi Năng")
+        case .critRate: return localized(en: "CRIT Rate", vi: "Tỉ Lệ Bạo")
+        case .critDMG: return localized(en: "CRIT DMG", vi: "ST Bạo")
+        case .healingBonus: return localized(en: "Healing", vi: "Trị Liệu")
+        case .elementalDMG(let element):
+            return localized(en: "\(element.rawValue) DMG", vi: "ST \(abyssElementLabel(element))")
+        }
+    }
+
+    /// Substat keys as they are written in `tuning.json`.
+    func abyssSubstatName(_ key: String) -> String {
+        switch key {
+        case "crit_rate": return localized(en: "CRIT Rate", vi: "Tỉ Lệ Bạo")
+        case "crit_dmg": return localized(en: "CRIT DMG", vi: "ST Bạo")
+        case "atk_pct": return "ATK%"
+        case "hp_pct": return "HP%"
+        case "def_pct": return "DEF%"
+        case "em": return localized(en: "EM", vi: "Tinh Thông")
+        case "er": return localized(en: "ER", vi: "Hồi Năng")
+        case "flat_atk": return localized(en: "flat ATK", vi: "ATK cố định")
+        case "flat_hp": return localized(en: "flat HP", vi: "HP cố định")
+        case "flat_def": return localized(en: "flat DEF", vi: "DEF cố định")
+        default: return key
         }
     }
 

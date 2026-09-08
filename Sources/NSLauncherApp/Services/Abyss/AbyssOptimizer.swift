@@ -22,12 +22,16 @@ struct AbyssOptimizer: Sendable {
     static let weaponAlternatives = 6
     /// Set pairs are tried across the best few sets only; the tail never wins.
     private static let setPairCandidates = 8
+    /// Floor on how many teams reach the artifact pass, so a request for the
+    /// single best team still gets a real shortlist to re-rank.
+    private static let minimumRefinementCandidates = 20
 
     init?(library: AbyssDataLibrary) {
         guard let tuning = library.tuning else { return nil }
         self.library = library
         self.tuning = tuning
-        assembler = AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs)
+        assembler = AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs,
+                                        artifactSets: library.artifactSets)
         scorer = AbyssScorer(library: library, tuning: tuning)
     }
 
@@ -56,10 +60,14 @@ struct AbyssOptimizer: Sendable {
                                         unknownRosterIDs: unknownIDs)
         }
 
+        let showcaseByID = Dictionary(request.showcase.map { ($0.characterID, $0) },
+                                      uniquingKeysWith: { first, _ in first })
+
         var options: [String: [AbyssGearOption]] = [:]
         options.reserveCapacity(characters.count)
         for character in characters {
-            options[character.id] = gearOptions(for: character, weapons: weapons, sets: sets, roster: roster)
+            options[character.id] = gearOptions(for: character, weapons: weapons, sets: sets,
+                                                roster: roster, showcase: showcaseByID[character.id])
         }
 
         // Characters far down on solo damage never appear in a winning team, and
@@ -84,12 +92,29 @@ struct AbyssOptimizer: Sendable {
         let floorNumbers = request.floors ?? cycle.floors.map(\.floor)
         var reports: [AbyssFloorReport] = []
         var diagnostics = AbyssParseDiagnostics()
+        let charactersByID = Dictionary(poolArray.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+
+        // The artifact pass can promote a team past the ones that beat it on
+        // neutral gear, so more candidates are carried into it than are shown.
+        let candidateCount = request.refinesArtifacts
+            ? max(request.topN * 4, Self.minimumRefinementCandidates)
+            : request.topN
 
         for (index, floorNumber) in floorNumbers.enumerated() {
             if Task.isCancelled { break }
             guard let floor = AbyssFloorContext.build(cycle: cycle, floor: floorNumber,
                                                       diagnostics: &diagnostics) else { continue }
-            let teams = await bestTeams(in: poolArray, options: options, floor: floor, topN: request.topN)
+            var teams = await bestTeams(in: poolArray, options: options, floor: floor, topN: candidateCount)
+            if request.refinesArtifacts {
+                let advisor = AbyssArtifactAdvisor(library: library, tuning: tuning,
+                                                   assembler: assembler, scorer: scorer)
+                teams = Self.trim(teams.map { team in
+                    advisor.refine(team: team,
+                                   members: team.memberIDs.compactMap { charactersByID[$0] },
+                                   floor: floor, sets: sets, roster: roster,
+                                   showcase: showcaseByID)
+                }, topN: request.topN)
+            }
             reports.append(AbyssFloorReport(
                 floor: floorNumber,
                 monsterLevel: floor.monsterLevel,
@@ -249,9 +274,27 @@ struct AbyssOptimizer: Sendable {
     func gearOptions(for character: AbyssCharacter,
                      weapons: [AbyssWeapon],
                      sets: [AbyssArtifactSet],
-                     roster: AbyssRoster?) -> [AbyssGearOption] {
+                     roster: AbyssRoster?,
+                     showcase: AbyssShowcaseBuild? = nil) -> [AbyssGearOption] {
         guard let profile = library.profilesByCharacterID[character.id] else { return [] }
         let role = defaultRole(for: character)
+
+        // An imported character needs no gear search: the app knows what they
+        // are holding and what they rolled. One option, their own, and the
+        // artifact pass then says what to change.
+        if let showcase {
+            let weapon = showcase.weaponID.flatMap { library.weaponsByID[$0] }
+            let wornIDs = showcase.activeSetIDs
+            let worn = wornIDs.compactMap { library.artifactSetsByID[$0] }
+            var stats = assembler.showcaseStats(build: showcase, weapon: weapon, wornSets: worn)
+            var diagnostics = AbyssParseDiagnostics()
+            assembler.applySets(worn, character: character, to: &stats, diagnostics: &diagnostics)
+            return [AbyssGearOption(stats: stats, weaponID: showcase.weaponID, setIDs: wornIDs,
+                                    role: role,
+                                    soloScore: scorer.soloScore(for: character, stats: stats),
+                                    statSource: .measured)]
+        }
+
         let usable = weapons.filter { $0.type == character.weaponType }
         var diagnostics = AbyssParseDiagnostics()
 

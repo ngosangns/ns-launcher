@@ -80,13 +80,14 @@ extension AbyssTeamNote {
         case .hexereiSecretRite: return "wand.and.stars"
         case .resonance: return "circle.hexagongrid.fill"
         case .weaponContested: return "exclamationmark.arrow.triangle.2.circlepath"
+        case .mixedStatSources: return "questionmark.circle"
         }
     }
 
     /// Warnings read differently from bonuses, so they are tinted differently.
     var accentColor: Color {
         switch self {
-        case .noSustainPenalty, .weaponContested: return LauncherPalette.warning
+        case .noSustainPenalty, .weaponContested, .mixedStatSources: return LauncherPalette.warning
         case .breaksShield, .exploitsWeakness: return LauncherPalette.success
         case .moonsignAscendantGleam, .hexereiSecretRite, .resonance: return LauncherPalette.goldHighlight
         }

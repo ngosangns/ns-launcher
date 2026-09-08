@@ -35,13 +35,20 @@ final class AbyssOptimizerTests: XCTestCase {
     /// The parallel path splits the combination space by rank; a mistake in that
     /// arithmetic would skip or double-count teams, which shows up here as a
     /// different answer from the single-stripe path.
+    ///
+    /// Run without artifact refinement: that pass only re-ranks the shortlist it
+    /// is handed, so with it on a team could win the narrow search and never
+    /// reach the wide search's shortlist — which would make this assertion about
+    /// the *enumeration* fail for a reason that has nothing to do with it.
     func testParallelSearchAgreesWithSingleStripeSearch() async throws {
         let optimizer = try makeOptimizer()
         let roster = try AbyssGoldenFixture.exampleRoster()
 
         // A pool of 15 crosses the striping threshold; a pool of 6 stays under it.
-        let wide = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [11], topN: 5, poolSize: 15))
-        let narrow = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [11], topN: 5, poolSize: 6))
+        let wide = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [11], topN: 5,
+                                                             poolSize: 15, refinesArtifacts: false))
+        let narrow = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [11], topN: 5,
+                                                               poolSize: 6, refinesArtifacts: false))
 
         let wideTop = try XCTUnwrap(wide.reports.first?.teams.first)
         let narrowTop = try XCTUnwrap(narrow.reports.first?.teams.first)

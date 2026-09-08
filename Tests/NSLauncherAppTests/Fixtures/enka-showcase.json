@@ -1,0 +1,301 @@
+{
+  "playerInfo": {
+    "nickname": "Fixture",
+    "level": 60,
+    "worldLevel": 8
+  },
+  "avatarInfoList": [
+    {
+      "avatarId": 10000046,
+      "talentIdList": [
+        0
+      ],
+      "propMap": {
+        "4001": {
+          "val": "90"
+        }
+      },
+      "fightPropMap": {
+        "1": 15552.0,
+        "2": 4780.0,
+        "3": 0.466,
+        "4": 715.0,
+        "5": 311.0,
+        "6": 0.466,
+        "7": 876.0,
+        "8": 0.0,
+        "9": 0.0,
+        "20": 0.7241,
+        "22": 1.5324,
+        "23": 1.2138,
+        "26": 0.0,
+        "28": 118.0,
+        "40": 0.616,
+        "2000": 27540.0,
+        "2001": 1359.0
+      },
+      "equipList": [
+        {
+          "itemId": 80000,
+          "reliquary": {
+            "level": 21,
+            "mainPropId": 14001
+          },
+          "flat": {
+            "itemType": "ITEM_RELIQUARY",
+            "equipType": "EQUIP_BRACER",
+            "setId": 15006,
+            "setNameTextMapHash": "0"
+          }
+        },
+        {
+          "itemId": 80001,
+          "reliquary": {
+            "level": 21,
+            "mainPropId": 14001
+          },
+          "flat": {
+            "itemType": "ITEM_RELIQUARY",
+            "equipType": "EQUIP_BRACER",
+            "setId": 15006,
+            "setNameTextMapHash": "0"
+          }
+        },
+        {
+          "itemId": 80002,
+          "reliquary": {
+            "level": 21,
+            "mainPropId": 14001
+          },
+          "flat": {
+            "itemType": "ITEM_RELIQUARY",
+            "equipType": "EQUIP_BRACER",
+            "setId": 15006,
+            "setNameTextMapHash": "0"
+          }
+        },
+        {
+          "itemId": 80003,
+          "reliquary": {
+            "level": 21,
+            "mainPropId": 14001
+          },
+          "flat": {
+            "itemType": "ITEM_RELIQUARY",
+            "equipType": "EQUIP_BRACER",
+            "setId": 15006,
+            "setNameTextMapHash": "0"
+          }
+        },
+        {
+          "itemId": 13501,
+          "weapon": {
+            "level": 90,
+            "affixMap": {
+              "113501": 0
+            }
+          },
+          "flat": {
+            "itemType": "ITEM_WEAPON"
+          }
+        }
+      ]
+    },
+    {
+      "avatarId": 10000032,
+      "talentIdList": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "propMap": {
+        "4001": {
+          "val": "90"
+        }
+      },
+      "fightPropMap": {
+        "1": 12397.0,
+        "2": 5019.0,
+        "3": 0.0991,
+        "4": 799.0,
+        "5": 342.0,
+        "6": 1.1709,
+        "7": 771.0,
+        "8": 0.0,
+        "9": 0.0,
+        "20": 0.0776,
+        "22": 0.5,
+        "23": 1.7264,
+        "26": 0.216,
+        "28": 44.0,
+        "2000": 18645.0,
+        "2001": 2077.18
+      },
+      "equipList": [
+        {
+          "itemId": 80000,
+          "reliquary": {
+            "level": 21,
+            "mainPropId": 14001
+          },
+          "flat": {
+            "itemType": "ITEM_RELIQUARY",
+            "equipType": "EQUIP_BRACER",
+            "setId": 15007,
+            "setNameTextMapHash": "0"
+          }
+        },
+        {
+          "itemId": 80001,
+          "reliquary": {
+            "level": 21,
+            "mainPropId": 14001
+          },
+          "flat": {
+            "itemType": "ITEM_RELIQUARY",
+            "equipType": "EQUIP_BRACER",
+            "setId": 15007,
+            "setNameTextMapHash": "0"
+          }
+        },
+        {
+          "itemId": 80000,
+          "reliquary": {
+            "level": 21,
+            "mainPropId": 14001
+          },
+          "flat": {
+            "itemType": "ITEM_RELIQUARY",
+            "equipType": "EQUIP_BRACER",
+            "setId": 15001,
+            "setNameTextMapHash": "0"
+          }
+        },
+        {
+          "itemId": 80001,
+          "reliquary": {
+            "level": 21,
+            "mainPropId": 14001
+          },
+          "flat": {
+            "itemType": "ITEM_RELIQUARY",
+            "equipType": "EQUIP_BRACER",
+            "setId": 15001,
+            "setNameTextMapHash": "0"
+          }
+        },
+        {
+          "itemId": 11410,
+          "weapon": {
+            "level": 90,
+            "affixMap": {
+              "111410": 4
+            }
+          },
+          "flat": {
+            "itemType": "ITEM_WEAPON"
+          }
+        }
+      ]
+    },
+    {
+      "avatarId": 99999999,
+      "talentIdList": [],
+      "propMap": {
+        "4001": {
+          "val": "90"
+        }
+      },
+      "fightPropMap": {
+        "1": 12397.0,
+        "2": 5019.0,
+        "3": 0.0991,
+        "4": 799.0,
+        "5": 342.0,
+        "6": 1.1709,
+        "7": 771.0,
+        "8": 0.0,
+        "9": 0.0,
+        "20": 0.0776,
+        "22": 0.5,
+        "23": 1.7264,
+        "26": 0.216,
+        "28": 44.0,
+        "2000": 18645.0,
+        "2001": 2077.18
+      },
+      "equipList": [
+        {
+          "itemId": 80000,
+          "reliquary": {
+            "level": 21,
+            "mainPropId": 14001
+          },
+          "flat": {
+            "itemType": "ITEM_RELIQUARY",
+            "equipType": "EQUIP_BRACER",
+            "setId": 15007,
+            "setNameTextMapHash": "0"
+          }
+        },
+        {
+          "itemId": 80001,
+          "reliquary": {
+            "level": 21,
+            "mainPropId": 14001
+          },
+          "flat": {
+            "itemType": "ITEM_RELIQUARY",
+            "equipType": "EQUIP_BRACER",
+            "setId": 15007,
+            "setNameTextMapHash": "0"
+          }
+        },
+        {
+          "itemId": 80002,
+          "reliquary": {
+            "level": 21,
+            "mainPropId": 14001
+          },
+          "flat": {
+            "itemType": "ITEM_RELIQUARY",
+            "equipType": "EQUIP_BRACER",
+            "setId": 15007,
+            "setNameTextMapHash": "0"
+          }
+        },
+        {
+          "itemId": 80003,
+          "reliquary": {
+            "level": 21,
+            "mainPropId": 14001
+          },
+          "flat": {
+            "itemType": "ITEM_RELIQUARY",
+            "equipType": "EQUIP_BRACER",
+            "setId": 15007,
+            "setNameTextMapHash": "0"
+          }
+        },
+        {
+          "itemId": 15501,
+          "weapon": {
+            "level": 90,
+            "affixMap": {
+              "115501": 0
+            }
+          },
+          "flat": {
+            "itemType": "ITEM_WEAPON"
+          }
+        }
+      ]
+    }
+  ],
+  "ttl": 60,
+  "uid": "618285856",
+  "region": "os_euro"
+}

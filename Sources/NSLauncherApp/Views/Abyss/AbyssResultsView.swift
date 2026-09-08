@@ -17,6 +17,16 @@ struct AbyssResultsView: View {
             } else {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 22) {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Label(text.abyssArtifactAdviceNotice, systemImage: "seal")
+                            if viewModel.showcase != nil {
+                                Label(text.abyssShowcaseNotice, systemImage: "checkmark.seal")
+                            }
+                        }
+                        .font(.system(size: 10, design: .rounded))
+                        .foregroundStyle(LauncherPalette.mist.opacity(0.55))
+                        .fixedSize(horizontal: false, vertical: true)
+
                         ForEach(viewModel.reports) { report in
                             floorSection(report)
                         }
@@ -78,6 +88,14 @@ struct AbyssResultsView: View {
                     Text("#\(rank)")
                         .font(.system(.headline, design: .rounded, weight: .bold))
                         .foregroundStyle(LauncherPalette.goldHighlight)
+
+                    // What re-picking the artifacts for this floor was worth.
+                    if team.artifactGain > 0.0005 {
+                        Text(text.abyssTeamArtifactGain(team.artifactGain))
+                            .font(.system(size: 10, weight: .semibold, design: .rounded))
+                            .foregroundStyle(LauncherPalette.success.opacity(0.85))
+                    }
+
                     Spacer()
                     Text(Self.scoreFormatter.string(from: NSNumber(value: team.score)) ?? "")
                         .font(.system(.caption, design: .monospaced))
@@ -132,6 +150,14 @@ struct AbyssResultsView: View {
                     .font(.system(.caption2, design: .rounded, weight: .bold))
                     .foregroundStyle(role.accentColor.opacity(0.85))
 
+                // Measured or modelled. Never left implicit: the same number
+                // means something different depending on which it is.
+                if option?.statSource == .measured {
+                    Label(text.abyssMeasuredBadge, systemImage: "checkmark.seal.fill")
+                        .font(.system(size: 9, weight: .semibold, design: .rounded))
+                        .foregroundStyle(LauncherPalette.success.opacity(0.9))
+                }
+
                 Spacer()
 
                 Text("\(Int((share * 100).rounded()))%")
@@ -141,21 +167,98 @@ struct AbyssResultsView: View {
             }
 
             HStack(spacing: 6) {
-                Text(gearSummary(option))
+                Image(systemName: character?.weaponType.symbolName ?? "wand.and.rays")
+                    .font(.system(size: 9))
+                    .foregroundStyle(LauncherPalette.mist.opacity(0.45))
+                    .frame(width: 16)
+                Text(option?.weaponID.flatMap { viewModel.weapon($0)?.name } ?? "—")
                     .font(.system(size: 10, design: .rounded))
                     .foregroundStyle(LauncherPalette.mist.opacity(0.6))
                     .lineLimit(1)
             }
 
+            artifactBlock(characterID: characterID, team: team)
+
             GoldenProgressBar(value: share)
         }
     }
 
-    private func gearSummary(_ option: AbyssGearOption?) -> String {
-        guard let option else { return "" }
-        let weapon = option.weaponID.flatMap { viewModel.weapon($0)?.name } ?? "—"
-        let sets = option.setIDs.compactMap { viewModel.artifactSet($0)?.name }.joined(separator: " + ")
-        return sets.isEmpty ? weapon : "\(weapon)  ·  \(sets)"
+    /// The artifact recommendation: which set, what it was worth here, which
+    /// main stats, and what to wear instead if the set is not farmed yet.
+    @ViewBuilder
+    private func artifactBlock(characterID: String, team: AbyssTeamResult) -> some View {
+        let advice = team.artifactAdvice[characterID]
+        let setIDs = advice?.setIDs ?? team.assignment[characterID]?.setIDs ?? []
+
+        if !setIDs.isEmpty {
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 6) {
+                    Image(systemName: "seal.fill")
+                        .font(.system(size: 9))
+                        .foregroundStyle(LauncherPalette.gold.opacity(0.55))
+                        .frame(width: 16)
+                    Text(setNames(setIDs))
+                        .font(.system(size: 10, weight: .semibold, design: .rounded))
+                        .foregroundStyle(LauncherPalette.parchment.opacity(0.82))
+                        .lineLimit(1)
+                    if let gain = advice?.gainOverNeutralPick, gain > 0.0005 {
+                        Text(text.abyssArtifactGain(gain))
+                            .font(.system(size: 9, design: .rounded))
+                            .foregroundStyle(LauncherPalette.success.opacity(0.8))
+                    }
+                }
+
+                if let advice {
+                    Text(mainStatLine(advice))
+                        .font(.system(size: 9, design: .rounded))
+                        .foregroundStyle(LauncherPalette.mist.opacity(0.55))
+                        .lineLimit(1)
+                        .padding(.leading, 22)
+
+                    // For an imported character the useful line is not "wear
+                    // this" but "this beats what you have, by this much".
+                    if !advice.currentSetIDs.isEmpty {
+                        Text(text.abyssArtifactUpgrade(from: setNames(advice.currentSetIDs),
+                                                       gain: advice.upgradeOverCurrent))
+                            .font(.system(size: 9, weight: .semibold, design: .rounded))
+                            .foregroundStyle(LauncherPalette.goldHighlight.opacity(0.85))
+                            .lineLimit(1)
+                            .padding(.leading, 22)
+                    } else if team.assignment[characterID]?.statSource == .measured {
+                        Text(text.abyssArtifactAlreadyBest(setNames(advice.setIDs)))
+                            .font(.system(size: 9, design: .rounded))
+                            .foregroundStyle(LauncherPalette.success.opacity(0.8))
+                            .lineLimit(1)
+                            .padding(.leading, 22)
+                    }
+
+                    if !advice.alternativeSetIDs.isEmpty {
+                        Text(text.abyssArtifactAlternative(setNames(advice.alternativeSetIDs),
+                                                           gap: advice.alternativeGap))
+                            .font(.system(size: 9, design: .rounded))
+                            .foregroundStyle(LauncherPalette.mist.opacity(0.42))
+                            .lineLimit(1)
+                            .padding(.leading, 22)
+                    }
+                }
+            }
+        }
+    }
+
+    /// A 4-piece set reads as one name; two 2-piece sets read as a pair.
+    private func setNames(_ ids: [String]) -> String {
+        let names = ids.map { viewModel.artifactSet($0)?.name ?? $0 }
+        return ids.count == 1 ? names.joined() : names.joined(separator: " + ")
+    }
+
+    private func mainStatLine(_ advice: AbyssArtifactAdvice) -> String {
+        let slots = [
+            "\(text.abyssSandsSlot) \(text.abyssMainStatName(advice.sands))",
+            "\(text.abyssGobletSlot) \(text.abyssMainStatName(advice.goblet))",
+            "\(text.abyssCircletSlot) \(text.abyssMainStatName(advice.circlet))",
+        ].joined(separator: " · ")
+        let substats = advice.substatPriority.prefix(3).map { text.abyssSubstatName($0) }.joined(separator: " > ")
+        return substats.isEmpty ? slots : "\(slots)  ·  \(text.abyssSubstatsLabel) \(substats)"
     }
 
     private func orderedMembers(of team: AbyssTeamResult) -> [String] {

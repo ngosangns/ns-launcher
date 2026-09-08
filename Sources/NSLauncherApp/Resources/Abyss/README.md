@@ -30,7 +30,19 @@ là **bản duy nhất**; công cụ Python trong `toi-uu-doi-hinh/optimizer/` c
 | `damage-formula.json` | Hằng số công thức sát thương + ví dụ mẫu để test |
 | `team-bonus.json` | Cộng hưởng nguyên tố, Nguyệt Triệu, Hexerei, Nightsoul Burst |
 | `tuning.json` | Tham số thuật toán (xem bên dưới) |
+| `game-ids.json` | Id số trong game → slug ở đây, để nhập Showcase theo UID |
 | `manifest.json` | Số lượng bản ghi + các khoảng trống dữ liệu đã biết |
+
+`game-ids.json` **sinh tự động**, đừng sửa tay:
+
+```bash
+python3 scripts/generate-abyss-game-ids.py
+```
+
+Chạy lại mỗi khi thêm nhân vật / vũ khí / bộ thánh di vật — bảng cũ khiến tính
+năng nhập theo UID lặng lẽ bỏ sót nhân vật. Script từ chối ghi nếu bảng mới mất
+id so với bảng đã commit, và `AbyssShowcaseImportTests` ghim bảng theo đúng bộ
+dữ liệu này.
 
 Schema JSON của từng loại: `toi-uu-doi-hinh/data-model/schema/`.
 

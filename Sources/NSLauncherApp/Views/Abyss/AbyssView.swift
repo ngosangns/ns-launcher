@@ -52,13 +52,113 @@ struct AbyssView: View {
                     .tint(LauncherPalette.gold)
                     .foregroundStyle(LauncherPalette.mist)
             } else {
-                searchControls
-                actions
-                Spacer(minLength: 0)
-                methodologyNotice
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 12) {
+                        actions
+                        uidImport
+                        methodologyNotice
+                    }
+                }
             }
         }
     }
+
+    /// Fetching a showcase needs nothing but the UID: its first digit is the
+    /// region, so there is no server to choose.
+    private var uidImport: some View {
+        VStack(alignment: .leading, spacing: 7) {
+            Divider().overlay(LauncherPalette.gold.opacity(0.15))
+
+            Text(text.abyssImportFromUID.uppercased())
+                .font(.system(.caption2, design: .rounded, weight: .bold))
+                .tracking(0.8)
+                .foregroundStyle(LauncherPalette.gold.opacity(0.88))
+
+            HStack(spacing: 6) {
+                TextField(text.abyssUIDPlaceholder, text: $viewModel.uid)
+                    .textFieldStyle(.plain)
+                    .font(.system(.caption, design: .monospaced))
+                    .foregroundStyle(LauncherPalette.parchment)
+                    .padding(.horizontal, 9)
+                    .padding(.vertical, 6)
+                    .background(LauncherPalette.night.opacity(0.42),
+                                in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .onSubmit { viewModel.importFromUID() }
+
+                Button {
+                    viewModel.isImporting ? viewModel.cancelImport() : viewModel.importFromUID()
+                } label: {
+                    Image(systemName: viewModel.isImporting ? "stop.fill" : "arrow.down.circle")
+                }
+                .quest(.quiet, disabled: !viewModel.canImport && !viewModel.isImporting)
+            }
+
+            if viewModel.isImporting {
+                Text(text.abyssFetching)
+                    .font(.system(.caption2, design: .rounded))
+                    .foregroundStyle(LauncherPalette.mist.opacity(0.7))
+            }
+
+            if let status = viewModel.importStatus {
+                Text(message(for: status))
+                    .font(.system(size: 10, design: .rounded))
+                    .foregroundStyle(isFailure(status)
+                        ? LauncherPalette.warning.opacity(0.9)
+                        : LauncherPalette.success.opacity(0.9))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            if let showcase = viewModel.showcase {
+                Text(text.abyssShowcaseFetchedAt(Self.timestamp.string(from: showcase.fetchedAt)))
+                    .font(.system(size: 10, design: .rounded))
+                    .foregroundStyle(LauncherPalette.mist.opacity(0.5))
+
+                if !showcase.unmappedIDs.isEmpty {
+                    Text(text.abyssShowcaseUnmapped(showcase.unmappedIDs))
+                        .font(.system(size: 10, design: .rounded))
+                        .foregroundStyle(LauncherPalette.warning.opacity(0.8))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Button { viewModel.clearShowcase() } label: {
+                    Label(text.abyssClearShowcase, systemImage: "trash")
+                }
+                .quest(.quiet)
+            }
+
+            Text(text.abyssUIDHint)
+                .font(.system(size: 10, design: .rounded))
+                .foregroundStyle(LauncherPalette.mist.opacity(0.5))
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private func message(for status: AbyssViewModel.ImportStatus) -> String {
+        switch status {
+        case .imported(let nickname, let count):
+            return text.abyssShowcaseSummary(nickname: nickname, count: count)
+        case .tooSoon(let seconds):
+            return text.abyssShowcaseTooSoon(seconds)
+        case .failed(let error):
+            return text.abyssEnkaError(error)
+        case .failedOther(let message):
+            return message
+        }
+    }
+
+    private func isFailure(_ status: AbyssViewModel.ImportStatus) -> Bool {
+        switch status {
+        case .imported: return false
+        case .tooSoon, .failed, .failedOther: return true
+        }
+    }
+
+    private static let timestamp: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        formatter.timeStyle = .short
+        return formatter
+    }()
 
     private var cycleBanner: some View {
         VStack(alignment: .leading, spacing: 5) {
@@ -84,60 +184,17 @@ struct AbyssView: View {
         }
     }
 
-    private var searchControls: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            TextField(text.abyssSearchPlaceholder, text: $viewModel.searchText)
-                .textFieldStyle(.plain)
-                .font(.system(.subheadline, design: .rounded))
-                .foregroundStyle(LauncherPalette.parchment)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(LauncherPalette.night.opacity(0.4),
-                            in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-
-            elementFilterChips
-
-            Toggle(text.abyssOwnedOnly, isOn: $viewModel.showsOwnedOnly)
-                .toggleStyle(.switch)
-                .tint(LauncherPalette.gold)
-                .font(.system(.caption, design: .rounded, weight: .semibold))
-                .foregroundStyle(LauncherPalette.mist)
-
+    private var actions: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            // Searching and filtering belong to the roster grid, so they live
+            // there; this toggle changes what the search *runs over*, which is
+            // an action, not a filter.
             Toggle(text.abyssUseFullRoster, isOn: $viewModel.usesFullRoster)
                 .toggleStyle(.switch)
                 .tint(LauncherPalette.gold)
                 .font(.system(.caption, design: .rounded, weight: .semibold))
                 .foregroundStyle(LauncherPalette.mist)
-        }
-    }
 
-    private var elementFilterChips: some View {
-        HStack(spacing: 5) {
-            ForEach(GenshinElement.allCases, id: \.self) { element in
-                Button {
-                    viewModel.elementFilter = viewModel.elementFilter == element ? nil : element
-                } label: {
-                    Image(systemName: element.symbolName)
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(viewModel.elementFilter == element
-                            ? LauncherPalette.ink
-                            : element.accentColor.opacity(0.85))
-                        .frame(width: 26, height: 24)
-                        .background(
-                            viewModel.elementFilter == element
-                                ? element.accentColor
-                                : LauncherPalette.night.opacity(0.36),
-                            in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-                }
-                .buttonStyle(.plain)
-                .pointerOnHover()
-                .help(text.abyssElementLabel(element))
-            }
-        }
-    }
-
-    private var actions: some View {
-        VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Button {
                     viewModel.isSearching ? viewModel.cancelSearch() : viewModel.search()

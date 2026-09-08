@@ -112,7 +112,11 @@ final class AbyssGoldenValueTests: XCTestCase {
         let optimizer = try XCTUnwrap(AbyssOptimizer(library: library))
         let roster = try AbyssGoldenFixture.exampleRoster()
 
-        let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, topN: 10, poolSize: 40))
+        // Artifact refinement is deliberately off: it is a Swift-only pass with
+        // no counterpart in the reference implementation, and this test's job is
+        // to hold the ported engine to the reference's numbers.
+        let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, topN: 10, poolSize: 40,
+                                                               refinesArtifacts: false))
         XCTAssertFalse(output.reports.isEmpty, "optimizer produced no floors")
 
         for report in output.reports {

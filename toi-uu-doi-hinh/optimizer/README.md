@@ -9,6 +9,12 @@ hạng các đội hình 4 người cho từng tầng Trầm Thủy của mùa h
 > chạy engine viết bằng Swift (`Sources/NSLauncherApp/Services/Abyss/`) trên
 > cùng bộ dữ liệu và cùng `tuning.json`. Script này giữ lại làm sân thử tham
 > số và bộ sinh fixture đối chiếu cho test phía Swift.
+>
+> Hai bản **không còn ngang tính năng**: bản Swift có thêm một lượt chọn lại
+> thánh di vật cho từng đội theo đúng tầng và đúng đồng đội
+> (`AbyssArtifactAdvisor`), thứ script này không có. Vì vậy fixture đối chiếu
+> được sinh và so với lượt đó **tắt** — phần chung của hai bản vẫn phải khớp
+> từng con số.
 
 ## Chạy nhanh
 

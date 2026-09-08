@@ -52,10 +52,15 @@ removal, but voice packs are not downloaded by the launcher.
 
 - The Home tab shows the game hero with **Play**, **Update**, and a
   diagnostics drawer for the current operation's progress and logs.
-- The Abyss tab suggests Spiral Abyss teams for the current rotation. Mark the
-  characters and weapons you own (or import a roster file), then press **Find
-  teams**. Scores rank teams against each other — they are an estimate, not a
-  damage simulation.
+- The Abyss tab suggests Spiral Abyss teams for the current rotation. Search
+  and filter to mark the characters and weapons you own, import a roster file,
+  or paste your UID to pull your Character Showcase straight from
+  Enka.Network — no login, and no server to pick. Then press **Find teams**.
+  Each suggested team comes with the artifact set, main stats, and substat
+  priority for every member, chosen for that floor and those team mates rather
+  than in the abstract; for the characters you imported, it compares against the
+  artifacts you are actually wearing. Scores rank teams against each other —
+  they are an estimate, not a damage simulation.
 - Installing or updating downloads and verifies game assets directly from
   HoYoPlay's Sophon CDN; you don't need the official launcher installed.
 - Settings covers the Wine runtime, display mode, install location, and
