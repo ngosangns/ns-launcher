@@ -1,0 +1,33 @@
+{
+  "dataFetchDate": "2026-09-08",
+  "gameVersion": "7.0",
+  "validatedAgainstSchema": true,
+  "files": {
+    "characters": {
+      "mondstadt.json": { "count": 40, "note": "24 Mondstadt + 9 Nod-Krai + 7 Traveler element-variants (traveler-anemo..traveler-cryo)" },
+      "liyue.json": { "count": 26, "note": "21 Liyue + 5 Snezhnaya (Tartaglia, Arlecchino, Sandrone, Odette, Alyosha)" },
+      "inazuma-fontaine.json": { "count": 29, "note": "16 Inazuma + 13 Fontaine" },
+      "sumeru-natlan.json": { "count": 25, "note": "14 Sumeru + 11 Natlan" },
+      "total": 120
+    },
+    "weapons": {
+      "kiem.json": { "count": 56, "type": "Sword" },
+      "dai-kiem.json": { "count": 45, "type": "Claymore" },
+      "thuong.json": { "count": 43, "type": "Polearm" },
+      "cung.json": { "count": 49, "type": "Bow" },
+      "phap-khi.json": { "count": 53, "type": "Catalyst" },
+      "total": 246
+    },
+    "artifact-sets.json": { "count": 63 },
+    "abyss-monsters": {
+      "2026-08-16-den-2026-09-15.json": { "period": "2026-08-16 to 2026-09-15", "floors": [9, 10, 11, 12] }
+    },
+    "damage-formula.json": { "sections": ["resMultiplier", "defMultiplier", "critMultiplier", "amplifying", "catalyze", "transformative", "lunarStellar", "trueDamage", "critValueHeuristic", "workedExample"] }
+  },
+  "knownDataGaps": {
+    "note": "Một số trường được giữ nguyên 'chưa xác nhận'/'~' từ Markdown nguồn thay vì bịa số — không phải lỗi transcribe.",
+    "characters": "~20 mốc số liệu trong sumeru-natlan.json, ~26 trong liyue.json, 1 trong mondstadt.json (chi tiết xem README từng file nguồn nhan-vat/*.md)",
+    "weapons": "cung.json và phap-khi.json chỉ có mốc R1/R5 trong nguồn (không có R2-R4) nên passive.effects để rỗng, số liệu đầy đủ vẫn giữ trong description dạng 'R1: ... R5: ...'",
+    "abyssMonsters": "nhiều hpRatio/resistanceNotes ghi 'chưa xác nhận' do wiki không công khai đầy đủ"
+  }
+}

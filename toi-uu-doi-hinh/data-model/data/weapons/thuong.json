@@ -1,0 +1,1260 @@
+[
+  {
+    "id": "staff-of-homa",
+    "name": "Staff of Homa",
+    "type": "Polearm",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.662
+    },
+    "passive": {
+      "name": null,
+      "description": "HP +20/25/30/35/40%. ATK cộng thêm bằng 0.8/1/1.2/1.4/1.6% HP tối đa; nếu HP người mang <50%, có thêm 1/1.2/1.4/1.6/1.8% HP tối đa nữa (tổng 1.8/2.2/2.6/3/3.4% HP tối đa khi dưới 50% HP).",
+      "effects": [
+        {
+          "stat": "HP Buff",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        },
+        {
+          "stat": "ATK from HP (% Max HP)",
+          "r1": 0.008,
+          "r2": 0.01,
+          "r3": 0.012,
+          "r4": 0.014,
+          "r5": 0.016
+        },
+        {
+          "stat": "Additional ATK from HP below 50% HP (% Max HP)",
+          "r1": 0.01,
+          "r2": 0.012,
+          "r3": 0.014,
+          "r4": 0.016,
+          "r5": 0.018
+        },
+        {
+          "stat": "Total ATK from HP below 50% HP (% Max HP)",
+          "r1": 0.018,
+          "r2": 0.022,
+          "r3": 0.026,
+          "r4": 0.03,
+          "r5": 0.034
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish)",
+    "bestCharacters": [
+      "Hu Tao",
+      "các DPS máu cao scale theo HP"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "primordial-jade-winged-spear",
+    "name": "Primordial Jade Winged-Spear",
+    "type": "Polearm",
+    "rarity": 5,
+    "atkLv1": 48,
+    "atkLv90": 674,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.221
+    },
+    "passive": {
+      "name": null,
+      "description": "Sát thương thường/trọng kích +12/15/18/21/24%; tấn công trúng địch +1 lớp Jade (tối đa 7, mỗi lớp +3.2/4/4.8/5.6/6.4% ATK, tối đa +22.4/28/33.6/39.2/44.8% ATK).",
+      "effects": [
+        {
+          "stat": "Normal/Charged Attack DMG Bonus",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        },
+        {
+          "stat": "ATK Buff per Jade stack",
+          "r1": 0.032,
+          "r2": 0.04,
+          "r3": 0.048,
+          "r4": 0.056,
+          "r5": 0.064
+        },
+        {
+          "stat": "ATK Buff Max (7 stacks)",
+          "r1": 0.224,
+          "r2": 0.28,
+          "r3": 0.336,
+          "r4": 0.392,
+          "r5": 0.448
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish)",
+    "bestCharacters": [
+      "Xiao",
+      "Zhongli",
+      "DPS thương on-field"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "vortex-vanquisher",
+    "name": "Vortex Vanquisher",
+    "type": "Polearm",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.496
+    },
+    "passive": {
+      "name": null,
+      "description": "ATK +12/15/18/21/24%; khi có khiên, thêm sát thương Kỹ năng/Bùng nổ +20/25/30/35/40%.",
+      "effects": [
+        {
+          "stat": "ATK Buff",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        },
+        {
+          "stat": "Elemental Skill/Burst DMG Bonus (with Shield)",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish, sự kiện Chronicled cũ)",
+    "bestCharacters": [
+      "Zhongli",
+      "DPS thương đội hình khiên"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "skyward-spine",
+    "name": "Skyward Spine",
+    "type": "Polearm",
+    "rarity": 5,
+    "atkLv1": 48,
+    "atkLv90": 674,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.367
+    },
+    "passive": {
+      "name": null,
+      "description": "Tăng tốc độ tấn công 12%; đòn chí mạng hồi HP = 60/70/80/90/100% ATK cho người mang.",
+      "effects": [
+        {
+          "stat": "HP Restore (% ATK)",
+          "r1": 0.6,
+          "r2": 0.7,
+          "r3": 0.8,
+          "r4": 0.9,
+          "r5": 1.0
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish)",
+    "bestCharacters": [
+      "DPS thương cần Energy Recharge/tốc đánh"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "calamity-queller",
+    "name": "Calamity Queller",
+    "type": "Polearm",
+    "rarity": 5,
+    "atkLv1": 49,
+    "atkLv90": 741,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.165
+    },
+    "passive": {
+      "name": null,
+      "description": "ATK +12/15/18/21/24% và sát thương nguyên tố mọi hệ +8/10/12/14/16% trong 20s sau khi rời/vào sân, giảm dần theo thời gian; nếu ở trên sân đủ lâu, ATK +20/25/30/35/40% và sát thương nguyên tố +12/15/18/21/24%.",
+      "effects": [
+        {
+          "stat": "ATK Buff (off-field, decaying)",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        },
+        {
+          "stat": "Elemental DMG Bonus (off-field, decaying)",
+          "r1": 0.08,
+          "r2": 0.1,
+          "r3": 0.12,
+          "r4": 0.14,
+          "r5": 0.16
+        },
+        {
+          "stat": "ATK Buff (on-field long enough)",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        },
+        {
+          "stat": "Elemental DMG Bonus (on-field long enough)",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        }
+      ]
+    },
+    "acquisition": "Chronicled Wish (rerun theo đợt, không phải banner giới hạn thường trực)",
+    "bestCharacters": [
+      "Nhân vật thương on-field bền bỉ"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "engulfing-lightning",
+    "name": "Engulfing Lightning",
+    "type": "Polearm",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.551
+    },
+    "passive": {
+      "name": null,
+      "description": "ATK cộng thêm bằng 28/35/42/49/56% Energy Recharge vượt quá 100% (tối đa +80% ATK); Energy Recharge +30%.",
+      "effects": [
+        {
+          "stat": "ATK from Energy Recharge over 100% (%)",
+          "r1": 0.28,
+          "r2": 0.35,
+          "r3": 0.42,
+          "r4": 0.49,
+          "r5": 0.56
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish, vũ khí signature Raiden Shogun)",
+    "bestCharacters": [
+      "Raiden Shogun"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "staff-of-the-scarlet-sands",
+    "name": "Staff of the Scarlet Sands",
+    "type": "Polearm",
+    "rarity": 5,
+    "atkLv1": 44,
+    "atkLv90": 542,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.441
+    },
+    "passive": {
+      "name": "Heat Haze at Horizon's End",
+      "description": "người mang nhận ATK cộng thêm bằng 52% (R1) đến 104% (R5) Elemental Mastery. Khi Kỹ năng nguyên tố trúng địch, nhận thêm \"Dream of the Scarlet Sands\" 10s: ATK cộng thêm bằng 28% (R1) đến 56% (R5) EM, tối đa 3 lớp.",
+      "effects": []
+    },
+    "acquisition": "Banner giới hạn (Wish, vũ khí signature Cyno)",
+    "bestCharacters": [
+      "Cyno",
+      "DPS thương scale EM"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "crimson-moons-semblance",
+    "name": "Crimson Moon's Semblance",
+    "type": "Polearm",
+    "rarity": 5,
+    "atkLv1": 48,
+    "atkLv90": 674,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.221
+    },
+    "passive": {
+      "name": "Ashen Sun's Shadow",
+      "description": "trọng kích trúng địch tạo Bond of Life = 25% HP tối đa (hồi chuỗi 14s). Khi có Bond of Life, DMG Bonus +12%; nếu giá trị Bond of Life ≥30% HP tối đa, thêm +24% DMG Bonus (tổng tối đa 36%).",
+      "effects": []
+    },
+    "acquisition": "Banner giới hạn (Wish, vũ khí signature Arlecchino)",
+    "bestCharacters": [
+      "Arlecchino"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "lumidouce-elegy",
+    "name": "Lumidouce Elegy",
+    "type": "Polearm",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.3308
+    },
+    "passive": {
+      "name": "Bright Dawn Overture",
+      "description": "ATK +15%. Khi gây hiệu ứng Thiêu Đốt (Burning) lên địch hoặc gây sát thương Dendro lên địch đang Thiêu Đốt, sát thương +18% trong 8s, tối đa 2 lớp. Ở 2 lớp (hoặc làm mới lớp 2), hồi 12 Năng lượng nguyên tố, hồi chuỗi 12s. Cả hai hiệu ứng trên hoạt động cả khi rời sân.",
+      "effects": []
+    },
+    "acquisition": "Banner giới hạn (Wish, vũ khí signature Emilie)",
+    "bestCharacters": [
+      "Emilie"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "bloodsoaked-ruins",
+    "name": "Bloodsoaked Ruins",
+    "type": "Polearm",
+    "rarity": 5,
+    "atkLv1": 48,
+    "atkLv90": 674,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.221
+    },
+    "passive": {
+      "name": "Mournful Tribute",
+      "description": "trong 3.5s sau khi dùng Bùng nổ nguyên tố, sát thương Lunar-Charged +36/48/60/72/84%. Sau khi kích hoạt phản ứng Lunar-Charged, nhận \"Requiem of Ruin\": CRIT DMG +28/35/42/49/56% trong 6s, đồng thời hồi 12/13/14/15/16 Năng lượng nguyên tố (hồi chuỗi 14s).",
+      "effects": [
+        {
+          "stat": "Lunar-Charged DMG Bonus",
+          "r1": 0.36,
+          "r2": 0.48,
+          "r3": 0.6,
+          "r4": 0.72,
+          "r5": 0.84
+        },
+        {
+          "stat": "CRIT DMG Buff (Requiem of Ruin)",
+          "r1": 0.28,
+          "r2": 0.35,
+          "r3": 0.42,
+          "r4": 0.49,
+          "r5": 0.56
+        },
+        {
+          "stat": "Energy Restore (Requiem of Ruin)",
+          "r1": 12,
+          "r2": 13,
+          "r3": 14,
+          "r4": 15,
+          "r5": 16
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish, vũ khí signature Flins)",
+    "bestCharacters": [
+      "Flins"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "disaster-and-remorse",
+    "name": "Disaster and Remorse",
+    "type": "Polearm",
+    "rarity": 5,
+    "atkLv1": 48,
+    "atkLv90": 674,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.221
+    },
+    "passive": {
+      "name": "Dolorous Stroke",
+      "description": "sau khi dùng Kỹ năng nguyên tố, nhận \"Path of Conflict\" 17s (hồi chuỗi 18s) cùng \"Unforgivable\" và \"Irreparable\" 3s mỗi hiệu ứng. Unforgivable: sát thương đòn thường/trọng kích +40% (R1)/+80% (R5). Irreparable: sát thương Kỹ năng/Bùng nổ nguyên tố +40% (R1)/+80% (R5). Trong lúc có Path of Conflict, đòn thường/trọng kích trúng địch kéo dài Irreparable thêm 1s, Kỹ năng/Bùng nổ trúng địch kéo dài Unforgivable thêm 1s (tối đa 1 lần/0.1s); rời sân hoặc hết Path of Conflict sẽ mất cả hai. Khi đội có Hexerei: Secret Rite, hai hiệu ứng trên +75%.",
+      "effects": []
+    },
+    "acquisition": "Banner giới hạn (Wish, vũ khí signature Lohen)",
+    "bestCharacters": [
+      "Lohen"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "fractured-halo",
+    "name": "Fractured Halo",
+    "type": "Polearm",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.662
+    },
+    "passive": {
+      "name": null,
+      "description": "Sau khi dùng Kỹ năng/Bùng nổ nguyên tố, ATK +24% trong 20s; nếu người mang tạo Khiên trong thời gian này, nhận \"Electrifying Edict\" 20s: toàn đội gần đó +40% sát thương Lunar-Charged.",
+      "effects": []
+    },
+    "acquisition": "Banner giới hạn (Wish, vũ khí signature Ineffa)",
+    "bestCharacters": [
+      "Ineffa"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "symphonist-of-scents",
+    "name": "Symphonist of Scents",
+    "type": "Polearm",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.662
+    },
+    "passive": {
+      "name": "Seasoned Symphony",
+      "description": "ATK +12% (R1)/+24% (R5); khi rời sân, thêm +12% (R1)/+24% (R5) ATK nữa. Sau khi hồi máu, người mang và (các) nhân vật được hồi nhận \"Sweet Echoes\": ATK +32% (R1)/+64% (R5) trong 3s (kích hoạt được cả khi rời sân).",
+      "effects": []
+    },
+    "acquisition": "Banner giới hạn (Wish, vũ khí signature Escoffier)",
+    "bestCharacters": [
+      "Escoffier"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "ballad-of-the-fjords",
+    "name": "Ballad of the Fjords",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Tales of the Tundra",
+      "description": "khi đội hình có từ 3 hệ nguyên tố khác nhau trở lên, Elemental Mastery +120 (R1) đến +240 (R5).",
+      "effects": []
+    },
+    "acquisition": "Battle Pass (Gnostic Hymn, bản 4.0)",
+    "bestCharacters": [
+      "Hỗ trợ EM cho đội đa nguyên tố (3+ hệ khác nhau)"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "blackcliff-pole",
+    "name": "Blackcliff Pole",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.551
+    },
+    "passive": {
+      "name": null,
+      "description": "Sau khi hạ gục địch, ATK +12/15/18/21/24% trong 30s, tối đa 3 lớp.",
+      "effects": [
+        {
+          "stat": "ATK Buff per stack",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        }
+      ]
+    },
+    "acquisition": "Đổi Starglitter (Paimon's Bargains)",
+    "bestCharacters": [
+      "DPS thương CRIT DMG-focus"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "crescent-pike",
+    "name": "Crescent Pike",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "Physical DMG Bonus",
+      "valueLv90": 0.345
+    },
+    "passive": {
+      "name": null,
+      "description": "Sau khi trúng đòn Nạp Năng bằng phản ứng nguyên tố (Aggravate/Spread…), sát thương thường/trọng kích tiếp theo +12/15/18/21/24% trong 5s.",
+      "effects": [
+        {
+          "stat": "Normal/Charged Attack DMG Bonus",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        }
+      ]
+    },
+    "acquisition": "Chế tạo",
+    "bestCharacters": [
+      "DPS thương đòn thường/trọng kích kết hợp phản ứng"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "deathmatch",
+    "name": "Deathmatch",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.368
+    },
+    "passive": {
+      "name": null,
+      "description": "ATK và DEF +16/20/24/28/32% khi có từ 2 địch trở lên gần người mang; nếu chỉ có 1 địch, ATK +12/15/18/21/24%.",
+      "effects": [
+        {
+          "stat": "ATK & DEF Buff (2+ enemies)",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        },
+        {
+          "stat": "ATK Buff (1 enemy)",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        }
+      ]
+    },
+    "acquisition": "Battle Pass",
+    "bestCharacters": [
+      "DPS/tank thương đa mục tiêu"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "dialogues-of-the-desert-sages",
+    "name": "Dialogues of the Desert Sages",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "HP%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Principle of Equilibrium",
+      "description": "khi người mang thực hiện hồi máu, hồi 8 (R1) đến 16 (R5) Năng lượng nguyên tố, hồi chuỗi 10s, kích hoạt được cả khi rời sân.",
+      "effects": []
+    },
+    "acquisition": "Sự kiện \"Alchemical Ascension\" (bản 4.5) — nhận miễn phí sau khi đạt 50.000 doanh thu tích lũy trong sự kiện",
+    "bestCharacters": [
+      "Chevreuse",
+      "Mika",
+      "Yaoyao (healer scale HP)"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "dragons-bane",
+    "name": "Dragon's Bane",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 221
+    },
+    "passive": {
+      "name": null,
+      "description": "Sát thương gây cho địch dính hiệu ứng Thủy hoặc Hỏa +12/15/18/21/24%.",
+      "effects": [
+        {
+          "stat": "DMG Bonus vs Hydro/Pyro-afflicted",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "Xiangling",
+      "Hu Tao",
+      "DPS thương hệ Hỏa/Thủy"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "dragonspine-spear",
+    "name": "Dragonspine Spear",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "Physical DMG Bonus",
+      "valueLv90": 0.69
+    },
+    "passive": {
+      "name": "Frost Burial",
+      "description": "đòn thường/trọng kích trúng địch có 60% (R1)/100% (R5) tỉ lệ rơi một khối băng gây sát thương AoE bằng 80% (R1)/140% (R5) ATK; nếu địch đang dính Băng thì gây 200% (R1)/360% (R5) ATK, hồi chuỗi 10s.",
+      "effects": []
+    },
+    "acquisition": "Chế tạo (Dragonspine)",
+    "bestCharacters": [
+      "DPS thương hệ Băng",
+      "trọng kích"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "favonius-lance",
+    "name": "Favonius Lance",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.306
+    },
+    "passive": {
+      "name": null,
+      "description": "Đòn chí mạng có 60/70/80/90/100% tỉ lệ tạo Hạt Nguyên Tố hồi năng lượng, hồi chuỗi 12/10/8/6/5s.",
+      "effects": [
+        {
+          "stat": "Particle Generation Chance",
+          "r1": 0.6,
+          "r2": 0.7,
+          "r3": 0.8,
+          "r4": 0.9,
+          "r5": 1.0
+        },
+        {
+          "stat": "Cooldown (s)",
+          "r1": 12,
+          "r2": 10,
+          "r3": 8,
+          "r4": 6,
+          "r5": 5
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "Nhân vật thương cần Energy Recharge"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "footprint-of-the-rainbow",
+    "name": "Footprint of the Rainbow",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "DEF%",
+      "valueLv90": 0.517
+    },
+    "passive": {
+      "name": "Pact of Flowing Springs",
+      "description": "dùng Kỹ năng nguyên tố, DEF +16% (R1) đến +32% (R5) trong 15s.",
+      "effects": []
+    },
+    "acquisition": "Chế tạo (Natlan, mua bản thiết kế từ Alom)",
+    "bestCharacters": [
+      "Kachina",
+      "Yun Jin",
+      "DPS/sub-DPS scale theo DEF"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "frostbreath",
+    "name": "Frostbreath",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.459
+    },
+    "passive": {
+      "name": "A Cast Real Far",
+      "description": "kích hoạt phản ứng nguyên tố hệ Băng hoặc Thủy, ATK người mang +20% (R1) đến +40% (R5) trong 15s, đồng thời hồi 6 (R1)/12 (R5) Năng lượng nguyên tố cho đồng đội, hồi chuỗi 16s.",
+      "effects": []
+    },
+    "acquisition": "Battle Pass (Gnostic Hymn, bản 7.0)",
+    "bestCharacters": [
+      "Escoffier",
+      "Shenhe (đội Đóng Băng)",
+      "Ineffa",
+      "Xiangling"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "kitain-cross-spear",
+    "name": "Kitain Cross Spear",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 110
+    },
+    "passive": {
+      "name": null,
+      "description": "Sau khi Kỹ năng nguyên tố trúng địch, ATK +4/5/6/7/8% và EM +16/20/24/28/32, tối đa 2 lớp trong 8s.",
+      "effects": [
+        {
+          "stat": "ATK Buff per stack",
+          "r1": 0.04,
+          "r2": 0.05,
+          "r3": 0.06,
+          "r4": 0.07,
+          "r5": 0.08
+        },
+        {
+          "stat": "EM Buff per stack",
+          "r1": 16,
+          "r2": 20,
+          "r3": 24,
+          "r4": 28,
+          "r5": 32
+        }
+      ]
+    },
+    "acquisition": "Chế tạo",
+    "bestCharacters": [
+      "DPS thương scale EM"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "lithic-spear",
+    "name": "Lithic Spear",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Lithic Axiom: Unity",
+      "description": "mỗi nhân vật trong đội đến từ Liyue (kể cả người mang) cho ATK +7% (R1)/+11% (R5) và CRIT Rate +3% (R1)/+7% (R5), tối đa 4 lần.",
+      "effects": []
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "Đội hình nhân vật gốc Liyue: Zhongli",
+      "Ningguang",
+      "Xingqiu",
+      "Hu Tao"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "missive-windspear",
+    "name": "Missive Windspear",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "The Wind Unattained",
+      "description": "trong 10s sau khi kích hoạt phản ứng nguyên tố, ATK +12% (R1)/+24% (R5) và EM +48 (R1)/+96 (R5).",
+      "effects": []
+    },
+    "acquisition": "Sự kiện (Event, vũ khí Fontaine)",
+    "bestCharacters": [
+      "Sub-DPS/support thương tạo phản ứng"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "moonpiercer",
+    "name": "Moonpiercer",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 110
+    },
+    "passive": {
+      "name": null,
+      "description": "Sau khi Kỹ năng nguyên tố trúng địch, ATK +8/9/10/11/12%, tối đa 2 lớp trong 12s; nếu người mang hệ Dendro, thêm 4/5/6/7/8% ATK mỗi lớp.",
+      "effects": [
+        {
+          "stat": "ATK Buff per stack",
+          "r1": 0.08,
+          "r2": 0.09,
+          "r3": 0.1,
+          "r4": 0.11,
+          "r5": 0.12
+        },
+        {
+          "stat": "Additional ATK Buff per stack (Dendro)",
+          "r1": 0.04,
+          "r2": 0.05,
+          "r3": 0.06,
+          "r4": 0.07,
+          "r5": 0.08
+        }
+      ]
+    },
+    "acquisition": "Chế tạo (Sumeru)",
+    "bestCharacters": [
+      "DPS/sub-DPS thương hệ Dendro"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "mountain-bracing-bolt",
+    "name": "Mountain-Bracing Bolt",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.306
+    },
+    "passive": {
+      "name": "Hope Beyond the Peaks",
+      "description": "giảm 15% tiêu hao thể lực leo trèo; sát thương Kỹ năng nguyên tố +12% (R1) đến +24% (R5); khi đồng đội gần đó dùng Kỹ năng nguyên tố, sát thương Kỹ năng của người mang cũng +12%/+24% thêm trong 8s.",
+      "effects": []
+    },
+    "acquisition": "Banner giới hạn (Weapon Event Wish, bản 5.1, không có trên banner tiêu chuẩn)",
+    "bestCharacters": [
+      "DPS/sub-DPS dùng Kỹ năng nguyên tố nhiều"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "prospectors-drill",
+    "name": "Prospector's Drill",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Masons' Ditty",
+      "description": "khi được hồi máu hoặc hồi máu cho người khác, nhận 1 Unity's Symbol (tối đa 3, kéo dài 30s). Dùng Kỹ năng/Bùng nổ nguyên tố tiêu hết Symbol để nhận Struggle 10s: mỗi Symbol tiêu cho 3% (R1)/7% (R5) ATK và 7% (R1)/13% (R5) DMG Bonus nguyên tố mọi hệ; hồi chuỗi 15s, Symbol nhận được cả khi rời sân.",
+      "effects": []
+    },
+    "acquisition": "Banner giới hạn (Weapon Event Wish)",
+    "bestCharacters": [
+      "Support/hybrid cần hồi máu kết hợp sát thương nguyên tố"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "prospectors-shovel",
+    "name": "Prospector's Shovel",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Swift and Sure",
+      "description": "sát thương Electro-Charged +48% (R1) đến +96% (R5); sát thương Lunar-Charged +12% (R1) đến +24% (R5), thêm +12% (R1) đến +24% (R5) nữa khi có Moonsign: Ascendant Gleam.",
+      "effects": []
+    },
+    "acquisition": "Chế tạo (Natlan, Rossum Workshop tại Nasha Town, mua bản thiết kế từ Lyulka)",
+    "bestCharacters": [
+      "Sub-DPS/support gây phản ứng Electro-Charged hoặc Lunar-Charged"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "prototype-starglitter",
+    "name": "Prototype Starglitter",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.459
+    },
+    "passive": {
+      "name": "Magic Affinity",
+      "description": "sau khi dùng Kỹ năng nguyên tố, sát thương đòn thường/trọng kích +8% (R1)/+16% (R5) trong 12s, tối đa 2 lớp.",
+      "effects": []
+    },
+    "acquisition": "Chế tạo",
+    "bestCharacters": [
+      "Nhân vật thương cần Energy Recharge"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "rightful-reward",
+    "name": "Rightful Reward",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "HP%",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Tip of the Spear",
+      "description": "khi người mang được hồi máu, hồi 8 (R1) đến 16 (R5) Năng lượng nguyên tố, hồi chuỗi 10s, kích hoạt được cả khi rời sân.",
+      "effects": []
+    },
+    "acquisition": "Chế tạo (Fontaine, mua bản thiết kế từ Estelle)",
+    "bestCharacters": [
+      "Healer/support cần hồi Năng lượng nguyên tố"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "royal-spear",
+    "name": "Royal Spear",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": null,
+      "description": "ATK +8/10/12/14/16%, nhưng CRIT Rate -6/5/4/3/2%.",
+      "effects": [
+        {
+          "stat": "ATK Buff",
+          "r1": 0.08,
+          "r2": 0.1,
+          "r3": 0.12,
+          "r4": 0.14,
+          "r5": 0.16
+        },
+        {
+          "stat": "CRIT Rate Penalty",
+          "r1": 0.06,
+          "r2": 0.05,
+          "r3": 0.04,
+          "r4": 0.03,
+          "r5": 0.02
+        }
+      ]
+    },
+    "acquisition": "Đổi Starglitter (Paimon's Bargains)",
+    "bestCharacters": [
+      "DPS thương ưu tiên ATK% thuần"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "sacrificers-staff",
+    "name": "Sacrificer's Staff",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 45,
+    "atkLv90": 620,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.092
+    },
+    "passive": {
+      "name": "Untainted Desire",
+      "description": "trong 6s sau khi Kỹ năng nguyên tố trúng địch, ATK +8% (R1) đến +16% (R5) và Energy Recharge +6% (R1) đến +12% (R5), tối đa 3 lớp, kích hoạt được cả khi rời sân.",
+      "effects": []
+    },
+    "acquisition": "Banner giới hạn (Weapon Event Wish, bản 6.4)",
+    "bestCharacters": [
+      "Flins",
+      "Escoffier",
+      "Cyno",
+      "Arlecchino",
+      "Ineffa (DPS/sub-DPS dùng Kỹ năng nguyên tố)"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "song-of-the-vigil",
+    "name": "Song of the Vigil",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 110
+    },
+    "passive": {
+      "name": "Cadence of Days Gone By",
+      "description": "kích hoạt phản ứng nguyên tố hồi 4 (R1)/8 (R5) Năng lượng nguyên tố cho người mang, hồi chuỗi 9s; kích hoạt phản ứng Stellar Glimmer thì ATK +20% (R1)/+40% (R5) trong 12s. Cả hai hiệu ứng hoạt động cả khi rời sân.",
+      "effects": []
+    },
+    "acquisition": "Chế tạo (Kuznets Smithy của Kuzmichev, Snezhnograd — Snezhnaya, bản 7.0)",
+    "bestCharacters": [
+      "Hỗ trợ hồi Năng lượng qua phản ứng nguyên tố"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "tamayuratei-no-ohanashi",
+    "name": "Tamayuratei no Ohanashi",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.306
+    },
+    "passive": {
+      "name": "Busybody's Running Light",
+      "description": "dùng Kỹ năng nguyên tố, ATK +20% (R1) đến +40% (R5) và tốc độ di chuyển +10%, trong 10s.",
+      "effects": []
+    },
+    "acquisition": "Sự kiện \"Enchanted Tales of the Mikawa Festival\" (đổi tối thiểu 3 Festival Stamp)",
+    "bestCharacters": [
+      "DPS thương dùng Kỹ năng nguyên tố nhiều"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "the-catch",
+    "name": "\"The Catch\"",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.459
+    },
+    "passive": {
+      "name": null,
+      "description": "Sát thương Bùng nổ nguyên tố +12/15/18/21/24% và CRIT Rate của Bùng nổ nguyên tố +6/7/8/9/10%.",
+      "effects": [
+        {
+          "stat": "Elemental Burst DMG Bonus",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        },
+        {
+          "stat": "Elemental Burst CRIT Rate Bonus",
+          "r1": 0.06,
+          "r2": 0.07,
+          "r3": 0.08,
+          "r4": 0.09,
+          "r5": 0.1
+        }
+      ]
+    },
+    "acquisition": "Vendor (Sumeru Fishing Association, đổi bằng cá)",
+    "bestCharacters": [
+      "Nhân vật thương Bùng nổ nguyên tố: Raiden Shogun (dù dùng thương-support build)"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "wavebreakers-fin",
+    "name": "Wavebreaker's Fin",
+    "type": "Polearm",
+    "rarity": 4,
+    "atkLv1": 45,
+    "atkLv90": 620,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.138
+    },
+    "passive": {
+      "name": null,
+      "description": "Khi Năng lượng nguyên tố <100%, ATK +16/20/24/28/32%; khi đầy Năng lượng, thay bằng sát thương Bùng nổ nguyên tố +12/15/18/21/24%.",
+      "effects": [
+        {
+          "stat": "ATK Buff (Energy <100%)",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        },
+        {
+          "stat": "Elemental Burst DMG Bonus (Energy full)",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "Nhân vật thương Bùng nổ nguyên tố"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "black-tassel",
+    "name": "Black Tassel",
+    "type": "Polearm",
+    "rarity": 3,
+    "atkLv1": 38,
+    "atkLv90": 354,
+    "subStat": {
+      "type": "HP%",
+      "valueLv90": 0.469
+    },
+    "passive": {
+      "name": null,
+      "description": "Không có hiệu ứng đặc biệt kích hoạt chủ động (chỉ tăng chỉ số cơ bản), vũ khí giản lược.",
+      "effects": []
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "Nhân vật thương sơ khai"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "halberd",
+    "name": "Halberd",
+    "type": "Polearm",
+    "rarity": 3,
+    "atkLv1": 40,
+    "atkLv90": 448,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.234
+    },
+    "passive": {
+      "name": "Heavy",
+      "description": "đòn thường trúng địch gây thêm sát thương bằng 160% (R1)/320% (R5) ATK, hồi chuỗi 10s.",
+      "effects": []
+    },
+    "acquisition": "Rương báu (Chest)",
+    "bestCharacters": [
+      "Nhân vật thương sơ khai"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "white-tassel",
+    "name": "White Tassel",
+    "type": "Polearm",
+    "rarity": 3,
+    "atkLv1": 39,
+    "atkLv90": 401,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.234
+    },
+    "passive": {
+      "name": null,
+      "description": "Đòn thường/trọng kích trúng địch có 50% tỉ lệ tăng tốc độ tấn công 12% trong 3s.",
+      "effects": []
+    },
+    "acquisition": "Rương báu (Chest)",
+    "bestCharacters": [
+      "Nhân vật thương sơ khai"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "iron-point",
+    "name": "Iron Point",
+    "type": "Polearm",
+    "rarity": 2,
+    "atkLv1": 33,
+    "atkLv90": 243,
+    "subStat": {
+      "type": null,
+      "valueLv90": null
+    },
+    "passive": null,
+    "acquisition": "Không ghi rõ trong nguồn (bảng 2★ chỉ liệt kê ATK theo cấp, cấp tối đa 70, không có cột Cách lấy riêng)",
+    "bestCharacters": [
+      "Chỉ dùng tạm giai đoạn đầu game"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  },
+  {
+    "id": "beginners-protector",
+    "name": "Beginner's Protector",
+    "type": "Polearm",
+    "rarity": 1,
+    "atkLv1": 23,
+    "atkLv90": 185,
+    "subStat": {
+      "type": null,
+      "valueLv90": null
+    },
+    "passive": null,
+    "acquisition": "Vũ khí khởi đầu mặc định (không ghi cột Cách lấy riêng trong nguồn, cấp tối đa 70)",
+    "bestCharacters": [
+      "Vũ khí khởi đầu",
+      "không dùng trong đội hình thực chiến"
+    ],
+    "sourceFile": "vu-khi/thuong.md"
+  }
+]

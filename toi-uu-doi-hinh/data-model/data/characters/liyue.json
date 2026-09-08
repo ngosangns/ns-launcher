@@ -1,0 +1,4799 @@
+[
+  {
+    "id": "xiao",
+    "name": "Xiao",
+    "element": "Anemo",
+    "weaponType": "Polearm",
+    "rarity": 5,
+    "nationInGame": "Liyue",
+    "releaseDate": "2021-02-01",
+    "baseStats": {
+      "lv1": {
+        "hp": 991.45,
+        "atk": 27.19,
+        "def": 62.22
+      },
+      "lv90": {
+        "hp": 4071.44,
+        "atk": 111.63,
+        "def": 255.53,
+        "ascensionStatType": "CRIT Rate",
+        "ascensionStatValue": 0.192
+      }
+    },
+    "normalAttack": {
+      "name": "Whirlwind Thrust",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "27.54%",
+            "lv10": "49.14%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "56.94%",
+            "lv10": "101.58%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "68.55%",
+            "lv10": "122.30%"
+          }
+        },
+        {
+          "label": "4-Hit (A+B)",
+          "values": {
+            "lv1": "37.66%+37.66%",
+            "lv10": "67.20%+67.20%"
+          }
+        },
+        {
+          "label": "5-Hit",
+          "values": {
+            "lv1": "71.54%",
+            "lv10": "127.64%"
+          }
+        },
+        {
+          "label": "6-Hit",
+          "values": {
+            "lv1": "95.83%",
+            "lv10": "170.97%"
+          }
+        },
+        {
+          "label": "Trọng kích (Charged, tốn 25 thể lực)",
+          "values": {
+            "lv1": "121.09%",
+            "lv10": "216.03%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "163.63% / 204.39%",
+            "lv10": "323.46% / 404.02%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Lemniscatic Wind Cycling",
+      "description": "Kỹ năng nguyên tố, 2 lượt dùng.",
+      "scaling": [
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "252.8%",
+            "lv10": "455.04%"
+          }
+        }
+      ],
+      "cooldown": "10s (2 lượt dùng)",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "Bane of All Evil",
+      "description": "Bùng nổ nguyên tố; tăng sát thương đòn thường/trọng kích/nhảy nhưng tiêu hao HP liên tục.",
+      "scaling": [
+        {
+          "label": "Cộng thêm sát thương thường/trọng kích/nhảy",
+          "values": {
+            "lv1": "58.45%",
+            "lv10": "95.2%"
+          }
+        },
+        {
+          "label": "Tiêu hao HP",
+          "values": {
+            "lv1": "3%/s",
+            "lv10": "2%/s"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "15s",
+            "lv10": "15s"
+          }
+        }
+      ],
+      "cooldown": "18s",
+      "energyCost": 70
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Conqueror of Evil: Tamer of Demons",
+        "unlock": "A1",
+        "description": "Khi vào Bane of All Evil, +5% sát thương ngay lập tức, cộng dồn thêm 5% mỗi 3s (tối đa +25%)."
+      },
+      {
+        "name": "Dissolution Eon: Heaven Fall",
+        "unlock": "A4",
+        "description": "Mỗi lần Lemniscatic Wind Cycling gây sát thương, kỹ năng tiếp theo +15% sát thương (tối đa 3 lần cộng dồn, hiệu lực 7s)."
+      },
+      {
+        "name": "Transcension: Gravity Defier",
+        "unlock": "Utility",
+        "description": "Giảm 20% tiêu hao thể lực leo trèo của cả đội."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Dissolution Eon: Destroyer of Worlds",
+        "description": "Lemniscatic Wind Cycling +1 lượt dùng."
+      },
+      {
+        "level": 2,
+        "name": "Annihilation Eon: Blossom of Kaleidos",
+        "description": "Khi ở trong đội hình nhưng không thi đấu, Nạp Nguyên Tố +25%."
+      },
+      {
+        "level": 3,
+        "name": "Conqueror of Evil: Wrath Deity",
+        "description": "Lemniscatic Wind Cycling +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Transcension: Extinction of Suffering",
+        "description": "Khi HP Xiao dưới 50%, +100% DEF."
+      },
+      {
+        "level": 5,
+        "name": "Evolution Eon: Origin of Ignorance",
+        "description": "Bane of All Evil +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "Conqueror of Evil: Guardian Yaksha",
+        "description": "Trong Bane of All Evil, nhảy trúng ≥2 địch hồi 1 lượt Lemniscatic Wind Cycling; có thể dùng kỹ năng bỏ qua hồi chiêu trong 1s."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính trên sàn (plunge/on-field), tiêu hao HP nên cần hỗ trợ hồi máu/khiên. Combo phổ biến: Anemo-Pyro (Xiao-Bennett-Faruzan) hoặc Anemo-Dendro Hyperbloom (Xiao-Nahida-hỗ trợ Dendro).",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "zhongli",
+    "name": "Zhongli",
+    "element": "Geo",
+    "weaponType": "Polearm",
+    "rarity": 5,
+    "nationInGame": "Liyue",
+    "releaseDate": "2020-12-02",
+    "baseStats": {
+      "lv1": {
+        "hp": 1143.98,
+        "atk": 19.55,
+        "def": 57.44
+      },
+      "lv90": {
+        "hp": 5841.8,
+        "atk": 99.83,
+        "def": 293.31,
+        "ascensionStatType": "Geo DMG Bonus",
+        "ascensionStatValue": 0.288
+      }
+    },
+    "normalAttack": {
+      "name": "Rain of Stone",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "30.77%",
+            "lv10": "60.82%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "31.15%",
+            "lv10": "61.58%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "38.58%",
+            "lv10": "76.26%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "42.94%",
+            "lv10": "84.88%"
+          }
+        },
+        {
+          "label": "5-Hit ×4",
+          "values": {
+            "lv1": "10.75%",
+            "lv10": "21.25%"
+          }
+        },
+        {
+          "label": "6-Hit",
+          "values": {
+            "lv1": "54.50%",
+            "lv10": "107.73%"
+          }
+        },
+        {
+          "label": "Trọng kích (25 thể lực)",
+          "values": {
+            "lv1": "111.03%",
+            "lv10": "219.47%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "127.84% / 159.68%",
+            "lv10": "252.70% / 315.64%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Dominus Lapidis",
+      "description": "Bấm nhanh tạo Stone Stele gây sát thương Geo; Giữ gây sát thương lớn hơn và tạo khiên Jade Shield (hiệu quả x1.5 với Geo).",
+      "scaling": [
+        {
+          "label": "Bấm nhanh — Stone Stele DMG (Hồi chiêu 4s)",
+          "values": {
+            "lv1": "16%",
+            "lv10": "28.8%"
+          }
+        },
+        {
+          "label": "Giữ — sát thương (Hồi chiêu 12s)",
+          "values": {
+            "lv1": "80%",
+            "lv10": "144%"
+          }
+        },
+        {
+          "label": "Giữ — khiên hấp thụ cơ bản",
+          "values": {
+            "lv1": "1232.41",
+            "lv10": "2711.51"
+          }
+        },
+        {
+          "label": "Giữ — khiên hấp thụ theo %HP tối đa",
+          "values": {
+            "lv1": "12.8%",
+            "lv10": "23.04%"
+          }
+        },
+        {
+          "label": "Thời lượng khiên",
+          "values": {
+            "lv1": "20s",
+            "lv10": "20s"
+          }
+        },
+        {
+          "label": "Cộng hưởng (Resonance) DMG",
+          "values": {
+            "lv1": "32%",
+            "lv10": "57.6%"
+          }
+        }
+      ],
+      "cooldown": null,
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Planet Befall",
+      "description": "Thiên thạch Geo rơi xuống gây sát thương diện rộng, hoá đá địch trong vùng.",
+      "scaling": [
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "401.08%",
+            "lv10": "899.72%"
+          }
+        },
+        {
+          "label": "Thời gian hoá đá",
+          "values": {
+            "lv1": "3.1s",
+            "lv10": "4s"
+          }
+        }
+      ],
+      "cooldown": "12s",
+      "energyCost": 40
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Resonant Waves",
+        "unlock": "A1",
+        "description": "Mỗi lần khiên Jade Shield nhận sát thương, được Củng Cố: +5% độ bền khiên, cộng dồn tối đa 5 lần."
+      },
+      {
+        "name": "Dominance of Earth",
+        "unlock": "A4",
+        "description": "Đòn thường/trọng kích/nhảy +1.39% Max HP; Dominus Lapidis +1.9% Max HP; Planet Befall +33% Max HP thành sát thương cộng thêm."
+      },
+      {
+        "name": "Arcanum of Crystal",
+        "unlock": "Utility",
+        "description": "Hoàn 15% quặng khi chế vũ khí loại Polearm."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Rock, the Backbone of Earth",
+        "description": "Dominus Lapidis có tối đa 2 Stone Stele cùng lúc."
+      },
+      {
+        "level": 2,
+        "name": "Stone, the Cradle of Jade",
+        "description": "Khi Planet Befall kết thúc, nhân vật gần đó được khiên Jade Shield."
+      },
+      {
+        "level": 3,
+        "name": "Jade, Shimmering through Darkness",
+        "description": "Dominus Lapidis +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Topaz, Unbreakable and Fearless",
+        "description": "Planet Befall +20% diện tích, hoá đá +2s."
+      },
+      {
+        "level": 5,
+        "name": "Lazuli, Herald of the Order",
+        "description": "Planet Befall +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "Chrysos, Bounty of Dominator",
+        "description": "Khi Jade Shield nhận sát thương, hồi 40% sát thương đó thành HP cho nhân vật đang chiến đấu (mỗi lần tối đa 8% Max HP)."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ/khiên toàn năng — giảm kháng nguyên tố + vật lý của địch qua hoá đá, gần như đi được mọi đội. Phổ biến trong đội Hypercarry (Zhongli-DPS chính-2 hỗ trợ) hoặc đội Vaporize/Melt cần khiên bền.",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "qiqi",
+    "name": "Qiqi",
+    "element": "Cryo",
+    "weaponType": "Sword",
+    "rarity": 5,
+    "nationInGame": "Liyue",
+    "releaseDate": "2020-09-27",
+    "baseStats": {
+      "lv1": {
+        "hp": 962.85,
+        "atk": 22.34,
+        "def": 71.8
+      },
+      "lv90": {
+        "hp": 3953.99,
+        "atk": 91.75,
+        "def": 294.84,
+        "ascensionStatType": "Healing Bonus",
+        "ascensionStatValue": 0.2215
+      }
+    },
+    "normalAttack": {
+      "name": "Ancient Sword Art",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "37.75%",
+            "lv10": "74.63%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "38.87%",
+            "lv10": "76.84%"
+          }
+        },
+        {
+          "label": "3-Hit ×2",
+          "values": {
+            "lv1": "24.17%",
+            "lv10": "47.77%"
+          }
+        },
+        {
+          "label": "4-Hit ×2",
+          "values": {
+            "lv1": "24.68%",
+            "lv10": "48.79%"
+          }
+        },
+        {
+          "label": "5-Hit",
+          "values": {
+            "lv1": "63.04%",
+            "lv10": "124.61%"
+          }
+        },
+        {
+          "label": "Trọng kích ×2 (20 thể lực)",
+          "values": {
+            "lv1": "64.33%",
+            "lv10": "127.16%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "127.84% / 159.68%",
+            "lv10": "252.70% / 315.64%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Adeptus Art: Herald of Frost",
+      "description": "Triệu hồi linh hồn theo dõi gây DMG Cryo, hồi máu khi trúng đòn và hồi máu liên tục; đánh phối hợp cùng đòn thường (thời lượng 15s).",
+      "scaling": [
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "96%",
+            "lv10": "190.08%"
+          }
+        },
+        {
+          "label": "Hồi máu khi trúng đòn",
+          "values": {
+            "lv1": "10.56% ATK + 67.41",
+            "lv10": "19.01% ATK + 148.31"
+          }
+        },
+        {
+          "label": "Hồi máu liên tục (mỗi tick)",
+          "values": {
+            "lv1": "0.696% ATK + 450.55",
+            "lv10": "1.253% ATK + 991.29"
+          }
+        },
+        {
+          "label": "Sát thương phối hợp",
+          "values": {
+            "lv1": "2.2%",
+            "lv10": "4.32%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "15s",
+            "lv10": "15s"
+          }
+        }
+      ],
+      "cooldown": "30s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Adeptus Art: Preserver of Fortune",
+      "description": "Hồi máu liên tục cho cả đội (thời lượng 15s). Ghi chú nguồn: số liệu sát thương cấp 10 do Yatta trả về thấp hơn cấp 1 (285%→162%) — nhiều khả năng lỗi trích xuất, giá trị chính xác cấp 10 CHƯA XÁC NHẬN.",
+      "scaling": [
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "284.8%",
+            "lv10": "162% (chưa xác nhận — thấp hơn bất thường so với cấp 1, khả năng lỗi trích xuất nguồn)"
+          }
+        },
+        {
+          "label": "Hồi máu",
+          "values": {
+            "lv1": "90% ATK + 577.34",
+            "lv10": "162% ATK + 1270.24"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "15s",
+            "lv10": "15s"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 80
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Life-Prolonging Methods",
+        "unlock": "A1",
+        "description": "Nhân vật trong vùng Herald of Frost khi gây phản ứng nguyên tố +20% hiệu quả hồi máu nhận trong 8s."
+      },
+      {
+        "name": "A Glimpse Into Arcanum",
+        "unlock": "A4",
+        "description": "Đòn thường/trọng kích có 50% cơ hội dán bùa Fortune-Preserving Talisman lên địch trong 6s (hồi chiêu riêng 30s)."
+      },
+      {
+        "name": "Former Life Memories",
+        "unlock": "Utility",
+        "description": "Hiện tài nguyên đặc sản Liyue trên minimap."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Ascetics of Frost",
+        "description": "Herald of Frost trúng địch có bùa Talisman hồi 2 Năng Lượng cho Qiqi."
+      },
+      {
+        "level": 2,
+        "name": "Frozen to the Bone",
+        "description": "Đòn thường/trọng kích +15% sát thương lên địch dính Cryo."
+      },
+      {
+        "level": 3,
+        "name": "Ascendant Praise",
+        "description": "Herald of Frost +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Divine Suppression",
+        "description": "Địch dính bùa Talisman -20% ATK."
+      },
+      {
+        "level": 5,
+        "name": "Crimson Lotus Bloom",
+        "description": "Preserver of Fortune +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "Rite of Resurrection",
+        "description": "Dùng Preserver of Fortune hồi sinh toàn bộ đồng đội gục gần đó, hồi 50% HP tối đa (hồi chiêu 15 phút)."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ hồi máu + tạo Cryo diện rộng, hợp đội Freeze (Cryo-Hydro) cùng Ganyu/Mona hoặc bất kỳ đội Cryo cần cứu hộ (C6).",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "ganyu",
+    "name": "Ganyu",
+    "element": "Cryo",
+    "weaponType": "Bow",
+    "rarity": 5,
+    "nationInGame": "Liyue",
+    "releaseDate": "2021-01-12",
+    "baseStats": {
+      "lv1": {
+        "hp": 762.66,
+        "atk": 26.07,
+        "def": 49.06
+      },
+      "lv90": {
+        "hp": 3131.88,
+        "atk": 107.04,
+        "def": 201.47,
+        "ascensionStatType": "CRIT DMG",
+        "ascensionStatValue": 0.384
+      }
+    },
+    "normalAttack": {
+      "name": "Liutian Archery",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "31.734%",
+            "lv10": "62.73%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "35.604%",
+            "lv10": "70.38%"
+          }
+        },
+        {
+          "label": "6-Hit",
+          "values": {
+            "lv1": "57.62%",
+            "lv10": "113.9%"
+          }
+        },
+        {
+          "label": "Bắn nhắm (Aimed Shot)",
+          "values": {
+            "lv1": "43.86%",
+            "lv10": "86.7%"
+          }
+        },
+        {
+          "label": "Trọng kích cấp 1",
+          "values": {
+            "lv1": "124%",
+            "lv10": "223.2%"
+          }
+        },
+        {
+          "label": "Frostflake Arrow",
+          "values": {
+            "lv1": "128%",
+            "lv10": "230.4%"
+          }
+        },
+        {
+          "label": "Frostflake Bloom (nổ)",
+          "values": {
+            "lv1": "217.6%",
+            "lv10": "391.68%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "56.83% / 141.93%",
+            "lv10": "112.34% / 280.57%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Trail of the Qilin",
+      "description": "Kế thừa HP, gây sát thương Cryo liên tục (thời lượng 6s).",
+      "scaling": [
+        {
+          "label": "Kế thừa HP",
+          "values": {
+            "lv1": "120%",
+            "lv10": "216%"
+          }
+        },
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "132%",
+            "lv10": "237.6%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "6s",
+            "lv10": "6s"
+          }
+        }
+      ],
+      "cooldown": "10s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Celestial Shower",
+      "description": "Mưa băng gây sát thương Cryo liên tục (thời lượng 15s).",
+      "scaling": [
+        {
+          "label": "Sát thương mảnh băng",
+          "values": {
+            "lv1": "70.272%",
+            "lv10": "126.4896%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "15s",
+            "lv10": "15s"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Undivided Heart",
+        "unlock": "A1",
+        "description": "Sau khi bắn Frostflake Arrow, CRIT Rate của Frostflake Arrow/Bloom kế tiếp +20% trong 5s."
+      },
+      {
+        "name": "Harmony Between Heaven and Earth",
+        "unlock": "A4",
+        "description": "Celestial Shower cho nhân vật đang chiến đấu trong vùng +20% Cryo DMG Bonus."
+      },
+      {
+        "name": "Preserved for the Hunt",
+        "unlock": "Utility",
+        "description": "Hoàn 15% quặng khi chế vũ khí loại Bow."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Dew-Drinker",
+        "description": "Frostflake Arrow/Bloom cấp 2 trúng địch giảm 15% kháng Cryo trong 6s, hồi 2 Năng Lượng."
+      },
+      {
+        "level": 2,
+        "name": "The Auspicious",
+        "description": "Trail of the Qilin +1 lượt dùng."
+      },
+      {
+        "level": 3,
+        "name": "Cloud-Strider",
+        "description": "Celestial Shower +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Westward Sojourn",
+        "description": "Địch trong vùng Celestial Shower nhận thêm sát thương: bắt đầu 5%, tăng 5%/3s, tối đa 25%; hiệu ứng còn 3s sau khi rời vùng."
+      },
+      {
+        "level": 5,
+        "name": "The Merciful",
+        "description": "Trail of the Qilin +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "The Clement",
+        "description": "Dùng Trail of the Qilin khiến Frostflake Arrow tiếp theo (trong 30s) không cần tích lực."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính bắn Trọng Kích, Melt với Pyro (Ganyu-Bennett-Xiangling) hoặc Freeze với Hydro (Ganyu-Mona-Kokomi-Diona).",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "keqing",
+    "name": "Keqing",
+    "element": "Electro",
+    "weaponType": "Sword",
+    "rarity": 5,
+    "nationInGame": "Liyue",
+    "releaseDate": "2020-09-27",
+    "baseStats": {
+      "lv1": {
+        "hp": 1020.05,
+        "atk": 25.14,
+        "def": 62.22
+      },
+      "lv90": {
+        "hp": 4188.89,
+        "atk": 103.22,
+        "def": 255.53,
+        "ascensionStatType": "CRIT DMG",
+        "ascensionStatValue": 0.384
+      }
+    },
+    "normalAttack": {
+      "name": "Yunlai Swordsmanship",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "41.0%",
+            "lv10": "81.1%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "41.0%",
+            "lv10": "81.1%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "54.4%",
+            "lv10": "107.6%"
+          }
+        },
+        {
+          "label": "4-Hit A / B",
+          "values": {
+            "lv1": "31.5% / 34.4%",
+            "lv10": "62.2% / 68.0%"
+          }
+        },
+        {
+          "label": "5-Hit",
+          "values": {
+            "lv1": "67.0%",
+            "lv10": "132.4%"
+          }
+        },
+        {
+          "label": "Trọng kích (25 thể lực)",
+          "values": {
+            "lv1": "77.0%+86.0%",
+            "lv10": "151.8%+170.0%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "127.8% / 159.7%",
+            "lv10": "252.7% / 315.6%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Stellar Restoration",
+      "description": "Cắm kiếm tạo Lightning Stiletto gây DMG Electro, bấm lại để dịch chuyển tới vị trí kiếm và chém.",
+      "scaling": [
+        {
+          "label": "Lightning Stiletto DMG",
+          "values": {
+            "lv1": "50.4%",
+            "lv10": "90.72%"
+          }
+        },
+        {
+          "label": "Slashing DMG (dịch chuyển tới cắm kiếm)",
+          "values": {
+            "lv1": "168%",
+            "lv10": "302.4%"
+          }
+        },
+        {
+          "label": "Thunderclap Slash ×2",
+          "values": {
+            "lv1": "84%",
+            "lv10": "151.2%"
+          }
+        }
+      ],
+      "cooldown": "7.5s",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "Starward Sword",
+      "description": "Kiếm sao rơi xuống gây sát thương mở màn, chém liên tục rồi kết thúc bằng đòn mạnh.",
+      "scaling": [
+        {
+          "label": "Sát thương mở màn",
+          "values": {
+            "lv1": "88%",
+            "lv10": "158.4%"
+          }
+        },
+        {
+          "label": "Chém liên tục ×8",
+          "values": {
+            "lv1": "24%",
+            "lv10": "43.2%"
+          }
+        },
+        {
+          "label": "Đòn cuối",
+          "values": {
+            "lv1": "188.8%",
+            "lv10": "339.8%"
+          }
+        }
+      ],
+      "cooldown": "12s",
+      "energyCost": 40
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Thundering Penance",
+        "unlock": "A1",
+        "description": "Bấm lại Stellar Restoration để rút kiếm mang lại Electro Infusion cho vũ khí trong 5s."
+      },
+      {
+        "name": "Aristocratic Dignity",
+        "unlock": "A4",
+        "description": "Dùng Starward Sword cho +15% CRIT Rate và +15% Năng Lượng hồi trong 8s."
+      },
+      {
+        "name": "Land's Overseer",
+        "unlock": "Utility",
+        "description": "Thám hiểm Liyue giảm 25% thời gian."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Thundering Might",
+        "description": "Bấm lại Stellar Restoration khi Lightning Stiletto còn tồn tại gây thêm 50% ATK sát thương Electro diện rộng ở cả điểm đi và điểm đến."
+      },
+      {
+        "level": 2,
+        "name": "Keen Extraction",
+        "description": "Đòn thường/trọng kích trúng địch dính Electro có 50% cơ hội tạo hạt Nguyên Tố (hồi chiêu 5s)."
+      },
+      {
+        "level": 3,
+        "name": "Foreseen Reformation",
+        "description": "Starward Sword +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Attunement",
+        "description": "Sau khi kích hoạt phản ứng liên quan Electro, +25% ATK trong 10s."
+      },
+      {
+        "level": 5,
+        "name": "Beckoning Stars",
+        "description": "Stellar Restoration +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "Tenacious Star",
+        "description": "Bất kỳ đòn tấn công nào cũng có 50% cơ hội (độc lập) +6% Electro DMG Bonus trong 8s."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính/phụ đổi nhanh nhờ Stellar Restoration teleport, hợp Hyperbloom (Electro-Dendro với Nahida/Kuki Shinobu) hoặc Aggravate.",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "hu-tao",
+    "name": "Hu Tao",
+    "element": "Pyro",
+    "weaponType": "Polearm",
+    "rarity": 5,
+    "nationInGame": "Liyue",
+    "releaseDate": "2021-03-02",
+    "baseStats": {
+      "lv1": {
+        "hp": 1210.72,
+        "atk": 8.29,
+        "def": 68.21
+      },
+      "lv90": {
+        "hp": 4971.86,
+        "atk": 34.02,
+        "def": 280.1,
+        "ascensionStatType": "CRIT DMG",
+        "ascensionStatValue": 0.384
+      }
+    },
+    "normalAttack": {
+      "name": "Secret Spear of Wangsheng",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "46.89%",
+            "lv10": "83.65%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "48.25%",
+            "lv10": "86.09%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "61.05%",
+            "lv10": "108.92%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "65.64%",
+            "lv10": "117.11%"
+          }
+        },
+        {
+          "label": "5-Hit A/B",
+          "values": {
+            "lv1": "33.27%/35.20%",
+            "lv10": "59.36%/62.80%"
+          }
+        },
+        {
+          "label": "6-Hit",
+          "values": {
+            "lv1": "85.96%",
+            "lv10": "153.36%"
+          }
+        },
+        {
+          "label": "Trọng kích (trong Paramita Papilio, tốn HP thay thể lực)",
+          "values": {
+            "lv1": "85.96%",
+            "lv10": "153.36%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "65.42% / 163.39%",
+            "lv10": "116.71% / 291.50%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Guide to Afterlife",
+      "description": "Tiêu 30% HP hiện tại để vào Paramita Papilio (tăng ATK, Đòn nặng dùng HP thay thể lực).",
+      "scaling": [
+        {
+          "label": "ATK cộng thêm",
+          "values": {
+            "lv1": "3.841% Max HP",
+            "lv10": "6.256% Max HP"
+          }
+        },
+        {
+          "label": "Blood Blossom DMG",
+          "values": {
+            "lv1": "64%",
+            "lv10": "115.2%"
+          }
+        },
+        {
+          "label": "Thời lượng trạng thái / Blood Blossom",
+          "values": {
+            "lv1": "9s / 8s",
+            "lv10": "9s / 8s"
+          }
+        }
+      ],
+      "cooldown": "16s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Spirit Soother",
+      "description": "Sát thương AoE Pyro, tăng mạnh khi HP Hu Tao ≤50% và kèm hồi máu.",
+      "scaling": [
+        {
+          "label": "Sát thương (HP >50%)",
+          "values": {
+            "lv1": "303.272%",
+            "lv10": "493.952%"
+          }
+        },
+        {
+          "label": "Sát thương (HP ≤50%)",
+          "values": {
+            "lv1": "379.09%",
+            "lv10": "617.44%"
+          }
+        },
+        {
+          "label": "Hồi máu (HP >50%)",
+          "values": {
+            "lv1": "6.263% Max HP",
+            "lv10": "10.2% Max HP"
+          }
+        },
+        {
+          "label": "Hồi máu (HP ≤50%)",
+          "values": {
+            "lv1": "8.35% Max HP",
+            "lv10": "13.6% Max HP"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Flutter By",
+        "unlock": "A1",
+        "description": "Khi trạng thái Paramita Papilio kết thúc, cả đội (trừ Hu Tao) +12% CRIT Rate trong 8s."
+      },
+      {
+        "name": "Sanguine Rouge",
+        "unlock": "A4",
+        "description": "Khi HP Hu Tao ≤50%, +33% Pyro DMG Bonus."
+      },
+      {
+        "name": "The More the Merrier",
+        "unlock": "Utility",
+        "description": "18% cơ hội nhân đôi món ăn khi nấu hoàn hảo."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Crimson Bouquet",
+        "description": "Trong Paramita Papilio, trọng kích không tốn thể lực."
+      },
+      {
+        "level": 2,
+        "name": "Ominous Rainfall",
+        "description": "Blood Blossom +10% Max HP sát thương; Spirit Soother cũng gắn Blood Blossom."
+      },
+      {
+        "level": 3,
+        "name": "Lingering Carmine",
+        "description": "Guide to Afterlife +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Garden of Eternal Rest",
+        "description": "Hạ gục địch dính Blood Blossom cho cả đội gần đó +12% CRIT Rate trong 15s."
+      },
+      {
+        "level": 5,
+        "name": "Floral Incense",
+        "description": "Spirit Soother +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "Butterfly's Embrace",
+        "description": "Khi HP dưới 25%, tránh gục 1 lần: toàn bộ kháng nguyên tố/vật lý +200%, CRIT Rate +100% (hồi chiêu 60s)."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính máu thấp — Vaporize với hỗ trợ Hydro on-field/off-field (Hu Tao-Xingqiu/Yelan-Zhongli-hỗ trợ hồi máu), luôn cần nguồn hồi máu đi kèm vì tự tốn HP.",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "yelan",
+    "name": "Yelan",
+    "element": "Hydro",
+    "weaponType": "Bow",
+    "rarity": 5,
+    "nationInGame": "Liyue",
+    "releaseDate": "2022-05-30",
+    "baseStats": {
+      "lv1": {
+        "hp": 1124.92,
+        "atk": 18.99,
+        "def": 42.66
+      },
+      "lv90": {
+        "hp": 4619.52,
+        "atk": 77.99,
+        "def": 175.18,
+        "ascensionStatType": "CRIT Rate",
+        "ascensionStatValue": 0.192
+      }
+    },
+    "normalAttack": {
+      "name": "Stealthy Bowshot",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "40.7%",
+            "lv10": "80.41%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "39.04%",
+            "lv10": "77.18%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "51.6%",
+            "lv10": "102%"
+          }
+        },
+        {
+          "label": "4-Hit ×2",
+          "values": {
+            "lv1": "32.51%",
+            "lv10": "64.26%"
+          }
+        },
+        {
+          "label": "Bắn nhắm",
+          "values": {
+            "lv1": "43.86%",
+            "lv10": "86.7%"
+          }
+        },
+        {
+          "label": "Trọng kích tích đầy",
+          "values": {
+            "lv1": "124%",
+            "lv10": "223.2%"
+          }
+        },
+        {
+          "label": "Breakthrough Barb",
+          "values": {
+            "lv1": "11.576% Max HP",
+            "lv10": "20.8368% Max HP"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "113.63% / 141.93%",
+            "lv10": "224.62% / 280.57%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Lingering Lifeline",
+      "description": "Giữ tối đa 3s để tăng phạm vi/sát thương, gây DMG Hydro theo Max HP.",
+      "scaling": [
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "22.6136% Max HP",
+            "lv10": "40.7045% Max HP"
+          }
+        }
+      ],
+      "cooldown": "10s (giữ tối đa 3s)",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Depth-Clarion Dice",
+      "description": "Gây nổ sát thương Hydu theo Max HP, sau đó tung xúc xắc Exquisite Throw (thời lượng 15s).",
+      "scaling": [
+        {
+          "label": "Sát thương nổ",
+          "values": {
+            "lv1": "7.308% Max HP",
+            "lv10": "13.1544% Max HP"
+          }
+        },
+        {
+          "label": "Exquisite Throw ×3",
+          "values": {
+            "lv1": "4.872% Max HP",
+            "lv10": "8.7696% Max HP"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "15s",
+            "lv10": "15s"
+          }
+        }
+      ],
+      "cooldown": "18s",
+      "energyCost": 70
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Turn Control",
+        "unlock": "A1",
+        "description": "Max HP +6%/12%/18%/30% tương ứng đội có 1/2/3/4 loại nguyên tố khác nhau."
+      },
+      {
+        "name": "Adapt With Ease",
+        "unlock": "A4",
+        "description": "Sát thương nhân vật đang chiến đấu +1%, cộng dồn +3.5%/giây (tối đa +50% khi Exquisite Throw đang hoạt động)."
+      },
+      {
+        "name": "Necessary Calculation",
+        "unlock": "Utility",
+        "description": "Thám hiểm Liyue 20 giờ nhận thêm 25% phần thưởng."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Enter the Plotters",
+        "description": "Lingering Lifeline +1 lượt dùng."
+      },
+      {
+        "level": 2,
+        "name": "Taking All Comers",
+        "description": "Exquisite Throw bắn thêm mũi tên nước, gây 14% Max HP sát thương Hydro (mỗi 1.8s)."
+      },
+      {
+        "level": 3,
+        "name": "Beware the Trickster's Dice",
+        "description": "Depth-Clarion Dice +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Bait-and-Switch",
+        "description": "Mỗi địch bị Lifeline đánh dấu khi nổ cho cả đội +10% Max HP trong 25s (tối đa +40%)."
+      },
+      {
+        "level": 5,
+        "name": "Dealer's Sleight",
+        "description": "Lingering Lifeline +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "Winner Takes All",
+        "description": "Sau Depth-Clarion Dice, vào trạng thái Mastermind: đòn thường chuyển thành Breakthrough Barb (156% sát thương, tính như trọng kích), kéo dài 20s hoặc 5 mũi tên."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ/sub-DPS Hydro off-field bám theo %HP tối đa, tạo Vaporize cho Hu Tao hoặc Hyperbloom/Bloom cho đội Dendro (Yelan-Nahida-...).",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "shenhe",
+    "name": "Shenhe",
+    "element": "Cryo",
+    "weaponType": "Polearm",
+    "rarity": 5,
+    "nationInGame": "Liyue",
+    "releaseDate": "2022-01-04",
+    "baseStats": {
+      "lv1": {
+        "hp": 1011.47,
+        "atk": 23.65,
+        "def": 64.62
+      },
+      "lv90": {
+        "hp": 4153.65,
+        "atk": 97.1,
+        "def": 265.36,
+        "ascensionStatType": "ATK%",
+        "ascensionStatValue": 0.288
+      }
+    },
+    "normalAttack": {
+      "name": "Dawnstar Piercer",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "43.3%",
+            "lv10": "85.5%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "40.2%",
+            "lv10": "79.6%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "53.3%",
+            "lv10": "105.4%"
+          }
+        },
+        {
+          "label": "4-Hit ×2",
+          "values": {
+            "lv1": "26.3%",
+            "lv10": "52.0%"
+          }
+        },
+        {
+          "label": "5-Hit",
+          "values": {
+            "lv1": "65.6%",
+            "lv10": "129.7%"
+          }
+        },
+        {
+          "label": "Trọng kích",
+          "values": {
+            "lv1": "65.6%",
+            "lv10": "129.7%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "63.9% / 127.8%",
+            "lv10": "126.4% / 252.7%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Spring Spirit Summoning",
+      "description": "Bấm nhanh (hồi chiêu 10s, tối đa 5 lần kích hoạt Icy Quill, 10s hiệu lực) hoặc Giữ (hồi chiêu 15s, tối đa 7 lần kích hoạt, 15s hiệu lực) để gây DMG Cryo.",
+      "scaling": [
+        {
+          "label": "Bấm nhanh DMG",
+          "values": {
+            "lv1": "139.2%",
+            "lv10": "250.6%"
+          }
+        },
+        {
+          "label": "Giữ DMG",
+          "values": {
+            "lv1": "188.8%",
+            "lv10": "339.8%"
+          }
+        },
+        {
+          "label": "DMG cộng thêm theo ATK mỗi lần kích hoạt Icy Quill",
+          "values": {
+            "lv1": "45.66%",
+            "lv10": "82.18%"
+          }
+        }
+      ],
+      "cooldown": null,
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Divine Maiden's Deliverance",
+      "description": "Gây DMG Cryo, giảm kháng Cryo địch, gây sát thương định kỳ (thời lượng 12s).",
+      "scaling": [
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "100.8%",
+            "lv10": "181.4%"
+          }
+        },
+        {
+          "label": "Giảm kháng Cryo địch",
+          "values": {
+            "lv1": "6%",
+            "lv10": "15%"
+          }
+        },
+        {
+          "label": "Sát thương định kỳ",
+          "values": {
+            "lv1": "33.1%",
+            "lv10": "59.6%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "12s",
+            "lv10": "12s"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 80
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Spirit Communion Seal",
+        "unlock": "A1",
+        "description": "Bấm nhanh Spring Spirit Summoning: cả đội +15% sát thương Kỹ năng/Bùng nổ nguyên tố (10s); giữ: +15% sát thương thường/trọng kích/nhảy (15s)."
+      },
+      {
+        "name": "Deific Embrace",
+        "unlock": "A4",
+        "description": "Nhân vật đang chiến đấu trong vùng Divine Maiden's Deliverance +15% Cryo DMG Bonus."
+      },
+      {
+        "name": "Precise Comings and Goings",
+        "unlock": "Utility",
+        "description": "Thám hiểm Liyue 20 giờ nhận thêm 25% phần thưởng."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Clarity of Heart",
+        "description": "Spring Spirit Summoning dùng thêm được 1 lần."
+      },
+      {
+        "level": 2,
+        "name": "Centered Spirit",
+        "description": "Divine Maiden's Deliverance kéo dài thêm 6s; nhân vật trong vùng +15% Cryo CRIT DMG."
+      },
+      {
+        "level": 3,
+        "name": "Seclusion",
+        "description": "Spring Spirit Summoning +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Insight",
+        "description": "Khi hiệu ứng Icy Quill kích hoạt, Shenhe nhận 1 điểm Skyfrost Mantra (tối đa 50); Spring Spirit Summoning tiêu hết số điểm này để +5% sát thương/điểm, hiệu lực 60s."
+      },
+      {
+        "level": 5,
+        "name": "Divine Attainment",
+        "description": "Divine Maiden's Deliverance +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "Mystical Abandon",
+        "description": "Hiệu ứng Icy Quill kích hoạt bởi đòn thường/trọng kích không tính vào số lần giới hạn."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ tăng sát thương Cryo/vật lý toàn đội, cột trụ của đội Freeze (Shenhe-Ganyu/Ayaka-Mona-Kokomi) hoặc Physical (Shenhe-Eula).",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "baizhu",
+    "name": "Baizhu",
+    "element": "Dendro",
+    "weaponType": "Catalyst",
+    "rarity": 5,
+    "nationInGame": "Liyue",
+    "releaseDate": "2023-05-02",
+    "baseStats": {
+      "lv1": {
+        "hp": 1039.12,
+        "atk": 14.99,
+        "def": 38.89
+      },
+      "lv90": {
+        "hp": 4267.18,
+        "atk": 61.55,
+        "def": 159.71,
+        "ascensionStatType": "HP%",
+        "ascensionStatValue": 0.288
+      }
+    },
+    "normalAttack": {
+      "name": "The Classics of Acupuncture",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "37.37%",
+            "lv10": "67.27%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "36.42%",
+            "lv10": "65.56%"
+          }
+        },
+        {
+          "label": "3-Hit ×2",
+          "values": {
+            "lv1": "22.54%",
+            "lv10": "40.57%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "54.14%",
+            "lv10": "97.45%"
+          }
+        },
+        {
+          "label": "Trọng kích (50 thể lực)",
+          "values": {
+            "lv1": "121.04%",
+            "lv10": "217.87%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "113.63% / 141.93%",
+            "lv10": "224.62% / 280.57%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Universal Diagnosis",
+      "description": "Gây DMG Dendro và hồi máu.",
+      "scaling": [
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "79.2%",
+            "lv10": "142.56%"
+          }
+        },
+        {
+          "label": "Hồi máu",
+          "values": {
+            "lv1": "8% Max HP + 770.38",
+            "lv10": "14.4% Max HP + 1694.95"
+          }
+        }
+      ],
+      "cooldown": "10s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Holistic Revivification",
+      "description": "Tạo khiên hấp thụ + hồi máu, kích hoạt Spiritvein khi đòn thường/trọng kích trúng lúc có khiên (thời lượng 14s).",
+      "scaling": [
+        {
+          "label": "Khiên hấp thụ",
+          "values": {
+            "lv1": "0.8% Max HP + 77.04",
+            "lv10": "1.44% Max HP + 169.50"
+          }
+        },
+        {
+          "label": "Hồi máu",
+          "values": {
+            "lv1": "5.2% Max HP + 500.74",
+            "lv10": "14.4% Max HP + 1101.72"
+          }
+        },
+        {
+          "label": "Sát thương Spiritvein (đòn thường/trọng kích khi có khiên)",
+          "values": {
+            "lv1": "97.06%",
+            "lv10": "174.72%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "14s",
+            "lv10": "14s"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 80
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Five Fortunes Forever",
+        "unlock": "A1",
+        "description": "HP ≤50%: +20% Healing Bonus; HP >50%: +25% Dendro DMG Bonus."
+      },
+      {
+        "name": "All Things Are of the Earth",
+        "unlock": "A4",
+        "description": "Nhân vật được Baizhu hồi máu nhận thêm sát thương phản ứng Dendro +2%/1000 Max HP của Baizhu (tối đa cộng dựa trên 50.000 HP)."
+      },
+      {
+        "name": "Herbal Nourishment",
+        "unlock": "Utility",
+        "description": "Thu hoạch nguyên liệu hồi 2.5% Max HP cho cả đội."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Attentive Observation",
+        "description": "Universal Diagnosis +1 lượt dùng."
+      },
+      {
+        "level": 2,
+        "name": "Incisive Discernment",
+        "description": "Nhân vật đang chiến đấu đánh trúng địch gần đó triệu hồi Gossamer Sprite: Splice, gây 250% ATK sát thương Dendro, hồi máu bằng 20% mức hồi thường (mỗi 5s)."
+      },
+      {
+        "level": 3,
+        "name": "All Aspects Stabilized",
+        "description": "Holistic Revivification +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Ancient Art of Perception",
+        "description": "Sau khi dùng Holistic Revivification, cả đội gần đó +80 Elemental Mastery trong 15s."
+      },
+      {
+        "level": 5,
+        "name": "The Hidden Ebb and Flow",
+        "description": "Universal Diagnosis +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "Elimination of Malicious Qi",
+        "description": "Sát thương Spiritvein +8% Max HP; Gossamer Sprite trúng đòn tạo khiên Seamless Shield."
+      }
+    ],
+    "abyssRoleNotes": "Healer + khiên chủ lực cho các đội phản ứng Dendro (Hyperbloom, Bloom, Aggravate), phổ biến cùng Nahida/Kuki Shinobu hoặc Yelan/Xingqiu.",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "xianyun",
+    "name": "Xianyun",
+    "element": "Anemo",
+    "weaponType": "Catalyst",
+    "rarity": 5,
+    "nationInGame": "Liyue",
+    "releaseDate": "2024-01-29",
+    "baseStats": {
+      "lv1": {
+        "hp": 810.32,
+        "atk": 26.07,
+        "def": 44.57
+      },
+      "lv90": {
+        "hp": 3327.62,
+        "atk": 107.04,
+        "def": 183.05,
+        "ascensionStatType": "ATK%",
+        "ascensionStatValue": 0.288
+      }
+    },
+    "normalAttack": {
+      "name": "Word of Wind and Flower",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "40.3%",
+            "lv10": "72.5%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "38.9%",
+            "lv10": "69.9%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "48.9%",
+            "lv10": "88.0%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "64.9%",
+            "lv10": "116.9%"
+          }
+        },
+        {
+          "label": "Trọng kích (50 thể lực)",
+          "values": {
+            "lv1": "123.1%",
+            "lv10": "221.6%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "113.6% / 141.9%",
+            "lv10": "224.6% / 280.6%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "White Clouds at Dawn",
+      "description": "Gây sát thương kỹ năng, tạo Driftcloud Wave 3 mốc DMG Anemo.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "24.8%",
+            "lv10": "44.6%"
+          }
+        },
+        {
+          "label": "Driftcloud Wave (3 mốc)",
+          "values": {
+            "lv1": "116% / 148% / 337.6%",
+            "lv10": "208.8% / 266.4% / 607.7%"
+          }
+        }
+      ],
+      "cooldown": "12s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Stars Gather at Dusk",
+      "description": "Gây sát thương AoE, tạo Starwicker, hồi máu tức thời và liên tục (thời lượng 16s).",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "108%",
+            "lv10": "194.4%"
+          }
+        },
+        {
+          "label": "Starwicker DMG",
+          "values": {
+            "lv1": "39.2%",
+            "lv10": "70.6%"
+          }
+        },
+        {
+          "label": "Hồi máu tức thời",
+          "values": {
+            "lv1": "57.8% ATK + 577",
+            "lv10": "165.9% ATK + 1271"
+          }
+        },
+        {
+          "label": "Hồi máu liên tục",
+          "values": {
+            "lv1": "92.16% ATK + 269.6",
+            "lv10": "165.9% ATK + 593.2"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "16s",
+            "lv10": "16s"
+          }
+        }
+      ],
+      "cooldown": "18s",
+      "energyCost": 70
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Galefeather Pursuit",
+        "unlock": "A1",
+        "description": "Driftcloud Wave trúng địch cho 1 điểm Storm Pinion (tối đa 4, 20s), mỗi điểm +4/6/8/10% CRIT Rate đòn nhảy."
+      },
+      {
+        "name": "Consider, the Adeptus in Her Realm",
+        "unlock": "A4",
+        "description": "Trong hiệu ứng Starwicker/Adeptal Assistance, sát thương sóng xung kích nhảy của nhân vật gần đó +200% ATK của Xianyun (tối đa +9000)."
+      },
+      {
+        "name": "Crane Form",
+        "unlock": "Utility",
+        "description": "Tốc độ lượn +15%."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Purifying Wind",
+        "description": "White Clouds at Dawn +1 lượt dùng."
+      },
+      {
+        "level": 2,
+        "name": "Aloof From the World",
+        "description": "Dùng Skyladder (đòn nhảy sau Driftcloud) cho +20% ATK trong 15s; nâng hiệu ứng passive 2 lên 400% ATK (tối đa +18000)."
+      },
+      {
+        "level": 3,
+        "name": "Creations of Star and Moon",
+        "description": "Stars Gather at Dusk +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Mystery Millet Gourmet",
+        "description": "Sau 1/2/3 lần Skyladder, Driftcloud Wave hồi 50%/80%/150% ATK (mỗi 5s)."
+      },
+      {
+        "level": 5,
+        "name": "Astride Rose-Colored Clouds",
+        "description": "White Clouds at Dawn +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "They Call Her Cloud Retainer",
+        "description": "1/2/3 Skyladder cho Driftcloud Wave đó +15%/35%/70% CRIT DMG; trong 16s sau Bùng Nổ, kỹ năng nguyên tố không hồi chiêu (tối đa 8 lần)."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ buff ATK theo đòn nhảy + hồi máu, cực mạnh với các DPS plunge/on-field cần đòn nhảy liên tục (đội \"Plunge team\").",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "xiangling",
+    "name": "Xiangling",
+    "element": "Pyro",
+    "weaponType": "Polearm",
+    "rarity": 4,
+    "nationInGame": "Liyue",
+    "releaseDate": "2020-09-27",
+    "baseStats": {
+      "lv1": {
+        "hp": 911.79,
+        "atk": 18.88,
+        "def": 56.08
+      },
+      "lv90": {
+        "hp": 4174.16,
+        "atk": 86.42,
+        "def": 256.74,
+        "ascensionStatType": "Elemental Mastery",
+        "ascensionStatValue": 96
+      }
+    },
+    "normalAttack": {
+      "name": "Dough-Fu",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "42.1%",
+            "lv10": "83.1%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "42.1%",
+            "lv10": "83.3%"
+          }
+        },
+        {
+          "label": "3-Hit ×2",
+          "values": {
+            "lv1": "26.1%",
+            "lv10": "51.5%"
+          }
+        },
+        {
+          "label": "4-Hit ×4",
+          "values": {
+            "lv1": "14.1%",
+            "lv10": "27.9%"
+          }
+        },
+        {
+          "label": "5-Hit",
+          "values": {
+            "lv1": "71.0%",
+            "lv10": "140.4%"
+          }
+        },
+        {
+          "label": "Trọng kích (25 thể lực)",
+          "values": {
+            "lv1": "121.7%",
+            "lv10": "240.6%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "127.8% / 159.7%",
+            "lv10": "252.7% / 315.6%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Guoba Attack",
+      "description": "Triệu hồi Guoba bắn lửa gây sát thương Pyro.",
+      "scaling": [
+        {
+          "label": "Sát thương lửa",
+          "values": {
+            "lv1": "111.3%",
+            "lv10": "200.3%"
+          }
+        }
+      ],
+      "cooldown": "12s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Pyronado",
+      "description": "Vung thương tạo lốc lửa Pyronado gây sát thương liên tục (thời lượng 10s).",
+      "scaling": [
+        {
+          "label": "Vung 1/2/3",
+          "values": {
+            "lv1": "72% / 88% / 109.6%",
+            "lv10": "129.6% / 158.4% / 197.3%"
+          }
+        },
+        {
+          "label": "Sát thương Pyronado",
+          "values": {
+            "lv1": "112%",
+            "lv10": "201.6%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "10s",
+            "lv10": "10s"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 80
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Crossfire",
+        "unlock": "A1",
+        "description": "Tăng 20% tầm bắn của Guoba."
+      },
+      {
+        "name": "Beware, It's Super Hot!",
+        "unlock": "A4",
+        "description": "Guoba để lại quả ớt, nhặt được +10% ATK trong 10s."
+      },
+      {
+        "name": "Chef de Cuisine",
+        "unlock": "Utility",
+        "description": "12% cơ hội nhân đôi món ăn cộng ATK khi nấu hoàn hảo."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Crispy Outside, Tender Inside",
+        "description": "Địch trúng đòn Guoba giảm 15% kháng Pyro trong 6s."
+      },
+      {
+        "level": 2,
+        "name": "Oil Meets Fire",
+        "description": "Đòn cuối chuỗi đòn thường gắn hiệu ứng Implode 2s; hết hạn nổ gây 75% ATK Xiangling sát thương Pyro diện rộng."
+      },
+      {
+        "level": 3,
+        "name": "Deepfry",
+        "description": "Pyronado +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Slowbake",
+        "description": "Pyronado kéo dài thêm 40% thời lượng."
+      },
+      {
+        "level": 5,
+        "name": "Guoba Mad",
+        "description": "Guoba Attack +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "Condensed Pyronado",
+        "description": "Trong thời gian Pyronado, cả đội +15% Pyro DMG Bonus."
+      }
+    ],
+    "abyssRoleNotes": "Sub-DPS Pyro off-field phổ biến bậc nhất, Vaporize với Hydro (Xingqiu/Yelan) hoặc Melt với Cryo.",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "beidou",
+    "name": "Beidou",
+    "element": "Electro",
+    "weaponType": "Claymore",
+    "rarity": 4,
+    "nationInGame": "Liyue",
+    "releaseDate": "2020-09-27",
+    "baseStats": {
+      "lv1": {
+        "hp": 1094.15,
+        "atk": 18.88,
+        "def": 54.36
+      },
+      "lv90": {
+        "hp": 4914.85,
+        "atk": 85.54,
+        "def": 194.51,
+        "ascensionStatType": "Electro DMG Bonus",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Oceanborne",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "71.122%",
+            "lv10": "140.59%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "70.864%",
+            "lv10": "140.08%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "88.322%",
+            "lv10": "174.59%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "86.516%",
+            "lv10": "171.02%"
+          }
+        },
+        {
+          "label": "5-Hit",
+          "values": {
+            "lv1": "112.144%",
+            "lv10": "221.68%"
+          }
+        },
+        {
+          "label": "Trọng kích tuần hoàn / đòn cuối",
+          "values": {
+            "lv1": "56.244% / 101.824%",
+            "lv10": "111.18% / 201.28%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "149.144% / 186.2889%",
+            "lv10": "294.8195% / 368.2455%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Tidecaller",
+      "description": "Tạo khiên hấp thụ, đúng thời điểm phản đòn gây sát thương Electro lớn (tăng theo thời điểm giữ).",
+      "scaling": [
+        {
+          "label": "Khiên hấp thụ",
+          "values": {
+            "lv1": "14.4% Max HP + 1386.37",
+            "lv10": "25.92% Max HP + 3050.24"
+          }
+        },
+        {
+          "label": "Sát thương phản đòn cơ bản",
+          "values": {
+            "lv1": "121.6%",
+            "lv10": "218.8%"
+          }
+        },
+        {
+          "label": "Cộng thêm theo thời điểm giữ",
+          "values": {
+            "lv1": "tối đa +160%",
+            "lv10": "tối đa +218.88%"
+          }
+        }
+      ],
+      "cooldown": "7.5s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Stormbreaker",
+      "description": "Vung kiếm sấm gây DMG Electro, gọi sét đánh liên tục, giảm sát thương nhận (thời lượng 15s).",
+      "scaling": [
+        {
+          "label": "Sát thương vung kiếm",
+          "values": {
+            "lv1": "121.6%",
+            "lv10": "218.8%"
+          }
+        },
+        {
+          "label": "Sát thương sét đánh",
+          "values": {
+            "lv1": "96%",
+            "lv10": "172.8%"
+          }
+        },
+        {
+          "label": "Giảm sát thương nhận",
+          "values": {
+            "lv1": "20%",
+            "lv10": "34%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "15s",
+            "lv10": "15s"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 80
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Retribution",
+        "unlock": "A1",
+        "description": "Phản đòn Tidecaller đúng thời điểm nhận sát thương/khiên tối đa."
+      },
+      {
+        "name": "Lightning Storm",
+        "unlock": "A4",
+        "description": "Sau phản đòn tối đa, đòn thường/trọng kích +15% sát thương và +15% tốc độ đánh trong 10s."
+      },
+      {
+        "name": "Conqueror of Tides",
+        "unlock": "Utility",
+        "description": "Giảm 20% tiêu hao thể lực bơi của cả đội."
+      },
+      {
+        "name": "Polaris",
+        "unlock": "Passive",
+        "description": "Giữ Tidecaller tích điểm mỗi 0.8s; mỗi điểm giảm 4s hồi chiêu và hồi 8 Năng Lượng (hồi chiêu riêng 15s)."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Sea Beast's Scourge",
+        "description": "Khi dùng Stormbreaker: tạo khiên hấp thụ 16% Max HP trong 15s, hiệu quả hấp thụ Electro 250%."
+      },
+      {
+        "level": 2,
+        "name": "Upon the Turbulent Sea, the Thunder Arises",
+        "description": "Tia sét của Stormbreaker lan sang 2 mục tiêu bổ sung."
+      },
+      {
+        "level": 3,
+        "name": "Summoner of Storm",
+        "description": "Tidecaller +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Stunning Revenge",
+        "description": "Sau khi bị tấn công, đòn thường +20% sát thương Electro trong 10s."
+      },
+      {
+        "level": 5,
+        "name": "Crimson Tidewalker",
+        "description": "Stormbreaker +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "Bane of Evil",
+        "description": "Khi Stormbreaker hoạt động, địch xung quanh -15% kháng Electro; trong trạng thái Stellar-Conduct: -15% kháng Cryo và +200 Elemental Mastery."
+      }
+    ],
+    "abyssRoleNotes": "Sub-DPS/hỗ trợ chống chịu nhờ khiên phản đòn, hợp Hyperbloom (Electro-Dendro) hoặc Overload/Electro-Charged.",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "xingqiu",
+    "name": "Xingqiu",
+    "element": "Hydro",
+    "weaponType": "Sword",
+    "rarity": 4,
+    "nationInGame": "Liyue",
+    "releaseDate": "2020-09-27",
+    "baseStats": {
+      "lv1": {
+        "hp": 857.08,
+        "atk": 16.92,
+        "def": 63.52
+      },
+      "lv90": {
+        "hp": 3066.63,
+        "atk": 60.53,
+        "def": 227.27,
+        "ascensionStatType": "ATK%",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Guhua Style",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "46.6%",
+            "lv10": "92.1%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "47.6%",
+            "lv10": "94.2%"
+          }
+        },
+        {
+          "label": "3-Hit A/B",
+          "values": {
+            "lv1": "28.6% mỗi đòn",
+            "lv10": "56.4% mỗi đòn"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "56.0%",
+            "lv10": "110.7%"
+          }
+        },
+        {
+          "label": "5-Hit A/B",
+          "values": {
+            "lv1": "35.9% mỗi đòn",
+            "lv10": "70.9% mỗi đòn"
+          }
+        },
+        {
+          "label": "Trọng kích (20 thể lực)",
+          "values": {
+            "lv1": "47.3%+56.2%",
+            "lv10": "93.5%+111.0%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "127.8% / 159.7%",
+            "lv10": "252.7% / 315.6%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Guhua Sword: Fatal Rainscreen",
+      "description": "Kiếm hộ vệ giảm sát thương nhận, gây DMG Hydu (thời lượng 15s).",
+      "scaling": [
+        {
+          "label": "Sát thương (2 hit)",
+          "values": {
+            "lv1": "1.68% + 1.912%",
+            "lv10": "3.024% + 3.4416%"
+          }
+        },
+        {
+          "label": "Giảm sát thương nhận",
+          "values": {
+            "lv1": "20%",
+            "lv10": "29%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "15s",
+            "lv10": "15s"
+          }
+        }
+      ],
+      "cooldown": "21s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Guhua Sword: Raincutter",
+      "description": "Mưa kiếm Hydro bảo vệ và tấn công liên tục (thời lượng 15s).",
+      "scaling": [
+        {
+          "label": "Sát thương Sword Rain",
+          "values": {
+            "lv1": "0.543%",
+            "lv10": "0.977%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "15s",
+            "lv10": "15s"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 80
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Hydropathic",
+        "unlock": "A1",
+        "description": "Rain Sword vỡ hoặc hết hạn hồi HP cho nhân vật hiện tại bằng 6% Max HP của Xingqiu."
+      },
+      {
+        "name": "Blades Amidst Raindrops",
+        "unlock": "A4",
+        "description": "Xingqiu nhận +20% Hydro DMG Bonus."
+      },
+      {
+        "name": "Flash of Genius",
+        "unlock": "Utility",
+        "description": "25% cơ hội hoàn nguyên liệu khi chế Sách Kỹ Năng."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "The Scent Remained",
+        "description": "Tăng số Rain Sword tối đa thêm 1."
+      },
+      {
+        "level": 2,
+        "name": "Rainbow Upon the Azure Sky",
+        "description": "Raincutter kéo dài thêm 3s; địch trúng sword rain giảm 15% kháng Hydro trong 4s."
+      },
+      {
+        "level": 3,
+        "name": "Weaver of Verses",
+        "description": "Raincutter +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Evilsoother",
+        "description": "Trong thời gian Raincutter, sát thương Fatal Rainscreen +50%."
+      },
+      {
+        "level": 5,
+        "name": "Embrace of Rain",
+        "description": "Fatal Rainscreen +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "Hence, Call Them My Own Verses",
+        "description": "Kích hoạt 2 đòn sword rain của Raincutter tăng mạnh đòn thứ 3; đòn thứ 3 trúng địch hồi thêm 3 Năng Lượng."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ Hydro gần như bắt buộc — khiên giảm dame + áp Hydro liên tục, nền tảng cho mọi đội Vaporize (Hu Tao/Yoimiya), Freeze hoặc Electro-Charged.",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "ningguang",
+    "name": "Ningguang",
+    "element": "Geo",
+    "weaponType": "Catalyst",
+    "rarity": 4,
+    "nationInGame": "Liyue",
+    "releaseDate": "2020-09-27",
+    "baseStats": {
+      "lv1": {
+        "hp": 820.61,
+        "atk": 17.81,
+        "def": 48.07
+      },
+      "lv90": {
+        "hp": 3756.74,
+        "atk": 81.53,
+        "def": 220.06,
+        "ascensionStatType": "Geo DMG Bonus",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Sparkling Scatter",
+      "hits": [
+        {
+          "label": "Sát thương thường",
+          "values": {
+            "lv1": "28%",
+            "lv10": "50.4%"
+          }
+        },
+        {
+          "label": "Trọng kích",
+          "values": {
+            "lv1": "174.08%",
+            "lv10": "313.34%"
+          }
+        },
+        {
+          "label": "Sát thương/viên Star Jade",
+          "values": {
+            "lv1": "49.6%",
+            "lv10": "89.28%"
+          }
+        },
+        {
+          "label": "Nhảy",
+          "values": {
+            "lv1": "56.83%",
+            "lv10": "112.34%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Jade Screen",
+      "description": "Tạo khiên đá (kế thừa HP), gây sát thương Geo.",
+      "scaling": [
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "230.4%",
+            "lv10": "414.72%"
+          }
+        },
+        {
+          "label": "HP kế thừa (khiên)",
+          "values": {
+            "lv1": "49.9%",
+            "lv10": "18.4% (chưa xác nhận — Yatta trả về thấp bất thường so với cấp 1, khả năng lỗi trích xuất)"
+          }
+        }
+      ],
+      "cooldown": "12s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Starshatter",
+      "description": "Ngọc vỡ ra thành nhiều viên bắn về phía trước gây sát thương Geo.",
+      "scaling": [
+        {
+          "label": "Sát thương mỗi viên ngọc",
+          "values": {
+            "lv1": "86.96%",
+            "lv10": "156.528%"
+          }
+        }
+      ],
+      "cooldown": "12s",
+      "energyCost": 40
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Backup Plan",
+        "unlock": "A1",
+        "description": "Khi có Star Jade, trọng kích không tốn thể lực."
+      },
+      {
+        "name": "Strategic Reserve",
+        "unlock": "A4",
+        "description": "Đòn thường xuyên qua Jade Screen cho +12% Geo DMG Bonus trong 10s."
+      },
+      {
+        "name": "Trove of Marvelous Treasures",
+        "unlock": "Utility",
+        "description": "Hiện mạch quặng gần đó trên minimap."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Piercing Fragments",
+        "description": "Đòn thường gây sát thương diện rộng."
+      },
+      {
+        "level": 2,
+        "name": "Shock Effect",
+        "description": "Jade Screen vỡ thì hồi chiêu ngay (tối đa mỗi 6s)."
+      },
+      {
+        "level": 3,
+        "name": "Majesty Be the Array of Stars",
+        "description": "Starshatter +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Exquisite be the Jade",
+        "description": "Jade Screen cho nhân vật gần đó +10% kháng nguyên tố."
+      },
+      {
+        "level": 5,
+        "name": "Invincible Be the Jade Screen",
+        "description": "Jade Screen +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "Grandeur Be the Seven Stars",
+        "description": "Starshatter tạo 7 viên Star Jade."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ/sub-DPS Geo tạo khiên + Crystallize, hợp cộng hưởng Geo cùng Zhongli/Albedo hoặc đội Crystallize.",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "chongyun",
+    "name": "Chongyun",
+    "element": "Cryo",
+    "weaponType": "Claymore",
+    "rarity": 4,
+    "nationInGame": "Liyue",
+    "releaseDate": "2020-09-27",
+    "baseStats": {
+      "lv1": {
+        "hp": 920.91,
+        "atk": 18.7,
+        "def": 54.36
+      },
+      "lv90": {
+        "hp": 3294.99,
+        "atk": 66.9,
+        "def": 194.51,
+        "ascensionStatType": "ATK%",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Demonbane",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "70%",
+            "lv10": "138.4%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "63.1%",
+            "lv10": "124.8%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "80.3%",
+            "lv10": "158.8%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "101.2%",
+            "lv10": "200.1%"
+          }
+        },
+        {
+          "label": "Trọng kích tuần hoàn/đòn cuối",
+          "values": {
+            "lv1": "56.3% / 101.8%",
+            "lv10": "111.3% / 201.2%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "74.6% / 186.3%",
+            "lv10": "147.4% / 368.2%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Spirit Blade: Chonghua's Layered Frost",
+      "description": "Gây DMG Cryo, tạo vùng đóng băng Frost Field (thời lượng 15s).",
+      "scaling": [
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "172%",
+            "lv10": "309.7%"
+          }
+        },
+        {
+          "label": "Vùng đóng băng (Frost Field)",
+          "values": {
+            "lv1": "15s",
+            "lv10": "15s"
+          }
+        }
+      ],
+      "cooldown": "10s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Spirit Blade: Cloud-Parting Star",
+      "description": "Triệu hồi kiếm linh hồn gây DMG Cryo.",
+      "scaling": [
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "142.4%",
+            "lv10": "256.3%"
+          }
+        }
+      ],
+      "cooldown": "12s",
+      "energyCost": 40
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Ice Unleashed",
+        "unlock": "A1",
+        "description": "Đòn cuối chuỗi đòn thường bắn 3 lưỡi băng, mỗi lưỡi gây 50% ATK sát thương Cryo."
+      },
+      {
+        "name": "Atmospheric Revolution",
+        "unlock": "A4",
+        "description": "Kỹ năng/bùng nổ dùng trong Frost Field giảm 15% hồi chiêu."
+      },
+      {
+        "name": "Frozen Skies",
+        "unlock": "Utility",
+        "description": "Trúng địch dính Cryo hồi 1 Năng Lượng (mỗi 2s)."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Ice Unleashed",
+        "description": "Ghi chú nguồn: mô tả trùng tên passive A1, nguồn không tách bạch rõ nội dung riêng của cung mệnh 1 — chưa xác nhận mô tả chính xác."
+      },
+      {
+        "level": 2,
+        "name": "Atmospheric Revolution",
+        "description": "Kỹ năng/bùng nổ dùng trong Frost Field giảm 15% hồi chiêu."
+      },
+      {
+        "level": 3,
+        "name": "Cloudburst",
+        "description": "Cloud-Parting Star +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Frozen Skies",
+        "description": "Hồi 1 Năng Lượng mỗi khi trúng địch dính Cryo (mỗi 2s)."
+      },
+      {
+        "level": 5,
+        "name": "The True Path",
+        "description": "Chonghua's Layered Frost +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "Rally of Four Blades",
+        "description": "Cloud-Parting Star gây thêm 15% sát thương lên địch có %HP thấp hơn Chongyun; triệu hồi thêm 1 lưỡi kiếm linh hồn."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ Cryo infusion/tăng vật lý, hợp đội Physical DMG (Eula/Razor) hoặc Freeze phụ trợ.",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "xinyan",
+    "name": "Xinyan",
+    "element": "Pyro",
+    "weaponType": "Claymore",
+    "rarity": 4,
+    "nationInGame": "Liyue",
+    "releaseDate": "2020-12-02",
+    "baseStats": {
+      "lv1": {
+        "hp": 939.14,
+        "atk": 20.84,
+        "def": 66.95
+      },
+      "lv90": {
+        "hp": 3360.24,
+        "atk": 74.55,
+        "def": 239.56,
+        "ascensionStatType": "ATK%",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Dance on Fire",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "76.54%",
+            "lv10": "151.3%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "73.96%",
+            "lv10": "146.2%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "95.46%",
+            "lv10": "188.7%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "115.842%",
+            "lv10": "228.99%"
+          }
+        },
+        {
+          "label": "Trọng kích tuần hoàn/đòn cuối",
+          "values": {
+            "lv1": "62.5455% / 113.09%",
+            "lv10": "123.6364% / 223.55%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "149.144% / 186.2889%",
+            "lv10": "294.8195% / 368.2455%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Sweeping Fervor",
+      "description": "Vung nhạc cụ gây DMG Pyro, tạo khiên theo DEF (bậc 1/2/3 tuỳ số địch gần đó, thời lượng 12s).",
+      "scaling": [
+        {
+          "label": "Sát thương vung",
+          "values": {
+            "lv1": "169.6%",
+            "lv10": "305.28%"
+          }
+        },
+        {
+          "label": "Khiên bậc 1/2/3",
+          "values": {
+            "lv1": "1.0404 DEF+500.55 / 1.224 DEF+588.88 / 1.44 DEF+692.81",
+            "lv10": "1.87272 DEF+1101.30 / 2.2032 DEF+1295.65 / 2.592 DEF+1524.29"
+          }
+        },
+        {
+          "label": "Sát thương liên tục",
+          "values": {
+            "lv1": "33.6%",
+            "lv10": "60.48%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "12s",
+            "lv10": "12s"
+          }
+        }
+      ],
+      "cooldown": "18s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Riff Revolution",
+      "description": "Gây DMG Pyro và sát thương Pyro liên tục (thời lượng 15s).",
+      "scaling": [
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "340.8%",
+            "lv10": "613.44%"
+          }
+        },
+        {
+          "label": "Sát thương Pyro liên tục",
+          "values": {
+            "lv1": "40%",
+            "lv10": "72%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "15s",
+            "lv10": "15s"
+          }
+        }
+      ],
+      "cooldown": "60s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "\"The Show Goes On, Even Without an Audience...\"",
+        "unlock": "A1",
+        "description": "Khiên bậc 2 cần ≥1 địch, bậc 3 cần ≥2 địch gần đó."
+      },
+      {
+        "name": "\"...Now That's Rock 'N' Roll!\"",
+        "unlock": "A4",
+        "description": "Nhân vật có khiên của Xinyan +15% sát thương vật lý."
+      },
+      {
+        "name": "A Rad Recipe",
+        "unlock": "Utility",
+        "description": "12% cơ hội nhân đôi món ăn cộng DEF khi nấu hoàn hảo."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Fatal Acceleration",
+        "description": "Khi chí mạng, +12% tốc độ đánh thường/trọng kích trong 5s (mỗi 5s)."
+      },
+      {
+        "level": 2,
+        "name": "Impromptu Opening",
+        "description": "Sát thương vật lý của Riff Revolution +100% CRIT Rate; kích hoạt khiên bậc 3 (Rave) khi cast."
+      },
+      {
+        "level": 3,
+        "name": "Double-Stop",
+        "description": "Sweeping Fervor +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Wildfire Rhythm",
+        "description": "Sát thương vung của Sweeping Fervor giảm 15% kháng vật lý địch trong 12s."
+      },
+      {
+        "level": 5,
+        "name": "Screamin' for an Encore",
+        "description": "Riff Revolution +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "Rockin' in a Flaming World",
+        "description": "Giảm 30% tiêu hao thể lực trọng kích; trọng kích được cộng thêm 50% DEF làm ATK."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ/DPS vật lý có khiên, hợp đội Physical DMG hoặc làm nguồn Pyro off-field phụ khi cần khiên.",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "yanfei",
+    "name": "Yanfei",
+    "element": "Pyro",
+    "weaponType": "Catalyst",
+    "rarity": 4,
+    "nationInGame": "Liyue",
+    "releaseDate": "2021-04-26",
+    "baseStats": {
+      "lv1": {
+        "hp": 784.14,
+        "atk": 20.12,
+        "def": 49.21
+      },
+      "lv90": {
+        "hp": 3573.54,
+        "atk": 261.35,
+        "def": 396.31,
+        "ascensionStatType": "Pyro DMG Bonus",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Seal of Approval",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "58.3%",
+            "lv10": "105.0%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "52.1%",
+            "lv10": "93.8%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "76.0%",
+            "lv10": "136.8%"
+          }
+        },
+        {
+          "label": "Trọng kích (0/1/2/3 seal)",
+          "values": {
+            "lv1": "98.2/115.6/132.9/150.2%",
+            "lv10": "160.0/188.2/216.5/244.7%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "56.8% / 141.9%",
+            "lv10": "112.3% / 280.6%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Signed Edict",
+      "description": "Cấp cho Yanfei 3 Scarlet Seal, gây sát thương Pyro.",
+      "scaling": [
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "169.6%",
+            "lv10": "305.3%"
+          }
+        }
+      ],
+      "cooldown": "9s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Done Deal",
+      "description": "Gây sát thương Pyro, cộng thêm sát thương trọng kích theo số giây (mỗi 1s cấp 1 seal, thời lượng 15s).",
+      "scaling": [
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "182.4%",
+            "lv10": "328.3%"
+          }
+        },
+        {
+          "label": "Cộng thêm trọng kích",
+          "values": {
+            "lv1": "33.4%",
+            "lv10": "54.4%"
+          }
+        },
+        {
+          "label": "Thời lượng (mỗi 1s cấp 1 seal)",
+          "values": {
+            "lv1": "15s",
+            "lv10": "15s"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 80
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Proviso",
+        "unlock": "A1",
+        "description": "Mỗi Scarlet Seal tiêu thụ +5% Pyro DMG Bonus (6s, cộng dồn)."
+      },
+      {
+        "name": "Blazing Eye",
+        "unlock": "A4",
+        "description": "Trọng kích chí mạng kích hoạt nổ 80% ATK sát thương Pyro diện rộng."
+      },
+      {
+        "name": "Encyclopedic Expertise",
+        "unlock": "Utility",
+        "description": "Hiện tài nguyên đặc sản Liyue trên minimap."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Right of Final Interpretation",
+        "description": "+20% CRIT Rate trọng kích lên địch dưới 50% HP."
+      },
+      {
+        "level": 2,
+        "name": "Samadhi Fire-Forged",
+        "description": "Signed Edict +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 3,
+        "name": "Supreme Amnesty",
+        "description": "Done Deal tạo khiên hấp thụ 45% Max HP, hiệu quả hấp thụ Pyro +250% (15s)."
+      },
+      {
+        "level": 4,
+        "name": "Abiding Affidavit",
+        "description": "Done Deal +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 5,
+        "name": "Extra Clause",
+        "description": "Số Scarlet Seal tối đa +1."
+      },
+      {
+        "level": 6,
+        "name": "The Law Knows No Kindness",
+        "description": "Mỗi Scarlet Seal hiện có giảm 10% tiêu hao thể lực trọng kích; tăng kháng ngắt quãng khi tung trọng kích."
+      }
+    ],
+    "abyssRoleNotes": "Sub-DPS/DPS chính combo trọng kích liên tục, Vaporize với hỗ trợ Hydro (Xingqiu/Yelan) để tối ưu sát thương. Ghi chú nguồn: 3 giá trị chỉ số cấp 90 do công cụ trích xuất tự tính lại từ đường cong tăng trưởng thay vì đọc trực tiếp trường dữ liệu, độ chính xác thấp hơn các nhân vật khác — chưa xác nhận chính xác tuyệt đối (thứ tự độ lớn phù hợp Catalyst 4★ Pyro).",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "yun-jin",
+    "name": "Yun Jin",
+    "element": "Geo",
+    "weaponType": "Polearm",
+    "rarity": 4,
+    "nationInGame": "Liyue",
+    "releaseDate": "2022-01-04",
+    "baseStats": {
+      "lv1": {
+        "hp": 893.56,
+        "atk": 16.03,
+        "def": 61.57
+      },
+      "lv90": {
+        "hp": 3197.12,
+        "atk": 57.35,
+        "def": 220.31,
+        "ascensionStatType": "Energy Recharge",
+        "ascensionStatValue": 0.2667
+      }
+    },
+    "normalAttack": {
+      "name": "Cloud-Grazing Strike",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "40.506%",
+            "lv10": "80.07%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "40.248%",
+            "lv10": "79.56%"
+          }
+        },
+        {
+          "label": "3-Hit A",
+          "values": {
+            "lv1": "22.962%+27.52%",
+            "lv10": "45.39%+54.4%"
+          }
+        },
+        {
+          "label": "4-Hit A",
+          "values": {
+            "lv1": "23.994%+28.81%",
+            "lv10": "47.43%+56.95%"
+          }
+        },
+        {
+          "label": "5-Hit",
+          "values": {
+            "lv1": "67.338%",
+            "lv10": "133.11%"
+          }
+        },
+        {
+          "label": "Trọng kích (25 thể lực)",
+          "values": {
+            "lv1": "121.69%",
+            "lv10": "240.55%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "127.84% / 159.68%",
+            "lv10": "252.70% / 315.64%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Opening Flourish",
+      "description": "Bấm gây DMG theo DEF; đúng thời điểm bị tấn công sẽ tung dạng Giữ cấp 2 mạnh hơn; tạo khiên.",
+      "scaling": [
+        {
+          "label": "Bấm DMG (theo DEF)",
+          "values": {
+            "lv1": "2.6096%",
+            "lv10": "2.68416%"
+          }
+        },
+        {
+          "label": "Giữ cấp 1/2 DMG (theo DEF)",
+          "values": {
+            "lv1": "3.728% / 5.592%",
+            "lv10": "4.69728% / 6.7104%"
+          }
+        },
+        {
+          "label": "Khiên",
+          "values": {
+            "lv1": "12% Max HP + 1155.43",
+            "lv10": "21.6% Max HP + 2542.14"
+          }
+        }
+      ],
+      "cooldown": "9s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Cliffbreaker's Banner",
+      "description": "Cắm cờ tạo Flying Cloud Flag Formation gây DMG Geo, cộng thêm sát thương theo DEF mỗi đòn thường trong vùng (tối đa 15 lần, thời lượng 12s).",
+      "scaling": [
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "244%",
+            "lv10": "439.2%"
+          }
+        },
+        {
+          "label": "Cộng thêm (theo DEF, mỗi đòn thường trong vùng, tối đa 15 lần)",
+          "values": {
+            "lv1": "32.16%",
+            "lv10": "57.888%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "12s",
+            "lv10": "12s"
+          }
+        }
+      ],
+      "cooldown": "60s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "True to Oneself",
+        "unlock": "A1",
+        "description": "Dùng Opening Flourish đúng lúc bị tấn công sẽ tung ra dạng giữ cấp 2."
+      },
+      {
+        "name": "Breaking Conventions",
+        "unlock": "A4",
+        "description": "Cộng thêm sát thương theo DEF của Cliffbreaker's Banner tăng 2.5%/5%/7.5%/11.5% DEF tương ứng đội có 1/2/3/4 loại nguyên tố."
+      },
+      {
+        "name": "Light Nourishment",
+        "unlock": "Utility",
+        "description": "12% cơ hội nhân đôi sản phẩm khi nấu hoàn hảo."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Thespian Gallop",
+        "description": "Opening Flourish giảm 18% hồi chiêu."
+      },
+      {
+        "level": 2,
+        "name": "Myriad Mise-En-Scène",
+        "description": "Sau khi tung Cliffbreaker's Banner, cả đội gần đó +15% sát thương đòn thường trong 12s."
+      },
+      {
+        "level": 3,
+        "name": "Seafaring General",
+        "description": "Cliffbreaker's Banner +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Flower and a Fighter",
+        "description": "Khi Yun Jin kích hoạt Crystallize/Lunar-Crystallize, DEF +20% trong 12s."
+      },
+      {
+        "level": 5,
+        "name": "Famed Throughout the Land",
+        "description": "Opening Flourish +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "Decorous Harmony",
+        "description": "Nhân vật trong Flying Cloud Flag Formation +12% tốc độ đánh thường."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ tăng sát thương đòn thường + khiên, cột trụ của các đội \"Normal Attack DPS\" (vật lý hoặc Geo) như Yun Jin-Zhongli-Xingqiu-Bennett.",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "yaoyao",
+    "name": "Yaoyao",
+    "element": "Dendro",
+    "weaponType": "Polearm",
+    "rarity": 4,
+    "nationInGame": "Liyue",
+    "releaseDate": "2023-01-16",
+    "baseStats": {
+      "lv1": {
+        "hp": 1030.32,
+        "atk": 17.81,
+        "def": 62.95
+      },
+      "lv90": {
+        "hp": 3686.48,
+        "atk": 63.72,
+        "def": 225.23,
+        "ascensionStatType": "HP%",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Toss 'N' Turn Spear",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "51.00%",
+            "lv10": "100.82%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "47.44%",
+            "lv10": "93.78%"
+          }
+        },
+        {
+          "label": "3-Hit A/B",
+          "values": {
+            "lv1": "31.38%/32.95%",
+            "lv10": "62.02%/65.13%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "77.93%",
+            "lv10": "154.05%"
+          }
+        },
+        {
+          "label": "Trọng kích",
+          "values": {
+            "lv1": "117.66%",
+            "lv10": "222.70%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "127.84% / 159.68%",
+            "lv10": "252.70% / 315.64%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Raphanus Sky Cluster",
+      "description": "Ném Củ Cải Trắng (Yuegui/Radish) gây DMG Dendu và hồi máu.",
+      "scaling": [
+        {
+          "label": "Sát thương Củ Cải Trắng",
+          "values": {
+            "lv1": "29.92%",
+            "lv10": "53.86%"
+          }
+        },
+        {
+          "label": "Hồi máu",
+          "values": {
+            "lv1": "1.71% Max HP + 165.08",
+            "lv10": "3.09% Max HP + 363.20"
+          }
+        },
+        {
+          "label": "Thời lượng Yuegui / Radish",
+          "values": {
+            "lv1": "10s / 5s",
+            "lv10": "10s / 5s"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Moonjade Descent",
+      "description": "Gây DMG Dendro, tạo Adeptal Legacy Radish, hồi máu và tăng kháng Dendro (thời lượng 5s).",
+      "scaling": [
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "72.16%",
+            "lv10": "129.89%"
+          }
+        },
+        {
+          "label": "Sát thương Adeptal Legacy Radish",
+          "values": {
+            "lv1": "20.17%",
+            "lv10": "36.30%"
+          }
+        },
+        {
+          "label": "Hồi máu Adeptal Legacy",
+          "values": {
+            "lv1": "1.94% Max HP + 194.21",
+            "lv10": "3.63% Max HP + 427.30"
+          }
+        },
+        {
+          "label": "Cộng kháng Dendro",
+          "values": {
+            "lv1": "+114.56%",
+            "lv10": "+206.21%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "5s",
+            "lv10": "5s"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 80
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "In Others' Shoes",
+        "unlock": "A1",
+        "description": "Củ Cải Trắng nổ hồi 0.8% Max HP mỗi giây trong 5s cho nhân vật đang chiến đấu."
+      },
+      {
+        "name": "Starscatter",
+        "unlock": "A4",
+        "description": "Trong Adeptal Legacy, chạy/nhảy/đu dây cũng ném Củ Cải Trắng (mỗi 0.6s)."
+      },
+      {
+        "name": "Tailing on Tiptoes",
+        "unlock": "Utility",
+        "description": "Cả đội không làm giật mình đom đóm pha lê và một số sinh vật."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Adeptus' Tutelage",
+        "description": "Củ Cải Trắng nổ cho nhân vật đang chiến đấu trong vùng +15% Dendro DMG Bonus (8s) và hồi 15 thể lực (mỗi 5s)."
+      },
+      {
+        "level": 2,
+        "name": "Innocent",
+        "description": "Trong Adeptal Legacy, Củ Cải Trắng nổ trúng địch hồi 3 Năng Lượng cho Yaoyao (mỗi 0.8s)."
+      },
+      {
+        "level": 3,
+        "name": "Loyal and Kind",
+        "description": "Raphanus Sky Cluster +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Winsome",
+        "description": "Sau khi dùng kỹ năng/bùng nổ, nhận Elemental Mastery bằng 0.3% Max HP trong 8s (tối đa 120 EM)."
+      },
+      {
+        "level": 5,
+        "name": "Compassionate",
+        "description": "Moonjade Descent +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "Beneficent",
+        "description": "Cứ mỗi 2 Củ Cải Trắng ném ra ở chế độ Yuegui, lần ném tiếp theo là Củ Cải Khổng Lồ: gây sát thương Dendro diện rộng bằng 75% ATK và hồi 7.5% Max HP (tối đa 2 lần/lượt)."
+      }
+    ],
+    "abyssRoleNotes": "Healer off-field cực dễ dùng, đi được mọi đội có phản ứng Dendro (Hyperbloom, Bloom, Aggravate, Burning).",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "gaming",
+    "name": "Gaming",
+    "element": "Pyro",
+    "weaponType": "Claymore",
+    "rarity": 4,
+    "nationInGame": "Liyue",
+    "releaseDate": "2024-01-29",
+    "baseStats": {
+      "lv1": {
+        "hp": 957.38,
+        "atk": 25.29,
+        "def": 58.94
+      },
+      "lv90": {
+        "hp": 4372.78,
+        "atk": 109.27,
+        "def": 277.68,
+        "ascensionStatType": "ATK%",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Stellar Rend",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "83.856%",
+            "lv10": "165.762%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "79.044%",
+            "lv10": "156.250%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "106.646%",
+            "lv10": "210.812%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "127.949%",
+            "lv10": "252.923%"
+          }
+        },
+        {
+          "label": "Trọng kích tuần hoàn/đòn cuối",
+          "values": {
+            "lv1": "62.522% / 113.09%",
+            "lv10": "123.590% / 223.550%"
+          }
+        },
+        {
+          "label": "Nhảy",
+          "values": {
+            "lv1": "64.146%",
+            "lv10": "126.800%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Bestial Ascent",
+      "description": "Tốn 15% Max HP để nhảy lên Charmed Cloudstrider gây DMG Pyro.",
+      "scaling": [
+        {
+          "label": "Sát thương nhảy Charmed Cloudstrider",
+          "values": {
+            "lv1": "230.4%",
+            "lv10": "414.72%"
+          }
+        }
+      ],
+      "cooldown": "6s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Suanni's Gilded Dance",
+      "description": "Man Chai đập gây DMG Pyro và hồi máu (thời lượng 12s).",
+      "scaling": [
+        {
+          "label": "Sát thương Man Chai Smash",
+          "values": {
+            "lv1": "370.4%",
+            "lv10": "666.72%"
+          }
+        },
+        {
+          "label": "Hồi máu",
+          "values": {
+            "lv1": "30% Max HP",
+            "lv10": "30% Max HP"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "12s",
+            "lv10": "12s"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Dance of Amity",
+        "unlock": "A1",
+        "description": "Sau khi Charmed Cloudstrider trúng đòn, hồi 1.5% Max HP mỗi 0.2s trong 0.8s."
+      },
+      {
+        "name": "Air of Prosperity",
+        "unlock": "A4",
+        "description": "HP <50%: +20% hiệu quả hồi máu nhận; HP ≥50%: Charmed Cloudstrider +20% sát thương."
+      },
+      {
+        "name": "The Striding Beast",
+        "unlock": "Utility",
+        "description": "Ban ngày (6:00–18:00), cả đội +10% tốc độ di chuyển."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Bringer of Blessing",
+        "description": "Man Chai đoàn tụ hồi 15% HP của Gaming."
+      },
+      {
+        "level": 2,
+        "name": "Plum Blossoms Underfoot",
+        "description": "Hồi máu dư thừa chuyển thành +20% ATK trong 5s."
+      },
+      {
+        "level": 3,
+        "name": "Awakening Spirit",
+        "description": "Bestial Ascent +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Soar Across Mountains",
+        "description": "Charmed Cloudstrider trúng đòn hồi 2 Năng Lượng (mỗi 0.2s)."
+      },
+      {
+        "level": 5,
+        "name": "Evil-Daunting Roar",
+        "description": "Suanni's Gilded Dance +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "To Tame All Beasts",
+        "description": "Charmed Cloudstrider +20% CRIT Rate, +40% CRIT DMG, tăng bán kính."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính on-field bùng nổ trong thời gian ngắn (Bestial Ascent), hợp Vaporize/Melt hoặc đội Hyperbloom-Burning tận dụng Pyro liên tục.",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "lan-yan",
+    "name": "Lan Yan",
+    "element": "Anemo",
+    "weaponType": "Catalyst",
+    "rarity": 4,
+    "nationInGame": "Liyue",
+    "releaseDate": "2025-01-21",
+    "baseStats": {
+      "lv1": {
+        "hp": 775.02,
+        "atk": 21.01,
+        "def": 48.64
+      },
+      "lv90": {
+        "hp": 2773.02,
+        "atk": 75.19,
+        "def": 174.04,
+        "ascensionStatType": "ATK%",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Black Pheasant Strides on Water",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "41.44%",
+            "lv10": "74.59%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "20.41%+24.95%",
+            "lv10": "36.74%+44.91%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "26.92%+26.92%",
+            "lv10": "44.91%+44.91%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "64.56%",
+            "lv10": "116.21%"
+          }
+        },
+        {
+          "label": "Trọng kích ×3",
+          "values": {
+            "lv1": "37.84%",
+            "lv10": "68.11%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "56.83% / 141.93%",
+            "lv10": "112.34% / 280.57%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Swallow-Wisp Pinion Dance",
+      "description": "Lướt tạo Feathermoon Ring gây DMG Anemo, tạo khiên (thời lượng khiên 12.5s).",
+      "scaling": [
+        {
+          "label": "Sát thương Feathermoon Ring",
+          "values": {
+            "lv1": "96.26%",
+            "lv10": "173.26%"
+          }
+        },
+        {
+          "label": "Khiên hấp thụ",
+          "values": {
+            "lv1": "2.7648 ATK + 1155.56",
+            "lv10": "4.9766 ATK + 2542.43"
+          }
+        },
+        {
+          "label": "Thời lượng khiên",
+          "values": {
+            "lv1": "12.5s",
+            "lv10": "12.5s"
+          }
+        }
+      ],
+      "cooldown": "16s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Lustrous Moonrise",
+      "description": "Gây sát thương Anemo 3 đòn.",
+      "scaling": [
+        {
+          "label": "Sát thương mỗi đòn ×3",
+          "values": {
+            "lv1": "241.06%",
+            "lv10": "433.92%"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Four Sealing Divination Charms",
+        "unlock": "A1",
+        "description": "Khi cú lướt của kỹ năng nguyên tố trúng địch đang dính Hydro/Pyro/Cryo/Electro, khiên Swallow-Wisp hấp thụ nguyên tố đó với hiệu quả +250%, Feathermoon Ring ném ra gây thêm sát thương nguyên tố đó bằng 50% sát thương gốc."
+      },
+      {
+        "name": "Skyfeather Evil-Subduing Charm",
+        "unlock": "A4",
+        "description": "Kỹ năng nguyên tố và bùng nổ nguyên tố nhận thêm sát thương bằng 309% và 774% Elemental Mastery của Lan Yan."
+      },
+      {
+        "name": "Thought and Intent, Like Silken Scent",
+        "unlock": "Utility",
+        "description": "Cả đội không làm giật mình đom đóm pha lê và một số sinh vật."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "(chưa xác nhận)",
+        "description": "Chưa xác nhận — dữ liệu cung mệnh của Lan Yan trích xuất được có mô tả không nhất quán/lẫn với kỹ năng của Odette (tên kỹ năng trùng \"Swallow-Wisp\"/\"Feathermoon\" do lỗi trộn dữ liệu khi trích xuất tự động)."
+      },
+      {
+        "level": 2,
+        "name": "(chưa xác nhận)",
+        "description": "Chưa xác nhận."
+      },
+      {
+        "level": 3,
+        "name": "(chưa xác nhận)",
+        "description": "Swallow-Wisp Pinion Dance +3 cấp (tối đa 15) — suy luận theo mẫu chung C3 của nhân vật hỗ trợ, chưa xác nhận số liệu chính thức."
+      },
+      {
+        "level": 4,
+        "name": "(chưa xác nhận)",
+        "description": "Chưa xác nhận."
+      },
+      {
+        "level": 5,
+        "name": "(chưa xác nhận)",
+        "description": "Lustrous Moonrise +3 cấp (tối đa 15) — suy luận theo mẫu chung, chưa xác nhận."
+      },
+      {
+        "level": 6,
+        "name": "(chưa xác nhận)",
+        "description": "Chưa xác nhận."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ Anemo có khiên + sát thương theo Elemental Mastery, hợp đội phản ứng lan toả (Swirl, Hyperbloom) cần khuếch tán nguyên tố diện rộng.",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "tartaglia",
+    "name": "Tartaglia (Childe)",
+    "element": "Hydro",
+    "weaponType": "Bow",
+    "rarity": 5,
+    "nationInGame": "Snezhnaya (Fatui, Harbinger thứ 11 — \"The Foul Legacy\")",
+    "releaseDate": "2020-11-11",
+    "baseStats": {
+      "lv1": {
+        "hp": 1020.05,
+        "atk": 23.46,
+        "def": 63.42
+      },
+      "lv90": {
+        "hp": 4188.89,
+        "atk": 96.34,
+        "def": 260.44,
+        "ascensionStatType": "Hydro DMG Bonus",
+        "ascensionStatValue": 0.288
+      }
+    },
+    "normalAttack": {
+      "name": "Cutting Torrent (dạng Cung)",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "41.28%",
+            "lv10": "81.6%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "46.268%",
+            "lv10": "91.46%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "55.384%",
+            "lv10": "109.48%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "57.018%",
+            "lv10": "112.71%"
+          }
+        },
+        {
+          "label": "5-Hit",
+          "values": {
+            "lv1": "60.888%",
+            "lv10": "120.36%"
+          }
+        },
+        {
+          "label": "6-Hit",
+          "values": {
+            "lv1": "72.756%",
+            "lv10": "143.82%"
+          }
+        },
+        {
+          "label": "Bắn nhắm / Tích đầy",
+          "values": {
+            "lv1": "43.86% / 124%",
+            "lv10": "86.7% / 223.2%"
+          }
+        },
+        {
+          "label": "Riptide Flash ×3 / Burst",
+          "values": {
+            "lv1": "12.4% / 62%",
+            "lv10": "22.32% / 111.6%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "127.84% / 159.68%",
+            "lv10": "252.70% / 315.64%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Foul Legacy: Raging Tide",
+      "description": "Chuyển sang Melee Stance (cận chiến, tối đa 30s hiệu lực), gây sát thương chuyển trạng thái, chuỗi cận chiến 6 đòn, trọng kích cận chiến, Riptide Slash.",
+      "scaling": [
+        {
+          "label": "Sát thương chuyển trạng thái",
+          "values": {
+            "lv1": "72%",
+            "lv10": "129.6%"
+          }
+        },
+        {
+          "label": "Chuỗi cận chiến 1–6 hit (6 đòn)",
+          "values": {
+            "lv1": "38.872–59.942%",
+            "lv10": "76.84–118.49%"
+          }
+        },
+        {
+          "label": "Trọng kích cận chiến",
+          "values": {
+            "lv1": "60.2%+71.982%",
+            "lv10": "119%+142.29%"
+          }
+        },
+        {
+          "label": "Riptide Slash",
+          "values": {
+            "lv1": "60.2%",
+            "lv10": "119%"
+          }
+        }
+      ],
+      "cooldown": "6s (tối đa 30s hiệu lực)",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Havoc: Obliteration",
+      "description": "Sát thương lớn khác nhau tuỳ trạng thái (Melee Stance hoặc dạng Cung); tạo Riptide Blast.",
+      "scaling": [
+        {
+          "label": "Sát thương (Melee Stance)",
+          "values": {
+            "lv1": "464%",
+            "lv10": "835.2%"
+          }
+        },
+        {
+          "label": "Sát thương (dạng Cung)",
+          "values": {
+            "lv1": "120%",
+            "lv10": "216%"
+          }
+        },
+        {
+          "label": "Riptide Blast",
+          "values": {
+            "lv1": "378.4%",
+            "lv10": "681.12%"
+          }
+        },
+        {
+          "label": "Hoàn Năng Lượng (dạng Cung)",
+          "values": {
+            "lv1": "20",
+            "lv10": "20"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Extends Riptide",
+        "unlock": "A1",
+        "description": "Kéo dài hiệu ứng Riptide thêm 8s."
+      },
+      {
+        "name": "Sword of Torrents",
+        "unlock": "A4",
+        "description": "Chí mạng trong Melee Stance gắn Riptide lên địch."
+      },
+      {
+        "name": "Master of Weaponry",
+        "unlock": "Utility",
+        "description": "+1 cấp đòn thường cho cả đội."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Foul Legacy: Tide Withholder",
+        "description": "Foul Legacy: Raging Tide giảm 20% hồi chiêu."
+      },
+      {
+        "level": 2,
+        "name": "Foul Legacy: Understream",
+        "description": "Hạ gục địch dính Riptide hồi 4 Năng Lượng."
+      },
+      {
+        "level": 3,
+        "name": "Abyssal Mayhem: Vortex of Turmoil",
+        "description": "Foul Legacy: Raging Tide +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Abyssal Mayhem: Hydrospout",
+        "description": "Trong Melee Stance, tự động gây hiệu ứng Riptide mỗi 4s."
+      },
+      {
+        "level": 5,
+        "name": "Havoc: Formless Blade",
+        "description": "Havoc: Obliteration +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "Havoc: Annihilation",
+        "description": "Dùng Havoc: Obliteration trong Melee Stance reset hồi chiêu Foul Legacy: Raging Tide."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính linh hoạt cận chiến/tầm xa, Vaporize với Pyro (Bennett, Xiangling) hoặc Electro-Charged/Freeze với Cryo-Electro.",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "arlecchino",
+    "name": "Arlecchino",
+    "element": "Pyro",
+    "weaponType": "Polearm",
+    "rarity": 5,
+    "nationInGame": "Snezhnaya (Fatui Harbinger thứ 4 — \"The Knave\")",
+    "releaseDate": "2024-04-22",
+    "baseStats": {
+      "lv1": {
+        "hp": 1020.05,
+        "atk": 26.63,
+        "def": 59.53
+      },
+      "lv90": {
+        "hp": 4188.89,
+        "atk": 109.34,
+        "def": 244.47,
+        "ascensionStatType": "CRIT DMG",
+        "ascensionStatValue": 0.384
+      }
+    },
+    "normalAttack": {
+      "name": "Invitation to a Beheading",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "47.5%",
+            "lv10": "93.9%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "52.1%",
+            "lv10": "103.0%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "65.4%",
+            "lv10": "129.3%"
+          }
+        },
+        {
+          "label": "4-Hit ×2",
+          "values": {
+            "lv1": "37.1%",
+            "lv10": "73.4%"
+          }
+        },
+        {
+          "label": "5-Hit",
+          "values": {
+            "lv1": "85.4%",
+            "lv10": "138.3%"
+          }
+        },
+        {
+          "label": "6-Hit",
+          "values": {
+            "lv1": "90.8%",
+            "lv10": "179.5%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "127.8% / 120.4%",
+            "lv10": "252.7% / 238.0%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "All Is Ash",
+      "description": "Gai đâm (Spike) và chém (Cleave) gây DMG Pyro, tạo Blood-Debt Directive (mỗi 5s, tối đa 2 lần), mỗi Directive cấp Bond of Life.",
+      "scaling": [
+        {
+          "label": "Spike DMG",
+          "values": {
+            "lv1": "14.84%",
+            "lv10": "26.71%"
+          }
+        },
+        {
+          "label": "Cleave DMG",
+          "values": {
+            "lv1": "133.56%",
+            "lv10": "240.41%"
+          }
+        },
+        {
+          "label": "Blood-Debt Directive (mỗi 5s, tối đa 2 lần)",
+          "values": {
+            "lv1": "31.8%",
+            "lv10": "57.24%"
+          }
+        },
+        {
+          "label": "Bond of Life cấp mỗi Directive",
+          "values": {
+            "lv1": "65% Max HP",
+            "lv10": "65% Max HP"
+          }
+        }
+      ],
+      "cooldown": "30s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Balemoon Rising",
+      "description": "Gây sát thương lớn, hồi máu theo Bond of Life và ATK (reset hồi chiêu All Is Ash).",
+      "scaling": [
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "370.4%",
+            "lv10": "666.72%"
+          }
+        },
+        {
+          "label": "Hồi máu",
+          "values": {
+            "lv1": "15% Bond of Life + 150% ATK",
+            "lv10": "15% Bond of Life + 150% ATK"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "\"Agony Alone May Be Repaid\"",
+        "unlock": "A1",
+        "description": "Directive hạ gục địch cấp 130% Max HP Bond of Life; nếu đã là Blood-Debt Due, cấp thêm 130% Max HP."
+      },
+      {
+        "name": "\"Strength Alone Can Defend\"",
+        "unlock": "A4",
+        "description": "Cứ 100 ATK vượt 1000, +1% mọi kháng nguyên tố/vật lý (tối đa +20%/loại)."
+      },
+      {
+        "name": "\"The Balemoon Alone May Know\"",
+        "unlock": "Passive (đột phá 6)",
+        "description": "Trong combat, +40% Pyro DMG Bonus nhưng chỉ hồi máu được qua Balemoon Rising."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "\"All Reprisals and Arrears, Mine to Bear...\"",
+        "description": "Sát thương cộng thêm của Masque tăng gấp đôi lên 100%; tăng kháng ngắt quãng khi tung đòn Masque."
+      },
+      {
+        "level": 2,
+        "name": "\"All Rewards and Retribution, Mine to Bestow...\"",
+        "description": "Directive tạo ra luôn là Blood-Debt Due; hấp thụ kích hoạt Balemoon Bloodfire gây 900% ATK sát thương Pyro diện rộng, +20% mọi kháng nguyên tố/vật lý trong 15s (hồi chiêu 10s). Yêu cầu đã có C1."
+      },
+      {
+        "level": 3,
+        "name": "\"You Shall Become a New Member of Our Family...\"",
+        "description": "Đòn thường +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "\"You Shall Love and Protect Each Other Henceforth...\"",
+        "description": "Hấp thụ Directive thành công giảm 2s hồi chiêu Balemoon Rising, hồi 15 Năng Lượng (hồi chiêu 10s)."
+      },
+      {
+        "level": 5,
+        "name": "\"For Alone, We Are as Good as Dead...\"",
+        "description": "Bùng nổ nguyên tố +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "\"From This Day On, We Shall Delight in New Life Together.\"",
+        "description": "Balemoon Rising sát thương +700% ATK theo %Bond of Life hiện tại; 20s sau All Is Ash, đòn thường và bùng nổ +10% CRIT Rate, +70% CRIT DMG (hồi chiêu kích hoạt 15s)."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính on-field cực mạnh, chủ đạo trong đội Mono Pyro (Arlecchino-Xiangling/Bennett-Sethos-hỗ trợ) hoặc phối Vaporize nhẹ.",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "sandrone",
+    "name": "Sandrone",
+    "element": "Cryo",
+    "weaponType": "Claymore",
+    "rarity": 5,
+    "nationInGame": "Snezhnaya (Fatui, liên quan Harbinger \"The Doctor\")",
+    "releaseDate": "2026-06-29 (~29/06–01/07/2026, bản 6.7 Luna VIII, ngày chính xác chưa xác nhận)",
+    "baseStats": {
+      "lv1": {
+        "hp": 1029.59,
+        "atk": 26.63,
+        "def": 58.57
+      },
+      "lv90": {
+        "hp": 4228.04,
+        "atk": 109.34,
+        "def": 240.54,
+        "ascensionStatType": "CRIT Rate",
+        "ascensionStatValue": 0.192
+      }
+    },
+    "normalAttack": {
+      "name": "Formule Phenomenale: Self-Evident Proposition",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "76.29%",
+            "lv10": "150.80%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "67.20%",
+            "lv10": "132.83%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "102.80%",
+            "lv10": "203.22%"
+          }
+        },
+        {
+          "label": "Trọng kích: Sweep",
+          "values": {
+            "lv1": "43%",
+            "lv10": "85%"
+          }
+        },
+        {
+          "label": "Trọng kích: Condensed Beam",
+          "values": {
+            "lv1": "122.55%",
+            "lv10": "242.25%"
+          }
+        },
+        {
+          "label": "Trọng kích: Stellar-Conduct Beam",
+          "values": {
+            "lv1": "81.7%",
+            "lv10": "161.5%"
+          }
+        },
+        {
+          "label": "Power Overdrive",
+          "values": {
+            "lv1": "74.59%",
+            "lv10": "147.44%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "186.29% / 122.55%",
+            "lv10": "368.25% / 242.25%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Formule Phenomenale: Differential Analysis",
+      "description": "Bắn Prism Shot gây DMG Cryo, có thể gây thêm DMG Stellar-Conduct.",
+      "scaling": [
+        {
+          "label": "Prism Shot DMG",
+          "values": {
+            "lv1": "32.4%",
+            "lv10": "76.95%"
+          }
+        },
+        {
+          "label": "Stellar-Conduct DMG",
+          "values": {
+            "lv1": "21.6%",
+            "lv10": "51.3%"
+          }
+        }
+      ],
+      "cooldown": "4s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Formule Phenomenale: Q.E.D.",
+      "description": "Oanh tạc gây DMG Cryo, tia Convective Inhibition Ray, sát thương Stellar-Conduct.",
+      "scaling": [
+        {
+          "label": "Bombardment ×3",
+          "values": {
+            "lv1": "88.22%",
+            "lv10": "158.79%"
+          }
+        },
+        {
+          "label": "Convective Inhibition Ray",
+          "values": {
+            "lv1": "330.8%",
+            "lv10": "595.44%"
+          }
+        },
+        {
+          "label": "Stellar-Conduct",
+          "values": {
+            "lv1": "220.53%",
+            "lv10": "396.6%"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "(chưa xác nhận)",
+        "unlock": "Chưa xác nhận",
+        "description": "Chi tiết passive của Sandrone chưa xác nhận đầy đủ trong lần trích xuất này (nguồn chỉ trả về bộ kỹ năng chính và cung mệnh); tên cơ chế liên quan tới nhân vật phụ \"Fagio\" (Decoding mode) xuất hiện trong mô tả cung mệnh C1 cho thấy có ít nhất một passive liên quan tới cơ chế \"Decoding\" — chưa xác nhận nội dung đầy đủ."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "\"Morrow After the Golden Dusk\"",
+        "description": "Trong chế độ Decoding, tốc độ tích Decoding Power của Fagio giảm 50%; cả đội +30% sát thương phản ứng Stellar Glimmer."
+      },
+      {
+        "level": 2,
+        "name": "\"An Heiress Gazed Into the Looking-Glass\"",
+        "description": "Trọng kích (Condensed Beam) +40% CRIT DMG; mỗi tia bắn ra +20% CRIT DMG (tối đa 3 lần cộng dồn)."
+      },
+      {
+        "level": 3,
+        "name": "(chưa xác nhận tên)",
+        "description": "Đòn thường +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "\"Of All Beside, She Takes No Part\"",
+        "description": "Bùng nổ nguyên tố +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 5,
+        "name": "\"Narcissus Wakes, Her Eyes Upon the Dawn\"",
+        "description": "Condensed Cluster Beam bắn thêm 4 tia Cryo diện rộng ở mức 100% ATK (Stellar-Conduct: 80% ATK; Stellar Swirl: 120% ATK); mọi sát thương phản ứng Stellar Glimmer +20%."
+      },
+      {
+        "level": 6,
+        "name": "(chưa xác nhận tên)",
+        "description": "Kỹ năng nguyên tố +3 cấp (tối đa 15)."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính dựa vào trọng kích, kích hoạt phản ứng Stellar-Conduct mới cùng nguồn Electro; đội hình mẫu: Sandrone-nguồn Electro off-field-hỗ trợ khiên/hồi máu.",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "odette",
+    "name": "Odette",
+    "element": "Cryo",
+    "weaponType": "Sword",
+    "rarity": 5,
+    "nationInGame": "Snezhnaya",
+    "releaseDate": "2026-08-11 (~10–12/08/2026, bản 7.0, ngày chính xác chưa xác nhận)",
+    "baseStats": {
+      "lv1": {
+        "hp": 1010.52,
+        "atk": 26.07,
+        "def": 61.27
+      },
+      "lv90": {
+        "hp": 4149.74,
+        "atk": 107.04,
+        "def": 251.6,
+        "ascensionStatType": "CRIT DMG",
+        "ascensionStatValue": 0.384
+      }
+    },
+    "normalAttack": {
+      "name": "Snow Swan Variation",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "51.9%",
+            "lv10": "102.5%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "51.5%",
+            "lv10": "101.8%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "32.6%+38.3%",
+            "lv10": "64.5%+75.7%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "74.6%",
+            "lv10": "147.4%"
+          }
+        },
+        {
+          "label": "5-Hit",
+          "values": {
+            "lv1": "90.2%",
+            "lv10": "178.3%"
+          }
+        },
+        {
+          "label": "Trọng kích",
+          "values": {
+            "lv1": "90.2%",
+            "lv10": "178.3%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "127.8% / 159.7%",
+            "lv10": "252.7% / 315.6%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Adagio: Phantom Night Dancers",
+      "description": "Gây DMG Cryo, tạo Solo Dance Double (thời lượng 20s) với Coda, Plume Move, Wing Move theo trạng thái Stellar-Conduct/Swirl.",
+      "scaling": [
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "108.08%",
+            "lv10": "194.5%"
+          }
+        },
+        {
+          "label": "Coda (sát thương liên tục / đòn cuối)",
+          "values": {
+            "lv1": "95.84% / 305.76–458.64%",
+            "lv10": "172.5% / 550.4–825.6%"
+          }
+        },
+        {
+          "label": "Plume Move (Stellar-Conduct/Swirl)",
+          "values": {
+            "lv1": "43.04% / 27.02%",
+            "lv10": "77.5% / 48.6%"
+          }
+        },
+        {
+          "label": "Wing Move (Stellar-Conduct/Swirl)",
+          "values": {
+            "lv1": "40.53% / 48.46%",
+            "lv10": "72.9% / 87.2%"
+          }
+        },
+        {
+          "label": "Thời lượng Solo Dance Double",
+          "values": {
+            "lv1": "20s",
+            "lv10": "20s"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Presto: Bluebird Finale",
+      "description": "Chém 3 đòn liên tiếp + đòn chém cuối, tăng sát thương Stellar Glimmer cho đội (thời lượng 20s).",
+      "scaling": [
+        {
+          "label": "Chém ×3",
+          "values": {
+            "lv1": "110.18% mỗi đòn",
+            "lv10": "198.3% mỗi đòn"
+          }
+        },
+        {
+          "label": "Đòn chém cuối",
+          "values": {
+            "lv1": "170.27%",
+            "lv10": "306.5%"
+          }
+        },
+        {
+          "label": "Snow Swan's Dream (cộng sát thương Stellar Glimmer đội)",
+          "values": {
+            "lv1": "+14%",
+            "lv10": "+50%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "20s",
+            "lv10": "20s"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Spring Rite of the Chosen One",
+        "unlock": "A1",
+        "description": "Triệu hồi cấp 4 điểm Marvelous Splendor."
+      },
+      {
+        "name": "Pathetique of Pateticheskaya",
+        "unlock": "A4",
+        "description": "Cứ 100 ATK vượt 1000, +1.5% sát thương Stellar Glimmer (tối đa +30%)."
+      },
+      {
+        "name": "Stellar Jubilee",
+        "unlock": "Passive",
+        "description": "Vào trạng thái Radiance, biến Superconduct/Cryo Swirl thành phản ứng Stellar, cộng thêm 0.7% ATK/100 ATK (tối đa +14%)."
+      },
+      {
+        "name": "Echo of Winter Daydreams",
+        "unlock": "Utility",
+        "description": "Hiện đặc sản Snezhnaya trên minimap."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "(chưa xác nhận tên)",
+        "description": "Sau đòn Coda của Adagio, gây thêm sát thương Cryo diện rộng bằng 300% ATK (Stellar-Conduct) hoặc 450% ATK (Stellar Swirl); Spring Rite cấp thêm 2 điểm Marvelous Splendor; điểm này giảm chậm hơn (2 điểm/giây) khi rời sàn đấu."
+      },
+      {
+        "level": 2,
+        "name": "(chưa xác nhận tên)",
+        "description": "Mỗi điểm Marvelous Splendor +7% ATK; trong trạng thái Radiance khi có Dance Double, địch gần Double giảm 20% kháng Cryo/Electro (Conduct) hoặc Cryo/Anemo (Swirl)."
+      },
+      {
+        "level": 3,
+        "name": "(chưa xác nhận tên)",
+        "description": "Adagio: Phantom Night Dancers +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "(chưa xác nhận tên)",
+        "description": "Snow Swan's Dream cho cả đội +50% sát thương Stellar Glimmer; khi đội kích hoạt Stellar Glimmer, Odette phối hợp tấn công thêm 66% ATK (Conduct) hoặc 99% ATK (Swirl), mỗi 3.5s."
+      },
+      {
+        "level": 5,
+        "name": "(chưa xác nhận tên)",
+        "description": "Presto: Bluebird Finale +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "(chưa xác nhận tên)",
+        "description": "Marvelous Splendor không giảm khi cấp cho đồng đội; nhân vật nhận được +25% sát thương Stellar Glimmer, Odette +20% cộng thêm."
+      }
+    ],
+    "abyssRoleNotes": "Sub-DPS/hỗ trợ off-field, kích hoạt và khuếch đại phản ứng Stellar Glimmer (Stellar-Conduct với Electro, Stellar Swirl với Anemo) cho cả đội.",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "alyosha",
+    "name": "Alyosha",
+    "element": "Electro",
+    "weaponType": "Polearm",
+    "rarity": 4,
+    "nationInGame": "Snezhnaya",
+    "releaseDate": "2026-08-11 (~10–12/08/2026, bản 7.0, ngày chính xác chưa xác nhận)",
+    "baseStats": {
+      "lv1": {
+        "hp": 1002.97,
+        "atk": 22.26,
+        "def": 58.94
+      },
+      "lv90": {
+        "hp": 3588.61,
+        "atk": 79.65,
+        "def": 210.89,
+        "ascensionStatType": "Energy Recharge",
+        "ascensionStatValue": 0.2667
+      }
+    },
+    "normalAttack": {
+      "name": "Skirmishing Spear",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "47.82%",
+            "lv10": "94.52%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "48.16%",
+            "lv10": "95.2%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "34.23%+31.82%",
+            "lv10": "67.66%+62.9%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "75.85%",
+            "lv10": "149.94%"
+          }
+        },
+        {
+          "label": "Trọng kích",
+          "values": {
+            "lv1": "75.85%",
+            "lv10": "149.94%"
+          }
+        },
+        {
+          "label": "Nhảy thấp / cao",
+          "values": {
+            "lv1": "127.84% / 159.68%",
+            "lv10": "252.70% / 315.64%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Thunderbolt Strike",
+      "description": "Bấm nhanh hoặc Giữ gây DMG Electro, gắn Hunter's Mark (15s), cộng ATK theo Năng Lượng hồi.",
+      "scaling": [
+        {
+          "label": "Bấm nhanh DMG",
+          "values": {
+            "lv1": "286.72%",
+            "lv10": "516.10%"
+          }
+        },
+        {
+          "label": "Giữ DMG",
+          "values": {
+            "lv1": "358.4%",
+            "lv10": "645.12%"
+          }
+        },
+        {
+          "label": "Cộng ATK theo Năng Lượng hồi",
+          "values": {
+            "lv1": "11.66%",
+            "lv10": "21.2%"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Hunter's Advance",
+      "description": "Tạo Polestar Field gây DMG Electro liên tục, triệu hồi Tugarin tấn công (thời lượng 14s).",
+      "scaling": [
+        {
+          "label": "Sát thương vùng (Polestar Field)",
+          "values": {
+            "lv1": "74.96%",
+            "lv10": "134.93%"
+          }
+        },
+        {
+          "label": "Sát thương Tugarin",
+          "values": {
+            "lv1": "50.22%",
+            "lv10": "90.40%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "14s",
+            "lv10": "14s"
+          }
+        }
+      ],
+      "cooldown": "18s",
+      "energyCost": 70
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Awakened by the Baying Hounds",
+        "unlock": "A1",
+        "description": "Đòn tấn công của Tugarin hồi máu cho nhân vật đang chiến đấu gần đó bằng 120% ATK của Alyosha."
+      },
+      {
+        "name": "Suffer the Winter Wheat Will",
+        "unlock": "A4",
+        "description": "Sát thương kỹ năng/bùng nổ nguyên tố +0.35% mỗi 1% Energy Recharge (tối đa +70%)."
+      },
+      {
+        "name": "Into the Fray",
+        "unlock": "Passive",
+        "description": "Hunter's Precision cho +20% sát thương phản ứng Stellar-Conduct trong Polestar Field."
+      },
+      {
+        "name": "Treetop Watch",
+        "unlock": "Utility",
+        "description": "Hiện đặc sản Snezhnaya trên minimap."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Frostvale Thunderclap",
+        "description": "Khi đồng đội gần đó kích hoạt phản ứng liên quan Electro, hồi 15 Năng Lượng cho Alyosha (hồi chiêu 18s)."
+      },
+      {
+        "level": 2,
+        "name": "Howl From Afar",
+        "description": "Elemental Burst kéo dài thêm 6s; Tugarin gắn Hunter's Mark lên mục tiêu trước mỗi đòn tấn công."
+      },
+      {
+        "level": 3,
+        "name": "Friendly Call",
+        "description": "Thunderbolt Strike +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Harvest the Spoils",
+        "description": "Tugarin hồi máu bằng 60% ATK của Alyosha cho thành viên có HP thấp nhất."
+      },
+      {
+        "level": 5,
+        "name": "When the Nightbird Falls Silent",
+        "description": "Hunter's Advance +3 cấp (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "Standard Reclaimed",
+        "description": "Hunter's Precision cộng dồn tối đa 2 lần; ở 2 lần, cấp 100 Elemental Mastery cho nhân vật đang chiến đấu."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ off-field hồi máu + buff sát thương theo Energy Recharge, chủ lực trong đội Stellar-Conduct (Electro-Cryo, ví dụ cùng Sandrone/Odette).",
+    "sourceFile": "nhan-vat/liyue.md"
+  }
+]

@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "character.schema.json",
+  "title": "Character",
+  "description": "Một nhân vật Genshin Impact có thể chơi được. Nhà Lữ Hành (Traveler) được tách thành một entry riêng cho mỗi nguyên tố đã cộng hưởng (id dạng traveler-anemo, traveler-pyro, ...) vì mỗi nguyên tố là một lựa chọn đội hình khác nhau.",
+  "type": "object",
+  "required": ["id", "name", "element", "weaponType", "rarity", "nationInGame", "baseStats", "normalAttack", "elementalSkill", "elementalBurst", "passives", "constellations", "sourceFile"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "slug kebab-case, không dấu, vd. hu-tao, traveler-pyro" },
+    "name": { "type": "string" },
+    "element": { "type": "string", "enum": ["Anemo", "Geo", "Electro", "Dendro", "Hydro", "Pyro", "Cryo"] },
+    "weaponType": { "type": "string", "enum": ["Sword", "Claymore", "Polearm", "Bow", "Catalyst"] },
+    "rarity": { "type": "integer", "enum": [4, 5] },
+    "nationInGame": { "type": "string", "description": "Quốc gia hiển thị trong game (region), không phải quê quán cốt truyện" },
+    "releaseDate": { "type": ["string", "null"] },
+    "baseStats": {
+      "type": "object",
+      "required": ["lv1", "lv90"],
+      "properties": {
+        "lv1": {
+          "type": "object",
+          "required": ["hp", "atk", "def"],
+          "properties": {
+            "hp": { "type": ["number", "null"] },
+            "atk": { "type": ["number", "null"] },
+            "def": { "type": ["number", "null"] }
+          }
+        },
+        "lv90": {
+          "type": "object",
+          "required": ["hp", "atk", "def", "ascensionStatType", "ascensionStatValue"],
+          "description": "Cấp 90, đột phá 6 (hoàn thiện)",
+          "properties": {
+            "hp": { "type": ["number", "null"] },
+            "atk": { "type": ["number", "null"] },
+            "def": { "type": ["number", "null"] },
+            "ascensionStatType": { "type": ["string", "null"], "description": "vd. CRIT Rate, CRIT DMG, Elemental Mastery, Energy Recharge, HP%, ATK%, DEF%, Physical DMG Bonus, Pyro DMG Bonus..." },
+            "ascensionStatValue": { "type": ["number", "null"], "description": "Số thập phân (0.331 = 33.1%); số nguyên thô nếu là Elemental Mastery" }
+          }
+        }
+      }
+    },
+    "normalAttack": {
+      "type": "object",
+      "required": ["name", "hits"],
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "hits": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["label", "values"],
+            "properties": {
+              "label": { "type": "string", "description": "vd. Đòn 1, Đòn 2, Trọng kích, Nhảy (rơi/thấp/cao)" },
+              "values": { "type": "object", "description": "map cấp -> giá trị dạng text nguyên văn, vd. { \"lv1\": \"44.5% ATK\", \"lv10\": \"87.9% ATK\" }", "additionalProperties": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "elementalSkill": { "$ref": "#/definitions/talent" },
+    "elementalBurst": { "$ref": "#/definitions/talent" },
+    "additionalTalents": {
+      "type": "array",
+      "description": "Passive/kỹ năng phụ đặc biệt không thuộc 4 nhóm chuẩn (Additional Talent của Traveler, Nightsoul's Blessing riêng, v.v.)",
+      "items": { "$ref": "#/definitions/talent" }
+    },
+    "passives": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "unlock", "description"],
+        "properties": {
+          "name": { "type": "string" },
+          "unlock": { "type": "string", "description": "vd. A1, A4, Ascension 1" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "constellations": {
+      "type": "array",
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "required": ["level", "name", "description"],
+        "properties": {
+          "level": { "type": "integer", "minimum": 1, "maximum": 6 },
+          "name": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "abyssRoleNotes": { "type": ["string", "null"], "description": "Vai trò gợi ý cho Trầm Thủy (DPS chính/phụ, support, khiên, heal), combo nguyên tố phổ biến" },
+    "sourceFile": { "type": "string", "description": "File markdown gốc trong nhan-vat/, để đối chiếu" }
+  },
+  "definitions": {
+    "talent": {
+      "type": "object",
+      "required": ["name", "description", "scaling"],
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "description": { "type": "string" },
+        "scaling": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["label", "values"],
+            "properties": {
+              "label": { "type": "string" },
+              "values": { "type": "object", "additionalProperties": { "type": "string" } }
+            }
+          }
+        },
+        "cooldown": { "type": ["string", "null"] },
+        "energyCost": { "type": ["number", "null"] }
+      }
+    }
+  }
+}

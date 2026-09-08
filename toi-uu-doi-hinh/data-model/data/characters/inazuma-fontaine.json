@@ -1,0 +1,4763 @@
+[
+  {
+    "id": "kamisato-ayaka",
+    "name": "Kamisato Ayaka",
+    "element": "Cryo",
+    "weaponType": "Sword",
+    "rarity": 5,
+    "nationInGame": "Inazuma",
+    "releaseDate": "2021-07-20",
+    "baseStats": {
+      "lv1": {
+        "hp": 1001,
+        "atk": 27,
+        "def": 61
+      },
+      "lv90": {
+        "hp": 12858,
+        "atk": 342,
+        "def": 784,
+        "ascensionStatType": "CRIT DMG",
+        "ascensionStatValue": 0.384
+      }
+    },
+    "normalAttack": {
+      "name": "Kamisato Art: Kabuki",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "45.7%",
+            "lv10": "90.4%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "48.7%",
+            "lv10": "96.2%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "62.6%",
+            "lv10": "123.8%"
+          }
+        },
+        {
+          "label": "4-Hit (×3)",
+          "values": {
+            "lv1": "22.6%",
+            "lv10": "44.8%"
+          }
+        },
+        {
+          "label": "5-Hit",
+          "values": {
+            "lv1": "78.2%",
+            "lv10": "154.5%"
+          }
+        },
+        {
+          "label": "Đòn nặng (×3)",
+          "values": {
+            "lv1": "55.1%",
+            "lv10": "109.0%"
+          }
+        },
+        {
+          "label": "Sát thương nhảy thấp/cao",
+          "values": {
+            "lv1": "127.8%/159.7%",
+            "lv10": "252.7%/315.6%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Kamisato Art: Hyouka",
+      "description": "Triệu hồi băng nở rộ, hất tung địch quanh Ayaka và gây sát thương AoE Cryo. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "239.2%",
+            "lv10": "430.6%",
+            "lv13": "568.1%"
+          }
+        }
+      ],
+      "cooldown": "10s",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "Kamisato Art: Soumetsu",
+      "description": "Triệu hồi bão tuyết Frostflake Seki no To lướt về phía trước, liên tục chém gây Cryo DMG rồi nổ tung gây AoE Cryo DMG cuối màn. Cấp kỹ năng được C3 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương chém",
+          "values": {
+            "lv1": "112.3%",
+            "lv10": "202.1%",
+            "lv13": "266.7%"
+          }
+        },
+        {
+          "label": "Sát thương nổ",
+          "values": {
+            "lv1": "168.5%",
+            "lv10": "303.2%",
+            "lv13": "400.1%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "5.0s",
+            "lv10": "5.0s",
+            "lv13": "5.0s"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 80
+    },
+    "additionalTalents": [
+      {
+        "name": "Kamisato Art: Senho",
+        "description": "Đòn giữ/né đặc biệt (cấp cố định 1): tiêu Thể lực để lướt trên mặt nước trong màn sương lạnh; khi thoát trạng thái, gây Cryo diện rộng quanh Ayaka và tráng Cryo lên đòn đánh trong thời gian ngắn. Tiêu 10 Thể lực để kích hoạt, hao 15 Thể lực/giây, thời gian tráng nguyên tố 5s.",
+        "scaling": [],
+        "cooldown": null,
+        "energyCost": null
+      }
+    ],
+    "passives": [
+      {
+        "name": "Amatsumi Kunitsumi Sanctification",
+        "unlock": "A1",
+        "description": "Sau khi dùng Hyouka, đòn thường/nặng của Ayaka tăng 30% sát thương trong 6s."
+      },
+      {
+        "name": "Kanten Senmyou Blessing",
+        "unlock": "A4",
+        "description": "Khi Cryo cuối đòn Senho trúng địch, Ayaka hồi 10 Thể lực và nhận 18% Cryo DMG Bonus trong 10s."
+      },
+      {
+        "name": "Fruits of Shinsa",
+        "unlock": "Utility",
+        "description": "10% cơ hội nhân đôi nguyên liệu đột phá vũ khí khi chế tạo."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Snowswept Sakura",
+        "description": "Đòn thường/nặng gây Cryo DMG có 50% cơ hội giảm CD Hyouka 0.3s (tối đa 1 lần/0.1s)."
+      },
+      {
+        "level": 2,
+        "name": "Blizzard Blade Seki no To",
+        "description": "Khi dùng Soumetsu, tung thêm 2 Frostflake Seki no To nhỏ, mỗi cái gây 20% sát thương bão gốc."
+      },
+      {
+        "level": 3,
+        "name": "Frostbloom Kamifubuki",
+        "description": "Tăng cấp Soumetsu thêm 3 (tối đa cấp 15 theo hệ thống, thực tế đạt 13)."
+      },
+      {
+        "level": 4,
+        "name": "Ebb and Flow",
+        "description": "Địch trúng Frostflake Seki no To của Soumetsu giảm 30% DEF trong 6s."
+      },
+      {
+        "level": 5,
+        "name": "Blossom Cloud Irutsuki",
+        "description": "Tăng cấp Hyouka thêm 3 (thực tế đạt 13)."
+      },
+      {
+        "level": 6,
+        "name": "Dance of Suigetsu",
+        "description": "Cứ 10s Ayaka nhận Usurahi Butou, tăng 298% sát thương đòn nặng; hiệu ứng biến mất 0.5s sau khi đòn nặng trúng địch rồi khởi động lại đếm giờ."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính Cryo on-field dựa vào Hyouka + Soumetsu để đóng băng diện rộng. Combo phổ biến: Đóng băng (Cryo-Hydu) với Kokomi/Yelan, hoặc Tan chảy (Cryo-Pyro) với Xiangling/Bennett làm phụ trợ.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "yoimiya",
+    "name": "Yoimiya",
+    "element": "Pyro",
+    "weaponType": "Bow",
+    "rarity": 5,
+    "nationInGame": "Inazuma",
+    "releaseDate": "2021-08-10",
+    "baseStats": {
+      "lv1": {
+        "hp": 791,
+        "atk": 25,
+        "def": 48
+      },
+      "lv90": {
+        "hp": 10164,
+        "atk": 323,
+        "def": 615,
+        "ascensionStatType": "CRIT Rate",
+        "ascensionStatValue": 0.192
+      }
+    },
+    "normalAttack": {
+      "name": "Firework Flare-Up",
+      "hits": [
+        {
+          "label": "1-Hit (×2)",
+          "values": {
+            "lv1": "35.6%",
+            "lv10": "63.6%"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "68.4%",
+            "lv10": "122.0%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "88.9%",
+            "lv10": "158.6%"
+          }
+        },
+        {
+          "label": "4-Hit (×2)",
+          "values": {
+            "lv1": "46.4%",
+            "lv10": "82.8%"
+          }
+        },
+        {
+          "label": "5-Hit",
+          "values": {
+            "lv1": "105.9%",
+            "lv10": "188.9%"
+          }
+        },
+        {
+          "label": "Aimed Shot",
+          "values": {
+            "lv1": "43.9%",
+            "lv10": "86.7%"
+          }
+        },
+        {
+          "label": "Aimed Shot sạc đầy",
+          "values": {
+            "lv1": "124.0%",
+            "lv10": "223.2%"
+          }
+        },
+        {
+          "label": "Kindling Arrow",
+          "values": {
+            "lv1": "16.4%",
+            "lv10": "29.5%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Niwabi Fire-Dance",
+      "description": "Tạo vòng pháo hoa quanh Yoimiya, đòn thường trong thời gian này biến thành Blazing Arrow, gây Pyro DMG tăng thêm. Cấp kỹ năng được C3 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Blazing Arrow DMG (% ST đòn thường)",
+          "values": {
+            "lv1": "137.9%",
+            "lv10": "161.7%",
+            "lv13": "176.5%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "10.0s",
+            "lv10": "10.0s",
+            "lv13": "10.0s"
+          }
+        }
+      ],
+      "cooldown": "18s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Ryuukin Saxifrage",
+      "description": "Nhảy lên bắn tên lửa gây AoE Pyro DMG, đánh dấu Aurous Blaze lên 1 địch — đồng đội (trừ Yoimiya) đánh trúng địch đánh dấu sẽ kích nổ gây thêm AoE Pyro DMG. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "127.2%",
+            "lv10": "229.0%",
+            "lv13": "302.1%"
+          }
+        },
+        {
+          "label": "Sát thương nổ Aurous Blaze",
+          "values": {
+            "lv1": "122.0%",
+            "lv10": "219.6%",
+            "lv13": "289.8%"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Tricks of the Trouble-Maker",
+        "unlock": "A1",
+        "description": "Trong Niwabi Fire-Dance, mỗi phát đòn thường trúng địch tăng 2% Pyro DMG Bonus (tối đa 10 lớp, 3s/lớp)."
+      },
+      {
+        "name": "Summer Night's Dawn",
+        "unlock": "A4",
+        "description": "Dùng Ryuukin Saxifrage cho đồng đội (trừ Yoimiya) +10% ATK trong 15s, cộng thêm 1%/lớp Trouble-Maker đang có."
+      },
+      {
+        "name": "Blazing Match",
+        "unlock": "Utility",
+        "description": "100% hoàn trả một phần nguyên liệu khi chế tạo đồ nội thất loại Trang trí/Vật phẩm/Cảnh quan."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Agate Ryuukin",
+        "description": "Aurous Blaze kéo dài thêm 4s; hạ gục địch trong thời gian này giúp Yoimiya +20% ATK trong 20s."
+      },
+      {
+        "level": 2,
+        "name": "A Procession of Bonfires",
+        "description": "Pyro DMG chí mạng cho Yoimiya +25% Pyro DMG Bonus trong 6s (kích hoạt cả khi không ở tiền tuyến)."
+      },
+      {
+        "level": 3,
+        "name": "Trickster's Flare",
+        "description": "Tăng cấp Niwabi Fire-Dance thêm 3 (thực tế 13)."
+      },
+      {
+        "level": 4,
+        "name": "Pyrotechnic Professional",
+        "description": "Aurous Blaze tự nổ giảm CD Niwabi Fire-Dance 1.2s."
+      },
+      {
+        "level": 5,
+        "name": "A Summer Festival's Eve",
+        "description": "Tăng cấp Ryuukin Saxifrage thêm 3 (thực tế 13)."
+      },
+      {
+        "level": 6,
+        "name": "Naganohara Meteor Swarm",
+        "description": "Trong Niwabi Fire-Dance, đòn thường có 50% cơ hội bắn thêm 1 Blazing Arrow gây 60% sát thương gốc."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính Pyro bền bỉ dùng đòn thường liên tục, không cần nhắm elemental burst spam. Combo phổ biến: Thuận Pyro (Pyro mono/Pyro-Dendro Burning) hoặc Tan chảy (Pyro-Hydro) cùng Kokomi/Xingqiu hỗ trợ khiên + hồi máu.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "sayu",
+    "name": "Sayu",
+    "element": "Anemo",
+    "weaponType": "Claymore",
+    "rarity": 4,
+    "nationInGame": "Inazuma",
+    "releaseDate": "2021-08-10",
+    "baseStats": {
+      "lv1": {
+        "hp": 994,
+        "atk": 20,
+        "def": 62
+      },
+      "lv90": {
+        "hp": 11860,
+        "atk": 244,
+        "def": 745,
+        "ascensionStatType": "Elemental Mastery",
+        "ascensionStatValue": 96
+      }
+    },
+    "normalAttack": {
+      "name": "Shuumatsuban Ninja Blade",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "72.2%",
+            "lv10": "142.8%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "98.1%",
+            "lv10": "194.0%"
+          }
+        },
+        {
+          "label": "Đòn nặng xoay",
+          "values": {
+            "lv1": "62.5%",
+            "lv10": "123.6%"
+          }
+        },
+        {
+          "label": "Đòn nặng kết thúc",
+          "values": {
+            "lv1": "113.1%",
+            "lv10": "223.6%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Yoohoo Art: Fuuin Dash",
+      "description": "Cuộn thành bánh xe gió lao vào địch gây Anemo DMG, hết giờ tung cước gió AoE.",
+      "scaling": [
+        {
+          "label": "Fuufuu Windwheel DMG",
+          "values": {
+            "lv1": "36.0%",
+            "lv10": "64.8%"
+          }
+        },
+        {
+          "label": "Whirlwind Kick (bấm)",
+          "values": {
+            "lv1": "158.4%",
+            "lv10": "285.1%"
+          }
+        },
+        {
+          "label": "Whirlwind Kick (giữ)",
+          "values": {
+            "lv1": "217.6%",
+            "lv10": "391.7%"
+          }
+        }
+      ],
+      "cooldown": "6–11s (thay đổi theo thời gian giữ)",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Yoohoo Art: Mujina Flurry",
+      "description": "Gây Anemo DMG + hồi máu đồng đội gần đó theo ATK, triệu hồi Muji-Muji Daruma tự động tấn công hoặc hồi máu tuỳ HP đồng đội. Sayu không có cung mệnh tăng cấp kỹ năng — tối đa cấp 10.",
+      "scaling": [
+        {
+          "label": "Sát thương kích hoạt",
+          "values": {
+            "lv1": "116.8%",
+            "lv10": "210.2%"
+          }
+        },
+        {
+          "label": "Hồi máu kích hoạt",
+          "values": {
+            "lv1": "92.2% ATK+577",
+            "lv10": "165.9% ATK+1270"
+          }
+        },
+        {
+          "label": "Sát thương Daruma",
+          "values": {
+            "lv1": "52.0%",
+            "lv10": "93.6%"
+          }
+        },
+        {
+          "label": "Hồi máu Daruma",
+          "values": {
+            "lv1": "79.9% ATK+500",
+            "lv10": "143.8% ATK+1101"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 80
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Someone More Capable",
+        "unlock": "A1",
+        "description": "Khi Sayu on-field kích hoạt phản ứng Xoáy Cuốn (Swirl)/Xoáy Cuốn Sao, hồi 300 HP cho cả đội + 1.2 HP/điểm EM (1 lần/2s)."
+      },
+      {
+        "name": "No Work Today!",
+        "unlock": "A4",
+        "description": "Daruma khi hồi máu 1 người sẽ lan 20% HP đó cho người gần đó; tăng phạm vi tấn công của Daruma."
+      },
+      {
+        "name": "Yoohoo Art: Silencer's Secret",
+        "unlock": "Utility",
+        "description": "Không làm giật mình sinh vật hoang dã khi có Sayu trong đội."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Multi-Task no Jutsu",
+        "description": "Daruma bỏ qua giới hạn HP, vừa tấn công vừa hồi máu cùng lúc."
+      },
+      {
+        "level": 2,
+        "name": "Egress Prep",
+        "description": "Whirlwind Kick (bấm) +3.3% DMG; mỗi 0.5s giữ Fuuin Dash +3.3% DMG Whirlwind Kick (tối đa +66%)."
+      },
+      {
+        "level": 3,
+        "name": "Eh, the Bunshin Can Handle It",
+        "description": "Tăng cấp Mujina Flurry thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "Skiving: New and Improved",
+        "description": "Kích hoạt Swirl/Xoáy Cuốn Sao hồi 1.2 năng lượng (1 lần/2s)."
+      },
+      {
+        "level": 5,
+        "name": "Speed Comes First",
+        "description": "Tăng cấp Fuuin Dash thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "Sleep O'Clock",
+        "description": "Daruma hưởng lợi từ EM của Sayu: +0.2% ATK sát thương/điểm EM (tối đa +400% ATK) và +3 HP hồi/điểm EM (tối đa +6000 HP)."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ tạo phản ứng Xoáy Cuốn (Swirl) lan nguyên tố diện rộng kiêm hồi máu tự động qua Daruma, gần như không cần đứng lại. Combo phổ biến: đội Xoáy Cuốn EM cao (Anemo-Electro/Anemo-Hydro) hoặc đi cùng Traveler Anemo để tăng lan toả nguyên tố.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "raiden-shogun",
+    "name": "Raiden Shogun",
+    "element": "Electro",
+    "weaponType": "Polearm",
+    "rarity": 5,
+    "nationInGame": "Inazuma",
+    "releaseDate": "2021-08-31",
+    "baseStats": {
+      "lv1": {
+        "hp": 1005,
+        "atk": 26,
+        "def": 61
+      },
+      "lv90": {
+        "hp": 12907,
+        "atk": 337,
+        "def": 789,
+        "ascensionStatType": "Energy Recharge",
+        "ascensionStatValue": 0.32
+      }
+    },
+    "normalAttack": {
+      "name": "Origin",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "39.6%",
+            "lv10": "78.4%"
+          }
+        },
+        {
+          "label": "5-Hit",
+          "values": {
+            "lv1": "65.4%",
+            "lv10": "129.4%"
+          }
+        },
+        {
+          "label": "Đòn nặng",
+          "values": {
+            "lv1": "99.6%",
+            "lv10": "196.9%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Transcendence: Baleful Omen",
+      "description": "Mở mảnh Euthymia gây Electro DMG quanh mình, ban Eye of Stormy Judgment cho đồng đội gần đó — đòn đánh trúng địch của người mang Eye sẽ kích hoạt đòn phối hợp Electro AoE và tăng DMG bùng nổ nguyên tố theo % năng lượng tối đa. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "117.2%",
+            "lv10": "211.0%",
+            "lv13": "278.4%"
+          }
+        },
+        {
+          "label": "Đòn phối hợp DMG",
+          "values": {
+            "lv1": "42.0%",
+            "lv10": "75.6%",
+            "lv13": "99.8%"
+          }
+        },
+        {
+          "label": "Tăng DMG Burst /điểm NL",
+          "values": {
+            "lv1": "0.22%",
+            "lv10": "0.30%",
+            "lv13": "0.30%"
+          }
+        },
+        {
+          "label": "Thời lượng Eye",
+          "values": {
+            "lv1": "25.0s",
+            "lv10": "25.0s",
+            "lv13": "25.0s"
+          }
+        }
+      ],
+      "cooldown": "10s",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "Secret Art: Musou Shinsetsu",
+      "description": "Tung Musou no Hitotachi gây AoE Electro DMG (tăng theo số lớp Resolve tiêu thụ), sau đó vào trạng thái Musou Isshin dùng đao chiến đấu. Cấp kỹ năng được C3 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Musou no Hitotachi (DMG gốc)",
+          "values": {
+            "lv1": "400.8%",
+            "lv10": "721.4%",
+            "lv13": "951.9%"
+          }
+        },
+        {
+          "label": "Resolve Bonus (khởi điểm/mỗi lớp)",
+          "values": {
+            "lv1": "3.89%/0.73% ATK",
+            "lv10": "7.00%/1.31% ATK",
+            "lv13": "9.23%/1.72% ATK"
+          }
+        },
+        {
+          "label": "Thời lượng Musou Isshin",
+          "values": {
+            "lv1": "7.0s",
+            "lv10": "7.0s",
+            "lv13": "7.0s"
+          }
+        }
+      ],
+      "cooldown": "18s",
+      "energyCost": 90
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Wishes Unnumbered",
+        "unlock": "A1",
+        "description": "Đồng đội gần đó nhận Orb/Particle nguyên tố giúp Chakra Desiderata +2 lớp Resolve (1 lần/3s)."
+      },
+      {
+        "name": "Enlightened One",
+        "unlock": "A4",
+        "description": "Mỗi 1% Energy Recharge vượt 100% cho +0.6% hồi năng lượng khi thoát Musou Isshin và +0.4% Electro DMG Bonus."
+      },
+      {
+        "name": "All-Preserver",
+        "unlock": "Utility",
+        "description": "Giảm 50% Mora khi đột phá Kiếm và Trường thương."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Ominous Inscription",
+        "description": "Tích Resolve nhanh hơn; nhân vật Electro dùng Burst tích thêm 80% Resolve, nguyên tố khác +20%."
+      },
+      {
+        "level": 2,
+        "name": "Steelbreaker",
+        "description": "Khi ở Musou Isshin, đòn đánh xuyên 60% DEF địch."
+      },
+      {
+        "level": 3,
+        "name": "Shinkage Bygones",
+        "description": "Tăng cấp Musou Shinsetsu thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "Pledge of Propriety",
+        "description": "Hết Musou Isshin, đồng đội (trừ Raiden) +30% ATK trong 10s."
+      },
+      {
+        "level": 5,
+        "name": "Shogun's Descent",
+        "description": "Tăng cấp Transcendence: Baleful Omen thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "Wishbearer",
+        "description": "Đòn Burst trong Musou Isshin giảm CD Burst đồng đội 1s khi trúng địch (1 lần/1s, tối đa 5 lần/lượt Musou Isshin)."
+      }
+    ],
+    "abyssRoleNotes": "Hybrid hỗ trợ năng lượng + sub-DPS Electro hàng đầu, gần như bắt buộc trong mọi đội cần xoay vòng burst liên tục. Combo phổ biến: Quá Tải/Cảm Ứng Siêu Dẫn (Electro-Pyro/Electro-Cryo) hoặc đội tán xạ (Electro-Anemo/Electro-Hydro) tận dụng Eye of Stormy Judgment.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "kujou-sara",
+    "name": "Kujou Sara",
+    "element": "Electro",
+    "weaponType": "Bow",
+    "rarity": 4,
+    "nationInGame": "Inazuma",
+    "releaseDate": "2021-08-31",
+    "baseStats": {
+      "lv1": {
+        "hp": 802,
+        "atk": 16,
+        "def": 53
+      },
+      "lv90": {
+        "hp": 9575,
+        "atk": 196,
+        "def": 628,
+        "ascensionStatType": "ATK%",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Tengu Bowmanship",
+      "hits": [
+        {
+          "label": "Aimed Shot",
+          "values": {
+            "lv1": "43.9%",
+            "lv10": "86.7%"
+          }
+        },
+        {
+          "label": "Aimed Shot sạc đầy",
+          "values": {
+            "lv1": "124.0%",
+            "lv10": "223.2%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Tengu Stormcall",
+      "description": "Lùi nhanh, nhận Crowfeather Cover 18s; Aimed Shot sạc đầy sẽ để lại Crowfeather kích hoạt Tengu Juurai: Ambush gây Electro DMG và cấp ATK Bonus theo ATK cơ bản của Sara cho người trong vùng.",
+      "scaling": [
+        {
+          "label": "Ambush DMG",
+          "values": {
+            "lv1": "125.8%",
+            "lv10": "226.4%"
+          }
+        },
+        {
+          "label": "Tỉ lệ ATK Bonus (theo ATK cơ bản Sara)",
+          "values": {
+            "lv1": "43.0%",
+            "lv10": "77.3%"
+          }
+        },
+        {
+          "label": "Thời lượng ATK Bonus",
+          "values": {
+            "lv1": "6.0s",
+            "lv10": "6.0s"
+          }
+        }
+      ],
+      "cooldown": "10s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Subjugation: Koukou Sendou",
+      "description": "Giáng Tengu Juurai: Titanbreaker gây AoE Electro DMG, sau đó tách thành 4 đợt Stormcluster, đều có thể cấp ATK Bonus như kỹ năng. Sara không có cung mệnh tăng cấp kỹ năng — tối đa cấp 10.",
+      "scaling": [
+        {
+          "label": "Titanbreaker DMG",
+          "values": {
+            "lv1": "409.6%",
+            "lv10": "737.3%"
+          }
+        },
+        {
+          "label": "Stormcluster DMG (mỗi đợt)",
+          "values": {
+            "lv1": "34.1%",
+            "lv10": "61.4%"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 80
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Immovable Will",
+        "unlock": "A1",
+        "description": "Trong Crowfeather Cover, thời gian sạc Aimed Shot giảm 60%."
+      },
+      {
+        "name": "Decorum",
+        "unlock": "A4",
+        "description": "Tengu Juurai: Ambush trúng địch hồi 1.2 năng lượng toàn đội mỗi 100% Energy Recharge của Sara (1 lần/3s)."
+      },
+      {
+        "name": "Land Survey",
+        "unlock": "Utility",
+        "description": "Giảm 25% thời gian thám hiểm tại Inazuma."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Crow's Eye",
+        "description": "Tengu Juurai cấp ATK hoặc trúng địch giảm CD Tengu Stormcall 1s (1 lần/3s)."
+      },
+      {
+        "level": 2,
+        "name": "Dark Wings",
+        "description": "Dùng Tengu Stormcall để lại Crowfeather yếu tại vị trí cũ, gây 30% sát thương gốc."
+      },
+      {
+        "level": 3,
+        "name": "The War Within",
+        "description": "Tăng cấp Koukou Sendou thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "Conclusive Proof",
+        "description": "Koukou Sendou tăng số đợt Stormcluster lên 6."
+      },
+      {
+        "level": 5,
+        "name": "Spellsinger",
+        "description": "Tăng cấp Tengu Stormcall thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "Sin of Pride",
+        "description": "Nhân vật được Tengu Juurai cấp ATK có Electro DMG khi chí mạng +60% Crit DMG."
+      }
+    ],
+    "abyssRoleNotes": "Buffer ATK% chuyên biệt cho DPS Electro/dùng phản ứng Electro (Quá Tải, Cảm Ứng Siêu Dẫn, Kết Tinh). Combo phổ biến: đi cùng Raiden Shogun/Itto để cộng dồn ATK Bonus, hoặc đội Quá Tải Electro-Pyro.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "sangonomiya-kokomi",
+    "name": "Sangonomiya Kokomi",
+    "element": "Hydro",
+    "weaponType": "Catalyst",
+    "rarity": 5,
+    "nationInGame": "Inazuma",
+    "releaseDate": "2021-09-21",
+    "baseStats": {
+      "lv1": {
+        "hp": 1049,
+        "atk": 18,
+        "def": 51
+      },
+      "lv90": {
+        "hp": 13470,
+        "atk": 234,
+        "def": 657,
+        "ascensionStatType": "Hydro DMG Bonus",
+        "ascensionStatValue": 0.288
+      }
+    },
+    "normalAttack": {
+      "name": "The Shape of Water",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "68.4%",
+            "lv10": "123.1%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "94.3%",
+            "lv10": "169.8%"
+          }
+        },
+        {
+          "label": "Đòn nặng",
+          "values": {
+            "lv1": "148.3%",
+            "lv10": "267.0%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Kurage's Oath",
+      "description": "Triệu hồi Bake-Kurage gây Hydro DMG quanh mình theo chu kỳ và hồi máu đồng đội gần đó theo Max HP. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Hồi máu/nhịp",
+          "values": {
+            "lv1": "4.4% MaxHP+424",
+            "lv10": "7.9% MaxHP+932",
+            "lv13": "9.3% MaxHP+1165"
+          }
+        },
+        {
+          "label": "Sát thương gợn sóng",
+          "values": {
+            "lv1": "109.2%",
+            "lv10": "196.5%",
+            "lv13": "232.0%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "12.0s",
+            "lv10": "12.0s",
+            "lv13": "12.0s"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "Nereid's Ascension",
+      "description": "Gây Hydro DMG quanh mình rồi khoác Ceremonial Garment — tăng sát thương đòn thường/nặng/Bake-Kurage theo Max HP và hồi máu đồng đội khi đòn thường/nặng trúng địch. Cấp kỹ năng được C3 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "10.4% MaxHP",
+            "lv10": "18.7% MaxHP",
+            "lv13": "22.1% MaxHP"
+          }
+        },
+        {
+          "label": "Bonus đòn thường",
+          "values": {
+            "lv1": "4.8% MaxHP",
+            "lv10": "8.7% MaxHP",
+            "lv13": "10.3% MaxHP"
+          }
+        },
+        {
+          "label": "Bonus đòn nặng",
+          "values": {
+            "lv1": "6.8% MaxHP",
+            "lv10": "12.2% MaxHP",
+            "lv13": "14.4% MaxHP"
+          }
+        },
+        {
+          "label": "Hồi máu/đòn",
+          "values": {
+            "lv1": "0.81% MaxHP+77",
+            "lv10": "1.45% MaxHP+170",
+            "lv13": "1.72% MaxHP+212"
+          }
+        }
+      ],
+      "cooldown": "18s",
+      "energyCost": 70
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Tamakushi Casket",
+        "unlock": "A1",
+        "description": "Dùng Nereid's Ascension khi Bake-Kurage của mình còn tồn tại sẽ làm mới thời lượng Bake-Kurage."
+      },
+      {
+        "name": "Song of Pearls",
+        "unlock": "A4",
+        "description": "Khi khoác Ceremonial Garment, bonus DMG theo Max HP được cộng thêm 15% Healing Bonus của Kokomi."
+      },
+      {
+        "name": "Princess of Watatsumi",
+        "unlock": "Utility",
+        "description": "Giảm 20% tiêu hao Thể lực khi bơi cho cả đội."
+      },
+      {
+        "name": "Flawless Strategy",
+        "unlock": "Mặc định mở khoá",
+        "description": "+25% Healing Bonus nhưng −100% Crit Rate."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "At Water's Edge",
+        "description": "Khi khoác Ceremonial Garment, đòn thường cuối combo tung thêm cá bơi gây 30% Max HP Hydro DMG (không tính là ST đòn thường)."
+      },
+      {
+        "level": 2,
+        "name": "The Clouds Like Waves Rippling",
+        "description": "Tăng hồi máu cho mục tiêu ≤50% HP: Bake-Kurage +4.5% MaxHP, đòn thường/nặng +0.6% MaxHP."
+      },
+      {
+        "level": 3,
+        "name": "The Moon, A Ship O'er the Seas",
+        "description": "Tăng cấp Nereid's Ascension thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "The Moon Overlooks the Waters",
+        "description": "Khi khoác Ceremonial Garment, tốc đánh thường +10% và đòn thường trúng địch hồi 0.8 năng lượng (1 lần/0.2s)."
+      },
+      {
+        "level": 5,
+        "name": "All Streams Flow to the Sea",
+        "description": "Tăng cấp Kurage's Oath thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "Sango Isshin",
+        "description": "Khi khoác Ceremonial Garment, đòn thường/nặng hồi máu (hoặc sẽ hồi máu) cho đồng đội ≥80% HP giúp Kokomi +40% Hydro DMG Bonus trong 4s."
+      }
+    ],
+    "abyssRoleNotes": "Support/sub-DPS hồi máu diện rộng theo % Max HP, gần như không thể chết, thường build HP thay vì Crit. Combo phổ biến: đóng băng (Hydro-Cryo) cùng Chongyun/Kaeya, hoặc Bắt Điện (Hydro-Electro) làm nền tảng phản ứng cho cả đội.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "thoma",
+    "name": "Thoma",
+    "element": "Pyro",
+    "weaponType": "Polearm",
+    "rarity": 4,
+    "nationInGame": "Inazuma",
+    "releaseDate": "2021-11-02",
+    "baseStats": {
+      "lv1": {
+        "hp": 866,
+        "atk": 17,
+        "def": 63
+      },
+      "lv90": {
+        "hp": 10336,
+        "atk": 202,
+        "def": 751,
+        "ascensionStatType": "ATK%",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Swiftshatter Spear",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "44.4%",
+            "lv10": "87.8%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "67.4%",
+            "lv10": "133.1%"
+          }
+        },
+        {
+          "label": "Đòn nặng",
+          "values": {
+            "lv1": "112.7%",
+            "lv10": "222.9%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Blazing Blessing",
+      "description": "Bay lên đá gây AoE Pyro DMG, tự tráng Pyro lên mình và tạo khiên Blazing Barrier (hấp thụ Pyro DMG hiệu quả hơn 250%) theo Max HP. Cấp kỹ năng được C3 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "146.4%",
+            "lv10": "263.5%",
+            "lv13": "311.1%"
+          }
+        },
+        {
+          "label": "Khiên hấp thụ",
+          "values": {
+            "lv1": "7.2% MaxHP+693",
+            "lv10": "13.0% MaxHP+1526",
+            "lv13": "15.3% MaxHP+1907"
+          }
+        },
+        {
+          "label": "Khiên tối đa (stack)",
+          "values": {
+            "lv1": "19.6% MaxHP+1887",
+            "lv10": "35.3% MaxHP+4153",
+            "lv13": "41.6% MaxHP+5191"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Crimson Ooyoroi",
+      "description": "Xoay thương gây AoE Pyro DMG và khoác Scorching Ooyoroi — đòn thường của nhân vật đang chiến đấu kích hoạt Fiery Collapse gây AoE Pyro DMG + tạo thêm Blazing Barrier. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "88.0%",
+            "lv10": "158.4%",
+            "lv13": "187.0%"
+          }
+        },
+        {
+          "label": "Fiery Collapse DMG",
+          "values": {
+            "lv1": "58.0%",
+            "lv10": "104.4%",
+            "lv13": "123.2%"
+          }
+        },
+        {
+          "label": "Thời lượng Ooyoroi",
+          "values": {
+            "lv1": "15.0s",
+            "lv10": "15.0s",
+            "lv13": "15.0s"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 80
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Imbricated Armor",
+        "unlock": "A1",
+        "description": "Nhận/làm mới Blazing Barrier cho nhân vật đang chiến đấu +5% Shield Strength trong 6s (1 lần/0.3s, tối đa 5 lớp)."
+      },
+      {
+        "name": "Flaming Assault",
+        "unlock": "A4",
+        "description": "Fiery Collapse +2.2% Max HP của Thoma vào sát thương."
+      },
+      {
+        "name": "Snap and Swing",
+        "unlock": "Utility",
+        "description": "Câu cá tại Inazuma có 20% cơ hội câu được gấp đôi."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "A Comrade's Duty",
+        "description": "Người được khiên bảo vệ (trừ Thoma) bị tấn công sẽ giảm CD cả 2 kỹ năng của Thoma 3s (1 lần/20s)."
+      },
+      {
+        "level": 2,
+        "name": "A Subordinate's Skills",
+        "description": "Crimson Ooyoroi kéo dài thêm 3s."
+      },
+      {
+        "level": 3,
+        "name": "Fortified Resolve",
+        "description": "Tăng cấp Blazing Blessing thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "Long-Term Planning",
+        "description": "Dùng xong Crimson Ooyoroi hồi 15 năng lượng."
+      },
+      {
+        "level": 5,
+        "name": "Raging Wildfire",
+        "description": "Tăng cấp Crimson Ooyoroi thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "Burning Heart",
+        "description": "Nhận/làm mới Blazing Barrier giúp cả đội +15% sát thương đòn thường/nặng/nhảy trong 6s."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ khiên bền (theo Max HP) kiêm tráng Pyro liên tục — rất mạnh trong đội cần chống ngắt chiêu và tự tạo phản ứng Pyro. Combo phổ biến: Tan chảy (Pyro-Cryo) với Ayaka/Ganyu, hoặc đội Cháy nổ (Pyro-Dendro) đứng cạnh tráng nguyên tố an toàn.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "gorou",
+    "name": "Gorou",
+    "element": "Geo",
+    "weaponType": "Bow",
+    "rarity": 4,
+    "nationInGame": "Inazuma",
+    "releaseDate": "2021-12-14",
+    "baseStats": {
+      "lv1": {
+        "hp": 802,
+        "atk": 15,
+        "def": 54
+      },
+      "lv90": {
+        "hp": 9575,
+        "atk": 183,
+        "def": 649,
+        "ascensionStatType": "Geo DMG Bonus",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Ripping Fang Fletching",
+      "hits": [
+        {
+          "label": "Aimed Shot",
+          "values": {
+            "lv1": "43.9%",
+            "lv10": "86.7%"
+          }
+        },
+        {
+          "label": "Aimed Shot sạc đầy",
+          "values": {
+            "lv1": "124.0%",
+            "lv10": "223.2%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Inuzaka All-Round Defense",
+      "description": "Gây AoE Geo DMG và dựng General's War Banner, cấp buff theo số nhân vật Geo trong đội (1: +DEF, 2: +kháng ngắt chiêu, 3: +Geo DMG Bonus). Cấp kỹ năng được C3 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "107.2%",
+            "lv10": "193.0%",
+            "lv13": "227.8%"
+          }
+        },
+        {
+          "label": "DEF cộng thêm",
+          "values": {
+            "lv1": "206.2",
+            "lv10": "371.1",
+            "lv13": "438.1"
+          }
+        },
+        {
+          "label": "Geo DMG Bonus (nếu đủ 3 Geo)",
+          "values": {
+            "lv1": "15.0%",
+            "lv10": "15.0%",
+            "lv13": "15.0%"
+          }
+        }
+      ],
+      "cooldown": "10s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Juuga: Forward Unto Victory",
+      "description": "Gây AoE Geo DMG theo DEF, tạo General's Glory di chuyển theo nhân vật, cứ 1.5s gây thêm Crystal Collapse Geo DMG. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng (%DEF)",
+          "values": {
+            "lv1": "98.2%",
+            "lv10": "176.8%",
+            "lv13": "208.7%"
+          }
+        },
+        {
+          "label": "Crystal Collapse DMG (%DEF)",
+          "values": {
+            "lv1": "61.3%",
+            "lv10": "110.3%",
+            "lv13": "130.3%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "9.0s",
+            "lv10": "9.0s",
+            "lv13": "9.0s"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 80
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Heedless of the Wind and Weather",
+        "unlock": "A1",
+        "description": "Dùng xong Burst, đồng đội gần đó +25% DEF trong 12s."
+      },
+      {
+        "name": "A Favor Repaid",
+        "unlock": "A4",
+        "description": "Sát thương kỹ năng của Gorou cộng thêm theo DEF (Skill +156% DEF, Burst/Crystal Collapse +15.6% DEF)."
+      },
+      {
+        "name": "Seeker of Shinies",
+        "unlock": "Utility",
+        "description": "Hiện tài nguyên đặc thù Inazuma trên minimap."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Rushing Hound: Swift as the Wind",
+        "description": "Đồng đội trong vùng buff gây Geo DMG giúp giảm CD kỹ năng Gorou 2s (1 lần/10s)."
+      },
+      {
+        "level": 2,
+        "name": "Sitting Hound: Steady as a Clock",
+        "description": "General's Glory kéo dài thêm 1s mỗi khi có phản ứng Kết Tinh gần đó (tối đa +3s)."
+      },
+      {
+        "level": 3,
+        "name": "Mauling Hound: Fierce as Fire",
+        "description": "Tăng cấp Inuzaka All-Round Defense thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "Lapping Hound: Warm as Water",
+        "description": "Ở trạng thái \"Impregnable\"/\"Crunch\", General's Glory hồi máu 50% DEF của Gorou mỗi 1.5s."
+      },
+      {
+        "level": 5,
+        "name": "Striking Hound: Thunderous Force",
+        "description": "Tăng cấp Juuga: Forward Unto Victory thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "Valiant Hound: Mountainous Fealty",
+        "description": "Sau khi dùng kỹ năng/burst, Geo DMG của cả đội +10%/+20%/+40% Crit DMG tuỳ cấp buff banner."
+      }
+    ],
+    "abyssRoleNotes": "Support Geo chuyên biệt, tăng DEF/Geo DMG cho đội toàn Geo hoặc mono-Geo. Combo phổ biến: đội Geo full (Itto/Ningguang/Albedo) tận dụng Crunch buff, hoặc Kết Tinh (Geo-Electro/Geo-Hydro) tạo khiên nguyên tố.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "arataki-itto",
+    "name": "Arataki Itto",
+    "element": "Geo",
+    "weaponType": "Claymore",
+    "rarity": 5,
+    "nationInGame": "Inazuma",
+    "releaseDate": "2021-12-14",
+    "baseStats": {
+      "lv1": {
+        "hp": 1001,
+        "atk": 18,
+        "def": 75
+      },
+      "lv90": {
+        "hp": 12858,
+        "atk": 227,
+        "def": 959,
+        "ascensionStatType": "CRIT Rate",
+        "ascensionStatValue": 0.192
+      }
+    },
+    "normalAttack": {
+      "name": "Fight Club Legend",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "79.2%",
+            "lv10": "156.6%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "117.2%",
+            "lv10": "231.7%"
+          }
+        },
+        {
+          "label": "Kesagiri liên hoàn",
+          "values": {
+            "lv1": "91.2%",
+            "lv10": "180.2%"
+          }
+        },
+        {
+          "label": "Kesagiri đòn cuối",
+          "values": {
+            "lv1": "190.9%",
+            "lv10": "377.4%"
+          }
+        },
+        {
+          "label": "Saichimonji Slash",
+          "values": {
+            "lv1": "90.5%",
+            "lv10": "178.8%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Masatsu Zetsugi: Akaushi Burst!",
+      "description": "Ném bò Ushi gây Geo DMG, Ushi ở lại thu hút thù, kế thừa HP theo % Max HP Itto và mỗi lần bị đánh cho Itto 1 lớp Superstrength (1 lần/2s). Cấp kỹ năng được C3 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "307.2%",
+            "lv10": "553.0%",
+            "lv13": "652.8%"
+          }
+        },
+        {
+          "label": "HP kế thừa (theo Max HP Itto)",
+          "values": {
+            "lv1": "100.0%",
+            "lv10": "100.0%",
+            "lv13": "100.0%"
+          }
+        },
+        {
+          "label": "Thời lượng Ushi",
+          "values": {
+            "lv1": "6.0s",
+            "lv10": "6.0s",
+            "lv13": "6.0s"
+          }
+        }
+      ],
+      "cooldown": "10s",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "Royal Descent: Behold, Itto the Evil!",
+      "description": "Biến thành Oni King, đòn thường/nặng/nhảy chuyển hẳn thành Geo DMG, ATK cộng thêm theo DEF, tăng tốc đánh nhưng giảm 20% kháng nguyên tố + vật lý. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "ATK Bonus (%DEF)",
+          "values": {
+            "lv1": "57.6%",
+            "lv10": "103.7%",
+            "lv13": "122.4%"
+          }
+        },
+        {
+          "label": "Tốc đánh",
+          "values": {
+            "lv1": "+10.0%",
+            "lv10": "+10.0%",
+            "lv13": "+10.0%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "11.0s",
+            "lv10": "11.0s",
+            "lv13": "11.0s"
+          }
+        }
+      ],
+      "cooldown": "18s",
+      "energyCost": 70
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Arataki Ichiban",
+        "unlock": "A1",
+        "description": "Liên hoàn Kesagiri mỗi nhát +10% tốc đánh cho nhát sau (tối đa +30%), tăng kháng ngắt chiêu."
+      },
+      {
+        "name": "Bloodline of the Crimson Oni",
+        "unlock": "A4",
+        "description": "Sát thương Kesagiri cộng thêm 35% DEF của Itto."
+      },
+      {
+        "name": "Woodchuck Chucked",
+        "unlock": "Utility",
+        "description": "25% cơ hội nhận thêm gỗ khi chặt cây."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Stay a While and Listen Up",
+        "description": "Dùng Burst xong nhận ngay 2 lớp Superstrength, sau 1s nhận thêm 1 lớp/0.5s trong 1.5s."
+      },
+      {
+        "level": 2,
+        "name": "Gather 'Round, It's a Brawl!",
+        "description": "Mỗi nhân vật Geo trong đội giảm CD Burst 1.5s và hồi 6 năng lượng cho Itto khi dùng Burst (tối đa −4.5s CD / +18 năng lượng)."
+      },
+      {
+        "level": 3,
+        "name": "Horns Lowered, Coming Through",
+        "description": "Tăng cấp kỹ năng thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "Jailhouse Bread and Butter",
+        "description": "Hết trạng thái Oni King, đồng đội gần đó +20% DEF và +20% ATK trong 10s."
+      },
+      {
+        "level": 5,
+        "name": "10 Years of Hanamizaka Fame",
+        "description": "Tăng cấp Burst thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "Arataki Itto, Present!",
+        "description": "Đòn nặng +70% Crit DMG; Kesagiri có 50% cơ hội không tốn lớp Superstrength."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính Geo dùng đòn nặng (Kesagiri) liên tục, cần Gorou/Albedo hỗ trợ Geo DMG Bonus và né bớt giảm kháng của Burst. Combo phổ biến: mono-Geo (Itto-Gorou-Albedo-Zhongli) hoặc Kết Tinh với Electro/Hydro để có thêm khiên nguyên tố.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "yae-miko",
+    "name": "Yae Miko",
+    "element": "Electro",
+    "weaponType": "Catalyst",
+    "rarity": 5,
+    "nationInGame": "Inazuma",
+    "releaseDate": "2022-02-15",
+    "baseStats": {
+      "lv1": {
+        "hp": 807,
+        "atk": 26,
+        "def": 44
+      },
+      "lv90": {
+        "hp": 10372,
+        "atk": 340,
+        "def": 569,
+        "ascensionStatType": "CRIT Rate",
+        "ascensionStatValue": 0.192
+      }
+    },
+    "normalAttack": {
+      "name": "Spiritfox Sin-Eater",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "39.7%",
+            "lv10": "71.4%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "56.9%",
+            "lv10": "102.4%"
+          }
+        },
+        {
+          "label": "Đòn nặng",
+          "values": {
+            "lv1": "142.9%",
+            "lv10": "257.2%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Yakan Evocation: Sesshou Sakura",
+      "description": "Để lại bùa Sesshou Sakura tự động phóng điện định kỳ; bùa gần nhau sẽ tăng cấp (tối đa cấp 4), tối đa 3 bùa cùng lúc (3 lần tích). Cấp kỹ năng (của bùa) được C3 tăng thêm 3. Số liệu ở cấp bùa 4.",
+      "scaling": [
+        {
+          "label": "Sát thương/nhịp",
+          "values": {
+            "lv1": "118.5%",
+            "lv10": "213.3%",
+            "lv13": "251.8%"
+          }
+        },
+        {
+          "label": "Thời lượng bùa",
+          "values": {
+            "lv1": "14.0s",
+            "lv10": "14.0s",
+            "lv13": "14.0s"
+          }
+        }
+      ],
+      "cooldown": "4s (3 lần tích)",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "Great Secret Art: Tenko Kenshin",
+      "description": "Giáng sét gây AoE Electro DMG, đồng thời phá huỷ Sesshou Sakura gần đó thành Tenko Thunderbolt giáng thêm sét theo số bùa bị phá. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "260.0%",
+            "lv10": "468.0%",
+            "lv13": "552.5%"
+          }
+        },
+        {
+          "label": "Tenko Thunderbolt (mỗi bùa phá)",
+          "values": {
+            "lv1": "333.8%",
+            "lv10": "600.9%",
+            "lv13": "709.4%"
+          }
+        }
+      ],
+      "cooldown": "22s",
+      "energyCost": 90
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "The Shrine's Sacred Shade",
+        "unlock": "A1",
+        "description": "Dùng Burst, mỗi bùa bị phá làm mới 1 lượt tích của kỹ năng."
+      },
+      {
+        "name": "Enlightened Blessing",
+        "unlock": "A4",
+        "description": "Mỗi điểm EM tăng 0.15% sát thương Sesshou Sakura."
+      },
+      {
+        "name": "Meditations of a Yako",
+        "unlock": "Utility",
+        "description": "25% cơ hội nhận thêm 1 nguyên liệu tu luyện vùng miền khi chế tạo."
+      },
+      {
+        "name": "Edict of Cleansing",
+        "unlock": "Mặc định",
+        "description": "Bùa kéo dài thêm 10s; khi đồng đội kích hoạt Cảm Ứng Siêu Dẫn, đòn sét kế tiếp của bùa tăng cường (80% ATK Yae Miko, thêm đòn 200% ATK dạng Stellar-Conduct nếu Kết Tinh Sao)."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Yakan Offering",
+        "description": "Mỗi lần Tenko Thunderbolt kích hoạt, hồi 8 năng lượng cho Yae Miko."
+      },
+      {
+        "level": 2,
+        "name": "Fox's Mooncall",
+        "description": "Sesshou Sakura sinh ra ở cấp 2, cấp tối đa tăng lên 4 (không đổi so với mặc định nếu đã max), phạm vi tấn công +60%."
+      },
+      {
+        "level": 3,
+        "name": "The Seven Glamours",
+        "description": "Tăng cấp kỹ năng thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "Sakura Channeling",
+        "description": "Sét của Sesshou Sakura trúng địch giúp cả đội +20% Electro DMG Bonus trong 5s."
+      },
+      {
+        "level": 5,
+        "name": "Mischievous Teasing",
+        "description": "Tăng cấp Burst thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "Forbidden Art: Daisesshou",
+        "description": "Đòn sét của Sesshou Sakura xuyên 60% DEF địch."
+      }
+    ],
+    "abyssRoleNotes": "DPS Electro off-field mạnh nhất — đặt bùa rồi đổi nhân vật, gần như không cần đứng lại. Combo phổ biến: Quá Tải (Electro-Pyro) hoặc Cảm Ứng Siêu Dẫn/tán xạ Electro-Cryo cùng Kokomi/Yelan làm nền hồi máu.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "kamisato-ayato",
+    "name": "Kamisato Ayato",
+    "element": "Hydro",
+    "weaponType": "Sword",
+    "rarity": 5,
+    "nationInGame": "Inazuma",
+    "releaseDate": "2022-03-29",
+    "baseStats": {
+      "lv1": {
+        "hp": 1068,
+        "atk": 23,
+        "def": 60
+      },
+      "lv90": {
+        "hp": 13715,
+        "atk": 299,
+        "def": 769,
+        "ascensionStatType": "CRIT DMG",
+        "ascensionStatValue": 0.384
+      }
+    },
+    "normalAttack": {
+      "name": "Kamisato Art: Marobashi",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "45.0%",
+            "lv10": "88.9%"
+          }
+        },
+        {
+          "label": "5-Hit",
+          "values": {
+            "lv1": "75.6%",
+            "lv10": "149.5%"
+          }
+        },
+        {
+          "label": "Đòn nặng",
+          "values": {
+            "lv1": "129.5%",
+            "lv10": "256.0%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Kamisato Art: Kyouka",
+      "description": "Dịch chuyển vào trạng thái Takimeguri Kanka (đòn thường chuyển hẳn thành AoE Hydro DMG, tích lớp Namisen), để lại ảo ảnh nước nổ tung khi gần địch hoặc hết giờ. Cấp kỹ năng được C3 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Shunsuiken 1-Hit",
+          "values": {
+            "lv1": "52.9%",
+            "lv10": "104.6%",
+            "lv13": "126.7%"
+          }
+        },
+        {
+          "label": "Shunsuiken 3-Hit",
+          "values": {
+            "lv1": "64.9%",
+            "lv10": "128.4%",
+            "lv13": "155.5%"
+          }
+        },
+        {
+          "label": "Namisen Bonus/lớp (%MaxHP)",
+          "values": {
+            "lv1": "0.56%",
+            "lv10": "1.11%",
+            "lv13": "1.34%"
+          }
+        },
+        {
+          "label": "Ảo ảnh nước nổ",
+          "values": {
+            "lv1": "101.5%",
+            "lv10": "200.6%",
+            "lv13": "243.1%"
+          }
+        },
+        {
+          "label": "Thời lượng Kanka",
+          "values": {
+            "lv1": "6.0s",
+            "lv10": "6.0s",
+            "lv13": "6.0s"
+          }
+        }
+      ],
+      "cooldown": "12s",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "Kamisato Art: Suiyuu",
+      "description": "Mở không gian tĩnh lặng, Bloomwater Blade liên tục rơi gây Hydro DMG và tăng sát thương đòn thường cho nhân vật trong vùng. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Bloomwater Blade DMG",
+          "values": {
+            "lv1": "66.5%",
+            "lv10": "119.6%",
+            "lv13": "141.2%"
+          }
+        },
+        {
+          "label": "Bonus đòn thường",
+          "values": {
+            "lv1": "11.0%",
+            "lv10": "20.0%",
+            "lv13": "20.0%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "18.0s",
+            "lv10": "18.0s",
+            "lv13": "18.0s"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 80
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Kamisato Art: Mine Wo Matoishi Kiyotaki",
+        "unlock": "A1",
+        "description": "Dùng Kyouka nhận 2 lớp Namisen; ảo ảnh nước nổ giúp Namisen đầy lớp."
+      },
+      {
+        "name": "Kamisato Art: Michiyuku Hagetsu",
+        "unlock": "A4",
+        "description": "Khi rời sân và NL <40, hồi 2 NL/giây."
+      },
+      {
+        "name": "Kamisato Art: Daily Cooking",
+        "unlock": "Utility",
+        "description": "18% cơ hội nấu ăn ra món phụ."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Kyouka Fuushi",
+        "description": "Shunsuiken +40% DMG lên địch ≤50% HP."
+      },
+      {
+        "level": 2,
+        "name": "World Source",
+        "description": "Namisen tối đa 5 lớp; từ 3 lớp trở lên +50% Max HP."
+      },
+      {
+        "level": 3,
+        "name": "To Admire the Flowers",
+        "description": "Tăng cấp Kyouka thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "Endless Flow",
+        "description": "Dùng Suiyuu xong, đồng đội gần đó +15% tốc đánh thường trong 15s."
+      },
+      {
+        "level": 5,
+        "name": "Bansui Ichiro",
+        "description": "Tăng cấp Suiyuu thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "Boundless Origin",
+        "description": "Sau Kyouka, đòn Shunsuiken kế tiếp tạo thêm 2 đòn phụ, mỗi đòn 450% ATK (không tính Namisen)."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính Hydro cực nhanh, chỉ cần vài giây trên sân (bấm kỹ năng rồi đổi người) nhờ Takimeguri Kanka tự đánh. Combo phổ biến: Đóng băng (Hydro-Cryo) với Kamisato Ayaka/Shenhe, hoặc Bốc Hơi (Hydro-Pyro) với Yoimiya/Klee.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "kuki-shinobu",
+    "name": "Kuki Shinobu",
+    "element": "Electro",
+    "weaponType": "Sword",
+    "rarity": 4,
+    "nationInGame": "Inazuma",
+    "releaseDate": "2022-06-21",
+    "baseStats": {
+      "lv1": {
+        "hp": 1030,
+        "atk": 18,
+        "def": 63
+      },
+      "lv90": {
+        "hp": 12295,
+        "atk": 213,
+        "def": 751,
+        "ascensionStatType": "HP%",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Shinobu's Shadowsword",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "48.8%",
+            "lv10": "96.4%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "76.1%",
+            "lv10": "150.4%"
+          }
+        },
+        {
+          "label": "Đòn nặng (2 nhát)",
+          "values": {
+            "lv1": "55.6%+66.8%",
+            "lv10": "110.0%+132.0%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Sanctifying Ring",
+      "description": "Tiêu 30% HP hiện tại (không hạ dưới 20% HP) để tạo vòng cỏ gây Electro DMG quanh mình, vòng theo chân nhân vật đang chiến đấu, gây Electro DMG mỗi 1.5s và hồi máu theo Max HP Shinobu. Cấp kỹ năng được C3 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "75.7%",
+            "lv10": "136.3%",
+            "lv13": "160.9%"
+          }
+        },
+        {
+          "label": "Hồi máu/nhịp vòng",
+          "values": {
+            "lv1": "3.0% MaxHP+289",
+            "lv10": "5.4% MaxHP+636",
+            "lv13": "6.4% MaxHP+795"
+          }
+        },
+        {
+          "label": "Sát thương vòng/nhịp",
+          "values": {
+            "lv1": "25.2%",
+            "lv10": "45.4%",
+            "lv13": "53.6%"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Gyoei Narukami Kariyama Rite",
+      "description": "Cắm kiếm tạo trường thanh tẩy gây Electro DMG liên tục theo Max HP Shinobu; nếu HP Shinobu ≤50% khi dùng, trường tồn tại lâu hơn. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Tổng DMG (HP thường/≤50%)",
+          "values": {
+            "lv1": "25.2%/43.3% MaxHP",
+            "lv10": "45.4%/77.9% MaxHP",
+            "lv13": "53.6%/91.9% MaxHP"
+          }
+        },
+        {
+          "label": "Thời lượng (thường/≤50%)",
+          "values": {
+            "lv1": "2.0s/3.5s",
+            "lv10": "2.0s/3.5s",
+            "lv13": "2.0s/3.5s"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Breaking Free",
+        "unlock": "A1",
+        "description": "HP ≤50% thì Healing Bonus +15%."
+      },
+      {
+        "name": "Heart's Repose",
+        "unlock": "A4",
+        "description": "Sanctifying Ring hưởng lợi EM: hồi máu +75% EM, sát thương +25% EM."
+      },
+      {
+        "name": "Protracted Prayers",
+        "unlock": "Utility",
+        "description": "+25% phần thưởng thám hiểm Inazuma 20 giờ."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "To Cloister Compassion",
+        "description": "Burst tăng phạm vi 50%."
+      },
+      {
+        "level": 2,
+        "name": "To Forsake Fortune",
+        "description": "Sanctifying Ring kéo dài thêm 3s."
+      },
+      {
+        "level": 3,
+        "name": "To Sequester Sorrow",
+        "description": "Tăng cấp kỹ năng thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "To Sever Sealing",
+        "description": "Đòn thường/nặng/nhảy của người trong vòng Sanctifying Ring gây thêm Electro DMG AoE = 9.7% Max HP Shinobu (1 lần/5s)."
+      },
+      {
+        "level": 5,
+        "name": "To Cease Courtesies",
+        "description": "Tăng cấp Burst thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "To Ward Weakness",
+        "description": "Tránh 1 lần tử vong khi HP về 1 (1 lần/60s); khi HP <25%, nhận 150 EM trong 15s (1 lần/60s)."
+      }
+    ],
+    "abyssRoleNotes": "Support hồi máu + sát thương Electro theo % Max HP, build HP thay vì Crit, phù hợp đội cần dùng nguyên tố Electro liên tục mà không cần đứng sân lâu. Combo phổ biến: Quá Tải (Electro-Pyro) Bennett-Xiangling, hoặc Cảm Ứng Siêu Dẫn/tán xạ với Kaeya/Ayaka.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "shikanoin-heizou",
+    "name": "Shikanoin Heizou",
+    "element": "Anemo",
+    "weaponType": "Catalyst",
+    "rarity": 4,
+    "nationInGame": "Inazuma",
+    "releaseDate": "2022-07-12",
+    "baseStats": {
+      "lv1": {
+        "hp": 894,
+        "atk": 19,
+        "def": 57
+      },
+      "lv90": {
+        "hp": 10663,
+        "atk": 225,
+        "def": 684,
+        "ascensionStatType": "Anemo DMG Bonus",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Fudou Style Martial Arts",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "37.5%",
+            "lv10": "67.5%"
+          }
+        },
+        {
+          "label": "5-Hit",
+          "values": {
+            "lv1": "61.4%",
+            "lv10": "110.6%"
+          }
+        },
+        {
+          "label": "Đòn nặng",
+          "values": {
+            "lv1": "73.0%",
+            "lv10": "131.4%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Heartstopper Strike",
+      "description": "Bấm tung đòn Anemo DMG; giữ để tích lớp Declension tăng sát thương đòn kế (tối đa 4 lớp, mỗi lớp tồn tại 60s), đủ 4 lớp có thêm hiệu ứng Conviction. Cấp kỹ năng được C3 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "227.5%",
+            "lv10": "409.5%",
+            "lv13": "483.5%"
+          }
+        },
+        {
+          "label": "Bonus/lớp Declension",
+          "values": {
+            "lv1": "56.9%",
+            "lv10": "102.4%",
+            "lv13": "120.9%"
+          }
+        },
+        {
+          "label": "Bonus Conviction (đủ 4 lớp)",
+          "values": {
+            "lv1": "113.8%",
+            "lv10": "204.8%",
+            "lv13": "241.7%"
+          }
+        }
+      ],
+      "cooldown": "10s",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "Windmuster Kick",
+      "description": "Nhảy lên đá tạo Vacuum Slugger nổ tung hút địch gây AoE Anemo DMG; nếu trúng địch dính Hydro/Pyro/Cryo/Electro sẽ gắn Windmuster Iris nổ theo nguyên tố đó. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Vacuum Slugger DMG",
+          "values": {
+            "lv1": "314.7%",
+            "lv10": "566.4%",
+            "lv13": "668.7%"
+          }
+        },
+        {
+          "label": "Windmuster Iris DMG",
+          "values": {
+            "lv1": "21.5%",
+            "lv10": "38.6%",
+            "lv13": "45.6%"
+          }
+        }
+      ],
+      "cooldown": "12s",
+      "energyCost": 40
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Paradoxical Practice",
+        "unlock": "A1",
+        "description": "Kích hoạt Xoáy Cuốn on-field cho 1 lớp Declension (1 lần/0.1s)."
+      },
+      {
+        "name": "Penetrative Reasoning",
+        "unlock": "A4",
+        "description": "Heartstopper Strike trúng địch, đồng đội (trừ Heizou) +80 EM trong 10s."
+      },
+      {
+        "name": "Pre-Existing Guilt",
+        "unlock": "Utility",
+        "description": "Giảm 20% tiêu hao Thể lực khi chạy cho cả đội."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Named Juvenile Casebook",
+        "description": "Vào sân 5s đầu +15% tốc đánh thường, nhận 1 lớp Declension (1 lần/10s)."
+      },
+      {
+        "level": 2,
+        "name": "Investigative Collection",
+        "description": "Windmuster Kick hút mạnh hơn, kéo dài thêm 1s."
+      },
+      {
+        "level": 3,
+        "name": "Esoteric Puzzle Book",
+        "description": "Tăng cấp Heartstopper Strike thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "Tome of Lies",
+        "description": "Nổ Windmuster Iris đầu tiên hồi 9 NL, mỗi nổ sau hồi thêm 1.5 NL (tối đa 13.5 NL/lượt)."
+      },
+      {
+        "level": 5,
+        "name": "Secret Archive",
+        "description": "Tăng cấp Windmuster Kick thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "Curious Casefiles",
+        "description": "Mỗi lớp Declension +4% Crit Rate cho Heartstopper Strike; khi có Conviction, +32% Crit DMG."
+      }
+    ],
+    "abyssRoleNotes": "Sub-DPS/hỗ trợ Xoáy Cuốn + cấp EM cho cả đội, burst gây sát thương AoE tốt với chi phí năng lượng thấp. Combo phổ biến: đội Xoáy Cuốn EM cao (Anemo-Electro/Anemo-Pyro) hoặc đi cùng Traveler Anemo để tối ưu lan nguyên tố.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "kirara",
+    "name": "Kirara",
+    "element": "Dendro",
+    "weaponType": "Sword",
+    "rarity": 4,
+    "nationInGame": "Inazuma",
+    "releaseDate": "2023-05-22",
+    "baseStats": {
+      "lv1": {
+        "hp": 1021,
+        "atk": 19,
+        "def": 46
+      },
+      "lv90": {
+        "hp": 12186,
+        "atk": 223,
+        "def": 546,
+        "ascensionStatType": "HP%",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Boxcutter",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "47.9%",
+            "lv10": "94.7%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "73.3%",
+            "lv10": "144.8%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Meow-teor Kick",
+      "description": "Nhảy đá gây AoE Dendro DMG và tạo Shield of Safe Transport (hấp thụ Dendro DMG hiệu quả hơn 250%, theo Max HP), có chế độ Urgent Neko Parcel lao thẳng gây sát thương liên tục. Cấp kỹ năng được C3 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương đá",
+          "values": {
+            "lv1": "104.0%",
+            "lv10": "187.2%",
+            "lv13": "221.0%"
+          }
+        },
+        {
+          "label": "Khiên hấp thụ",
+          "values": {
+            "lv1": "10.0% MaxHP+962",
+            "lv10": "18.0% MaxHP+2117",
+            "lv13": "21.2% MaxHP+2646"
+          }
+        },
+        {
+          "label": "Khiên tối đa",
+          "values": {
+            "lv1": "16.0% MaxHP+1541",
+            "lv10": "28.8% MaxHP+3391",
+            "lv13": "34.0% MaxHP+4238"
+          }
+        }
+      ],
+      "cooldown": "8–12s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Secret Art: Surprise Dispatch",
+      "description": "Ném gói hàng gây AoE Dendro DMG rồi tách thành nhiều Cat Grass Cardamom nổ khi chạm địch hoặc hết giờ. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "570.2%",
+            "lv10": "1026.4%",
+            "lv13": "1211.8%"
+          }
+        },
+        {
+          "label": "Nổ Cardamom",
+          "values": {
+            "lv1": "35.6%",
+            "lv10": "64.2%",
+            "lv13": "75.7%"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Bewitching, Betwitching Tails",
+        "unlock": "A1",
+        "description": "Trong Urgent Neko Parcel, mỗi lần va trúng địch tích 1 lớp Reinforced Packaging (tối đa 3), hết trạng thái mỗi lớp tạo 1 khiên phụ (20% hấp thụ so với khiên gốc)."
+      },
+      {
+        "name": "Pupillary Variance",
+        "unlock": "A4",
+        "description": "Mỗi 1000 Max HP +0.4% DMG Meow-teor Kick và +0.3% DMG Surprise Dispatch."
+      },
+      {
+        "name": "Cat's Creeping Carriage",
+        "unlock": "Utility",
+        "description": "Không làm giật mình gia cầm/thịt sống khi có Kirara trong đội."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Material Circulation",
+        "description": "Mỗi 8000 Max HP tạo thêm 1 Cardamom khi dùng Burst (tối đa +4)."
+      },
+      {
+        "level": 2,
+        "name": "Perfectly Packaged",
+        "description": "Trong Urgent Neko Parcel, va trúng đồng đội cấp Critical Transport Shield (40% khiên tối đa, hấp thụ Dendro 250%)."
+      },
+      {
+        "level": 3,
+        "name": "Universal Recognition",
+        "description": "Tăng cấp Meow-teor Kick thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "Steed of Skanda",
+        "description": "Người có khiên Kirara đánh trúng địch sẽ kích hoạt đòn phối hợp Cardamom nhỏ 200% ATK Kirara (1 lần/3.8s, dùng chung CD toàn đội)."
+      },
+      {
+        "level": 5,
+        "name": "A Thousand Miles in a Day",
+        "description": "Tăng cấp Burst thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "Countless Sights to See",
+        "description": "Dùng kỹ năng/Burst xong, đồng đội gần đó +12% All Elemental DMG Bonus trong 15s."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ khiên Dendro + kích hoạt phản ứng Dendro (Bùng Phát/Cháy Nổ/Kết Tinh Rêu) off-field, build HP. Combo phổ biến: Bùng Phát Toả Hương (Dendro-Hydro-Electro/Pyro) hoặc đội cần khiên liên tục thay Zhongli.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "chiori",
+    "name": "Chiori",
+    "element": "Geo",
+    "weaponType": "Sword",
+    "rarity": 5,
+    "nationInGame": "Inazuma",
+    "releaseDate": "2024-03-11",
+    "baseStats": {
+      "lv1": {
+        "hp": 890,
+        "atk": 25,
+        "def": 74
+      },
+      "lv90": {
+        "hp": 11437,
+        "atk": 323,
+        "def": 953,
+        "ascensionStatType": "CRIT Rate",
+        "ascensionStatValue": 0.192
+      }
+    },
+    "normalAttack": {
+      "name": "Weaving Blade",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "49.4%",
+            "lv10": "97.7%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "75.1%",
+            "lv10": "148.5%"
+          }
+        },
+        {
+          "label": "Đòn nặng (2 nhát)",
+          "values": {
+            "lv1": "54.3%+54.3%",
+            "lv10": "107.4%+107.4%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Fluttering Hasode",
+      "description": "Lướt tới rồi triệu hồi automaton \"Tamoto\" chém quét gây AoE Geo DMG theo cả ATK và DEF; Tamoto tự đánh định kỳ trong thời gian tồn tại. Cấp kỹ năng được C3 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Tamoto DMG",
+          "values": {
+            "lv1": "82.1% ATK+102.6% DEF",
+            "lv10": "147.7% ATK+184.7% DEF",
+            "lv13": "174.4% ATK+218.0% DEF"
+          }
+        },
+        {
+          "label": "Đòn quét lên",
+          "values": {
+            "lv1": "149.3% ATK+186.6% DEF",
+            "lv10": "268.7% ATK+335.9% DEF",
+            "lv13": "317.2% ATK+396.5% DEF"
+          }
+        },
+        {
+          "label": "Thời lượng Tamoto",
+          "values": {
+            "lv1": "17.0s",
+            "lv10": "17.0s",
+            "lv13": "17.0s"
+          }
+        }
+      ],
+      "cooldown": "16s",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "Hiyoku: Twin Blades",
+      "description": "Song kiếm tung chiêu gây AoE Geo DMG theo cả ATK và DEF. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "256.3% ATK+320.4% DEF",
+            "lv10": "461.4% ATK+576.7% DEF",
+            "lv13": "544.7% ATK+680.9% DEF"
+          }
+        }
+      ],
+      "cooldown": "13.5s",
+      "energyCost": 50
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Tailor-Made",
+        "unlock": "A1",
+        "description": "Sau đòn quét lên của Hasode, bấm kỹ năng để đổi người + cấp \"Seize the Moment\" (tăng DMG đòn tiếp theo), hoặc bấm đòn thường để kích hoạt \"Tailoring\"."
+      },
+      {
+        "name": "The Finishing Touch",
+        "unlock": "A4",
+        "description": "Đồng đội tạo kết cấu Geo giúp Chiori +20% Geo DMG Bonus trong 20s."
+      },
+      {
+        "name": "Brocaded Collar's Beauteous Silhouette",
+        "unlock": "Utility",
+        "description": "Đồng đội mặc trang phục/dù khác mặc định được +10% tốc di chuyển (không áp dụng trong Trầm Thủy)."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Six Paths of Sage Silkcraft",
+        "description": "Phạm vi Tamoto +50%; nếu có Geo khác trong đội, Hasode triệu hồi thêm 1 Tamoto và kích hoạt luôn passive The Finishing Touch."
+      },
+      {
+        "level": 2,
+        "name": "In Five Colors Dyed",
+        "description": "Sau Burst 10s, cứ 3s triệu hồi automaton \"Kinu\" gây 170% sát thương Tamoto (tính là DMG kỹ năng)."
+      },
+      {
+        "level": 3,
+        "name": "Four Brocade Embellishments",
+        "description": "Tăng cấp Hasode thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "A Tailor's Three Courtesies",
+        "description": "Sau hiệu ứng Tailor-Made, đòn thường/nặng/nhảy trúng địch triệu hồi Kinu gần đó (tối đa 3/lượt, 1 lần/15s)."
+      },
+      {
+        "level": 5,
+        "name": "Two Silken Plumules",
+        "description": "Tăng cấp Burst thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "Sole Principle Pursuit",
+        "description": "Sau hiệu ứng Tailor-Made, giảm CD Hasode 12s; đòn thường +235% DEF vào sát thương."
+      }
+    ],
+    "abyssRoleNotes": "DPS/sub-DPS Geo scale theo cả ATK và DEF, kết hợp Zhongli/Gorou/Albedo để cộng dồn DEF và Geo DMG Bonus. Combo phổ biến: mono-Geo hoặc Kết Tinh (Geo-Hydro/Geo-Electro) tận dụng passive Finishing Touch.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "yumemizuki-mizuki",
+    "name": "Yumemizuki Mizuki",
+    "element": "Anemo",
+    "weaponType": "Catalyst",
+    "rarity": 5,
+    "nationInGame": "Inazuma",
+    "releaseDate": "2025-02-10",
+    "baseStats": {
+      "lv1": {
+        "hp": 991,
+        "atk": 17,
+        "def": 59
+      },
+      "lv90": {
+        "hp": 12735,
+        "atk": 215,
+        "def": 757,
+        "ascensionStatType": "Elemental Mastery",
+        "ascensionStatValue": 115.2
+      }
+    },
+    "normalAttack": {
+      "name": "Pure Heart, Pure Dreams",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "52.3%",
+            "lv10": "94.1%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "71.4%",
+            "lv10": "128.5%"
+          }
+        },
+        {
+          "label": "Đòn nặng",
+          "values": {
+            "lv1": "130.0%",
+            "lv10": "234.0%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Aisa Utamakura Pilgrimage",
+      "description": "Vào trạng thái Dreamdrifter bay lơ lửng, liên tục gây AoE Anemo DMG; sát thương Xoáy Cuốn/Xoáy Cuốn Sao được khuếch đại theo EM. Cấp kỹ năng được C3 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "57.7%",
+            "lv10": "103.9%",
+            "lv13": "122.7%"
+          }
+        },
+        {
+          "label": "Sát thương liên tục",
+          "values": {
+            "lv1": "44.9%",
+            "lv10": "80.8%",
+            "lv13": "95.4%"
+          }
+        },
+        {
+          "label": "Tăng DMG Xoáy Cuốn /100 EM",
+          "values": {
+            "lv1": "18.00%",
+            "lv10": "45.00%",
+            "lv13": "54.00%"
+          }
+        },
+        {
+          "label": "Tăng DMG Xoáy Cuốn Sao /100 EM",
+          "values": {
+            "lv1": "1.80%",
+            "lv10": "4.50%",
+            "lv13": "5.40%"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "Anraku Secret Spring Therapy",
+      "description": "Hút địch gây AoE Anemo DMG và triệu hồi Mini Baku thả Yumemi Style Special Snack — đồng đội HP >70% nhặt sẽ nổ Munen Shockwave gây Anemo DMG, HP thấp thì hồi máu theo EM. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "94.1%",
+            "lv10": "169.3%",
+            "lv13": "199.9%"
+          }
+        },
+        {
+          "label": "Munen Shockwave DMG",
+          "values": {
+            "lv1": "70.6%",
+            "lv10": "127.0%",
+            "lv13": "149.9%"
+          }
+        },
+        {
+          "label": "Hồi máu khi nhặt (HP thấp)",
+          "values": {
+            "lv1": "130.6% EM+315",
+            "lv10": "235.0% EM+692",
+            "lv13": "277.4% EM+865"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Bright Moon's Restless Voice",
+        "unlock": "A1",
+        "description": "Kích hoạt Xoáy Cuốn/Xoáy Cuốn Sao trong Dreamdrifter kéo dài trạng thái thêm 2.5s (tối đa 2 lần/lượt)."
+      },
+      {
+        "name": "Thoughts by Day Bring Dreams by Night",
+        "unlock": "A4",
+        "description": "Trong Dreamdrifter, đồng đội gây Pyro/Hydro/Cryo/Electro DMG giúp Mizuki +100 EM trong 4s."
+      },
+      {
+        "name": "All Ailments Banished",
+        "unlock": "Utility",
+        "description": "Đồ ăn hồi máu (không hồi sinh) có cơ hội hồi thêm 30% HP."
+      },
+      {
+        "name": "Vast Be the Dream",
+        "unlock": "Mặc định",
+        "description": "Kích hoạt Xoáy Cuốn/Xoáy Cuốn Sao trong Dreamdrifter khiến đòn AoE định kỳ tiếp theo +1000% EM (1 lần/2.5s); nếu là Xoáy Cuốn Sao, gây thêm 1 đòn Anemo DMG riêng 1000% EM."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "In Mist-Like Waters",
+        "description": "Trong Dreamdrifter, gắn hiệu ứng lên địch mỗi 3.5s; Xoáy Cuốn/Xoáy Cuốn Sao xảy ra trong lúc đó gây thêm 1100%/550% EM."
+      },
+      {
+        "level": 2,
+        "name": "Your Echo I Meet in Dreams",
+        "description": "Vào Dreamdrifter, mỗi điểm EM +0.04% Pyro/Hydro/Cryo/Electro DMG Bonus cho cả đội đến khi hết trạng thái."
+      },
+      {
+        "level": 3,
+        "name": "Till Dawn's Moon Ends Night",
+        "description": "Tăng cấp kỹ năng thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "Buds Warm Lucid Springs",
+        "description": "Nhặt Snack từ Burst hồi thêm 5 năng lượng (tối đa 4 lần/lượt Burst)."
+      },
+      {
+        "level": 5,
+        "name": "As Setting Moon Brings Year's End",
+        "description": "Tăng cấp Burst thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "The Heart Lingers Long",
+        "description": "Trong Dreamdrifter, sát thương Xoáy Cuốn của đồng đội có thể chí mạng (Crit Rate cố định 30%, Crit DMG 100%); Xoáy Cuốn Sao +10%/+20% Crit Rate/DMG."
+      }
+    ],
+    "abyssRoleNotes": "Support/sub-DPS Anemo scale theo EM, kích hoạt và khuếch đại Xoáy Cuốn liên tục trong lúc bay Dreamdrifter. Combo phổ biến: đội Xoáy Cuốn EM cao (Anemo-Electro/Anemo-Dendro Catalyze) hoặc thay thế Kazuha/Sucrose làm gom quái kiêm buff sát thương.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "lynette",
+    "name": "Lynette",
+    "element": "Anemo",
+    "weaponType": "Sword",
+    "rarity": 4,
+    "nationInGame": "Fontaine",
+    "releaseDate": "2023-08-14",
+    "baseStats": {
+      "lv1": {
+        "hp": 1039,
+        "atk": 19,
+        "def": 60
+      },
+      "lv90": {
+        "hp": 12404,
+        "atk": 232,
+        "def": 712,
+        "ascensionStatType": "Anemo DMG Bonus",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Rapid Ritesword",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "43.1%",
+            "lv10": "85.2%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "63.2%",
+            "lv10": "124.8%"
+          }
+        },
+        {
+          "label": "Đòn nặng (2 nhát)",
+          "values": {
+            "lv1": "44.2%+61.4%",
+            "lv10": "87.4%+121.4%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Enigmatic Feint",
+      "description": "Bấm để tung Enigma Thrust gây Anemo DMG, hồi máu theo Max HP nhưng mất máu dần 4s sau; giữ để vào Pilfering Shadow di chuyển nhanh. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Enigma Thrust DMG",
+          "values": {
+            "lv1": "268.0%",
+            "lv10": "482.4%",
+            "lv13": "569.5%"
+          }
+        },
+        {
+          "label": "Surging Blade DMG",
+          "values": {
+            "lv1": "31.2%",
+            "lv10": "56.2%",
+            "lv13": "66.3%"
+          }
+        },
+        {
+          "label": "Hồi máu",
+          "values": {
+            "lv1": "25.0% MaxHP",
+            "lv10": "25.0% MaxHP",
+            "lv13": "25.0% MaxHP"
+          }
+        }
+      ],
+      "cooldown": "12s",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "Magic Trick: Astonishing Shift",
+      "description": "Gây AoE Anemo DMG rồi triệu hồi Bogglecat Box hút thù, tự động tấn công; khi chạm Hydro/Pyro/Cryo/Electro sẽ nhiễm nguyên tố đó và bắn Vivid Shot theo nguyên tố. Cấp kỹ năng được C3 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "83.2%",
+            "lv10": "149.8%",
+            "lv13": "176.8%"
+          }
+        },
+        {
+          "label": "Bogglecat Box DMG",
+          "values": {
+            "lv1": "51.2%",
+            "lv10": "92.2%",
+            "lv13": "108.8%"
+          }
+        },
+        {
+          "label": "Vivid Shot DMG",
+          "values": {
+            "lv1": "45.6%",
+            "lv10": "82.1%",
+            "lv13": "96.9%"
+          }
+        }
+      ],
+      "cooldown": "18s",
+      "energyCost": 70
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Sophisticated Synergy",
+        "unlock": "A1",
+        "description": "Sau Burst 10s, càng nhiều nguyên tố khác nhau trong đội (1–4) thì cả đội càng +8/12/16/20% ATK."
+      },
+      {
+        "name": "Props Positively Prepped",
+        "unlock": "A4",
+        "description": "Bogglecat Box đổi nguyên tố xong, Burst của Lynette +15% DMG đến hết thời lượng box."
+      },
+      {
+        "name": "Loci-Based Mnemonics",
+        "unlock": "Utility",
+        "description": "Hiện Recovery Orb trên minimap, +25% Thể lực/HP nhận từ orb."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "A Cold Blade Like a Shadow",
+        "description": "Enigma Thrust trúng địch có Shadowsign tạo xoáy hút địch gần đó."
+      },
+      {
+        "level": 2,
+        "name": "Endless Mysteries",
+        "description": "Bogglecat Box bắn thêm 1 Vivid Shot mỗi lần bắn."
+      },
+      {
+        "level": 3,
+        "name": "Cognition-Inverting Gaze",
+        "description": "Tăng cấp Astonishing Shift thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "Tacit Coordination",
+        "description": "Enigmatic Feint +1 lượt tích."
+      },
+      {
+        "level": 5,
+        "name": "Obscuring Ambiguity",
+        "description": "Tăng cấp Enigmatic Feint thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "Watchful Eye",
+        "description": "Dùng Enigma Thrust nhận Anemo Infusion + 20% Anemo DMG Bonus trong 6s."
+      }
+    ],
+    "abyssRoleNotes": "Support Xoáy Cuốn/gom quái kiêm buff ATK toàn đội đa nguyên tố (thường đi cặp với Lyney/Freminet). Combo phổ biến: đội 4 nguyên tố (Lyney-Lynette-Freminet + 1 hỗ trợ) hoặc Xoáy Cuốn Anemo-Pyro/Anemo-Cryo.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "lyney",
+    "name": "Lyney",
+    "element": "Pyro",
+    "weaponType": "Bow",
+    "rarity": 5,
+    "nationInGame": "Fontaine",
+    "releaseDate": "2023-08-14",
+    "baseStats": {
+      "lv1": {
+        "hp": 858,
+        "atk": 25,
+        "def": 42
+      },
+      "lv90": {
+        "hp": 11021,
+        "atk": 318,
+        "def": 538,
+        "ascensionStatType": "CRIT Rate",
+        "ascensionStatValue": 0.192
+      }
+    },
+    "normalAttack": {
+      "name": "Card Force Translocation",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "38.8%",
+            "lv10": "76.7%"
+          }
+        },
+        {
+          "label": "Prop Arrow DMG",
+          "values": {
+            "lv1": "172.8%",
+            "lv10": "311.0%"
+          }
+        },
+        {
+          "label": "Pyrotechnic Strike (Hat tự bắn)",
+          "values": {
+            "lv1": "212.0%",
+            "lv10": "381.6%"
+          }
+        },
+        {
+          "label": "Tiêu hao (Prop Arrow)",
+          "values": {
+            "lv1": "20.0% MaxHP",
+            "lv10": "20.0% MaxHP"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Bewildering Lights",
+      "description": "Xoá hết lớp Prop Surplus để gây AoE Pyro DMG (tăng theo số lớp xoá) và hồi máu theo % Max HP/lớp; nếu có Grin-Malkin Hat trên sân sẽ kích nổ luôn. Không có cung mệnh tăng cấp — tối đa cấp 10.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "167.2%",
+            "lv10": "301.0%"
+          }
+        },
+        {
+          "label": "Bonus/lớp Prop Surplus",
+          "values": {
+            "lv1": "53.2% ATK",
+            "lv10": "95.8% ATK"
+          }
+        },
+        {
+          "label": "Hồi máu/lớp",
+          "values": {
+            "lv1": "20.0%",
+            "lv10": "20.0%"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "Wondrous Trick: Miracle Parade",
+      "description": "Biến thành Grin-Malkin Cat gây Pyro DMG khi áp sát địch; hết giờ nổ pháo hoa AoE Pyro DMG, triệu hồi 1 Hat và +1 lớp Prop Surplus. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "154.0%",
+            "lv10": "277.2%",
+            "lv13": "327.2%"
+          }
+        },
+        {
+          "label": "Nổ pháo hoa",
+          "values": {
+            "lv1": "414.0%",
+            "lv10": "745.2%",
+            "lv13": "879.8%"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Perilous Performance",
+        "unlock": "A1",
+        "description": "Prop Arrow tốn HP, Hat trúng địch hồi 3 NL và +80% ATK vào sát thương."
+      },
+      {
+        "name": "Conclusive Ovation",
+        "unlock": "A4",
+        "description": "Sát thương lên địch dính Pyro +60%, mỗi thành viên Pyro khác (trừ Lyney) +20% (tối đa +100%)."
+      },
+      {
+        "name": "Trivial Observations",
+        "unlock": "Utility",
+        "description": "Hiện tài nguyên đặc thù Fontaine trên minimap."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Whimsical Wonders",
+        "description": "Tối đa 2 Hat cùng lúc; Prop Arrow triệu hồi 2 Hat và +1 lớp Prop Surplus (1 lần/15s)."
+      },
+      {
+        "level": 2,
+        "name": "Loquacious Cajoling",
+        "description": "On-field cứ 2s tích 1 lớp Crisp Focus (+20% Crit DMG/lớp, tối đa 3 lớp)."
+      },
+      {
+        "level": 3,
+        "name": "Prestidigitation",
+        "description": "Tăng cấp đòn thường thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "Well-Versed, Well-Rehearsed",
+        "description": "Đòn nặng Pyro trúng địch giảm 20% Pyro RES trong 6s."
+      },
+      {
+        "level": 5,
+        "name": "To Pierce Enigmas",
+        "description": "Tăng cấp Burst thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "Guarded Smile",
+        "description": "Bắn Prop Arrow kèm theo Pyrotechnic Strike phụ 80% sát thương gốc."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính Pyro dạng \"on-field ngắn, off-field đánh hộ\" qua Grin-Malkin Hat, cực mạnh khi có nhiều nguyên tố Pyro hỗ trợ. Combo phổ biến: đội 4 nguyên tố cùng Lynette/Freminet, hoặc Tan chảy (Pyro-Cryo)/Bốc hơi (Pyro-Hydro).",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "freminet",
+    "name": "Freminet",
+    "element": "Cryo",
+    "weaponType": "Claymore",
+    "rarity": 4,
+    "nationInGame": "Fontaine",
+    "releaseDate": "2023-09-05",
+    "baseStats": {
+      "lv1": {
+        "hp": 1012,
+        "atk": 21,
+        "def": 59
+      },
+      "lv90": {
+        "hp": 12077,
+        "atk": 255,
+        "def": 709,
+        "ascensionStatType": "ATK%",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Flowing Eddies",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "84.2%",
+            "lv10": "166.5%",
+            "lv13": "201.8%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "123.8%",
+            "lv10": "244.7%",
+            "lv13": "296.6%"
+          }
+        },
+        {
+          "label": "Đòn nặng kết thúc",
+          "values": {
+            "lv1": "113.1%",
+            "lv10": "223.6%",
+            "lv13": "270.9%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Pressurized Floe",
+      "description": "Đâm lên gây Cryo DMG, vào Pers Timer 10s biến kỹ năng thành Shattering Pressure — sát thương và tỉ lệ Cryo/Vật lý thay đổi theo Pressure Level (0–4) tích được từ đòn thường trong lúc chờ. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Đâm lên",
+          "values": {
+            "lv1": "83.0%",
+            "lv10": "149.5%",
+            "lv13": "176.5%"
+          }
+        },
+        {
+          "label": "Shattering Pressure Lv0",
+          "values": {
+            "lv1": "200.5%",
+            "lv10": "360.9%",
+            "lv13": "426.0%"
+          }
+        },
+        {
+          "label": "Shattering Pressure Lv4",
+          "values": {
+            "lv1": "243.4%",
+            "lv10": "438.2%",
+            "lv13": "517.3%"
+          }
+        }
+      ],
+      "cooldown": "10s",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "Shadowhunter's Ambush",
+      "description": "Gây AoE Cryo DMG, reset CD kỹ năng và vào Subnautical Hunter 10s (giảm 70% CD kỹ năng, đòn thường tăng Pressure Level nhanh hơn). Không có cung mệnh tăng cấp — tối đa cấp 10.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "318.4%",
+            "lv10": "573.1%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "10.0s",
+            "lv10": "10.0s"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Saturation Deep Dive",
+        "unlock": "A1",
+        "description": "Dùng Shattering Pressure khi chưa đạt Level 4 giảm CD kỹ năng 1s."
+      },
+      {
+        "name": "Parallel Condensers",
+        "unlock": "A4",
+        "description": "Kích hoạt Kết Băng (Shatter) tăng 40% DMG Shattering Pressure trong 5s."
+      },
+      {
+        "name": "Deepwater Navigation",
+        "unlock": "Utility",
+        "description": "Giảm 35% tiêu hao Thể lực khi bơi cho cả đội."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Dreams of the Foamy Deep",
+        "description": "Shattering Pressure +15% Crit Rate."
+      },
+      {
+        "level": 2,
+        "name": "Penguins and the Land of Plenty",
+        "description": "Dùng Shattering Pressure hồi 2 NL (3 NL nếu ở Level 4)."
+      },
+      {
+        "level": 3,
+        "name": "Song of the Eddies and Bleached Sands",
+        "description": "Tăng cấp đòn thường thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "Dance of the Snowy Moon and Flute",
+        "description": "Kích hoạt Đóng Băng/Kết Băng/Cảm Ứng Siêu Dẫn +9% ATK trong 6s (tối đa 2 lớp)."
+      },
+      {
+        "level": 5,
+        "name": "Nights of Hearth and Happiness",
+        "description": "Tăng cấp Pressurized Floe thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "Moment of Waking and Resolve",
+        "description": "Kích hoạt các phản ứng trên +12% Crit DMG trong 6s (tối đa 3 lớp)."
+      }
+    ],
+    "abyssRoleNotes": "Sub-DPS Cryo linh hoạt (Vật lý + Cryo pha trộn), mạnh nhất khi giữ Pressure Level cao trước khi tung Shattering Pressure. Combo phổ biến: Đóng băng (Cryo-Hydro) hoặc Kết Băng/Siêu Dẫn với Electro để tận dụng passive tăng ATK/Crit DMG.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "neuvillette",
+    "name": "Neuvillette",
+    "element": "Hydro",
+    "weaponType": "Catalyst",
+    "rarity": 5,
+    "nationInGame": "Fontaine",
+    "releaseDate": "2023-09-25",
+    "baseStats": {
+      "lv1": {
+        "hp": 1144,
+        "atk": 16,
+        "def": 45
+      },
+      "lv90": {
+        "hp": 14695,
+        "atk": 208,
+        "def": 576,
+        "ascensionStatType": "CRIT DMG",
+        "ascensionStatValue": 0.384
+      }
+    },
+    "normalAttack": {
+      "name": "As Water Seeks Equilibrium",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "54.6%",
+            "lv10": "98.2%",
+            "lv13": "116.0%"
+          }
+        },
+        {
+          "label": "Equitable Judgment (%MaxHP)",
+          "values": {
+            "lv1": "7.32%",
+            "lv10": "14.47%",
+            "lv13": "17.53%"
+          }
+        },
+        {
+          "label": "Hồi máu/droplet",
+          "values": {
+            "lv1": "16.0% MaxHP",
+            "lv10": "16.0% MaxHP",
+            "lv13": "16.0% MaxHP"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "O Tears, I Shall Repay",
+      "description": "Triệu hồi thác nước gây AoE Hydro DMG theo % Max HP, tạo 3 Sourcewater Droplet. Không có cung mệnh tăng cấp — tối đa cấp 10.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng (%MaxHP)",
+          "values": {
+            "lv1": "12.86%",
+            "lv10": "23.16%"
+          }
+        },
+        {
+          "label": "Spiritbreath Thorn DMG",
+          "values": {
+            "lv1": "20.8%",
+            "lv10": "37.4%"
+          }
+        }
+      ],
+      "cooldown": "12s",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "O Tides, I Have Returned",
+      "description": "Gây AoE Hydro DMG theo % Max HP, sau đó 2 thác nước nhỏ hơn giáng xuống tạo 6 Sourcewater Droplet. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng (%MaxHP)",
+          "values": {
+            "lv1": "22.26%",
+            "lv10": "40.06%",
+            "lv13": "47.30%"
+          }
+        },
+        {
+          "label": "Thác nước phụ (%MaxHP)",
+          "values": {
+            "lv1": "9.11%",
+            "lv10": "16.39%",
+            "lv13": "19.35%"
+          }
+        }
+      ],
+      "cooldown": "18s",
+      "energyCost": 70
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Heir to the Ancient Sea's Authority",
+        "unlock": "A1",
+        "description": "Đồng đội kích hoạt Bốc Hơi/Đóng Băng/Cảm Ứng Điện/Bùng Phát/Xoáy Cuốn Hydro/Kết Tinh Hydro cấp 1 lớp Past Draconic Glories (tối đa 3, mỗi lớp 30s) — Equitable Judgment DMG +110%/125%/160% tuỳ số lớp."
+      },
+      {
+        "name": "Discipline of the Supreme Arbitration",
+        "unlock": "A4",
+        "description": "Mỗi 1% HP hiện tại vượt 30% Max HP cho +0.6% Hydro DMG Bonus (tối đa +30%)."
+      },
+      {
+        "name": "Gather Like the Tide",
+        "unlock": "Utility",
+        "description": "+15% tốc bơi dưới nước cho cả đội."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Venerable Institution",
+        "description": "Vào sân nhận ngay 1 lớp Past Draconic Glories; tăng kháng ngắt chiêu khi tích/thả đòn nặng."
+      },
+      {
+        "level": 2,
+        "name": "Juridical Exhortation",
+        "description": "Mỗi lớp Past Draconic Glories +14% Crit DMG cho Equitable Judgment (tối đa +42%)."
+      },
+      {
+        "level": 3,
+        "name": "Ancient Postulation",
+        "description": "Tăng cấp đòn thường thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "Crown of Commiseration",
+        "description": "Neuvillette on-field được hồi máu sẽ tạo thêm 1 Sourcewater Droplet (1 lần/4s)."
+      },
+      {
+        "level": 5,
+        "name": "Axiomatic Judgment",
+        "description": "Tăng cấp Burst thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "Wrathful Recompense",
+        "description": "Đòn nặng hút Droplet gần đó kéo dài thời gian, mỗi 2s bắn thêm 2 dòng nước phụ 10% Max HP Hydro DMG."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính Hydro scale hoàn toàn theo Max HP, gần như không cần Crit ban đầu (Crit DMG đột phá vẫn hữu ích khi đã no HP). Combo phổ biến: Bốc Hơi/Đóng Băng với Bennett/Xiangling hoặc Kokomi/Chevreuse để vừa buff Hydro DMG vừa cấp Droplet. Ghi chú nguồn: HP cấp 90 cao nhất trò chơi.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "wriothesley",
+    "name": "Wriothesley",
+    "element": "Cryo",
+    "weaponType": "Catalyst",
+    "rarity": 5,
+    "nationInGame": "Fontaine",
+    "releaseDate": "2023-10-17",
+    "baseStats": {
+      "lv1": {
+        "hp": 1058,
+        "atk": 24,
+        "def": 59
+      },
+      "lv90": {
+        "hp": 13592,
+        "atk": 311,
+        "def": 763,
+        "ascensionStatType": "CRIT DMG",
+        "ascensionStatValue": 0.384
+      }
+    },
+    "normalAttack": {
+      "name": "Forceful Fists of Frost",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "53.4%",
+            "lv10": "105.5%",
+            "lv13": "127.8%"
+          }
+        },
+        {
+          "label": "5-Hit",
+          "values": {
+            "lv1": "90.7%",
+            "lv10": "179.4%",
+            "lv13": "217.4%"
+          }
+        },
+        {
+          "label": "Đòn nặng",
+          "values": {
+            "lv1": "153.0%",
+            "lv10": "275.3%",
+            "lv13": "325.0%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Icefang Rush",
+      "description": "Lao tới vào trạng thái Chilling Penalty (tăng kháng ngắt chiêu; nếu HP >50%, tăng sát thương Repelling Fists nhưng tiêu HP mỗi lần trúng). Không có cung mệnh tăng cấp — tối đa cấp 10.",
+      "scaling": [
+        {
+          "label": "Repelling Fist tăng cường (%ST đòn thường)",
+          "values": {
+            "lv1": "143.2%",
+            "lv10": "170.3%"
+          }
+        },
+        {
+          "label": "Tiêu HP",
+          "values": {
+            "lv1": "4.5% MaxHP",
+            "lv10": "4.5% MaxHP"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "10.0s",
+            "lv10": "10.0s"
+          }
+        }
+      ],
+      "cooldown": "16s",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "Darkgold Wolfbite",
+      "description": "Đấm băng thẳng rồi Icicle Impact gây nhiều đợt AoE Cryo DMG, sau đó Surging Blade giáng xuống thêm sát thương. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng (×5 đợt)",
+          "values": {
+            "lv1": "127.20%",
+            "lv10": "228.96%",
+            "lv13": "270.30%"
+          }
+        },
+        {
+          "label": "Surging Blade DMG",
+          "values": {
+            "lv1": "42.40%",
+            "lv10": "76.32%",
+            "lv13": "90.10%"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "There Shall Be a Plea for Justice",
+        "unlock": "A1",
+        "description": "HP <60% nhận Gracious Rebuke, đòn nặng kế tiếp không tốn Thể lực, +50% DMG, hồi 30% Max HP khi trúng (1 lần/5s)."
+      },
+      {
+        "name": "There Shall Be a Reckoning for Sin",
+        "unlock": "A4",
+        "description": "Trong Chilling Penalty, HP thay đổi tích 1 lớp Prosecution Edict (tối đa 5, mỗi lớp +6% ATK)."
+      },
+      {
+        "name": "The Duke's Grace",
+        "unlock": "Utility",
+        "description": "10% cơ hội nhân đôi nguyên liệu đột phá vũ khí khi chế tạo."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Terror for the Evildoers",
+        "description": "Đổi điều kiện Gracious Rebuke (đòn 5 Repelling Fists khi HP<60% hoặc trong Chilling Penalty, 1 lần/2.5s); Rebuke: Vaulting Fist +200% DMG và kéo dài Chilling Penalty 4s khi trúng."
+      },
+      {
+        "level": 2,
+        "name": "Shackles for the Arrogant",
+        "description": "Mỗi lớp Prosecution Edict +40% DMG Darkgold Wolfbite."
+      },
+      {
+        "level": 3,
+        "name": "Punishment for the Frauds",
+        "description": "Tăng cấp đòn thường thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "Redemption for the Suffering",
+        "description": "Rebuke: Vaulting Fist hồi 50% Max HP; hồi máu dư thừa cấp tốc đánh +20% (on-field) hoặc +10% cả đội (off-field) trong vài giây."
+      },
+      {
+        "level": 5,
+        "name": "Mercy for the Wronged",
+        "description": "Tăng cấp Burst thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "Esteem for the Innocent",
+        "description": "Rebuke: Vaulting Fist +10% Crit Rate, +80% Crit DMG, tạo thêm 1 mảnh băng phụ 100% sát thương gốc."
+      }
+    ],
+    "abyssRoleNotes": "DPS/sub-DPS Cryo chơi quanh vùng HP thấp để kích Gracious Rebuke liên tục, cần nguồn sát thương/tự trừ máu hỗ trợ. Combo phổ biến: Đóng băng (Cryo-Hydro) với Kokomi/Yelan hoặc Kết Băng-Siêu Dẫn với Electro.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "charlotte",
+    "name": "Charlotte",
+    "element": "Cryo",
+    "weaponType": "Catalyst",
+    "rarity": 4,
+    "nationInGame": "Fontaine",
+    "releaseDate": "2023-11-06",
+    "baseStats": {
+      "lv1": {
+        "hp": 903,
+        "atk": 15,
+        "def": 46
+      },
+      "lv90": {
+        "hp": 10772,
+        "atk": 173,
+        "def": 546,
+        "ascensionStatType": "ATK%",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Cool-Color Capture",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "49.8%",
+            "lv10": "89.7%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "64.6%",
+            "lv10": "116.3%"
+          }
+        },
+        {
+          "label": "Đòn nặng",
+          "values": {
+            "lv1": "100.5%",
+            "lv10": "180.9%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Framing: Freezing Point Composition",
+      "description": "Bấm để chụp gây AoE Cryo DMG + đánh dấu Snappy Silhouette (tự nổ Cryo DMG định kỳ); giữ để vào Composition Mode. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Photo DMG (bấm)",
+          "values": {
+            "lv1": "67.2%",
+            "lv10": "121.0%",
+            "lv13": "142.8%"
+          }
+        },
+        {
+          "label": "Photo DMG (giữ)",
+          "values": {
+            "lv1": "139.2%",
+            "lv10": "250.6%",
+            "lv13": "295.8%"
+          }
+        },
+        {
+          "label": "Snappy Silhouette (mỗi nhịp)",
+          "values": {
+            "lv1": "39.2%",
+            "lv10": "70.6%",
+            "lv13": "83.3%"
+          }
+        }
+      ],
+      "cooldown": "12s",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "Still Photo: Comprehensive Confirmation",
+      "description": "Tạo Newsflash Field gây AoE Cryo DMG định kỳ và hồi máu liên tục cho đồng đội gần đó theo ATK Charlotte. Cấp kỹ năng được C3 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Hồi máu khi cast",
+          "values": {
+            "lv1": "256.6% ATK+1609",
+            "lv10": "461.8% ATK+3539",
+            "lv13": "545.2% ATK+4424"
+          }
+        },
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "77.6%",
+            "lv10": "139.7%",
+            "lv13": "164.9%"
+          }
+        },
+        {
+          "label": "Hồi máu liên tục/nhịp",
+          "values": {
+            "lv1": "9.2% ATK+57",
+            "lv10": "16.6% ATK+126",
+            "lv13": "19.6% ATK+158"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 80
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Moment of Impact",
+        "unlock": "A1",
+        "description": "Hạ gục địch đánh dấu Focused Impression giảm CD kỹ năng 2s (tối đa 4 lần/12s)."
+      },
+      {
+        "name": "Diversified Investigation",
+        "unlock": "A4",
+        "description": "Đội có 1/2/3 người Fontaine khác cho +5/10/15% Healing Bonus; có 1/2/3 người không phải Fontaine cho +5/10/15% Cryo DMG Bonus."
+      },
+      {
+        "name": "First-Person Shutter",
+        "unlock": "Utility",
+        "description": "Kích hoạt ống kính đặc biệt thay đổi hiệu ứng giữ nút kỹ năng."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "A Need to Verify Facts",
+        "description": "Burst hồi máu ai đó sẽ đánh dấu hồi thêm 80% ATK mỗi 2s trong 6s."
+      },
+      {
+        "level": 2,
+        "name": "A Duty to Pursue Truth",
+        "description": "Framing trúng 1/2/3+ địch cho Charlotte +10/20/30% ATK trong 12s."
+      },
+      {
+        "level": 3,
+        "name": "An Imperative to Independence",
+        "description": "Tăng cấp Burst thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "A Responsibility to Oversee",
+        "description": "Burst trúng địch đánh dấu +10% DMG và hồi 2 NL (tối đa 5 lần/20s)."
+      },
+      {
+        "level": 5,
+        "name": "A Principle of Conscience",
+        "description": "Tăng cấp Framing thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "A Summation of Interest",
+        "description": "Đòn thường/nặng trúng địch đánh dấu Focused Impression kích đòn phối hợp 180% ATK AoE Cryo DMG + hồi 42% ATK (1 lần/6s, tính là DMG Burst)."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ hồi máu + Cryo DMG off-field, rất linh hoạt cho đội cần cả khiên/hồi máu lẫn tráng Cryo. Combo phổ biến: Đóng băng (Cryo-Hydro) hoặc Tan chảy (Cryo-Pyro), thường thay thế Bennett/Kokomi khi cần thêm Cryo.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "furina",
+    "name": "Furina",
+    "element": "Hydro",
+    "weaponType": "Sword",
+    "rarity": 5,
+    "nationInGame": "Fontaine",
+    "releaseDate": "2023-11-06",
+    "baseStats": {
+      "lv1": {
+        "hp": 1192,
+        "atk": 19,
+        "def": 54
+      },
+      "lv90": {
+        "hp": 15307,
+        "atk": 244,
+        "def": 696,
+        "ascensionStatType": "CRIT Rate",
+        "ascensionStatValue": 0.192
+      }
+    },
+    "normalAttack": {
+      "name": "Soloist's Solicitation",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "48.4%",
+            "lv10": "95.6%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "73.3%",
+            "lv10": "144.9%"
+          }
+        },
+        {
+          "label": "Đòn nặng",
+          "values": {
+            "lv1": "74.2%",
+            "lv10": "146.7%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Salon Solitaire",
+      "description": "Tuỳ Arkhe hiện tại, triệu hồi 3 Salon Member tự tấn công gây Hydro DMG theo Max HP (Ousia) hoặc Singer of Many Waters hồi máu theo Max HP (Pneuma). Cấp kỹ năng được C5 tăng thêm 3. Số liệu Ousia.",
+      "scaling": [
+        {
+          "label": "Bong bóng nổ (%MaxHP)",
+          "values": {
+            "lv1": "7.9%",
+            "lv10": "14.2%",
+            "lv13": "16.7%"
+          }
+        },
+        {
+          "label": "Mademoiselle Crabaletta (%MaxHP)",
+          "values": {
+            "lv1": "8.29%",
+            "lv10": "14.92%",
+            "lv13": "17.61%"
+          }
+        },
+        {
+          "label": "Singer hồi máu (Pneuma)",
+          "values": {
+            "lv1": "4.80% MaxHP+462",
+            "lv10": "8.64% MaxHP+1017",
+            "lv13": "10.20% MaxHP+1271"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "Let the People Rejoice",
+      "description": "Gây AoE Hydro DMG theo % Max HP, đưa đồng đội vào Universal Revelry — HP đồng đội thay đổi tích điểm Fanfare cho Furina, Fanfare quy đổi thành DMG Bonus và Incoming Healing Bonus cho cả đội. Cấp kỹ năng được C3 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng (%MaxHP)",
+          "values": {
+            "lv1": "11.4%",
+            "lv10": "20.5%",
+            "lv13": "24.2%"
+          }
+        },
+        {
+          "label": "Tỉ lệ Fanfare→DMG",
+          "values": {
+            "lv1": "0.07%",
+            "lv10": "0.25%",
+            "lv13": "0.31%"
+          }
+        },
+        {
+          "label": "Tỉ lệ Fanfare→Healing Bonus",
+          "values": {
+            "lv1": "0.01%",
+            "lv10": "0.10%",
+            "lv13": "0.13%"
+          }
+        },
+        {
+          "label": "Fanfare tối đa",
+          "values": {
+            "lv1": "300",
+            "lv10": "300",
+            "lv13": "300"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Endless Waltz",
+        "unlock": "A1",
+        "description": "Khi đồng đội được hồi máu dư thừa (không phải từ Furina), Furina hồi thêm 2% Max HP/2s cho đồng đội gần đó trong 4s."
+      },
+      {
+        "name": "Unheard Confession",
+        "unlock": "A4",
+        "description": "Mỗi 1000 Max HP tăng 0.7% DMG Salon Member (tối đa +28%) và giảm 0.4% chu kỳ hồi máu Singer (tối đa −16%)."
+      },
+      {
+        "name": "The Sea Is My Stage",
+        "unlock": "Utility",
+        "description": "Giảm 30% CD kỹ năng Xenochromatic Fontemer Aberrant."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "\"Love Is a Rebellious Bird...\"",
+        "description": "Dùng Burst nhận ngay 150 Fanfare; giới hạn Fanfare +100."
+      },
+      {
+        "level": 2,
+        "name": "\"A Woman Adapts Like Duckweed...\"",
+        "description": "Trong Burst, Fanfare tích từ HP thay đổi +250%; mỗi điểm Fanfare vượt giới hạn +0.35% Max HP (tối đa +140%)."
+      },
+      {
+        "level": 3,
+        "name": "\"My Secret Is Hidden...\"",
+        "description": "Tăng cấp Burst thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "\"They Know Not Life...\"",
+        "description": "Salon Member trúng địch hoặc Singer hồi máu cho Furina 4 NL (1 lần/5s)."
+      },
+      {
+        "level": 5,
+        "name": "\"His Name I Now Know...\"",
+        "description": "Tăng cấp Salon Solitaire thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "\"Hear Me — Let Us Raise the Chalice of Love!\"",
+        "description": "Dùng kỹ năng nhận \"Center of Attention\" 10s: đòn thường/nặng/nhảy chuyển hẳn Hydro DMG +18% Max HP sát thương, và tuỳ Arkhe hồi máu hoặc tăng sát thương thêm cho cả đội (tối đa 6 lần kích hoạt)."
+      }
+    ],
+    "abyssRoleNotes": "Buffer sát thương toàn đội bậc nhất (qua Fanfare) kiêm cấp HP khủng để chống chịu — gần như bắt buộc trong đội cần %DMG bonus cực lớn. Combo phổ biến: bất kỳ đội DPS nào (Hydro-Pyro/Hydro-Cryo) miễn có nguồn dao động HP để tích Fanfare nhanh.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "navia",
+    "name": "Navia",
+    "element": "Geo",
+    "weaponType": "Claymore",
+    "rarity": 5,
+    "nationInGame": "Fontaine",
+    "releaseDate": "2023-12-18",
+    "baseStats": {
+      "lv1": {
+        "hp": 985,
+        "atk": 27,
+        "def": 62
+      },
+      "lv90": {
+        "hp": 12650,
+        "atk": 352,
+        "def": 793,
+        "ascensionStatType": "CRIT DMG",
+        "ascensionStatValue": 0.384
+      }
+    },
+    "normalAttack": {
+      "name": "Blunt Refusal",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "93.5%",
+            "lv10": "184.9%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "133.4%",
+            "lv10": "263.8%"
+          }
+        },
+        {
+          "label": "Đòn nặng kết thúc",
+          "values": {
+            "lv1": "113.1%",
+            "lv10": "223.6%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Ceremonial Crystalshot",
+      "description": "Tích lớp Crystal Shrapnel khi có phản ứng Kết Tinh (tối đa 6 lớp, tồn tại 300s); khi bắn, tiêu hết lớp mở dù bắn nhiều viên đạn hoa hồng gây Geo DMG. Cấp kỹ năng được C3 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Rosula Shardshot (DMG gốc)",
+          "values": {
+            "lv1": "394.8%",
+            "lv10": "710.6%",
+            "lv13": "839.0%"
+          }
+        },
+        {
+          "label": "Surging Blade DMG",
+          "values": {
+            "lv1": "36.0%",
+            "lv10": "64.8%",
+            "lv13": "76.5%"
+          }
+        }
+      ],
+      "cooldown": "9s",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "As the Sunlit Sky's Singing Salute",
+      "description": "Bắn đại bác gây AoE Geo DMG rồi duy trì Cannon Fire Support bắn định kỳ; đại bác trúng địch cấp thêm lớp Crystal Shrapnel. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "75.2%",
+            "lv10": "135.4%",
+            "lv13": "159.8%"
+          }
+        },
+        {
+          "label": "Cannon Fire Support DMG",
+          "values": {
+            "lv1": "43.1%",
+            "lv10": "77.7%",
+            "lv13": "91.7%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "12.0s",
+            "lv10": "12.0s",
+            "lv13": "12.0s"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Undisclosed Distribution Channels",
+        "unlock": "A1",
+        "description": "Sau Ceremonial Crystalshot 4s, đòn thường/nặng/nhảy chuyển hẳn Geo DMG +40% DMG."
+      },
+      {
+        "name": "Mutual Assistance Network",
+        "unlock": "A4",
+        "description": "Mỗi thành viên Pyro/Electro/Cryo/Hydro cho +20% ATK (tối đa 2 lần = +40%)."
+      },
+      {
+        "name": "Painstaking Transaction",
+        "unlock": "Utility",
+        "description": "+25% phần thưởng thám hiểm Fontaine 20 giờ."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "A Lady's Rules...",
+        "description": "Mỗi lớp Crystal Shrapnel tiêu thụ hồi 3 NL và giảm CD Burst 1s (tối đa +9 NL/−3s)."
+      },
+      {
+        "level": 2,
+        "name": "The President's Pursuit of Victory",
+        "description": "Mỗi lớp tiêu thụ +12% Crit Rate cho phát bắn đó (tối đa +36%); trúng địch kích 1 phát Cannon Fire Support (tính DMG Burst)."
+      },
+      {
+        "level": 3,
+        "name": "Businesswoman's Broad Vision",
+        "description": "Tăng cấp kỹ năng thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "The Oathsworn Never Capitulate",
+        "description": "Burst trúng địch giảm 20% Geo RES trong 8s."
+      },
+      {
+        "level": 5,
+        "name": "Negotiator's Resolute Negotiations",
+        "description": "Tăng cấp Burst thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "The Flexible Finesse...",
+        "description": "Tiêu >3 lớp thì mỗi lớp vượt +45% Crit DMG cho phát bắn đó, lớp vượt được hoàn trả."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính Geo cần phản ứng Kết Tinh liên tục để giữ đầy lớp Crystal Shrapnel trước khi xả kỹ năng. Combo phổ biến: Kết Tinh (Geo-Electro/Geo-Pyro) với Fischl/Xiangling, hoặc mono-Geo cùng Gorou.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "chevreuse",
+    "name": "Chevreuse",
+    "element": "Pyro",
+    "weaponType": "Polearm",
+    "rarity": 4,
+    "nationInGame": "Fontaine",
+    "releaseDate": "2024-01-09",
+    "baseStats": {
+      "lv1": {
+        "hp": 1003,
+        "atk": 16,
+        "def": 51
+      },
+      "lv90": {
+        "hp": 11968,
+        "atk": 193,
+        "def": 605,
+        "ascensionStatType": "HP%",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Line Bayonet Thrust EX",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "53.1%",
+            "lv10": "105.0%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "77.3%",
+            "lv10": "152.7%"
+          }
+        },
+        {
+          "label": "Đòn nặng",
+          "values": {
+            "lv1": "121.7%",
+            "lv10": "240.6%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Short-Range Rapid Interdiction Fire",
+      "description": "Bấm bắn súng gây AoE Pyro DMG + hồi máu liên tục theo Max HP; giữ để ngắm bắn chính xác hơn (bắn Overcharged Ball nếu có). Cấp kỹ năng được C3 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Bắn nhanh",
+          "values": {
+            "lv1": "115.2%",
+            "lv10": "207.4%",
+            "lv13": "244.8%"
+          }
+        },
+        {
+          "label": "Bắn ngắm",
+          "values": {
+            "lv1": "172.8%",
+            "lv10": "311.0%",
+            "lv13": "367.2%"
+          }
+        },
+        {
+          "label": "Overcharged Ball",
+          "values": {
+            "lv1": "282.4%",
+            "lv10": "508.3%",
+            "lv13": "600.1%"
+          }
+        },
+        {
+          "label": "Hồi máu liên tục",
+          "values": {
+            "lv1": "2.67% MaxHP+257",
+            "lv10": "4.80% MaxHP+565",
+            "lv13": "5.67% MaxHP+706"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "Ring of Bursting Grenades",
+      "description": "Bắn lựu đạn gây AoE Pyro DMG, tách thành nhiều mảnh nổ phụ. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Lựu đạn chính",
+          "values": {
+            "lv1": "368.2%",
+            "lv10": "662.7%",
+            "lv13": "782.3%"
+          }
+        },
+        {
+          "label": "Mảnh nổ phụ",
+          "values": {
+            "lv1": "49.1%",
+            "lv10": "88.4%",
+            "lv13": "104.3%"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Vanguard's Coordinated Tactics",
+        "unlock": "A1",
+        "description": "Nếu đội chỉ gồm Pyro+Electro (có cả 2), đồng đội gần đó khi kích Quá Tải giảm 40% kháng Pyro/Electro của địch trong 6s."
+      },
+      {
+        "name": "Vertical Force Coordination",
+        "unlock": "A4",
+        "description": "Bắn Overcharged Ball xong, đồng đội Pyro/Electro gần đó +1% ATK/1000 Max HP Chevreuse (tối đa +40%) trong 30s."
+      },
+      {
+        "name": "Double Time March",
+        "unlock": "Utility",
+        "description": "Giảm 20% tiêu hao Thể lực khi chạy cho cả đội."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Stable Front Line's Resolve",
+        "description": "Người có \"Coordinated Tactics\" kích Quá Tải hồi 6 NL (1 lần/10s)."
+      },
+      {
+        "level": 2,
+        "name": "Sniper Induced Explosion",
+        "description": "Giữ bắn trúng địch kích 2 vụ nổ phụ mỗi vụ 120% ATK (1 lần/10s, tính DMG kỹ năng)."
+      },
+      {
+        "level": 3,
+        "name": "Practiced Field Stripping Technique",
+        "description": "Tăng cấp kỹ năng thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "The Secret to Rapid-Fire Multishots",
+        "description": "Dùng Burst xong, giữ bắn (Hold) không vào CD trong 6s hoặc 2 lần bắn."
+      },
+      {
+        "level": 5,
+        "name": "Enhanced Incendiary Firepower",
+        "description": "Tăng cấp Burst thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "In Pursuit of Ending Evil",
+        "description": "Sau 12s hồi máu từ kỹ năng, đồng đội hồi thêm 10% Max HP Chevreuse 1 lần; người được hồi nhận +20% Pyro/Electro DMG Bonus trong 8s (tối đa 3 lớp)."
+      }
+    ],
+    "abyssRoleNotes": "Buffer + hồi máu chuyên biệt cho đội Quá Tải (Pyro-Electro), giảm kháng địch và cấp ATK cho cả 2 nguyên tố. Combo phổ biến: Quá Tải với Raiden Shogun/Yae Miko + Bennett/Xiangling.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "clorinde",
+    "name": "Clorinde",
+    "element": "Electro",
+    "weaponType": "Sword",
+    "rarity": 5,
+    "nationInGame": "Fontaine",
+    "releaseDate": "2024-06-03",
+    "baseStats": {
+      "lv1": {
+        "hp": 1009,
+        "atk": 26,
+        "def": 61
+      },
+      "lv90": {
+        "hp": 12956,
+        "atk": 337,
+        "def": 784,
+        "ascensionStatType": "CRIT Rate",
+        "ascensionStatValue": 0.192
+      }
+    },
+    "normalAttack": {
+      "name": "Oath of Hunting Shadows",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "54.1%",
+            "lv10": "106.9%"
+          }
+        },
+        {
+          "label": "5-Hit",
+          "values": {
+            "lv1": "90.0%",
+            "lv10": "177.9%"
+          }
+        },
+        {
+          "label": "Đòn nặng",
+          "values": {
+            "lv1": "128.1%",
+            "lv10": "253.3%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Hunter's Vigil",
+      "description": "Vào Night Vigil 7.5s — đòn thường chuyển hẳn thành Swift Hunt (Electro DMG, cấp Bond of Life theo Max HP), dùng lại kỹ năng biến thành đòn lao Impale the Night (một phần chuyển hồi máu thành Bond of Life). Cấp kỹ năng được C3 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Swift Hunt DMG",
+          "values": {
+            "lv1": "26.8%/38.8%",
+            "lv10": "52.9%/76.7%",
+            "lv13": "64.1%/92.9%"
+          }
+        },
+        {
+          "label": "Bond of Life từ Swift Hunt",
+          "values": {
+            "lv1": "35.0% MaxHP",
+            "lv10": "35.0% MaxHP",
+            "lv13": "35.0% MaxHP"
+          }
+        },
+        {
+          "label": "Impale the Night DMG",
+          "values": {
+            "lv1": "33.0%/44.0%/25.1%×3",
+            "lv10": "65.2%/86.9%/49.6%×3",
+            "lv13": "79.0%/105.3%/60.2%×3"
+          }
+        },
+        {
+          "label": "Thời lượng Night Vigil",
+          "values": {
+            "lv1": "7.5s",
+            "lv10": "7.5s",
+            "lv13": "7.5s"
+          }
+        }
+      ],
+      "cooldown": "16s",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "Last Lightfall",
+      "description": "Cấp Bond of Life theo Max HP rồi né đánh combo 5 đòn AoE Electro DMG. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương (×5 đòn)",
+          "values": {
+            "lv1": "126.9%",
+            "lv10": "228.4%",
+            "lv13": "269.6%"
+          }
+        },
+        {
+          "label": "Bond of Life nhận",
+          "values": {
+            "lv1": "66.0% MaxHP",
+            "lv10": "120.0% MaxHP",
+            "lv13": "138.0% MaxHP"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Dark-Shattering Flame",
+        "unlock": "A1",
+        "description": "Đồng đội kích phản ứng liên quan Electro giúp đòn thường/Last Lightfall Electro DMG +20% ATK/lớp (tối đa 3 lớp, tổng tối đa +1800 sát thương phẳng)."
+      },
+      {
+        "name": "Lawful Remuneration",
+        "unlock": "A4",
+        "description": "Bond of Life ≥100% Max HP, mỗi lần thay đổi +10% Crit Rate 15s (tối đa 2 lớp); Night Vigil chuyển 100% hồi máu thành Bond of Life."
+      },
+      {
+        "name": "Night Vigil's Harvest",
+        "unlock": "Utility",
+        "description": "Hiện tài nguyên đặc thù Fontaine trên minimap."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "\"From This Day...\"",
+        "description": "Trong Night Vigil, đòn thường Electro trúng địch triệu hồi Nightvigil Shade đánh phối hợp 2 đòn 30% ATK (1 lần/1.2s)."
+      },
+      {
+        "level": 2,
+        "name": "\"Now, As We Face...\"",
+        "description": "Dark-Shattering Flame tăng lên +30% ATK/lớp (tối đa +2700 sát thương phẳng); đủ 3 lớp tăng kháng ngắt chiêu."
+      },
+      {
+        "level": 3,
+        "name": "\"I Pledge to Remember...\"",
+        "description": "Tăng cấp Hunter's Vigil thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "\"To Enshrine Tears...\"",
+        "description": "Last Lightfall DMG +2%/1% Bond of Life hiện tại (tối đa +200%)."
+      },
+      {
+        "level": 5,
+        "name": "\"Holding Dawn's Coming...\"",
+        "description": "Tăng cấp Last Lightfall thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "\"And So Shall I Never Despair\"",
+        "description": "Sau Hunter's Vigil 12s, +10% Crit Rate/+70% Crit DMG; trong Night Vigil giảm 80% sát thương nhận và triệu hồi Glimbright Shade đánh 200% ATK khi bị tấn công/dùng Impale."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính Electro cơ chế Bond of Life (máu ảo thay vì thật), cần nguồn hồi máu để chuyển hoá Bond of Life an toàn. Combo phổ biến: Quá Tải (Electro-Pyro) hoặc Cảm Ứng Siêu Dẫn/tán xạ với Furina/Bennett hỗ trợ hồi máu.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "sigewinne",
+    "name": "Sigewinne",
+    "element": "Hydro",
+    "weaponType": "Bow",
+    "rarity": 5,
+    "nationInGame": "Fontaine",
+    "releaseDate": "2024-06-26",
+    "baseStats": {
+      "lv1": {
+        "hp": 1039,
+        "atk": 15,
+        "def": 39
+      },
+      "lv90": {
+        "hp": 13348,
+        "atk": 193,
+        "def": 500,
+        "ascensionStatType": "HP%",
+        "ascensionStatValue": 0.288
+      }
+    },
+    "normalAttack": {
+      "name": "Targeted Treatment",
+      "hits": [
+        {
+          "label": "Aimed Shot",
+          "values": {
+            "lv1": "43.9%",
+            "lv10": "86.7%"
+          }
+        },
+        {
+          "label": "Aimed Shot sạc đầy",
+          "values": {
+            "lv1": "124.0%",
+            "lv10": "223.2%"
+          }
+        },
+        {
+          "label": "Mini-Stration Bubble",
+          "values": {
+            "lv1": "24.8%",
+            "lv10": "44.6%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Rebound Hydrotherapy",
+      "description": "Thổi Bolstering Bubblebalm nảy qua các địch gây Hydro DMG theo Max HP, mỗi lần nảy hồi máu đồng đội (trừ Sigewinne) theo Max HP; sau 5 lần nảy tự hồi máu cho Sigewinne. Cấp kỹ năng được C3 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương/lần nảy (%MaxHP)",
+          "values": {
+            "lv1": "2.28%",
+            "lv10": "4.10%",
+            "lv13": "4.84%"
+          }
+        },
+        {
+          "label": "Hồi máu/lần nảy",
+          "values": {
+            "lv1": "2.80% MaxHP+270",
+            "lv10": "5.04% MaxHP+593",
+            "lv13": "5.95% MaxHP+742"
+          }
+        },
+        {
+          "label": "Hồi máu nảy cuối",
+          "values": {
+            "lv1": "50.0% MaxHP",
+            "lv10": "50.0% MaxHP",
+            "lv13": "50.0% MaxHP"
+          }
+        }
+      ],
+      "cooldown": "18s",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "Super Saturated Syringing",
+      "description": "Tấn công vùng trước mặt gây AoE Hydro DMG theo Max HP, hút tối đa 2 Sourcewater Droplet. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng (%MaxHP)",
+          "values": {
+            "lv1": "11.8%",
+            "lv10": "21.2%",
+            "lv13": "25.0%"
+          }
+        },
+        {
+          "label": "Thời lượng",
+          "values": {
+            "lv1": "2.5s",
+            "lv10": "2.5s",
+            "lv13": "2.5s"
+          }
+        }
+      ],
+      "cooldown": "18s",
+      "energyCost": 70
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Requires Appropriate Rest",
+        "unlock": "A1",
+        "description": "Sau kỹ năng 18s, +8% Hydro DMG Bonus và 10 lớp Convalescence — kỹ năng nguyên tố của đồng đội off-field tiêu 1 lớp để +DMG (theo Max HP Sigewinne trên 30000, tối đa +2800)."
+      },
+      {
+        "name": "Detailed Diagnosis, Thorough Treatment",
+        "unlock": "A4",
+        "description": "Hồi máu tăng thêm theo tổng Bond of Life cả đội (mỗi 1000 HP Bond of Life +3% Healing, tối đa +30%)."
+      },
+      {
+        "name": "Emergency Dose",
+        "unlock": "Utility",
+        "description": "Dưới nước, HP đồng đội <50% tự hồi 50% Max HP nhưng giảm 10% kháng nguyên tố+vật lý 10s (1 lần/20s)."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "\"Can the Happiest of Spirits...\"",
+        "description": "Bubblebalm nảy thêm 3 lần; 3 lần đầu không giảm kích thước; Convalescence đổi thành +100 DMG/1000 Max HP trên 30000 (tối đa +3500)."
+      },
+      {
+        "level": 2,
+        "name": "\"Can the Most Merciful of Spirits...\"",
+        "description": "Dùng kỹ năng/Burst tạo Bubbly Shield 30% Max HP (hấp thụ Hydro 250%); trúng địch giảm 35% Hydro RES trong 8s."
+      },
+      {
+        "level": 3,
+        "name": "\"Can the Healthiest of Spirits...\"",
+        "description": "Tăng cấp kỹ năng thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "\"Can the Loveliest of Spirits...\"",
+        "description": "Burst kéo dài thêm 3s."
+      },
+      {
+        "level": 5,
+        "name": "\"Can the Most Joyful of Spirits...\"",
+        "description": "Tăng cấp Burst thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "\"Can the Most Radiant of Spirits...\"",
+        "description": "Hồi máu tăng Crit Rate/Crit DMG cho Burst theo Max HP (mỗi 1000 HP +0.4%/+2.2%, tối đa +20%/+110%) trong 15s."
+      }
+    ],
+    "abyssRoleNotes": "Healer bậc nhất scale theo Max HP, gần như không thể để đội chết, kiêm buff sát thương kỹ năng off-field. Combo phổ biến: bất kỳ đội cần healer bền (Hydro-bất kỳ), đặc biệt hợp với DPS scale Bond of Life như Clorinde/Arlecchino.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "emilie",
+    "name": "Emilie",
+    "element": "Dendro",
+    "weaponType": "Polearm",
+    "rarity": 5,
+    "nationInGame": "Fontaine",
+    "releaseDate": "2024-08-06",
+    "baseStats": {
+      "lv1": {
+        "hp": 1056,
+        "atk": 26,
+        "def": 57
+      },
+      "lv90": {
+        "hp": 13568,
+        "atk": 335,
+        "def": 730,
+        "ascensionStatType": "CRIT DMG",
+        "ascensionStatValue": 0.384
+      }
+    },
+    "normalAttack": {
+      "name": "Shadow-Hunting Spear (Custom)",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "48.6%",
+            "lv10": "96.0%"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "75.1%",
+            "lv10": "148.5%"
+          }
+        },
+        {
+          "label": "Đòn nặng",
+          "values": {
+            "lv1": "91.3%",
+            "lv10": "180.5%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Fragrance Extraction",
+      "description": "Tạo Lumidouce Case tự bắn Puff of Puredew gây Dendro DMG; hộp thu thập \"Scent\" toả ra từ địch dính Cháy (Burning), đủ 2 Scent thì lên cấp 2 (bắn thêm 1 phát, tăng phạm vi/DMG). Cấp kỹ năng được C3 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "47.1%",
+            "lv10": "84.7%",
+            "lv13": "100.0%"
+          }
+        },
+        {
+          "label": "Lumidouce Case cấp 1",
+          "values": {
+            "lv1": "39.6%",
+            "lv10": "71.3%",
+            "lv13": "84.2%"
+          }
+        },
+        {
+          "label": "Lumidouce Case cấp 2 (×2)",
+          "values": {
+            "lv1": "84.0%",
+            "lv10": "151.2%",
+            "lv13": "178.5%"
+          }
+        },
+        {
+          "label": "Thời lượng hộp",
+          "values": {
+            "lv1": "22.0s",
+            "lv10": "22.0s",
+            "lv13": "22.0s"
+          }
+        }
+      ],
+      "cooldown": "14s",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "Aromatic Explication",
+      "description": "Chuyển hộp thành Lumidouce Case cấp 3, liên tục thả Scented Dew gây Dendro DMG diện rộng trong thời gian ngắn, hết giờ tái tạo hộp cấp 1. Cấp kỹ năng được C5 tăng thêm 3.",
+      "scaling": [
+        {
+          "label": "Lumidouce Case cấp 3 DMG",
+          "values": {
+            "lv1": "217.2%",
+            "lv10": "391.0%",
+            "lv13": "461.6%"
+          }
+        },
+        {
+          "label": "Thời lượng cấp 3",
+          "values": {
+            "lv1": "2.8s",
+            "lv10": "2.8s",
+            "lv13": "2.8s"
+          }
+        }
+      ],
+      "cooldown": "13.5s",
+      "energyCost": 50
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Lingering Fragrance",
+        "unlock": "A1",
+        "description": "Hộp cấp 2 đủ 2 Scent sẽ tự xả Cleardew Cologne gây 600% ATK Dendro DMG AoE (không tính DMG kỹ năng)."
+      },
+      {
+        "name": "Rectification",
+        "unlock": "A4",
+        "description": "Sát thương lên địch đang Cháy +15%/1000 ATK (tối đa +36%)."
+      },
+      {
+        "name": "Headspace Capture",
+        "unlock": "Utility",
+        "description": "Khi có Lumidouce Case trên sân, cả đội +85% kháng sát thương Cháy (Pyro)."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Light Fragrance Leaching",
+        "description": "Fragrance Extraction và Cleardew Cologne +20% DMG; đồng đội kích Cháy/gây Dendro DMG lên địch Cháy tạo thêm 1 Scent (1 lần/2.9s)."
+      },
+      {
+        "level": 2,
+        "name": "Lakelight Top Note",
+        "description": "Kỹ năng/Burst/Cleardew Cologne trúng địch giảm 30% Dendro RES trong 10s."
+      },
+      {
+        "level": 3,
+        "name": "Exquisite Essence",
+        "description": "Tăng cấp kỹ năng thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "Lumidouce Heart Note",
+        "description": "Burst kéo dài thêm 2s; giảm 0.3s chu kỳ đổi mục tiêu Scented Dew."
+      },
+      {
+        "level": 5,
+        "name": "Puredew Aroma",
+        "description": "Tăng cấp Burst thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "Marcotte Sillage",
+        "description": "Dùng kỹ năng/Burst nhận Abiding Fragrance 5s: đòn thường/nặng chuyển hẳn Dendro DMG +300% ATK, tạo Scent (tối đa 4 lần, 1 lần/12s)."
+      }
+    ],
+    "abyssRoleNotes": "DPS off-field Dendro chuyên trị đội Cháy (Burning), cần Pyro liên tục để nuôi Scent nâng cấp hộp. Combo phổ biến: Cháy nổ (Dendro-Pyro-Anemo) với Xiangling/Yoimiya + Kazuha/Sucrose lan nguyên tố.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "escoffier",
+    "name": "Escoffier",
+    "element": "Cryo",
+    "weaponType": "Polearm",
+    "rarity": 5,
+    "nationInGame": "Fontaine",
+    "releaseDate": "2025-05-05",
+    "baseStats": {
+      "lv1": {
+        "hp": 1039,
+        "atk": 27,
+        "def": 57
+      },
+      "lv90": {
+        "hp": 13348,
+        "atk": 347,
+        "def": 732,
+        "ascensionStatType": "CRIT Rate",
+        "ascensionStatValue": 0.192
+      }
+    },
+    "normalAttack": {
+      "name": "Kitchen Skills",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "51.6%",
+            "lv10": "101.9%"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "33.0%+40.3%",
+            "lv10": "65.2%+79.7%"
+          }
+        },
+        {
+          "label": "Đòn nặng",
+          "values": {
+            "lv1": "115.4%",
+            "lv10": "228.1%"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Low-Temperature Cooking",
+      "description": "Bấm kích hoạt Cooking Mek chế độ Cold Storage gây AoE Cryo DMG, tự bắn Frosty Parfait định kỳ; giữ để vào chế độ khác. Cấp kỹ năng được C3 tăng thêm 3 (ghi chú nguồn: API gắn cờ liên kết cung mệnh khác quy ước thông thường nhưng văn bản C3 xác nhận +3 cấp, tối đa cấp 15; số liệu cấp 13 đã kiểm chứng khớp công thức scale).",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "50.4%",
+            "lv10": "90.7%",
+            "lv13": "107.1%"
+          }
+        },
+        {
+          "label": "Frosty Parfait DMG",
+          "values": {
+            "lv1": "120.0%",
+            "lv10": "216.0%",
+            "lv13": "255.0%"
+          }
+        },
+        {
+          "label": "Thời lượng Cold Storage",
+          "values": {
+            "lv1": "20.0s",
+            "lv10": "20.0s",
+            "lv13": "20.0s"
+          }
+        }
+      ],
+      "cooldown": "bấm 15s / giữ 6s",
+      "energyCost": 0
+    },
+    "elementalBurst": {
+      "name": "Scoring Cuts",
+      "description": "Thi triển dao pháp gây AoE Cryo DMG và hồi máu cả đội gần đó theo ATK. Cấp kỹ năng được C5 tăng thêm 3 (cùng lưu ý về liên kết cung mệnh như Kỹ năng).",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "592.8%",
+            "lv10": "1067.0%",
+            "lv13": "1259.7%"
+          }
+        },
+        {
+          "label": "Hồi máu",
+          "values": {
+            "lv1": "172.0% ATK+1079",
+            "lv10": "309.7% ATK+2373",
+            "lv13": "365.6% ATK+2966"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Better to Salivate Than Medicate",
+        "unlock": "A1",
+        "description": "Sau Burst, Rehab Diet 9s tự hồi máu đồng đội mỗi giây theo 138.24% ATK."
+      },
+      {
+        "name": "Inspiration-Immersed Seasoning",
+        "unlock": "A4",
+        "description": "Đội có 1/2/3/4 Hydro/Cryo thì kỹ năng/Burst trúng địch giảm 5/10/15/55% kháng Hydro+Cryo trong 12s."
+      },
+      {
+        "name": "Constant Off-the-Cuff Cookery",
+        "unlock": "Utility",
+        "description": "Giữ kỹ năng kích hoạt chế độ nấu ăn phụ hấp thụ nguyên tố tạo món ăn đặc biệt."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Pre-Dinner Dance for Your Taste Buds",
+        "description": "Đội đủ 4 Hydro/Cryo thì dùng kỹ năng/Burst cho cả đội +60% Crit DMG Cryo trong 15s."
+      },
+      {
+        "level": 2,
+        "name": "Fresh, Fragrant Stew Is an Art",
+        "description": "Kích hoạt Cold Storage Mode nhận 5 lớp Cold Dish; đồng đội gây Cryo DMG tiêu 1 lớp để +240% ATK Escoffier vào sát thương."
+      },
+      {
+        "level": 3,
+        "name": "The Bakery Magic of Caramel Browning",
+        "description": "Tăng cấp kỹ năng thêm 3."
+      },
+      {
+        "level": 4,
+        "name": "Secret Rosemary Recipe",
+        "description": "Rehab Diet +6s; có cơ hội (theo Crit Rate) hồi thêm 100% HP và 2 NL mỗi lần hồi máu (tối đa 7 lần/lượt)."
+      },
+      {
+        "level": 5,
+        "name": "Symphony of a Thousand Sauces",
+        "description": "Tăng cấp Burst thêm 3."
+      },
+      {
+        "level": 6,
+        "name": "Tea Parties Bursting With Color",
+        "description": "Cold Storage Mode: đồng đội đánh trúng địch kích thêm 1 Frosty Parfait đặc biệt 500% ATK Escoffier (1 lần/0.5s, tối đa 6 lần/lượt, tính DMG kỹ năng)."
+      }
+    ],
+    "abyssRoleNotes": "Support hồi máu + buff giảm kháng Hydro/Cryo mạnh nhất cho đội Đóng Băng, gần như thay thế hoàn toàn nhu cầu healer khác. Combo phổ biến: Đóng băng (Cryo-Hydro) toàn Hydro/Cryo với Neuvillette/Ayaka/Ganyu để tối đa hoá passive giảm kháng.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  }
+]

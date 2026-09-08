@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "abyss-cycle.schema.json",
+  "title": "AbyssCycle",
+  "description": "Dữ liệu quái Trầm Thủy của một chu kỳ 2 tuần (tầng 9-12).",
+  "type": "object",
+  "required": ["periodStart", "periodEnd", "gameVersion", "floors"],
+  "properties": {
+    "periodStart": { "type": "string", "format": "date" },
+    "periodEnd": { "type": "string", "format": "date" },
+    "gameVersion": { "type": "string" },
+    "mechanicNotes": { "type": "string", "description": "Ghi chú cơ chế mới/đặc biệt của bản này (vd. Stellar Glimmer Reaction)" },
+    "floors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["floor", "leyLineDisorder", "chambers", "recommendation"],
+        "properties": {
+          "floor": { "type": "integer" },
+          "leyLineDisorder": { "type": "string" },
+          "chambers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["chamber", "monsterLevel", "waves"],
+              "properties": {
+                "chamber": { "type": "integer" },
+                "monsterLevel": { "type": ["integer", "null"] },
+                "waves": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["wave", "monsters"],
+                    "properties": {
+                      "wave": { "type": "integer" },
+                      "monsters": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": ["name", "count", "size", "elements", "weakpoint"],
+                          "properties": {
+                            "name": { "type": "string" },
+                            "count": { "type": "string" },
+                            "size": { "type": "string", "description": "Nhỏ/Vừa/Lớn/Trùm" },
+                            "elements": { "type": "array", "items": { "type": "string" }, "description": "Nguyên tố tấn công/khiên" },
+                            "resistanceNotes": { "type": ["string", "null"] },
+                            "weakpoint": { "type": ["boolean", "null"] },
+                            "mechanics": { "type": ["string", "null"] },
+                            "hpRatio": { "type": ["string", "null"] }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "recommendation": { "type": "string" }
+        }
+      }
+    }
+  }
+}

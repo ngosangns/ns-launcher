@@ -1,0 +1,278 @@
+{
+  "sourceFile": "quai-vat-la-hoan/2026-08-16-den-2026-09-15.md",
+  "dataFetchDate": "2026-09-08",
+  "periodStart": "2026-08-16",
+  "periodEnd": "2026-09-15",
+  "gameVersion": "7.0",
+  "mechanicNotes": "Stellar Glimmer Reaction (Stellar Swirl = biến thể Cryo Swirl, Stellar-Conduct = biến thể Superconduct) chỉ kích hoạt được khi đội có Sandrone, traveler-cryo hoặc Odette (passive Stellar Jubilee). Volkodlak Basher (Tầng 9) bị choáng khi trúng Stellar Glimmer Reaction lúc gầm/ra đòn.",
+  "floors": [
+    {
+      "floor": 9,
+      "leyLineDisorder": "Sát thương Stellar Swirl gây bởi mọi nhân vật +50%.",
+      "chambers": [
+        {
+          "chamber": 1,
+          "monsterLevel": 72,
+          "waves": [
+            {
+              "wave": 1,
+              "monsters": [
+                { "name": "Winged Halberd-Knight", "count": "1→5 (hồi thêm)", "size": "Vừa", "elements": ["Anemo"], "resistanceNotes": "kháng Anemo +20%", "weakpoint": false, "mechanics": null, "hpRatio": null },
+                { "name": "Winged Soarer Knight", "count": "2→10 (hồi thêm)", "size": "Vừa", "elements": ["Anemo"], "resistanceNotes": "kháng Anemo +20%", "weakpoint": false, "mechanics": null, "hpRatio": null }
+              ]
+            },
+            {
+              "wave": 2,
+              "monsters": [
+                { "name": "Cutting Edge All-Purpose Storm Landcruiser", "count": "1 (boss)", "size": "Lớn (máy Fatui)", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "Có thể làm tê liệt 2s nếu kích 4 lần Electro-Charged/Lunar-Charged trong lúc dùng chiêu lớn", "hpRatio": "hp_ratio 7, atk_ratio 6 — rất trâu" }
+              ]
+            }
+          ]
+        },
+        {
+          "chamber": 2,
+          "monsterLevel": 74,
+          "waves": [
+            {
+              "wave": 1,
+              "monsters": [
+                { "name": "Winged Halberd-Knight", "count": "1→4", "size": "Vừa", "elements": ["Anemo"], "resistanceNotes": null, "weakpoint": false, "mechanics": null, "hpRatio": null },
+                { "name": "Volkodlak Basher", "count": "2→8", "size": "Vừa/Lớn (Elite)", "elements": ["Cryo", "Geo", "Pyro"], "resistanceNotes": "nguyên tố tuỳ màu dấu (xanh/nâu/cam)", "weakpoint": null, "mechanics": "Choáng khi trúng Stellar Glimmer Reaction lúc gầm hoặc sau combo", "hpRatio": "hp_ratio 1.5, atk_ratio 2 — khá mỏng máu so với Elite khác" }
+              ]
+            },
+            {
+              "wave": 2,
+              "monsters": [
+                { "name": "Cutting Edge Fire Support Ground Effect Landcruiser", "count": "2 (nối tiếp)", "size": "Lớn (máy Fatui)", "elements": ["Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "Tê liệt 5s nếu kích 4 lần Electro-Charged/Lunar-Charged", "hpRatio": "hp_ratio 6, atk_ratio 6" }
+              ]
+            }
+          ]
+        },
+        {
+          "chamber": 3,
+          "monsterLevel": 76,
+          "waves": [
+            {
+              "wave": 1,
+              "monsters": [
+                { "name": "Juvenile Tree Segment", "count": "2 rồi 2", "size": "Vừa (Elite)", "elements": ["Geo"], "resistanceNotes": "rất yếu Pyro (pyro_res -20%); kháng Dendro/Geo +20~30%", "weakpoint": null, "mechanics": null, "hpRatio": "hp_ratio 2" },
+                { "name": "Rugged Elder Leshy", "count": "1 (đợt nhỏ 2)", "size": "Lớn (Elite)", "elements": ["Geo"], "resistanceNotes": "rất yếu Pyro (pyro_res -220% khi 'Rooted'); kháng Dendro/Geo +20~30%", "weakpoint": null, "mechanics": null, "hpRatio": "hp_ratio 8" }
+              ]
+            },
+            {
+              "wave": 2,
+              "monsters": [
+                { "name": "Cutting Edge Fire Support Ground Effect Landcruiser", "count": "1 (cùng lúc)", "size": "Lớn", "elements": ["Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": "hp_ratio 6-7" },
+                { "name": "Cutting Edge All-Purpose Storm Landcruiser", "count": "1 (cùng lúc)", "size": "Lớn", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": "hp_ratio 6-7" }
+              ]
+            }
+          ]
+        }
+      ],
+      "recommendation": "Mang một trong ba nhân vật có Stellar Jubilee (Sandrone / traveler-cryo / Odette) kết hợp Cryo + Anemo để vừa ăn full 50% sát thương Stellar Swirl vừa khống chế (choáng) Volkodlak Basher. Winged Knight không có điểm yếu để bắn trúng — ưu tiên AoE diện rộng vì hồi quân liên tục theo đợt. Landcruiser cỡ lớn có thể bị tê liệt bằng combo Electro-Charged/Lunar-Charged. Chặng 3 nên mang một DPS/support Pyro vì Juvenile Tree Segment và đặc biệt Rugged Elder Leshy cực yếu Hỏa."
+    },
+    {
+      "floor": 10,
+      "leyLineDisorder": "Sát thương Stellar-Conduct gây bởi mọi nhân vật +50%.",
+      "chambers": [
+        {
+          "chamber": 1,
+          "monsterLevel": 80,
+          "waves": [
+            {
+              "wave": 1,
+              "monsters": [
+                { "name": "Volkodlak Lobber", "count": "1→5", "size": "Vừa/Lớn (Elite)", "elements": ["Physical", "Dendro", "Pyro", "Geo"], "resistanceNotes": "đa dạng theo biến thể", "weakpoint": null, "mechanics": "chưa xác nhận điểm yếu cụ thể", "hpRatio": null },
+                { "name": "Volkodlak Raider", "count": "2→10", "size": "Vừa/Lớn (Elite)", "elements": ["Physical", "Dendro", "Electro", "Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null }
+              ]
+            },
+            {
+              "wave": 2,
+              "monsters": [
+                { "name": "Oprichniki Fireblade Shock Trooper", "count": "2", "size": "Vừa (Common, lính Fatui)", "elements": ["Electro", "Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null }
+              ]
+            }
+          ]
+        },
+        {
+          "chamber": 2,
+          "monsterLevel": 82,
+          "waves": [
+            {
+              "wave": 1,
+              "monsters": [
+                { "name": "Leomastiff Guard", "count": "1→4", "size": "Vừa/Lớn (Elite)", "elements": ["Physical", "Hydro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null },
+                { "name": "Channel Contact", "count": "1→4", "size": "Vừa/Lớn (Elite)", "elements": ["Physical", "Dendro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null }
+              ]
+            },
+            {
+              "wave": 2,
+              "monsters": [
+                { "name": "Oprichniki Thunderblitz Gvardiya", "count": "2", "size": "Vừa (Common, lính Fatui)", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null }
+              ]
+            }
+          ]
+        },
+        {
+          "chamber": 3,
+          "monsterLevel": 85,
+          "waves": [
+            {
+              "wave": 1,
+              "monsters": [
+                { "name": "Glaciomancer", "count": "2→ (2+1 boss)", "size": "Vừa (Common, tiên linh Snowland Fae)", "elements": ["Cryo"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null },
+                { "name": "Glacial Warden", "count": "1 (đợt nhỏ 2)", "size": "Vừa (Common, tiên linh Snowland Fae)", "elements": ["Cryo"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null }
+              ]
+            },
+            {
+              "wave": 2,
+              "monsters": [
+                { "name": "Oprichniki Thunderblitz Gvardiya", "count": "1 rồi 1", "size": "Vừa (Common, lính Fatui)", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null },
+                { "name": "Oprichniki Medic", "count": "2 (đợt đầu)", "size": "Vừa (Common, lính Fatui)", "elements": ["Physical", "Hydro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "support/hồi máu — ưu tiên diệt trước", "hpRatio": null },
+                { "name": "Oprichniki Fireblade Shock Trooper", "count": "1 (đợt sau)", "size": "Vừa (Common, lính Fatui)", "elements": ["Electro", "Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null }
+              ]
+            }
+          ]
+        }
+      ],
+      "recommendation": "Chúc phúc thiên hẳn về Cryo+Electro — mang Sandrone/traveler-cryo/Odette để biến Superconduct thường thành Stellar-Conduct và ăn +50% sát thương. Đa số quái Fatui Oprichniki và Volkodlak ở tầng này không có dữ liệu điểm yếu nguyên tố công khai rõ ràng — ưu tiên diệt Oprichniki Medic trước (hỗ trợ/hồi máu) và dùng đội hình ngắt chiêu (Cryo+Electro liên tục) để khống chế đám đông trước khi hồi quân."
+    },
+    {
+      "floor": 11,
+      "leyLineDisorder": "Toàn đội +60% sát thương Cryo và +60% sát thương Pyro (áp dụng cùng lúc cho cả tầng, không tách theo nửa).",
+      "chambers": [
+        {
+          "chamber": 1,
+          "monsterLevel": 88,
+          "waves": [
+            {
+              "wave": 1,
+              "monsters": [
+                { "name": "Chimeric Armored Beast", "count": "~ (đợt nhỏ 1)", "size": "Vừa/Lớn", "elements": ["Geo"], "resistanceNotes": null, "weakpoint": null, "mechanics": "số lượng chưa chắc chắn theo ghi chú wiki", "hpRatio": null },
+                { "name": "Chimeric Burrowbeast", "count": "~ (đợt nhỏ 1)", "size": "Vừa/Lớn", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null },
+                { "name": "Chimeric Winged Elephant", "count": "~ (đợt nhỏ 1)", "size": "Vừa/Lớn", "elements": ["Anemo"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null },
+                { "name": "Mirror Maiden", "count": "1 rồi 1 (≈8 tổng cả đợt)", "size": "Vừa/Lớn", "elements": ["Hydro"], "resistanceNotes": "có khiên", "weakpoint": true, "mechanics": "kháng ngắt chiêu cao, hay dịch chuyển (Teleport)", "hpRatio": null }
+              ]
+            },
+            {
+              "wave": 2,
+              "monsters": [
+                { "name": "Veteran Tainted Water-Splitting Phantasm", "count": "1 (Elite)", "size": "Vừa/Lớn", "elements": ["Hydro"], "resistanceNotes": null, "weakpoint": false, "mechanics": null, "hpRatio": null }
+              ]
+            }
+          ]
+        },
+        {
+          "chamber": 2,
+          "monsterLevel": 90,
+          "waves": [
+            {
+              "wave": 1,
+              "monsters": [
+                { "name": "Voywolf Hunter", "count": "2 (nối tiếp, xen kẽ)", "size": "Vừa/Lớn", "elements": ["Cryo"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null },
+                { "name": "Fanged Zealot", "count": "2 (nối tiếp, xen kẽ)", "size": "Vừa/Lớn", "elements": ["Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null },
+                { "name": "Suppression Specialist Mek", "count": "1 (cuối chuỗi)", "size": "Vừa/Lớn", "elements": ["Physical", "Dendro", "Pyro"], "resistanceNotes": null, "weakpoint": false, "mechanics": "máy móc", "hpRatio": null }
+              ]
+            },
+            {
+              "wave": 2,
+              "monsters": [
+                { "name": "Frostarm Lawachurl", "count": "1 (nối tiếp)", "size": "Lớn (Elite, Hilichurl khổng lồ)", "elements": ["Physical", "Cryo"], "resistanceNotes": null, "weakpoint": true, "mechanics": "khiên Băng ở tay vũ khí — phá bằng Pyro", "hpRatio": null },
+                { "name": "Thunderhelm Lawachurl", "count": "1 (nối tiếp)", "size": "Lớn (Elite, Hilichurl khổng lồ)", "elements": ["Physical", "Electro"], "resistanceNotes": null, "weakpoint": true, "mechanics": "khiên Điện ở tay vũ khí — phá bằng Hydro/Cryo", "hpRatio": null },
+                { "name": "Stonehide Lawachurl", "count": "1 (nối tiếp)", "size": "Lớn (Elite, Hilichurl khổng lồ)", "elements": ["Physical", "Geo"], "resistanceNotes": null, "weakpoint": true, "mechanics": "khiên Nham ở tay vũ khí — phá bằng Dendro/nguyên tố khác", "hpRatio": null }
+              ]
+            }
+          ]
+        },
+        {
+          "chamber": 3,
+          "monsterLevel": 92,
+          "waves": [
+            {
+              "wave": 1,
+              "monsters": [
+                { "name": "Chimeric Horned Bear", "count": "1 (nối tiếp)", "size": "Vừa/Lớn", "elements": ["Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null },
+                { "name": "Thundering Wayob Manifestation", "count": "1 (nối tiếp)", "size": "Vừa/Lớn", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "hút năng lượng (Energy Drain) — ưu tiên diệt nhanh nếu đội phụ thuộc nộ", "hpRatio": null }
+              ]
+            },
+            {
+              "wave": 2,
+              "monsters": [
+                { "name": "Construction Specialist Mek", "count": "1 (nối tiếp)", "size": "Vừa/Lớn", "elements": ["Physical", "Cryo", "Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null },
+                { "name": "Biting-Cold Wayob Manifestation", "count": "1 (nối tiếp)", "size": "Vừa/Lớn", "elements": ["Cryo"], "resistanceNotes": null, "weakpoint": null, "mechanics": "hút năng lượng", "hpRatio": null }
+              ]
+            }
+          ]
+        }
+      ],
+      "recommendation": "Chúc phúc cộng thẳng cả Cryo lẫn Pyro cho toàn đội — lý tưởng là mang song song 1 DPS chính Cryo và 1 DPS chính Pyro (hoặc tận dụng Melt để cộng hưởng cả hai). Nhiều quái xuất hiện nối tiếp từng con nên ưu tiên sát thương đơn mục tiêu/burst nhanh hơn AoE diện rộng thuần túy. Ba con Lawachurl có khiên nguyên tố ở tay — cần đúng nguyên tố khắc chế để phá khiên nhanh. Wayob Manifestation hút năng lượng nộ — nếu đội phụ thuộc mạnh vào Nộ Kỹ, nên diệt chúng trước hoặc né đòn hút."
+    },
+    {
+      "floor": 12,
+      "leyLineDisorder": "Nửa 1 (nửa trước): Sát thương Superconduct +200%, sát thương Stellar-Conduct +75%. Nửa 2 (nửa sau): Sát thương Thường công (Normal Attack) hệ Pyro +75%.",
+      "chambers": [
+        {
+          "chamber": 1,
+          "monsterLevel": 95,
+          "waves": [
+            {
+              "wave": 1,
+              "monsters": [
+                { "name": "Ruin Cruiser", "count": "4", "size": "Vừa/Lớn (Automaton)", "elements": [], "resistanceNotes": "chưa xác nhận", "weakpoint": true, "mechanics": "có khung hình bất tử (Invincibility Frames) theo chiêu", "hpRatio": null },
+                { "name": "Ruin Scout", "count": "8 (hồi thêm)", "size": "Vừa/Lớn (Automaton)", "elements": [], "resistanceNotes": "chưa xác nhận", "weakpoint": true, "mechanics": "có khung hình bất tử theo chiêu", "hpRatio": null },
+                { "name": "Perpetual Mechanical Array", "count": "1 (boss)", "size": "Lớn (Trùm)", "elements": [], "resistanceNotes": "chưa xác nhận", "weakpoint": false, "mechanics": "không điểm yếu khai thác, có Invincibility Frames — né chiêu lớn thay vì cố ngắt", "hpRatio": null }
+              ]
+            },
+            {
+              "wave": 2,
+              "monsters": [
+                { "name": "Construction Specialist Mek", "count": "2 (biến thể)", "size": "Vừa", "elements": ["Physical", "Cryo", "Pyro"], "resistanceNotes": null, "weakpoint": false, "mechanics": "máy móc thuần, không có điểm bắn chí mạng", "hpRatio": null },
+                { "name": "Icewind Suite: Nemesis of Coppelius", "count": "1 (boss)", "size": "Lớn (Trùm máy)", "elements": ["Anemo", "Cryo"], "resistanceNotes": null, "weakpoint": false, "mechanics": "máy móc thuần, không có điểm bắn chí mạng", "hpRatio": null }
+              ]
+            }
+          ]
+        },
+        {
+          "chamber": 2,
+          "monsterLevel": 98,
+          "waves": [
+            {
+              "wave": 1,
+              "monsters": [
+                { "name": "Chimeric Horned Bear", "count": "1 (nối tiếp)", "size": "Vừa", "elements": ["Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận điểm yếu cụ thể", "hpRatio": null },
+                { "name": "Chimeric Winged Lion", "count": "1 (boss 'Solo Accompanist')", "size": "Lớn (Trùm)", "elements": ["Anemo", "Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "có kỹ năng Ward (khiên/che chắn)", "hpRatio": null }
+              ]
+            },
+            {
+              "wave": 2,
+              "monsters": [
+                { "name": "Iniquitous Baptist", "count": "1 (nối tiếp, trùm đa nguyên tố)", "size": "Lớn (Trùm)", "elements": ["Cryo", "Electro", "Hydro", "Pyro"], "resistanceNotes": null, "weakpoint": true, "mechanics": "có khiên nguyên tố, đổi khiên theo pha — cần đội đa nguyên tố linh hoạt để phá nhanh", "hpRatio": null },
+                { "name": "Cryo Abyss Mage", "count": "1 (nối tiếp)", "size": "Vừa (Elite)", "elements": ["Cryo"], "resistanceNotes": null, "weakpoint": true, "mechanics": "có khiên nguyên tố; phá khiên Băng bằng Pyro", "hpRatio": null }
+              ]
+            }
+          ]
+        },
+        {
+          "chamber": 3,
+          "monsterLevel": 100,
+          "waves": [
+            {
+              "wave": 1,
+              "monsters": [
+                { "name": "Battle-Hardened Chimeric Volkodlak Archer", "count": "1 (Elite)", "size": "Vừa/Lớn", "elements": ["Cryo"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận cụ thể (trang chưa tách riêng, dùng chung dữ liệu họ Volkodlak Brute)", "hpRatio": null }
+              ]
+            },
+            {
+              "wave": 2,
+              "monsters": [
+                { "name": "Secret Source Automaton: Hunter-Seeker", "count": "1 (Elite)", "size": "Vừa", "elements": ["Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "có kỹ năng Fury (tự buff khi giận dữ) — hạ nhanh trước khi lên nộ", "hpRatio": null },
+                { "name": "Gluttonous Yumkasaur Mountain King", "count": "1 (boss 'Kongamato')", "size": "Lớn (Trùm, khủng long Natlan)", "elements": ["Dendro", "Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận điểm yếu cụ thể", "hpRatio": null }
+              ]
+            }
+          ]
+        }
+      ],
+      "recommendation": "Tầng nặng nhất về combo nguyên tố. Nửa 1 gần như bắt buộc đội Cryo+Electro (Superconduct hoặc Stellar-Conduct nếu có Sandrone/traveler-cryo/Odette) vì hệ số cộng cực lớn (+200%/+75%) — đồng thời đối phó quái máy Ruin/Automaton phần lớn không có điểm yếu khai thác và có khung hình bất tử, nên ưu tiên burst dồn sát thương ở cửa sổ hở thay vì cố ngắt chiêu liên tục; Iniquitous Baptist và Cryo Abyss Mage có khiên nguyên tố thật sự nên cần đội hình linh hoạt đa nguyên tố (hoặc một nguyên tố áp đảo đúng loại khiên đang bật). Nửa 2 đổi hẳn sang Thường công Pyro (+75%) — nên mang DPS chính dùng vũ khí đánh thường (cung/kiếm/thương) hệ Pyro làm trụ cột, không phải nhân vật dựa vào kỹ năng/nộ. Toàn tầng nên xử lý quái tự buff/hút năng lượng sớm để tránh kéo dài thời gian."
+    }
+  ]
+}

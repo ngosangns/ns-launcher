@@ -1,0 +1,1670 @@
+[
+  {
+    "id": "wolfs-gravestone",
+    "name": "Wolf's Gravestone",
+    "type": "Claymore",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.496
+    },
+    "passive": {
+      "name": "Wolfish Tracker",
+      "description": "ATK +20/25/30/35/40%. Đòn thường/trọng kích trúng địch có HP dưới 30% sẽ tăng ATK toàn đội (kể cả người mang) +40/50/60/70/80% trong 12s; hồi chuỗi 30s.",
+      "effects": [
+        {
+          "stat": "ATK Buff",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        },
+        {
+          "stat": "Team ATK Buff (target below 30% HP)",
+          "r1": 0.4,
+          "r2": 0.5,
+          "r3": 0.6,
+          "r4": 0.7,
+          "r5": 0.8
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish)",
+    "bestCharacters": [
+      "Eula",
+      "Itto",
+      "các DPS Claymore on-field"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "skyward-pride",
+    "name": "Skyward Pride",
+    "type": "Claymore",
+    "rarity": 5,
+    "atkLv1": 48,
+    "atkLv90": 674,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.368
+    },
+    "passive": {
+      "name": "Sky-ripping Dragon Spine",
+      "description": "tăng toàn bộ sát thương +8/10/12/14/16%. Sau khi dùng Bùng nổ nguyên tố, đòn thường/trọng kích trúng địch tạo một lưỡi chém chân không gây 80/100/120/140/160% ATK sát thương xuyên các mục tiêu trên đường đi; hiệu ứng kéo dài 20s hoặc tối đa 8 lưỡi chém.",
+      "effects": [
+        {
+          "stat": "All DMG Bonus",
+          "r1": 0.08,
+          "r2": 0.1,
+          "r3": 0.12,
+          "r4": 0.14,
+          "r5": 0.16
+        },
+        {
+          "stat": "Blade DMG (% ATK)",
+          "r1": 0.8,
+          "r2": 1.0,
+          "r3": 1.2,
+          "r4": 1.4,
+          "r5": 1.6
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish)",
+    "bestCharacters": [
+      "Xinyan",
+      "DPS Claymore cần Energy Recharge"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "song-of-broken-pines",
+    "name": "Song of Broken Pines",
+    "type": "Claymore",
+    "rarity": 5,
+    "atkLv1": 49,
+    "atkLv90": 741,
+    "subStat": {
+      "type": "Physical DMG Bonus",
+      "valueLv90": 0.207
+    },
+    "passive": {
+      "name": "Rebel's Banner-Hymn",
+      "description": "ATK +16/20/24/28/32%; đòn thường/trọng kích trúng địch cho 1 Sigil of Whispers (hồi 0.3s). Khi đủ 4 Sigil, tiêu hao toàn bộ để cấp cho bản thân và đồng đội gần đó hiệu ứng \"Banner-Hymn\" trong 12s: tốc độ đánh thường +12/15/18/21/24%, ATK +20/25/30/35/40%; sau khi kích hoạt, ngừng nhận Sigil mới trong 20s (các hiệu ứng cùng loại của \"Millennial Movement\" không cộng dồn).",
+      "effects": [
+        {
+          "stat": "ATK Buff",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        },
+        {
+          "stat": "Normal Attack SPD Buff (Banner-Hymn)",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        },
+        {
+          "stat": "Team ATK Buff (Banner-Hymn)",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish, sự kiện Chronicled cũ)",
+    "bestCharacters": [
+      "DPS Vật lý Claymore: Eula",
+      "Razor"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "the-unforged",
+    "name": "The Unforged",
+    "type": "Claymore",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.496
+    },
+    "passive": {
+      "name": "Golden Majesty",
+      "description": "Khiên hấp thụ +20/25/30/35/40%. Đòn đánh trúng địch tăng ATK +4/5/6/7/8% trong 8s, tối đa 5 lớp, hồi 0.3s; khi có khiên bảo vệ, mức tăng ATK này nhân đôi (8/10/12/14/16%).",
+      "effects": [
+        {
+          "stat": "Shield Strength Buff",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        },
+        {
+          "stat": "ATK Buff per stack",
+          "r1": 0.04,
+          "r2": 0.05,
+          "r3": 0.06,
+          "r4": 0.07,
+          "r5": 0.08
+        },
+        {
+          "stat": "ATK Buff per stack (with Shield)",
+          "r1": 0.08,
+          "r2": 0.1,
+          "r3": 0.12,
+          "r4": 0.14,
+          "r5": 0.16
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish, sự kiện Chronicled cũ)",
+    "bestCharacters": [
+      "DPS Claymore đội hình khiên (Zhongli",
+      "Xingqiu-Zhongli)"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "redhorn-stonethresher",
+    "name": "Redhorn Stonethresher",
+    "type": "Claymore",
+    "rarity": 5,
+    "atkLv1": 44,
+    "atkLv90": 542,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.882
+    },
+    "passive": {
+      "name": "Gokadaiou Otogibanashi",
+      "description": "DEF +28/35/42/49/56%; sát thương đòn thường và trọng kích được cộng thêm 40/50/60/70/80% giá trị DEF của người mang.",
+      "effects": [
+        {
+          "stat": "DEF Buff",
+          "r1": 0.28,
+          "r2": 0.35,
+          "r3": 0.42,
+          "r4": 0.49,
+          "r5": 0.56
+        },
+        {
+          "stat": "Normal/Charged Attack DMG (% DEF)",
+          "r1": 0.4,
+          "r2": 0.5,
+          "r3": 0.6,
+          "r4": 0.7,
+          "r5": 0.8
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish, vũ khí signature Itto)",
+    "bestCharacters": [
+      "Arataki Itto"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "verdict",
+    "name": "Verdict",
+    "type": "Claymore",
+    "rarity": 5,
+    "atkLv1": 48,
+    "atkLv90": 674,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.221
+    },
+    "passive": {
+      "name": "Many Oaths of Dawn and Dusk",
+      "description": "ATK +20/25/30/35/40%. Khi đồng đội thu Mảnh Nguyên Tố từ phản ứng Kết Tinh (Crystallize) hoặc kích hoạt phản ứng Lunar-Crystallize, người mang nhận 1 Seal: Kỹ năng nguyên tố +18/22.5/27/31.5/36% sát thương, thời lượng 15s, tối đa 2 Seal (từ Lunar-Crystallize tối đa 1 Seal/giây); toàn bộ Seal biến mất 0.2s sau khi Kỹ năng nguyên tố gây sát thương.",
+      "effects": [
+        {
+          "stat": "ATK Buff",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        },
+        {
+          "stat": "Elemental Skill DMG Bonus per Seal",
+          "r1": 0.18,
+          "r2": 0.225,
+          "r3": 0.27,
+          "r4": 0.315,
+          "r5": 0.36
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish, vũ khí signature Navia)",
+    "bestCharacters": [
+      "Navia"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "a-thousand-blazing-suns",
+    "name": "A Thousand Blazing Suns",
+    "type": "Claymore",
+    "rarity": 5,
+    "atkLv1": 49,
+    "atkLv90": 741,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.11
+    },
+    "passive": {
+      "name": "Sunset Reignites the Dawn",
+      "description": "khi dùng Kỹ năng/Bùng nổ nguyên tố, nhận \"Scorching Brilliance\" trong 6s: CRIT DMG +20/25/30/35/40% và ATK +28/35/42/49/56%; hồi chuỗi 10s. Đòn thường/trọng kích gây sát thương nguyên tố kéo dài Scorching Brilliance thêm 2s (hồi 1s, tối đa +6s). Khi người mang trong trạng thái Nightsoul's Blessing, hiệu ứng Scorching Brilliance +75% và không đếm ngược thời lượng khi rời sân.",
+      "effects": [
+        {
+          "stat": "Scorching Brilliance CRIT DMG Buff",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        },
+        {
+          "stat": "Scorching Brilliance ATK Buff",
+          "r1": 0.28,
+          "r2": 0.35,
+          "r3": 0.42,
+          "r4": 0.49,
+          "r5": 0.56
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish, vũ khí signature Mavuika)",
+    "bestCharacters": [
+      "Mavuika"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "fang-of-the-mountain-king",
+    "name": "Fang of the Mountain King",
+    "type": "Claymore",
+    "rarity": 5,
+    "atkLv1": 49,
+    "atkLv90": 741,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.11
+    },
+    "passive": {
+      "name": "Turquoise Hunt",
+      "description": "nhận 1 lớp Canopy's Favor sau khi Kỹ năng nguyên tố trúng địch (hồi 0.5s); khi đồng đội gần đó kích hoạt phản ứng Thiêu Đốt (Burning) hoặc Nảy Mầm (Burgeon), nhận thêm 3 lớp (hồi 2s, kích hoạt được cả khi đồng đội rời sân). Mỗi lớp Canopy's Favor: sát thương Kỹ năng và Bùng nổ nguyên tố +10/12.5/15/17.5/20% trong 6s, tối đa 6 lớp, mỗi lớp tính thời lượng riêng.",
+      "effects": [
+        {
+          "stat": "Elemental Skill/Burst DMG Bonus per stack",
+          "r1": 0.1,
+          "r2": 0.125,
+          "r3": 0.15,
+          "r4": 0.175,
+          "r5": 0.2
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish, vũ khí signature Kinich)",
+    "bestCharacters": [
+      "Kinich"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "a-teaspoon-of-transcendence",
+    "name": "A Teaspoon of Transcendence",
+    "type": "Claymore",
+    "rarity": 5,
+    "atkLv1": 48,
+    "atkLv90": 674,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.441
+    },
+    "passive": {
+      "name": "White Fairy's Queening",
+      "description": "ATK +28/35/42/49/56%. Mỗi lần trọng kích trúng địch, người mang nhận \"Transcendence\" trong thời gian ngắn: sát thương phản ứng Stellar-Conduct và Stellar Swirl +16/20/24/28/32% trong 5s, hồi 0.2s, tối đa 3 lớp.",
+      "effects": [
+        {
+          "stat": "ATK Buff",
+          "r1": 0.28,
+          "r2": 0.35,
+          "r3": 0.42,
+          "r4": 0.49,
+          "r5": 0.56
+        },
+        {
+          "stat": "Stellar-Conduct/Stellar Swirl DMG Bonus per stack",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish, vũ khí signature Sandrone, bản 6.7 Luna VIII)",
+    "bestCharacters": [
+      "Sandrone"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "beacon-of-the-reed-sea",
+    "name": "Beacon of the Reed Sea",
+    "type": "Claymore",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.331
+    },
+    "passive": {
+      "name": "Desert Watch",
+      "description": "sau khi Kỹ năng nguyên tố trúng địch, ATK +20/25/30/35/40% trong 8s; sau khi nhận sát thương, ATK +20/25/30/35/40% trong 8s (2 hiệu ứng trên kích hoạt được cả khi rời sân). Khi không có khiên bảo vệ, HP tối đa +32/40/48/56/64%.",
+      "effects": [
+        {
+          "stat": "ATK Buff (Elemental Skill)",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        },
+        {
+          "stat": "ATK Buff (on Hit)",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        },
+        {
+          "stat": "Max HP Buff (no Shield)",
+          "r1": 0.32,
+          "r2": 0.4,
+          "r3": 0.48,
+          "r4": 0.56,
+          "r5": 0.64
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Weapon Event Wish, vũ khí signature Dehya, bản 3.5)",
+    "bestCharacters": [
+      "Dehya"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "gest-of-the-mighty-wolf",
+    "name": "Gest of the Mighty Wolf",
+    "type": "Claymore",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.331
+    },
+    "passive": {
+      "name": "Indomitable Chivalry",
+      "description": "tăng tốc đánh thường +10%. Đòn thường trúng địch / dùng Kỹ năng nguyên tố / bắt đầu trọng kích lần lượt cho 1/2/2 lớp Four Winds' Hymn: sát thương gây ra +7.5/9.5/11.5/13.5/15.5% trong 4s, tối đa 4 lớp, hồi 0.01s. Khi đội có hiệu ứng \"Hexerei: Secret Rite\", mỗi lớp Four Winds' Hymn cũng tăng CRIT DMG người mang thêm 7.5/9.5/11.5/13.5/15.5%.",
+      "effects": [
+        {
+          "stat": "DMG Bonus per Four Winds' Hymn stack",
+          "r1": 0.075,
+          "r2": 0.095,
+          "r3": 0.115,
+          "r4": 0.135,
+          "r5": 0.155
+        },
+        {
+          "stat": "CRIT DMG Buff per stack (Hexerei active)",
+          "r1": 0.075,
+          "r2": 0.095,
+          "r3": 0.115,
+          "r4": 0.135,
+          "r5": 0.155
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish, vũ khí signature Varka, bản 6.4 Luna V)",
+    "bestCharacters": [
+      "Varka"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "akuoumaru",
+    "name": "Akuoumaru",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Watatsumi Wavewalker",
+      "description": "mỗi điểm Năng Lượng nguyên tố tối đa cộng dồn của toàn đội cho người mang +0.12/0.15/0.18/0.21/0.24% sát thương Bùng nổ nguyên tố, tối đa +40/50/60/70/80%.",
+      "effects": [
+        {
+          "stat": "Elemental Burst DMG per Max Energy point (%)",
+          "r1": 0.0012,
+          "r2": 0.0015,
+          "r3": 0.0018,
+          "r4": 0.0021,
+          "r5": 0.0024
+        },
+        {
+          "stat": "Elemental Burst DMG Bonus Cap",
+          "r1": 0.4,
+          "r2": 0.5,
+          "r3": 0.6,
+          "r4": 0.7,
+          "r5": 0.8
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "Gorou",
+      "nhân vật Claymore burst-focused với đội nhiều Năng Lượng tối đa"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "blackcliff-slasher",
+    "name": "Blackcliff Slasher",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.551
+    },
+    "passive": {
+      "name": "Press the Advantage",
+      "description": "sau khi hạ gục kẻ địch, ATK +12/15/18/21/24% trong 30s, tối đa 3 lớp, mỗi lớp tính thời lượng riêng.",
+      "effects": [
+        {
+          "stat": "ATK Buff per stack",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        }
+      ]
+    },
+    "acquisition": "Đổi Starglitter (Paimon's Bargains, dòng Blackcliff luân phiên theo tháng)",
+    "bestCharacters": [
+      "DPS Claymore cần CRIT DMG giá rẻ",
+      "dùng tạm cho hầu hết DPS"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "blade-of-atonement",
+    "name": "Blade of Atonement",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Repentance and Redemption",
+      "description": "kích hoạt phản ứng nguyên tố tăng Elemental Mastery người mang +64/80/96/112/128 trong 12s; kích hoạt phản ứng Stellar Glimmer tăng ATK +16/20/24/28/32% trong 12s (cả 2 hiệu ứng kích hoạt được cả khi rời sân).",
+      "effects": [
+        {
+          "stat": "Elemental Mastery Buff (Elemental Reaction)",
+          "r1": 64,
+          "r2": 80,
+          "r3": 96,
+          "r4": 112,
+          "r5": 128
+        },
+        {
+          "stat": "ATK Buff (Stellar Glimmer)",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        }
+      ]
+    },
+    "acquisition": "Chế tạo (bản thiết kế từ Kuzmichev, Kuznets Smithy, Snezhnograd), bản 7.0",
+    "bestCharacters": [
+      "DPS Claymore hệ phản ứng Stellar Glimmer (Sandrone)"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "earth-shaker",
+    "name": "Earth Shaker",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Oath of Qhapaq Nan",
+      "description": "sau khi đồng đội kích hoạt phản ứng liên quan Pyro, sát thương Kỹ năng nguyên tố người mang +16/20/24/28/32% trong 8s (kích hoạt được cả khi đồng đội rời sân).",
+      "effects": [
+        {
+          "stat": "Elemental Skill DMG Bonus",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        }
+      ]
+    },
+    "acquisition": "Chế tạo",
+    "bestCharacters": [
+      "DPS/sub-DPS Claymore hệ Pyro dùng Kỹ năng nguyên tố nhiều"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "favonius-greatsword",
+    "name": "Favonius Greatsword",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.613
+    },
+    "passive": {
+      "name": "Windfall",
+      "description": "đòn chí mạng có 60/70/80/90/100% tỉ lệ tạo Hạt Nguyên Tố hồi 6 Năng Lượng, hồi chuỗi 12/10.5/9/7.5/6s.",
+      "effects": [
+        {
+          "stat": "Particle Generation Chance",
+          "r1": 0.6,
+          "r2": 0.7,
+          "r3": 0.8,
+          "r4": 0.9,
+          "r5": 1.0
+        },
+        {
+          "stat": "Cooldown (s)",
+          "r1": 12,
+          "r2": 10.5,
+          "r3": 9,
+          "r4": 7.5,
+          "r5": 6
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "Nhân vật Claymore cần Energy Recharge"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "flame-forged-insight",
+    "name": "Flame-Forged Insight",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 165
+    },
+    "passive": {
+      "name": "Mind in Bloom",
+      "description": "khi kích hoạt Điện Cảm (Electro-Charged), Lunar-Charged, Bloom/Lunar-Bloom, Kết Tinh (Crystallize) hoặc Lunar-Crystallize, hồi 12/15/18/21/24 Năng Lượng nguyên tố và Elemental Mastery +60/75/90/105/120 trong 15s; hồi chuỗi 15s, kích hoạt được cả khi rời sân.",
+      "effects": [
+        {
+          "stat": "Energy Restore",
+          "r1": 12,
+          "r2": 15,
+          "r3": 18,
+          "r4": 21,
+          "r5": 24
+        },
+        {
+          "stat": "Elemental Mastery Buff",
+          "r1": 60,
+          "r2": 75,
+          "r3": 90,
+          "r4": 105,
+          "r5": 120
+        }
+      ]
+    },
+    "acquisition": "Sự kiện (Sunspray Summer Resort)",
+    "bestCharacters": [
+      "Kaveh",
+      "Sayu",
+      "nhân vật scale Elemental Mastery cần hồi năng lượng"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "forest-regalia",
+    "name": "Forest Regalia",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.306
+    },
+    "passive": {
+      "name": "Forest Sanctuary",
+      "description": "sau khi kích hoạt Thiêu Đốt, Kích Phát, Tăng Kích, Lan Tỏa, Nảy Mầm (Bloom/Lunar-Bloom), Kích Nổ Siêu Cấp hoặc Bùng Nổ, một Leaf of Consciousness xuất hiện quanh người mang (tối đa 10s); nhặt được cho Elemental Mastery +60/75/90/105/120 trong 12s (chỉ tạo 1 lá/20s, kích hoạt được cả khi rời sân, hiệu ứng không cộng dồn).",
+      "effects": [
+        {
+          "stat": "Elemental Mastery Buff",
+          "r1": 60,
+          "r2": 75,
+          "r3": 90,
+          "r4": 105,
+          "r5": 120
+        }
+      ]
+    },
+    "acquisition": "Chế tạo (bản thiết kế \"Tale of the Forest King\" từ Aravinay sau chuỗi nhiệm vụ Aranyaka, Vanarana, Sumeru)",
+    "bestCharacters": [
+      "DPS/sub-DPS Claymore hệ phản ứng nguyên tố cần Energy Recharge"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "forged-by-the-golden-melody",
+    "name": "Forged by the Golden Melody",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Day and Night in Counterpoint",
+      "description": "mỗi 10s, người mang lần lượt nhận 1 \"Harmonic Movement\" (10s): ATK +18/22.5/27/31.5/36% → Elemental Mastery +120/150/180/210/240 → sát thương phản ứng Stellar Glimmer +28/35/42/49/56% (kích hoạt được cả khi rời sân). Kích hoạt phản ứng Stellar Glimmer cho thêm 12s \"Harmonic Movement: Contrapuntal\" cùng hiệu ứng với lượt đang active, cộng dồn với Harmonic Movement gốc; hồi 12s.",
+      "effects": [
+        {
+          "stat": "ATK Buff (Harmonic Movement)",
+          "r1": 0.18,
+          "r2": 0.225,
+          "r3": 0.27,
+          "r4": 0.315,
+          "r5": 0.36
+        },
+        {
+          "stat": "Elemental Mastery Buff (Harmonic Movement)",
+          "r1": 120,
+          "r2": 150,
+          "r3": 180,
+          "r4": 210,
+          "r5": 240
+        },
+        {
+          "stat": "Stellar Glimmer DMG Bonus (Harmonic Movement)",
+          "r1": 0.28,
+          "r2": 0.35,
+          "r3": 0.42,
+          "r4": 0.49,
+          "r5": 0.56
+        }
+      ]
+    },
+    "acquisition": "Vé Thông Hành (Gnostic Hymn 3), bản 7.0",
+    "bestCharacters": [
+      "DPS Claymore hệ phản ứng Stellar Glimmer (Sandrone",
+      "Beidou)"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "fruitful-hook",
+    "name": "Fruitful Hook",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "The Weight of Falling Branches",
+      "description": "CRIT Rate trọng kích rơi (Plunging Attack) +16/20/24/28/32%; sau khi trọng kích rơi trúng địch, sát thương đòn thường/trọng kích/trọng kích rơi +16/20/24/28/32% trong 10s.",
+      "effects": [
+        {
+          "stat": "Plunging Attack CRIT Rate Bonus",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        },
+        {
+          "stat": "Normal/Charged/Plunging Attack DMG Bonus",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "DPS Claymore chuyên trọng kích rơi (build plunge)"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "katsuragikiri-nagamasa",
+    "name": "Katsuragikiri Nagamasa",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.459
+    },
+    "passive": {
+      "name": "Samurai Conduct",
+      "description": "sát thương Kỹ năng nguyên tố +6/7.5/9/10.5/12%. Sau khi Kỹ năng nguyên tố trúng địch, người mang mất 3 Năng Lượng nhưng hồi 3/3.5/4/4.5/5 Năng Lượng mỗi 2s trong 6s tiếp theo; hồi chuỗi 10s, kích hoạt được cả khi rời sân.",
+      "effects": [
+        {
+          "stat": "Elemental Skill DMG Bonus",
+          "r1": 0.06,
+          "r2": 0.075,
+          "r3": 0.09,
+          "r4": 0.105,
+          "r5": 0.12
+        },
+        {
+          "stat": "Energy Restore per 2s",
+          "r1": 3,
+          "r2": 3.5,
+          "r3": 4,
+          "r4": 4.5,
+          "r5": 5
+        }
+      ]
+    },
+    "acquisition": "Chế tạo (bản thiết kế từ rương kho báu cao cấp tại Tatarasuna, Inazuma)",
+    "bestCharacters": [
+      "Kuki Shinobu",
+      "Gorou",
+      "nhân vật Claymore cần Energy Recharge/spam Kỹ năng"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "lithic-blade",
+    "name": "Lithic Blade",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Lithic Axiom: Unity",
+      "description": "mỗi nhân vật trong đội có quê quán Liyue cho người mang +7/8/9/10/11% ATK và +3/4/5/6/7% CRIT Rate, tối đa 4 lần (tính theo quê quán Liyue, không phụ thuộc hệ nguyên tố).",
+      "effects": [
+        {
+          "stat": "ATK Buff per Liyue character",
+          "r1": 0.07,
+          "r2": 0.08,
+          "r3": 0.09,
+          "r4": 0.1,
+          "r5": 0.11
+        },
+        {
+          "stat": "CRIT Rate Buff per Liyue character",
+          "r1": 0.03,
+          "r2": 0.04,
+          "r3": 0.05,
+          "r4": 0.06,
+          "r5": 0.07
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "Đội hình nhiều nhân vật Liyue: Itto",
+      "Albedo",
+      "Noelle",
+      "Xiao"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "luxurious-sea-lord",
+    "name": "Luxurious Sea-Lord",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.551
+    },
+    "passive": {
+      "name": "Oceanic Victory",
+      "description": "tăng sát thương Bùng nổ nguyên tố +12/15/18/21/24%. Khi Bùng nổ nguyên tố trúng địch, 100% tỉ lệ triệu hồi đàn cá ngừ gây 100/125/150/175/200% ATK sát thương AoE; hồi chuỗi 15s.",
+      "effects": [
+        {
+          "stat": "Elemental Burst DMG Bonus",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        },
+        {
+          "stat": "Tuna Swarm AoE DMG (% ATK)",
+          "r1": 1.0,
+          "r2": 1.25,
+          "r3": 1.5,
+          "r4": 1.75,
+          "r5": 2.0
+        }
+      ]
+    },
+    "acquisition": "Sự kiện (Event)",
+    "bestCharacters": [
+      "DPS/sub-DPS Claymore hệ Thủy"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "mailed-flower",
+    "name": "Mailed Flower",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 110
+    },
+    "passive": {
+      "name": "Whispers of Wind and Flower",
+      "description": "trong 8s sau khi Kỹ năng nguyên tố trúng địch hoặc kích hoạt phản ứng nguyên tố, ATK +12/15/18/21/24% và Elemental Mastery +48/60/72/84/96.",
+      "effects": [
+        {
+          "stat": "ATK Buff",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        },
+        {
+          "stat": "Elemental Mastery Buff",
+          "r1": 48,
+          "r2": 60,
+          "r3": 72,
+          "r4": 84,
+          "r5": 96
+        }
+      ]
+    },
+    "acquisition": "Sự kiện (Windblume Festival 2023, mini-game \"Floral Pursuit\") — đã kết thúc, không lặp lại",
+    "bestCharacters": [
+      "Dehya",
+      "DPS/sub-DPS Claymore hệ phản ứng nguyên tố"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "makhaira-aquamarine",
+    "name": "Makhaira Aquamarine",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 165
+    },
+    "passive": {
+      "name": "Desert Pavilion",
+      "description": "mỗi 10s, người mang nhận thêm ATK = 24/30/36/42/48% Elemental Mastery của bản thân trong 12s; đồng đội gần đó nhận 30% giá trị buff này trong cùng thời lượng. Nhiều bản sao vũ khí cho phép cộng dồn; kích hoạt được cả khi rời sân.",
+      "effects": [
+        {
+          "stat": "ATK from EM (%)",
+          "r1": 0.24,
+          "r2": 0.3,
+          "r3": 0.36,
+          "r4": 0.42,
+          "r5": 0.48
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "DPS Claymore scale Elemental Mastery"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "master-key",
+    "name": "Master Key",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.613
+    },
+    "passive": {
+      "name": "Fall Into Place",
+      "description": "kích hoạt phản ứng nguyên tố tăng Elemental Mastery +60/75/90/105/120 trong 12s; khi có \"Moonsign: Ascendant Gleam\", tăng thêm 60/75/90/105/120 Elemental Mastery nữa; kích hoạt được cả khi rời sân.",
+      "effects": [
+        {
+          "stat": "Elemental Mastery Buff",
+          "r1": 60,
+          "r2": 75,
+          "r3": 90,
+          "r4": 105,
+          "r5": 120
+        },
+        {
+          "stat": "Additional Elemental Mastery Buff (Moonsign)",
+          "r1": 60,
+          "r2": 75,
+          "r3": 90,
+          "r4": 105,
+          "r5": 120
+        }
+      ]
+    },
+    "acquisition": "Chế tạo (bản thiết kế từ Lyulka, Rossum Workshop, Nasha Town)",
+    "bestCharacters": [
+      "Aino",
+      "DPS/sub-DPS Claymore hệ phản ứng nguyên tố mùa Luna"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "portable-power-saw",
+    "name": "Portable Power Saw",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "HP%",
+      "valueLv90": 0.551
+    },
+    "passive": {
+      "name": "Sea Shanty",
+      "description": "khi người mang được hồi máu hoặc hồi máu cho đồng đội, nhận 1 Stoic's Symbol (tối đa 3, thời lượng 30s); dùng Kỹ năng/Bùng nổ nguyên tố tiêu hao toàn bộ Symbol để nhận \"Roused\" 10s: mỗi Symbol tiêu hao cho 40/50/60/70/80 Elemental Mastery, 2s sau đó hồi 2/2.5/3/3.5/4 Năng Lượng mỗi Symbol; hồi chuỗi Roused 15s, nhận Symbol được cả khi rời sân.",
+      "effects": [
+        {
+          "stat": "Elemental Mastery Buff per Symbol",
+          "r1": 40,
+          "r2": 50,
+          "r3": 60,
+          "r4": 70,
+          "r5": 80
+        },
+        {
+          "stat": "Energy Restore per Symbol",
+          "r1": 2,
+          "r2": 2.5,
+          "r3": 3,
+          "r4": 3.5,
+          "r5": 4
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "Nhân vật Claymore hồi máu/scale Elemental Mastery"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "prototype-archaic",
+    "name": "Prototype Archaic",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Crush",
+      "description": "đòn thường/trọng kích trúng địch có 50% tỉ lệ gây thêm 240/300/360/420/480% ATK sát thương AoE nhỏ; hồi chuỗi 15s.",
+      "effects": [
+        {
+          "stat": "Bonus AoE DMG (% ATK)",
+          "r1": 2.4,
+          "r2": 3.0,
+          "r3": 3.6,
+          "r4": 4.2,
+          "r5": 4.8
+        }
+      ]
+    },
+    "acquisition": "Chế tạo",
+    "bestCharacters": [
+      "DPS Claymore trọng kích Vật lý"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "rainslasher",
+    "name": "Rainslasher",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 165
+    },
+    "passive": {
+      "name": "Bane of Storm and Tide",
+      "description": "sát thương gây cho địch dính hiệu ứng Thủy hoặc Lôi +20/24/28/32/36%.",
+      "effects": [
+        {
+          "stat": "DMG Bonus vs Hydro/Electro-afflicted",
+          "r1": 0.2,
+          "r2": 0.24,
+          "r3": 0.28,
+          "r4": 0.32,
+          "r5": 0.36
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "DPS Claymore hệ Thủy/Lôi"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "royal-greatsword",
+    "name": "Royal Greatsword",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Focus",
+      "description": "gây sát thương lên địch tăng CRIT Rate +8/10/12/14/16%, tối đa 5 lớp; một đòn chí mạng sẽ xóa toàn bộ lớp.",
+      "effects": [
+        {
+          "stat": "CRIT Rate Buff per stack",
+          "r1": 0.08,
+          "r2": 0.1,
+          "r3": 0.12,
+          "r4": 0.14,
+          "r5": 0.16
+        }
+      ]
+    },
+    "acquisition": "Đổi Starglitter (Paimon's Bargains, dòng Royal luân phiên theo tháng)",
+    "bestCharacters": [
+      "DPS Claymore ưu tiên ATK% thuần",
+      "build stack CRIT Rate"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "sacrificial-greatsword",
+    "name": "Sacrificial Greatsword",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.306
+    },
+    "passive": {
+      "name": "Composed",
+      "description": "sau khi Kỹ năng nguyên tố trúng địch, có 40/50/60/70/80% tỉ lệ hồi chuỗi Kỹ năng ngay lập tức; hồi chuỗi hiệu ứng 30/26/22/19/16s.",
+      "effects": [
+        {
+          "stat": "Reset Chance",
+          "r1": 0.4,
+          "r2": 0.5,
+          "r3": 0.6,
+          "r4": 0.7,
+          "r5": 0.8
+        },
+        {
+          "stat": "Cooldown (s)",
+          "r1": 30,
+          "r2": 26,
+          "r3": 22,
+          "r4": 19,
+          "r5": 16
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "Nhân vật Claymore cần spam Kỹ năng"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "serpent-spine",
+    "name": "Serpent Spine",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Wavesplitter",
+      "description": "cứ mỗi 4s trên sân, sát thương gây ra +6/7/8/9/10% và sát thương phải nhận +3/2.7/2.4/2.2/2%; tối đa 5 lớp, không mất khi rời sân nhưng giảm 1 lớp khi nhận sát thương.",
+      "effects": [
+        {
+          "stat": "DMG Bonus per stack",
+          "r1": 0.06,
+          "r2": 0.07,
+          "r3": 0.08,
+          "r4": 0.09,
+          "r5": 0.1
+        },
+        {
+          "stat": "DMG Taken Increase per stack",
+          "r1": 0.03,
+          "r2": 0.027,
+          "r3": 0.024,
+          "r4": 0.022,
+          "r5": 0.02
+        }
+      ]
+    },
+    "acquisition": "Battle Pass (Gnostic Hymn Bounty)",
+    "bestCharacters": [
+      "DPS trụ sân bền bỉ (mọi hệ vũ khí",
+      "đặc biệt Claymore)"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "snow-tombed-starsilver",
+    "name": "Snow-Tombed Starsilver",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "Physical DMG Bonus",
+      "valueLv90": 0.345
+    },
+    "passive": {
+      "name": "Frost Burial",
+      "description": "đòn thường/trọng kích trúng địch có 60/70/80/90/100% tỉ lệ tạo cơn lốc băng gây 80/95/110/125/140% ATK sát thương AoE (200/240/280/320/360% ATK nếu địch dính Băng); hồi chuỗi 10s.",
+      "effects": [
+        {
+          "stat": "Proc Chance",
+          "r1": 0.6,
+          "r2": 0.7,
+          "r3": 0.8,
+          "r4": 0.9,
+          "r5": 1.0
+        },
+        {
+          "stat": "AoE DMG (% ATK)",
+          "r1": 0.8,
+          "r2": 0.95,
+          "r3": 1.1,
+          "r4": 1.25,
+          "r5": 1.4
+        },
+        {
+          "stat": "AoE DMG vs Cryo-afflicted (% ATK)",
+          "r1": 2.0,
+          "r2": 2.4,
+          "r3": 2.8,
+          "r4": 3.2,
+          "r5": 3.6
+        }
+      ]
+    },
+    "acquisition": "Chế tạo (Dragonspine)",
+    "bestCharacters": [
+      "DPS Claymore hệ Băng"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "talking-stick",
+    "name": "Talking Stick",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.184
+    },
+    "passive": {
+      "name": "\"The Silver Tongue\"",
+      "description": "sau khi dính Hỏa, ATK +16/20/24/28/32% trong 15s, hồi 12s. Sau khi dính Thủy/Băng/Lôi/Thảo, toàn bộ Elemental DMG Bonus +12/15/18/21/24% trong 15s, hồi 12s.",
+      "effects": [
+        {
+          "stat": "ATK Buff (Pyro)",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        },
+        {
+          "stat": "Elemental DMG Bonus (Hydro/Cryo/Electro/Dendro)",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        }
+      ]
+    },
+    "acquisition": "Vé Thông Hành (Gnostic Hymn 2)",
+    "bestCharacters": [
+      "Razor",
+      "nhân vật Claymore tự áp nguyên tố lên bản thân"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "the-bell",
+    "name": "The Bell",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "HP%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Rebellious Guardian",
+      "description": "nhận sát thương tạo khiên hấp thụ tối đa 20/23/26/29/32% HP tối đa, kéo dài 10s hoặc đến khi vỡ, hồi chuỗi 45s; trong lúc có khiên, sát thương gây ra +12/15/18/21/24%.",
+      "effects": [
+        {
+          "stat": "Shield Absorption (% Max HP)",
+          "r1": 0.2,
+          "r2": 0.23,
+          "r3": 0.26,
+          "r4": 0.29,
+          "r5": 0.32
+        },
+        {
+          "stat": "DMG Bonus (with Shield)",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish) hoặc Epitome Invocation (banner vũ khí giới hạn, tỉ lệ cao hơn)",
+    "bestCharacters": [
+      "DPS/tank Claymore scale HP",
+      "phổ thông giai đoạn đầu game"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "tidal-shadow",
+    "name": "Tidal Shadow",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "White Cruising Wave",
+      "description": "sau khi người mang được hồi máu, ATK +24/30/36/42/48% trong 8s; kích hoạt được cả khi rời sân.",
+      "effects": [
+        {
+          "stat": "ATK Buff",
+          "r1": 0.24,
+          "r2": 0.3,
+          "r3": 0.36,
+          "r4": 0.42,
+          "r5": 0.48
+        }
+      ]
+    },
+    "acquisition": "Chế tạo (Fontaine)",
+    "bestCharacters": [
+      "DPS/sub-DPS Claymore hệ Thủy",
+      "đội hình hồi máu"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "whiteblind",
+    "name": "Whiteblind",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "DEF%",
+      "valueLv90": 0.517
+    },
+    "passive": {
+      "name": "Infusion Blade",
+      "description": "đòn thường/trọng kích trúng địch tăng ATK và DEF +6/7.5/9/10.5/12% trong 6s, tối đa 4 lớp, hồi 0.5s.",
+      "effects": [
+        {
+          "stat": "ATK & DEF Buff per stack",
+          "r1": 0.06,
+          "r2": 0.075,
+          "r3": 0.09,
+          "r4": 0.105,
+          "r5": 0.12
+        }
+      ]
+    },
+    "acquisition": "Chế tạo",
+    "bestCharacters": [
+      "DPS Claymore on-field phổ thông"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "ultimate-overlords-mega-magic-sword",
+    "name": "\"Ultimate Overlord's Mega Magic Sword\"",
+    "type": "Claymore",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.306
+    },
+    "passive": {
+      "name": "Melussistance!",
+      "description": "ATK +12/15/18/21/24%. Ngoài ra, dựa theo số Melusine đã giúp đỡ tại Merusea Village, ATK cộng thêm tối đa +12/15/18/21/24% nữa.",
+      "effects": [
+        {
+          "stat": "ATK Buff",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        },
+        {
+          "stat": "Additional ATK Buff (Melusine helped, max)",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        }
+      ]
+    },
+    "acquisition": "Sự kiện Roses and Muskets (vũ khí miễn phí, không lặp lại ngoài rerun)",
+    "bestCharacters": [
+      "Vũ khí F2P ATK% thuần",
+      "không gắn với nhân vật cụ thể"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "bloodtainted-greatsword",
+    "name": "Bloodtainted Greatsword",
+    "type": "Claymore",
+    "rarity": 3,
+    "atkLv1": 38,
+    "atkLv90": 354,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 187
+    },
+    "passive": {
+      "name": "Bane of Fire and Thunder",
+      "description": "sát thương gây cho địch dính hiệu ứng Hỏa hoặc Lôi +12/15/18/21/24%.",
+      "effects": [
+        {
+          "stat": "DMG Bonus vs Pyro/Electro-afflicted",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "Sub-DPS Claymore hệ Hỏa/Lôi",
+      "nhân vật sơ khai"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "debate-club",
+    "name": "Debate Club",
+    "type": "Claymore",
+    "rarity": 3,
+    "atkLv1": 39,
+    "atkLv90": 401,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.352
+    },
+    "passive": {
+      "name": "Blunt Conclusion",
+      "description": "sau khi dùng Kỹ năng nguyên tố, đòn thường/trọng kích trúng địch gây thêm 60/75/90/105/120% ATK sát thương AoE nhỏ, hiệu ứng kéo dài 15s; sát thương cộng thêm chỉ kích hoạt 1 lần/3s.",
+      "effects": [
+        {
+          "stat": "Bonus AoE DMG (% ATK)",
+          "r1": 0.6,
+          "r2": 0.75,
+          "r3": 0.9,
+          "r4": 1.05,
+          "r5": 1.2
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "Nhân vật Claymore sơ khai",
+      "trọng kích"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "ferrous-shadow",
+    "name": "Ferrous Shadow",
+    "type": "Claymore",
+    "rarity": 3,
+    "atkLv1": 39,
+    "atkLv90": 401,
+    "subStat": {
+      "type": "HP%",
+      "valueLv90": 0.352
+    },
+    "passive": {
+      "name": "Unbending",
+      "description": "khi HP dưới 70/75/80/85/90%, sát thương trọng kích +30/35/40/45/50% và trọng kích khó bị ngắt hơn.",
+      "effects": [
+        {
+          "stat": "HP Threshold (%)",
+          "r1": 0.7,
+          "r2": 0.75,
+          "r3": 0.8,
+          "r4": 0.85,
+          "r5": 0.9
+        },
+        {
+          "stat": "Charged Attack DMG Bonus",
+          "r1": 0.3,
+          "r2": 0.35,
+          "r3": 0.4,
+          "r4": 0.45,
+          "r5": 0.5
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "Nhân vật Claymore sơ khai",
+      "trọng kích"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "skyrider-greatsword",
+    "name": "Skyrider Greatsword",
+    "type": "Claymore",
+    "rarity": 3,
+    "atkLv1": 39,
+    "atkLv90": 401,
+    "subStat": {
+      "type": "Physical DMG Bonus",
+      "valueLv90": 0.439
+    },
+    "passive": {
+      "name": "Courage",
+      "description": "đòn thường/trọng kích trúng địch tăng ATK +6/7/8/9/10% trong 6s, tối đa 4 lớp, hồi 0.5s.",
+      "effects": [
+        {
+          "stat": "ATK Buff per stack",
+          "r1": 0.06,
+          "r2": 0.07,
+          "r3": 0.08,
+          "r4": 0.09,
+          "r5": 0.1
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "Nhân vật Claymore sơ khai"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "white-iron-greatsword",
+    "name": "White Iron Greatsword",
+    "type": "Claymore",
+    "rarity": 3,
+    "atkLv1": 39,
+    "atkLv90": 401,
+    "subStat": {
+      "type": "DEF%",
+      "valueLv90": 0.439
+    },
+    "passive": {
+      "name": "Cull the Weak",
+      "description": "hạ gục địch hồi 8/10/12/14/16% HP cho người mang.",
+      "effects": [
+        {
+          "stat": "HP Restore (%)",
+          "r1": 0.08,
+          "r2": 0.1,
+          "r3": 0.12,
+          "r4": 0.14,
+          "r5": 0.16
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "Nhân vật Claymore sơ khai"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "old-mercs-pal",
+    "name": "Old Merc's Pal",
+    "type": "Claymore",
+    "rarity": 2,
+    "atkLv1": 33,
+    "atkLv90": 243,
+    "subStat": {
+      "type": null,
+      "valueLv90": null
+    },
+    "passive": null,
+    "acquisition": "Không ghi rõ trong nguồn (bảng 2★ chỉ liệt kê ATK theo cấp, không có cột Cách lấy riêng)",
+    "bestCharacters": [
+      "Chỉ dùng tạm giai đoạn đầu game"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  },
+  {
+    "id": "waster-greatsword",
+    "name": "Waster Greatsword",
+    "type": "Claymore",
+    "rarity": 1,
+    "atkLv1": 23,
+    "atkLv90": 185,
+    "subStat": {
+      "type": null,
+      "valueLv90": null
+    },
+    "passive": null,
+    "acquisition": "Vũ khí khởi đầu mặc định (không ghi cột Cách lấy riêng trong nguồn)",
+    "bestCharacters": [
+      "Vũ khí khởi đầu",
+      "không dùng trong đội hình thực chiến"
+    ],
+    "sourceFile": "vu-khi/dai-kiem.md"
+  }
+]

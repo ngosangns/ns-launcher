@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "team.schema.json",
+  "title": "TeamComposition",
+  "description": "Hợp đồng đầu ra (output contract) cho thuật toán tối ưu đội hình: một đội 4 nhân vật kèm build, chấm điểm cho một tầng Trầm Thủy cụ thể. Không phải dữ liệu tra cứu tĩnh — đây là schema cho KẾT QUẢ do thuật toán sinh ra, đặt ở đây để việc triển khai thuật toán sau này có sẵn hợp đồng dữ liệu thống nhất với phần còn lại của data model.",
+  "type": "object",
+  "required": ["targetFloor", "members", "score"],
+  "properties": {
+    "targetFloor": {
+      "type": "object",
+      "required": ["cycleFile", "floor", "half"],
+      "properties": {
+        "cycleFile": { "type": "string", "description": "vd. data/abyss-monsters/2026-08-16-den-2026-09-15.json" },
+        "floor": { "type": "integer" },
+        "half": { "type": ["integer", "null"], "enum": [1, 2, null], "description": "Một số tầng (vd 12) tách Ley Line Disorder theo nửa tầng" }
+      }
+    },
+    "members": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["characterId", "weaponId", "artifactSetIds", "role"],
+        "properties": {
+          "characterId": { "type": "string", "description": "khớp id trong data/characters/*.json" },
+          "weaponId": { "type": "string", "description": "khớp id trong data/weapons/*.json" },
+          "artifactSetIds": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 2,
+            "description": "1 phần tử = 4pc 1 bộ; 2 phần tử = 2pc+2pc phối 2 bộ",
+            "items": { "type": "string", "description": "khớp id trong data/artifact-sets.json" }
+          },
+          "role": { "type": "string", "enum": ["main-dps", "sub-dps", "support", "shield", "healer"] },
+          "estimatedStats": {
+            "type": "object",
+            "description": "Tổng chỉ số ước tính sau build (đầu vào cho damage-formula.json), do thuật toán tự tính từ base stats + weapon + artifact main/substat giả định — không phải dữ liệu tra cứu",
+            "properties": {
+              "atk": { "type": "number" },
+              "hp": { "type": "number" },
+              "def": { "type": "number" },
+              "elementalMastery": { "type": "number" },
+              "critRate": { "type": "number" },
+              "critDmg": { "type": "number" },
+              "energyRecharge": { "type": "number" },
+              "elementalDmgBonus": { "type": "number" }
+            }
+          }
+        }
+      }
+    },
+    "reactionsEnabled": { "type": "array", "items": { "type": "string" }, "description": "vd. [\"Vaporize\", \"Stellar-Conduct\"]" },
+    "score": {
+      "type": "object",
+      "required": ["estimatedTotalDamage"],
+      "properties": {
+        "estimatedTotalDamage": { "type": "number" },
+        "clearTimeEstimateSeconds": { "type": ["number", "null"] },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

@@ -20,6 +20,9 @@ gameplay/thông số, thay đổi theo từng bản cập nhật, không phải 
   thương gốc của game (DEF/RES/CRIT, phản ứng khuếch đại/chuyển hóa/cộng
   dồn, và cơ chế Lunar & Stellar Glimmer Reaction mới) — dùng để tự tính
   DPS thực tế của một đội hình thay vì chỉ so % trên giấy.
+- [`data-model/`](data-model/README.md) — Bản JSON có cấu trúc (JSON Schema
+  + dữ liệu) của toàn bộ 4 mục trên, để một thuật toán tối ưu đội hình đọc
+  và tính toán tự động thay vì phải parse Markdown.
 
 ## Nguồn dữ liệu
 

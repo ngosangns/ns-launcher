@@ -1,0 +1,1126 @@
+[
+  {
+    "id": "hunters-bow",
+    "name": "Hunter's Bow",
+    "type": "Bow",
+    "rarity": 1,
+    "atkLv1": 23,
+    "atkLv90": 185,
+    "subStat": {
+      "type": null,
+      "valueLv90": null
+    },
+    "passive": null,
+    "acquisition": "Rương kho báu cơ bản rải rác khắp Teyvat, hoặc chế tạo tại Lò rèn (không cần bản thiết kế)",
+    "bestCharacters": [
+      "Bất kỳ nhân vật dùng Cung nào ở giai đoạn đầu game"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "seasoned-hunters-bow",
+    "name": "Seasoned Hunter's Bow",
+    "type": "Bow",
+    "rarity": 2,
+    "atkLv1": 33,
+    "atkLv90": 243,
+    "subStat": {
+      "type": null,
+      "valueLv90": null
+    },
+    "passive": null,
+    "acquisition": "Rương kho báu cơ bản, hoặc chế tạo tại Lò rèn (không cần bản thiết kế)",
+    "bestCharacters": [
+      "Bất kỳ nhân vật dùng Cung nào ở giai đoạn đầu game"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "raven-bow",
+    "name": "Raven Bow",
+    "type": "Bow",
+    "rarity": 3,
+    "atkLv1": 40,
+    "atkLv90": 448,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 94
+    },
+    "passive": {
+      "name": "Bane of Flame and Water",
+      "description": "R1: Tăng 15% sát thương lên kẻ địch đang dính hiệu ứng Thủy hoặc Hỏa R5: Tăng 24% sát thương lên kẻ địch đang dính hiệu ứng Thủy hoặc Hỏa",
+      "effects": []
+    },
+    "acquisition": "Rương kho báu (Tinh xảo trở lên) rải rác khắp Teyvat",
+    "bestCharacters": [
+      "Yoimiya",
+      "Fischl"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "sharpshooters-oath",
+    "name": "Sharpshooter's Oath",
+    "type": "Bow",
+    "rarity": 3,
+    "atkLv1": 39,
+    "atkLv90": 401,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.469
+    },
+    "passive": {
+      "name": "Precise",
+      "description": "R1: Tăng 30% sát thương khi bắn trúng điểm yếu R5: Tăng 48% sát thương khi bắn trúng điểm yếu",
+      "effects": []
+    },
+    "acquisition": "Rương kho báu (Tinh xảo trở lên) rải rác khắp Teyvat",
+    "bestCharacters": [
+      "Tartaglia",
+      "Ganyu"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "recurve-bow",
+    "name": "Recurve Bow",
+    "type": "Bow",
+    "rarity": 3,
+    "atkLv1": 38,
+    "atkLv90": 354,
+    "subStat": {
+      "type": "HP%",
+      "valueLv90": 0.469
+    },
+    "passive": {
+      "name": "Cull the Weak",
+      "description": "R1: Hạ gục kẻ địch hồi phục 10% HP R5: Hạ gục kẻ địch hồi phục 16% HP",
+      "effects": []
+    },
+    "acquisition": "Rương kho báu (Tinh xảo trở lên) rải rác khắp Teyvat",
+    "bestCharacters": [
+      "Không có nhân vật Cung nào scale theo HP rõ rệt",
+      "chỉ phù hợp dùng tạm giai đoạn đầu"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "slingshot",
+    "name": "Slingshot",
+    "type": "Bow",
+    "rarity": 3,
+    "atkLv1": 38,
+    "atkLv90": 354,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.312
+    },
+    "passive": {
+      "name": "Slingshot",
+      "description": "R1: Nếu Đòn thường/Đòn nặng trúng mục tiêu trong 0.3s sau khi bắn, tăng 42% sát thương; nếu không, giảm 10% sát thương R5: Nếu Đòn thường/Đòn nặng trúng mục tiêu trong 0.3s sau khi bắn, tăng 60% sát thương; nếu không, giảm 10% sát thương",
+      "effects": []
+    },
+    "acquisition": "Rương kho báu (Tinh xảo trở lên) rải rác khắp Teyvat",
+    "bestCharacters": [
+      "Ganyu",
+      "Yoimiya (giai đoạn đầu)"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "messenger",
+    "name": "Messenger",
+    "type": "Bow",
+    "rarity": 3,
+    "atkLv1": 40,
+    "atkLv90": 448,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.312
+    },
+    "passive": {
+      "name": "Archer's Message",
+      "description": "R1: Đòn nặng trúng điểm yếu gây thêm 100% ATK dưới dạng sát thương CRIT, chỉ kích hoạt 1 lần mỗi 10s R5: Đòn nặng trúng điểm yếu gây thêm 200% ATK dưới dạng sát thương CRIT, chỉ kích hoạt 1 lần mỗi 10s",
+      "effects": []
+    },
+    "acquisition": "Rương kho báu (Tinh xảo trở lên), chủ yếu tại Liyue",
+    "bestCharacters": [
+      "Ganyu",
+      "Tartaglia"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "favonius-warbow",
+    "name": "Favonius Warbow",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.613
+    },
+    "passive": {
+      "name": "Windfall",
+      "description": "R1: Đòn chí mạng có 60% cơ hội tạo Nguyên Tố Vi Lạp hồi 6 Năng lượng, chỉ kích hoạt 1 lần mỗi 12s R5: Đòn chí mạng có 100% cơ hội tạo Nguyên Tố Vi Lạp hồi 6 Năng lượng, chỉ kích hoạt 1 lần mỗi 6s",
+      "effects": []
+    },
+    "acquisition": "Banner tiêu chuẩn (Khát Vọng Lang Thang) hoặc rơi ra như vũ khí 4★ phụ trên mọi banner Nguyện ước",
+    "bestCharacters": [
+      "Fischl",
+      "Gorou",
+      "Kujou Sara"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "the-stringless",
+    "name": "The Stringless",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 165
+    },
+    "passive": {
+      "name": "Arrowless Song",
+      "description": "R1: Tăng 24% sát thương Kỹ năng và Trọng kích nguyên tố R5: Tăng 48% sát thương Kỹ năng và Trọng kích nguyên tố",
+      "effects": []
+    },
+    "acquisition": "Từng là phần thưởng sự kiện (bản 1.1); hiện có thể nhận như vũ khí 4★ phụ khi quay banner vũ khí giới hạn (Sử Thi Hóa)",
+    "bestCharacters": [
+      "Venti",
+      "Tighnari",
+      "Kujou Sara"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "sacrificial-bow",
+    "name": "Sacrificial Bow",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.306
+    },
+    "passive": {
+      "name": "Composed",
+      "description": "R1: Sau khi Kỹ năng nguyên tố gây sát thương, có 40% cơ hội kết thúc hồi chiêu của chính nó, chỉ kích hoạt 1 lần mỗi 30s R5: Sau khi Kỹ năng nguyên tố gây sát thương, có 80% cơ hội kết thúc hồi chiêu của chính nó, chỉ kích hoạt 1 lần mỗi 16s",
+      "effects": []
+    },
+    "acquisition": "Banner tiêu chuẩn (Khát Vọng Lang Thang) hoặc rơi ra như vũ khí 4★ phụ trên mọi banner Nguyện ước",
+    "bestCharacters": [
+      "Fischl",
+      "Kujou Sara",
+      "Tighnari"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "royal-bow",
+    "name": "Royal Bow",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Focus",
+      "description": "R1: Gây sát thương lên kẻ địch tăng 8% Tỉ lệ chí mạng, tối đa 5 lớp, đòn chí mạng xóa hết lớp R5: Gây sát thương lên kẻ địch tăng 16% Tỉ lệ chí mạng, tối đa 5 lớp, đòn chí mạng xóa hết lớp",
+      "effects": []
+    },
+    "acquisition": "Banner tiêu chuẩn (Khát Vọng Lang Thang) hoặc rơi ra như vũ khí 4★ phụ trên mọi banner Nguyện ước",
+    "bestCharacters": [
+      "Yoimiya",
+      "Ganyu",
+      "Tartaglia"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "rust",
+    "name": "Rust",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Rapid Firing",
+      "description": "R1: Tăng 40% sát thương Đòn thường nhưng giảm 10% sát thương Đòn nặng R5: Tăng 80% sát thương Đòn thường nhưng giảm 10% sát thương Đòn nặng",
+      "effects": []
+    },
+    "acquisition": "Banner tiêu chuẩn (Khát Vọng Lang Thang) hoặc rơi ra như vũ khí 4★ phụ trên mọi banner Nguyện ước",
+    "bestCharacters": [
+      "Fischl",
+      "Yoimiya"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "prototype-crescent",
+    "name": "Prototype Crescent",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Unreturning",
+      "description": "R1: Đòn nặng trúng điểm yếu tăng 10% tốc độ di chuyển và 36% ATK trong 10s R5: Đòn nặng trúng điểm yếu tăng 10% tốc độ di chuyển và 72% ATK trong 10s",
+      "effects": []
+    },
+    "acquisition": "Chế tạo tại Lò rèn bằng bản thiết kế \"Nguyên mẫu\" mua từ NPC Lò rèn ở Mondstadt",
+    "bestCharacters": [
+      "Ganyu",
+      "Tartaglia",
+      "Yoimiya"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "compound-bow",
+    "name": "Compound Bow",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "Physical DMG Bonus",
+      "valueLv90": 0.69
+    },
+    "passive": {
+      "name": "Infusion Arrow",
+      "description": "R1: Đòn thường/Đòn nặng trúng địch tăng 4% ATK và 1.2% tốc độ Đòn thường trong 6s, tối đa 4 lớp, chỉ kích hoạt 1 lần mỗi 0.3s R5: Đòn thường/Đòn nặng trúng địch tăng 8% ATK và 2.4% tốc độ Đòn thường trong 6s, tối đa 4 lớp, chỉ kích hoạt 1 lần mỗi 0.3s",
+      "effects": []
+    },
+    "acquisition": "Chế tạo tại Lò rèn bằng bản thiết kế mua từ NPC Lò rèn ở Liyue",
+    "bestCharacters": [
+      "Yoimiya",
+      "Fischl"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "blackcliff-warbow",
+    "name": "Blackcliff Warbow",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.368
+    },
+    "passive": {
+      "name": "Press the Advantage",
+      "description": "R1: Hạ gục kẻ địch tăng 12% ATK trong 30s, tối đa 3 lớp, mỗi lớp tính thời gian riêng R5: Hạ gục kẻ địch tăng 24% ATK trong 30s, tối đa 3 lớp, mỗi lớp tính thời gian riêng",
+      "effects": []
+    },
+    "acquisition": "Mua giới hạn thời gian bằng Sao Băng Vô Chủ tại cửa hàng Ưu Đãi Của Paimon khi có banner nhân vật liên quan",
+    "bestCharacters": [
+      "Yoimiya",
+      "Ganyu"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "the-viridescent-hunt",
+    "name": "The Viridescent Hunt",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Verdant Wind",
+      "description": "R1: Đòn thường/Đòn nặng trúng địch có 50% cơ hội tạo lốc xoáy hút địch xung quanh, gây 40% ATK mỗi 0.5s trong 4s, chỉ kích hoạt 1 lần mỗi 14s R5: Đòn thường/Đòn nặng trúng địch có 50% cơ hội tạo lốc xoáy hút địch xung quanh, gây 80% ATK mỗi 0.5s trong 4s, chỉ kích hoạt 1 lần mỗi 10s",
+      "effects": []
+    },
+    "acquisition": "Chế tạo tại Lò rèn bằng bản thiết kế nhận được sau khi hoàn thành thử thách liên quan tại Mondstadt",
+    "bestCharacters": [
+      "Fischl",
+      "Yoimiya",
+      "Tartaglia (dùng để gom quái)"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "alley-hunter",
+    "name": "Alley Hunter",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Oppidan Ambush",
+      "description": "R1: Khi ở trong đội hình nhưng không xuất trận, sát thương tăng 2%/giây tối đa 20%; khi ra trận hơn 4s, hiệu ứng giảm dần 4%/giây R5: Khi ở trong đội hình nhưng không xuất trận, sát thương tăng 4%/giây tối đa 40%; khi ra trận hơn 4s, hiệu ứng giảm dần 8%/giây",
+      "effects": []
+    },
+    "acquisition": "Vũ khí 4★ phụ khi quay banner vũ khí giới hạn (Sử Thi Hóa)",
+    "bestCharacters": [
+      "Fischl",
+      "Gorou (nhân vật hỗ trợ ngoài trận)"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "fading-twilight",
+    "name": "Fading Twilight",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.306
+    },
+    "passive": {
+      "name": "Radiance of the Deeps",
+      "description": "R1: Có 3 trạng thái Evengleam/Afterglow/Dawnblaze tăng lần lượt 6%/10%/14% sát thương, chuyển trạng thái kế tiếp khi đòn đánh trúng địch, đổi trạng thái tối đa 1 lần mỗi 7s R5: Có 3 trạng thái Evengleam/Afterglow/Dawnblaze tăng lần lượt 12%/20%/28% sát thương, chuyển trạng thái kế tiếp khi đòn đánh trúng địch, đổi trạng thái tối đa 1 lần mỗi 7s",
+      "effects": []
+    },
+    "acquisition": "Phần thưởng chuỗi nhiệm vụ thế giới tại Fontaine",
+    "bestCharacters": [
+      "Yoimiya",
+      "Tartaglia"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "mitternachts-waltz",
+    "name": "Mitternachts Waltz",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Physical DMG Bonus",
+      "valueLv90": 0.517
+    },
+    "passive": {
+      "name": "Evernight Duet",
+      "description": "R1: Đòn thường trúng địch tăng 20% sát thương Kỹ năng nguyên tố trong 5s; Kỹ năng nguyên tố trúng địch tăng 20% sát thương Đòn thường trong 5s R5: Đòn thường trúng địch tăng 40% sát thương Kỹ năng nguyên tố trong 5s; Kỹ năng nguyên tố trúng địch tăng 40% sát thương Đòn thường trong 5s",
+      "effects": []
+    },
+    "acquisition": "Chế tạo tại Lò rèn bằng bản thiết kế mua từ NPC tại Inazuma",
+    "bestCharacters": [
+      "Fischl"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "windblume-ode",
+    "name": "Windblume Ode",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 165
+    },
+    "passive": {
+      "name": "Windblume Wish",
+      "description": "R1: Sau khi dùng Kỹ năng nguyên tố, nhận điều ước Lễ hội Hoa Phong tăng 16% ATK trong 6s R5: Sau khi dùng Kỹ năng nguyên tố, nhận điều ước Lễ hội Hoa Phong tăng 32% ATK trong 6s",
+      "effects": []
+    },
+    "acquisition": "Phần thưởng miễn phí từ sự kiện Lễ Hội Hoa Phong (Windblume Festival), tổ chức lại hàng năm tại Mondstadt",
+    "bestCharacters": [
+      "Tighnari",
+      "Yoimiya"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "hamayumi",
+    "name": "Hamayumi",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.551
+    },
+    "passive": {
+      "name": "Full Draw",
+      "description": "R1: Tăng 16% sát thương Đòn thường và 12% sát thương Đòn nặng; khi Năng lượng đầy, hiệu ứng tăng gấp đôi R5: Tăng 32% sát thương Đòn thường và 24% sát thương Đòn nặng; khi Năng lượng đầy, hiệu ứng tăng gấp đôi",
+      "effects": []
+    },
+    "acquisition": "Chế tạo tại Lò rèn bằng bản thiết kế mua từ NPC tại Inazuma",
+    "bestCharacters": [
+      "Yoimiya",
+      "Gorou"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "predator",
+    "name": "Predator",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Strong Strike (chỉ trên PlayStation™Network)",
+      "description": "R1: Gây sát thương Băng lên địch tăng 10% sát thương Đòn thường/Đòn nặng trong 6s, tối đa 2 lớp; riêng Aloy trang bị Predator được cộng thêm 66 ATK R5: Không có refine cao hơn (vũ khí không thể tinh chế)",
+      "effects": []
+    },
+    "acquisition": "Nhận miễn phí kèm nhân vật Aloy khi đổi mã hoặc trong các đợt phát lại hợp tác PlayStation",
+    "bestCharacters": [
+      "Aloy"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "mouuns-moon",
+    "name": "Mouun's Moon",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Watatsumi Wavewalker",
+      "description": "R1: Mỗi điểm Năng lượng tối đa cộng dồn của cả đội tăng 0.12% sát thương Trọng kích, tối đa 40% R5: Mỗi điểm Năng lượng tối đa cộng dồn của cả đội tăng 0.24% sát thương Trọng kích, tối đa 80%",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí sự kiện giới hạn thời gian (Nguyện Ước Chuyển Dời)",
+    "bestCharacters": [
+      "Fischl",
+      "Gorou (đội hình có tổng Năng lượng tối đa cao)"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "kings-squire",
+    "name": "King's Squire",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.551
+    },
+    "passive": {
+      "name": "Labyrinth Lord's Instruction",
+      "description": "R1: Dùng Kỹ năng/Trọng kích nguyên tố nhận hiệu ứng Lời Dạy Của Khu Rừng tăng 60 Tinh Thông Nguyên Tố trong 12s; khi hết hiệu ứng gây 100% ATK sát thương lên 1 địch gần đó, kích hoạt 1 lần mỗi 20s R5: Dùng Kỹ năng/Trọng kích nguyên tố nhận hiệu ứng Lời Dạy Của Khu Rừng tăng 140 Tinh Thông Nguyên Tố trong 12s; khi hết hiệu ứng gây 180% ATK sát thương lên 1 địch gần đó, kích hoạt 1 lần mỗi 20s",
+      "effects": []
+    },
+    "acquisition": "Chế tạo tại Lò rèn: đổi \"Câu Chuyện Về Bạn\" (phần thưởng chuỗi nhiệm vụ Aranyaka) lấy bản thiết kế từ NPC Aravinay tại Vanarana, Sumeru, rồi rèn",
+    "bestCharacters": [
+      "Tighnari",
+      "Collei"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "end-of-the-line",
+    "name": "End of the Line",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.459
+    },
+    "passive": {
+      "name": "Net Snapper",
+      "description": "R1: Sau khi dùng Kỹ năng nguyên tố, đòn đánh trúng địch kích hoạt hiệu ứng Flowrider gây 80% ATK sát thương diện rộng, tối đa 3 lần mỗi 15s, kích hoạt Flowrider 1 lần mỗi 12s R5: Sau khi dùng Kỹ năng nguyên tố, đòn đánh trúng địch kích hoạt hiệu ứng Flowrider gây 160% ATK sát thương diện rộng, tối đa 3 lần mỗi 15s, kích hoạt Flowrider 1 lần mỗi 12s",
+      "effects": []
+    },
+    "acquisition": "Đổi từ Hiệp Hội Câu Cá Sumeru (NPC Loumelat) bằng các loại cá câu được",
+    "bestCharacters": [
+      "Fischl",
+      "Kujou Sara",
+      "Gorou"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "ibis-piercer",
+    "name": "Ibis Piercer",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Secret Wisdom's Favor",
+      "description": "R1: Đòn nặng trúng địch tăng 40 Tinh Thông Nguyên Tố trong 6s, tối đa 2 lớp, chỉ kích hoạt 1 lần mỗi 0.5s R5: Đòn nặng trúng địch tăng 80 Tinh Thông Nguyên Tố trong 6s, tối đa 2 lớp, chỉ kích hoạt 1 lần mỗi 0.5s",
+      "effects": []
+    },
+    "acquisition": "Đổi từ sự kiện \"Đấu Trường Chiêu Hoán\" (Duel! The Summoners' Summit) bằng Phiếu Chiêu Hoán",
+    "bestCharacters": [
+      "Tighnari",
+      "Ganyu"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "scion-of-the-blazing-sun",
+    "name": "Scion of the Blazing Sun",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.184
+    },
+    "passive": {
+      "name": "The Way of Sunfire",
+      "description": "R1: Sau khi đòn Charged Attack trúng địch, một Mũi Tên Sunfire rơi xuống gây 60% ATK sát thương và áp Heartsearer lên mục tiêu trong 10s, khiến mục tiêu chịu thêm 28% sát thương Charged Attack từ người dùng. Kích hoạt tối đa 1 lần/10s. R5: Mũi Tên Sunfire gây 120% ATK sát thương, Heartsearer tăng 56% sát thương Charged Attack nhận vào. Vẫn 1 lần/10s.",
+      "effects": []
+    },
+    "acquisition": "Vé Thông Hành (Gnostic Hymn – Battle Pass); có thể quay lại trên banner vũ khí giới hạn",
+    "bestCharacters": [
+      "Lyney",
+      "Ganyu",
+      "Tighnari"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "song-of-stillness",
+    "name": "Song of Stillness",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Benthic Pulse",
+      "description": "R1: Sau khi người dùng được hồi máu, gây thêm 16% sát thương trong 8s. Kích hoạt được cả khi rời sân. R5: Sát thương tăng thêm 32% trong 8s, điều kiện như trên.",
+      "effects": []
+    },
+    "acquisition": "Chế tạo tại lò rèn (Forging)",
+    "bestCharacters": [
+      "Yoimiya",
+      "Ganyu (DPS cung trong đội có healer)"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "cloudforged",
+    "name": "Cloudforged",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 165
+    },
+    "passive": {
+      "name": "Crag-Chiseled Forge",
+      "description": "R1: Sau khi Năng lượng Nguyên Tố giảm, Tinh Thông Nguyên Tố tăng 40 trong 18s, tối đa 2 lần cộng dồn. R5: Tinh Thông Nguyên Tố tăng 80 trong 18s, tối đa 2 lần.",
+      "effects": []
+    },
+    "acquisition": "Phần thưởng sự kiện giới hạn",
+    "bestCharacters": [
+      "Sethos (vũ khí đặc trưng)",
+      "Tighnari"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "range-gauge",
+    "name": "Range Gauge",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Masons' Ditty",
+      "description": "R1: Khi được hồi máu hoặc hồi máu cho người khác, nhận 1 Unity's Symbol (tối đa 3, kéo dài 30s). Dùng Elemental Skill/Burst tiêu hết Symbol để nhận Struggle trong 10s: mỗi Symbol tiêu cho 3% ATK và 7% All Elemental DMG Bonus. Struggle tối đa 1 lần/15s; Symbol nhận được cả khi rời sân. R5: Mỗi Symbol tiêu cho 7% ATK và 13% All Elemental DMG Bonus, cơ chế còn lại giữ nguyên.",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn (Weapon Event Wishes)",
+    "bestCharacters": [
+      "DPS/sub-DPS cung trong đội có healer"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "flower-wreathed-feathers",
+    "name": "Flower-Wreathed Feathers",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Inflorescence Unattainable",
+      "description": "R1: Giảm 15% tiêu hao thể lực khi lượn. Khi ngắm bắn, sát thương Charged Attack tăng 6% mỗi 0.5s ngắm, tối đa 6 lần, mất sau 10s rời chế độ ngắm. R5: Sát thương Charged Attack tăng 12% mỗi 0.5s ngắm, cơ chế còn lại giữ nguyên.",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn",
+    "bestCharacters": [
+      "Ganyu",
+      "Tighnari",
+      "Yoimiya"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "chain-breaker",
+    "name": "Chain Breaker",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Flower-Feather Song",
+      "description": "R1: Mỗi thành viên trong đội đến từ Natlan hoặc khác nguyên tố với người dùng cho 4.8% ATK; có từ 3 nhân vật như vậy trở lên thì nhận thêm 24 Tinh Thông Nguyên Tố. R5: ATK cộng thêm 9.6% mỗi thành viên, và 48 Tinh Thông Nguyên Tố khi đủ điều kiện.",
+      "effects": []
+    },
+    "acquisition": "Chế tạo tại lò rèn",
+    "bestCharacters": [
+      "Chasca",
+      "Ororon (đội đa nguyên tố Natlan)"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "sequence-of-solitude",
+    "name": "Sequence of Solitude",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "HP%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Silent Trigger",
+      "description": "R1: Khi đòn đánh trúng địch, gây sát thương diện rộng bằng 40% HP tối đa tại vị trí mục tiêu, tối đa 1 lần/15s. R5: Sát thương diện rộng bằng 80% HP tối đa, vẫn 1 lần/15s.",
+      "effects": []
+    },
+    "acquisition": "Phần thưởng sự kiện giới hạn \"Whirling Waltz\" (bản 5.6)",
+    "bestCharacters": [
+      "Yelan và các DPS cung scale theo HP"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "snare-hook",
+    "name": "Snare Hook",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.613
+    },
+    "passive": {
+      "name": "Phantom Flash",
+      "description": "R1: Khi gây phản ứng nguyên tố, Tinh Thông Nguyên Tố tăng 60 trong 12s; nếu có Moonsign: Ascendant Gleam, tăng thêm 60. Kích hoạt được cả khi rời sân. R5: Tinh Thông Nguyên Tố tăng 120 (+120 với Moonsign), điều kiện như trên.",
+      "effects": []
+    },
+    "acquisition": "Chế tạo tại lò rèn (mua thiết kế từ Lyulka, Rossum Workshop, Nasha Town – Natlan)",
+    "bestCharacters": [
+      "Tighnari",
+      "Fischl (DPS/sub-DPS phản ứng)"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "rainbow-serpents-rain-bow",
+    "name": "Rainbow Serpent's Rain Bow",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.459
+    },
+    "passive": {
+      "name": "Astral Whispers Beyond the Sacred Throne",
+      "description": "R1: ATK tăng 28% trong 8s sau khi đòn đánh của người dùng trúng địch trong lúc đang rời sân. R5: ATK tăng 56% trong 8s, điều kiện như trên.",
+      "effects": []
+    },
+    "acquisition": "Phần thưởng sự kiện giới hạn",
+    "bestCharacters": [
+      "Fischl",
+      "Yelan (gây sát thương khi rời sân)"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "jade-vista",
+    "name": "Jade Vista",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "A Candle Woven From the Night",
+      "description": "R1: Mỗi thành viên khác trong đội cùng nguyên tố cho 64 Tinh Thông Nguyên Tố; mỗi thành viên khác nguyên tố cho 12% ATK. Hai hiệu ứng cộng dồn tối đa 3 lần (ưu tiên tính Tinh Thông Nguyên Tố trước). R5: Cùng nguyên tố cho 128 Tinh Thông Nguyên Tố; khác nguyên tố cho 24% ATK, tối đa 3 lần.",
+      "effects": []
+    },
+    "acquisition": "Vé Thông Hành (Gnostic Hymn – Battle Pass, bản 7.0)",
+    "bestCharacters": [
+      "Sethos",
+      "Tighnari",
+      "Chasca",
+      "Yelan"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "covenant-of-frost-and-snow",
+    "name": "Covenant of Frost and Snow",
+    "type": "Bow",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "DEF%",
+      "valueLv90": 0.517
+    },
+    "passive": {
+      "name": "The Law's Equilibrium",
+      "description": "R1: Sau khi dùng Elemental Skill, Tinh Thông Nguyên Tố tăng 120 trong 12s. R5: Tinh Thông Nguyên Tố tăng 240 trong 12s.",
+      "effects": []
+    },
+    "acquisition": "Chế tạo tại lò rèn",
+    "bestCharacters": [
+      "Fischl",
+      "Tighnari (DPS/sub-DPS tạo phản ứng)"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "skyward-harp",
+    "name": "Skyward Harp",
+    "type": "Bow",
+    "rarity": 5,
+    "atkLv1": 48,
+    "atkLv90": 674,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.221
+    },
+    "passive": {
+      "name": "Echoing Ballad",
+      "description": "R1: Tăng 20% CRIT DMG. Đòn đánh trúng có 60% cơ hội gây một vụ nổ AoE nhỏ, gây 125% ATK sát thương Vật Lý, tối đa 1 lần/4s. R5: Tăng 40% CRIT DMG, 100% cơ hội gây nổ AoE, hồi chiêu còn 2s.",
+      "effects": []
+    },
+    "acquisition": "Banner Ước Nguyện tiêu chuẩn (vũ khí 5★ thường trực)",
+    "bestCharacters": [
+      "Yoimiya",
+      "Ganyu",
+      "Tighnari"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "amos-bow",
+    "name": "Amos' Bow",
+    "type": "Bow",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.496
+    },
+    "passive": {
+      "name": "Strong-Willed",
+      "description": "R1: Tăng 12% sát thương Normal/Charged Attack; sau khi bắn, sát thương tăng thêm 8% mỗi 0.1s mũi tên còn bay, tối đa 5 lần. R5: Tăng 24% sát thương Normal/Charged Attack; sát thương tăng thêm 16% mỗi 0.1s, tối đa 5 lần.",
+      "effects": []
+    },
+    "acquisition": "Banner Ước Nguyện tiêu chuẩn",
+    "bestCharacters": [
+      "Yoimiya",
+      "Ganyu",
+      "Childe (Tartaglia)"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "elegy-for-the-end",
+    "name": "Elegy for the End",
+    "type": "Bow",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.551
+    },
+    "passive": {
+      "name": "The Parting Refrain",
+      "description": "R1: Tăng 60 Tinh Thông Nguyên Tố. Khi Elemental Skill/Burst trúng địch, nhận 1 Sigil of Remembrance (tối đa 1 lần/0.2s, cả khi rời sân). Đủ 4 Sigil, cả đội gần đó nhận \"Millennial Movement: Farewell Song\" 12s: +100 Tinh Thông Nguyên Tố và +20% ATK, sau đó khóa 20s không nhận Sigil mới. R5: Tăng 120 Tinh Thông Nguyên Tố nền; Farewell Song cho +200 Tinh Thông Nguyên Tố và +40% ATK, cơ chế còn lại giữ nguyên.",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn",
+    "bestCharacters": [
+      "Venti",
+      "Fischl (hỗ trợ/battery Tinh Thông Nguyên Tố)"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "polar-star",
+    "name": "Polar Star",
+    "type": "Bow",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.331
+    },
+    "passive": {
+      "name": "Daylight's Augury",
+      "description": "R1: Tăng 12% sát thương Elemental Skill/Burst. Sau khi Normal/Charged Attack/Skill/Burst trúng địch, nhận 1 stack Ashen Nightstar (12s); có 1/2/3/4 stack cho ATK +10/20/30/48%. Stack từ 4 loại đòn tính độc lập. R5: Tăng 24% sát thương Skill/Burst; ATK +20/40/60/96% theo số stack.",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn",
+    "bestCharacters": [
+      "Gaming",
+      "Yoimiya"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "aqua-simulacra",
+    "name": "Aqua Simulacra",
+    "type": "Bow",
+    "rarity": 5,
+    "atkLv1": 44,
+    "atkLv90": 542,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.882
+    },
+    "passive": {
+      "name": "The Cleansing Form",
+      "description": "R1: Tăng 16% HP. Khi có địch ở gần, sát thương gây ra tăng 20%, hiệu lực cả khi rời sân. R5: Tăng 32% HP; sát thương tăng 40%, điều kiện như trên.",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn",
+    "bestCharacters": [
+      "Yelan",
+      "Childe (Tartaglia)",
+      "Nilou"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "thundering-pulse",
+    "name": "Thundering Pulse",
+    "type": "Bow",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.662
+    },
+    "passive": {
+      "name": "Rule by Thunder",
+      "description": "R1: Tăng 20% ATK, nhận Thunder Emblem: 1/2/3 stack cho +12/24/40% sát thương Normal Attack. Nhận 1 stack khi Normal Attack trúng (5s), khi dùng Elemental Skill (10s), hoặc khi Năng lượng dưới 100% (mất khi đầy Năng lượng). R5: Tăng 40% ATK; Thunder Emblem cho +24/48/80% sát thương Normal Attack.",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn",
+    "bestCharacters": [
+      "Yoimiya",
+      "Childe (Tartaglia)"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "hunters-path",
+    "name": "Hunter's Path",
+    "type": "Bow",
+    "rarity": 5,
+    "atkLv1": 44,
+    "atkLv90": 542,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.441
+    },
+    "passive": {
+      "name": "At the End of the Beast-Paths",
+      "description": "R1: Tăng 12% All Elemental DMG Bonus. Sau khi Charged Attack trúng địch, nhận Tireless Hunt: sát thương Charged Attack tăng thêm 160% Tinh Thông Nguyên Tố, mất sau 12 đòn hoặc 10s, tối đa 1 lần/12s. R5: Tăng 24% All Elemental DMG Bonus; Tireless Hunt cộng thêm 320% Tinh Thông Nguyên Tố.",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn (ra mắt cùng Sumeru, bản 3.0); có thể roll lại qua Nguyện Vọng Hoài Niệm (Chronicled Wish)",
+    "bestCharacters": [
+      "Tighnari (vũ khí gắn liền khi ra mắt Sumeru)"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "the-first-great-magic",
+    "name": "The First Great Magic",
+    "type": "Bow",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.662
+    },
+    "passive": {
+      "name": "Parsifal the Great",
+      "description": "R1: Tăng 16% sát thương Charged Attack. Mỗi thành viên cùng nguyên tố với người dùng (kể cả bản thân) cho 1 stack Gimmick; mỗi thành viên khác nguyên tố cho 1 stack Theatrics. Có 1/2/3+ Gimmick cho ATK +16/32/48%; có 1/2/3+ Theatrics cho tốc độ di chuyển +4/7/10%. R5: Tăng 32% sát thương Charged Attack; Gimmick cho ATK +32/64/96%; Theatrics cho tốc độ +12/15/18%.",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn (bản 4.0 – Fontaine)",
+    "bestCharacters": [
+      "Lyney (chủ đề ảo thuật sư trùng khớp",
+      "DPS Charged Attack)"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "silvershower-heartstrings",
+    "name": "Silvershower Heartstrings",
+    "type": "Bow",
+    "rarity": 5,
+    "atkLv1": 44,
+    "atkLv90": 542,
+    "subStat": {
+      "type": "HP%",
+      "valueLv90": 0.662
+    },
+    "passive": {
+      "name": "Dryas's Nocturne",
+      "description": "R1: Nhận hiệu ứng Remedy; có 1/2/3 stack cho HP tối đa +12/24/40%. Nhận 1 stack khi dùng Elemental Skill (25s), khi giá trị Bond of Life tăng (25s), hoặc khi thực hiện hồi máu (20s); có thể kích hoạt cả khi rời sân. Đủ 3 stack, CRIT Rate của Elemental Burst +28% (mất sau 4s nếu tụt dưới 3 stack). R5: HP tối đa +24/48/80% theo stack; CRIT Rate Elemental Burst +56% khi đủ 3 stack.",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn (bản 4.7)",
+    "bestCharacters": [
+      "Yelan (DPS cung scale theo HP)"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "astral-vultures-crimson-plumage",
+    "name": "Astral Vulture's Crimson Plumage",
+    "type": "Bow",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.662
+    },
+    "passive": {
+      "name": "The Moonring Sighted",
+      "description": "R1: Sau khi kích hoạt phản ứng Swirl, ATK tăng 24% trong 12s. Khi có 1/2 thành viên trở lên khác nguyên tố với người dùng, sát thương Charged Attack tăng 20/48%, sát thương Elemental Burst tăng 10/24%. R5: ATK tăng 48%; Charged Attack tăng 40/96%; Elemental Burst tăng 20/48%.",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn (bản 5.2 – Natlan)",
+    "bestCharacters": [
+      "Chasca (DPS cung Anemo/Swirl)"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "the-daybreak-chronicles",
+    "name": "The Daybreak Chronicles",
+    "type": "Bow",
+    "rarity": 5,
+    "atkLv1": 48,
+    "atkLv90": 674,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.441
+    },
+    "passive": {
+      "name": "Ode Beyond Time",
+      "description": "R1: Nhận Stirring Dawn Breeze – 3s sau khi rời combat, sát thương Normal Attack/Elemental Skill/Elemental Burst tăng 60%; trong combat, mức tăng giảm dần 10%/giây cho tới 0%. Khi các đòn trên trúng địch, mức tăng tương ứng được cộng lại 10% (tối đa 60%), tối đa 1 lần/0.1s mỗi loại đòn, kích hoạt được cả khi rời sân. R5: Mức tăng ban đầu 120%, giảm 20%/giây trong combat, mỗi đòn trúng cộng lại 20% (tối đa 120%); khi đội có hiệu ứng Hexerei: Secret Rite, mức cộng thêm khi trúng đòn tăng lên 40%.",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn (bản 6.2, Luna III)",
+    "bestCharacters": [
+      "Venti (vũ khí signature",
+      "BiS)"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  },
+  {
+    "id": "golden-frostbound-oath",
+    "name": "Golden Frostbound Oath",
+    "type": "Bow",
+    "rarity": 5,
+    "atkLv1": 44,
+    "atkLv90": 542,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.882
+    },
+    "passive": {
+      "name": "Dawn's Salutation Returned",
+      "description": "R1: Tăng 16% DEF. Khi Elemental Skill hoặc đòn Lunar-Crystallize của người dùng trúng địch, nhận Frost Fae's Favor trong 6s: sát thương Geo và sát thương phản ứng Lunar-Crystallize +40%. Nếu có Moondrift gần đó trong lúc hiệu ứng còn hiệu lực, đồng đội xung quanh nhận Frost Fae's Mischief: sát thương Geo và Lunar-Crystallize +20% (kích hoạt được cả khi rời sân). R5: DEF +32%; Frost Fae's Favor cho +80% sát thương Geo/Lunar-Crystallize; Frost Fae's Mischief cho +40%.",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn (bản 6.5, Luna VI)",
+    "bestCharacters": [
+      "Linnea (vũ khí signature",
+      "BiS)"
+    ],
+    "sourceFile": "vu-khi/cung.md"
+  }
+]

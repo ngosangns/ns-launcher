@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "damage-formula.schema.json",
+  "title": "DamageFormulaConstants",
+  "description": "Hằng số/công thức lõi để một engine tính DPS tự triển khai theo cong-thuc-sat-thuong.md",
+  "type": "object",
+  "required": ["resMultiplier", "defMultiplier", "critMultiplier", "amplifying", "catalyze", "transformative", "lunarStellar", "critValueHeuristic"],
+  "properties": {
+    "resMultiplier": {
+      "type": "object",
+      "properties": {
+        "formula": { "type": "string" },
+        "breakpoints": { "type": "array", "items": { "type": "object", "properties": { "condition": { "type": "string" }, "formula": { "type": "string" } } } },
+        "defaultMonsterResAllElements": { "type": "number" }
+      }
+    },
+    "defMultiplier": { "type": "object", "properties": { "formula": { "type": "string" } } },
+    "critMultiplier": { "type": "object", "properties": { "critFormula": { "type": "string" }, "noCritFormula": { "type": "string" }, "expectedValueFormula": { "type": "string" } } },
+    "amplifying": {
+      "type": "object",
+      "properties": {
+        "formula": { "type": "string" },
+        "emBonusFormula": { "type": "string" },
+        "coefficients": { "type": "object", "additionalProperties": { "type": "number" } }
+      }
+    },
+    "catalyze": {
+      "type": "object",
+      "properties": {
+        "formula": { "type": "string" },
+        "emBonusFormula": { "type": "string" },
+        "coefficients": { "type": "object", "additionalProperties": { "type": "number" } }
+      }
+    },
+    "transformative": {
+      "type": "object",
+      "properties": {
+        "formula": { "type": "string" },
+        "emBonusFormula": { "type": "string" },
+        "coefficients": { "type": "object", "additionalProperties": { "type": "number" } },
+        "levelMultiplier": { "type": "object", "additionalProperties": { "type": "object", "properties": { "character": { "type": "number" }, "monster": { "type": "number" } } } }
+      }
+    },
+    "lunarStellar": {
+      "type": "object",
+      "properties": {
+        "emBonusFormula": { "type": "string" },
+        "indirect": { "type": "object" },
+        "direct": { "type": "object" },
+        "reactionBaseDmgBonusSources": {
+          "type": "array",
+          "items": { "type": "object", "properties": { "character": { "type": "string" }, "reactionType": { "type": "string" }, "maxBonus": { "type": "number" } } }
+        }
+      }
+    },
+    "critValueHeuristic": { "type": "object", "properties": { "formula": { "type": "string" }, "targetRatio": { "type": "string" } } },
+    "workedExample": { "type": "object", "description": "Ví dụ mẫu dịch nguyên văn từ wiki, dùng để unit-test engine tính DPS tự viết" }
+  }
+}

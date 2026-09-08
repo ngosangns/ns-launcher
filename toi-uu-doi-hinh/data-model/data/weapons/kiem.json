@@ -1,0 +1,2082 @@
+[
+  {
+    "id": "aquila-favonia",
+    "name": "Aquila Favonia",
+    "type": "Sword",
+    "rarity": 5,
+    "atkLv1": 48,
+    "atkLv90": 674,
+    "subStat": {
+      "type": "Physical DMG Bonus",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Falcon's Defiance",
+      "description": "ATK +20/25/30/35/40%. Khi nhận sát thương: hồi HP = 100/115/130/145/160% ATK và gây 200/230/260/290/320% ATK sát thương AoE quanh nhân vật; hồi chuỗi 15s.",
+      "effects": [
+        {
+          "stat": "ATK Buff",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        },
+        {
+          "stat": "HP Restore (% ATK)",
+          "r1": 1.0,
+          "r2": 1.15,
+          "r3": 1.3,
+          "r4": 1.45,
+          "r5": 1.6
+        },
+        {
+          "stat": "AoE DMG (% ATK)",
+          "r1": 2.0,
+          "r2": 2.3,
+          "r3": 2.6,
+          "r4": 2.9,
+          "r5": 3.2
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish, tỉ lệ rất thấp)",
+    "bestCharacters": [
+      "Diluc",
+      "Bennett",
+      "các DPS/sub-DPS hệ Vật lý"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "freedom-sworn",
+    "name": "Freedom-Sworn",
+    "type": "Sword",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 198
+    },
+    "passive": {
+      "name": "Revolutionary Chorale",
+      "description": "Nhận +10/12.5/15/17.5/20% sát thương. Khi người mang gây phản ứng nguyên tố, nhận 1 Sigil of Rebellion (hồi chuỗi 0.5s, có thể kích hoạt cả khi rời sân). Khi có đủ 2 Sigil, tiêu hao toàn bộ để cấp cho các thành viên gần đó hiệu ứng \"Millennial Movement: Song of Resistance\" trong 12s: đòn thường/trọng kích/rơi tự do +16/20/24/28/32% sát thương và ATK +20/25/30/35/40%; sau khi kích hoạt, không nhận thêm Sigil trong 20s (các buff cùng loại từ nhiều vũ khí Millennial Movement không cộng dồn).",
+      "effects": [
+        {
+          "stat": "DMG Bonus",
+          "r1": 0.1,
+          "r2": 0.125,
+          "r3": 0.15,
+          "r4": 0.175,
+          "r5": 0.2
+        },
+        {
+          "stat": "Normal/Charged/Plunging Attack DMG Bonus (team)",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        },
+        {
+          "stat": "Team ATK Buff",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish, sự kiện Chronicled cũ)",
+    "bestCharacters": [
+      "Sub-DPS/hỗ trợ buff cả đội: Kazuha",
+      "Sucrose",
+      "Yelan"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "haran-geppaku-futsu",
+    "name": "Haran Geppaku Futsu",
+    "type": "Sword",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.331
+    },
+    "passive": {
+      "name": "Honed Flow",
+      "description": "Nhận +12/15/18/21/24% sát thương nguyên tố mọi hệ (thường trực). Khi đồng đội gần đó dùng Kỹ năng nguyên tố, người mang nhận 1 lớp Wavespike (tối đa 2 lớp, hồi chuỗi 0.3s). Khi người mang dùng Kỹ năng nguyên tố, tiêu hao toàn bộ lớp Wavespike để nhận Rippling Upheaval: mỗi lớp tiêu hao +20/25/30/35/40% sát thương đòn thường trong 8s.",
+      "effects": [
+        {
+          "stat": "Elemental DMG Bonus",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        },
+        {
+          "stat": "Normal Attack DMG Bonus per Wavespike",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish)",
+    "bestCharacters": [
+      "Ayato",
+      "các DPS đòn thường tần suất cao"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "mistsplitter-reforged",
+    "name": "Mistsplitter Reforged",
+    "type": "Sword",
+    "rarity": 5,
+    "atkLv1": 48,
+    "atkLv90": 674,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.441
+    },
+    "passive": {
+      "name": "Mistsplitter's Edge",
+      "description": "Nhận +12/15/18/21/24% sát thương nguyên tố mọi hệ, đồng thời nhận stack Mistsplitter's Emblem: ở 1/2/3 lớp Emblem, cộng thêm sát thương nguyên tố hệ nhân vật là 8/16/28% (R1), 10/20/35% (R2), 12/24/42% (R3), 14/28/49% (R4), 16/32/56% (R5). Nhận 1 lớp khi đòn thường gây sát thương nguyên tố (5s) hoặc dùng Bùng nổ nguyên tố (10s); mất lớp khi đầy Năng lượng.",
+      "effects": [
+        {
+          "stat": "Elemental DMG Bonus",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish)",
+    "bestCharacters": [
+      "Raiden Shogun",
+      "Yoimiya",
+      "Kazuha",
+      "DPS on-field mono hệ"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "primordial-jade-cutter",
+    "name": "Primordial Jade Cutter",
+    "type": "Sword",
+    "rarity": 5,
+    "atkLv1": 44,
+    "atkLv90": 542,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.441
+    },
+    "passive": {
+      "name": "Protector's Virtue",
+      "description": "HP tối đa +20/25/30/35/40%. Ngoài ra, nhận thêm ATK bằng 1.2/1.5/1.8/2.1/2.4% HP tối đa của người mang.",
+      "effects": [
+        {
+          "stat": "HP Buff",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        },
+        {
+          "stat": "ATK from HP (% Max HP)",
+          "r1": 0.012,
+          "r2": 0.015,
+          "r3": 0.018,
+          "r4": 0.021,
+          "r5": 0.024
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish)",
+    "bestCharacters": [
+      "Hầu hết DPS kiếm on-field: Kamisato Ayaka",
+      "Keqing"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "skyward-blade",
+    "name": "Skyward Blade",
+    "type": "Sword",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.551
+    },
+    "passive": {
+      "name": "Sky-Piercing Fang",
+      "description": "CRIT Rate +4/5/6/7/8%. Khi dùng Bùng nổ nguyên tố, nhận Skypiercing Might trong 12s: tốc độ di chuyển +10%, tốc độ tấn công +10%, đòn thường/trọng kích gây thêm sát thương bằng 20/25/30/35/40% ATK.",
+      "effects": [
+        {
+          "stat": "CRIT Rate Buff",
+          "r1": 0.04,
+          "r2": 0.05,
+          "r3": 0.06,
+          "r4": 0.07,
+          "r5": 0.08
+        },
+        {
+          "stat": "Normal/Charged Attack DMG (% ATK)",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish)",
+    "bestCharacters": [
+      "DPS cần Energy Recharge",
+      "đội cần tần suất Bùng nổ cao"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "uraku-misugiri",
+    "name": "Uraku Misugiri",
+    "type": "Sword",
+    "rarity": 5,
+    "atkLv1": 44,
+    "atkLv90": 542,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.882
+    },
+    "passive": {
+      "name": "Brocade Bloom, Shrine Sword",
+      "description": "Sát thương đòn thường +16/20/24/28/32%, sát thương Kỹ năng nguyên tố +24/30/36/42/48%; khi có đồng đội gây sát thương Geo gần đó, hiệu ứng trên +100% trong 15s và DEF người mang +20/25/30/35/40%.",
+      "effects": [
+        {
+          "stat": "Normal Attack DMG Bonus",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        },
+        {
+          "stat": "Elemental Skill DMG Bonus",
+          "r1": 0.24,
+          "r2": 0.3,
+          "r3": 0.36,
+          "r4": 0.42,
+          "r5": 0.48
+        },
+        {
+          "stat": "DEF Buff",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        }
+      ]
+    },
+    "acquisition": "Sự kiện Event-Wish giới hạn (không lặp lại ngoài rerun)",
+    "bestCharacters": [
+      "Chiori",
+      "các DPS/sub-DPS scale theo DEF"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "absolution",
+    "name": "Absolution",
+    "type": "Sword",
+    "rarity": 5,
+    "atkLv1": 48,
+    "atkLv90": 674,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.441
+    },
+    "passive": {
+      "name": "Deathly Pact",
+      "description": "CRIT DMG +20/25/30/35/40%. Khi tăng giá trị Bond of Life, sát thương gây ra +16/20/24/28/32% trong 6s, tối đa 3 lớp.",
+      "effects": [
+        {
+          "stat": "CRIT DMG Buff",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        },
+        {
+          "stat": "DMG Bonus (Bond of Life)",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish, vũ khí signature Clorinde)",
+    "bestCharacters": [
+      "Clorinde",
+      "các DPS cơ chế Bond of Life"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "athame-artis",
+    "name": "Athame Artis",
+    "type": "Sword",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.331
+    },
+    "passive": {
+      "name": "Day King's Splendor Solis",
+      "description": "CRIT DMG của Bùng nổ nguyên tố +16/20/24/28/32%. Khi Bùng nổ nguyên tố trúng địch, nhận hiệu ứng: ATK người mang +20/25/30/35/40%, ATK đồng đội xuất trận gần đó +16/20/24/28/32% trong 3s; nếu đội có hiệu ứng Hexerei: Secret Rite, hiệu ứng trên +75%.",
+      "effects": [
+        {
+          "stat": "Elemental Burst CRIT DMG Buff",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        },
+        {
+          "stat": "Self ATK Buff",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        },
+        {
+          "stat": "Nearby Active Character ATK Buff",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Weapon Event Wish, vũ khí signature Durin)",
+    "bestCharacters": [
+      "Durin",
+      "sub-DPS/hỗ trợ kiếm dùng Bùng nổ nguyên tố"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "azurelight",
+    "name": "Azurelight",
+    "type": "Sword",
+    "rarity": 5,
+    "atkLv1": 48,
+    "atkLv90": 674,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.221
+    },
+    "passive": {
+      "name": "Whitehill's Bestowal",
+      "description": "Trong 12s sau khi dùng Kỹ năng nguyên tố, ATK +24/30/36/42/48%; nếu người mang có 0 Năng lượng trong thời gian này, ATK tăng thêm 24/30/36/42/48% và CRIT DMG +40/50/60/70/80%.",
+      "effects": [
+        {
+          "stat": "ATK Buff",
+          "r1": 0.24,
+          "r2": 0.3,
+          "r3": 0.36,
+          "r4": 0.42,
+          "r5": 0.48
+        },
+        {
+          "stat": "Additional ATK Buff (0 Energy)",
+          "r1": 0.24,
+          "r2": 0.3,
+          "r3": 0.36,
+          "r4": 0.42,
+          "r5": 0.48
+        },
+        {
+          "stat": "CRIT DMG Buff (0 Energy)",
+          "r1": 0.4,
+          "r2": 0.5,
+          "r3": 0.6,
+          "r4": 0.7,
+          "r5": 0.8
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish, vũ khí signature Skirk)",
+    "bestCharacters": [
+      "Skirk (gần như độc quyền do cơ chế 0 Năng lượng)"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "exaiphanes-blade",
+    "name": "Exaiphanes Blade",
+    "type": "Sword",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.331
+    },
+    "passive": {
+      "name": "Traveler's Path",
+      "description": "(chỉ có hiệu lực khi trang bị cho Nhà Lữ Hành): sau khi đòn tấn công trúng địch, hồi 3 (R1) hoặc 5 (R2–R5) Năng lượng nguyên tố, hồi chuỗi 5s, có thể kích hoạt cả khi rời sân. R1: ATK +16% trong 8s. R2–R5: thêm CRIT DMG +6% cho mỗi nguyên tố đã cộng hưởng (Elemental Resonance), và ATK tăng 20/24/32/40% (R2/R3/R4/R5) trong 8s thay vì 16%.",
+      "effects": []
+    },
+    "acquisition": "Nhiệm vụ (Quest: Great Deeds on the Tundra, thuộc cốt truyện Nod-Krai) — vũ khí miễn phí",
+    "bestCharacters": [
+      "Nhà Lữ Hành (Traveler)",
+      "đặc biệt bản Cryo mới"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "whitelake-frostfeather",
+    "name": "Whitelake Frostfeather",
+    "type": "Sword",
+    "rarity": 5,
+    "atkLv1": 48,
+    "atkLv90": 674,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.221
+    },
+    "passive": {
+      "name": "Snow Swan's Finale",
+      "description": "đòn Kỹ năng nguyên tố trúng địch cho \"Lake-Hued Lament\": ATK +8/10/12/14/16% trong 8s (trúng tối đa 1 lần/0.1s, tối đa 3 lớp, mỗi lớp tính thời lượng riêng). Ở 3 lớp: CRIT DMG của sát thương phản ứng Stellar-Glimmer +50/65/80/95/110%; khi kích hoạt phản ứng/gây sát thương Stellar-Glimmer, hồi 4/4.5/5/5.5/6 Năng lượng nguyên tố (hồi chuỗi 3.5s, có thể kích hoạt cả khi rời sân).",
+      "effects": [
+        {
+          "stat": "ATK Buff per stack",
+          "r1": 0.08,
+          "r2": 0.1,
+          "r3": 0.12,
+          "r4": 0.14,
+          "r5": 0.16
+        },
+        {
+          "stat": "Stellar-Glimmer CRIT DMG Buff (3 stacks)",
+          "r1": 0.5,
+          "r2": 0.65,
+          "r3": 0.8,
+          "r4": 0.95,
+          "r5": 1.1
+        },
+        {
+          "stat": "Energy Restore (Stellar-Glimmer)",
+          "r1": 4,
+          "r2": 4.5,
+          "r3": 5,
+          "r4": 5.5,
+          "r5": 6
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish, vũ khí signature Odette)",
+    "bestCharacters": [
+      "Odette"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "peak-patrol-song",
+    "name": "Peak Patrol Song",
+    "type": "Sword",
+    "rarity": 5,
+    "atkLv1": 44,
+    "atkLv90": 542,
+    "subStat": {
+      "type": "DEF%",
+      "valueLv90": 0.827
+    },
+    "passive": {
+      "name": "Halcyon Years Unending",
+      "description": "sau đòn thường/trọng kích trúng địch, nhận \"Ode to Flowers\": DEF +8/10/12/14/16% và sát thương nguyên tố mọi hệ +10/12.5/15/17.5/20% trong 6s (trúng tối đa 1 lần/0.1s, tối đa 2 lớp). Ở 2 lớp (hoặc làm mới lớp 2), toàn đội gần đó nhận thêm 8/10/12/14/16% sát thương nguyên tố mọi hệ cho mỗi 1000 DEF của người mang, tối đa 25.6/32/38.4/44.8/51.2%, trong 15s.",
+      "effects": [
+        {
+          "stat": "Self DEF Buff (stack)",
+          "r1": 0.08,
+          "r2": 0.1,
+          "r3": 0.12,
+          "r4": 0.14,
+          "r5": 0.16
+        },
+        {
+          "stat": "Self Elemental DMG Bonus (stack)",
+          "r1": 0.1,
+          "r2": 0.125,
+          "r3": 0.15,
+          "r4": 0.175,
+          "r5": 0.2
+        },
+        {
+          "stat": "Team Elemental DMG Bonus per 1000 DEF",
+          "r1": 0.08,
+          "r2": 0.1,
+          "r3": 0.12,
+          "r4": 0.14,
+          "r5": 0.16
+        },
+        {
+          "stat": "Team Elemental DMG Bonus Cap",
+          "r1": 0.256,
+          "r2": 0.32,
+          "r3": 0.384,
+          "r4": 0.448,
+          "r5": 0.512
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish)",
+    "bestCharacters": [
+      "DPS/hỗ trợ scale theo DEF"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "summit-shaper",
+    "name": "Summit Shaper",
+    "type": "Sword",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.496
+    },
+    "passive": {
+      "name": "Golden Majesty",
+      "description": "Shield Strength +20/25/30/35/40%. Đòn đánh trúng địch tăng ATK +4/5/6/7/8% trong 8s, tối đa 5 lớp, hồi chuỗi 0.3s; khi đang có khiên bảo vệ, hiệu ứng tăng ATK trên nhân đôi.",
+      "effects": [
+        {
+          "stat": "Shield Strength Buff",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        },
+        {
+          "stat": "ATK Buff per stack",
+          "r1": 0.04,
+          "r2": 0.05,
+          "r3": 0.06,
+          "r4": 0.07,
+          "r5": 0.08
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish)",
+    "bestCharacters": [
+      "DPS/hỗ trợ đội hình có khiên (Zhongli",
+      "Xianyun",
+      "đội Geo mono)"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "key-of-khaj-nisut",
+    "name": "Key of Khaj-Nisut",
+    "type": "Sword",
+    "rarity": 5,
+    "atkLv1": 44,
+    "atkLv90": 542,
+    "subStat": {
+      "type": "HP%",
+      "valueLv90": 0.661
+    },
+    "passive": {
+      "name": "Sunken Song of the Sands",
+      "description": "HP +20/25/30/35/40%. Kỹ năng nguyên tố trúng địch cho hiệu ứng Grand Hymn 20s: EM +0.12/0.15/0.18/0.21/0.24% HP tối đa (hồi chuỗi 0.3s, tối đa 3 lớp). Đủ 3 lớp (hoặc làm mới lớp 3), toàn đội gần đó nhận thêm EM +0.2/0.25/0.3/0.35/0.4% HP tối đa của người mang trong 20s.",
+      "effects": [
+        {
+          "stat": "HP Buff",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        },
+        {
+          "stat": "Self EM per % Max HP (stack)",
+          "r1": 0.0012,
+          "r2": 0.0015,
+          "r3": 0.0018,
+          "r4": 0.0021,
+          "r5": 0.0024
+        },
+        {
+          "stat": "Team EM per % Max HP (3 stacks)",
+          "r1": 0.002,
+          "r2": 0.0025,
+          "r3": 0.003,
+          "r4": 0.0035,
+          "r5": 0.004
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish, vũ khí signature Nilou)",
+    "bestCharacters": [
+      "Nilou"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "light-of-foliar-incision",
+    "name": "Light of Foliar Incision",
+    "type": "Sword",
+    "rarity": 5,
+    "atkLv1": 44,
+    "atkLv90": 542,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.882
+    },
+    "passive": {
+      "name": "Whitemoon Bristle",
+      "description": "CRIT Rate +4/5/6/7/8%. Đòn thường gây sát thương nguyên tố cho hiệu ứng Foliar Incision: sát thương Đòn thường và Kỹ năng nguyên tố +120/150/180/210/240% Tinh Thông Nguyên Tố, mất sau 28 lần trúng đòn hoặc 12s, chỉ nhận lại tối đa 1 lần mỗi 12s.",
+      "effects": [
+        {
+          "stat": "CRIT Rate Buff",
+          "r1": 0.04,
+          "r2": 0.05,
+          "r3": 0.06,
+          "r4": 0.07,
+          "r5": 0.08
+        },
+        {
+          "stat": "Normal Attack & Elemental Skill DMG (% EM)",
+          "r1": 1.2,
+          "r2": 1.5,
+          "r3": 1.8,
+          "r4": 2.1,
+          "r5": 2.4
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish, vũ khí signature Alhaitham)",
+    "bestCharacters": [
+      "Alhaitham"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "splendor-of-tranquil-waters",
+    "name": "Splendor of Tranquil Waters",
+    "type": "Sword",
+    "rarity": 5,
+    "atkLv1": 44,
+    "atkLv90": 542,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.882
+    },
+    "passive": {
+      "name": "Dawn and Dusk by the Lake",
+      "description": "khi HP hiện tại của người mang tăng/giảm, sát thương Kỹ năng nguyên tố +8/10/12/14/16% trong 6s, tối đa 3 lớp (hồi chuỗi 0.2s). Khi HP hiện tại của đồng đội khác tăng/giảm, HP tối đa người mang +14/17.5/21/24.5/28% trong 6s, tối đa 2 lớp (hồi chuỗi 0.2s, kích hoạt được cả khi rời sân).",
+      "effects": [
+        {
+          "stat": "Elemental Skill DMG Bonus per stack",
+          "r1": 0.08,
+          "r2": 0.1,
+          "r3": 0.12,
+          "r4": 0.14,
+          "r5": 0.16
+        },
+        {
+          "stat": "Max HP Buff per stack",
+          "r1": 0.14,
+          "r2": 0.175,
+          "r3": 0.21,
+          "r4": 0.245,
+          "r5": 0.28
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish, vũ khí signature Furina)",
+    "bestCharacters": [
+      "Furina"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "lightbearing-moonshard",
+    "name": "Lightbearing Moonshard",
+    "type": "Sword",
+    "rarity": 5,
+    "atkLv1": 44,
+    "atkLv90": 542,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.882
+    },
+    "passive": {
+      "name": "Legacy of Lang-Gan",
+      "description": "DEF +20/25/30/35/40%. Sau khi dùng Kỹ năng nguyên tố, sát thương phản ứng Lunar-Crystallize +64/80/96/112/128% trong 5s.",
+      "effects": [
+        {
+          "stat": "DEF Buff",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        },
+        {
+          "stat": "Lunar-Crystallize DMG Bonus",
+          "r1": 0.64,
+          "r2": 0.8,
+          "r3": 0.96,
+          "r4": 1.12,
+          "r5": 1.28
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Wish, vũ khí signature Zibai, bản 6.3 Luna IV)",
+    "bestCharacters": [
+      "Zibai; các DPS/hỗ trợ scale DEF hệ Geo khác (Chiori",
+      "Albedo) cũng dùng tốt nếu có nguồn Lunar-Crystallize"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "amenoma-kageuchi",
+    "name": "Amenoma Kageuchi",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.551
+    },
+    "passive": {
+      "name": "Iwakura Succession",
+      "description": "Sau khi dùng Kỹ năng nguyên tố, nhận 1 Bản Nguyên Kết Tinh (hồi chuỗi 5s; mỗi Bản Nguyên tồn tại 30s, tối đa 3 Bản Nguyên cùng lúc). Khi dùng Bùng nổ nguyên tố, tiêu hao toàn bộ Bản Nguyên đang có, sau 2s hồi 6/7.5/9/10.5/12 Năng lượng nguyên tố cho mỗi Bản Nguyên đã tiêu hao.",
+      "effects": [
+        {
+          "stat": "Energy Restore per Prism",
+          "r1": 6,
+          "r2": 7.5,
+          "r3": 9,
+          "r4": 10.5,
+          "r5": 12
+        }
+      ]
+    },
+    "acquisition": "Chế tạo (công thức mở qua nhiệm vụ \"The Farmer's Treasure\" ở Inazuma)",
+    "bestCharacters": [
+      "Nhân vật kiếm cần Energy Recharge sớm game"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "blackcliff-longsword",
+    "name": "Blackcliff Longsword",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.368
+    },
+    "passive": {
+      "name": "Press the Advantage",
+      "description": "Sau khi hạ gục địch, ATK +12/15/18/21/24% trong 30s, tối đa 3 lớp, mỗi lớp tính thời lượng riêng.",
+      "effects": [
+        {
+          "stat": "ATK Buff per stack",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        }
+      ]
+    },
+    "acquisition": "Đổi Starglitter (Paimon's Bargains)",
+    "bestCharacters": [
+      "DPS kiếm CRIT DMG-focus giai đoạn giữa game"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "calamity-of-eshu",
+    "name": "Calamity of Eshu",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Diffusing Boundary",
+      "description": "Khi nhân vật đang thi đấu được khiên bảo vệ, sát thương đòn thường/trọng kích +20/25/30/35/40% và CRIT Rate đòn thường/trọng kích +8/10/12/14/16%.",
+      "effects": [
+        {
+          "stat": "Normal/Charged Attack DMG Bonus",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        },
+        {
+          "stat": "Normal/Charged Attack CRIT Rate Bonus",
+          "r1": 0.08,
+          "r2": 0.1,
+          "r3": 0.12,
+          "r4": 0.14,
+          "r5": 0.16
+        }
+      ]
+    },
+    "acquisition": "Sự kiện Iktomi Spiritseeking Scrolls (đã kết thúc, không lặp lại ngoài rerun; tinh luyện qua đổi Shuttle of Odara)",
+    "bestCharacters": [
+      "DPS kiếm đòn thường/trọng kích trong đội hình có khiên (Zhongli",
+      "Xianyun)"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "cinnabar-spindle",
+    "name": "Cinnabar Spindle",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "DEF%",
+      "valueLv90": 0.69
+    },
+    "passive": {
+      "name": "Spotless Heart",
+      "description": "Sát thương Kỹ năng nguyên tố +40/50/60/70/80% DEF của người mang. Hiệu ứng kích hoạt tối đa 1 lần/1.5s, mất 0.1s sau khi Kỹ năng nguyên tố gây sát thương.",
+      "effects": [
+        {
+          "stat": "Elemental Skill DMG (% DEF)",
+          "r1": 0.4,
+          "r2": 0.5,
+          "r3": 0.6,
+          "r4": 0.7,
+          "r5": 0.8
+        }
+      ]
+    },
+    "acquisition": "Sự kiện Shadows Amidst Snowstorms (bản 2.2, đã kết thúc, không lặp lại ngoài rerun; tinh luyện qua đổi Alkahest)",
+    "bestCharacters": [
+      "Chiori",
+      "Zibai",
+      "các DPS/sub-DPS kiếm dùng Kỹ năng nguyên tố",
+      "scale theo DEF"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "emberwell",
+    "name": "Emberwell",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 165
+    },
+    "passive": {
+      "name": "Starfire Upon the Snowplains",
+      "description": "Khi kích hoạt phản ứng nguyên tố, ATK +16/20/24/28/32% trong 12s. Khi kích hoạt phản ứng Stellar Glimmer, sát thương Stellar Glimmer +16/20/24/28/32% trong 12s. Cả 2 hiệu ứng kích hoạt được cả khi rời sân.",
+      "effects": [
+        {
+          "stat": "ATK Buff (Elemental Reaction)",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        },
+        {
+          "stat": "Stellar Glimmer DMG Bonus",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        }
+      ]
+    },
+    "acquisition": "Chế tạo (bản thiết kế từ Kuzmichev, Kuznets Smithy, Snezhnograd), bản 7.0",
+    "bestCharacters": [
+      "Odette",
+      "các DPS/sub-DPS kiếm hệ phản ứng Stellar Glimmer/Stellar-Conduct"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "favonius-sword",
+    "name": "Favonius Sword",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.613
+    },
+    "passive": {
+      "name": "Windfall",
+      "description": "Đòn chí mạng có 60/70/80/90/100% tỉ lệ tạo Hạt Nguyên Tố hồi 6 Năng lượng, hồi chuỗi 12/10.5/9/7.5/6s.",
+      "effects": [
+        {
+          "stat": "Particle Generation Chance",
+          "r1": 0.6,
+          "r2": 0.7,
+          "r3": 0.8,
+          "r4": 0.9,
+          "r5": 1.0
+        },
+        {
+          "stat": "Cooldown (s)",
+          "r1": 12,
+          "r2": 10.5,
+          "r3": 9,
+          "r4": 7.5,
+          "r5": 6
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "Nhân vật cần Energy Recharge",
+      "off-field support"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "festering-desire",
+    "name": "Festering Desire",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.459
+    },
+    "passive": {
+      "name": "Undying Admiration",
+      "description": "Kỹ năng nguyên tố sát thương +16/20/24/28/32%, CRIT Rate của Kỹ năng nguyên tố +6/7.5/9/10.5/12%.",
+      "effects": [
+        {
+          "stat": "Elemental Skill DMG Bonus",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        },
+        {
+          "stat": "Elemental Skill CRIT Rate Bonus",
+          "r1": 0.06,
+          "r2": 0.075,
+          "r3": 0.09,
+          "r4": 0.105,
+          "r5": 0.12
+        }
+      ]
+    },
+    "acquisition": "Sự kiện (The Chalk Prince and the Dragon)",
+    "bestCharacters": [
+      "DPS/sub-DPS dùng Kỹ năng nguyên tố nhiều"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "finale-of-the-deep",
+    "name": "Finale of the Deep",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "An End Sublime",
+      "description": "Khi dùng Kỹ năng nguyên tố, ATK +12/15/18/21/24% trong 15s và nhận Bond of Life bằng 25% HP tối đa (hồi chuỗi 10s). Khi Bond of Life được xóa, nhận thêm tối đa 150/187.5/225/262.5/300 ATK (cộng thẳng, không phải %) dựa trên 2.4/3/3.6/4.2/4.8% tổng lượng Bond of Life đã xóa, kéo dài 15s.",
+      "effects": [
+        {
+          "stat": "ATK Buff",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        },
+        {
+          "stat": "Max Additional ATK (flat)",
+          "r1": 150,
+          "r2": 187.5,
+          "r3": 225,
+          "r4": 262.5,
+          "r5": 300
+        },
+        {
+          "stat": "ATK from Bond of Life Cleared (%)",
+          "r1": 0.024,
+          "r2": 0.03,
+          "r3": 0.036,
+          "r4": 0.042,
+          "r5": 0.048
+        }
+      ]
+    },
+    "acquisition": "Chế tạo (Fontaine)",
+    "bestCharacters": [
+      "Nhân vật kiếm dùng Kỹ năng nguyên tố",
+      "scale Bond of Life"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "fleuve-cendre-ferryman",
+    "name": "Fleuve Cendre Ferryman",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.459
+    },
+    "passive": {
+      "name": "Ironbone",
+      "description": "CRIT Rate của Kỹ năng nguyên tố +8/10/12/14/16%. Ngoài ra, sau khi dùng Kỹ năng nguyên tố, Energy Recharge +16/20/24/28/32% trong 5s.",
+      "effects": [
+        {
+          "stat": "Elemental Skill CRIT Rate Bonus",
+          "r1": 0.08,
+          "r2": 0.1,
+          "r3": 0.12,
+          "r4": 0.14,
+          "r5": 0.16
+        },
+        {
+          "stat": "Energy Recharge Buff",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        }
+      ]
+    },
+    "acquisition": "Hiệp Hội Câu Cá Fontaine (đổi Martens' Omni-Fix bằng cá câu được để tinh luyện)",
+    "bestCharacters": [
+      "Nhân vật kiếm cần Energy Recharge và CRIT Rate cho Kỹ năng nguyên tố"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "flute-of-ezpitzal",
+    "name": "Flute of Ezpitzal",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "DEF%",
+      "valueLv90": 0.69
+    },
+    "passive": {
+      "name": "Smoke-and-Mirror Mystery",
+      "description": "Dùng Kỹ năng nguyên tố, DEF +16/20/24/28/32% trong 15s.",
+      "effects": [
+        {
+          "stat": "DEF Buff",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        }
+      ]
+    },
+    "acquisition": "Chế tạo (bản thiết kế bán bởi Alom, Natlan) hoặc nhận miễn phí qua kích hoạt đủ 5 Furnace of Fiery Embers rồi rút thanh kiếm cổ tại Ochkanatlan (thử thách ẩn \"Stoking the Ancient Flames\")",
+    "bestCharacters": [
+      "Chiori",
+      "Zibai",
+      "các DPS/tank kiếm scale DEF dùng nhiều Kỹ năng nguyên tố"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "heretics-molten-blade",
+    "name": "Heretic's Molten Blade",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Lone Light's Blessing",
+      "description": "Sau khi dùng Kỹ năng nguyên tố, nhận \"Gleam of First Light\" (tối đa 14s, hồi chuỗi 14s, mất khi rời sân): mỗi giây, ATK tăng từ 18/22.5/27/31.5/36% đến 36/45/54/63/72% tùy quãng đường di chuyển trong giây trước đó.",
+      "effects": [
+        {
+          "stat": "ATK Buff (min)",
+          "r1": 0.18,
+          "r2": 0.225,
+          "r3": 0.27,
+          "r4": 0.315,
+          "r5": 0.36
+        },
+        {
+          "stat": "ATK Buff (max)",
+          "r1": 0.36,
+          "r2": 0.45,
+          "r3": 0.54,
+          "r4": 0.63,
+          "r5": 0.72
+        }
+      ]
+    },
+    "acquisition": "Battle Pass (Gnostic Hymn 3), bản 7.0",
+    "bestCharacters": [
+      "DPS kiếm cần di chuyển nhiều sau khi dùng Kỹ năng nguyên tố"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "iron-sting",
+    "name": "Iron Sting",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 165
+    },
+    "passive": {
+      "name": "Infusion Stinger",
+      "description": "Khi gây sát thương nguyên tố, tất cả sát thương +6/7.5/9/10.5/12% trong 6s, tối đa 2 lớp, hồi chuỗi 1s.",
+      "effects": [
+        {
+          "stat": "DMG Bonus per stack",
+          "r1": 0.06,
+          "r2": 0.075,
+          "r3": 0.09,
+          "r4": 0.105,
+          "r5": 0.12
+        }
+      ]
+    },
+    "acquisition": "Chế tạo",
+    "bestCharacters": [
+      "Sub-DPS/hỗ trợ tạo phản ứng nguyên tố"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "kagotsurube-isshin",
+    "name": "Kagotsurube Isshin",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Isshin Art Clarity",
+      "description": "(không có tinh luyện, chỉ 1 cấp duy nhất): Đòn thường/trọng kích/rơi tự do trúng địch tạo một cơn gió chém gây 180% ATK sát thương AoE và ATK +15% trong 8s; hồi chuỗi 8s.",
+      "effects": []
+    },
+    "acquisition": "Phần thưởng nhiệm vụ (Quest: Ere the End, a Glance Back — phần cuối của A Strange and Friendless Road, cốt truyện Kazuha)",
+    "bestCharacters": [
+      "Kazuha (phần thưởng gắn với nhiệm vụ của chính anh)",
+      "các DPS kiếm đòn thường Vật Lý khác (vũ khí không thể tinh luyện thêm)"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "lions-roar",
+    "name": "Lion's Roar",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Bane of Fire and Thunder",
+      "description": "Tăng sát thương lên địch đang dính hiệu ứng Pyro hoặc Electro (Sấm) +20/24/28/32/36%.",
+      "effects": [
+        {
+          "stat": "DMG Bonus vs Pyro/Electro-afflicted",
+          "r1": 0.2,
+          "r2": 0.24,
+          "r3": 0.28,
+          "r4": 0.32,
+          "r5": 0.36
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "DPS Pyro/Electro dùng kiếm: Diluc",
+      "Keqing",
+      "Chevreuse-team"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "moonweavers-dawn",
+    "name": "Moonweaver's Dawn",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Secret Silver's Testament",
+      "description": "Sát thương Bùng nổ nguyên tố +20/25/30/35/40%. Nếu Năng Lượng tối đa của người mang không vượt quá 60/40, sát thương Bùng nổ nguyên tố tăng thêm 16/20/24/28/32% (ngưỡng 60) hoặc 28/35/42/49/56% (ngưỡng 40).",
+      "effects": [
+        {
+          "stat": "Elemental Burst DMG Bonus",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        },
+        {
+          "stat": "Additional Burst DMG Bonus (Max Energy ≤60)",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        },
+        {
+          "stat": "Additional Burst DMG Bonus (Max Energy ≤40)",
+          "r1": 0.28,
+          "r2": 0.35,
+          "r3": 0.42,
+          "r4": 0.49,
+          "r5": 0.56
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Weapon Event Wishes) hoặc Phần thưởng nhiệm vụ (Quest: Echoes of an Unfinished Past, thuộc chuỗi nhiệm vụ thế giới \"Polkka Beneath the Moon's Oracle\" ở Nod-Krai)",
+    "bestCharacters": [
+      "Keqing",
+      "Bennett",
+      "Kaeya",
+      "Jean — các DPS/support kiếm Bùng nổ nguyên tố có chi phí Năng Lượng ≤60"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "prototype-rancour",
+    "name": "Prototype Rancour",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "Physical DMG Bonus",
+      "valueLv90": 0.345
+    },
+    "passive": {
+      "name": "Smashed Stone",
+      "description": "Đòn thường/trọng kích trúng địch: ATK +4/5/6/7/8% và DEF +4/5/6/7/8%, tối đa 4 lớp trong 6s, hồi chuỗi 0.3s.",
+      "effects": [
+        {
+          "stat": "ATK Buff per stack",
+          "r1": 0.04,
+          "r2": 0.05,
+          "r3": 0.06,
+          "r4": 0.07,
+          "r5": 0.08
+        },
+        {
+          "stat": "DEF Buff per stack",
+          "r1": 0.04,
+          "r2": 0.05,
+          "r3": 0.06,
+          "r4": 0.07,
+          "r5": 0.08
+        }
+      ]
+    },
+    "acquisition": "Chế tạo",
+    "bestCharacters": [
+      "DPS kiếm on-field phổ thông giai đoạn đầu-giữa game"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "royal-longsword",
+    "name": "Royal Longsword",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Focus",
+      "description": "Khi gây sát thương lên địch, CRIT Rate +8/10/12/14/16% (tối đa 5 lớp, tối đa +40/50/60/70/80%); một đòn chí mạng sẽ xóa toàn bộ lớp đang có.",
+      "effects": [
+        {
+          "stat": "CRIT Rate Buff per stack",
+          "r1": 0.08,
+          "r2": 0.1,
+          "r3": 0.12,
+          "r4": 0.14,
+          "r5": 0.16
+        },
+        {
+          "stat": "CRIT Rate Buff Max (5 stacks)",
+          "r1": 0.4,
+          "r2": 0.5,
+          "r3": 0.6,
+          "r4": 0.7,
+          "r5": 0.8
+        }
+      ]
+    },
+    "acquisition": "Đổi Starglitter (Paimon's Bargains)",
+    "bestCharacters": [
+      "DPS kiếm cần ATK% thuần",
+      "quản lý CRIT Rate qua stack"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "sacrificial-sword",
+    "name": "Sacrificial Sword",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.613
+    },
+    "passive": {
+      "name": "Composed",
+      "description": "Sau khi Kỹ năng nguyên tố gây sát thương lên địch, có 40/50/60/70/80% tỉ lệ hồi chuỗi Kỹ năng ngay lập tức, hồi chuỗi 30/26/22/19/16s.",
+      "effects": [
+        {
+          "stat": "Reset Chance",
+          "r1": 0.4,
+          "r2": 0.5,
+          "r3": 0.6,
+          "r4": 0.7,
+          "r5": 0.8
+        },
+        {
+          "stat": "Cooldown (s)",
+          "r1": 30,
+          "r2": 26,
+          "r3": 22,
+          "r4": 19,
+          "r5": 16
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "Nhân vật cần spam Kỹ năng nguyên tố: Kaeya",
+      "Xingqiu (dù Xingqiu dùng kiếm)"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "sapwood-blade",
+    "name": "Sapwood Blade",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.306
+    },
+    "passive": {
+      "name": "Forest Sanctuary",
+      "description": "Sau khi kích hoạt Thiêu Đốt, Kích Phát, Tăng Kích, Lan Tỏa, Nảy Mầm (Bloom/Lunar-Bloom), Kích Nổ Siêu Cấp hoặc Bùng Nổ, một Leaf of Consciousness xuất hiện quanh người mang (tối đa 10s); nhặt được cho EM +60/75/90/105/120 trong 12s (chỉ tạo 1 lá/20s, kích hoạt được cả khi rời sân, hiệu ứng không cộng dồn).",
+      "effects": [
+        {
+          "stat": "Elemental Mastery Buff",
+          "r1": 60,
+          "r2": 75,
+          "r3": 90,
+          "r4": 105,
+          "r5": 120
+        }
+      ]
+    },
+    "acquisition": "Chế tạo (bản thiết kế \"Tale of the Desert\" từ Aravinay sau chuỗi nhiệm vụ Aranyaka, Vanarana, Sumeru)",
+    "bestCharacters": [
+      "Alhaitham",
+      "Nhà Lữ Hành (Thảo)",
+      "các DPS/sub-DPS kiếm hệ phản ứng Thảo/Bloom"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "serenitys-call",
+    "name": "Serenity's Call",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.613
+    },
+    "passive": {
+      "name": "Solemn Silence",
+      "description": "Khi gây phản ứng nguyên tố, HP tối đa +16/20/24/28/32% trong 12s; nếu có Moonsign: Ascendant Gleam, HP tối đa tăng thêm 16/20/24/28/32% nữa; kích hoạt được cả khi rời sân.",
+      "effects": [
+        {
+          "stat": "Max HP Buff",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        },
+        {
+          "stat": "Additional Max HP Buff (Moonsign)",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        }
+      ]
+    },
+    "acquisition": "Chế tạo (bản thiết kế từ Lyulka, Rossum Workshop, Nasha Town)",
+    "bestCharacters": [
+      "Nhân vật kiếm gây phản ứng nguyên tố cần Energy Recharge",
+      "đặc biệt hưởng lợi mùa Luna (Moonsign: Ascendant Gleam)"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "sturdy-bone",
+    "name": "Sturdy Bone",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Trapper's Pride",
+      "description": "Giảm 15% tiêu hao Thể Lực khi Chạy nước rút/Chạy nước rút thay thế. Sau khi dùng Chạy nước rút/Chạy nước rút thay thế, sát thương Đòn thường +16/20/24/28/32% ATK, hết hiệu lực sau 18 lần trúng đòn hoặc 7s.",
+      "effects": [
+        {
+          "stat": "Normal Attack DMG Bonus (% ATK)",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Weapon Event Wishes, series Heroes of Natlan)",
+    "bestCharacters": [
+      "DPS kiếm đòn thường Vật Lý tận dụng cơ chế Chạy nước rút tại Natlan"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "sword-of-descension",
+    "name": "Sword of Descension",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 39,
+    "atkLv90": 440,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.352
+    },
+    "passive": {
+      "name": "Descension",
+      "description": "(hiệu ứng cố định, không đổi theo cấp tinh luyện): đòn thường/trọng kích trúng địch có 50% tỉ lệ gây 200% ATK sát thương AoE nhỏ, hồi chuỗi 10s. Nếu trang bị cho Nhà Lữ Hành, ATK +66 (cộng thẳng, không phải %).",
+      "effects": []
+    },
+    "acquisition": "Quà tặng qua Mail (chỉ tài khoản từng chơi trên PS4/PS5; lấy được trên PC/Mobile qua Cross-Save)",
+    "bestCharacters": [
+      "Chỉ dùng được đầy đủ nếu có tài khoản liên kết PlayStation"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "sword-of-narzissenkreuz",
+    "name": "Sword of Narzissenkreuz",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Hero's Blade",
+      "description": "Khi người mang không mang thuộc tính Arkhe (Pneuma/Ousia): đòn thường/trọng kích/rơi tự do trúng địch kích hoạt một vụ nổ năng lượng Pneuma hoặc Ousia, gây 160/200/240/280/320% ATK sát thương, hồi chuỗi 12s; loại năng lượng phụ thuộc thuộc tính hiện tại của vũ khí.",
+      "effects": [
+        {
+          "stat": "AoE DMG (% ATK)",
+          "r1": 1.6,
+          "r2": 2.0,
+          "r3": 2.4,
+          "r4": 2.8,
+          "r5": 3.2
+        }
+      ]
+    },
+    "acquisition": "Phần thưởng nhiệm vụ (Quest: Rowboat's Wake)",
+    "bestCharacters": [
+      "Chưa xác nhận nhân vật đại diện cụ thể (vũ khí mới",
+      "chưa có meta rõ ràng)"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "the-alley-flash",
+    "name": "The Alley Flash",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 45,
+    "atkLv90": 620,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 55
+    },
+    "passive": {
+      "name": "Itinerant Hero",
+      "description": "Tăng sát thương gây ra của người mang +12/15/18/21/24%. Khi người mang nhận sát thương, hiệu ứng này bị vô hiệu hóa trong 5s.",
+      "effects": [
+        {
+          "stat": "DMG Bonus",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Weapon Event Wish)",
+    "bestCharacters": [
+      "DPS kiếm EM/hybrid ít bị trúng đòn"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "the-black-sword",
+    "name": "The Black Sword",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Justice",
+      "description": "Sát thương đòn thường/trọng kích +20/25/30/35/40%. Ngoài ra, khi đòn thường/trọng kích chí mạng (CRIT), hồi HP bằng 60/70/80/90/100% ATK, hồi chuỗi 5s.",
+      "effects": [
+        {
+          "stat": "Normal/Charged Attack DMG Bonus",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        },
+        {
+          "stat": "HP Restore (% ATK)",
+          "r1": 0.6,
+          "r2": 0.7,
+          "r3": 0.8,
+          "r4": 0.9,
+          "r5": 1.0
+        }
+      ]
+    },
+    "acquisition": "Battle Pass (Gnostic Hymn Bounty)",
+    "bestCharacters": [
+      "DPS kiếm đòn thường: Kamisato Ayaka off-elemental build"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "the-dockhands-assistant",
+    "name": "The Dockhand's Assistant",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "HP%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Sea Shanty",
+      "description": "Khi người mang được hồi máu hoặc hồi máu cho đồng đội, nhận 1 Stoic's Symbol (tối đa 3, kéo dài 30s). Dùng Kỹ năng/Bùng nổ nguyên tố tiêu hao toàn bộ Symbol để nhận Roused trong 10s: mỗi Symbol tiêu cho 40/50/60/70/80 EM, 2s sau hồi 2/2.5/3/3.5/4 Năng lượng mỗi Symbol; hồi chuỗi Roused 15s, nhận Symbol được cả khi rời sân.",
+      "effects": [
+        {
+          "stat": "EM Buff per Symbol",
+          "r1": 40,
+          "r2": 50,
+          "r3": 60,
+          "r4": 70,
+          "r5": 80
+        },
+        {
+          "stat": "Energy Restore per Symbol",
+          "r1": 2,
+          "r2": 2.5,
+          "r3": 3,
+          "r4": 3.5,
+          "r5": 4
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Weapon Event Wishes, series Construction)",
+    "bestCharacters": [
+      "Nhân vật kiếm hồi máu/scale EM trong đội có healer"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "the-flute",
+    "name": "The Flute",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Chord",
+      "description": "Đòn thường/trọng kích trúng địch tích 1 nốt Harmonic (tối đa 1 nốt/0.5s, mỗi nốt tồn tại tối đa 30s). Đủ 5 nốt sẽ kích hoạt, gây 100/125/150/175/200% ATK sát thương Vật lý diện rộng quanh người mang.",
+      "effects": [
+        {
+          "stat": "AoE Physical DMG (% ATK)",
+          "r1": 1.0,
+          "r2": 1.25,
+          "r3": 1.5,
+          "r4": 1.75,
+          "r5": 2.0
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "DPS kiếm đòn thường/trọng kích tần suất cao"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "toukabou-shigure",
+    "name": "Toukabou Shigure",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 165
+    },
+    "passive": {
+      "name": "Kaidan: Rainfall Earthbinder",
+      "description": "Đòn tấn công trúng địch gây hiệu ứng Cursed Parasol lên 1 mục tiêu trong 10s (hồi chuỗi 15s; hạ gục mục tiêu trong lúc còn hiệu ứng sẽ làm mới hồi chuỗi ngay lập tức). Người mang gây thêm 16/20/24/28/32% sát thương lên mục tiêu đang dính Cursed Parasol.",
+      "effects": [
+        {
+          "stat": "DMG Bonus vs Cursed Parasol target",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        }
+      ]
+    },
+    "acquisition": "Sự kiện Akitsu Kimodameshi (đã kết thúc, không lặp lại ngoài rerun; tinh luyện qua đổi Parasol Talcum)",
+    "bestCharacters": [
+      "Kazuha",
+      "Alhaitham",
+      "các DPS/sub-DPS kiếm đơn mục tiêu cần Tinh Thông Nguyên Tố"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "wolf-fang",
+    "name": "Wolf-Fang",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Northwind Wolf",
+      "description": "Sát thương Kỹ năng và Bùng nổ nguyên tố +16/20/24/28/32%. Khi Kỹ năng nguyên tố trúng địch, CRIT Rate của Kỹ năng +2/2.5/3/3.5/4% (tối đa 4 lớp); khi Bùng nổ nguyên tố trúng địch, CRIT Rate của Bùng nổ +2/2.5/3/3.5/4% (tối đa 4 lớp); mỗi hiệu ứng tính riêng, kéo dài 10s, hồi chuỗi 0.1s.",
+      "effects": [
+        {
+          "stat": "Elemental Skill/Burst DMG Bonus",
+          "r1": 0.16,
+          "r2": 0.2,
+          "r3": 0.24,
+          "r4": 0.28,
+          "r5": 0.32
+        },
+        {
+          "stat": "Elemental Skill CRIT Rate per stack",
+          "r1": 0.02,
+          "r2": 0.025,
+          "r3": 0.03,
+          "r4": 0.035,
+          "r5": 0.04
+        },
+        {
+          "stat": "Elemental Burst CRIT Rate per stack",
+          "r1": 0.02,
+          "r2": 0.025,
+          "r3": 0.03,
+          "r4": 0.035,
+          "r5": 0.04
+        }
+      ]
+    },
+    "acquisition": "Battle Pass (Gnostic Hymn 2)",
+    "bestCharacters": [
+      "Kamisato Ayato",
+      "các DPS kiếm scale sát thương Kỹ năng/Bùng nổ nguyên tố"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "xiphos-moonlight",
+    "name": "Xiphos' Moonlight",
+    "type": "Sword",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 165
+    },
+    "passive": {
+      "name": "Jinni's Whisper",
+      "description": "Cứ mỗi 10s, người mang nhận Energy Recharge bằng 0.036/0.045/0.054/0.063/0.072% cho mỗi điểm Elemental Mastery đang sở hữu, kéo dài 12s; đồng đội gần đó nhận 30% hiệu ứng này trong cùng thời gian (có thể kích hoạt cả khi rời sân; nhiều vũ khí cùng loại cộng dồn).",
+      "effects": [
+        {
+          "stat": "Energy Recharge per EM point (%)",
+          "r1": 0.00036,
+          "r2": 0.00045,
+          "r3": 0.00054,
+          "r4": 0.00063,
+          "r5": 0.00072
+        }
+      ]
+    },
+    "acquisition": "Banner giới hạn (Weapon Event Wish, series Tulaytullah)",
+    "bestCharacters": [
+      "Hỗ trợ buff Energy Recharge toàn đội theo EM"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "cool-steel",
+    "name": "Cool Steel",
+    "type": "Sword",
+    "rarity": 3,
+    "atkLv1": 39,
+    "atkLv90": 401,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.352
+    },
+    "passive": {
+      "name": "Bane of Water and Ice",
+      "description": "Tăng sát thương lên địch đang dính hiệu ứng Thủy hoặc Băng +12/15/18/21/24%.",
+      "effects": [
+        {
+          "stat": "DMG Bonus vs Hydro/Cryo-afflicted",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "Nhân vật kiếm sơ khai",
+      "F2P giai đoạn đầu"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "dark-iron-sword",
+    "name": "Dark Iron Sword",
+    "type": "Sword",
+    "rarity": 3,
+    "atkLv1": 39,
+    "atkLv90": 401,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 141
+    },
+    "passive": {
+      "name": "Overloaded",
+      "description": "Khi người mang gây phản ứng Overloaded, Superconduct, Stellar-Conduct, Electro-Charged, Quicken, Aggravate, Hyperbloom, Lunar-Charged, hoặc Swirl (khi mang thuộc tính Electro), ATK +20/25/30/35/40% trong 12s.",
+      "effects": [
+        {
+          "stat": "ATK Buff",
+          "r1": 0.2,
+          "r2": 0.25,
+          "r3": 0.3,
+          "r4": 0.35,
+          "r5": 0.4
+        }
+      ]
+    },
+    "acquisition": "Rương báu (Chest)",
+    "bestCharacters": [
+      "Nhân vật kiếm sơ khai gây phản ứng Electro"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "fillet-blade",
+    "name": "Fillet Blade",
+    "type": "Sword",
+    "rarity": 3,
+    "atkLv1": 39,
+    "atkLv90": 401,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.352
+    },
+    "passive": {
+      "name": "Gash",
+      "description": "Trúng đòn có 50% tỉ lệ gây thêm 240/280/320/360/400% ATK sát thương lên 1 mục tiêu, hồi chuỗi 15/14/13/12/11s.",
+      "effects": [
+        {
+          "stat": "Bonus DMG (% ATK)",
+          "r1": 2.4,
+          "r2": 2.8,
+          "r3": 3.2,
+          "r4": 3.6,
+          "r5": 4.0
+        },
+        {
+          "stat": "Cooldown (s)",
+          "r1": 15,
+          "r2": 14,
+          "r3": 13,
+          "r4": 12,
+          "r5": 11
+        }
+      ]
+    },
+    "acquisition": "Rương báu (Chest)",
+    "bestCharacters": [
+      "Nhân vật cần ATK% sơ khai"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "harbinger-of-dawn",
+    "name": "Harbinger of Dawn",
+    "type": "Sword",
+    "rarity": 3,
+    "atkLv1": 39,
+    "atkLv90": 401,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.469
+    },
+    "passive": {
+      "name": "Vigorous",
+      "description": "Khi HP >90%, CRIT Rate +14/17.5/21/24.5/28%.",
+      "effects": [
+        {
+          "stat": "CRIT Rate Buff (HP>90%)",
+          "r1": 0.14,
+          "r2": 0.175,
+          "r3": 0.21,
+          "r4": 0.245,
+          "r5": 0.28
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "DPS máu cao",
+      "giữ HP trên 90%"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "skyrider-sword",
+    "name": "Skyrider Sword",
+    "type": "Sword",
+    "rarity": 3,
+    "atkLv1": 38,
+    "atkLv90": 354,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.517
+    },
+    "passive": {
+      "name": "Determination",
+      "description": "Dùng Bùng nổ nguyên tố tăng ATK và tốc độ di chuyển +12/15/18/21/24% trong 15s.",
+      "effects": [
+        {
+          "stat": "ATK & Movement Speed Buff",
+          "r1": 0.12,
+          "r2": 0.15,
+          "r3": 0.18,
+          "r4": 0.21,
+          "r5": 0.24
+        }
+      ]
+    },
+    "acquisition": "Banner tiêu chuẩn (Wish)",
+    "bestCharacters": [
+      "Nhân vật kiếm sơ khai"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "travelers-handy-sword",
+    "name": "Traveler's Handy Sword",
+    "type": "Sword",
+    "rarity": 3,
+    "atkLv1": 40,
+    "atkLv90": 448,
+    "subStat": {
+      "type": "DEF%",
+      "valueLv90": 0.293
+    },
+    "passive": {
+      "name": "Journey",
+      "description": "Mỗi Hạt/Cầu Nguyên Tố nhặt được hồi 1/1.25/1.5/1.75/2% HP.",
+      "effects": [
+        {
+          "stat": "HP Restore per Elemental Particle/Orb (%)",
+          "r1": 0.01,
+          "r2": 0.0125,
+          "r3": 0.015,
+          "r4": 0.0175,
+          "r5": 0.02
+        }
+      ]
+    },
+    "acquisition": "Rương báu (Chest)",
+    "bestCharacters": [
+      "Nhân vật kiếm sơ khai",
+      "F2P"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "silver-sword",
+    "name": "Silver Sword",
+    "type": "Sword",
+    "rarity": 2,
+    "atkLv1": 33,
+    "atkLv90": 243,
+    "subStat": {
+      "type": null,
+      "valueLv90": null
+    },
+    "passive": null,
+    "acquisition": "Không ghi rõ trong nguồn (bảng 2★ chỉ liệt kê ATK theo cấp, không có cột Cách lấy riêng)",
+    "bestCharacters": [
+      "Chỉ dùng tạm giai đoạn đầu game hoặc thử nghiệm chuỗi đòn"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  },
+  {
+    "id": "dull-blade",
+    "name": "Dull Blade",
+    "type": "Sword",
+    "rarity": 1,
+    "atkLv1": 23,
+    "atkLv90": 185,
+    "subStat": {
+      "type": null,
+      "valueLv90": null
+    },
+    "passive": null,
+    "acquisition": "Vũ khí khởi đầu mặc định (không ghi cột Cách lấy riêng trong nguồn)",
+    "bestCharacters": [
+      "Vũ khí khởi đầu",
+      "không dùng trong đội hình thực chiến"
+    ],
+    "sourceFile": "vu-khi/kiem.md"
+  }
+]

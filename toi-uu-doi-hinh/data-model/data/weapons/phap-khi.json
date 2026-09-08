@@ -1,0 +1,1226 @@
+[
+  {
+    "id": "apprentices-notes",
+    "name": "Apprentice's Notes",
+    "type": "Catalyst",
+    "rarity": 1,
+    "atkLv1": 20,
+    "atkLv90": 185,
+    "subStat": {
+      "type": null,
+      "valueLv90": null
+    },
+    "passive": null,
+    "acquisition": "Chế tạo tại Lò rèn (Rèn Bắc Âu) hoặc mua từ NPC thợ rèn ở cấp độ phiêu lưu thấp",
+    "bestCharacters": [
+      "Vũ khí tạm thời cho pháp sư mới bắt đầu (Lisa",
+      "Klee giai đoạn đầu)",
+      "chủ yếu để phân giải nguyên liệu"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "pocket-grimoire",
+    "name": "Pocket Grimoire",
+    "type": "Catalyst",
+    "rarity": 2,
+    "atkLv1": 33,
+    "atkLv90": 243,
+    "subStat": {
+      "type": null,
+      "valueLv90": null
+    },
+    "passive": null,
+    "acquisition": "Rương kho báu trong thế giới mở, hoặc mua từ thợ rèn sau khi nhặt được",
+    "bestCharacters": [
+      "Vũ khí tạm thời đầu game",
+      "dùng để phân giải nguyên liệu"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "magic-guide",
+    "name": "Magic Guide",
+    "type": "Catalyst",
+    "rarity": 3,
+    "atkLv1": 38,
+    "atkLv90": 354,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 187
+    },
+    "passive": {
+      "name": "Bane of Storm and Tide",
+      "description": "R1: Tăng 12% sát thương lên kẻ địch đang chịu hiệu ứng Thủy hoặc Lôi R5: Tăng 24% sát thương lên kẻ địch đang chịu hiệu ứng Thủy hoặc Lôi",
+      "effects": []
+    },
+    "acquisition": "Chế tạo tại Lò rèn (cần Đan Dược Bắc Âu - Catalyst Billet)",
+    "bestCharacters": [
+      "Pháp sư gây phản ứng Thủy/Lôi giai đoạn đầu: Klee",
+      "Ningguang",
+      "Lisa"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "thrilling-tales-of-dragon-slayers",
+    "name": "Thrilling Tales of Dragon Slayers",
+    "type": "Catalyst",
+    "rarity": 3,
+    "atkLv1": 39,
+    "atkLv90": 401,
+    "subStat": {
+      "type": "HP%",
+      "valueLv90": 0.352
+    },
+    "passive": {
+      "name": "Heritage",
+      "description": "R1: Khi đổi nhân vật, nhân vật mới vào sân được tăng 24% ATK trong 10s (hồi chiêu 20s) R5: Khi đổi nhân vật, nhân vật mới vào sân được tăng 48% ATK trong 10s (hồi chiêu 20s)",
+      "effects": []
+    },
+    "acquisition": "Rương kho báu trong thế giới mở (không chế tạo được), cũng có thể ra từ banner cầu nguyện tiêu chuẩn",
+    "bestCharacters": [
+      "Đội hình đánh nhanh cần buff ATK ngay khi vào sân trước đòn burst: Xiangling",
+      "Bennett-style catalyst DPS"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "otherworldly-story",
+    "name": "Otherworldly Story",
+    "type": "Catalyst",
+    "rarity": 3,
+    "atkLv1": 39,
+    "atkLv90": 401,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.39
+    },
+    "passive": {
+      "name": "Energy Shower",
+      "description": "R1: Nhặt Cầu/Hạt Nguyên Tố hồi 1% HP R5: Nhặt Cầu/Hạt Nguyên Tố hồi 2% HP",
+      "effects": []
+    },
+    "acquisition": "Rương kho báu trong thế giới mở",
+    "bestCharacters": [
+      "Support/healer cần Nạp Nguyên Tố: Kokomi",
+      "Barbara",
+      "Sucrose"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "emerald-orb",
+    "name": "Emerald Orb",
+    "type": "Catalyst",
+    "rarity": 3,
+    "atkLv1": 40,
+    "atkLv90": 448,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 94
+    },
+    "passive": {
+      "name": "Rapids",
+      "description": "R1: Khi gây phản ứng Bốc hơi, Cảm Điện, Đóng Băng, Tỏa Nhiệt, Nguyệt Cảm Điện, Nguyệt Tỏa Nhiệt hoặc Cuốn Phong hệ Thủy, tăng 20% ATK trong 12s R5: (tương tự) tăng 40% ATK trong 12s",
+      "effects": []
+    },
+    "acquisition": "Rương kho báu trong thế giới mở",
+    "bestCharacters": [
+      "Pháp sư chuyên gây phản ứng nguyên tố: Klee",
+      "Yanfei",
+      "Lisa"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "twin-nephrite",
+    "name": "Twin Nephrite",
+    "type": "Catalyst",
+    "rarity": 3,
+    "atkLv1": 40,
+    "atkLv90": 448,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.156
+    },
+    "passive": {
+      "name": "Guerilla Tactics",
+      "description": "R1: Hạ gục kẻ địch tăng 12% Tốc độ di chuyển và ATK trong 15s R5: Hạ gục kẻ địch tăng 20% Tốc độ di chuyển và ATK trong 15s",
+      "effects": []
+    },
+    "acquisition": "Rương kho báu trong thế giới mở",
+    "bestCharacters": [
+      "Pháp sư solo dọn quái yếu",
+      "farm world: Yanfei",
+      "Klee"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "favonius-codex",
+    "name": "Favonius Codex",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.459
+    },
+    "passive": {
+      "name": "Windfall",
+      "description": "R1: Đòn Bạo Kích có 60% cơ hội tạo Hạt Nguyên Tố hồi 6 Năng lượng, hồi chiêu 12s R5: Đòn Bạo Kích có 100% cơ hội tạo Hạt Nguyên Tố hồi 6 Năng lượng, hồi chiêu 6s",
+      "effects": []
+    },
+    "acquisition": "Banner cầu nguyện tiêu chuẩn (Wanderlust Invocation)",
+    "bestCharacters": [
+      "Trợ chiến cần hồi năng lượng: Kokomi",
+      "Sucrose",
+      "Nahida"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "the-widsith",
+    "name": "The Widsith",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.551
+    },
+    "passive": {
+      "name": "Debut",
+      "description": "R1: Khi vào sân, ngẫu nhiên nhận 1 trong 3 hiệu ứng 10s (hồi chiêu 30s) - Recitative: +60% ATK; Aria: +48% sát thương nguyên tố; Interlude: +240 Tinh Thông Nguyên Tố R5: (tương tự) Recitative: +120% ATK; Aria: +96% sát thương nguyên tố; Interlude: +480 Tinh Thông Nguyên Tố",
+      "effects": []
+    },
+    "acquisition": "Phần thưởng sự kiện giới hạn trong quá khứ, hiện không có trong banner/chế tạo thường xuyên (chỉ khi sự kiện tái diễn)",
+    "bestCharacters": [
+      "Phù hợp rộng cho mọi pháp sư nhờ buff ngẫu nhiên có lợi toàn đội: Klee",
+      "Ningguang",
+      "Sucrose-team"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "sacrificial-fragments",
+    "name": "Sacrificial Fragments",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 221
+    },
+    "passive": {
+      "name": "Composed",
+      "description": "R1: Sau khi gây sát thương bằng Kỹ Năng Nguyên Tố, có 40% cơ hội kết thúc ngay hồi chiêu Kỹ Năng đó, hồi chiêu hiệu ứng 30s R5: (tương tự) 80% cơ hội, hồi chiêu hiệu ứng 16s",
+      "effects": []
+    },
+    "acquisition": "Banner cầu nguyện tiêu chuẩn (Wanderlust Invocation)",
+    "bestCharacters": [
+      "Support/Sub-DPS cần spam Kỹ Năng liên tục: Sucrose",
+      "Kokomi",
+      "Nahida"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "royal-grimoire",
+    "name": "Royal Grimoire",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.275
+    },
+    "passive": {
+      "name": "Focus",
+      "description": "R1: Gây sát thương lên kẻ địch tăng 8% Tỉ lệ Bạo Kích, tối đa 5 tầng, mất hết tầng khi Bạo Kích R5: (tương tự) tăng 16% Tỉ lệ Bạo Kích mỗi tầng, tối đa 5 tầng",
+      "effects": []
+    },
+    "acquisition": "Chế tạo tại Lò rèn (dòng Royal, cần nguyên liệu đặc thù)",
+    "bestCharacters": [
+      "Pháp sư DPS cận chiến-tầm xa tích Bạo Kích: Klee",
+      "Yanfei",
+      "Ningguang"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "solar-pearl",
+    "name": "Solar Pearl",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.275
+    },
+    "passive": {
+      "name": "Solar Shine",
+      "description": "R1: Đòn thường trúng tăng 20% sát thương Kỹ Năng/Đại Chiêu trong 6s; ngược lại Kỹ Năng/Đại Chiêu trúng tăng 20% sát thương đòn thường trong 6s R5: (tương tự) tăng 40% mỗi chiều",
+      "effects": []
+    },
+    "acquisition": "Battle Pass (Gnostic Hymn/Chorus)",
+    "bestCharacters": [
+      "Pháp sư luân chuyển đòn thường - kỹ năng liên tục: Yanfei",
+      "Klee"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "prototype-amber",
+    "name": "Prototype Amber",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "HP%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Gilding",
+      "description": "R1: Dùng Đại Chiêu hồi 4 Năng lượng mỗi 2s trong 6s, đồng thời cả đội hồi 4% HP mỗi 2s R5: (tương tự) hồi 6 Năng lượng và 6% HP mỗi 2s",
+      "effects": []
+    },
+    "acquisition": "Chế tạo tại Lò rèn (dòng Prototype)",
+    "bestCharacters": [
+      "Healer/support catalyst: Barbara",
+      "Kokomi",
+      "Baizhu"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "mappa-mare",
+    "name": "Mappa Mare",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 110
+    },
+    "passive": {
+      "name": "Infusion Scroll",
+      "description": "R1: Gây phản ứng nguyên tố tăng 8% sát thương nguyên tố trong 10s, tối đa 2 tầng R5: (tương tự) tăng 16% mỗi tầng",
+      "effects": []
+    },
+    "acquisition": "Chế tạo tại Lò rèn (dòng Mappa Mare)",
+    "bestCharacters": [
+      "Pháp sư chuyên phản ứng nguyên tố: Klee",
+      "Yanfei",
+      "Lisa",
+      "Ningguang"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "blackcliff-agate",
+    "name": "Blackcliff Agate",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.551
+    },
+    "passive": {
+      "name": "Press the Advantage",
+      "description": "R1: Hạ gục kẻ địch tăng 12% ATK trong 30s, tối đa 3 tầng độc lập R5: (tương tự) tăng 24% ATK mỗi tầng",
+      "effects": []
+    },
+    "acquisition": "Cửa hàng đổi Starglitter/Stardust của Paimon (xuất hiện luân phiên)",
+    "bestCharacters": [
+      "Pháp sư dọn quái/farm liên tục: Klee",
+      "Yanfei"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "eye-of-perception",
+    "name": "Eye of Perception",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.551
+    },
+    "passive": {
+      "name": "Echo",
+      "description": "R1: Đòn thường/trọng kích có 50% cơ hội bắn tia xuyên 4 mục tiêu gây 240% ATK sát thương, hồi chiêu 12s R5: (tương tự) gây 360% ATK sát thương, hồi chiêu 8s",
+      "effects": []
+    },
+    "acquisition": "Phần thưởng sự kiện giới hạn trong quá khứ",
+    "bestCharacters": [
+      "Pháp sư DPS đòn thường/trọng kích: Klee",
+      "Yanfei",
+      "Ningguang",
+      "Wanderer"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "wine-and-song",
+    "name": "Wine and Song",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.306
+    },
+    "passive": {
+      "name": "Ever-Changing",
+      "description": "R1: Đòn thường trúng địch giảm 14% tiêu hao Thể Lực khi chạy trong 5s; dùng Chạy nước rút/kỹ năng di chuyển tăng 20% ATK trong 5s R5: (tương tự) giảm 22% tiêu hao Thể Lực, tăng 40% ATK",
+      "effects": []
+    },
+    "acquisition": "Battle Pass (Gnostic Hymn)",
+    "bestCharacters": [
+      "Pháp sư cần tiện lợi di chuyển + buff ATK: Yanfei",
+      "Klee"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "frostbearer",
+    "name": "Frostbearer",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Frost Burial",
+      "description": "R1: Đòn thường/trọng kích có 60% cơ hội tạo băng trụ rơi gây AoE 80% ATK (200% ATK nếu địch dính Băng), hồi chiêu 10s R5: (tương tự) 100% cơ hội, gây 140% ATK (360% ATK nếu dính Băng)",
+      "effects": []
+    },
+    "acquisition": "Battle Pass (Gnostic Hymn)",
+    "bestCharacters": [
+      "Pháp sư đối phó kẻ địch dính Băng",
+      "gây AoE: Klee",
+      "Yanfei",
+      "Ningguang"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "dodoco-tales",
+    "name": "Dodoco Tales",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.551
+    },
+    "passive": {
+      "name": "Dodoventure!",
+      "description": "R1: Đòn thường trúng tăng 16% sát thương trọng kích trong 6s; trọng kích trúng tăng 8% ATK trong 6s R5: (tương tự) tăng 32% sát thương trọng kích, tăng 16% ATK",
+      "effects": []
+    },
+    "acquisition": "Battle Pass (vũ khí đặc trưng của Klee)",
+    "bestCharacters": [
+      "Klee (BiS 4★)",
+      "ngoài ra Yanfei",
+      "Ningguang"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "hakushin-ring",
+    "name": "Hakushin Ring",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.306
+    },
+    "passive": {
+      "name": "Sakura Saiguu",
+      "description": "R1: Sau khi gây phản ứng Cảm Điện, đồng đội gần đó thuộc nguyên tố tham gia phản ứng nhận 10% Tăng Sát Thương Nguyên Tố tương ứng trong 6s (không cộng dồn) R5: (tương tự) tăng 20% Sát Thương Nguyên Tố",
+      "effects": []
+    },
+    "acquisition": "Phần thưởng sự kiện giới hạn (liên quan cốt truyện Inazuma)",
+    "bestCharacters": [
+      "Pháp sư hệ Lôi/hỗ trợ phản ứng: Yae Miko",
+      "Lisa"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "oathsworn-eye",
+    "name": "Oathsworn Eye",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.275
+    },
+    "passive": {
+      "name": "People of the Faltering Light",
+      "description": "R1: Sau khi dùng Kỹ Năng Nguyên Tố, tăng 24% Nạp Nguyên Tố trong 10s R5: (tương tự) tăng 48% Nạp Nguyên Tố trong 10s",
+      "effects": []
+    },
+    "acquisition": "Sự kiện \"Three Realms Gateway Offering\" (bản 2.5, đã kết thúc — chỉ lấy lại được nếu sự kiện rerun)",
+    "bestCharacters": [
+      "Support cần Nạp Nguyên Tố cho combo Kỹ Năng: Nahida",
+      "Kokomi",
+      "Sucrose"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "wandering-evenstar",
+    "name": "Wandering Evenstar",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 165
+    },
+    "passive": {
+      "name": "Wildling Nightstar",
+      "description": "R1: Mỗi 10s, người trang bị nhận 24% Tinh Thông Nguyên Tố thành ATK cộng thêm trong 12s, đồng đội gần đó nhận 30% hiệu ứng này R5: (tương tự) nhận 48% Tinh Thông Nguyên Tố thành ATK cộng thêm",
+      "effects": []
+    },
+    "acquisition": "Phần thưởng sự kiện giới hạn trong quá khứ",
+    "bestCharacters": [
+      "Pháp sư build Tinh Thông Nguyên Tố: Nahida",
+      "Sucrose",
+      "Kokomi"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "fruit-of-fulfillment",
+    "name": "Fruit of Fulfillment",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.459
+    },
+    "passive": {
+      "name": "Full Circle",
+      "description": "R1: Sau khi gây phản ứng nguyên tố, nhận hiệu ứng \"Wax and Wane\": +24 Tinh Thông Nguyên Tố nhưng -5% ATK, cộng dồn tối đa 5 tầng R5: (tương tự) +36 Tinh Thông Nguyên Tố mỗi tầng, -5% ATK",
+      "effects": []
+    },
+    "acquisition": "Phần thưởng sự kiện giới hạn trong quá khứ",
+    "bestCharacters": [
+      "Pháp sư build Tinh Thông Nguyên Tố",
+      "gây phản ứng liên tục: Nahida",
+      "Yae Miko",
+      "Sucrose"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "sacrificial-jade",
+    "name": "Sacrificial Jade",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.368
+    },
+    "passive": {
+      "name": "Jade Circulation",
+      "description": "R1: Khi rời sàn đấu quá 5s, HP tối đa +32%, Tinh Thông Nguyên Tố +40. Hiệu ứng biến mất sau khi ở lại sàn đấu 10s R5: HP tối đa +64%, Tinh Thông Nguyên Tố +80 (điều kiện như trên)",
+      "effects": []
+    },
+    "acquisition": "Đổi từ Thông Hành Chiến Đấu (Gnostic Hymn)",
+    "bestCharacters": [
+      "Nahida",
+      "Yae Miko",
+      "Baizhu"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "flowing-purity",
+    "name": "Flowing Purity",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Unfinished Masterpiece",
+      "description": "R1: Dùng Kỹ Năng Nguyên Tố tăng 8% ST DMG nguyên tố trong 15s và nhận Bond of Life bằng 24% HP tối đa (hồi 10s); khi Bond of Life được xóa, mỗi 1.000 HP xóa tăng thêm 2% ST DMG nguyên tố (tối đa 12%) trong 15s R5: tăng 16% ST DMG nguyên tố; mỗi 1.000 HP xóa tăng thêm 4% (tối đa 24%)",
+      "effects": []
+    },
+    "acquisition": "Chế tạo tại lò rèn (Fontaine)",
+    "bestCharacters": [
+      "Wriothesley và các catalyst DPS tận dụng Bond of Life"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "ballad-of-the-boundless-blue",
+    "name": "Ballad of the Boundless Blue",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.306
+    },
+    "passive": {
+      "name": "Azure Skies",
+      "description": "R1: Trong 6s sau khi Đòn Thường/Trọng kích trúng địch, DMG Đòn Thường +10%, DMG Trọng kích +7.5%, tối đa 3 lớp, hồi 0.3s R5: DMG Đòn Thường +16%, DMG Trọng kích +12% (điều kiện như trên)",
+      "effects": []
+    },
+    "acquisition": "Sự kiện Waterborne Poetry (bản 4.1)",
+    "bestCharacters": [
+      "Klee",
+      "Ningguang",
+      "Lisa (catalyst DPS thường/trọng kích)"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "ash-graven-drinking-horn",
+    "name": "Ash-Graven Drinking Horn",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "HP%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Tupac's Grip",
+      "description": "R1: Khi đòn tấn công trúng địch, gây sát thương AoE bằng 50% HP tối đa tại vị trí mục tiêu, hồi 15s R5: gây sát thương AoE bằng 80% HP tối đa",
+      "effects": []
+    },
+    "acquisition": "Chế tạo tại lò rèn Natlan (bản 5.0)",
+    "bestCharacters": [
+      "Mualani",
+      "Kokomi (catalyst scaling HP)"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "waveriding-whirl",
+    "name": "Waveriding Whirl",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.613
+    },
+    "passive": {
+      "name": "Fangs Flying To and Fro",
+      "description": "R1: Giảm 15% tiêu hao thể lực bơi. Sau khi dùng Kỹ Năng Nguyên Tố, HP tối đa +20% trong 10s; mỗi nhân vật Thủy trong đội hình +12% (tối đa 2 lần), hồi 15s R5: HP tối đa +40%; mỗi nhân vật Thủy +24% (tối đa 2 lần)",
+      "effects": []
+    },
+    "acquisition": "Chế tạo tại lò rèn Natlan (bản 5.0)",
+    "bestCharacters": [
+      "Mualani",
+      "Kokomi"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "ring-of-yaxche",
+    "name": "Ring of Yaxche",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "HP%",
+      "valueLv90": 0.413
+    },
+    "passive": {
+      "name": "Echoes of the Plentiful Land",
+      "description": "R1: Dùng Kỹ Năng Nguyên Tố nhận hiệu ứng Jade-Forged Crown: mỗi 1.000 HP tối đa tăng 0.6% DMG Đòn Thường trong 10s, tối đa 16% R5: mỗi 1.000 HP tối đa tăng 1% DMG Đòn Thường, tối đa 32%",
+      "effects": []
+    },
+    "acquisition": "Chế tạo tại lò rèn của Alom (Natlan) hoặc nhận miễn phí qua thư (mốc 20 triệu lượt cổ vũ cộng đồng, bản 5.0)",
+    "bestCharacters": [
+      "Mualani",
+      "Kokomi"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "etherlight-spindlelute",
+    "name": "Etherlight Spindlelute",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "Energy Recharge",
+      "valueLv90": 0.459
+    },
+    "passive": {
+      "name": "Last Singer",
+      "description": "R1: Sau khi dùng Kỹ Năng Nguyên Tố, Tinh Thông Nguyên Tố +100 trong 20s R5: Tinh Thông Nguyên Tố +200 trong 20s",
+      "effects": []
+    },
+    "acquisition": "Đổi từ sự kiện Clink Clank Clash (Legion Moral, cần 800 để đổi tinh luyện tối đa)",
+    "bestCharacters": [
+      "Nahida",
+      "Sucrose",
+      "Mizuki",
+      "Citlali"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "blackmarrow-lantern",
+    "name": "Blackmarrow Lantern",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 41,
+    "atkLv90": 454,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 221
+    },
+    "passive": {
+      "name": "Token of Covenant",
+      "description": "R1: DMG Bloom +48%, DMG Lunar-Bloom +12%; khi có Moonsign: Ascendant Gleam, DMG Lunar-Bloom +12% (cộng thêm) R5: DMG Bloom +96%, DMG Lunar-Bloom +24%; Moonsign: Ascendant Gleam DMG Lunar-Bloom +24% (cộng thêm)",
+      "effects": []
+    },
+    "acquisition": "Chế tạo tại lò rèn Lyulka (Nod-Krai)",
+    "bestCharacters": [
+      "Kokomi",
+      "Nahida",
+      "Lauma (nhân vật gây Bloom/Lunar-Bloom)"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "dawning-frost",
+    "name": "Dawning Frost",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.551
+    },
+    "passive": {
+      "name": "Nocturnal Dreams",
+      "description": "R1: Sau Trọng kích trúng địch, Tinh Thông Nguyên Tố +72 trong 10s; sau Kỹ Năng Nguyên Tố trúng địch, +48 trong 10s R5: Tinh Thông Nguyên Tố +144 (Trọng kích) và +96 (Kỹ Năng)",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn, bản 6.1 Luna II (22/10/2025)",
+    "bestCharacters": [
+      "Nahida",
+      "Yae Miko (catalyst phản ứng nguyên tố)"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "clash-of-kings",
+    "name": "Clash of Kings",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 42,
+    "atkLv90": 510,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Without Heed for Day nor Night",
+      "description": "R1: Dùng Kỹ Năng Nguyên Tố nhận \"Laws of the Board\": ATK +20%, Tinh Thông Nguyên Tố +100, kéo dài 6s (hồi 12s); Trọng kích trúng địch gia hạn thêm 6s (tối đa 1 lần) R5: ATK +40%, Tinh Thông Nguyên Tố +200",
+      "effects": []
+    },
+    "acquisition": "Thông Hành Chiến Đấu (Gnostic Hymn), bản 7.0 (12/8/2026)",
+    "bestCharacters": [
+      "Neuvillette",
+      "Escoffier",
+      "Shenhe",
+      "Ineffa"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "echoes-of-the-heart",
+    "name": "Echoes of the Heart",
+    "type": "Catalyst",
+    "rarity": 4,
+    "atkLv1": 44,
+    "atkLv90": 565,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.276
+    },
+    "passive": {
+      "name": "Echo of a Vow",
+      "description": "R1: Kích hoạt phản ứng nguyên tố tăng Tinh Thông Nguyên Tố +60 trong 12s; kích hoạt phản ứng Stellar Glimmer tăng DMG phản ứng đó +16% trong 12s (kích hoạt được cả khi rời sàn đấu) R5: Tinh Thông Nguyên Tố +120, DMG Stellar Glimmer +32%",
+      "effects": []
+    },
+    "acquisition": "Chế tạo tại lò rèn Kuznets của Kuzmichev (Snezhnograd), bản 7.0",
+    "bestCharacters": [
+      "Mizuki",
+      "Yae Miko"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "skyward-atlas",
+    "name": "Skyward Atlas",
+    "type": "Catalyst",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 674,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.331
+    },
+    "passive": {
+      "name": "Wandering Clouds",
+      "description": "R1: DMG nguyên tố +12%. Đòn Thường có 50% cơ hội triệu hồi mây tấn công địch gần đó trong 15s, gây 160% ATK DMG, hồi 30s R5: DMG nguyên tố +24%, cơ hội 100%, mây gây 320% ATK DMG",
+      "effects": []
+    },
+    "acquisition": "Rương ước nguyện vũ khí tiêu chuẩn (Epitome Invocation) hoặc chế tạo",
+    "bestCharacters": [
+      "Klee",
+      "Ningguang",
+      "Yanfei"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "lost-prayer-to-the-sacred-winds",
+    "name": "Lost Prayer to the Sacred Winds",
+    "type": "Catalyst",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.331
+    },
+    "passive": {
+      "name": "Boundless Blessing",
+      "description": "R1: Tốc độ di chuyển +10%. Trong combat, mỗi 4s tăng 6% DMG nguyên tố, tối đa 4 lớp (24%); hiệu ứng mất khi rời combat R5: mỗi 4s tăng 10% DMG nguyên tố, tối đa 4 lớp (40%)",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn – vũ khí signature Klee",
+    "bestCharacters": [
+      "Klee",
+      "Yanfei",
+      "Ningguang"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "memory-of-dust",
+    "name": "Memory of Dust",
+    "type": "Catalyst",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.496
+    },
+    "passive": {
+      "name": "Golden Majesty",
+      "description": "R1: Shield Strength +20%. Đòn trúng địch tăng ATK +4% trong 8s, tối đa 5 lớp (20%), hồi 0.3s; khi có khiên bảo vệ, hiệu ứng tăng ATK nhân đôi R5: ATK +8%/lớp (tối đa 40%, nhân đôi thành 80% khi có khiên)",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn",
+    "bestCharacters": [
+      "Klee",
+      "Yanfei (trong đội hình có khiên như Zhongli/Diona)"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "jadefalls-splendor",
+    "name": "Jadefall's Splendor",
+    "type": "Catalyst",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "HP%",
+      "valueLv90": 0.496
+    },
+    "passive": {
+      "name": "Primordial Jade Regalia",
+      "description": "R1: Trong 3s sau khi dùng Nộ hoặc tạo khiên, hồi 4.5 Năng Lượng mỗi 2.5s và +0.3% DMG nguyên tố tương ứng mỗi 1.000 HP tối đa (tối đa 12%); vẫn kích hoạt khi rời sàn đấu R5: hồi 6.5 Năng Lượng mỗi 2.5s, +1.1% DMG nguyên tố mỗi 1.000 HP tối đa (tối đa 44%)",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn – vũ khí signature Baizhu",
+    "bestCharacters": [
+      "Baizhu"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "everlasting-moonglow",
+    "name": "Everlasting Moonglow",
+    "type": "Catalyst",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "HP%",
+      "valueLv90": 0.496
+    },
+    "passive": {
+      "name": "Byakuya Kougetsu",
+      "description": "R1: Hiệu ứng hồi máu +10%. DMG Đòn Thường tăng thêm bằng 1% HP tối đa. Trong 12s sau khi dùng Nộ, Đòn Thường trúng địch hồi 0.6 Năng Lượng (hồi 0.1s) R5: Hiệu ứng hồi máu +20%, DMG Đòn Thường tăng thêm bằng 3% HP tối đa",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn – vũ khí signature Yaoyao",
+    "bestCharacters": [
+      "Yaoyao"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "kaguras-verity",
+    "name": "Kagura's Verity",
+    "type": "Catalyst",
+    "rarity": 5,
+    "atkLv1": 48,
+    "atkLv90": 608,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.662
+    },
+    "passive": {
+      "name": "Kagura Dance of the Sacred Sakura",
+      "description": "R1: Dùng Kỹ Năng Nguyên Tố tăng DMG Kỹ Năng Nguyên Tố +12% trong 16s, tối đa 3 lớp; khi đạt 3 lớp, +12% DMG toàn nguyên tố R5: +24% DMG Kỹ Năng Nguyên Tố mỗi lớp; +24% DMG toàn nguyên tố khi đủ 3 lớp",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn – vũ khí signature Yae Miko",
+    "bestCharacters": [
+      "Yae Miko"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "a-thousand-floating-dreams",
+    "name": "A Thousand Floating Dreams",
+    "type": "Catalyst",
+    "rarity": 5,
+    "atkLv1": 44,
+    "atkLv90": 542,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 265
+    },
+    "passive": {
+      "name": "A Thousand Nights' Dawnsong",
+      "description": "R1: Đồng đội cùng nguyên tố tăng Tinh Thông Nguyên Tố +32/lớp (tối đa 3 lớp); đồng đội khác nguyên tố tăng DMG nguyên tố bản thân +10%/lớp (tối đa 3 lớp); đồng đội gần đó nhận thêm Tinh Thông Nguyên Tố +40 R5: +64 Tinh Thông Nguyên Tố/lớp (cùng nguyên tố), +20% DMG nguyên tố/lớp (khác nguyên tố), đồng đội nhận thêm +80 Tinh Thông Nguyên Tố",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn – vũ khí signature Nahida",
+    "bestCharacters": [
+      "Nahida"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "tulaytullahs-remembrance",
+    "name": "Tulaytullah's Remembrance",
+    "type": "Catalyst",
+    "rarity": 5,
+    "atkLv1": 48,
+    "atkLv90": 674,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.441
+    },
+    "passive": {
+      "name": "Bygone Azure Teardrop",
+      "description": "R1: Tốc độ Đòn Thường +10%. Sau Kỹ Năng Nguyên Tố, trong 14s mỗi giây DMG Đòn Thường +4.8%; Đòn Thường trúng địch trong thời gian này +9.6% thêm (hồi 0.3s) R5: Tốc độ Đòn Thường +20%, DMG Đòn Thường +9.6%/giây trong 14s",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn – vũ khí signature Kinich",
+    "bestCharacters": [
+      "Kinich"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "cashflow-supervision",
+    "name": "Cashflow Supervision",
+    "type": "Catalyst",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 674,
+    "subStat": {
+      "type": "CRIT Rate",
+      "valueLv90": 0.221
+    },
+    "passive": {
+      "name": "Golden Blood-Tide",
+      "description": "R1: ATK +16%. Khi HP hiện tại tăng/giảm, DMG Đòn Thường +16%, DMG Trọng kích +14%, DMG Stellar-Conduct +14% trong 4s, tối đa 3 lớp (hồi 0.3s); khi đủ 3 lớp, Tốc độ tấn công +8% R5: ATK +32%, DMG Đòn Thường +32%, DMG Trọng kích/Stellar-Conduct +28%, Tốc độ tấn công +16% khi đủ 3 lớp",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn – vũ khí signature Wriothesley",
+    "bestCharacters": [
+      "Wriothesley"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "tome-of-the-eternal-flow",
+    "name": "Tome of the Eternal Flow",
+    "type": "Catalyst",
+    "rarity": 5,
+    "atkLv1": 44,
+    "atkLv90": 542,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.882
+    },
+    "passive": {
+      "name": "Aeon Wave",
+      "description": "R1: HP tối đa +16%. Khi HP hiện tại tăng/giảm, DMG Trọng kích +14% trong 4s, tối đa 3 lớp (hồi 0.3s); khi đủ 3 lớp hoặc làm mới lớp thứ 3, hồi 8 Năng Lượng (hồi 12s) R5: HP tối đa +32%, DMG Trọng kích +30%/lớp",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn – vũ khí signature Neuvillette",
+    "bestCharacters": [
+      "Neuvillette"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "cranes-echoing-call",
+    "name": "Crane's Echoing Call",
+    "type": "Catalyst",
+    "rarity": 5,
+    "atkLv1": 48,
+    "atkLv90": 741,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.165
+    },
+    "passive": {
+      "name": "Cloudfall Axiom",
+      "description": "R1: Sau khi trúng Trọng kích rơi (Plunging Attack), toàn đội gần đó tăng 28% DMG Trọng kích rơi trong 20s; đồng đội gần đó trúng Trọng kích rơi hồi 2.5 Năng Lượng cho người trang bị R5: DMG Trọng kích rơi +80%; hồi 3.5 Năng Lượng mỗi lần trúng",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn – vũ khí signature Xianyun (bản 4.4, 31/1/2024)",
+    "bestCharacters": [
+      "Xianyun"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "surfs-up",
+    "name": "Surf's Up",
+    "type": "Catalyst",
+    "rarity": 5,
+    "atkLv1": 44,
+    "atkLv90": 542,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.882
+    },
+    "passive": {
+      "name": "Aqua Remembrance",
+      "description": "R1: HP tối đa +20%. Mỗi 15s, trong 14s sau khi dùng Kỹ Năng Nguyên Tố, nhận 4 lớp Scorching Summer, mỗi lớp tăng DMG Đòn Thường +12%; mất 1 lớp mỗi 1.5s sau Đòn Thường trúng địch, nhận lại 1 lớp mỗi 1.5s khi kích hoạt Bốc Hơi, tối đa 4 lớp R5: HP tối đa +40%, mỗi lớp Scorching Summer tăng DMG Đòn Thường +24%",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn – vũ khí signature Mualani (bản 5.0, 28/8/2024)",
+    "bestCharacters": [
+      "Mualani"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "starcallers-watch",
+    "name": "Starcaller's Watch",
+    "type": "Catalyst",
+    "rarity": 5,
+    "atkLv1": 44,
+    "atkLv90": 542,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 265
+    },
+    "passive": {
+      "name": "Offering Unto Wind and Sun",
+      "description": "R1: Tinh Thông Nguyên Tố +100. Trong 15s sau khi người trang bị tạo khiên, nhận \"Mirror of Night\": nhân vật đang thi đấu gây +28% DMG lên địch gần đó (hồi 14s) R5: Tinh Thông Nguyên Tố +200, DMG gây thêm qua \"Mirror of Night\" +56%",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn – vũ khí signature Citlali (bản 5.3, 1/1/2025)",
+    "bestCharacters": [
+      "Citlali"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "sunny-morning-sleep-in",
+    "name": "Sunny Morning Sleep-In",
+    "type": "Catalyst",
+    "rarity": 5,
+    "atkLv1": 44,
+    "atkLv90": 542,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 265
+    },
+    "passive": {
+      "name": "Bathhouses, Hawks, and Narukami",
+      "description": "R1: Tinh Thông Nguyên Tố +120 trong 6s sau khi kích hoạt Cuốn (Swirl) hoặc Stellar Swirl; +96 trong 9s sau khi Kỹ Năng Nguyên Tố trúng địch R5: Tinh Thông Nguyên Tố +240 (Swirl/Stellar Swirl), +192 (Kỹ Năng Nguyên Tố)",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn – vũ khí signature Yumemizuki Mizuki (bản 5.4)",
+    "bestCharacters": [
+      "Yumemizuki Mizuki"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "vivid-notions",
+    "name": "Vivid Notions",
+    "type": "Catalyst",
+    "rarity": 5,
+    "atkLv1": 46,
+    "atkLv90": 674,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.441
+    },
+    "passive": {
+      "name": "Falling Rainbow's Wish",
+      "description": "R1: ATK +28%. Dùng Trọng kích rơi (Plunging Attack) nhận \"Dawn's First Hue\": DMG CRIT của Trọng kích rơi +28% trong 15s; dùng Kỹ Năng/Nộ nhận \"Twilight's Splendor\": DMG CRIT Trọng kích rơi +40% trong 15s R5: ATK +56%, \"Dawn's First Hue\" +56%, \"Twilight's Splendor\" +80%",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn – vũ khí signature Varesa (bản 5.5)",
+    "bestCharacters": [
+      "Varesa"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "nightweavers-looking-glass",
+    "name": "Nightweaver's Looking Glass",
+    "type": "Catalyst",
+    "rarity": 5,
+    "atkLv1": 44,
+    "atkLv90": 542,
+    "subStat": {
+      "type": "Elemental Mastery",
+      "valueLv90": 265
+    },
+    "passive": {
+      "name": "Millennial Hymn",
+      "description": "R1: Kỹ Năng Nguyên Tố gây DMG Thủy/Thảo nhận \"Prayer of the Far North\": Tinh Thông Nguyên Tố +60 trong 4.5s; đồng đội gần đó kích hoạt Lunar-Bloom nhận \"New Moon Verse\": Tinh Thông Nguyên Tố +60 trong 10s; khi có cả hai hiệu ứng, đồng đội gần đó nhận DMG Bloom +120%, Hyperbloom/Burgeon +80%, Lunar-Bloom +40% (kích hoạt được cả khi rời sàn đấu) R5: DMG Bloom +240%, Hyperbloom/Burgeon +160%, Lunar-Bloom +80%",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn – vũ khí signature Lauma (bản 6.5 Luna VI Phase 2, 28/4–19/5/2026)",
+    "bestCharacters": [
+      "Lauma"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "reliquary-of-truth",
+    "name": "Reliquary of Truth",
+    "type": "Catalyst",
+    "rarity": 5,
+    "atkLv1": 44,
+    "atkLv90": 542,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.882
+    },
+    "passive": {
+      "name": "Essence of Falsity",
+      "description": "R1: CRIT Rate +8%. Dùng Kỹ Năng Nguyên Tố nhận \"Secret of Lies\": Tinh Thông Nguyên Tố +80 trong 12s; gây DMG Lunar-Bloom nhận \"Moon of Truth\": CRIT DMG +24% trong 4s; khi cả hai hiệu ứng cùng tồn tại, kết quả của cả hai tăng thêm 50% R5: CRIT Rate +16%, Tinh Thông Nguyên Tố +160 (Secret of Lies), CRIT DMG +24% giữ nguyên nhưng cộng dồn 50% khi trùng hiệu ứng",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn – vũ khí signature Nefer",
+    "bestCharacters": [
+      "Nefer"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "nocturnes-curtain-call",
+    "name": "Nocturne's Curtain Call",
+    "type": "Catalyst",
+    "rarity": 5,
+    "atkLv1": 44,
+    "atkLv90": 542,
+    "subStat": {
+      "type": "CRIT DMG",
+      "valueLv90": 0.882
+    },
+    "passive": {
+      "name": "Ballad of the Crossroads",
+      "description": "R1: HP tối đa +10%. Khi kích hoạt phản ứng Lunar hoặc gây DMG phản ứng Lunar, hồi 14 Năng Lượng và nhận \"Bountiful Sea's Sacred Wine\" trong 12s: HP tối đa +14% (cộng dồn), CRIT DMG từ phản ứng Lunar +60% (hồi 18s, kích hoạt được cả khi rời sàn đấu) R5: HP tối đa +18%, hồi 18 Năng Lượng, \"Bountiful Sea's Sacred Wine\" cộng thêm HP +22%, CRIT DMG phản ứng Lunar +140%",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn – vũ khí signature Columbina (bản 6.7 Luna VIII Phase 2, 21/7–11/8/2026)",
+    "bestCharacters": [
+      "Columbina"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  },
+  {
+    "id": "angelos-heptades",
+    "name": "Angelos' Heptades",
+    "type": "Catalyst",
+    "rarity": 5,
+    "atkLv1": 48,
+    "atkLv90": 741,
+    "subStat": {
+      "type": "ATK%",
+      "valueLv90": 0.165
+    },
+    "passive": {
+      "name": "Crown of the Final Scion",
+      "description": "R1: ATK +12%. Sau khi tạo khiên, nhận \"Pathfinder's Light\" trong 20s: đồng đội đang thi đấu +10% DMG mỗi 1.000 ATK của người trang bị (tối đa 26%); đồng thời nhận \"Guide's Contentment\": hồi 14 Năng lượng (hồi 14s, kích hoạt được cả khi mở rương ngoài combat) R5: hiệu ứng tương tự ở mức tinh luyện cao nhất, các chỉ số % tăng theo cấp tinh luyện",
+      "effects": []
+    },
+    "acquisition": "Banner vũ khí giới hạn – vũ khí signature Nicole",
+    "bestCharacters": [
+      "Nicole"
+    ],
+    "sourceFile": "vu-khi/phap-khi.md"
+  }
+]

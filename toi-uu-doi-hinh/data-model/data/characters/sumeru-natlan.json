@@ -1,0 +1,2917 @@
+[
+  {
+    "id": "tighnari",
+    "name": "Tighnari",
+    "element": "Dendro",
+    "weaponType": "Bow",
+    "rarity": 5,
+    "nationInGame": "Sumeru",
+    "releaseDate": "2022-08-24",
+    "baseStats": {
+      "lv1": {
+        "hp": 844.64,
+        "atk": 20.85,
+        "def": 49.06
+      },
+      "lv90": {
+        "hp": 10849.88,
+        "atk": 267.88,
+        "def": 630.21,
+        "ascensionStatType": "Dendro DMG Bonus",
+        "ascensionStatValue": 0.288
+      }
+    },
+    "normalAttack": {
+      "name": "Khanda Barrier-Buster",
+      "hits": [
+        {
+          "label": "1-Hit / 2-Hit / 3-Hit×2 / 4-Hit",
+          "values": {
+            "lv1": "44.6% / 42.0% / 26.4%×2 / 68.6%",
+            "lv10": "88.2% / 83.0% / 52.3%×2 / 135.7%"
+          }
+        },
+        {
+          "label": "Charged (mức 1)",
+          "values": {
+            "lv1": "124%",
+            "lv10": "223%"
+          }
+        },
+        {
+          "label": "Wreath Arrow",
+          "values": {
+            "lv1": "87.2%",
+            "lv10": "157%"
+          }
+        },
+        {
+          "label": "Clusterbloom Arrow (mỗi mũi)",
+          "values": {
+            "lv1": "38.6%",
+            "lv10": "69.5%"
+          }
+        },
+        {
+          "label": "Plunge / Low / High",
+          "values": {
+            "lv1": "56.8% / 114% / 142%",
+            "lv10": "chưa xác nhận"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Vijnana-Phala Mine",
+      "description": "Ném Vijnana Stormheart gây sát thương AoE, tạo vùng Vijnana-Khanda Field gây rối kẻ địch, giảm 2.4s thời gian tích Wreath Arrow.",
+      "scaling": [
+        {
+          "label": "Sát thương kỹ năng",
+          "values": {
+            "lv1": "149.6% ATK",
+            "lv10": "269.3% ATK"
+          }
+        }
+      ],
+      "cooldown": "12s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Fashioner's Tanglevine Shaft",
+      "description": "Bắn 6 Tanglevine Shaft truy đuổi, tạo đợt bắn thứ 2.",
+      "scaling": [
+        {
+          "label": "Tanglevine Shaft (đợt 1)",
+          "values": {
+            "lv1": "55.6% ATK",
+            "lv10": "100.1% ATK"
+          }
+        },
+        {
+          "label": "Tanglevine Shaft (đợt 2)",
+          "values": {
+            "lv1": "68.0% ATK",
+            "lv10": "122.4% ATK"
+          }
+        }
+      ],
+      "cooldown": "12s",
+      "energyCost": 40
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Keen Sight",
+        "unlock": "A1",
+        "description": "Sau khi bắn Wreath Arrow, +50 Tinh Thông Nguyên Tố trong 4s."
+      },
+      {
+        "name": "Scholarly Blade",
+        "unlock": "A4",
+        "description": "Mỗi điểm Tinh Thông Nguyên Tố +0.06% sát thương Charged Attack và Burst, tối đa +60%."
+      },
+      {
+        "name": "Encyclopedic Knowledge",
+        "unlock": "Utility",
+        "description": "Hiện đặc sản Sumeru trên minimap."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Beginnings Determined at the Roots",
+        "description": "Charged Attack CRIT Rate +15%."
+      },
+      {
+        "level": 2,
+        "name": "Origins Known From the Stem",
+        "description": "Khi có địch trong Vijnana-Khanda Field, +20% Dendro DMG Bonus (giữ tới 6s sau khi field kết thúc hoặc hết địch)."
+      },
+      {
+        "level": 3,
+        "name": "Fortunes Read Amongst the Branches",
+        "description": "+3 cấp Fashioner's Tanglevine Shaft (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "Withering Glimpsed in the Leaves",
+        "description": "Khi tung Burst, cả đội gần đó +60 Tinh Thông Nguyên Tố 8s; nếu Burst gây Burning/Bloom/Lunar-Bloom/Quicken/Spread thì +60 nữa (làm mới thời lượng)."
+      },
+      {
+        "level": 5,
+        "name": "Comprehension Amidst the Flowers",
+        "description": "+3 cấp Vijnana-Phala Mine (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "Karma Adjudged From the Leaden Fruit",
+        "description": "Wreath Arrow giảm 0.9s thời gian tích, tạo thêm 1 Clusterbloom Arrow gây 150% ATK."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính trên trường (on-field), chuyên đội Dendro phản ứng (Bloom/Spread/Aggravate). Combo phổ biến: Tighnari + Nahida + Xingqiu/Yelan (Quicken-Bloom/Aggravate) hoặc Tighnari + Kuki Shinobu + Dendro core (Hyperbloom).",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "collei",
+    "name": "Collei",
+    "element": "Dendro",
+    "weaponType": "Bow",
+    "rarity": 4,
+    "nationInGame": "Sumeru",
+    "releaseDate": "2022-08-24",
+    "baseStats": {
+      "lv1": {
+        "hp": 820.61,
+        "atk": 16.74,
+        "def": 50.36
+      },
+      "lv90": {
+        "hp": 9787.42,
+        "atk": 199.65,
+        "def": 600.62,
+        "ascensionStatType": "ATK%",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Supplicant's Bowmanship",
+      "hits": [
+        {
+          "label": "Sát thương đòn thường trung bình/đòn (4 hit)",
+          "values": {
+            "lv1": "~40–90% ATK",
+            "lv10": "chưa xác nhận"
+          }
+        },
+        {
+          "label": "Charged Attack",
+          "values": {
+            "lv1": "~106% ATK",
+            "lv10": "chưa xác nhận"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Floral Brush",
+      "description": "Ném Floral Ring gây 1 lần Dendro DMG khi bay đi và 1 lần khi bay về.",
+      "scaling": [
+        {
+          "label": "Sát thương mỗi lần trúng",
+          "values": {
+            "lv1": "55.8% ATK",
+            "lv10": "100.4% ATK"
+          }
+        }
+      ],
+      "cooldown": "7s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Trump-Card Kitty",
+      "description": "Ném búp bê Cuilein-Anbar nổ AoE, tạo vùng Cuilein-Anbar Zone nảy liên tục gây DMG.",
+      "scaling": [
+        {
+          "label": "Sát thương nổ ban đầu",
+          "values": {
+            "lv1": "156% ATK",
+            "lv10": "281% ATK"
+          }
+        },
+        {
+          "label": "Sát thương mỗi lần nảy",
+          "values": {
+            "lv1": "34.8% ATK",
+            "lv10": "62.7% ATK"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 40
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Floral Sidewinder",
+        "unlock": "A1",
+        "description": "Nếu đội gây phản ứng Dendro trước khi Floral Ring bay về, tạo hiệu ứng Sprout gây DMG liên tục = 40% ATK Collei quanh mục tiêu, 3s."
+      },
+      {
+        "name": "The Languid Wood",
+        "unlock": "A4",
+        "description": "Kích hoạt phản ứng Dendro trong Cuilein-Anbar Zone kéo dài thời lượng Burst tối đa 3s."
+      },
+      {
+        "name": "Gliding Champion of Sumeru",
+        "unlock": "Utility",
+        "description": "-20% tiêu hao thể lực khi lượn cho cả đội."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Deepwood Patrol",
+        "description": "Khi trong đội nhưng không ra trận, +20% Nạp Nguyên Tố."
+      },
+      {
+        "level": 2,
+        "name": "Through Hill and Copse",
+        "description": "Floral Sidewinder được cải tiến: Sprout có thể kéo dài thêm 3s nếu đội gây phản ứng Dendro trong lúc hiệu lực."
+      },
+      {
+        "level": 3,
+        "name": "Scent of Summer",
+        "description": "+3 cấp Floral Brush (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "Gift of the Woods",
+        "description": "Trump-Card Kitty tăng 60 Tinh Thông Nguyên Tố cho đồng đội gần đó (trừ Collei) trong 12s."
+      },
+      {
+        "level": 5,
+        "name": "All Embers",
+        "description": "+3 cấp Trump-Card Kitty (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "Forest of Falling Arrows",
+        "description": "Floral Ring khi trúng tạo Cuilein-Anbar mini gây 200% ATK Dendro DMG (1 lần/lượt dùng skill)."
+      }
+    ],
+    "abyssRoleNotes": "Sub-DPS/hỗ trợ off-field Dendro giá rẻ (4★), bật phản ứng Quicken/Bloom/Burning liên tục. Combo phổ biến: Collei + Bennett + Xingqiu (Burning/Vaporize hỗ trợ) hoặc Collei + Nahida + Hydro DPS (Bloom).",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "dori",
+    "name": "Dori",
+    "element": "Electro",
+    "weaponType": "Claymore",
+    "rarity": 4,
+    "nationInGame": "Sumeru",
+    "releaseDate": "2022-09-09",
+    "baseStats": {
+      "lv1": {
+        "hp": 1039.44,
+        "atk": 18.7,
+        "def": 60.66
+      },
+      "lv90": {
+        "hp": 12397.4,
+        "atk": 223.02,
+        "def": 723.47,
+        "ascensionStatType": "HP%",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Marvelous Sword-Dance (Modified)",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "Spirit-Warding Lamp: Troubleshooter Cannon",
+      "description": "Bắn Troubleshooter Shot gây Electro DMG, khi trúng tạo 2 After-Sales Service Round tự động truy đuổi.",
+      "scaling": [
+        {
+          "label": "Troubleshooter Shot",
+          "values": {
+            "lv1": "68.8% ATK",
+            "lv10": "123.9% ATK"
+          }
+        },
+        {
+          "label": "After-Sales Service Round (mỗi viên)",
+          "values": {
+            "lv1": "30.4% ATK",
+            "lv10": "54.8% ATK"
+          }
+        }
+      ],
+      "cooldown": "10s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Alcazarzaray's Exactitude",
+      "description": "Triệu hồi Jinni kết nối 1 nhân vật, hồi HP/Năng lượng liên tục dựa theo Max HP Dori, gây Electro DMG khi dây chạm địch.",
+      "scaling": [
+        {
+          "label": "Hồi HP mỗi giây",
+          "values": {
+            "lv1": "~5.6% Max HP Dori",
+            "lv10": "~10% Max HP Dori"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 80
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "An Eye for Gold",
+        "unlock": "A1",
+        "description": "Sau phản ứng Electro liên quan trên nhân vật nối Jinni, giảm 1s CD kỹ năng (mỗi 3s)."
+      },
+      {
+        "name": "Compound Interest",
+        "unlock": "A4",
+        "description": "Troubleshooter Shot/After-Sales Round trúng địch hồi 5 năng lượng/100% Nạp NL, tối đa 15 NL/lần dùng skill."
+      },
+      {
+        "name": "Unexpected Order",
+        "unlock": "Utility",
+        "description": "25% cơ hội hoàn nguyên liệu chế đồ."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Additional Investment",
+        "description": "+1 After-Sales Service Round."
+      },
+      {
+        "level": 2,
+        "name": "Special Franchise",
+        "description": "Khi Jinni hồi máu trong combat, bắn Jinni Toop gây 50% ATK Dori DMG."
+      },
+      {
+        "level": 3,
+        "name": "Wonders Never Cease",
+        "description": "+3 cấp Alcazarzaray's Exactitude (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "Discretionary Supplement",
+        "description": "Nhân vật nối Jinni: HP<50% → +50% Nhận Hiệu Ứng Hồi Máu; NL<50% → +30% Nạp Nguyên Tố."
+      },
+      {
+        "level": 5,
+        "name": "Value for Mora",
+        "description": "+3 cấp Spirit-Warding Lamp: Troubleshooter Cannon (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "Sprinkling Weight",
+        "description": "Sau khi dùng skill, 3s có Electro Infusion; đòn thường trúng hồi máu cả đội = 4% Max HP Dori."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ hồi máu + hồi năng lượng off-field cho nhân vật cần nhiều năng lượng (Raiden, Yae Miko...). Combo phổ biến: Dori + Raiden Shogun (hồi năng lượng burst-spam) hoặc Dori + bất kỳ DPS cần sustain trong đội Hyperbloom/Aggravate.",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "candace",
+    "name": "Candace",
+    "element": "Hydro",
+    "weaponType": "Polearm",
+    "rarity": 4,
+    "nationInGame": "Sumeru",
+    "releaseDate": "2022-09-28",
+    "baseStats": {
+      "lv1": {
+        "hp": 911.79,
+        "atk": 17.81,
+        "def": 57.23
+      },
+      "lv90": {
+        "hp": 10874.91,
+        "atk": 212.4,
+        "def": 682.52,
+        "ascensionStatType": "HP%",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Gleaming Spear - Guardian Stance",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "Sacred Rite: Heron's Sanctum",
+      "description": "Tap lao tới gây Hydro DMG; Hold dựng khiên hấp thụ theo Max HP (hiệu quả x250% với Hydro DMG), khi thả/khiên vỡ tung đòn nhảy gây DMG.",
+      "scaling": [
+        {
+          "label": "Sát thương Tap",
+          "values": {
+            "lv1": "74.4% ATK",
+            "lv10": "134% ATK"
+          }
+        },
+        {
+          "label": "Sát thương đòn nhảy (Hold)",
+          "values": {
+            "lv1": "128% ATK",
+            "lv10": "230% ATK"
+          }
+        },
+        {
+          "label": "Khiên hấp thụ",
+          "values": {
+            "lv1": "~19% Max HP",
+            "lv10": "~34% Max HP"
+          }
+        }
+      ],
+      "cooldown": "8s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Sacred Rite: Wagtail's Tide",
+      "description": "Gây Hydro DMG AoE theo Max HP, ban Prayer of the Crimson Crown liên tục cho nhân vật ra trận (tăng DMG đòn thường theo nguyên tố, tạo sóng nước khi đổi nhân vật, cho Hydro Infusion với Sword/Claymore/Polearm).",
+      "scaling": [
+        {
+          "label": "Sát thương ban đầu",
+          "values": {
+            "lv1": "~40% Max HP",
+            "lv10": "~72% Max HP"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 80
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Aegis of Crossed Arrows",
+        "unlock": "A1",
+        "description": "Bị đánh trong lúc Hold sẽ hoàn tất tích khiên ngay."
+      },
+      {
+        "name": "Celestial Dome of Sand",
+        "unlock": "A4",
+        "description": "Nhân vật dưới Prayer of the Crimson Crown +0.5% DMG nguyên tố đòn thường / mỗi 1000 Max HP của Candace."
+      },
+      {
+        "name": "To Dawn's First Light",
+        "unlock": "Utility",
+        "description": "-20% tiêu hao thể lực leo trèo cho đội."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "(chưa xác nhận đầy đủ)",
+        "description": "Tên hiển thị trùng với Passive 1 \"Aegis of Crossed Arrows\" nhưng số liệu riêng — nội dung chi tiết chưa xác nhận đầy đủ trong phiên lấy dữ liệu này."
+      },
+      {
+        "level": 2,
+        "name": "(chưa xác nhận đầy đủ)",
+        "description": "Chưa xác nhận đầy đủ trong phiên lấy dữ liệu này."
+      },
+      {
+        "level": 3,
+        "name": "(chưa xác nhận tên)",
+        "description": "Tăng cấp Sacred Rite: Wagtail's Tide (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "(chưa xác nhận tên)",
+        "description": "Celestial Dome of Sand tăng hiệu lực."
+      },
+      {
+        "level": 5,
+        "name": "(chưa xác nhận tên)",
+        "description": "Tăng cấp Sacred Rite: Heron's Sanctum (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "(chưa xác nhận tên)",
+        "description": "Prayer of the Crimson Crown mạnh hơn."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ khiên + buff DMG đòn thường nguyên tố cho đội Hydro Infusion (National-style). Combo phổ biến: Candace + Xiangling/Bennett (Hydro Infusion Vaporize) hoặc Candace + Raiden/Kazuha làm khiên phụ. Ghi chú nguồn: tên & mô tả chi tiết C1–C6 của Candace chưa xác nhận đầy đủ, cần đối chiếu lại nguồn trước khi dùng số liệu cung mệnh.",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "cyno",
+    "name": "Cyno",
+    "element": "Electro",
+    "weaponType": "Polearm",
+    "rarity": 5,
+    "nationInGame": "Sumeru",
+    "releaseDate": "2022-09-28",
+    "baseStats": {
+      "lv1": {
+        "hp": 972.39,
+        "atk": 24.76,
+        "def": 66.89
+      },
+      "lv90": {
+        "hp": 12490.83,
+        "atk": 318.11,
+        "def": 859.24,
+        "ascensionStatType": "CRIT DMG",
+        "ascensionStatValue": 0.384
+      }
+    },
+    "normalAttack": {
+      "name": "Invoker's Spear",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "Secret Rite: Chasmic Soulfarer",
+      "description": "Đâm nhanh gây Electro DMG dọc đường đi; nếu đang ở trạng thái Pactsworn Pathclearer thì biến thành Mortuary Rite gây AoE Electro DMG và kéo dài Pathclearer.",
+      "scaling": [
+        {
+          "label": "Secret Rite (thường)",
+          "values": {
+            "lv1": "144% ATK",
+            "lv10": "259.2% ATK"
+          }
+        },
+        {
+          "label": "Mortuary Rite (AoE)",
+          "values": {
+            "lv1": "~163% ATK",
+            "lv10": "~293% ATK"
+          }
+        }
+      ],
+      "cooldown": "4s (thường) / 6s (Mortuary Rite)",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Sacred Rite: Wolf's Swiftness",
+      "description": "Biến thành Pactsworn Pathclearer, đòn thường/charged/plunge chuyển Electro DMG, tăng Tinh Thông Nguyên Tố & kháng ngắt, miễn nhiễm Electro-Charged DMG, tối đa 18s.",
+      "scaling": [
+        {
+          "label": "Sát thương khi tung",
+          "values": {
+            "lv1": "189.6% ATK",
+            "lv10": "341.4% ATK"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Featherfall Judgment",
+        "unlock": "A1",
+        "description": "Khi ở Pathclearer, định kỳ vào trạng thái Endseer; nếu dùng Skill lúc đó kích hoạt Judication (+35% DMG Skill, bắn 3 Duststalker Bolt = 100% ATK mỗi viên)."
+      },
+      {
+        "name": "Authority Over the Nine Bows",
+        "unlock": "A4",
+        "description": "Đòn thường trong Pathclearer +150% Tinh Thông Nguyên Tố sát thương; Duststalker Bolt +250% Tinh Thông Nguyên Tố."
+      },
+      {
+        "name": "The Gift of Silence",
+        "unlock": "Utility",
+        "description": "+25% phần thưởng khi phái đi thám hiểm Sumeru 20h."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Ordinance: Unceasing Vigil",
+        "description": "Sau khi dùng Burst, +20% Tốc Độ Đánh Thường 10s (làm mới khi kích hoạt Judication)."
+      },
+      {
+        "level": 2,
+        "name": "Ceremony: Homecoming of Spirits",
+        "description": "Đòn thường trúng địch +10% Electro DMG Bonus 4s (tối đa 5 lớp)."
+      },
+      {
+        "level": 3,
+        "name": "Precept: Lawful Enforcer",
+        "description": "+3 cấp Sacred Rite: Wolf's Swiftness (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "Austerity: Forbidding Guard",
+        "description": "Trong Pathclearer, sau phản ứng Electro-Charged/Superconduct/Quicken/Aggravate/Hyperbloom/Swirl Electro, hồi 3 NL cho cả đội gần đó (trừ bản thân), tối đa 5 lần/lượt Burst."
+      },
+      {
+        "level": 5,
+        "name": "Funerary Rite: The Passing of Starlight",
+        "description": "+3 cấp Secret Rite: Chasmic Soulfarer (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "Raiment: Just Scales",
+        "description": "Sau Burst/Judication nhận 4 lớp \"Day of the Jackal\"; đòn thường trúng địch tiêu 1 lớp để bắn thêm 1 Duststalker Bolt (tối đa 8 lớp, 1 lần/0.4s)."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính on-field Electro, cực mạnh trong đội Hyperbloom/Aggravate nhờ scaling Tinh Thông Nguyên Tố. Combo phổ biến: Cyno + Nahida + Kuki Shinobu/Kokomi (Hyperbloom) hoặc Cyno + Nahida + Yae Miko (Electro thuần).",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "nilou",
+    "name": "Nilou",
+    "element": "Hydro",
+    "weaponType": "Sword",
+    "rarity": 5,
+    "nationInGame": "Sumeru",
+    "releaseDate": "2022-10-14",
+    "baseStats": {
+      "lv1": {
+        "hp": 1182.12,
+        "atk": 17.88,
+        "def": 56.72
+      },
+      "lv90": {
+        "hp": 15184.93,
+        "atk": 229.61,
+        "def": 728.59,
+        "ascensionStatType": "HP%",
+        "ascensionStatValue": 0.288
+      }
+    },
+    "normalAttack": {
+      "name": "Dance of Samser",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "Dance of Haftkarsvar",
+      "description": "Vào trạng thái Pirouette (gây Hydro DMG theo Max HP); đòn thường/skill tiếp theo vào Sword Dance/Whirling Steps, bước nhảy thứ 3 kết thúc Pirouette và tung đòn kết (Luminous Illusion hoặc Whirling Water Wheel).",
+      "scaling": [
+        {
+          "label": "Sát thương khi vào Pirouette",
+          "values": {
+            "lv1": "~29% Max HP",
+            "lv10": "~52% Max HP"
+          }
+        },
+        {
+          "label": "Luminous Illusion / Whirling Water Wheel",
+          "values": {
+            "lv1": "~29–36% Max HP",
+            "lv10": "~52–65% Max HP"
+          }
+        }
+      ],
+      "cooldown": "12s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Dance of Abzendegi: Distant Dreams, Listening Spring",
+      "description": "Nở Lotus of Distant Waters gây AoE Hydro DMG theo Max HP, áp Lingering Aeon rồi gây thêm 1 đợt DMG sau đó.",
+      "scaling": [
+        {
+          "label": "Sát thương đợt 1 / đợt 2",
+          "values": {
+            "lv1": "~28% / 35% Max HP",
+            "lv10": "~50% / 63% Max HP"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 80
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Court of Dancing Petals",
+        "unlock": "A1",
+        "description": "Đội toàn Dendro+Hydro (có ít nhất 1 mỗi loại) → bước nhảy 3 tạo Golden Chalice's Bounty, biến Dendro Core thành Bountiful Core (nổ nhanh hơn, AoE lớn hơn)."
+      },
+      {
+        "name": "Dreamy Dance of Aeons",
+        "unlock": "A4",
+        "description": "Mỗi 1000 Max HP vượt 30,000 → Bountiful Core DMG +9%, tối đa +400%."
+      },
+      {
+        "name": "White Jade Lotus",
+        "unlock": "Utility",
+        "description": "12% cơ hội nhân đôi món ăn phiêu lưu hoàn hảo."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Dance of the Waning Moon",
+        "description": "Luminous Illusion DMG +65%; Tranquility Aura +6s thời lượng."
+      },
+      {
+        "level": 2,
+        "name": "The Starry Skies Their Flowers Rain",
+        "description": "Nhân vật dưới Golden Chalice's Bounty gây Hydro DMG giảm 35% Hydro RES địch 10s; Bloom/Lunar-Bloom giảm 35% Dendro RES địch 10s."
+      },
+      {
+        "level": 3,
+        "name": "Beguiling Shadowstep",
+        "description": "+3 cấp Dance of Abzendegi (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "Fricative Pulse",
+        "description": "Bước nhảy 3 trúng địch: +15 Năng Lượng, Burst tăng 50% DMG trong 8s."
+      },
+      {
+        "level": 5,
+        "name": "Twirling Light",
+        "description": "+3 cấp Dance of Haftkarsvar (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "Frostbreaker's Melody",
+        "description": "Mỗi 1000 Max HP: +0.6% CRIT Rate, +1.2% CRIT DMG (tối đa +30%/+60%)."
+      }
+    ],
+    "abyssRoleNotes": "Trái tim đội \"Nilou Bloom\" — hỗ trợ/DPS Hydro biến Dendro Core thành Bountiful Core sát thương cực cao. Combo bắt buộc: Nilou + Nahida + Dendro core support + Hydro phụ (Nilou-Nahida-Kokomi/Yaoyao-Barbara/Xingqiu).",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "layla",
+    "name": "Layla",
+    "element": "Cryo",
+    "weaponType": "Sword",
+    "rarity": 4,
+    "nationInGame": "Sumeru",
+    "releaseDate": "2022-11-18",
+    "baseStats": {
+      "lv1": {
+        "hp": 930.03,
+        "atk": 18.16,
+        "def": 54.94
+      },
+      "lv90": {
+        "hp": 11092.41,
+        "atk": 216.65,
+        "def": 655.22,
+        "ascensionStatType": "HP%",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Sword of the Radiant Path",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "Nights of Formal Focus",
+      "description": "Dựng khiên Curtain of Slumber (hấp thụ theo Max HP, x250% hiệu quả với Cryo DMG); khiên tích Night Star, đủ 4 sao biến thành Shooting Star bắn theo dõi gây Cryo DMG.",
+      "scaling": [
+        {
+          "label": "Khiên hấp thụ",
+          "values": {
+            "lv1": "~19% Max HP",
+            "lv10": "~34% Max HP"
+          }
+        },
+        {
+          "label": "Shooting Star (mỗi viên)",
+          "values": {
+            "lv1": "~11% Max HP",
+            "lv10": "~20% Max HP"
+          }
+        }
+      ],
+      "cooldown": "12s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Dream of the Star-Stream Shaker",
+      "description": "Celestial Dreamsphere bắn Starlight Slug liên tục gây Cryo DMG, mỗi lần trúng tạo Night Star cho khiên gần đó.",
+      "scaling": [
+        {
+          "label": "Starlight Slug (mỗi lần bắn)",
+          "values": {
+            "lv1": "~10% Max HP",
+            "lv10": "~18% Max HP"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 80
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Like Nascent Light",
+        "unlock": "A1",
+        "description": "Mỗi Night Star tích thêm cho khiên +6% Shield Strength (tối đa 4 lớp)."
+      },
+      {
+        "name": "Sweet Slumber Undisturbed",
+        "unlock": "A4",
+        "description": "Shooting Star DMG +1.5% Max HP Layla."
+      },
+      {
+        "name": "Shadowy Dream-Signs",
+        "unlock": "Utility",
+        "description": "10% cơ hội nhân đôi khi chế nguyên liệu tài năng."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Fortress of Fantasy",
+        "description": "Khiên Curtain of Slumber +20% hấp thụ; đồng thời tạo khiên phụ 35% hấp thụ (12s, x250% hiệu quả Cryo) cho đồng đội chưa có khiên."
+      },
+      {
+        "level": 2,
+        "name": "Light's Remit",
+        "description": "Shooting Star trúng địch hồi 1 Năng Lượng cho Layla (mỗi viên 1 lần)."
+      },
+      {
+        "level": 3,
+        "name": "Secrets of the Night",
+        "description": "+3 cấp Nights of Formal Focus (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "Starry Illumination",
+        "description": "Khi Shooting Star bắt đầu bắn, cả đội gần đó nhận Dawn Star: đòn thường/charged +5% Max HP Layla DMG (tối đa 3s)."
+      },
+      {
+        "level": 5,
+        "name": "Stream of Consciousness",
+        "description": "+3 cấp Dream of the Star-Stream Shaker (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "Radiant Soulfire",
+        "description": "Shooting Star & Starlight Slug DMG +40%; khoảng cách tạo Night Star giảm 20%."
+      }
+    ],
+    "abyssRoleNotes": "Khiên + hỗ trợ Cryo off-field giá rẻ, phù hợp đội Cryo/Freeze/Melt cần khiên bền. Combo phổ biến: Layla + Kaeya/Chongyun (Freeze) hoặc Layla + bất kỳ đội cần khiên rẻ tiền thay Zhongli.",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "wanderer",
+    "name": "Wanderer",
+    "element": "Anemo",
+    "weaponType": "Catalyst",
+    "rarity": 5,
+    "nationInGame": "Sumeru",
+    "releaseDate": "2022-12-07",
+    "baseStats": {
+      "lv1": {
+        "hp": 791.26,
+        "atk": 25.51,
+        "def": 47.27
+      },
+      "lv90": {
+        "hp": 10164.11,
+        "atk": 327.67,
+        "def": 607.16,
+        "ascensionStatType": "CRIT Rate",
+        "ascensionStatValue": 0.192
+      }
+    },
+    "normalAttack": {
+      "name": "Yuuban Meigen",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "Hanega: Song of the Wind",
+      "description": "Gây AoE Anemo DMG rồi bật lên trạng thái Windfavored (bay lượn, đòn thường/charged biến thành Kuugo: Fushoudan/Toufukai tăng DMG & AoE). Tiêu Kuugoryoku Point để duy trì bay/tăng tốc/nhảy cao.",
+      "scaling": [
+        {
+          "label": "Sát thương khi tung skill",
+          "values": {
+            "lv1": "172.8% ATK",
+            "lv10": "311% ATK"
+          }
+        },
+        {
+          "label": "Kuugo: Fushoudan (đòn thường trên không, mỗi hit)",
+          "values": {
+            "lv1": "~60–100% ATK",
+            "lv10": "chưa xác nhận"
+          }
+        }
+      ],
+      "cooldown": "10s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Kyougen: Five Ceremonial Plays",
+      "description": "Nhiều đợt AoE Anemo DMG, hủy Windfavored nếu đang bật.",
+      "scaling": [
+        {
+          "label": "Tổng sát thương (nhiều đợt)",
+          "values": {
+            "lv1": "~50%×nhiều đợt ATK",
+            "lv10": "~90%×nhiều đợt ATK"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Jade-Claimed Flower",
+        "unlock": "A1",
+        "description": "Skill chạm Hydro/Pyro/Cryo/Electro cho buff tương ứng (Hydro: +20 Kuugoryoku cap; Pyro: +30% ATK; Cryo: +20% CRIT Rate; Electro: hồi NL khi đòn thường trúng)."
+      },
+      {
+        "name": "Gales of Reverie",
+        "unlock": "A4",
+        "description": "Đòn Kuugo trúng địch có 16% cơ hội kích hoạt Descent (lần tăng tốc kế tiếp miễn phí Kuugoryoku Point + bắn 4 mũi tên gió 35% ATK mỗi mũi)."
+      },
+      {
+        "name": "Strum the Swirling Winds",
+        "unlock": "Utility",
+        "description": "-50% Mora khi đột phá Cung và Đồng."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Shoban: Ostentatious Plumage",
+        "description": "Trong Windfavored, +10% Tốc Độ Đánh cho Kuugo; mũi tên gió từ Gales of Reverie +25% ATK DMG."
+      },
+      {
+        "level": 2,
+        "name": "Niban: Isle Amidst White Waves",
+        "description": "Trong Windfavored, Burst +4% DMG cho mỗi điểm chênh lệch Kuugoryoku tối đa và hiện tại (tối đa +200%)."
+      },
+      {
+        "level": 3,
+        "name": "Sanban: Moonflower Kusemai",
+        "description": "+3 cấp Kyougen: Five Ceremonial Plays (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "Yonban: Set Adrift into Spring",
+        "description": "Jade-Claimed Flower kích hoạt thêm 1 buff ngẫu nhiên chưa có (tối đa 3 buff cùng lúc)."
+      },
+      {
+        "level": 5,
+        "name": "Matsuban: Ancient Illuminator From Abroad",
+        "description": "+3 cấp Hanega: Song of the Wind (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "Shugen: The Curtains' Melancholic Sway",
+        "description": "Kuugo: Fushoudan trúng địch tạo thêm 1 đòn phụ (40% DMG gốc, tính là đòn thường); hồi 4 Kuugoryoku Point khi dưới 40 điểm (tối đa 5 lần/lượt Windfavored)."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính on-field Anemo scaling CRIT Rate/DMG, đổi nguyên tố linh hoạt qua C1. Combo phổ biến: Wanderer + Faruzan + Bennett (Anemo-Pyro buff ATK) hoặc Wanderer + Nahida + Kazuha/Faruzan (Anemo-Dendro).",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "faruzan",
+    "name": "Faruzan",
+    "element": "Anemo",
+    "weaponType": "Bow",
+    "rarity": 4,
+    "nationInGame": "Sumeru",
+    "releaseDate": "2022-12-07",
+    "baseStats": {
+      "lv1": {
+        "hp": 802.38,
+        "atk": 16.47,
+        "def": 52.65
+      },
+      "lv90": {
+        "hp": 9569.93,
+        "atk": 196.47,
+        "def": 627.92,
+        "ascensionStatType": "ATK%",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Parthian Shot",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "Wind Realm of Nasamjnin",
+      "description": "Gây AoE Anemo DMG, vào trạng thái Manifest Gale (Aimed Shot tiếp theo thành Hurricane Arrow áp Pressurized Collapse tạo lốc xoáy hút địch).",
+      "scaling": [
+        {
+          "label": "Sát thương khi tung skill",
+          "values": {
+            "lv1": "133.6% ATK",
+            "lv10": "240.6% ATK"
+          }
+        },
+        {
+          "label": "Vortex (Pressurized Collapse)",
+          "values": {
+            "lv1": "~163% ATK",
+            "lv10": "~293% ATK"
+          }
+        }
+      ],
+      "cooldown": "12s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "The Wind's Secret Ways",
+      "description": "Dazzling Polyhedron di chuyển tam giác, mỗi góc bắn Whirlwind Pulse (giảm kháng Anemo địch + buff Anemo DMG cho đội).",
+      "scaling": [
+        {
+          "label": "Whirlwind Pulse (mỗi lần)",
+          "values": {
+            "lv1": "~62% ATK",
+            "lv10": "~112% ATK"
+          }
+        },
+        {
+          "label": "Giảm kháng Anemo địch / buff Anemo DMG đội",
+          "values": {
+            "lv1": "30% / 12%",
+            "lv10": "40% / 20% (ước tính theo cấp)"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": 70
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Impetuous Flow",
+        "unlock": "A1",
+        "description": "Trong Manifest Gale, -60% thời gian tích Aimed Shot; vortex có thể áp Perfidious Wind's Bale."
+      },
+      {
+        "name": "Lost Wisdom of the Seven Caverns",
+        "unlock": "A4",
+        "description": "Nhân vật dưới Prayerful Wind's Benefit gây Anemo DMG nhận thêm DMG = 32% ATK cơ bản Faruzan (Hurricane Guard, 1 lần/0.8s)."
+      },
+      {
+        "name": "Tomes Light the Path",
+        "unlock": "Utility",
+        "description": "+25% phần thưởng thám hiểm Sumeru 20h."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Truth by Any Means",
+        "description": "Có thể bắn tối đa 2 Hurricane Arrow trong 1 lần Manifest Gale."
+      },
+      {
+        "level": 2,
+        "name": "Overzealous Intellect",
+        "description": "Dazzling Polyhedron +6s thời lượng."
+      },
+      {
+        "level": 3,
+        "name": "Spirit-Orchard Stroll",
+        "description": "+3 cấp Wind Realm of Nasamjnin (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "Divine Comprehension",
+        "description": "Vortex hồi năng lượng cho Faruzan: 2 NL cho địch đầu tiên, +0.5 NL mỗi địch thêm, tối đa 4 NL."
+      },
+      {
+        "level": 5,
+        "name": "Wonderland of Rumination",
+        "description": "+3 cấp The Wind's Secret Ways (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "The Wondrous Path of Truth",
+        "description": "Nhân vật dưới Prayerful Wind's Benefit +40% CRIT DMG khi gây Anemo DMG; đòn DMG trong buff này áp Pressurized Collapse (dùng chung CD 3s cả đội)."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ giảm kháng Anemo + buff Anemo DMG bắt buộc cho mọi đội Anemo DPS (đặc biệt Wanderer). Combo phổ biến: Faruzan + Wanderer + Bennett/Xiangling, hoặc Faruzan + bất kỳ Anemo DPS nào cần shred kháng.",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "alhaitham",
+    "name": "Alhaitham",
+    "element": "Dendro",
+    "weaponType": "Sword",
+    "rarity": 5,
+    "nationInGame": "Sumeru",
+    "releaseDate": "2023-01-18",
+    "baseStats": {
+      "lv1": {
+        "hp": 1039.12,
+        "atk": 24.39,
+        "def": 60.85
+      },
+      "lv90": {
+        "hp": 13348.04,
+        "atk": 313.32,
+        "def": 781.62,
+        "ascensionStatType": "Dendro DMG Bonus",
+        "ascensionStatValue": 0.288
+      }
+    },
+    "normalAttack": {
+      "name": "Abductive Reasoning",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "Universality: An Elaboration on Form",
+      "description": "Lao tới gây Dendro DMG, tạo 1 Chisel-Light Mirror (tối đa 3 mirror cùng lúc); mirror kích hoạt Projection Attack AoE khi đòn thường/charged/plunge trúng.",
+      "scaling": [
+        {
+          "label": "Sát thương khi lao tới",
+          "values": {
+            "lv1": "134.4% ATK",
+            "lv10": "242% ATK"
+          }
+        },
+        {
+          "label": "Projection Attack (mỗi mirror)",
+          "values": {
+            "lv1": "~50% ATK",
+            "lv10": "~90% ATK"
+          }
+        }
+      ],
+      "cooldown": "10s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Particular Field: Fetters of Phenomena",
+      "description": "Tạo Particular Binding Field, gây nhiều đợt AoE Dendro DMG; tiêu thụ mirror hiện có để tăng số đợt DMG.",
+      "scaling": [
+        {
+          "label": "Mỗi đợt DMG",
+          "values": {
+            "lv1": "~44% ATK",
+            "lv10": "~80% ATK"
+          }
+        }
+      ],
+      "cooldown": "12s",
+      "energyCost": 40
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Four-Causal Correction",
+        "unlock": "A1",
+        "description": "Charged/Plunging Attack trúng địch tạo 1 mirror (1 lần/12s)."
+      },
+      {
+        "name": "Mysteries Laid Bare",
+        "unlock": "A4",
+        "description": "Mỗi điểm Tinh Thông Nguyên Tố +0.1% DMG Projection Attack và Burst, tối đa +100%."
+      },
+      {
+        "name": "Law of Reductive Overdetermination",
+        "unlock": "Utility",
+        "description": "10% cơ hội nhân đôi khi chế nguyên liệu đột phá vũ khí."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "(chưa xác nhận đầy đủ)",
+        "description": "Theo hiểu biết chung: tăng số Mirror tối đa lên 4 — cần đối chiếu lại nguồn, chưa xác nhận tên/số liệu chính thức."
+      },
+      {
+        "level": 2,
+        "name": "(chưa xác nhận đầy đủ)",
+        "description": "Projection Attack tăng sát thương khi số Mirror tiêu thụ nhiều hơn."
+      },
+      {
+        "level": 3,
+        "name": "(chưa xác nhận tên)",
+        "description": "+3 cấp Particular Field: Fetters of Phenomena (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "(chưa xác nhận đầy đủ)",
+        "description": "Universality: Elaboration on Form hồi năng lượng khi trúng địch."
+      },
+      {
+        "level": 5,
+        "name": "(chưa xác nhận tên)",
+        "description": "+3 cấp Universality: An Elaboration on Form (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "(chưa xác nhận đầy đủ)",
+        "description": "Projection Attack có thể chí mạng, tăng mạnh DMG dựa trên Tinh Thông Nguyên Tố."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính on-field Dendro scaling Tinh Thông Nguyên Tố, phối hợp phản ứng Quicken/Spread/Aggravate/Hyperbloom. Combo phổ biến: Alhaitham + Nahida + Yae Miko/Fischl (Aggravate) hoặc Alhaitham + Nahida + Xingqiu (Quicken-Spread). Ghi chú nguồn: mô tả C1–C6 chính xác của Alhaitham chưa lấy được nguyên văn trong phiên lấy dữ liệu này, cần đối chiếu Fandom trước khi dùng.",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "dehya",
+    "name": "Dehya",
+    "element": "Pyro",
+    "weaponType": "Claymore",
+    "rarity": 5,
+    "nationInGame": "Sumeru",
+    "releaseDate": "2023-03-01",
+    "baseStats": {
+      "lv1": {
+        "hp": 1220.25,
+        "atk": 20.67,
+        "def": 48.88
+      },
+      "lv90": {
+        "hp": 15674.77,
+        "atk": 265.49,
+        "def": 627.91,
+        "ascensionStatType": "HP%",
+        "ascensionStatValue": 0.288
+      }
+    },
+    "normalAttack": {
+      "name": "Sandstorm Assault",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "Molten Inferno",
+      "description": "Indomitable Flame (AoE Pyro DMG, tạo field Fiery Sanctum) hoặc Ranging Flame (nhảy tấn công, tái tạo field). Field gây Coordinated Attack theo ATK+Max HP khi địch trong field bị đánh; nhân vật trong field tăng kháng ngắt, hấp thụ 1 phần DMG chuyển vào Redmane's Blood cho Dehya chịu.",
+      "scaling": [
+        {
+          "label": "Sát thương AoE ban đầu",
+          "values": {
+            "lv1": "~145% ATK",
+            "lv10": "~262% ATK"
+          }
+        },
+        {
+          "label": "Coordinated Attack",
+          "values": {
+            "lv1": "~50% ATK + ~2.7% Max HP",
+            "lv10": "~90% ATK + ~4.9% Max HP"
+          }
+        }
+      ],
+      "cooldown": "12s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Leonine Bite",
+      "description": "Vào Blazing Lioness, tự động tung Flame-Mane's Fist liên tục (ATK+Max HP), kết thúc bằng Incineration Drive AoE.",
+      "scaling": [
+        {
+          "label": "Flame-Mane's Fist (mỗi đòn)",
+          "values": {
+            "lv1": "~40% ATK + ~1% Max HP",
+            "lv10": "~72% ATK + ~1.8% Max HP"
+          }
+        },
+        {
+          "label": "Incineration Drive",
+          "values": {
+            "lv1": "~150% ATK + ~4% Max HP",
+            "lv10": "~270% ATK + ~7.2% Max HP"
+          }
+        }
+      ],
+      "cooldown": "12s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Unstinting Succor",
+        "unlock": "A1",
+        "description": "Giảm 60% DMG từ Redmane's Blood trong 6s sau khi lấy lại field; ban Gold-Forged Form (tăng kháng ngắt trong field) cho đội sau Indomitable Flame."
+      },
+      {
+        "name": "Stalwart and True",
+        "unlock": "A4",
+        "description": "HP<40% → hồi 20% Max HP ngay + 6%/2s trong 10s (CD 20s)."
+      },
+      {
+        "name": "The Sunlit Way",
+        "unlock": "Utility",
+        "description": "Ban ngày (6h–18h) cả đội +10% tốc độ di chuyển."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "The Flame Incandescent",
+        "description": "+20% Max HP; Molten Inferno DMG +3.6% Max HP, Leonine Bite DMG +6% Max HP."
+      },
+      {
+        "level": 2,
+        "name": "The Sand-Blades Glittering",
+        "description": "Ranging Flame kéo dài field thêm 6s; Coordinated Attack tiếp theo +50% DMG khi nhân vật trong field bị đánh."
+      },
+      {
+        "level": 3,
+        "name": "A Rage Swift as Fire",
+        "description": "+3 cấp Leonine Bite (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "An Oath Abiding",
+        "description": "Flame-Mane's Fist/Incineration Drive trúng địch hồi 1.5 NL + 2.5% Max HP (1 lần/0.2s)."
+      },
+      {
+        "level": 5,
+        "name": "The Alpha Unleashed",
+        "description": "+3 cấp Molten Inferno (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "The Burning Claws Cleaving",
+        "description": "Leonine Bite +10% CRIT Rate; Flame-Mane's Fist chí mạng tăng 15% CRIT DMG Leonine Bite (tối đa +60%) và kéo dài Blazing Lioness tối đa 2s."
+      }
+    ],
+    "abyssRoleNotes": "DPS phụ/off-field bền bỉ (sinh tồn cao), thường dùng làm sub-DPS Pyro hoặc DPS chính khi build HP. Combo phổ biến: Dehya + Bennett (đội Pyro Sunfire) hoặc Dehya + Nahida (Burning/Hyperbloom).",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "kaveh",
+    "name": "Kaveh",
+    "element": "Dendro",
+    "weaponType": "Claymore",
+    "rarity": 4,
+    "nationInGame": "Sumeru",
+    "releaseDate": "2023-05-02",
+    "baseStats": {
+      "lv1": {
+        "hp": 1002.97,
+        "atk": 19.59,
+        "def": 62.95
+      },
+      "lv90": {
+        "hp": 11962.41,
+        "atk": 233.64,
+        "def": 750.77,
+        "ascensionStatType": "Elemental Mastery",
+        "ascensionStatValue": 96
+      }
+    },
+    "normalAttack": {
+      "name": "Schematic Setup",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "Artistic Ingenuity",
+      "description": "Quét radial gây AoE Dendro DMG, kích nổ ngay các Dendro Core trong phạm vi.",
+      "scaling": [
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "~180% ATK",
+            "lv10": "~324% ATK"
+          }
+        }
+      ],
+      "cooldown": "10s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Painted Dome",
+      "description": "Tạo không gian quét hình lập phương gây AoE Dendro DMG + kích nổ Dendro Core, đồng thời tăng AoE đòn thường/charged/plunge (chuyển Dendro DMG không ghi đè), tăng DMG nổ Dendro Core do cả đội tạo (Bloom/Lunar-Bloom), tăng kháng ngắt.",
+      "scaling": [
+        {
+          "label": "Sát thương khi tung",
+          "values": {
+            "lv1": "~280% ATK",
+            "lv10": "~504% ATK"
+          }
+        }
+      ],
+      "cooldown": "12s",
+      "energyCost": 70
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "An Architect's Undertaking",
+        "unlock": "A1",
+        "description": "Khi bị Dendro Core (kể cả Burgeon/Hyperbloom) gây DMG, hồi HP = 300% Tinh Thông Nguyên Tố (1 lần/0.5s)."
+      },
+      {
+        "name": "A Craftsman's Curious Conceptions",
+        "unlock": "A4",
+        "description": "Trong Painted Dome, đòn thường/charged/plunge trúng địch +25 Tinh Thông Nguyên Tố (tối đa 4 lớp, mất khi Painted Dome kết thúc)."
+      },
+      {
+        "name": "The Art of Budgeting",
+        "unlock": "Utility",
+        "description": "100% cơ hội hoàn nguyên liệu khi chế đồ nội thất Cảnh quan/Công trình/Sân vườn."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Sublime Salutations",
+        "description": "Trong 3s sau khi dùng Skill, +50% kháng Dendro và +25% Nhận Hiệu Ứng Hồi Máu."
+      },
+      {
+        "level": 2,
+        "name": "Grace of Royal Roads",
+        "description": "Trong Painted Dome, +15% Tốc Độ Đánh Thường."
+      },
+      {
+        "level": 3,
+        "name": "Profferings of Dur Untash",
+        "description": "+3 cấp Painted Dome (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "Feast of Apadana",
+        "description": "Dendro Core do Kaveh kích hoạt Bloom/Lunar-Bloom nổ mạnh hơn 60%."
+      },
+      {
+        "level": 5,
+        "name": "Treasures of Bonkhanak",
+        "description": "+3 cấp Artistic Ingenuity (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "Pairidaeza's Dreams",
+        "description": "Trong Painted Dome, đòn thường/charged/plunge trúng địch tung Pairidaeza's Light gây 61.8% ATK AoE Dendro DMG + kích nổ Dendro Core (1 lần/3s)."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính on-field cho đội Bloom/Hyperbloom/Burgeon (kích nổ + khuếch đại Dendro Core). Combo phổ biến: Kaveh + Nahida + Hydro DPS + Electro (Hyperbloom) hoặc Kaveh + Nahida + Xingqiu (Burgeon/Bloom).",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "nahida",
+    "name": "Nahida",
+    "element": "Dendro",
+    "weaponType": "Catalyst",
+    "rarity": 5,
+    "nationInGame": "Sumeru",
+    "releaseDate": "2022-11-02",
+    "baseStats": {
+      "lv1": {
+        "hp": 806.51,
+        "atk": 23.28,
+        "def": 49.06
+      },
+      "lv90": {
+        "hp": 10360.04,
+        "atk": 298.97,
+        "def": 630.21,
+        "ascensionStatType": "Elemental Mastery",
+        "ascensionStatValue": 115.2
+      }
+    },
+    "normalAttack": {
+      "name": "Akara",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "All Schemes to Know",
+      "description": "Gửi dây nghiệp gây AoE Dendro DMG, đánh dấu tối đa 8 địch bằng Seed of Skandha (liên kết với nhau); khi 1 địch bị đánh dấu chịu phản ứng nguyên tố hoặc DMG từ Dendro Core, kích hoạt Tri-Karma Purification lan sang các địch liên kết (theo ATK + Tinh Thông Nguyên Tố). Có thể giữ để ngắm nhiều mục tiêu.",
+      "scaling": [
+        {
+          "label": "Sát thương khi tung",
+          "values": {
+            "lv1": "149.6% ATK",
+            "lv10": "269.3% ATK"
+          }
+        },
+        {
+          "label": "Tri-Karma Purification",
+          "values": {
+            "lv1": "~85% ATK + ~85% Tinh Thông Nguyên Tố",
+            "lv10": "~150% ATK + ~150% Tinh Thông Nguyên Tố"
+          }
+        }
+      ],
+      "cooldown": "10s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Illusory Heart",
+      "description": "Mở Shrine of Maya, buff theo nguyên tố Pyro/Electro/Hydro trong đội (Pyro: +DMG Tri-Karma khi Nahida trong field; Electro: giảm CD Tri-Karma; Hydro: +thời lượng field); buff tăng thêm nếu ≥2 nhân vật cùng loại.",
+      "scaling": [],
+      "cooldown": "12s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Compassion Illuminated",
+        "unlock": "A1",
+        "description": "Shrine of Maya cho nhân vật ra trận +25% Tinh Thông Nguyên Tố cao nhất trong đội (tối đa +250)."
+      },
+      {
+        "name": "Awakening Elucidated",
+        "unlock": "A4",
+        "description": "Mỗi điểm Tinh Thông Nguyên Tố vượt 200 → +0.1% DMG và +0.03% CRIT Rate cho Tri-Karma Purification (tối đa +80% DMG, +24% CRIT Rate)."
+      },
+      {
+        "name": "On All Things Meditated",
+        "unlock": "Utility",
+        "description": "Dùng Skill để tương tác tài nguyên đặc biệt trong phạm vi."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "The Seed of Stored Knowledge",
+        "description": "Khi tính số nhân vật Pyro/Electro/Hydro cho Shrine of Maya, +1 vào mỗi loại."
+      },
+      {
+        "level": 2,
+        "name": "The Root of All Fullness",
+        "description": "Địch bị Seed of Skandha (do Nahida) đánh dấu: DMG Burning/Bloom/Hyperbloom/Burgeon có thể chí mạng (CRIT Rate 20%, CRIT DMG 100%, cộng dồn); trong 8s sau Quicken/Aggravate/Spread giảm 30% DEF; Lunar-Bloom +10% CRIT Rate/+20% CRIT DMG."
+      },
+      {
+        "level": 3,
+        "name": "The Shoot of Conscious Attainment",
+        "description": "+3 cấp All Schemes to Know (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "The Stem of Manifest Inference",
+        "description": "1/2/3/4+ địch bị Seed of Skandha đánh dấu gần đó → +100/120/140/160 Tinh Thông Nguyên Tố cho Nahida."
+      },
+      {
+        "level": 5,
+        "name": "The Leaves of Enlightening Speech",
+        "description": "+3 cấp Illusory Heart (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "The Fruit of Reason's Culmination",
+        "description": "Sau Burst, đòn thường/charged trúng địch có Seed of Skandha sẽ kích Tri-Karma Purification: Karmic Oblivion (200% ATK + 400% Tinh Thông Nguyên Tố), 1 lần/0.2s, tối đa 6 lần trong 10s."
+      }
+    ],
+    "abyssRoleNotes": "Xương sống mọi đội Dendro — hỗ trợ/DPS phụ kích hoạt phản ứng liên hoàn (Quicken/Aggravate/Spread/Bloom/Hyperbloom/Burgeon). Combo phổ biến: Nahida + Xingqiu/Yelan + Electro DPS (Aggravate/Hyperbloom) hoặc Nahida + Nilou (Bloom).",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "sethos",
+    "name": "Sethos",
+    "element": "Electro",
+    "weaponType": "Bow",
+    "rarity": 4,
+    "nationInGame": "Sumeru",
+    "releaseDate": "2024-06-05",
+    "baseStats": {
+      "lv1": {
+        "hp": 820.61,
+        "atk": 19.05,
+        "def": 46.92
+      },
+      "lv90": {
+        "hp": 9787.42,
+        "atk": 227.26,
+        "def": 559.67,
+        "ascensionStatType": "Elemental Mastery",
+        "ascensionStatValue": 96
+      }
+    },
+    "normalAttack": {
+      "name": "Royal Reed Archery",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "Ancient Rite: The Thundering Sands",
+      "description": "Gây AoE Electro DMG rồi lùi nhanh; nếu kích hoạt phản ứng Electro thì hồi năng lượng.",
+      "scaling": [
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "~184% ATK",
+            "lv10": "~331% ATK"
+          }
+        }
+      ],
+      "cooldown": "10s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Secret Rite: Twilight Shadowpiercer",
+      "description": "Vào Twilight Meditation, đòn thường biến thành Dusk Bolt xuyên địch (Charged Attack DMG, tăng theo Tinh Thông Nguyên Tố).",
+      "scaling": [
+        {
+          "label": "Dusk Bolt (mỗi đòn)",
+          "values": {
+            "lv1": "~40% ATK + ~28.8% Tinh Thông Nguyên Tố",
+            "lv10": "~72% ATK + ~52% Tinh Thông Nguyên Tố"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Black Kite's Enigma",
+        "unlock": "A1",
+        "description": "Khi ngắm, giảm 0.285s thời gian tích/điểm Năng Lượng hiện có (tối thiểu 0.3s, tối đa tích 20 NL); bắn Shadowpiercing tiêu hết NL tích, bắn mức 1 tiêu 50%."
+      },
+      {
+        "name": "The Sand King's Boon",
+        "unlock": "A4",
+        "description": "Kích hoạt Scorching Sandshade, Shadowpiercing Shot +700% Tinh Thông Nguyên Tố DMG (hết hiệu lực sau 5s hoặc 4 lần trúng; hồi lại sau 15s)."
+      },
+      {
+        "name": "Thoth's Revelation",
+        "unlock": "Utility",
+        "description": "Hiện đặc sản Sumeru trên minimap."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Sealed Shrine's Spiritsong",
+        "description": "Shadowpiercing Shot +15% CRIT Rate."
+      },
+      {
+        "level": 2,
+        "name": "Papyrus Scripture of Silent Secrets",
+        "description": "Tiêu NL qua Aimed Shot, hồi NL qua phản ứng Electro, hoặc dùng Burst → +15% Electro DMG Bonus 10s (cộng dồn 2 lần)."
+      },
+      {
+        "level": 3,
+        "name": "Ode to the Moonrise Sage",
+        "description": "+3 cấp Royal Reed Archery (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "Beneficent Plumage",
+        "description": "Shadowpiercing/Dusk Bolt trúng ≥2 địch → cả đội gần đó +80 Tinh Thông Nguyên Tố 10s."
+      },
+      {
+        "level": 5,
+        "name": "Record of the Desolate God's Burning Sands",
+        "description": "+3 cấp Secret Rite: Twilight Shadowpiercer (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "Pylon of the Sojourning Sun Temple",
+        "description": "Shadowpiercing Shot trúng địch hoàn lại NL đã tiêu qua Black Kite's Enigma (1 lần/15s)."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính on-field Electro dựa vào Tinh Thông Nguyên Tố, hợp đội phản ứng Electro (Aggravate/Hyperbloom/Overload). Combo phổ biến: Sethos + Nahida + Xingqiu/Yelan (Aggravate) hoặc Sethos + Nahida + Hyperbloom enabler.",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "kachina",
+    "name": "Kachina",
+    "element": "Geo",
+    "weaponType": "Polearm",
+    "rarity": 4,
+    "nationInGame": "Natlan",
+    "releaseDate": "2024-08-28",
+    "baseStats": {
+      "lv1": {
+        "hp": 989.29,
+        "atk": 18.16,
+        "def": 66.44
+      },
+      "lv90": {
+        "hp": 11799.28,
+        "atk": 216.65,
+        "def": 792.41,
+        "ascensionStatType": "Geo DMG Bonus",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Cragbiter",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "Go, Go Turbo Twirly!",
+      "description": "Triệu hồi Turbo Twirly (đập đất gây AoE Geo DMG theo DEF); có thể cưỡi để di chuyển/leo trèo nhanh và tấn công bằng đòn thường (đập đất theo DEF). Vào Nightsoul's Blessing, tiêu điểm Nightsoul để duy trì.",
+      "scaling": [
+        {
+          "label": "Sát thương đập đất",
+          "values": {
+            "lv1": "~150% DEF",
+            "lv10": "~270% DEF"
+          }
+        }
+      ],
+      "cooldown": "8s (không cưỡi) / khi cưỡi tuỳ dùng",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Time to Get Serious!",
+      "description": "Đập đất gây AoE Geo DMG theo DEF, tạo Turbo Drill Field (tăng AoE & tốc độ Turbo Twirly khi cưỡi).",
+      "scaling": [
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "~220% DEF",
+            "lv10": "~396% DEF"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Mountain Echoes",
+        "unlock": "A1",
+        "description": "Khi đội gây Nightsoul Burst, +20% Geo DMG Bonus 12s."
+      },
+      {
+        "name": "The Weight of Stone",
+        "unlock": "A4",
+        "description": "Turbo Twirly DMG +20% DEF Kachina."
+      },
+      {
+        "name": "Boon of Crystal Flame",
+        "unlock": "Utility",
+        "description": "Hồi 20 thể lực khi tương tác vật phẩm; hiện đặc sản Natlan trên minimap."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Shards Are Gems Too",
+        "description": "Khi lên/xuống Turbo Twirly, hút mảnh vỡ Kết Tinh gần đó; nhặt mảnh hoặc kích hoạt Lunar-Crystallize hồi 3 NL (1 lần/5s)."
+      },
+      {
+        "level": 2,
+        "name": "Never Leave Home Without... Turbo Twirly",
+        "description": "Dùng Burst hồi 20 điểm Nightsoul; nếu chưa có Turbo Twirly sẽ triệu hồi luôn."
+      },
+      {
+        "level": 3,
+        "name": "Improved Stabilizer",
+        "description": "+3 cấp Go, Go Turbo Twirly! (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "More Foes, More Caution",
+        "description": "1/2/3/4+ địch trong Turbo Drill Field → nhân vật ra trận +8%/12%/16%/20% DEF."
+      },
+      {
+        "level": 5,
+        "name": "All I've Collected Till Now",
+        "description": "+3 cấp Time to Get Serious! (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "This Time, I've Gotta Win",
+        "description": "Khi khiên nhân vật ra trận bị thay/vỡ, Kachina gây 200% DEF AoE Geo DMG (1 lần/5s)."
+      }
+    ],
+    "abyssRoleNotes": "Sub-DPS/hỗ trợ off-field Geo scaling DEF, tạo shard hỗ trợ Kết Tinh. Combo phổ biến: Kachina + Zhongli/Xilonen (Geo Resonance/khiên) hoặc Kachina + Navia (Crystallize burst).",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "mualani",
+    "name": "Mualani",
+    "element": "Hydro",
+    "weaponType": "Catalyst",
+    "rarity": 5,
+    "nationInGame": "Natlan",
+    "releaseDate": "2024-08-28",
+    "baseStats": {
+      "lv1": {
+        "hp": 1182.12,
+        "atk": 14.15,
+        "def": 44.39
+      },
+      "lv90": {
+        "hp": 15184.93,
+        "atk": 181.78,
+        "def": 570.27,
+        "ascensionStatType": "CRIT Rate",
+        "ascensionStatValue": 0.192
+      }
+    },
+    "normalAttack": {
+      "name": "Cooling Treatment",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "Surfshark Wavebreaker",
+      "description": "Lên ván lướt Sharky, đòn thường biến thành Sharky's Bite (theo Max HP); chạm địch tích Wave Momentum (tối đa 3) và áp \"Marked as Prey\"; đủ 3 lớp thành Sharky's Surging Bite mạnh hơn, xoá Mark lân cận và bắn Shark Missile.",
+      "scaling": [
+        {
+          "label": "Sharky's Bite",
+          "values": {
+            "lv1": "~22% Max HP",
+            "lv10": "~40% Max HP"
+          }
+        },
+        {
+          "label": "Sharky's Surging Bite",
+          "values": {
+            "lv1": "~40% Max HP",
+            "lv10": "~72% Max HP"
+          }
+        }
+      ],
+      "cooldown": "theo điểm Nightsoul (không CD cố định — tự nạp lại khi tiêu hết)",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Boomsharka-laka",
+      "description": "Bắn Super Shark Missile truy đuổi gây AoE Hydro DMG theo Max HP.",
+      "scaling": [
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "~35% Max HP",
+            "lv10": "~63% Max HP"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 70
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Heat-Resistant Freshwater Floater",
+        "unlock": "A1",
+        "description": "Sharky's Surging Bite trúng địch tạo Puffer gần đó; nhặt hồi 20 điểm Nightsoul (tối đa 2 Puffer/lượt)."
+      },
+      {
+        "name": "Natlan's Greatest Guide",
+        "unlock": "A4",
+        "description": "Đội gây Nightsoul Burst tích Wavechaser's Exploits (tối đa 3); dùng Burst tiêu hết để +15/30/45% Max HP DMG Burst."
+      },
+      {
+        "name": "The Trick Is to Keep Smiling!",
+        "unlock": "Utility",
+        "description": "Hồi 15 Phlogiston khi tương tác vật phẩm; hiện đặc sản Natlan."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "The Leisurely \"Meztli\"...",
+        "description": "Sharky's Surging Bite đầu tiên sau khi vào Nightsoul's Blessing +66% Max HP DMG (và Shark Missile theo đó); ngoài combat giảm 30% tiêu hao Phlogiston/Nightsoul."
+      },
+      {
+        "level": 2,
+        "name": "Mualani, Going All Out!",
+        "description": "Vào Nightsoul's Blessing nhận sẵn 2 lớp Wave Momentum; nhặt Puffer +1 lớp."
+      },
+      {
+        "level": 3,
+        "name": "Surfing Atop Joyous Seas",
+        "description": "+3 cấp Surfshark Wavebreaker (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "Sharky Eats Puffies",
+        "description": "Nhặt Puffer hồi 8 Năng Lượng; Boomsharka-laka +75% DMG."
+      },
+      {
+        "level": 5,
+        "name": "Same Style of Surfboard on Sale!",
+        "description": "+3 cấp Boomsharka-laka (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "Spirit of the Springs' People",
+        "description": "DMG bonus của C1 không còn giới hạn 1 lần/lượt Nightsoul's Blessing."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính on-field Hydro scaling Max HP, cực mạnh khi build HP cao. Combo phổ biến: Mualani + Kirara/Xilonen (buff HP) + Hydro-Cryo (Freeze) hoặc Mualani + Furina (Hydro thuần).",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "kinich",
+    "name": "Kinich",
+    "element": "Dendro",
+    "weaponType": "Claymore",
+    "rarity": 5,
+    "nationInGame": "Natlan",
+    "releaseDate": "2024-09-17",
+    "baseStats": {
+      "lv1": {
+        "hp": 1000.99,
+        "atk": 25.88,
+        "def": 62.4
+      },
+      "lv90": {
+        "hp": 12858.21,
+        "atk": 332.46,
+        "def": 801.6,
+        "ascensionStatType": "CRIT DMG",
+        "ascensionStatValue": 0.384
+      }
+    },
+    "normalAttack": {
+      "name": "Nightsun Style",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "Canopy Hunter: Riding High",
+      "description": "Móc câu vào địch/vật thể để đu người hoặc bay tới; nếu có địch, vào Nightsoul's Blessing (đòn thường thành Loop Shot tích điểm; đủ điểm tối đa dùng lại skill để bắn Scalespiker Cannon tiêu hết điểm). CD giảm 60% nếu không có mục tiêu móc câu.",
+      "scaling": [
+        {
+          "label": "Loop Shot (mỗi đòn)",
+          "values": {
+            "lv1": "~40% ATK",
+            "lv10": "~72% ATK"
+          }
+        },
+        {
+          "label": "Scalespiker Cannon",
+          "values": {
+            "lv1": "~220% ATK",
+            "lv10": "~396% ATK"
+          }
+        }
+      ],
+      "cooldown": null,
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Hail to the Almighty Dragonlord",
+      "description": "Triệu hồi Ajaw gây AoE Dendro DMG định kỳ (Dragon Breath).",
+      "scaling": [
+        {
+          "label": "Sát thương ban đầu + mỗi Dragon Breath",
+          "values": {
+            "lv1": "~130% ATK + ~50% ATK/đợt",
+            "lv10": "~234% ATK + ~90% ATK/đợt"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 70
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "The Price of Desolation",
+        "unlock": "A1",
+        "description": "Địch trúng Skill trong Nightsoul's Blessing vào Desolation, khi chịu Burning/Burgeon hồi 7 điểm Nightsoul cho Kinich (1 lần/0.8s)."
+      },
+      {
+        "name": "Flame Spirit Pact",
+        "unlock": "A4",
+        "description": "Đội gây Nightsoul Burst cho Kinich 1 lớp Hunter's Experience (tối đa 2), tiêu khi bắn Scalespiker Cannon để +320% ATK DMG/lớp."
+      },
+      {
+        "name": "Repaid in Full",
+        "unlock": "Utility",
+        "description": "Tiêu 10 Phlogiston để swing giữa trung thêm lần nữa; hồi tốc trèo trong Phlogiston area."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Parrot's Beak",
+        "description": "Sau khi hạ cánh từ swing giữa trung, +30% tốc độ di chuyển 6s; Scalespiker Cannon +100% CRIT DMG."
+      },
+      {
+        "level": 2,
+        "name": "Tiger Beetle's Palm",
+        "description": "Skill trúng địch giảm 30% kháng Dendro 6s; Scalespiker Cannon đầu tiên sau khi vào Nightsoul's Blessing tăng AoE và +100% DMG."
+      },
+      {
+        "level": 3,
+        "name": "Protosuchian's Claw",
+        "description": "+3 cấp Canopy Hunter: Riding High (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "Hummingbird's Feather",
+        "description": "Trong Nightsoul's Blessing, Loop Shot/Scalespiker Cannon hồi 5 NL (1 lần/2.8s); Hail to the Almighty Dragonlord +70% DMG."
+      },
+      {
+        "level": 5,
+        "name": "Howler Monkey's Tail",
+        "description": "+3 cấp Hail to the Almighty Dragonlord (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "Auspicious Beast's Shape",
+        "description": "Scalespiker Cannon trúng địch nảy sang địch khác 1 lần, gây 700% ATK Dendro DMG (kế thừa buff từ Flame Spirit Pact/C2 nếu có)."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính on-field Dendro, cực mạnh trong đội Burning/Hyperbloom nhờ Ajaw luôn ở trên trường. Combo phổ biến: Kinich + Nahida/Emilie + Bennett (Burning) hoặc Kinich + Nahida + Hydro-Electro (Hyperbloom).",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "xilonen",
+    "name": "Xilonen",
+    "element": "Geo",
+    "weaponType": "Sword",
+    "rarity": 5,
+    "nationInGame": "Natlan",
+    "releaseDate": "2024-10-09",
+    "baseStats": {
+      "lv1": {
+        "hp": 965.71,
+        "atk": 21.41,
+        "def": 72.39
+      },
+      "lv90": {
+        "hp": 12405.11,
+        "atk": 275.06,
+        "def": 929.95,
+        "ascensionStatType": "DEF%",
+        "ascensionStatValue": 0.36
+      }
+    },
+    "normalAttack": {
+      "name": "Ehecatl's Roar",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "Yohual's Scratch",
+      "description": "Lao tới gây Geo DMG theo DEF, vào Nightsoul's Blessing (Blade Roller); mang 3 Sampler đổi nguyên tố theo thành viên đội (Pyro/Hydro/Cryo/Electro), giảm kháng nguyên tố tương ứng của địch khi kích hoạt. Nightsoul giới hạn 9s.",
+      "scaling": [
+        {
+          "label": "Sát thương khi lao tới",
+          "values": {
+            "lv1": "~184% DEF",
+            "lv10": "~331% DEF"
+          }
+        }
+      ],
+      "cooldown": null,
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Ocelotlicue Point!",
+      "description": "Kích DJ Controller gây AoE Geo DMG theo DEF; nếu ≥2 Source Sample đã đổi nguyên tố → hồi máu liên tục (Ebullient); nếu <2 → 2 nhịp AoE Geo DMG thêm (Ardent).",
+      "scaling": [
+        {
+          "label": "Sát thương chính",
+          "values": {
+            "lv1": "~220% DEF",
+            "lv10": "~396% DEF"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 70
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Netotiliztli's Echoes",
+        "unlock": "A1",
+        "description": "Trong Nightsoul's Blessing, nếu ≥2 Sample đã đổi nguyên tố → đòn thường/plunge trúng hồi 35 điểm Nightsoul (0.1s/lần); nếu <2 → đòn thường/plunge +30% DMG."
+      },
+      {
+        "name": "Portable Armored Sheath",
+        "unlock": "A4",
+        "description": "Đủ điểm Nightsoul tối đa → tự kích hiệu ứng như Nightsoul Burst (1 lần/14s); đội gây Nightsoul Burst → Xilonen +20% DEF 15s."
+      },
+      {
+        "name": "Tour of Tepeilhuitl",
+        "unlock": "Utility",
+        "description": "Kích hoạt Nightsoul Transmission hồi 15 Phlogiston."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Sabbatical Phrase",
+        "description": "Giảm 30% tiêu hao Nightsoul/Phlogiston, +45% giới hạn thời gian Nightsoul; Source Sample kích hoạt còn tăng kháng ngắt cho đội."
+      },
+      {
+        "level": 2,
+        "name": "Chiucue Mix",
+        "description": "Geo Sample luôn kích hoạt; các Sample kích hoạt cho buff theo nguyên tố tương ứng của từng thành viên (Geo +50% DMG, Pyro +45% ATK, Hydro +45% Max HP, Cryo +60% CRIT DMG, Electro hồi 25 NL & giảm 6s CD Burst)."
+      },
+      {
+        "level": 3,
+        "name": "Tonalpohualli's Loop",
+        "description": "+3 cấp Yohual's Scratch (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "Suchitl's Trance",
+        "description": "Sau Yohual's Scratch, cả đội nhận Blooming Blessing 15s: đòn thường/charged/plunge +65% DEF Xilonen DMG (tối đa 6 lần kích hoạt)."
+      },
+      {
+        "level": 5,
+        "name": "Tlaltecuhtli's Crossfade",
+        "description": "+3 cấp Ocelotlicue Point! (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "Imperishable Night Carnival",
+        "description": "Trong Nightsoul's Blessing, sprint/nhảy/đòn thường/plunge có thể kích Imperishable Night's Blessing 5s: tạm dừng tiêu hao Nightsoul/Phlogiston/Stamina, +300% DEF DMG đòn thường/plunge, hồi máu đội 120% DEF/1.5s (1 lần/15s)."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ toàn diện (buff theo nguyên tố đội + giảm kháng + hồi máu) scaling DEF, gần như bắt buộc trong mọi đội Natlan đa nguyên tố. Combo phổ biến: Xilonen + bất kỳ 2 nguyên tố Pyro/Hydro/Cryo/Electro (Taser/Freeze/Vaporize team), rất phổ biến cùng Mavuika/Chasca.",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "chasca",
+    "name": "Chasca",
+    "element": "Anemo",
+    "weaponType": "Bow",
+    "rarity": 5,
+    "nationInGame": "Natlan",
+    "releaseDate": "2024-11-20",
+    "baseStats": {
+      "lv1": {
+        "hp": 762.66,
+        "atk": 27.0,
+        "def": 47.86
+      },
+      "lv90": {
+        "hp": 9796.73,
+        "atk": 346.81,
+        "def": 614.84,
+        "ascensionStatType": "CRIT Rate",
+        "ascensionStatValue": 0.192
+      }
+    },
+    "normalAttack": {
+      "name": "Phantom Feather Flurry",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "Spirit Reins, Shadow Hunt",
+      "description": "Cộng hưởng vũ khí gây AoE Anemo DMG, vào Nightsoul's Blessing bay lượn; đòn thường Tap gây Anemo DMG, Hold vào chế độ ngắm nạp tối đa 6 Shadowhunt Shell (đợt nạp thứ 4–6 đổi nguyên tố ngẫu nhiên theo thành viên Pyro/Hydro/Cryo/Electro trong đội — Shining Shell).",
+      "scaling": [
+        {
+          "label": "Sát thương khi tung skill",
+          "values": {
+            "lv1": "~184% ATK",
+            "lv10": "~331% ATK"
+          }
+        },
+        {
+          "label": "Shadowhunt Shell (mỗi viên)",
+          "values": {
+            "lv1": "~40% ATK",
+            "lv10": "~72% ATK"
+          }
+        }
+      ],
+      "cooldown": null,
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Soul Reaper's Fatal Round",
+      "description": "Bắn Galesplitting Soulseeker Shell AoE Anemo DMG, tách thành 6 Soulseeker Shell (2 viên/nguyên tố đội đổi thành Radiant Soulseeker Shell).",
+      "scaling": [
+        {
+          "label": "Sát thương ban đầu + mỗi Soulseeker Shell",
+          "values": {
+            "lv1": "~90% ATK + ~35% ATK/viên",
+            "lv10": "~162% ATK + ~63% ATK/viên"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 70
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Bullet Trick",
+        "unlock": "A1",
+        "description": "Khi nạp Multitarget Fire, mỗi loại nguyên tố đủ điều kiện có 33.3/66.7/100% cơ hội đổi viên đạn thứ 3 thành Shining Shell; mỗi loại còn cho 1 lớp Spirit of the Radiant Shadow (+15/35/65% DMG Shining Shell, tối đa 3 lớp)."
+      },
+      {
+        "name": "Intent to Cover",
+        "unlock": "A4",
+        "description": "Đội gây Nightsoul Burst → Chasca bắn Burning Shadowhunt Shot = 150% DMG Shell (hoặc Shining Shell nếu có nguyên tố phù hợp), tính là Charged Attack DMG."
+      },
+      {
+        "name": "Mediation's True Meaning",
+        "unlock": "Utility",
+        "description": "Hồi 25 Phlogiston khi đội hạ gục địch (1 lần/12s)."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Cylinder, the Restless Roulette",
+        "description": "Khi kích Spiritbinding Conversion, viên đạn thứ 2 cũng đổi thành Shining Shell; tăng cơ hội Spiritbinding Conversion lên tối đa 100%; ngoài combat giảm 30% tiêu hao Nightsoul/Phlogiston."
+      },
+      {
+        "level": 2,
+        "name": "Muzzle, the Searing Smoke",
+        "description": "Ra trận nhận 1 lớp Spirit of the Radiant Shadow; Shining Shadowhunt Shell trúng địch gây thêm AoE 400% ATK nguyên tố tương ứng (Charged Attack DMG)."
+      },
+      {
+        "level": 3,
+        "name": "Reins, Her Careful Control",
+        "description": "+3 cấp Spirit Reins, Shadow Hunt (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "Sparks, the Sudden Shot",
+        "description": "Radiant Soulseeker Shell trúng địch hồi 1.5 NL và gây thêm AoE 400% ATK nguyên tố tương ứng."
+      },
+      {
+        "level": 5,
+        "name": "Brim, the Sandshadow's Silhouette",
+        "description": "+3 cấp Soul Reaper's Fatal Round (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "Showdown, the Glory of Battle",
+        "description": "Giảm thời gian nạp Multitarget Fire; sau Spiritbinding Conversion vào \"Fatal Rounds\" 3s: lần nạp Multitarget Fire kế tiếp tích tức thì, +120% CRIT DMG."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính on-field Anemo đa nguyên tố hóa đạn (Taser/đa phản ứng), rất mạnh trong đội 4 nguyên tố khác nhau. Combo phổ biến: Chasca + Furina/Fischl/Bennett/Kazuha (mỗi người 1 nguyên tố để tối đa hóa Shining Shell).",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "ororon",
+    "name": "Ororon",
+    "element": "Electro",
+    "weaponType": "Bow",
+    "rarity": 4,
+    "nationInGame": "Natlan",
+    "releaseDate": "2024-11-20",
+    "baseStats": {
+      "lv1": {
+        "hp": 775.02,
+        "atk": 20.48,
+        "def": 49.21
+      },
+      "lv90": {
+        "hp": 9243.68,
+        "atk": 244.26,
+        "def": 586.97,
+        "ascensionStatType": "ATK%",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Spiritvessel Snapshot",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "Night's Sling",
+      "description": "Ném Spirit Orb gây Electro DMG, nảy tối đa 3 lần giữa các địch khác nhau.",
+      "scaling": [
+        {
+          "label": "Sát thương mỗi lần trúng",
+          "values": {
+            "lv1": "~120% ATK",
+            "lv10": "~216% ATK"
+          }
+        }
+      ],
+      "cooldown": "10s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Dark Voices Echo",
+      "description": "Gây AoE Electro DMG, triệu hồi Supersonic Oculus khiêu khích và bắn sóng âm gây Electro DMG liên tục.",
+      "scaling": [
+        {
+          "label": "Sát thương ban đầu + mỗi sóng âm",
+          "values": {
+            "lv1": "~140% ATK + ~40% ATK/đợt",
+            "lv10": "~252% ATK + ~72% ATK/đợt"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Nightshade Synesthesia",
+        "unlock": "A1",
+        "description": "Đội gây Nightsoul Burst hoặc Hydro/Electro trúng địch trong 15s sau Skill → tích điểm Nightsoul cho Ororon (tối đa 80); địch chịu Electro-Charged/Nightsoul-aligned DMG từ đồng đội → Ororon tiêu 10 điểm vào Nightsoul's Blessing, kích Hypersense (160% ATK AoE, tối đa 4 địch, 1 lần/1.8s)."
+      },
+      {
+        "name": "Aspect Catalyst",
+        "unlock": "A4",
+        "description": "Sau khi Spirit Orb trúng địch, 15s nhận Aspect Sigil: đòn thường/charged/plunge trúng địch của nhân vật ra trận hồi 3 NL (tối đa 3 lần, kể cả khi Ororon không ra trận)."
+      },
+      {
+        "name": "The Art of Skinchanging",
+        "unlock": "Utility",
+        "description": "+15% tốc độ lượn cho đội."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Trails Amidst the Forest Fog",
+        "description": "Spirit Orb nảy thêm 2 lần; áp Nighttide 12s khiến địch chịu thêm 50% DMG Hypersense."
+      },
+      {
+        "level": 2,
+        "name": "King Bee of the Hidden Honeyed Wine",
+        "description": "Sau Burst, 9s nhận Spiritual Supersense: +8% Electro DMG Bonus, mỗi địch thêm bị trúng Burst/Oculus +8% nữa (tối đa +32%)."
+      },
+      {
+        "level": 3,
+        "name": "Roosting Bat's Spiritcage",
+        "description": "+3 cấp Dark Voices Echo (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "As the Mysteries of the Night Wind",
+        "description": "Supersonic Oculus quay nhanh hơn 25%; Ororon hồi 8 NL sau khi dùng Burst."
+      },
+      {
+        "level": 5,
+        "name": "A Gift For the Soul",
+        "description": "+3 cấp Night's Sling (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "Ode to Deep Springs",
+        "description": "Sau khi kích Hypersense, nhân vật ra trận +10% ATK 9s (tối đa 3 lớp); dùng Burst còn kích thêm 1 lần Hypersense tương đương 200% DMG gốc."
+      }
+    ],
+    "abyssRoleNotes": "Sub-DPS/hỗ trợ off-field Electro dựa vào phản ứng Electro của đồng đội để tự động dội thêm sát thương. Combo phổ biến: Ororon + Furina/Nilou (Hydro) hoặc Ororon + bất kỳ DPS Electro-Charged/Hyperbloom.",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "mavuika",
+    "name": "Mavuika",
+    "element": "Pyro",
+    "weaponType": "Claymore",
+    "rarity": 5,
+    "nationInGame": "Natlan",
+    "releaseDate": "2025-01-01",
+    "baseStats": {
+      "lv1": {
+        "hp": 977.15,
+        "atk": 27.93,
+        "def": 61.62
+      },
+      "lv90": {
+        "hp": 12552.06,
+        "atk": 358.77,
+        "def": 791.61,
+        "ascensionStatType": "CRIT DMG",
+        "ascensionStatValue": 0.384
+      }
+    },
+    "normalAttack": {
+      "name": "Flames Weave Life",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "The Named Moment",
+      "description": "Triệu hồi All-Fire Armaments — Tap: Ring of Searing Radiance (tự động tấn công định kỳ theo nhân vật ra trận); Hold: Flamestrider (cưỡi tốc độ cao, đòn thường/charged/plunge chuyển Pyro DMG). Nightsoul đầy khi kích hoạt.",
+      "scaling": [
+        {
+          "label": "Ring of Searing Radiance (mỗi lần tấn công)",
+          "values": {
+            "lv1": "~50% ATK",
+            "lv10": "~90% ATK"
+          }
+        },
+        {
+          "label": "Flamestrider — đòn thường/charged",
+          "values": {
+            "lv1": "tăng theo % ATK (đã bao gồm buff)",
+            "lv10": "chưa xác nhận"
+          }
+        }
+      ],
+      "cooldown": "10s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Hour of Burning Skies",
+      "description": "Không tốn Năng Lượng mà tốn \"Fighting Spirit\" (≥50% mới dùng được); Sunfell Slice gây AoE Pyro DMG, vào Crucible of Death and Life (miễn tiêu Nightsoul, tăng kháng ngắt, tăng DMG theo lượng Fighting Spirit đã dùng).",
+      "scaling": [
+        {
+          "label": "Sunfell Slice",
+          "values": {
+            "lv1": "~250% ATK",
+            "lv10": "~450% ATK"
+          }
+        }
+      ],
+      "cooldown": null,
+      "energyCost": null
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Gift of Flaming Flowers",
+        "unlock": "A1",
+        "description": "Đội gây Nightsoul Burst → Mavuika +30% ATK 10s."
+      },
+      {
+        "name": "\"Kiongozi\"",
+        "unlock": "A4",
+        "description": "Sau Burst, mỗi điểm Fighting Spirit lúc dùng +0.2% DMG cho nhân vật ra trận (tối đa +40%, giảm dần trong 20s)."
+      },
+      {
+        "name": "Exhaust Mode / Night-Shattering Radiance",
+        "unlock": "Utility",
+        "description": "Dùng Phlogiston khi hết Nightsoul; giảm 20% CD Nightsoul Transmission cho đội."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "The Night-Lord's Explication",
+        "description": "Nightsoul tối đa tăng lên 120, tích Fighting Spirit hiệu quả hơn 25%; nhận Fighting Spirit thì +40% ATK 8s."
+      },
+      {
+        "level": 2,
+        "name": "The Ashen Price",
+        "description": "Trong Nightsoul's Blessing, +200 ATK cơ bản; Ring: -20% DEF địch gần đó; Flamestrider: đòn thường/charged/Sunfell Slice +60%/90%/120% ATK DMG."
+      },
+      {
+        "level": 3,
+        "name": "The Burning Sun",
+        "description": "+3 cấp Hour of Burning Skies (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "The Leader's Resolve",
+        "description": "Buff DMG từ \"Kiongozi\" không giảm dần theo thời gian, +10% DMG Bonus thêm."
+      },
+      {
+        "level": 5,
+        "name": "The Meaning of Truth",
+        "description": "+3 cấp The Named Moment (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "\"Humanity's Name\" Unfettered",
+        "description": "Ring: khi trúng, Flamestrider lao vào gây 200% ATK AoE Pyro DMG; Flamestrider: có thêm Scorching Ring theo dõi, -20% DEF địch, gây 500% ATK AoE Pyro DMG mỗi 3s."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính/hỗ trợ linh hoạt (on-field lẫn off-field), Pyro Archon với burst không cần Năng Lượng — bù đắp NL rất mạnh. Combo phổ biến: Mavuika + Xiangling/Bennett (Pyro thuần) hoặc Mavuika + Citlali/Emilie (Vaporize/Melt).",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "citlali",
+    "name": "Citlali",
+    "element": "Cryo",
+    "weaponType": "Catalyst",
+    "rarity": 5,
+    "nationInGame": "Natlan",
+    "releaseDate": "2025-01-01",
+    "baseStats": {
+      "lv1": {
+        "hp": 905.65,
+        "atk": 9.87,
+        "def": 59.41
+      },
+      "lv90": {
+        "hp": 11633.62,
+        "atk": 126.76,
+        "def": 763.17,
+        "ascensionStatType": "Elemental Mastery",
+        "ascensionStatValue": 115.2
+      }
+    },
+    "normalAttack": {
+      "name": "Shadow-Stealing Spirit Vessel",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "Dawnfrost Darkstar",
+      "description": "Dựng Opal Shield (hấp thụ theo Tinh Thông Nguyên Tố, x250% hiệu quả Cryo) và triệu hồi Itzpapa gây Nightsoul AoE Cryo DMG; đủ 50 điểm Nightsoul, Itzpapa liên tục quạt Frostfall Storm gây DMG theo Tinh Thông Nguyên Tố.",
+      "scaling": [
+        {
+          "label": "Sát thương khi triệu hồi",
+          "values": {
+            "lv1": "~140% ATK",
+            "lv10": "~252% ATK"
+          }
+        },
+        {
+          "label": "Frostfall Storm (mỗi giây)",
+          "values": {
+            "lv1": "~90% Tinh Thông Nguyên Tố",
+            "lv10": "~162% Tinh Thông Nguyên Tố"
+          }
+        }
+      ],
+      "cooldown": "10s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Edict of Entwined Splendor",
+      "description": "Bão băng AoE Cryo DMG, hồi điểm Nightsoul, triệu hồi tối đa 3 Spiritvessel Skull nổ chậm gây AoE Cryo DMG + hồi thêm điểm Nightsoul.",
+      "scaling": [
+        {
+          "label": "Sát thương bão băng",
+          "values": {
+            "lv1": "~180% ATK",
+            "lv10": "~324% ATK"
+          }
+        },
+        {
+          "label": "Spiritvessel Skull (mỗi quả)",
+          "values": {
+            "lv1": "~120% ATK",
+            "lv10": "~216% ATK"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 70
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Mamaloaco's Frigid Rain",
+        "unlock": "A1",
+        "description": "Khi Itzpapa trên trường, đội gây Frozen/Melt → giảm 20% kháng Pyro & Hydro địch 12s; hồi 16 điểm Nightsoul (1 lần/8s)."
+      },
+      {
+        "name": "Itzpapalotl's Star Garments",
+        "unlock": "A4",
+        "description": "Frostfall Storm +90% Tinh Thông Nguyên Tố DMG; Ice Storm (Burst) +1200% Tinh Thông Nguyên Tố DMG; đội gây Nightsoul Burst hồi 4 điểm Nightsoul."
+      },
+      {
+        "name": "Songs of Profound Mystery",
+        "unlock": "Utility",
+        "description": "Nightsoul Burst hồi 20 Phlogiston."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Radiant Blades of Centzon Mimixcoah",
+        "description": "Dùng Skill nhận 10 Stellar Blade; nhân vật khác gây DMG tiêu 1 Blade để +200% Tinh Thông Nguyên Tố DMG; Frozen/Melt cho thêm 3 Blade (1 lần/8s); giảm 45% tiêu hao Phlogiston khi nhảy/ngắm/charged trên không."
+      },
+      {
+        "level": 2,
+        "name": "Heart Devourer's Travail",
+        "description": "Citlali +125 Tinh Thông Nguyên Tố; nhân vật được khiên/theo Itzpapa +250 Tinh Thông Nguyên Tố; Skill ban khiên cho cả đội gần đó; Mamaloaco's Frigid Rain tăng hiệu lực gấp đôi."
+      },
+      {
+        "level": 3,
+        "name": "Cloud Serpent's Feathered Crown",
+        "description": "+3 cấp Dawnfrost Darkstar (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "Death Defier's Spirit Skull",
+        "description": "Frostfall Storm trúng địch triệu hồi thêm Spiritvessel Skull (1800% Tinh Thông Nguyên Tố khi nổ, hồi 16 Nightsoul + 8 NL, 1 lần/8s)."
+      },
+      {
+        "level": 5,
+        "name": "Nemontemi's Hex",
+        "description": "+3 cấp Edict of Entwined Splendor (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "Teoiztac's Secret Pact",
+        "description": "Itzpapa luôn ở Opal Fire; mỗi điểm Nightsoul tiêu hao tích \"Cifra of the Secret Law\" (tối đa 40) → cả đội +1.5% Pyro/Hydro DMG, Citlali +2.5% DMG/điểm."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ/DPS phụ Cryo scaling Tinh Thông Nguyên Tố, khiên bền + giảm kháng Pyro/Hydro (bật Melt/Vaporize mạnh hơn). Combo phổ biến: Citlali + Mavuika/Yoimiya (Melt) hoặc Citlali + đội Freeze.",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "iansan",
+    "name": "Iansan",
+    "element": "Electro",
+    "weaponType": "Polearm",
+    "rarity": 5,
+    "nationInGame": "Natlan",
+    "releaseDate": "2025-03-26",
+    "baseStats": {
+      "lv1": {
+        "hp": 893.56,
+        "atk": 21.55,
+        "def": 53.51
+      },
+      "lv90": {
+        "hp": 10657.42,
+        "atk": 257.0,
+        "def": 638.16,
+        "ascensionStatType": "ATK%",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Weighted Spike",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "Thunderbolt Rush",
+      "description": "Lao tới gây Electro DMG dọc đường; hồi 54 điểm Nightsoul, 5s sau đó đòn thường đầu tiên tự kích 1 Swift Stormflight miễn phí thể lực.",
+      "scaling": [
+        {
+          "label": "Sát thương khi lao",
+          "values": {
+            "lv1": "~150% ATK",
+            "lv10": "~270% ATK"
+          }
+        }
+      ],
+      "cooldown": "8s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "The Three Principles of Power",
+      "description": "Dậm đất gây AoE Electro DMG, triệu hồi Kinetic Energy Scale theo nhân vật ra trận, buff ATK dựa vào điểm Nightsoul (≥42 điểm vào \"Ardent Support!\" buff mạnh hơn); Scale còn hồi điểm Nightsoul theo quãng đường di chuyển.",
+      "scaling": [
+        {
+          "label": "Sát thương khi dậm đất",
+          "values": {
+            "lv1": "~220% ATK",
+            "lv10": "~396% ATK"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 70
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Enhanced Resistance Training",
+        "unlock": "A1",
+        "description": "Sau Swift Stormflight trúng địch, 15s nhận Precise Movement (+20% ATK; hồi điểm Nightsoul qua Scale được +1 điểm, hoặc +4 nếu vừa có tiêu/hồi Nightsoul khác, 1 lần/2.8s)."
+      },
+      {
+        "name": "Kinetic Energy Gradient Test",
+        "unlock": "A4",
+        "description": "Đội gây Nightsoul Burst → 10s Warming Up: hồi ≥1 điểm Nightsoul thì hồi máu nhân vật ra trận = 60% ATK (1 lần/2.8s)."
+      },
+      {
+        "name": "Caloric Balancing Plan",
+        "unlock": "Utility",
+        "description": "Phlogiston <50% → hồi 10 (1 lần/10s)."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Starting's Never Easy",
+        "description": "Trong combat & Nightsoul's Blessing, mỗi 6 điểm Nightsoul tiêu hồi 15 NL (1 lần/18s)."
+      },
+      {
+        "level": 2,
+        "name": "Laziness is the Enemy!",
+        "description": "Dùng Burst nhận Precise Movement; nếu Iansan không ra trận trong lúc đó, +30% ATK cho nhân vật ra trận."
+      },
+      {
+        "level": 3,
+        "name": "Scientific Diet Planning",
+        "description": "+3 cấp Thunderbolt Rush (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "Slow and Steady Wins the Race",
+        "description": "Khi có Scale, nhân vật ra trận (khác Iansan) dùng Burst cho Iansan 2 lớp Surging Force; mỗi lần hồi Nightsoul qua Scale tiêu 1 lớp để hồi thêm 4 điểm."
+      },
+      {
+        "level": 5,
+        "name": "We Can Push It Further!",
+        "description": "+3 cấp The Three Principles of Power (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "Teachings of the Collective of Plenty",
+        "description": "Scale +3s thời lượng; khi hồi Nightsoul dư thừa, nhân vật ra trận +25% DMG 3s (Extreme Force)."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ off-field buff ATK cho nhân vật ra trận (kiểu National buffer), rất linh hoạt trong đội Electro-Charged/Hyperbloom. Combo phổ biến: Iansan + bất kỳ DPS chính cần buff ATK, đặc biệt đội Hyperbloom hoặc National.",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "varesa",
+    "name": "Varesa",
+    "element": "Electro",
+    "weaponType": "Catalyst",
+    "rarity": 5,
+    "nationInGame": "Natlan",
+    "releaseDate": "2025-03-26",
+    "baseStats": {
+      "lv1": {
+        "hp": 988.59,
+        "atk": 27.74,
+        "def": 60.85
+      },
+      "lv90": {
+        "hp": 12699.01,
+        "atk": 356.38,
+        "def": 781.62,
+        "ascensionStatType": "CRIT Rate",
+        "ascensionStatValue": 0.192
+      }
+    },
+    "normalAttack": {
+      "name": "By the Horns",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "Riding the Night-Rainbow",
+      "description": "Tap lao tới gây Electro DMG + \"Follow-Up Strike\" (đòn thường tiếp theo tự kích Charged miễn thể lực); Hold vào Sudden Onrush (di chuyển nhanh, tiêu điểm Nightsoul). 2 lượt dùng.",
+      "scaling": [
+        {
+          "label": "Sát thương khi lao (Tap)",
+          "values": {
+            "lv1": "~150% ATK",
+            "lv10": "~270% ATK"
+          }
+        }
+      ],
+      "cooldown": "~9s/lượt",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Guardian Vent!",
+      "description": "Cú đá bay từ trên cao gây AoE Electro DMG, hồi đầy điểm Nightsoul, vào Fiery Passion. Trong Fiery Passion, Burst gây DMG cao hơn; sau Plunge trong Fiery Passion còn có thể dùng bản Burst đặc biệt \"Volcano Kablam\" giá rẻ hơn qua Apex Drive.",
+      "scaling": [
+        {
+          "label": "Sát thương thường / trong Fiery Passion",
+          "values": {
+            "lv1": "~220% / ~280% ATK",
+            "lv10": "~396% / ~504% ATK"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Tag-Team Triple Jump!",
+        "unlock": "A1",
+        "description": "Sau Skill, 5s Rainbow Crash: Plunge Attack impact +50% ATK DMG (180% nếu đang Fiery Passion)."
+      },
+      {
+        "name": "The Hero Twice-Returned!",
+        "unlock": "A4",
+        "description": "Đội gây Nightsoul Burst → +35% ATK 12s (tối đa 2 lớp)."
+      },
+      {
+        "name": "A Torch That Incinerates Evil / Blazing Heart, Singular Advance!",
+        "unlock": "Utility",
+        "description": "Dùng Phlogiston duy trì Sudden Onrush; tăng tốc sprint."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Undying Passion",
+        "description": "Special Plunge (Thunderous Tornado Eruption) cũng kích Rainbow Crash; Rainbow Crash cho +180% ATK DMG dù có Fiery Passion hay không; Sudden Onrush giảm 30% tiêu hao."
+      },
+      {
+        "level": 2,
+        "name": "Beyond the Edge of Light",
+        "description": "Sau Plunge luôn vào Apex Drive (dù Fiery Passion hay không); Apex Drive tăng kháng ngắt hơn nữa; Plunge impact trúng địch hồi 11.5 NL."
+      },
+      {
+        "level": 3,
+        "name": "Unbowed Resolve",
+        "description": "+3 cấp Guardian Vent! (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "The Courage to Press On",
+        "description": "Dùng Burst: nếu không có Fiery Passion/Apex Drive → Diligent Refinement 15s (+500% ATK DMG Plunge impact, tối đa 20,000 DMG); nếu có 1 trong 2 trạng thái → Burst +100% DMG."
+      },
+      {
+        "level": 5,
+        "name": "Thoughts Floating on the Warm Breeze",
+        "description": "+3 cấp By the Horns (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "A Hero of Justice's Triumph",
+        "description": "Vào Apex Drive hồi 30 NL; Plunge & Burst +10% CRIT Rate, +100% CRIT DMG; Hold Skill (hoặc Tap trong Sudden Onrush) hồi đầy điểm Nightsoul."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính on-field Electro cơ động cao, tự buff qua chu trình Skill-Charged-Plunge. Combo phổ biến: Varesa + Xilonen/Kachina (Geo buff) hoặc Varesa + Furina/Iansan (Electro-Charged).",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  },
+  {
+    "id": "ifa",
+    "name": "Ifa",
+    "element": "Anemo",
+    "weaponType": "Catalyst",
+    "rarity": 4,
+    "nationInGame": "Natlan",
+    "releaseDate": "2025-05-07",
+    "baseStats": {
+      "lv1": {
+        "hp": 845.23,
+        "atk": 14.96,
+        "def": 50.76
+      },
+      "lv90": {
+        "hp": 10081.05,
+        "atk": 178.41,
+        "def": 605.4,
+        "ascensionStatType": "Elemental Mastery",
+        "ascensionStatValue": 96
+      }
+    },
+    "normalAttack": {
+      "name": "Rite of Dispelling Winds",
+      "hits": []
+    },
+    "elementalSkill": {
+      "name": "Airborne Disease Prevention",
+      "description": "Gọi Cacucu, vào Nightsoul's Blessing bay lượn; đòn thường (Tap/Hold) thành Tonicshot hồi máu cả đội. Giữ skill trong lúc bay để Plunge Attack. Nightsoul đầy 80 điểm khi kích hoạt.",
+      "scaling": [
+        {
+          "label": "Tonicshot (hồi máu, mỗi lần)",
+          "values": {
+            "lv1": "~9% ATK Ifa",
+            "lv10": "~16% ATK Ifa"
+          }
+        }
+      ],
+      "cooldown": null,
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Compound Sedation Field",
+      "description": "Bắn Therapeutic Sedative nổ tạo gió hút gây AoE Anemo DMG; nếu trúng địch dính Hydro/Pyro/Cryo/Electro thì áp Sedation Mark.",
+      "scaling": [
+        {
+          "label": "Sát thương",
+          "values": {
+            "lv1": "~190% ATK",
+            "lv10": "~342% ATK"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "additionalTalents": [],
+    "passives": [
+      {
+        "name": "Field Medic's Vision",
+        "unlock": "A1",
+        "description": "Trong Nightsoul's Blessing, mỗi điểm Nightsoul tổng của đội cho 1 điểm Rescue Essentials, tăng DMG Swirl/Stellar Swirl/Electro-Charged/Lunar-Charged của cả đội."
+      },
+      {
+        "name": "Mutual Aid Agreement",
+        "unlock": "A4",
+        "description": "Đội gây Nightsoul Burst → +80 Tinh Thông Nguyên Tố 10s."
+      },
+      {
+        "name": "Tactical Warm Compress Bandaging",
+        "unlock": "Utility",
+        "description": "Nhân vật ra trận HP<40% → tiêu 10 Phlogiston hồi 40% HP (1 lần/10s, không áp dụng trong Trầm Thủy)."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Vitiferous Elixir's Concoction",
+        "description": "Supporting Fire trúng địch hồi 6 NL (1 lần/8s)."
+      },
+      {
+        "level": 2,
+        "name": "Guiding Spirit of Ballistic Prayer",
+        "description": "Trong Nightsoul's Blessing, mỗi điểm Nightsoul đội vượt 60 cho thêm 4 điểm Rescue Essentials; tăng giới hạn Rescue Essentials thêm 50."
+      },
+      {
+        "level": 3,
+        "name": "Rebuttal in Negotiations With the Night",
+        "description": "+3 cấp Airborne Disease Prevention (tối đa cấp 15)."
+      },
+      {
+        "level": 4,
+        "name": "Decayed Vessel's Permutation",
+        "description": "Gió hút từ Burst +3s thời lượng; Ifa +100 Tinh Thông Nguyên Tố 15s sau Burst."
+      },
+      {
+        "level": 5,
+        "name": "Vow of Universal Coexistence",
+        "description": "+3 cấp Compound Sedation Field (tối đa cấp 15)."
+      },
+      {
+        "level": 6,
+        "name": "Oath on a Feathered Knot",
+        "description": "Bản Hold của Supporting Fire có 50% cơ hội bắn thêm 1 Tonicshot (120% ATK Anemo DMG, tính Normal Attack); ngoài combat giảm 20% tiêu hao Nightsoul/Phlogiston."
+      }
+    ],
+    "abyssRoleNotes": "Hỗ trợ hồi máu + khuếch đại DMG Swirl/Electro-Charged (giá rẻ 4★), phù hợp đội cần sustain nhẹ mà vẫn giữ DPS. Combo phổ biến: Ifa + Ororon/Sethos (Electro-Charged) hoặc Ifa + bất kỳ đội Swirl cần heal.",
+    "sourceFile": "nhan-vat/sumeru-natlan.md"
+  }
+]

@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "weapon.schema.json",
+  "title": "Weapon",
+  "type": "object",
+  "required": ["id", "name", "type", "rarity", "atkLv1", "atkLv90", "subStat", "acquisition", "bestCharacters", "sourceFile"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "name": { "type": "string" },
+    "type": { "type": "string", "enum": ["Sword", "Claymore", "Polearm", "Bow", "Catalyst"] },
+    "rarity": { "type": "integer", "minimum": 1, "maximum": 5 },
+    "atkLv1": { "type": ["number", "null"] },
+    "atkLv90": { "type": ["number", "null"] },
+    "subStat": {
+      "type": "object",
+      "required": ["type", "valueLv90"],
+      "description": "null/null cho vũ khí 1★-2★ (không có chỉ số phụ)",
+      "properties": {
+        "type": { "type": ["string", "null"], "description": "vd. CRIT Rate, CRIT DMG, ATK%, Elemental Mastery, Energy Recharge, Physical DMG Bonus, HP%, DEF%" },
+        "valueLv90": { "type": ["number", "null"], "description": "Số thập phân (0.496 = 49.6%); số nguyên thô nếu là Elemental Mastery" }
+      }
+    },
+    "passive": {
+      "type": ["object", "null"],
+      "description": "null cho vũ khí 1★-2★ (không có hiệu ứng đặc biệt)",
+      "required": ["name", "description", "effects"],
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "description": { "type": "string", "description": "Mô tả đầy đủ nguyên văn, giữ nguyên các dải số R1-R5 dạng text để không mất thông tin" },
+        "effects": {
+          "type": "array",
+          "description": "Mỗi hiệu ứng số có thể tách được từ mô tả (dạng 'X +20/25/30/35/40%') thành một track riêng để tính toán. Có thể rỗng nếu hiệu ứng thuần định tính (không số/không thang R1-R5).",
+          "items": {
+            "type": "object",
+            "required": ["stat", "r1", "r2", "r3", "r4", "r5"],
+            "properties": {
+              "stat": { "type": "string", "description": "vd. ATK Buff, Team ATK Buff, DMG Bonus, CRIT DMG Buff..." },
+              "r1": { "type": ["number", "string", "null"] },
+              "r2": { "type": ["number", "string", "null"] },
+              "r3": { "type": ["number", "string", "null"] },
+              "r4": { "type": ["number", "string", "null"] },
+              "r5": { "type": ["number", "string", "null"] }
+            }
+          }
+        }
+      }
+    },
+    "acquisition": { "type": "string" },
+    "bestCharacters": { "type": "array", "items": { "type": "string" } },
+    "sourceFile": { "type": "string" }
+  }
+}

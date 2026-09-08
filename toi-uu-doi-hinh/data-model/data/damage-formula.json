@@ -1,0 +1,138 @@
+{
+  "sourceFile": "cong-thuc-sat-thuong.md",
+  "dataFetchDate": "2026-09-08",
+  "resMultiplier": {
+    "formula": "%RES = %RES gốc của quái + %RES Bonus − %RES Debuff",
+    "breakpoints": [
+      { "condition": "RES < 0", "formula": "1 - RES/2" },
+      { "condition": "0 <= RES < 0.75", "formula": "1 - RES" },
+      { "condition": "RES >= 0.75", "formula": "1 / (4*RES + 1)" }
+    ],
+    "defaultMonsterResAllElements": 0.1,
+    "note": "Quái thường (không phải boss) mặc định 10% kháng mọi hệ kể cả Vật Lý trừ khi ghi chú khác trong quai-vat-la-hoan/. RES âm khuếch đại sát thương phi tuyến nên hạ RES (vd. Viridescent Venerer 4pc -40%) rất mạnh."
+  },
+  "defMultiplier": {
+    "formula": "DEF Multiplier = (Cấp nhân vật + 100) / [k * (Cấp quái + 100) + (Cấp nhân vật + 100)], k = (1 - %DEF Reduction người chơi gây) * (1 - %DEF Ignore người chơi gây)"
+  },
+  "elevationMultiplier": {
+    "formula": "1 + %Elevation",
+    "note": "Cơ chế mới, tách biệt DMG Bonus, chỉ xuất hiện ở một số cung mệnh 5★ liên quan Lunar-Charged/Lunar-Bloom/Lunar-Crystallize/Stellar-Conduct/Stellar Swirl."
+  },
+  "critMultiplier": {
+    "critFormula": "1 + %CRIT DMG",
+    "noCritFormula": "1",
+    "expectedValueFormula": "1 + CRIT Rate * CRIT DMG"
+  },
+  "amplifying": {
+    "formula": "Amplifying Multiplier = Hệ số gốc * (1 + %EM Bonus + %Reaction Bonus); DMG sau phản ứng = DMG gốc * Amplifying Multiplier",
+    "emBonusFormula": "2.78 * EM / (EM + 1400)",
+    "coefficients": {
+      "meltPyroTrigger": 2.0,
+      "meltCryoTrigger": 1.5,
+      "vaporizeHydroTrigger": 2.0,
+      "vaporizePyroTrigger": 1.5
+    },
+    "note": "meltPyroTrigger = Pyro đánh vào Cryo có sẵn (Melt mạnh). vaporizeHydroTrigger = Hydro đánh vào Pyro có sẵn (Vaporize mạnh). %Reaction Bonus đến từ thánh di vật/cung mệnh, vd. 4pc Crimson Witch of Flames +15% Vaporize/Melt."
+  },
+  "catalyze": {
+    "formula": "Additive Base DMG Bonus = Hệ số gốc * Level Multiplier(cấp nhân vật) * (1 + %EM Bonus + %Reaction Bonus); cộng thẳng vào Base DMG của đòn kế tiếp, không nhân %",
+    "emBonusFormula": "5 * EM / (EM + 1200)",
+    "coefficients": { "aggravate": 1.15, "spread": 1.25 }
+  },
+  "transformative": {
+    "formula": "DMG = [Hệ số gốc * Level Multiplier(cấp nhân vật kích hoạt) * (1 + %EM Bonus + %Reaction Bonus) + Reaction Additive Base DMG Bonus] * RES Multiplier(địch) * CRIT Multiplier(mặc định 1)",
+    "emBonusFormula": "16 * EM / (EM + 2000)",
+    "coefficients": {
+      "burning": 0.25,
+      "swirl": 0.6,
+      "superconduct": 1.5,
+      "electroCharged": 2.0,
+      "bloom": 2.0,
+      "overloaded": 2.75,
+      "burgeon": 3.0,
+      "hyperbloom": 3.0,
+      "shatter": 3.0
+    },
+    "levelMultiplier": {
+      "70": { "character": 765.640231, "monster": 720.170325 },
+      "80": { "character": 1077.443668, "monster": 946.370258 },
+      "85": { "character": 1253.835659, "monster": 1066.623598 },
+      "90": { "character": 1446.853458, "monster": 1202.813736 }
+    },
+    "note": "Độc lập hoàn toàn với ATK/DMG Bonus/CRIT thường; chỉ phụ thuộc cấp độ và EM của người KÍCH HOẠT phản ứng (chạm nguyên tố thứ hai/thứ ba), không phải người áp nguyên tố đầu tiên."
+  },
+  "lunarStellar": {
+    "emBonusFormula": "6 * EM / (EM + 2000)",
+    "note": "Cơ chế mới bản 6.x/7.0 (Nod-Krai/Snezhnaya): Lunar-Charged, Lunar-Bloom, Lunar-Crystallize (nhóm Lunar) và Stellar-Conduct, Stellar Swirl (nhóm Stellar Glimmer). Có thể gây trực tiếp (dùng CRIT thường của nhân vật) hoặc gián tiếp (đòn tính riêng theo tất cả nhân vật đã góp phần áp nguyên tố).",
+    "indirect": {
+      "appliesTo": ["Lunar-Charged", "Lunar-Crystallize", "Stellar Swirl"],
+      "perCharacterFormula": "DMG(cá nhân) = Hệ số gốc * Level Multiplier(cấp nhân vật đó) * (1 + %Reaction Base DMG Bonus) * (1 + %EM Bonus + %Reaction Bonus) * Elevation Multiplier * RES Multiplier(địch) * CRIT Multiplier(cá nhân đó)",
+      "coefficients": {
+        "stellarSwirlFirstHit": 0.75,
+        "lunarCrystallize": 1.6,
+        "stellarSwirlLv1Next": 2,
+        "stellarSwirlLv2": 3,
+        "lunarCharged": 3
+      },
+      "aggregationFormula": "DMG cuối = Cao nhất*0.6 + Nhì*0.3 + Ba*0.05 + Tư*0.05 (xếp hạng DMG cá nhân giảm dần, tối đa 4 người góp mặt; nếu ít hơn 4 người thì bỏ phần thiếu, giữ nguyên hệ số phần còn lại)"
+    },
+    "direct": {
+      "appliesTo": ["Lunar-Bloom", "Stellar Swirl", "Lunar-Crystallize", "Lunar-Charged", "Stellar-Conduct"],
+      "formula": "DMG(trực tiếp) = [Hệ số gốc * %Kỹ năng * Chỉ số * Base DMG Multiplier * (1 + %Reaction Base DMG Bonus) * (1 + %EM Bonus + %Reaction Bonus) + Reaction Additive Base DMG Bonus] * Elevation Multiplier * RES Multiplier(địch) * CRIT Multiplier",
+      "coefficients": {
+        "lunarBloom": 1,
+        "stellarSwirl": 1,
+        "lunarCrystallize": 1.6,
+        "lunarCharged": 3,
+        "stellarConductMin": 1,
+        "stellarConductMax": 2
+      },
+      "note": "stellarConduct bắt đầu 1.4, +0.05 mỗi đòn Băng/Điện ghi nhận trước đó, tối đa 12 đòn (tối đa hệ số 2)."
+    },
+    "reactionBaseDmgBonusSources": [
+      { "character": "Columbina", "reactionType": "Lunar-Charged/Bloom/Crystallize", "maxBonus": 0.07 },
+      { "character": "Lauma", "reactionType": "Lunar-Bloom", "maxBonus": 0.14 },
+      { "character": "Nefer", "reactionType": "Lunar-Bloom", "maxBonus": 0.14 },
+      { "character": "Flins", "reactionType": "Lunar-Charged", "maxBonus": 0.14 },
+      { "character": "Ineffa", "reactionType": "Lunar-Charged", "maxBonus": 0.14 },
+      { "character": "Zibai", "reactionType": "Lunar-Crystallize", "maxBonus": 0.14 },
+      { "character": "Linnea", "reactionType": "Lunar-Crystallize", "maxBonus": 0.14 },
+      { "character": "Sandrone", "reactionType": "Stellar-Conduct, Stellar Swirl", "maxBonus": 0.14 },
+      { "character": "Odette", "reactionType": "Stellar-Conduct, Stellar Swirl", "maxBonus": 0.14 },
+      { "character": "traveler-cryo", "reactionType": "Stellar-Conduct, Stellar Swirl", "maxBonus": 0.07 }
+    ]
+  },
+  "trueDamage": {
+    "note": "Bỏ qua hoàn toàn DEF/RES/DMG Reduction của địch (vẫn bị khiên chặn). Chỉ tăng qua Vaporize/Melt. Hiếm khi liên quan build đội hình (sát thương rơi/va chạm, Ley Line Disorder đặc biệt, Electrogranum, Thunderstone...)."
+  },
+  "critValueHeuristic": {
+    "formula": "Crit Value = 2 * %CRIT Rate + %CRIT DMG",
+    "targetRatio": "CRIT Rate : CRIT DMG ≈ 1:2 (vd. 70%:140%)"
+  },
+  "workedExample": {
+    "sourceNote": "Dịch nguyên văn ví dụ chính thức trên Genshin Impact Wiki (Fandom), trang Damage. Dùng để unit-test một engine tính DPS tự viết theo file này.",
+    "scenario": "Mona cấp 70 (ATK 1500, EM 150, CRIT DMG 80%, Hydro DMG Bonus 40%) áp Hydro lên Fatui Agent cấp 75 → Sucrose (4pc Viridescent Venerer) Khuếch Tán (Swirl) hệ Hydro, hạ 40% kháng Hydro địch → Hydro hết hiệu lực → Klee (C2 Explosive Frags) đánh Pyro vào, áp Pyro và hạ 23% DEF địch → Mona tung Nộ (Stellaris Phantasm cấp 6, hệ số 6.19), trúng đòn này kích hoạt Vaporize (Hydro của Mona kích hoạt lên Pyro có sẵn, hệ số 2.0), ăn chí mạng; Klee C2 cộng thêm 52% DMG Bonus cho đòn vừa gây phản ứng.",
+    "inputs": {
+      "characterLevel": 70,
+      "monsterLevel": 75,
+      "atk": 1500,
+      "elementalMastery": 150,
+      "critDmg": 0.8,
+      "hydroDmgBonus": 0.4,
+      "klee_c2_reactionDmgBonus": 0.52,
+      "skillMultiplierStellarisPhantasmLv6": 6.19,
+      "defReductionFromKleeC2": 0.23,
+      "resHydroBase": 0.1,
+      "resHydroReductionFromSucroseSwirl": 0.4
+    },
+    "steps": {
+      "defMultiplier": "(70+100) / [(1-0.23)*(75+100) + 70+100] = 0.55783",
+      "resHydroEffective": "0.10 - 0.40 = -0.30",
+      "resMultiplier": "1 - (-0.30/2) = 1.15",
+      "emBonusAmplifying": "2.78 * 150/(150+1400) = 0.26903",
+      "amplifyingMultiplier": "2.0 * (1 + 0.26903) = 2.53806",
+      "critDmgFormula": "1500 * 6.19 * (1 + 0.40 + 0.52) * 0.55783 * 1.15 * 2.53806 * (1 + 0.8)"
+    },
+    "result": { "value": 52246.50, "unit": "Hydro DMG (CRIT)" }
+  }
+}
