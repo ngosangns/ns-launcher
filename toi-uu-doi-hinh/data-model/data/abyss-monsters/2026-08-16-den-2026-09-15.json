@@ -5,6 +5,13 @@
   "periodEnd": "2026-09-15",
   "gameVersion": "7.0",
   "mechanicNotes": "Stellar Glimmer Reaction (Stellar Swirl = biến thể Cryo Swirl, Stellar-Conduct = biến thể Superconduct) chỉ kích hoạt được khi đội có Sandrone, traveler-cryo hoặc Odette (passive Stellar Jubilee). Volkodlak Basher (Tầng 9) bị choáng khi trúng Stellar Glimmer Reaction lúc gầm/ra đòn.",
+  "blessingOfTheAbyssalMoon": {
+    "name": "Luster-Piercing",
+    "description": "Khi nhân vật đang thi triển đứng trong Polestar Field, các đòn đánh gây sát thương lên địch sẽ tạo thêm một đợt sóng xung kích tại vị trí địch gây sát thương thật (True DMG). Hiệu ứng này kích hoạt tối đa 1 lần mỗi 4 giây.",
+    "timeStart": "2026-08-16 04:00:00",
+    "timeEnd": "2026-09-16 03:59:59",
+    "relatedMechanic": "Polestar Field — vùng hiệu ứng do Starlight Prism duy trì 7s sau khi kích hoạt Stellar-Conduct: hệ số phản ứng Stellar-Conduct +40%+5%/đòn Cryo-Electro ghi nhận (tối đa 12 đòn, hệ số tối đa 2.0, khớp damage-formula.json lunarStellar.direct.coefficients.stellarConductMin/Max); nhân vật trong vùng +20% (hoặc +28% nếu có ghi nhận đòn) sát thương Cryo/Electro. Buff này áp dụng cho MỌI tầng 1-12 suốt cả chu kỳ, khuếch đại thêm giá trị của Sandrone/traveler-cryo/Odette ngoài phần Ley Line Disorder riêng của từng tầng."
+  },
   "floors": [
     {
       "floor": 9,

@@ -57,6 +57,11 @@ Mỗi entity có `id` dạng slug kebab-case (vd. `hu-tao`, `wolfs-gravestone`,
   `resistanceNotes` dùng để đối chiếu với `Character.element` /
   `ArtifactSet` giảm kháng (vd. Viridescent Venerer 4pc) khi tính
   `RES Multiplier` trong `damage-formula.json`.
+- `AbyssCycle.blessingOfTheAbyssalMoon` là buff áp dụng cho **toàn bộ**
+  Trầm Thủy (mọi tầng 1–12) suốt cả chu kỳ — khác với
+  `floors[].leyLineDisorder` vốn chỉ áp dụng riêng từng tầng 9–12 (đôi khi
+  khác nhau theo nửa tầng). Cả hai loại buff đều cần cộng dồn khi tính DMG
+  kỳ vọng ở bước 5 bên dưới.
 - `Nhà Lữ Hành (Traveler)` được tách thành 7 `Character` riêng theo nguyên
   tố (`traveler-anemo` … `traveler-cryo`) vì mỗi nguyên tố là một lựa chọn
   đội hình độc lập, dù share chung base stats.

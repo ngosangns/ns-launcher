@@ -4,12 +4,24 @@
   "title": "AbyssCycle",
   "description": "Dữ liệu quái Trầm Thủy của một chu kỳ 2 tuần (tầng 9-12).",
   "type": "object",
-  "required": ["periodStart", "periodEnd", "gameVersion", "floors"],
+  "required": ["periodStart", "periodEnd", "gameVersion", "blessingOfTheAbyssalMoon", "floors"],
   "properties": {
     "periodStart": { "type": "string", "format": "date" },
     "periodEnd": { "type": "string", "format": "date" },
     "gameVersion": { "type": "string" },
     "mechanicNotes": { "type": "string", "description": "Ghi chú cơ chế mới/đặc biệt của bản này (vd. Stellar Glimmer Reaction)" },
+    "blessingOfTheAbyssalMoon": {
+      "type": "object",
+      "required": ["name", "description", "timeStart", "timeEnd"],
+      "description": "Buff áp dụng cho TOÀN BỘ Trầm Thủy (mọi tầng 1-12) suốt cả chu kỳ — khác với leyLineDisorder trong floors[] vốn chỉ áp dụng riêng từng tầng 9-12.",
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "timeStart": { "type": "string" },
+        "timeEnd": { "type": "string" },
+        "relatedMechanic": { "type": ["string", "null"], "description": "Cơ chế nền liên quan nếu buff gắn với 1 phản ứng/hiệu ứng cụ thể (vd. Polestar Field / Stellar-Conduct)" }
+      }
+    },
     "floors": {
       "type": "array",
       "items": {

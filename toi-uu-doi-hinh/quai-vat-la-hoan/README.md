@@ -11,8 +11,13 @@ thường không đổi theo mùa) cần ghi:
 - Với mỗi loại quái: kích thước (nhỏ/vừa/lớn/trùm — ảnh hưởng AoE), nguyên
   tố tấn công/khiên nguyên tố (nếu có), điểm yếu (nguyên tố khắc chế, có bị
   choáng/đóng băng/cảm điện dễ không), lượng HP tham khảo.
-- Hiệu ứng chúc phúc (Ley Line Disorder / blessing) áp dụng cho toàn màn
-  Trầm Thủy trong mùa này.
+- Hai loại chúc phúc, cần ghi rõ riêng biệt:
+  - **Uyên Nguyệt Chúc Phúc (Blessing of the Abyssal Moon)**: áp dụng cho
+    TOÀN BỘ Trầm Thủy (mọi tầng 1–12) suốt cả chu kỳ, chỉ 1 buff duy nhất
+    mỗi mùa (nguồn: trang Fandom `Spiral Abyss/Blessing of the Abyssal
+    Moon/<ngày-bắt-đầu>`).
+  - **Ley Line Disorder**: riêng từng tầng 9–12, khác nhau mỗi tầng (đôi
+    khi khác nhau theo nửa tầng).
 - Gợi ý loại đội hình khắc chế (không cần đội hình cụ thể, chỉ cần định
   hướng nguyên tố/cơ chế).
 
