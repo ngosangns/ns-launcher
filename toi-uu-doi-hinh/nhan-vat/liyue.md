@@ -22,8 +22,17 @@ nên không đưa vào.
 
 # Nhân vật — Liyue & Snezhnaya
 
-Tổng cộng **26 nhân vật**: 21 Liyue (10 tướng 5★, 11 tướng 4★) + 5 Snezhnaya (4 tướng 5★, 1 tướng
-4★).
+Tổng cộng **27 nhân vật**: 21 Liyue (10 tướng 5★, 11 tướng 4★) + 5 Snezhnaya (4 tướng 5★, 1 tướng
+4★) + Skirk (không có quốc gia trong game, xếp cùng nhóm Snezhnaya vì gắn với Tartaglia/Abyss).
+
+> **Sửa lỗi 2026-09-08 (phát hiện khi dựng thuật toán gợi ý đội hình):** toàn bộ 26 nhân vật trong
+> file này trước đó có **chỉ số cấp 90 sai** — bản đầu tính `cấp 90 = chỉ số cấp 1 + hệ số đột phá`
+> mà **quên nhân hệ số đường cong tăng trưởng theo cấp**, khiến HP/ATK/DEF thấp hơn thực tế 60-70%
+> (ví dụ Xiangling ATK ghi 86.42 trong khi đúng là 225.14). Đã tính lại toàn bộ theo
+> `initValue × hệ số đường cong + addProps`, với hệ số lấy theo **mã đường cong trong API**
+> (`GROW_CURVE_ATTACK_S5` = 8.739030 cho 5★, `S4` = 8.349055 cho 4★ — lưu ý Nhà Lữ Hành là 5★
+> nhưng dùng đường cong S4). Kết quả đã đối chiếu khớp giá trị cộng đồng đã biết (Hu Tao 15.552 HP
+> / 106 ATK, Zhongli 14.695 HP / 251 ATK, Xiangling 225 ATK).
 
 ## Mục lục
 
@@ -36,7 +45,7 @@ Tổng cộng **26 nhân vật**: 21 Liyue (10 tướng 5★, 11 tướng 4★) 
 [Yun Jin](#yun-jin) · [Yaoyao](#yaoyao) · [Gaming](#gaming) · [Lan Yan](#lan-yan)
 
 **Snezhnaya:** [Tartaglia](#tartaglia-childe) · [Arlecchino](#arlecchino) · [Sandrone](#sandrone) ·
-[Odette](#odette) · [Alyosha](#alyosha)
+[Odette](#odette) · [Alyosha](#alyosha) · [Skirk](#skirk)
 
 ---
 
@@ -55,7 +64,7 @@ Tổng cộng **26 nhân vật**: 21 Liyue (10 tướng 5★, 11 tướng 4★) 
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 991.45 | 27.19 | 62.22 |
-| 90 (đột phá 6) | 4071.44 | 111.63 | 255.53 |
+| 90 (đột phá 6) | 12,735.78 | 349.20 | 799.30 |
 
 Chỉ số đột phá phụ (cấp 90): **CRIT Rate +19.2%**
 
@@ -128,7 +137,7 @@ máu/khiên. Combo phổ biến: Anemo-Pyro (Xiao-Bennett-Faruzan) hoặc Anemo-
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 1143.98 | 19.55 | 57.44 |
-| 90 (đột phá 6) | 5841.80 | 99.83 | 293.31 |
+| 90 (đột phá 6) | 14,695.13 | 251.14 | 737.81 |
 
 Chỉ số đột phá phụ (cấp 90): **Geo DMG Bonus +28.8%**
 
@@ -205,7 +214,7 @@ hoá đá, gần như đi được mọi đội. Phổ biến trong đội Hyper
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 962.85 | 22.34 | 71.80 |
-| 90 (đột phá 6) | 3953.99 | 91.75 | 294.84 |
+| 90 (đột phá 6) | 12,368.40 | 287.01 | 922.27 |
 
 Chỉ số đột phá phụ (cấp 90): **Healing Bonus +22.15%**
 
@@ -282,7 +291,7 @@ cùng Ganyu/Mona hoặc bất kỳ đội Cryo cần cứu hộ (C6).
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 762.66 | 26.07 | 49.06 |
-| 90 (đột phá 6) | 3131.88 | 107.04 | 201.47 |
+| 90 (đột phá 6) | 9,796.75 | 334.85 | 630.22 |
 
 Chỉ số đột phá phụ (cấp 90): **CRIT DMG +38.4%**
 
@@ -356,7 +365,7 @@ Freeze với Hydro (Ganyu-Mona-Kokomi-Diona).
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 1020.05 | 25.14 | 62.22 |
-| 90 (đột phá 6) | 4188.89 | 103.22 | 255.53 |
+| 90 (đột phá 6) | 13,103.16 | 322.89 | 799.30 |
 
 Chỉ số đột phá phụ (cấp 90): **CRIT DMG +38.4%**
 
@@ -430,7 +439,7 @@ Hyperbloom (Electro-Dendro với Nahida/Kuki Shinobu) hoặc Aggravate.
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 1210.72 | 8.29 | 68.21 |
-| 90 (đột phá 6) | 4971.86 | 34.02 | 280.10 |
+| 90 (đột phá 6) | 15,552.34 | 106.43 | 876.15 |
 
 Chỉ số đột phá phụ (cấp 90): **CRIT DMG +38.4%**
 
@@ -506,7 +515,7 @@ CRIT Rate +100% (hồi chiêu 60s). |
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 1124.92 | 18.99 | 42.66 |
-| 90 (đột phá 6) | 4619.52 | 77.99 | 175.18 |
+| 90 (đột phá 6) | 14,450.21 | 243.96 | 547.98 |
 
 Chỉ số đột phá phụ (cấp 90): **CRIT Rate +19.2%**
 
@@ -578,7 +587,7 @@ Hu Tao hoặc Hyperbloom/Bloom cho đội Dendro (Yelan-Nahida-...).
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 1011.47 | 23.65 | 64.62 |
-| 90 (đột phá 6) | 4153.65 | 97.10 | 265.36 |
+| 90 (đột phá 6) | 12,992.94 | 303.76 | 830.04 |
 
 Chỉ số đột phá phụ (cấp 90): **ATK% +28.8%**
 
@@ -653,7 +662,7 @@ lần giới hạn. |
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 1039.12 | 14.99 | 38.89 |
-| 90 (đột phá 6) | 4267.18 | 61.55 | 159.71 |
+| 90 (đột phá 6) | 13,348.07 | 192.54 | 499.56 |
 
 Chỉ số đột phá phụ (cấp 90): **HP% +28.8%**
 
@@ -725,7 +734,7 @@ Bloom, Aggravate), phổ biến cùng Nahida/Kuki Shinobu hoặc Yelan/Xingqiu.
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 810.32 | 26.07 | 44.57 |
-| 90 (đột phá 6) | 3327.62 | 107.04 | 183.05 |
+| 90 (đột phá 6) | 10,409.05 | 334.85 | 572.57 |
 
 Chỉ số đột phá phụ (cấp 90): **ATK% +28.8%**
 
@@ -799,7 +808,7 @@ plunge/on-field cần đòn nhảy liên tục (đội "Plunge team").
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 911.79 | 18.88 | 56.08 |
-| 90 (đột phá 6) | 4174.16 | 86.42 | 256.74 |
+| 90 (đột phá 6) | 10,874.97 | 225.14 | 668.87 |
 
 Chỉ số đột phá phụ (cấp 90): **Elemental Mastery +96**
 
@@ -867,7 +876,7 @@ Xiangling sát thương Pyro diện rộng. |
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 1094.15 | 18.88 | 54.36 |
-| 90 (đột phá 6) | 4914.85 | 85.54 | 194.51 |
+| 90 (đột phá 6) | 13,049.96 | 225.14 | 648.40 |
 
 Chỉ số đột phá phụ (cấp 90): **Electro DMG Bonus +24%**
 
@@ -943,7 +952,7 @@ thái Stellar-Conduct: -15% kháng Cryo và +200 Elemental Mastery. |
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 857.08 | 16.92 | 63.52 |
-| 90 (đột phá 6) | 3066.63 | 60.53 | 227.27 |
+| 90 (đột phá 6) | 10,222.47 | 201.78 | 757.60 |
 
 Chỉ số đột phá phụ (cấp 90): **ATK% +24%**
 
@@ -1014,7 +1023,7 @@ nền tảng cho mọi đội Vaporize (Hu Tao/Yoimiya), Freeze hoặc Electro-C
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 820.61 | 17.81 | 48.07 |
-| 90 (đột phá 6) | 3756.74 | 81.53 | 220.06 |
+| 90 (đột phá 6) | 9,787.47 | 212.40 | 573.32 |
 
 Chỉ số đột phá phụ (cấp 90): **Geo DMG Bonus +24%**
 
@@ -1079,7 +1088,7 @@ Zhongli/Albedo hoặc đội Crystallize.
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 920.91 | 18.70 | 54.36 |
-| 90 (đột phá 6) | 3294.99 | 66.90 | 194.51 |
+| 90 (đột phá 6) | 10,983.71 | 223.02 | 648.40 |
 
 Chỉ số đột phá phụ (cấp 90): **ATK% +24%**
 
@@ -1147,7 +1156,7 @@ hoặc Freeze phụ trợ.
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 939.14 | 20.84 | 66.95 |
-| 90 (đột phá 6) | 3360.24 | 74.55 | 239.56 |
+| 90 (đột phá 6) | 11,201.21 | 248.51 | 798.55 |
 
 Chỉ số đột phá phụ (cấp 90): **ATK% +24%**
 
@@ -1220,7 +1229,7 @@ off-field phụ khi cần khiên.
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 784.14 | 20.12 | 49.21 |
-| 90 (đột phá 6) | 3573.54* | 261.35* | 396.31* |
+| 90 (đột phá 6) | 9,352.47* | 240.01* | 586.97* |
 
 \* Ba giá trị cấp 90 do công cụ trích xuất tự tính lại từ đường cong tăng trưởng thay vì đọc trực
 tiếp trường dữ liệu, độ chính xác thấp hơn các nhân vật khác — "chưa xác nhận" chính xác tuyệt đối,
@@ -1291,7 +1300,7 @@ Hydro (Xingqiu/Yelan) để tối ưu sát thương.
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 893.56 | 16.03 | 61.57 |
-| 90 (đột phá 6) | 3197.12 | 57.35 | 220.31 |
+| 90 (đột phá 6) | 10,657.47 | 191.16 | 734.40 |
 
 Chỉ số đột phá phụ (cấp 90): **Energy Recharge +26.67%**
 
@@ -1363,7 +1372,7 @@ thường trong 12s. |
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 1030.32 | 17.81 | 62.95 |
-| 90 (đột phá 6) | 3686.48 | 63.72 | 225.23 |
+| 90 (đột phá 6) | 12,288.71 | 212.40 | 750.78 |
 
 Chỉ số đột phá phụ (cấp 90): **HP% +24%**
 
@@ -1439,7 +1448,7 @@ Lồ: gây sát thương Dendro diện rộng bằng 75% ATK và hồi 7.5% Max 
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 957.38 | 25.29 | 58.94 |
-| 90 (đột phá 6) | 4372.78 | 109.27 | 277.68 |
+| 90 (đột phá 6) | 11,418.71 | 301.61 | 703.00 |
 
 Chỉ số đột phá phụ (cấp 90): **ATK% +24%**
 
@@ -1507,7 +1516,7 @@ hợp Vaporize/Melt hoặc đội Hyperbloom-Burning tận dụng Pyro liên t�
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 775.02 | 21.01 | 48.64 |
-| 90 (đột phá 6) | 2773.02 | 75.19 | 174.04 |
+| 90 (đột phá 6) | 9,243.72 | 250.63 | 580.15 |
 
 Chỉ số đột phá phụ (cấp 90): **ATK% +24%**
 
@@ -1587,7 +1596,7 @@ phản ứng lan toả (Swirl, Hyperbloom) cần khuếch tán nguyên tố di�
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 1020.05 | 23.46 | 63.42 |
-| 90 (đột phá 6) | 4188.89 | 96.34 | 260.44 |
+| 90 (đột phá 6) | 13,103.16 | 301.37 | 814.67 |
 
 Chỉ số đột phá phụ (cấp 90): **Hydro DMG Bonus +28.8%**
 
@@ -1663,7 +1672,7 @@ Xiangling) hoặc Electro-Charged/Freeze với Cryo-Electro.
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 1020.05 | 26.63 | 59.53 |
-| 90 (đột phá 6) | 4188.89 | 109.34 | 244.47 |
+| 90 (đột phá 6) | 13,103.16 | 342.03 | 764.71 |
 
 Chỉ số đột phá phụ (cấp 90): **CRIT DMG +38.4%**
 
@@ -1744,7 +1753,7 @@ hồi chiêu Balemoon Rising, hồi 15 Năng Lượng (hồi chiêu 10s). |
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 1029.59 | 26.63 | 58.57 |
-| 90 (đột phá 6) | 4228.04 | 109.34 | 240.54 |
+| 90 (đột phá 6) | 13,225.61 | 342.03 | 752.42 |
 
 Chỉ số đột phá phụ (cấp 90): **CRIT Rate +19.2%**
 
@@ -1818,7 +1827,7 @@ cùng nguồn Electro; đội hình mẫu: Sandrone-nguồn Electro off-field-h�
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 1010.52 | 26.07 | 61.27 |
-| 90 (đột phá 6) | 4149.74 | 107.04 | 251.60 |
+| 90 (đột phá 6) | 12,980.70 | 334.85 | 787.00 |
 
 Chỉ số đột phá phụ (cấp 90): **CRIT DMG +38.4%**
 
@@ -1899,7 +1908,7 @@ Glimmer (Stellar-Conduct với Electro, Stellar Swirl với Anemo) cho cả đ�
 | Cấp | HP | ATK | DEF |
 |---|---|---|---|
 | 1 | 1002.97 | 22.26 | 58.94 |
-| 90 (đột phá 6) | 3588.61 | 79.65 | 210.89 |
+| 90 (đột phá 6) | 11,962.46 | 265.50 | 703.00 |
 
 Chỉ số đột phá phụ (cấp 90): **Energy Recharge +26.67%**
 
@@ -1958,3 +1967,91 @@ Mastery cho nhân vật đang chiến đấu. |
 
 **Gợi ý đội hình Trầm Thủy**: Hỗ trợ off-field hồi máu + buff sát thương theo Energy Recharge, chủ
 lực trong đội Stellar-Conduct (Electro-Cryo, ví dụ cùng Sandrone/Odette).
+
+---
+
+## Skirk
+
+**Thông tin chung**
+
+| Nguyên tố | Vũ khí | Độ hiếm | Quốc gia | Ngày ra mắt |
+|---|---|---|---|---|
+| Cryo | Sword | 5★ | — (nhãn nội bộ API: `OMNI_SCOURGE`; sư phụ của Tartaglia, gắn với Abyss) | 16/06/2025 (bản 5.7) |
+
+> Bổ sung 2026-09-08: trước đó thiếu hoàn toàn khỏi kho dữ liệu. Skirk không có "quốc gia trong
+> game" như các nhân vật khác nên được xếp vào file này theo quan hệ cốt truyện (sư phụ của
+> Tartaglia — Snezhnaya/Fatui).
+
+**Chỉ số cơ bản**
+
+| Cấp | HP | ATK | DEF |
+|---|---|---|---|
+| 1 | 966.67 | 27.93 | 62.76 |
+| 90 (đột phá 6) | 12,417.38 | 358.77 | 806.22 |
+
+Chỉ số đột phá phụ (cấp 90): **CRIT DMG +38.4%**
+
+**Bộ kỹ năng**
+
+*Đòn thường — Havoc: Sunder* (bộ đòn thường mặc định)
+
+| Đòn | Cấp 1 | Cấp 10 |
+|---|---|---|
+| 1-Hit | 54.52% | 107.78% |
+| 2-Hit | 49.79% | 98.43% |
+| 3-Hit ×2 | 32.42%+32.42% | 64.09%+64.09% |
+| 4-Hit | 60.80% | 120.19% |
+| 5-Hit | 82.90% | 163.88% |
+| Trọng kích ×2 | 66.82% | 132.09% |
+| Nhảy rơi | 63.93% | 126.38% |
+| Nhảy thấp/cao | 127.84%/159.68% | 252.70%/315.64% |
+
+*Kỹ năng — Havoc: Warp* (Hồi chiêu: 15s | Thời lượng: 20s): vào trạng thái
+**Seven-Phase Flash** — đòn thường hoá Cryo và đổi sang bộ đòn riêng mạnh hơn hẳn, đồng thời tích
+tài nguyên **Serpent's Subtlety** dùng cho Bùng nổ.
+
+| Chỉ số (bộ đòn Seven-Phase Flash) | Cấp 1 | Cấp 10 (max 13 nhờ C5) |
+|---|---|---|
+| Warp 1-Hit | 132.82% | 262.56% |
+| Warp 2-Hit | 119.80% | 236.81% |
+| Warp 3-Hit ×2 | 75.72%+75.72% | 149.69%+149.69% |
+| Warp 4-Hit ×2 | 80.54%+80.54% | 159.20%+159.20% |
+| Warp 5-Hit | 196.62% | 388.68% |
+| Warp Trọng kích ×3 | 44.55% | 88.06% |
+
+*Bùng nổ — Havoc: Ruin* (Hồi chiêu: 15s | không tốn năng lượng, tiêu Serpent's Subtlety): chém 5
+nhát rồi 1 nhát kết liễu, toàn bộ là DMG Cryo. Sát thương cộng thêm theo số điểm Serpent's Subtlety
+và số **Void Rift** hấp thụ được.
+
+| Chỉ số | Cấp 1 | Cấp 10 (max 13 nhờ C3) |
+|---|---|---|
+| Chém ×5 | 122.76% ATK | 220.97% ATK |
+| Nhát kết liễu | 204.60% ATK | 368.28% ATK |
+| Bonus theo Serpent's Subtlety | 19.32% ATK/điểm | 34.78% ATK/điểm |
+| Bonus theo 0/1/2/3 Void Rift | 3.5%/6.6%/8.8%/11.0% | 8%/12%/16%/20% |
+
+**Passive A1 — Reason Beyond Reason:** khi đồng đội gần đó kích hoạt Đóng Băng, Siêu Dẫn,
+**Stellar-Conduct**, Cryo Swirl, **Stellar Swirl** hoặc Cryo Crystallize lên địch, tạo 1 **Void
+Rift** gần địch (2.5s/lần, tối đa 3 Void Rift do Skirk tạo cùng lúc); Skirk hấp thụ Void Rift để
+tăng sát thương Bùng nổ.
+**Passive A4 — Return to Oblivion:** khi đồng đội Hydro đánh trúng bằng đòn Hydro, hoặc đồng đội
+Cryo khác Skirk đánh trúng bằng đòn Cryo, Skirk nhận 1 lớp **Death's Crossing** (20s, tối đa 3 lớp,
+mỗi nhân vật chỉ cấp được 1 lớp) — mỗi lớp tăng sát thương Đòn thường.
+**Utility Passive — Mutual Weapons Mentorship:** nếu cả đội chỉ gồm Hydro và/hoặc Cryo, và có ít
+nhất 1 Hydro + 1 Cryo, **toàn đội +1 cấp Kỹ năng nguyên tố**.
+
+**Cung mệnh**
+1. Far to Fall — mỗi Void Rift hấp thụ triệu hồi 1 lưỡi pha lê gây 500% ATK sát thương Cryo (tính
+   là sát thương Trọng kích).
+2. Into the Abyss — sau khi dùng Havoc: Warp nhận thêm 10 điểm Serpent's Subtlety; khi dùng Havoc:
+   Ruin, mượn thêm tối đa 10 điểm để tăng sát thương lượt đó.
+3. Serendipitous Sin — tăng cấp Havoc: Ruin +3 (tối đa 15).
+4. Fractured Flow — mỗi lớp Death's Crossing còn tăng ATK Skirk 10%/20%/40% (cần mở A4).
+5. End of Wishes — tăng cấp Havoc: Warp +3 (tối đa 15).
+6. To the Source — mỗi Void Rift hấp thụ cho 1 lớp Havoc: Sever; tiêu lớp này để tung đòn phối hợp
+   và giảm sát thương nhận vào khi thi triển.
+
+**Vai trò đội hình Trầm Thủy:** DPS chính on-field Cryo scale ATK, dựa vào đòn thường trong trạng
+thái Seven-Phase Flash. Đội **thuần Hydro + Cryo** gần như bắt buộc để mở Utility Passive (+1 cấp
+Kỹ năng toàn đội) và để đồng đội cấp lớp Death's Crossing. Combo phổ biến: Skirk + Furina +
+Escoffier/Citlali (Đóng Băng hoặc Tan Chảy tuỳ đội).

@@ -5,22 +5,22 @@
   "files": {
     "characters": {
       "mondstadt.json": {
-        "count": 41,
-        "note": "24 Mondstadt + 10 Nod-Krai + 7 Traveler element-variants (traveler-anemo..traveler-cryo). Zibai (Nod-Krai) bổ sung 2026-09-08 sau khi phát hiện anh bị loại nhầm khỏi cả file này lẫn liyue.md do mâu thuẫn ghi chú region."
+        "count": 43,
+        "note": "25 Mondstadt + 10 Nod-Krai + 7 Traveler element-variants + Aloy (collab, không quốc gia). Zibai bổ sung 2026-09-08; Dahlia + Aloy bổ sung 2026-09-08 (đợt đối chiếu toàn bộ danh sách với API)."
       },
       "liyue.json": {
-        "count": 26,
-        "note": "21 Liyue + 5 Snezhnaya (Tartaglia, Arlecchino, Sandrone, Odette, Alyosha)"
+        "count": 27,
+        "note": "21 Liyue + 5 Snezhnaya + Skirk (không có quốc gia trong game, xếp cùng nhóm Snezhnaya). CẢNH BÁO LỊCH SỬ: 26 nhân vật gốc của file này từng có chỉ số cấp 90 sai 60-70% (quên hệ số đường cong tăng trưởng), đã sửa toàn bộ 2026-09-08."
       },
       "inazuma-fontaine.json": {
-        "count": 29,
-        "note": "16 Inazuma + 13 Fontaine"
+        "count": 30,
+        "note": "17 Inazuma + 13 Fontaine. Kaedehara Kazuha bổ sung 2026-09-08."
       },
       "sumeru-natlan.json": {
         "count": 25,
         "note": "14 Sumeru + 11 Natlan"
       },
-      "total": 121
+      "total": 125
     },
     "weapons": {
       "kiem.json": {
@@ -75,13 +75,19 @@
       ]
     },
     "team-bonus.json": {
-      "sections": ["elementalResonance (8)", "moonsign (10 nhân vật)", "hexerei (12 nhân vật)", "nightsoulBurst"]
+      "sections": [
+        "elementalResonance (8)",
+        "moonsign (10 nhân vật)",
+        "hexerei (12 nhân vật)",
+        "nightsoulBurst"
+      ]
     }
   },
   "knownDataGaps": {
     "note": "Một số trường được giữ nguyên 'chưa xác nhận'/'~' từ Markdown nguồn thay vì bịa số — không phải lỗi transcribe.",
-    "characters": "~20 mốc số liệu trong sumeru-natlan.json, ~26 trong liyue.json, 1 trong mondstadt.json (chi tiết xem README từng file nguồn nhan-vat/*.md)",
+    "characters": "~20 mốc số liệu trong sumeru-natlan.json, ~26 trong liyue.json, 1 trong mondstadt.json (chi tiết xem README từng file nguồn nhan-vat/*.md). Chỉ số cơ bản cấp 90 của TOÀN BỘ 125 nhân vật đã được đối chiếu lại với gi.yatta.moe 2026-09-08 (initValue × hệ số đường cong theo mã GROW_CURVE trong API + addProps): 0 sai lệch >2%.",
     "weapons": "cung.json và phap-khi.json chỉ có mốc R1/R5 trong nguồn (không có R2-R4) nên passive.effects để rỗng, số liệu đầy đủ vẫn giữ trong description dạng 'R1: ... R5: ...'",
-    "abyssMonsters": "nhiều hpRatio/resistanceNotes ghi 'chưa xác nhận' do wiki không công khai đầy đủ"
+    "abyssMonsters": "nhiều hpRatio/resistanceNotes ghi 'chưa xác nhận' do wiki không công khai đầy đủ",
+    "charactersVerified": "2026-09-08: đối chiếu đủ 125/125 nhân vật với API; danh sách nhân vật cũng đã diff với API (chỉ còn Manekin/Manekina bị loại có chủ đích — chế độ Miliastra Wonderland, không dùng trong Trầm Thủy)."
   }
 }

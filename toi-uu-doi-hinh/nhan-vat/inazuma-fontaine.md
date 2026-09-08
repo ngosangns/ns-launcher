@@ -25,8 +25,13 @@ Nguồn:
 
 # Inazuma + Fontaine — Toàn bộ nhân vật
 
-29 nhân vật: 16 Inazuma + 13 Fontaine (mọi độ hiếm, tính đến bản cập nhật gần
+30 nhân vật: 17 Inazuma + 13 Fontaine (mọi độ hiếm, tính đến bản cập nhật gần
 nhất trước 2026-09-08).
+
+> **Bổ sung 2026-09-08:** Kaedehara Kazuha trước đó bị thiếu hoàn toàn khỏi
+> file này (phát hiện khi dựng thuật toán gợi ý đội hình — anh được nhắc tên
+> 8 lần trong phần gợi ý combo của các nhân vật khác nhưng không có mục
+> riêng). Đã bổ sung đầy đủ từ `gi.yatta.moe/api/v2/en/avatar/10000047`.
 
 ## Mục lục
 
@@ -36,7 +41,7 @@ nhất trước 2026-09-08).
 [Arataki Itto](#arataki-itto) · [Yae Miko](#yae-miko) ·
 [Kamisato Ayato](#kamisato-ayato) · [Kuki Shinobu](#kuki-shinobu) ·
 [Shikanoin Heizou](#shikanoin-heizou) · [Kirara](#kirara) · [Chiori](#chiori) ·
-[Yumemizuki Mizuki](#yumemizuki-mizuki)
+[Yumemizuki Mizuki](#yumemizuki-mizuki) · [Kaedehara Kazuha](#kaedehara-kazuha)
 
 **Fontaine:** [Lynette](#lynette) · [Lyney](#lyney) · [Freminet](#freminet) ·
 [Neuvillette](#neuvillette) · [Wriothesley](#wriothesley) ·
@@ -2277,3 +2282,84 @@ Combo phổ biến: Đóng băng (Cryo-Hydro) toàn Hydro/Cryo với
 Neuvillette/Ayaka/Ganyu để tối đa hoá passive giảm kháng.
 
 ---
+
+---
+
+## Kaedehara Kazuha
+
+**Thông tin chung**
+
+| Nguyên tố | Vũ khí | Độ hiếm | Quốc gia | Ngày ra mắt |
+|---|---|---|---|---|
+| Anemo | Sword | 5★ | Inazuma | 29/06/2021 (bản 1.6) |
+
+**Chỉ số cơ bản**
+
+| Cấp | HP | ATK | DEF |
+|---|---|---|---|
+| 1 | 1039.12 | 23.09 | 62.82 |
+| 90 (đột phá 6) | 13,348.07 | 296.58 | 806.98 |
+
+Chỉ số đột phá phụ (cấp 90): **Elemental Mastery +115.2**
+
+**Bộ kỹ năng**
+
+*Đòn thường — Garyuu Bladework*
+
+| Đòn | Cấp 1 | Cấp 10 |
+|---|---|---|
+| 1-Hit | 44.98% | 88.91% |
+| 2-Hit | 45.24% | 89.42% |
+| 3-Hit ×2 | 25.80%+30.96% | 51.00%+61.20% |
+| 4-Hit | 60.72% | 120.02% |
+| 5-Hit ×3 | 25.37% | 50.15% |
+| Trọng kích ×2 | 43.00%+74.65% | 85.00%+147.56% |
+| Nhảy rơi | 81.83% | 161.76% |
+| Nhảy thấp/cao | 163.63%/204.39% | 323.46%/404.02% |
+
+*Kỹ năng — Chihayaburu* (Hồi chiêu: 6s bấm nhanh / 9s giữ): hút gió gây DMG
+Anemo diện rộng rồi nâng Kazuha lên không, cho phép dùng ngay Đòn nhảy đặc
+biệt **Midare Ranzan**. Nếu chạm Hydro/Pyro/Cryo/Electro khi thi triển, hút
+nguyên tố đó (Elemental Absorption, 1 lần/lượt dùng).
+
+| Chỉ số | Cấp 1 | Cấp 10 (max 13 nhờ C3) |
+|---|---|---|
+| Bấm nhanh — Skill DMG | 192% ATK | 345.6% ATK |
+| Giữ — Skill DMG | 260.8% ATK | 469.44% ATK |
+
+*Bùng nổ — Kazuha Slash* (Năng lượng: 60 | Hồi chiêu: 15s): tạo vùng **Autumn
+Whirlwind** tồn tại 8s, gây DMG Anemo ban đầu rồi DMG Anemo liên tục; vùng hút
+Hydro/Pyro/Cryo/Electro chạm phải và gây thêm sát thương nguyên tố đó.
+
+| Chỉ số | Cấp 1 | Cấp 10 (max 13 nhờ C5) |
+|---|---|---|
+| Slashing DMG | 262.4% ATK | 472.32% ATK |
+| DoT (mỗi nhịp) | 120% ATK | 216% ATK |
+| Sát thương nguyên tố cộng thêm | 36% ATK | 64.8% ATK |
+
+**Passive A1 — Soumon Swordsmanship:** nếu Chihayaburu hút được nguyên tố,
+Midare Ranzan dùng ngay sau đó gây thêm **200% ATK** sát thương thuộc nguyên tố
+đã hút (tính là sát thương Đòn nhảy).
+**Passive A4 — Poetics of Fuubutsu:** khi kích hoạt Khuếch Tán (Swirl) hoặc
+**Stellar Swirl**, toàn đội nhận **+0.04% DMG Bonus** của nguyên tố bị cuốn
+trên **mỗi điểm EM** của Kazuha, trong 8s; bonus các nguyên tố khác nhau cộng
+dồn song song.
+**Utility Passive — Cloud Strider:** giảm 20% tiêu hao thể lực khi chạy cho
+toàn đội.
+
+**Cung mệnh**
+1. Scarlet Hills — giảm 10% hồi chiêu Chihayaburu; dùng Kazuha Slash reset hồi
+   chiêu Chihayaburu.
+2. Yamaarashi Tailwind — vùng Autumn Whirlwind cho Kazuha +200 EM và nhân vật
+   đứng trong vùng +200 EM.
+3. Maple Monogatari — tăng cấp Chihayaburu +3 (tối đa 15).
+4. Oozora Genpou — khi năng lượng < 45: bấm nhanh/giữ Chihayaburu hồi 3/4 năng
+   lượng; đòn nhảy trong 5s sau khi dùng Chihayaburu hồi 2 năng lượng/giây.
+5. Wisdom of Bansei — tăng cấp Kazuha Slash +3 (tối đa 15).
+6. Crimson Momiji — sau khi dùng Chihayaburu/Kazuha Slash, Kazuha được phú
+   Anemo 5s; mỗi điểm EM tăng 0.2% sát thương Đòn thường/Trọng kích/Đòn nhảy.
+
+**Vai trò đội hình Trầm Thủy:** Support Anemo mạnh nhất game — gom quái, hạ 40%
+kháng nguyên tố bị cuốn (4 món Viridescent Venerer) và buff DMG nguyên tố toàn
+đội theo EM (A4). Build EM là chính (không phải ATK). Ghép được với gần như mọi
+đội phản ứng: Vaporize (Hu Tao/Xiangling), Freeze, Aggravate, Melt.

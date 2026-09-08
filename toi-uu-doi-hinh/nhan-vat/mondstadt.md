@@ -16,9 +16,9 @@ Durin/Varka/Prune/Lohen/Nicole) — các passive này đã được cập nhật
 
 # Mondstadt + Nod-Krai + Nhà Lữ Hành
 
-Danh sách đầy đủ 24 nhân vật Mondstadt (bao gồm các nhân vật hệ Hexerei mới xuất hiện từ cốt truyện Hexenzirkel:
-Durin, Varka, Prune, Lohen, Nicole), 10 nhân vật Nod-Krai, và Nhà Lữ Hành với cả 7 nguyên tố đã cộng hưởng
-(Anemo/Geo/Electro/Dendro/Hydro/Pyro/Cryo).
+Danh sách đầy đủ 25 nhân vật Mondstadt (bao gồm các nhân vật hệ Hexerei mới xuất hiện từ cốt truyện Hexenzirkel:
+Durin, Varka, Prune, Lohen, Nicole), 10 nhân vật Nod-Krai, Nhà Lữ Hành với cả 7 nguyên tố đã cộng hưởng
+(Anemo/Geo/Electro/Dendro/Hydro/Pyro/Cryo), và Aloy (nhân vật collab Horizon, không có quốc gia trong game).
 
 **Ghi chú phân loại quốc gia:** một số nhân vật có "quốc gia trong game" (region hiển thị trong hồ sơ, quyết định
 thưởng thám hiểm/set độ hiếm) khác với quê quán trong cốt truyện — file này phân loại theo **quốc gia trong game**
@@ -38,7 +38,8 @@ gắn nhãn NODKRAI_ZIBAI nên KHÔNG thuộc file đó). Zibai nay được th�
 ## Mục lục
 - [Nhà Lữ Hành (Traveler)](#nhà-lữ-hành-traveler) — mọi nguyên tố
 - Mondstadt 5★: [Albedo](#albedo) · [Diluc](#diluc) · [Jean](#jean) · [Klee](#klee) · [Mona](#mona) · [Venti](#venti) · [Eula](#eula) · [Durin](#durin) · [Varka](#varka) · [Lohen](#lohen) · [Nicole](#nicole)
-- Mondstadt 4★: [Amber](#amber) · [Barbara](#barbara) · [Bennett](#bennett) · [Diona](#diona) · [Fischl](#fischl) · [Kaeya](#kaeya) · [Lisa](#lisa) · [Mika](#mika) · [Noelle](#noelle) · [Razor](#razor) · [Rosaria](#rosaria) · [Sucrose](#sucrose) · [Prune](#prune)
+- Mondstadt 4★: [Amber](#amber) · [Barbara](#barbara) · [Bennett](#bennett) · [Diona](#diona) · [Fischl](#fischl) · [Kaeya](#kaeya) · [Lisa](#lisa) · [Mika](#mika) · [Noelle](#noelle) · [Razor](#razor) · [Rosaria](#rosaria) · [Sucrose](#sucrose) · [Prune](#prune) · [Dahlia](#dahlia)
+- Không quốc gia (collab): [Aloy](#aloy)
 - Nod-Krai 5★: [Ineffa](#ineffa) · [Flins](#flins) · [Columbina](#columbina) · [Linnea](#linnea) · [Nefer](#nefer) · [Zibai](#zibai)
 - Nod-Krai 4★: [Aino](#aino) · [Lauma](#lauma) · [Illuga](#illuga) · [Jahoda](#jahoda)
 
@@ -2253,3 +2254,127 @@ Nguyệt Triệu khác để đạt Moonsign Level "Ascendant Gleam", mở khoá
 đội (xem `cong-huong-nguyen-to.md` mục 2).
 
 ---
+
+---
+
+## Dahlia
+
+**Nguyên tố:** Hydro | **Vũ khí:** Kiếm | **Độ hiếm:** 4★ | **Quốc gia:** Mondstadt | **Ngày ra mắt:** 16/06/2025 (bản 5.7)
+
+> Bổ sung 2026-09-08: trước đó thiếu hoàn toàn khỏi kho dữ liệu (phát hiện khi đối chiếu danh sách
+> nhân vật với `gi.yatta.moe/api/v2/en/avatar`).
+
+Support khiên Hydro scale **HP tối đa** (không phải ATK): Bùng nổ cấp hiệu ứng Favonian Favor cho
+đội, tích lớp Benison để tạo khiên Shield of Sacred Favor, đồng thời buff tốc đánh cho nhân vật
+đứng sân.
+
+### Chỉ số cơ bản
+
+| Cấp | HP | ATK | DEF | HP% |
+|---|---|---|---|---|
+| 1 | 1,048.56 | 15.85 | 46.92 | — |
+| 90 | 12,506.21 | 189.03 | 559.67 | 24.0% |
+
+### Bộ kỹ năng
+
+**Đòn thường — Favonius Bladework - Ritual:** tối đa 4 đòn kiếm.
+| Đòn | Cấp 1 | Cấp 10 |
+|---|---|---|
+| 1-Hit | 43.55% | 86.08% |
+| 2-Hit | 40.10% | 79.27% |
+| 3-Hit ×2 | 23.74%+29.02% | 46.94%+57.36% |
+| 4-Hit | 65.66% | 129.79% |
+| Trọng kích ×2 | 39.88%+55.07% | 78.83%+108.85% |
+| Nhảy rơi | 63.93% | 126.38% |
+
+**Kỹ năng — Immersive Ordinance** (hồi chiêu 9s): ném đạn nước gây DMG Hydro diện rộng.
+| Chỉ số | Cấp 1 | Cấp 10 (max 13 nhờ C5) |
+|---|---|---|
+| Skill DMG | 232.8% ATK | 419.04% ATK |
+
+**Bùng nổ — Radiant Psalter** (năng lượng 60, hồi chiêu 15s): gây DMG Hydro diện rộng và cấp
+Favonian Favor 12s cho đội; tiêu lớp Benison để tạo khiên theo HP tối đa của Dahlia.
+| Chỉ số | Cấp 1 | Cấp 10 (max 13 nhờ C3) |
+|---|---|---|
+| Skill DMG | 406.4% ATK | 731.52% ATK |
+| Khiên hấp thụ | 3.36% HP tối đa + 323.56 | 6.05% HP tối đa + 711.88 |
+
+**Passive A1 — The Wind's Gentle Grace:** nhân vật mang Favonian Favor kích hoạt Đóng Băng lên địch
+cho Dahlia 2 lớp Benison (8s/lần).
+**Passive A4 — Prayer of Well-Wrought Joy:** nhân vật đứng sân mang Favonian Favor tăng tốc đánh
+theo HP tối đa của Dahlia — mỗi 1.000 HP cho +0.5%, tối đa **+20%**.
+**Utility Passive — Pilgrimage Upon Returning Winds:** ban ngày (06:00-18:00) toàn đội +10% tốc độ
+di chuyển (không áp dụng trong Trầm Thủy).
+
+### Cung mệnh
+1. Infallible Procession — mỗi lớp Benison nhận được hồi 2.5 năng lượng nguyên tố.
+2. Revelation of Mercy — nhân vật được Shield of Sacred Favor bảo vệ tăng 25% độ bền khiên (12s).
+3. Windblume Offertory — tăng cấp Radiant Psalter +3 (tối đa 15).
+4. Collect of the Assembly — Favonian Favor kéo dài thêm 3s.
+5. Let It Be Subtly So — tăng cấp Immersive Ordinance +3 (tối đa 15).
+6. You Shall Go Out With Joy — nhân vật mang Favonian Favor thêm +10% tốc đánh; nhân vật mang
+   Favonian Favor bị gục sẽ được hồi sinh ngay lập tức.
+
+**Vai trò đội hình Trầm Thủy:** Support khiên + buff tốc đánh, build HP%. Lựa chọn 4★ thay thế khi
+chưa có Zhongli; hợp nhất với DPS dựa vào đòn thường (đội Đóng Băng, đội phú Hydro).
+
+---
+
+## Aloy
+
+**Nguyên tố:** Cryo | **Vũ khí:** Cung | **Độ hiếm:** 5★ | **Quốc gia:** — (collab *Horizon*, nhãn nội bộ API `RANGER`) | **Ngày ra mắt:** 31/08/2021 (bản 2.1)
+
+> Bổ sung 2026-09-08: trước đó thiếu hoàn toàn khỏi kho dữ liệu. Aloy không có quốc gia trong game
+> nên xếp tạm vào file này (giống cách xử lý Nicole và Nhà Lữ Hành).
+>
+> **Aloy KHÔNG có cung mệnh:** cả 6 mục C1-C6 trong dữ liệu game đều là chỗ trống chính thức
+> ("Star of Another World: The time has not yet come for this person's corner of the night sky to
+> light up") — nghĩa là sức mạnh của cô bị chốt vĩnh viễn ở mức C0.
+
+### Chỉ số cơ bản
+
+| Cấp | HP | ATK | DEF | Cryo DMG Bonus |
+|---|---|---|---|---|
+| 1 | 848.45 | 18.21 | 52.65 | — |
+| 90 | 10,898.89 | 233.92 | 676.33 | 28.8% |
+
+### Bộ kỹ năng
+
+**Đòn thường — Rapid Fire:** 4 đòn bắn nhanh + ngắm bắn.
+| Đòn | Cấp 1 | Cấp 10 |
+|---|---|---|
+| 1-Hit ×2 | 21.12%+23.76% | 37.68%+42.39% |
+| 2-Hit | 43.12% | 76.93% |
+| 3-Hit | 52.80% | 94.20% |
+| 4-Hit | 65.65% | 117.12% |
+| Ngắm bắn | 43.86% | 86.70% |
+| Ngắm bắn sạc đầy | 124% | 223.2% |
+| Nhảy rơi | 56.83% | 112.34% |
+
+**Kỹ năng — Frozen Wilds** (hồi chiêu 20s): ném Freeze Bomb gây DMG Cryo và gắn Chillwater Bomblet
+lên địch; bom nổ gây DMG Cryo, **giảm ATK địch** và cho Aloy lớp **Coil**. Đủ 4 lớp Coil, Aloy vào
+trạng thái **Rushing Ice**: đòn thường hoá Cryo và tăng mạnh sát thương đòn thường.
+| Chỉ số | Cấp 1 | Cấp 10 |
+|---|---|---|
+| Freeze Bomb DMG | 177.6% ATK | 319.68% ATK |
+| Chillwater Bomblet DMG | 40% ATK | 72% ATK |
+| Giảm ATK địch | 12% | 15% |
+| Bonus đòn thường theo Coil (1/2/3 lớp) | 5.85%/11.69%/17.54% | 9.52%/19.04%/28.56% |
+| Bonus đòn thường khi Rushing Ice | 29.23% | 47.60% |
+
+**Bùng nổ — Prophecies of Dawn** (năng lượng 40, hồi chiêu 12s): ném bom lạnh gây DMG Cryo diện rộng.
+| Chỉ số | Cấp 1 | Cấp 10 |
+|---|---|---|
+| Skill DMG | 359.2% ATK | 646.56% ATK |
+
+**Passive A1 — Combat Override:** khi nhận lớp Coil, ATK Aloy +16% và ATK đồng đội gần đó +8% (10s).
+**Passive A4 — Strong Strike:** ở trạng thái Rushing Ice, Cryo DMG Bonus của Aloy +3.5% mỗi giây,
+tối đa **+35%**.
+**Utility Passive — Easy Does It:** thú cho Thịt/Gia cầm không bỏ chạy khi đồng đội lại gần.
+
+### Cung mệnh
+Không có (xem ghi chú đầu mục).
+
+**Vai trò đội hình Trầm Thủy:** DPS Cryo dùng đòn thường, phát miễn phí cho mọi người chơi. Vì
+không có cung mệnh và hệ số đã cũ, vai trò thực tế ở Trầm Thủy khá hạn chế — chủ yếu dùng để lấp
+slot Cryo cho đội Đóng Băng/Siêu Dẫn khi chưa có DPS Cryo tốt hơn.

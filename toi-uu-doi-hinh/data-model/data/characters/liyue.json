@@ -14,9 +14,9 @@
         "def": 62.22
       },
       "lv90": {
-        "hp": 4071.44,
-        "atk": 111.63,
-        "def": 255.53,
+        "hp": 12735.78,
+        "atk": 349.2,
+        "def": 799.3,
         "ascensionStatType": "CRIT Rate",
         "ascensionStatValue": 0.192
       }
@@ -194,9 +194,9 @@
         "def": 57.44
       },
       "lv90": {
-        "hp": 5841.8,
-        "atk": 99.83,
-        "def": 293.31,
+        "hp": 14695.13,
+        "atk": 251.14,
+        "def": 737.81,
         "ascensionStatType": "Geo DMG Bonus",
         "ascensionStatValue": 0.288
       }
@@ -402,9 +402,9 @@
         "def": 71.8
       },
       "lv90": {
-        "hp": 3953.99,
-        "atk": 91.75,
-        "def": 294.84,
+        "hp": 12368.4,
+        "atk": 287.01,
+        "def": 922.27,
         "ascensionStatType": "Healing Bonus",
         "ascensionStatValue": 0.2215
       }
@@ -603,9 +603,9 @@
         "def": 49.06
       },
       "lv90": {
-        "hp": 3131.88,
-        "atk": 107.04,
-        "def": 201.47,
+        "hp": 9796.75,
+        "atk": 334.85,
+        "def": 630.22,
         "ascensionStatType": "CRIT DMG",
         "ascensionStatValue": 0.384
       }
@@ -790,9 +790,9 @@
         "def": 62.22
       },
       "lv90": {
-        "hp": 4188.89,
-        "atk": 103.22,
-        "def": 255.53,
+        "hp": 13103.16,
+        "atk": 322.89,
+        "def": 799.3,
         "ascensionStatType": "CRIT DMG",
         "ascensionStatValue": 0.384
       }
@@ -977,9 +977,9 @@
         "def": 68.21
       },
       "lv90": {
-        "hp": 4971.86,
-        "atk": 34.02,
-        "def": 280.1,
+        "hp": 15552.34,
+        "atk": 106.43,
+        "def": 876.15,
         "ascensionStatType": "CRIT DMG",
         "ascensionStatValue": 0.384
       }
@@ -1178,9 +1178,9 @@
         "def": 42.66
       },
       "lv90": {
-        "hp": 4619.52,
-        "atk": 77.99,
-        "def": 175.18,
+        "hp": 14450.21,
+        "atk": 243.96,
+        "def": 547.98,
         "ascensionStatType": "CRIT Rate",
         "ascensionStatValue": 0.192
       }
@@ -1358,9 +1358,9 @@
         "def": 64.62
       },
       "lv90": {
-        "hp": 4153.65,
-        "atk": 97.1,
-        "def": 265.36,
+        "hp": 12992.94,
+        "atk": 303.76,
+        "def": 830.04,
         "ascensionStatType": "ATK%",
         "ascensionStatValue": 0.288
       }
@@ -1552,9 +1552,9 @@
         "def": 38.89
       },
       "lv90": {
-        "hp": 4267.18,
-        "atk": 61.55,
-        "def": 159.71,
+        "hp": 13348.07,
+        "atk": 192.54,
+        "def": 499.56,
         "ascensionStatType": "HP%",
         "ascensionStatValue": 0.288
       }
@@ -1732,9 +1732,9 @@
         "def": 44.57
       },
       "lv90": {
-        "hp": 3327.62,
-        "atk": 107.04,
-        "def": 183.05,
+        "hp": 10409.05,
+        "atk": 334.85,
+        "def": 572.57,
         "ascensionStatType": "ATK%",
         "ascensionStatValue": 0.288
       }
@@ -1919,9 +1919,9 @@
         "def": 56.08
       },
       "lv90": {
-        "hp": 4174.16,
-        "atk": 86.42,
-        "def": 256.74,
+        "hp": 10874.97,
+        "atk": 225.14,
+        "def": 668.87,
         "ascensionStatType": "Elemental Mastery",
         "ascensionStatValue": 96
       }
@@ -2092,9 +2092,9 @@
         "def": 54.36
       },
       "lv90": {
-        "hp": 4914.85,
-        "atk": 85.54,
-        "def": 194.51,
+        "hp": 13049.96,
+        "atk": 225.14,
+        "def": 648.4,
         "ascensionStatType": "Electro DMG Bonus",
         "ascensionStatValue": 0.24
       }
@@ -2291,9 +2291,9 @@
         "def": 63.52
       },
       "lv90": {
-        "hp": 3066.63,
-        "atk": 60.53,
-        "def": 227.27,
+        "hp": 10222.47,
+        "atk": 201.78,
+        "def": 757.6,
         "ascensionStatType": "ATK%",
         "ascensionStatValue": 0.24
       }
@@ -2471,9 +2471,9 @@
         "def": 48.07
       },
       "lv90": {
-        "hp": 3756.74,
-        "atk": 81.53,
-        "def": 220.06,
+        "hp": 9787.47,
+        "atk": 212.4,
+        "def": 573.32,
         "ascensionStatType": "Geo DMG Bonus",
         "ascensionStatValue": 0.24
       }
@@ -2616,9 +2616,9 @@
         "def": 54.36
       },
       "lv90": {
-        "hp": 3294.99,
-        "atk": 66.9,
-        "def": 194.51,
+        "hp": 10983.71,
+        "atk": 223.02,
+        "def": 648.4,
         "ascensionStatType": "ATK%",
         "ascensionStatValue": 0.24
       }
@@ -2775,9 +2775,9 @@
         "def": 66.95
       },
       "lv90": {
-        "hp": 3360.24,
-        "atk": 74.55,
-        "def": 239.56,
+        "hp": 11201.21,
+        "atk": 248.51,
+        "def": 798.55,
         "ascensionStatType": "ATK%",
         "ascensionStatValue": 0.24
       }
@@ -2962,9 +2962,9 @@
         "def": 49.21
       },
       "lv90": {
-        "hp": 3573.54,
-        "atk": 261.35,
-        "def": 396.31,
+        "hp": 9352.47,
+        "atk": 240.01,
+        "def": 586.97,
         "ascensionStatType": "Pyro DMG Bonus",
         "ascensionStatValue": 0.24
       }
@@ -3121,9 +3121,9 @@
         "def": 61.57
       },
       "lv90": {
-        "hp": 3197.12,
-        "atk": 57.35,
-        "def": 220.31,
+        "hp": 10657.47,
+        "atk": 191.16,
+        "def": 734.4,
         "ascensionStatType": "Energy Recharge",
         "ascensionStatValue": 0.2667
       }
@@ -3308,9 +3308,9 @@
         "def": 62.95
       },
       "lv90": {
-        "hp": 3686.48,
-        "atk": 63.72,
-        "def": 225.23,
+        "hp": 12288.71,
+        "atk": 212.4,
+        "def": 750.78,
         "ascensionStatType": "HP%",
         "ascensionStatValue": 0.24
       }
@@ -3502,9 +3502,9 @@
         "def": 58.94
       },
       "lv90": {
-        "hp": 4372.78,
-        "atk": 109.27,
-        "def": 277.68,
+        "hp": 11418.71,
+        "atk": 301.61,
+        "def": 703.0,
         "ascensionStatType": "ATK%",
         "ascensionStatValue": 0.24
       }
@@ -3668,9 +3668,9 @@
         "def": 48.64
       },
       "lv90": {
-        "hp": 2773.02,
-        "atk": 75.19,
-        "def": 174.04,
+        "hp": 9243.72,
+        "atk": 250.63,
+        "def": 580.15,
         "ascensionStatType": "ATK%",
         "ascensionStatValue": 0.24
       }
@@ -3834,9 +3834,9 @@
         "def": 63.42
       },
       "lv90": {
-        "hp": 4188.89,
-        "atk": 96.34,
-        "def": 260.44,
+        "hp": 13103.16,
+        "atk": 301.37,
+        "def": 814.67,
         "ascensionStatType": "Hydro DMG Bonus",
         "ascensionStatValue": 0.288
       }
@@ -4049,9 +4049,9 @@
         "def": 59.53
       },
       "lv90": {
-        "hp": 4188.89,
-        "atk": 109.34,
-        "def": 244.47,
+        "hp": 13103.16,
+        "atk": 342.03,
+        "def": 764.71,
         "ascensionStatType": "CRIT DMG",
         "ascensionStatValue": 0.384
       }
@@ -4236,9 +4236,9 @@
         "def": 58.57
       },
       "lv90": {
-        "hp": 4228.04,
-        "atk": 109.34,
-        "def": 240.54,
+        "hp": 13225.61,
+        "atk": 342.03,
+        "def": 752.42,
         "ascensionStatType": "CRIT Rate",
         "ascensionStatValue": 0.192
       }
@@ -4413,9 +4413,9 @@
         "def": 61.27
       },
       "lv90": {
-        "hp": 4149.74,
-        "atk": 107.04,
-        "def": 251.6,
+        "hp": 12980.7,
+        "atk": 334.85,
+        "def": 787.0,
         "ascensionStatType": "CRIT DMG",
         "ascensionStatValue": 0.384
       }
@@ -4626,9 +4626,9 @@
         "def": 58.94
       },
       "lv90": {
-        "hp": 3588.61,
-        "atk": 79.65,
-        "def": 210.89,
+        "hp": 11962.46,
+        "atk": 265.5,
+        "def": 703.0,
         "ascensionStatType": "Energy Recharge",
         "ascensionStatValue": 0.2667
       }
@@ -4794,6 +4794,227 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ off-field hồi máu + buff sát thương theo Energy Recharge, chủ lực trong đội Stellar-Conduct (Electro-Cryo, ví dụ cùng Sandrone/Odette).",
+    "sourceFile": "nhan-vat/liyue.md"
+  },
+  {
+    "id": "skirk",
+    "name": "Skirk",
+    "element": "Cryo",
+    "weaponType": "Sword",
+    "rarity": 5,
+    "nationInGame": "— (không có quốc gia trong game; nhãn nội bộ OMNI_SCOURGE, gắn với Abyss/Snezhnaya)",
+    "releaseDate": "2025-06-16",
+    "baseStats": {
+      "lv1": {
+        "hp": 966.67,
+        "atk": 27.93,
+        "def": 62.76
+      },
+      "lv90": {
+        "hp": 12417.38,
+        "atk": 358.77,
+        "def": 806.22,
+        "ascensionStatType": "CRIT DMG",
+        "ascensionStatValue": 0.384
+      }
+    },
+    "normalAttack": {
+      "name": "Havoc: Sunder",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "54.52% ATK",
+            "lv10": "107.78% ATK"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "49.79% ATK",
+            "lv10": "98.43% ATK"
+          }
+        },
+        {
+          "label": "3-Hit (x2)",
+          "values": {
+            "lv1": "32.42%+32.42% ATK",
+            "lv10": "64.09%+64.09% ATK"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "60.80% ATK",
+            "lv10": "120.19% ATK"
+          }
+        },
+        {
+          "label": "5-Hit",
+          "values": {
+            "lv1": "82.90% ATK",
+            "lv10": "163.88% ATK"
+          }
+        },
+        {
+          "label": "Trọng kích (x2)",
+          "values": {
+            "lv1": "66.82% ATK x2",
+            "lv10": "132.09% ATK x2"
+          }
+        },
+        {
+          "label": "Nhảy rơi",
+          "values": {
+            "lv1": "63.93% ATK",
+            "lv10": "126.38% ATK"
+          }
+        },
+        {
+          "label": "Nhảy thấp/cao",
+          "values": {
+            "lv1": "127.84%/159.68% ATK",
+            "lv10": "252.70%/315.64% ATK"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Havoc: Warp",
+      "description": "Vào trạng thái Seven-Phase Flash (đòn thường hoá Cryo, chuỗi đòn riêng mạnh hơn hẳn) và tích tài nguyên Serpent's Subtlety. Trong trạng thái này Skirk dùng bộ đòn thường Havoc: Warp thay cho bộ thường.",
+      "scaling": [
+        {
+          "label": "Warp 1-Hit",
+          "values": {
+            "lv1": "132.82% ATK",
+            "lv10": "262.56% ATK"
+          }
+        },
+        {
+          "label": "Warp 2-Hit",
+          "values": {
+            "lv1": "119.80% ATK",
+            "lv10": "236.81% ATK"
+          }
+        },
+        {
+          "label": "Warp 3-Hit (x2)",
+          "values": {
+            "lv1": "75.72%+75.72% ATK",
+            "lv10": "149.69%+149.69% ATK"
+          }
+        },
+        {
+          "label": "Warp 4-Hit (x2)",
+          "values": {
+            "lv1": "80.54%+80.54% ATK",
+            "lv10": "159.20%+159.20% ATK"
+          }
+        },
+        {
+          "label": "Warp 5-Hit",
+          "values": {
+            "lv1": "196.62% ATK",
+            "lv10": "388.68% ATK"
+          }
+        },
+        {
+          "label": "Warp Trọng kích (x3)",
+          "values": {
+            "lv1": "44.55% ATK x3",
+            "lv10": "88.06% ATK x3"
+          }
+        }
+      ],
+      "cooldown": "15s (thời lượng Seven-Phase Flash 20s)",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Havoc: Ruin",
+      "description": "Chém 5 nhát rồi 1 nhát kết liễu, toàn bộ là DMG Cryo. Sát thương tăng theo số điểm Serpent's Subtlety đang có và theo số Void Rift (0/1/2/3) hấp thụ được.",
+      "scaling": [
+        {
+          "label": "Chém (x5)",
+          "values": {
+            "lv1": "122.76% ATK x5",
+            "lv10": "220.97% ATK x5"
+          }
+        },
+        {
+          "label": "Nhát kết liễu",
+          "values": {
+            "lv1": "204.60% ATK",
+            "lv10": "368.28% ATK"
+          }
+        },
+        {
+          "label": "Bonus theo Serpent's Subtlety",
+          "values": {
+            "lv1": "19.32% ATK/điểm",
+            "lv10": "34.78% ATK/điểm"
+          }
+        },
+        {
+          "label": "Bonus theo 0/1/2/3 Void Rift",
+          "values": {
+            "lv1": "3.5%/6.6%/8.8%/11.0%",
+            "lv10": "8%/12%/16%/20%"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": null
+    },
+    "passives": [
+      {
+        "name": "Reason Beyond Reason",
+        "unlock": "A1",
+        "description": "Khi đồng đội gần đó kích hoạt Đóng Băng, Siêu Dẫn, Stellar-Conduct, Cryo Swirl, Stellar Swirl hoặc Cryo Crystallize lên địch, tạo 1 Void Rift gần địch đó (2.5s/lần, tối đa 3 Void Rift do Skirk tạo tồn tại cùng lúc). Skirk hấp thụ Void Rift để tăng sát thương Bùng nổ."
+      },
+      {
+        "name": "Return to Oblivion",
+        "unlock": "A4",
+        "description": "Khi đồng đội Hydro đánh trúng địch bằng đòn Hydro, hoặc đồng đội Cryo khác Skirk đánh trúng bằng đòn Cryo, Skirk nhận 1 lớp Death's Crossing trong 20s (tối đa 3 lớp, mỗi nhân vật chỉ cấp được 1 lớp). Mỗi lớp tăng sát thương Đòn thường của Skirk."
+      },
+      {
+        "name": "Mutual Weapons Mentorship",
+        "unlock": "Utility",
+        "description": "Khi cả đội chỉ gồm nhân vật Hydro và/hoặc Cryo và có ít nhất 1 Hydro + 1 Cryo, toàn đội tăng 1 cấp Kỹ năng nguyên tố."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Far to Fall",
+        "description": "Tăng cường A1: mỗi Void Rift hấp thụ triệu hồi 1 lưỡi pha lê gây 500% ATK sát thương Cryo (tính là sát thương Trọng kích)."
+      },
+      {
+        "level": 2,
+        "name": "Into the Abyss",
+        "description": "Sau khi dùng Havoc: Warp, nhận thêm 10 điểm Serpent's Subtlety. Khi dùng Havoc: Ruin, sát thương lượt đó được tăng thêm bằng cách mượn tối đa 10 điểm Serpent's Subtlety."
+      },
+      {
+        "level": 3,
+        "name": "Serendipitous Sin",
+        "description": "Tăng cấp Havoc: Ruin +3 (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Fractured Flow",
+        "description": "Tăng cường A4: mỗi lớp Death's Crossing còn tăng ATK của Skirk thêm 10%/20%/40% (cần mở A4 trước)."
+      },
+      {
+        "level": 5,
+        "name": "End of Wishes",
+        "description": "Tăng cấp Havoc: Warp +3 (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "To the Source",
+        "description": "Mỗi Void Rift hấp thụ qua A1 cho 1 lớp Havoc: Sever; tiêu lớp này để tung đòn phối hợp và giảm sát thương nhận vào trong lúc thi triển."
+      }
+    ],
+    "abyssRoleNotes": "DPS chính on-field Cryo scale ATK, cần đội thuần Hydro/Cryo để mở Utility Passive (+1 cấp Kỹ năng toàn đội) và để đồng đội cấp Death's Crossing. Combo phổ biến: Skirk + Furina/Escoffier + Citlali/Shenhe (Freeze/Melt tuỳ đội).",
     "sourceFile": "nhan-vat/liyue.md"
   }
 ]

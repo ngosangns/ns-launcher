@@ -4759,5 +4759,191 @@
     ],
     "abyssRoleNotes": "Support hồi máu + buff giảm kháng Hydro/Cryo mạnh nhất cho đội Đóng Băng, gần như thay thế hoàn toàn nhu cầu healer khác. Combo phổ biến: Đóng băng (Cryo-Hydro) toàn Hydro/Cryo với Neuvillette/Ayaka/Ganyu để tối đa hoá passive giảm kháng.",
     "sourceFile": "nhan-vat/inazuma-fontaine.md"
+  },
+  {
+    "id": "kaedehara-kazuha",
+    "name": "Kaedehara Kazuha",
+    "element": "Anemo",
+    "weaponType": "Sword",
+    "rarity": 5,
+    "nationInGame": "Inazuma",
+    "releaseDate": "2021-06-29",
+    "baseStats": {
+      "lv1": {
+        "hp": 1039.12,
+        "atk": 23.09,
+        "def": 62.82
+      },
+      "lv90": {
+        "hp": 13348.07,
+        "atk": 296.58,
+        "def": 806.98,
+        "ascensionStatType": "Elemental Mastery",
+        "ascensionStatValue": 115.2
+      }
+    },
+    "normalAttack": {
+      "name": "Garyuu Bladework",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "44.98% ATK",
+            "lv10": "88.91% ATK"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "45.24% ATK",
+            "lv10": "89.42% ATK"
+          }
+        },
+        {
+          "label": "3-Hit (x2)",
+          "values": {
+            "lv1": "25.80%+30.96% ATK",
+            "lv10": "51.00%+61.20% ATK"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "60.72% ATK",
+            "lv10": "120.02% ATK"
+          }
+        },
+        {
+          "label": "5-Hit (x3)",
+          "values": {
+            "lv1": "25.37% ATK x3",
+            "lv10": "50.15% ATK x3"
+          }
+        },
+        {
+          "label": "Trọng kích (x2)",
+          "values": {
+            "lv1": "43.00%+74.65% ATK",
+            "lv10": "85.00%+147.56% ATK"
+          }
+        },
+        {
+          "label": "Nhảy rơi",
+          "values": {
+            "lv1": "81.83% ATK",
+            "lv10": "161.76% ATK"
+          }
+        },
+        {
+          "label": "Nhảy thấp/cao",
+          "values": {
+            "lv1": "163.63%/204.39% ATK",
+            "lv10": "323.46%/404.02% ATK"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Chihayaburu",
+      "description": "Hút gió gây DMG Anemo diện rộng và nâng Kazuha lên không; ngay sau đó có thể dùng Đòn nhảy đặc biệt Midare Ranzan. Bấm nhanh (CD 6s) hoặc Giữ (CD 9s, hút mạnh hơn). Nếu chạm Hydro/Pyro/Cryo/Electro khi thi triển, Chihayaburu hút nguyên tố đó (Elemental Absorption, 1 lần/lượt).",
+      "scaling": [
+        {
+          "label": "Bấm nhanh — Skill DMG",
+          "values": {
+            "lv1": "192% ATK",
+            "lv10": "345.6% ATK"
+          }
+        },
+        {
+          "label": "Giữ — Skill DMG",
+          "values": {
+            "lv1": "260.8% ATK",
+            "lv10": "469.44% ATK"
+          }
+        }
+      ],
+      "cooldown": "6s (bấm nhanh) / 9s (giữ)",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Kazuha Slash",
+      "description": "Chém tạo vùng Autumn Whirlwind tồn tại 8s, gây DMG Anemo ban đầu rồi DMG Anemo liên tục theo chu kỳ. Nếu vùng chạm Hydro/Pyro/Cryo/Electro, nó hút nguyên tố đó và gây thêm sát thương nguyên tố tương ứng (chỉ hút 1 loại/lượt).",
+      "scaling": [
+        {
+          "label": "Slashing DMG",
+          "values": {
+            "lv1": "262.4% ATK",
+            "lv10": "472.32% ATK"
+          }
+        },
+        {
+          "label": "DoT (mỗi nhịp)",
+          "values": {
+            "lv1": "120% ATK",
+            "lv10": "216% ATK"
+          }
+        },
+        {
+          "label": "Sát thương nguyên tố cộng thêm",
+          "values": {
+            "lv1": "36% ATK",
+            "lv10": "64.8% ATK"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "passives": [
+      {
+        "name": "Soumon Swordsmanship",
+        "unlock": "A1",
+        "description": "Nếu Chihayaburu hút được Hydro/Pyro/Cryo/Electro, Đòn nhảy Midare Ranzan dùng ngay sau đó gây thêm 200% ATK sát thương thuộc nguyên tố đã hút (tính là sát thương Đòn nhảy). Mỗi lần dùng Chihayaburu chỉ hút 1 lần."
+      },
+      {
+        "name": "Poetics of Fuubutsu",
+        "unlock": "A4",
+        "description": "Khi kích hoạt phản ứng Khuếch Tán (Swirl) hoặc Stellar Swirl, toàn đội nhận +0.04% DMG Bonus của nguyên tố bị cuốn trên mỗi điểm Tinh Thông Nguyên Tố (EM) của Kazuha, trong 8s. Bonus của các nguyên tố khác nhau cộng dồn song song."
+      },
+      {
+        "name": "Cloud Strider",
+        "unlock": "Utility",
+        "description": "Giảm 20% tiêu hao thể lực khi chạy của toàn đội (không cộng dồn với passive cùng loại)."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Scarlet Hills",
+        "description": "Giảm 10% hồi chiêu Chihayaburu. Dùng Kazuha Slash reset hồi chiêu Chihayaburu."
+      },
+      {
+        "level": 2,
+        "name": "Yamaarashi Tailwind",
+        "description": "Vùng Autumn Whirlwind của Kazuha Slash tăng 200 EM cho bản thân Kazuha và 200 EM cho nhân vật đứng trong vùng, suốt thời lượng vùng."
+      },
+      {
+        "level": 3,
+        "name": "Maple Monogatari",
+        "description": "Tăng cấp Chihayaburu +3 (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Oozora Genpou",
+        "description": "Khi năng lượng dưới 45: bấm nhanh/giữ Chihayaburu hồi lần lượt 3/4 năng lượng cho Kazuha; đòn nhảy trong 5s sau khi dùng Chihayaburu hồi 2 năng lượng/giây cho Kazuha."
+      },
+      {
+        "level": 5,
+        "name": "Wisdom of Bansei",
+        "description": "Tăng cấp Kazuha Slash +3 (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "Crimson Momiji",
+        "description": "Sau khi dùng Chihayaburu hoặc Kazuha Slash, Kazuha được phú Anemo trong 5s; đồng thời mỗi điểm EM tăng 0.2% sát thương Đòn thường/Trọng kích/Đòn nhảy của Kazuha."
+      }
+    ],
+    "abyssRoleNotes": "Support Anemo hàng đầu: gom quái, hạ 40% kháng nguyên tố bị cuốn (4 món Viridescent Venerer) và buff DMG nguyên tố toàn đội theo EM (A4). Build EM là chính. Ghép được với hầu hết đội phản ứng: Vaporize (Hu Tao/Xiangling), Freeze, Aggravate, Melt.",
+    "sourceFile": "nhan-vat/inazuma-fontaine.md"
   }
 ]

@@ -7096,5 +7096,332 @@
     ],
     "abyssRoleNotes": "Hỗ trợ hồi máu + gây sát thương đa nguyên tố linh hoạt tuỳ đội hình, dễ nhét vào mọi đội 4 nguyên tố cơ bản. Combo phổ biến: Jahoda + đội đa nguyên tố (Pyro/Hydro/Electro/Cryo) để tối ưu hoá buff robot.",
     "sourceFile": "nhan-vat/mondstadt.md"
+  },
+  {
+    "id": "dahlia",
+    "name": "Dahlia",
+    "element": "Hydro",
+    "weaponType": "Sword",
+    "rarity": 4,
+    "nationInGame": "Mondstadt",
+    "releaseDate": "2025-06-16",
+    "baseStats": {
+      "lv1": {
+        "hp": 1048.56,
+        "atk": 15.85,
+        "def": 46.92
+      },
+      "lv90": {
+        "hp": 12506.21,
+        "atk": 189.03,
+        "def": 559.67,
+        "ascensionStatType": "HP%",
+        "ascensionStatValue": 0.24
+      }
+    },
+    "normalAttack": {
+      "name": "Favonius Bladework - Ritual",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "43.55% ATK",
+            "lv10": "86.08% ATK"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "40.10% ATK",
+            "lv10": "79.27% ATK"
+          }
+        },
+        {
+          "label": "3-Hit (x2)",
+          "values": {
+            "lv1": "23.74%+29.02% ATK",
+            "lv10": "46.94%+57.36% ATK"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "65.66% ATK",
+            "lv10": "129.79% ATK"
+          }
+        },
+        {
+          "label": "Trọng kích (x2)",
+          "values": {
+            "lv1": "39.88%+55.07% ATK",
+            "lv10": "78.83%+108.85% ATK"
+          }
+        },
+        {
+          "label": "Nhảy rơi",
+          "values": {
+            "lv1": "63.93% ATK",
+            "lv10": "126.38% ATK"
+          }
+        },
+        {
+          "label": "Nhảy thấp/cao",
+          "values": {
+            "lv1": "127.84%/159.68% ATK",
+            "lv10": "252.70%/315.64% ATK"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Immersive Ordinance",
+      "description": "Ném đạn nước gây DMG Hydro diện rộng.",
+      "scaling": [
+        {
+          "label": "Skill DMG",
+          "values": {
+            "lv1": "232.8% ATK",
+            "lv10": "419.04% ATK"
+          }
+        }
+      ],
+      "cooldown": "9s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Radiant Psalter",
+      "description": "Gây DMG Hydro diện rộng và cấp hiệu ứng Favonian Favor 12s cho đội; Dahlia tích lớp Benison để triệu hồi Shield of Sacred Favor — khiên hấp thụ theo HP tối đa của Dahlia.",
+      "scaling": [
+        {
+          "label": "Skill DMG",
+          "values": {
+            "lv1": "406.4% ATK",
+            "lv10": "731.52% ATK"
+          }
+        },
+        {
+          "label": "Khiên hấp thụ",
+          "values": {
+            "lv1": "3.36% HP tối đa + 323.56",
+            "lv10": "6.05% HP tối đa + 711.88"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "passives": [
+      {
+        "name": "The Wind's Gentle Grace",
+        "unlock": "A1",
+        "description": "Khi nhân vật đang mang Favonian Favor kích hoạt phản ứng Đóng Băng lên địch, Dahlia nhận 2 lớp Benison (8s/lần)."
+      },
+      {
+        "name": "Prayer of Well-Wrought Joy",
+        "unlock": "A4",
+        "description": "Nhân vật đang đứng sân mang Favonian Favor được tăng tốc đánh theo HP tối đa của Dahlia: mỗi 1.000 HP tối đa cho +0.5% tốc đánh, tối đa +20%."
+      },
+      {
+        "name": "Pilgrimage Upon Returning Winds",
+        "unlock": "Utility",
+        "description": "Ban ngày (06:00-18:00) toàn đội tăng 10% tốc độ di chuyển (không áp dụng trong Vực nguyên/Vực khiêu chiến/Trầm Thủy)."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Infallible Procession",
+        "description": "Mỗi lần nhận 1 lớp Benison, Dahlia hồi 2.5 năng lượng nguyên tố."
+      },
+      {
+        "level": 2,
+        "name": "Revelation of Mercy",
+        "description": "Sau khi tiêu lớp Benison để tạo Shield of Sacred Favor, nhân vật được khiên bảo vệ tăng 25% độ bền khiên trong 12s."
+      },
+      {
+        "level": 3,
+        "name": "Windblume Offertory",
+        "description": "Tăng cấp Radiant Psalter +3 (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "Collect of the Assembly",
+        "description": "Favonian Favor kéo dài thêm 3s."
+      },
+      {
+        "level": 5,
+        "name": "Let It Be Subtly So",
+        "description": "Tăng cấp Immersive Ordinance +3 (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "You Shall Go Out With Joy",
+        "description": "Nhân vật đứng sân mang Favonian Favor tăng thêm 10% tốc đánh; ngoài ra khi nhân vật mang Favonian Favor gục sẽ được hồi sinh ngay lập tức (có hồi chiêu riêng)."
+      }
+    ],
+    "abyssRoleNotes": "Support khiên Hydro 4★ scale HP: cấp khiên theo HP tối đa và buff tốc đánh cho DPS đòn thường. Cần build HP%. Hợp đội đòn thường (Freeze/Hydro infusion) và đội cần khiên thay Zhongli khi chưa có.",
+    "sourceFile": "nhan-vat/mondstadt.md"
+  },
+  {
+    "id": "aloy",
+    "name": "Aloy",
+    "element": "Cryo",
+    "weaponType": "Bow",
+    "rarity": 5,
+    "nationInGame": "— (nhân vật collab Horizon, không có quốc gia trong game; nhãn nội bộ RANGER)",
+    "releaseDate": "2021-08-31",
+    "baseStats": {
+      "lv1": {
+        "hp": 848.45,
+        "atk": 18.21,
+        "def": 52.65
+      },
+      "lv90": {
+        "hp": 10898.89,
+        "atk": 233.92,
+        "def": 676.33,
+        "ascensionStatType": "Cryo DMG Bonus",
+        "ascensionStatValue": 0.288
+      }
+    },
+    "normalAttack": {
+      "name": "Rapid Fire",
+      "hits": [
+        {
+          "label": "1-Hit (x2)",
+          "values": {
+            "lv1": "21.12%+23.76% ATK",
+            "lv10": "37.68%+42.39% ATK"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "43.12% ATK",
+            "lv10": "76.93% ATK"
+          }
+        },
+        {
+          "label": "3-Hit",
+          "values": {
+            "lv1": "52.80% ATK",
+            "lv10": "94.20% ATK"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "65.65% ATK",
+            "lv10": "117.12% ATK"
+          }
+        },
+        {
+          "label": "Ngắm bắn",
+          "values": {
+            "lv1": "43.86% ATK",
+            "lv10": "86.70% ATK"
+          }
+        },
+        {
+          "label": "Ngắm bắn sạc đầy",
+          "values": {
+            "lv1": "124% ATK",
+            "lv10": "223.2% ATK"
+          }
+        },
+        {
+          "label": "Nhảy rơi",
+          "values": {
+            "lv1": "56.83% ATK",
+            "lv10": "112.34% ATK"
+          }
+        },
+        {
+          "label": "Nhảy thấp/cao",
+          "values": {
+            "lv1": "113.63%/141.93% ATK",
+            "lv10": "224.62%/280.57% ATK"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Frozen Wilds",
+      "description": "Ném Freeze Bomb gây DMG Cryo và gắn Chillwater Bomblet lên địch; bom nổ gây DMG Cryo, giảm ATK địch và cho Aloy lớp Coil. Đủ 4 lớp Coil, Aloy vào trạng thái Rushing Ice: đòn thường hoá Cryo và tăng mạnh sát thương đòn thường.",
+      "scaling": [
+        {
+          "label": "Freeze Bomb DMG",
+          "values": {
+            "lv1": "177.6% ATK",
+            "lv10": "319.68% ATK"
+          }
+        },
+        {
+          "label": "Chillwater Bomblet DMG",
+          "values": {
+            "lv1": "40% ATK",
+            "lv10": "72% ATK"
+          }
+        },
+        {
+          "label": "Giảm ATK địch",
+          "values": {
+            "lv1": "12%",
+            "lv10": "15%"
+          }
+        },
+        {
+          "label": "Bonus đòn thường theo Coil (1/2/3 lớp)",
+          "values": {
+            "lv1": "5.85%/11.69%/17.54%",
+            "lv10": "9.52%/19.04%/28.56%"
+          }
+        },
+        {
+          "label": "Bonus đòn thường khi Rushing Ice",
+          "values": {
+            "lv1": "29.23%",
+            "lv10": "47.60%"
+          }
+        }
+      ],
+      "cooldown": "20s",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Prophecies of Dawn",
+      "description": "Ném bom lạnh gây DMG Cryo diện rộng.",
+      "scaling": [
+        {
+          "label": "Skill DMG",
+          "values": {
+            "lv1": "359.2% ATK",
+            "lv10": "646.56% ATK"
+          }
+        }
+      ],
+      "cooldown": "12s",
+      "energyCost": 40
+    },
+    "passives": [
+      {
+        "name": "Combat Override",
+        "unlock": "A1",
+        "description": "Khi nhận lớp Coil từ Frozen Wilds, ATK của Aloy +16% và ATK đồng đội gần đó +8%, trong 10s."
+      },
+      {
+        "name": "Strong Strike",
+        "unlock": "A4",
+        "description": "Khi ở trạng thái Rushing Ice, Cryo DMG Bonus của Aloy tăng 3.5% mỗi giây, tối đa +35%."
+      },
+      {
+        "name": "Easy Does It",
+        "unlock": "Utility",
+        "description": "Khi Aloy trong đội, các con vật cho Thịt/Gia cầm không bỏ chạy khi đồng đội lại gần."
+      }
+    ],
+    "constellations": [],
+    "abyssRoleNotes": "DPS Cryo dùng đòn thường (collab Horizon, phát miễn phí). KHÔNG có cung mệnh — game ghi rõ \"Star of Another World: chưa tới lúc\" cho cả C1-C6, nên sức mạnh bị chặn ở mức C0 vĩnh viễn. Vai trò thực tế ở Trầm Thủy hạn chế; chủ yếu dùng khi thiếu DPS Cryo hoặc để lấp slot Cryo cho đội Đóng Băng/Siêu Dẫn.",
+    "sourceFile": "nhan-vat/mondstadt.md"
   }
 ]
