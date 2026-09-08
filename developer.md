@@ -157,6 +157,15 @@ The GitHub Actions workflow in `.github/workflows/release.yml` runs on tags
 matching `v*.*.*` using `macos-15`. It builds the app, creates an ad-hoc-signed
 bundle, archives it as `.tar.gz`, and publishes a GitHub release.
 
+Both the workflow and `task bundle` assemble the `.app` through
+`scripts/bundle-app.sh` — they must not spell those steps out separately. They
+previously did, and drifted: the workflow never copied SwiftPM's
+`ns-launcher_NSLauncherApp.bundle`, so every released build shipped without
+`Resources/Story` and the Story tab came up empty even though local `task
+bundle` builds were fine. The script now fails the build if any directory in
+its `REQUIRED_RESOURCE_DIRS` list is missing from the assembled bundle; extend
+that list whenever `Package.swift` gains a new `resources:` entry.
+
 There is currently no notarized or DMG distribution path.
 
 ## Screenshot Capture

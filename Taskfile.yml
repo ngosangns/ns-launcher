@@ -31,18 +31,10 @@ tasks:
   bundle:
     desc: Build release and assemble {{.APP_NAME}}.app in .build/release.
     deps: [build]
-    dir: '{{.BIN_PATH}}'
     cmds:
-      - rm -rf '{{.APP_NAME}}.app'
-      - mkdir -p '{{.APP_NAME}}.app/Contents/MacOS' '{{.APP_NAME}}.app/Contents/Resources'
-      - cp '{{.ROOT_DIR}}/Resources/Info.plist' '{{.APP_NAME}}.app/Contents/Info.plist'
-      - cp 'NSLauncherApp' '{{.APP_NAME}}.app/Contents/MacOS/{{.BIN_NAME}}'
-      - ./IconGen '{{.APP_NAME}}.app/Contents/Resources/AppIcon.icns'
-      # SwiftPM's own resource bundle (Resources/Story/, declared in Package.swift)
-      # — `Bundle.module` looks for it under Contents/Resources at runtime.
-      - cp -R ns-launcher_NSLauncherApp.bundle '{{.APP_NAME}}.app/Contents/Resources/'
-      - codesign --force --sign - '{{.APP_NAME}}.app'
-      - codesign --verify --strict '{{.APP_NAME}}.app'
+      # Shared with .github/workflows/release.yml — see the script's header for
+      # why these steps are not written out twice.
+      - ./scripts/bundle-app.sh
 
   install:
     desc: Bundle and move {{.APP_NAME}}.app into /Applications.
