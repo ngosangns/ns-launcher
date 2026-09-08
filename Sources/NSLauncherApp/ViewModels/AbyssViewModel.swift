@@ -22,6 +22,44 @@ final class AbyssViewModel: ObservableObject {
         case weapons
     }
 
+    /// How the roster grid is ordered.
+    ///
+    /// Only affects what is shown. The library's own order is load-bearing
+    /// elsewhere — `AbyssOptimizer` breaks pool ties on it — so the sort is
+    /// applied to a copy on its way to the view and never to `library`.
+    enum RosterSort: String, Hashable, CaseIterable {
+        case name
+        /// Star rating: 5★ down to 1★ by default.
+        case rarity
+        /// Characters only.
+        case element
+        /// Characters only.
+        case release
+        /// Weapons only; base ATK at level 90.
+        case attack
+        case owned
+
+        static func options(for tab: RosterTab) -> [RosterSort] {
+            switch tab {
+            case .characters: return [.name, .rarity, .element, .release, .owned]
+            case .weapons: return [.name, .rarity, .attack, .owned]
+            }
+        }
+
+        /// Which way round the sort starts.
+        ///
+        /// Every key has an obvious "interesting end" and it is not the same
+        /// one: names want A first, stars want 5★ first, and a release date
+        /// wants the newest. Picking a sort snaps back to its own default, so
+        /// choosing "stars" never lands on 1★ weapons.
+        var startsDescending: Bool {
+            switch self {
+            case .name, .element: return false
+            case .rarity, .release, .attack, .owned: return true
+            }
+        }
+    }
+
     @Published private(set) var library: AbyssDataLibrary?
     @Published private(set) var roster: AbyssRoster = .empty
     @Published private(set) var reports: [AbyssFloorReport] = []
@@ -31,10 +69,31 @@ final class AbyssViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     @Published var section: Section = .roster
-    @Published var rosterTab: RosterTab = .characters
+    /// Switching tabs drops a sort the other tab has no meaning for — there is
+    /// no "by element" order for weapons — rather than leaving a stale label on
+    /// a control that is silently doing nothing.
+    @Published var rosterTab: RosterTab = .characters {
+        didSet {
+            guard !RosterSort.options(for: rosterTab).contains(rosterSort) else { return }
+            rosterSort = .name
+        }
+    }
     @Published var searchText: String = ""
     @Published var elementFilter: GenshinElement?
     @Published var weaponTypeFilter: WeaponType?
+    /// By stars first: the grid's own file order groups characters by nation,
+    /// which this screen never shows, and rarity is what most people scan a
+    /// roster grid by.
+    @Published var rosterSort: RosterSort = .rarity {
+        didSet {
+            guard rosterSort != oldValue else { return }
+            sortDescending = rosterSort.startsDescending
+        }
+    }
+
+    /// Direction of `rosterSort`. Reset to the sort's own natural end whenever
+    /// the sort changes, and flippable from there.
+    @Published var sortDescending = RosterSort.rarity.startsDescending
     @Published var showsOwnedOnly = false
     /// Search across every character instead of the roster — "what could I
     /// build in theory".
@@ -188,24 +247,16 @@ final class AbyssViewModel: ObservableObject {
 
     var characters: [AbyssCharacter] {
         guard let library else { return [] }
-        return filter(library.characters)
+        return sorted(filter(library.characters))
     }
 
     var weapons: [AbyssWeapon] {
         guard let library else { return [] }
-        return library.weapons.filter { weapon in
+        return sorted(library.weapons.filter { weapon in
             if showsOwnedOnly, !roster.weaponIDs.contains(weapon.id) { return false }
             if let weaponTypeFilter, weapon.type != weaponTypeFilter { return false }
             return matches(name: weapon.name, id: weapon.id)
-        }
-    }
-
-    var weaponsByType: [(type: WeaponType, weapons: [AbyssWeapon])] {
-        let matching = weapons
-        return WeaponType.allCases.compactMap { type in
-            let weapons = matching.filter { $0.type == type }
-            return weapons.isEmpty ? nil : (type, weapons)
-        }
+        })
     }
 
     /// How many rows the filters are hiding, for the "12 of 125" counter.
@@ -242,6 +293,76 @@ final class AbyssViewModel: ObservableObject {
     var canSearch: Bool {
         guard library != nil, !isSearching else { return false }
         return usesFullRoster || roster.characters.count >= 4
+    }
+
+    /// Applies `rosterSort` in `sortDescending`'s direction, then falls through
+    /// to the name and the id.
+    ///
+    /// The fall-through is what makes each ordering *total*. Swift's sort is
+    /// unstable, so a comparator that stopped at "same rarity" would leave the
+    /// order inside each star block up to the algorithm's internals, and the
+    /// grid would look like it rearranges itself. The fall-through always runs
+    /// ascending, whichever way the primary key points — a reversed sort should
+    /// flip the blocks, not scramble the names inside them.
+    private func ordered<T>(_ items: [T],
+                            name: (T) -> String,
+                            id: (T) -> String,
+                            key: (T, T) -> ComparisonResult) -> [T] {
+        items.sorted { lhs, rhs in
+            let primary = key(lhs, rhs)
+            if primary != .orderedSame {
+                return sortDescending ? primary == .orderedDescending : primary == .orderedAscending
+            }
+            let byName = name(lhs).localizedCaseInsensitiveCompare(name(rhs))
+            if byName != .orderedSame { return byName == .orderedAscending }
+            return id(lhs) < id(rhs)
+        }
+    }
+
+    /// Ascending order for a key, before the direction is applied.
+    private static func compare<V: Comparable>(_ lhs: V, _ rhs: V) -> ComparisonResult {
+        lhs == rhs ? .orderedSame : (lhs < rhs ? .orderedAscending : .orderedDescending)
+    }
+
+    private func sorted(_ characters: [AbyssCharacter]) -> [AbyssCharacter] {
+        ordered(characters, name: \.name, id: \.id) { lhs, rhs in
+            switch rosterSort {
+            case .name:
+                return lhs.name.localizedCaseInsensitiveCompare(rhs.name)
+            case .rarity:
+                return Self.compare(lhs.rarity, rhs.rarity)
+            case .element:
+                return Self.compare(lhs.element.rawValue, rhs.element.rawValue)
+            case .release:
+                // A missing date sorts as the oldest rather than the newest: an
+                // untranscribed entry is not a new release.
+                return Self.compare(lhs.releaseDate ?? "", rhs.releaseDate ?? "")
+            case .attack:
+                return .orderedSame
+            case .owned:
+                // Bool is not Comparable in Swift; 0/1 keeps one comparison path.
+                return Self.compare(roster.characterIDs.contains(lhs.id) ? 1 : 0,
+                                    roster.characterIDs.contains(rhs.id) ? 1 : 0)
+            }
+        }
+    }
+
+    private func sorted(_ weapons: [AbyssWeapon]) -> [AbyssWeapon] {
+        ordered(weapons, name: \.name, id: \.id) { lhs, rhs in
+            switch rosterSort {
+            case .name:
+                return lhs.name.localizedCaseInsensitiveCompare(rhs.name)
+            case .rarity:
+                return Self.compare(lhs.rarity, rhs.rarity)
+            case .attack:
+                return Self.compare(lhs.atkLv90 ?? 0, rhs.atkLv90 ?? 0)
+            case .owned:
+                return Self.compare(roster.weaponIDs.contains(lhs.id) ? 1 : 0,
+                                    roster.weaponIDs.contains(rhs.id) ? 1 : 0)
+            case .element, .release:
+                return .orderedSame
+            }
+        }
     }
 
     private func filter(_ characters: [AbyssCharacter]) -> [AbyssCharacter] {
@@ -310,19 +431,13 @@ final class AbyssViewModel: ObservableObject {
         persist()
     }
 
-    /// Nobody fills in 371 toggles by hand; the 4★ weapons are the ones almost
-    /// every account has several of.
-    func addEveryFourStarWeapon() {
-        guard let library else { return }
-        let owned = roster.weaponIDs
-        for weapon in library.weapons where weapon.rarity == 4 && !owned.contains(weapon.id) {
-            roster.weapons.append(.init(id: weapon.id))
-        }
+    func clearCharacters() {
+        roster.characters = []
         persist()
     }
 
-    func clearRoster() {
-        roster = .empty
+    func clearWeapons() {
+        roster.weapons = []
         persist()
     }
 
@@ -392,6 +507,8 @@ final class AbyssViewModel: ObservableObject {
     func character(_ id: String) -> AbyssCharacter? { library?.charactersByID[id] }
     func weapon(_ id: String) -> AbyssWeapon? { library?.weaponsByID[id] }
     func artifactSet(_ id: String) -> AbyssArtifactSet? { library?.artifactSetsByID[id] }
+    func characterIconURL(_ id: String) -> URL? { library?.icons.characterIconURL(id) }
+    func weaponIconURL(_ id: String) -> URL? { library?.icons.weaponIconURL(id) }
 
     /// Damage share within a team, used for the per-character bar. Computed
     /// against the sum of the members rather than the team score, because the

@@ -49,6 +49,8 @@ struct AbyssDataLibrary: Sendable {
     let stellarJubileeIDs: Set<String>
     /// Numeric game ids -> slugs, for reading a player's showcase.
     let gameIDs: AbyssGameIDMap
+    /// Bundled character/weapon portrait files.
+    let icons: AbyssIconLibrary
     let diagnostics: AbyssParseDiagnostics
 
     var latestCycle: AbyssCycle? { cycles.first }
@@ -80,6 +82,7 @@ struct AbyssDataLibrary: Sendable {
                                  overrides: cycleOverrideDirectory)
 
         gameIDs = Self.decode(from: root?.appendingPathComponent("game-ids.json")) ?? .empty
+        icons = AbyssIconLibrary(root: root)
         moonsignIDs = Set(teamBonus?.moonsign.characterIds ?? [])
         hexereiIDs = Set(teamBonus?.hexerei.characterIds ?? [])
         stellarJubileeIDs = Set(tuning?.stellarJubileeCharacterIds ?? [])

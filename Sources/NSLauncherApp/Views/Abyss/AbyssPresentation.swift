@@ -36,6 +36,40 @@ extension GenshinElement {
     }
 }
 
+extension RarityAppearance {
+    /// Genshin's rarity colours — gold, purple, blue, green, grey — pulled
+    /// toward the launcher's palette the same way the element colours are.
+    ///
+    /// Following the game's own convention matters more here than matching the
+    /// launcher: a player reads "gold" as five-star before they read any label,
+    /// and inventing a different scale would fight fifty hours of muscle memory.
+    static func genshin(_ stars: Int) -> RarityAppearance {
+        switch stars {
+        case 5:
+            return RarityAppearance(stars: 5,
+                                    accent: LauncherPalette.gold,
+                                    fill: LauncherPalette.goldHighlight,
+                                    isTopTier: true)
+        case 4:
+            return RarityAppearance(stars: 4,
+                                    accent: Color(red: 0.72, green: 0.56, blue: 0.92),
+                                    fill: Color(red: 0.85, green: 0.79, blue: 0.97))
+        case 3:
+            return RarityAppearance(stars: 3,
+                                    accent: LauncherPalette.sky,
+                                    fill: Color(red: 0.76, green: 0.86, blue: 0.96))
+        case 2:
+            return RarityAppearance(stars: 2,
+                                    accent: LauncherPalette.success,
+                                    fill: Color(red: 0.79, green: 0.93, blue: 0.86))
+        default:
+            return RarityAppearance(stars: max(stars, 1),
+                                    accent: LauncherPalette.mist,
+                                    fill: Color(red: 0.88, green: 0.91, blue: 0.94))
+        }
+    }
+}
+
 extension WeaponType {
     var symbolName: String {
         switch self {

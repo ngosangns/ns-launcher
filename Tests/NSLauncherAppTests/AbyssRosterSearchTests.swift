@@ -97,8 +97,6 @@ final class AbyssRosterSearchTests: XCTestCase {
         viewModel.weaponTypeFilter = .catalyst
         XCTAssertTrue(viewModel.weapons.allSatisfy { $0.type == .catalyst })
         XCTAssertEqual(viewModel.visibleCount, viewModel.weapons.count)
-        XCTAssertEqual(viewModel.weaponsByType.map(\.type), [.catalyst],
-                       "the grouped list should only contain the type being filtered to")
 
         viewModel.rosterTab = .characters
         XCTAssertEqual(viewModel.totalCount, library.characters.count)
@@ -150,6 +148,139 @@ final class AbyssRosterSearchTests: XCTestCase {
         XCTAssertNil(viewModel.showcase)
         XCTAssertTrue(viewModel.owns(characterID: "hu-tao"),
                       "forgetting the import should not un-own what it added")
+    }
+
+    // MARK: - Sorting
+
+    func testCharacterSortsOrderTheGrid() async throws {
+        let viewModel = await makeViewModel()
+
+        // Stars first is the default: the data's own order groups characters by
+        // nation, which this screen never shows, and rarity is what people scan
+        // a roster grid by.
+        XCTAssertEqual(viewModel.rosterSort, .rarity)
+        let rarities = viewModel.characters.map(\.rarity)
+        XCTAssertEqual(rarities, rarities.sorted(by: >), "5★ should come before 4★")
+
+        viewModel.rosterSort = .name
+        let names = viewModel.characters.map(\.name)
+        XCTAssertEqual(names, names.sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending })
+
+        viewModel.rosterSort = .release
+        let dates = viewModel.characters.map { $0.releaseDate ?? "" }
+        XCTAssertEqual(dates, dates.sorted(by: >), "newest first")
+
+        viewModel.rosterSort = .owned
+        viewModel.toggleCharacter("hu-tao")
+        XCTAssertEqual(viewModel.characters.first?.id, "hu-tao",
+                       "the only owned character should sort to the front")
+    }
+
+    func testWeaponSortsOrderTheGrid() async throws {
+        let viewModel = await makeViewModel()
+        viewModel.rosterTab = .weapons
+
+        viewModel.rosterSort = .attack
+        let attack = viewModel.weapons.map { $0.atkLv90 ?? 0 }
+        XCTAssertEqual(attack, attack.sorted(by: >))
+
+        viewModel.rosterSort = .rarity
+        let rarities = viewModel.weapons.map(\.rarity)
+        XCTAssertEqual(rarities, rarities.sorted(by: >))
+    }
+
+    /// Each key has its own interesting end — A first, but 5★ first — so
+    /// picking a sort has to land on that end rather than on a shared default.
+    func testEachSortStartsAtItsOwnInterestingEnd() async throws {
+        let viewModel = await makeViewModel()
+
+        viewModel.rosterSort = .rarity
+        XCTAssertTrue(viewModel.sortDescending, "stars should open on 5★, not 1★")
+        XCTAssertEqual(viewModel.characters.first?.rarity, 5)
+
+        viewModel.rosterSort = .name
+        XCTAssertFalse(viewModel.sortDescending, "names should open on A")
+
+        viewModel.rosterTab = .weapons
+        viewModel.rosterSort = .attack
+        XCTAssertTrue(viewModel.sortDescending, "base ATK should open on the strongest")
+    }
+
+    /// Reversing flips the blocks; it must not scramble the names inside them.
+    func testReversingFlipsTheKeyButKeepsNamesAscendingWithinTies() async throws {
+        let viewModel = await makeViewModel()
+        viewModel.rosterSort = .rarity
+
+        let descending = viewModel.characters.map(\.rarity)
+        viewModel.sortDescending = false
+        let ascending = viewModel.characters.map(\.rarity)
+
+        XCTAssertEqual(ascending, descending.reversed().sorted(), "reversing did not flip the star order")
+        XCTAssertEqual(ascending.first, 4)
+        XCTAssertEqual(ascending.last, 5)
+
+        // Inside one star block the names still run A → Z.
+        let fourStars = viewModel.characters.filter { $0.rarity == 4 }.map(\.name)
+        XCTAssertEqual(fourStars,
+                       fourStars.sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending },
+                       "reversing the key should not reverse the names inside a tie")
+
+        // And flipping a name sort really does give Z → A.
+        viewModel.rosterSort = .name
+        viewModel.sortDescending = true
+        let names = viewModel.characters.map(\.name)
+        XCTAssertEqual(names,
+                       names.sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedDescending })
+    }
+
+    /// Every ordering has to be total, not just correct on its headline key.
+    /// Swift's sort is unstable, so a comparator that stops at "same rarity"
+    /// leaves the order within each rarity block up to the sort's internals —
+    /// which is how a grid ends up looking like it rearranges itself. Each sort
+    /// therefore has to fall through to the name, and that is what is asserted:
+    /// inside every run of equal keys, names ascend.
+    func testEveryOrderingFallsThroughToTheName() async throws {
+        let viewModel = await makeViewModel()
+
+        func assertNamesAscend<T>(_ items: [T], key: (T) -> String, name: (T) -> String,
+                                  sort: AbyssViewModel.RosterSort) {
+            for (previous, next) in zip(items, items.dropFirst()) where key(previous) == key(next) {
+                XCTAssertTrue(
+                    name(previous).localizedCaseInsensitiveCompare(name(next)) != .orderedDescending,
+                    "\(sort): \(name(previous)) and \(name(next)) tie on the sort key but are not in name order")
+            }
+        }
+
+        viewModel.rosterSort = .rarity
+        assertNamesAscend(viewModel.characters, key: { String($0.rarity) }, name: \.name, sort: .rarity)
+
+        viewModel.rosterSort = .element
+        assertNamesAscend(viewModel.characters, key: { $0.element.rawValue }, name: \.name, sort: .element)
+
+        viewModel.rosterSort = .owned
+        assertNamesAscend(viewModel.characters, key: { _ in "unowned" }, name: \.name, sort: .owned)
+
+        viewModel.rosterTab = .weapons
+        viewModel.rosterSort = .rarity
+        assertNamesAscend(viewModel.weapons, key: { String($0.rarity) }, name: \.name, sort: .rarity)
+
+        viewModel.rosterSort = .attack
+        assertNamesAscend(viewModel.weapons, key: { String($0.atkLv90 ?? 0) }, name: \.name, sort: .attack)
+    }
+
+    /// A weapon has no element, so carrying that sort across to the weapons tab
+    /// would leave a control labelled with an order it is not applying.
+    func testSwitchingTabsDropsASortTheOtherTabCannotUse() async throws {
+        let viewModel = await makeViewModel()
+
+        viewModel.rosterSort = .element
+        viewModel.rosterTab = .weapons
+        XCTAssertEqual(viewModel.rosterSort, .name)
+
+        // One both tabs share survives the switch.
+        viewModel.rosterSort = .rarity
+        viewModel.rosterTab = .characters
+        XCTAssertEqual(viewModel.rosterSort, .rarity)
     }
 
     func testImportIsRefusedForAMalformedUID() async throws {

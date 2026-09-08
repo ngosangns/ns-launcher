@@ -15,6 +15,7 @@ struct AbyssView: View {
         HStack(alignment: .top, spacing: 0) {
             sidebar
                 .frame(width: 268)
+                .frame(maxHeight: .infinity, alignment: .top)
                 // Leading/trailing must clear WindowFrameOrnament's corner brackets, which occupy a
                 // 16-40pt band from each window edge — see HomeView's matching comment.
                 .padding(.leading, 44)
@@ -37,14 +38,23 @@ struct AbyssView: View {
             HStack(spacing: 8) {
                 SidebarTabButton(title: text.abyssRosterSection,
                                  systemImage: "person.3.fill",
-                                 isSelected: viewModel.section == .roster) {
+                                 isSelected: viewModel.section == .roster,
+                                 showsLabelWhenInactive: false) {
                     viewModel.section = .roster
                 }
                 SidebarTabButton(title: text.abyssResultsSection,
                                  systemImage: "trophy.fill",
-                                 isSelected: viewModel.section == .results) {
+                                 isSelected: viewModel.section == .results,
+                                 showsLabelWhenInactive: false) {
                     viewModel.section = .results
                 }
+
+                Spacer(minLength: 0)
+
+                // Import/export are occasional, not the primary action, so they
+                // move out of the button row and into an overflow menu rather
+                // than competing with Find Teams for visual weight.
+                rosterFileMenu
             }
 
             if viewModel.library == nil {
@@ -54,13 +64,58 @@ struct AbyssView: View {
             } else {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 12) {
-                        actions
+                        rosterSummary
                         uidImport
                         methodologyNotice
                     }
                 }
+                .frame(maxHeight: .infinity)
+
+                // Pinned below the scroll area rather than inside it: it is the
+                // one action every visit to this tab ends with, so it should
+                // not require scrolling past the showcase and legal notices to
+                // reach.
+                findTeamsButton
             }
         }
+    }
+
+    private var rosterFileMenu: some View {
+        Menu {
+            Button { importRoster() } label: { Label(text.abyssImport, systemImage: "square.and.arrow.down") }
+            Button { exportRoster() } label: { Label(text.abyssExport, systemImage: "square.and.arrow.up") }
+        } label: {
+            Image(systemName: "ellipsis.circle")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(LauncherPalette.mist.opacity(0.85))
+                .frame(width: 30, height: 30)
+                .background(LauncherPalette.night.opacity(0.34), in: Circle())
+        }
+        .menuStyle(.borderlessButton)
+        .menuIndicator(.hidden)
+        .fixedSize()
+        .pointerOnHover()
+    }
+
+    private var findTeamsButton: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            if viewModel.isSearching {
+                GoldenProgressBar(value: viewModel.progress > 0 ? viewModel.progress : nil)
+                Text(text.abyssRecomputing)
+                    .font(.system(.caption2, design: .rounded))
+                    .foregroundStyle(LauncherPalette.mist.opacity(0.7))
+            }
+
+            Button {
+                viewModel.isSearching ? viewModel.cancelSearch() : viewModel.search()
+            } label: {
+                Label(viewModel.isSearching ? text.abyssCancel : text.abyssRecompute,
+                      systemImage: viewModel.isSearching ? "stop.fill" : "sparkle.magnifyingglass")
+                    .frame(maxWidth: .infinity)
+            }
+            .quest(.primary, disabled: !viewModel.canSearch && !viewModel.isSearching)
+        }
+        .padding(.top, 8)
     }
 
     /// Fetching a showcase needs nothing but the UID: its first digit is the
@@ -184,7 +239,7 @@ struct AbyssView: View {
         }
     }
 
-    private var actions: some View {
+    private var rosterSummary: some View {
         VStack(alignment: .leading, spacing: 8) {
             // Searching and filtering belong to the roster grid, so they live
             // there; this toggle changes what the search *runs over*, which is
@@ -194,30 +249,6 @@ struct AbyssView: View {
                 .tint(LauncherPalette.gold)
                 .font(.system(.caption, design: .rounded, weight: .semibold))
                 .foregroundStyle(LauncherPalette.mist)
-
-            HStack(spacing: 8) {
-                Button {
-                    viewModel.isSearching ? viewModel.cancelSearch() : viewModel.search()
-                } label: {
-                    Label(viewModel.isSearching ? text.abyssCancel : text.abyssRecompute,
-                          systemImage: viewModel.isSearching ? "stop.fill" : "sparkle.magnifyingglass")
-                }
-                .quest(.primary, disabled: !viewModel.canSearch && !viewModel.isSearching)
-            }
-
-            if viewModel.isSearching {
-                GoldenProgressBar(value: viewModel.progress > 0 ? viewModel.progress : nil)
-                Text(text.abyssRecomputing)
-                    .font(.system(.caption2, design: .rounded))
-                    .foregroundStyle(LauncherPalette.mist.opacity(0.7))
-            }
-
-            HStack(spacing: 8) {
-                Button { importRoster() } label: { Label(text.abyssImport, systemImage: "square.and.arrow.down") }
-                    .quest(.quiet)
-                Button { exportRoster() } label: { Label(text.abyssExport, systemImage: "square.and.arrow.up") }
-                    .quest(.quiet)
-            }
 
             Text(text.abyssOwnedCount(characters: viewModel.roster.characters.count,
                                       weapons: viewModel.roster.weapons.count))

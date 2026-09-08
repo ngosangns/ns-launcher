@@ -176,7 +176,20 @@ struct AppText {
         case .lumine: return localized(en: "Lumine (Girl)", vi: "Lumine (Nữ)")
         }
     }
+    /// Short label for the Boy/Girl cutscene tab picker — `travelerGenderName` is too long for a
+    /// segmented control.
+    func travelerGenderShortName(_ gender: TravelerGender) -> String {
+        switch gender {
+        case .aether: return localized(en: "Boy", vi: "Nam")
+        case .lumine: return localized(en: "Girl", vi: "Nữ")
+        }
+    }
     var cutsceneSearchPlaceholder: String { localized(en: "Filter by filename", vi: "Lọc theo tên file") }
+    var cutsceneSortLabel: String { localized(en: "Sort", vi: "Sắp xếp") }
+    var cutsceneSortSizeDescending: String { localized(en: "Size (largest first)", vi: "Dung lượng (lớn nhất trước)") }
+    var cutsceneSortSizeAscending: String { localized(en: "Size (smallest first)", vi: "Dung lượng (nhỏ nhất trước)") }
+    var cutsceneSortNameAscending: String { localized(en: "Name (A–Z)", vi: "Tên (A–Z)") }
+    var cutsceneSortNameDescending: String { localized(en: "Name (Z–A)", vi: "Tên (Z–A)") }
     var refreshCutscenesTitle: String { localized(en: "Refresh", vi: "Làm mới") }
     var openCutsceneTitle: String { localized(en: "Open", vi: "Mở") }
     var revealCutsceneTitle: String { localized(en: "Reveal in Finder", vi: "Hiện trong Finder") }
@@ -202,27 +215,30 @@ struct AppText {
     }
     var decryptingCutscene: String { localized(en: "Decrypting cutscene...", vi: "Đang giải mã cutscene...") }
     var cutsceneDecryptFailed: String { localized(en: "Failed to decrypt cutscene", vi: "Giải mã cutscene thất bại") }
-    var cutsceneDecryptOutputMissing: String {
-        localized(
-            en: "GI-cutscenes ran but did not produce a playable file. Check its output settings.",
-            vi: "GI-cutscenes đã chạy nhưng không tạo ra file phát được. Hãy kiểm tra lại cấu hình output của công cụ."
+    func cutsceneDecryptOutputMissing(_ details: String) -> String {
+        let trimmed = details.trimmingCharacters(in: .whitespacesAndNewlines)
+        return localized(
+            en: "GI-cutscenes ran but did not produce a playable file.\(trimmed.isEmpty ? "" : " Its output: \(trimmed)")",
+            vi: "GI-cutscenes đã chạy nhưng không tạo ra file phát được.\(trimmed.isEmpty ? "" : " Output của công cụ: \(trimmed)")"
         )
     }
-    var deleteOppositeGenderCutscenesTitle: String { localized(en: "Delete opposite-gender cutscenes", vi: "Xóa cutscene giới tính khác") }
-    func deleteOppositeGenderCutscenesSummary(_ count: Int, _ size: String) -> String {
+    func clearAllCutscenesTitle(_ genderShortName: String) -> String {
+        localized(en: "Clear all \(genderShortName)", vi: "Xóa tất cả \(genderShortName)")
+    }
+    func clearAllCutscenesSummary(_ count: Int, _ size: String) -> String {
         localized(en: "\(count) files · \(size)", vi: "\(count) file · \(size)")
     }
-    var noOppositeGenderCutscenes: String {
+    func noCutscenesForGender(_ genderShortName: String) -> String {
         localized(
-            en: "No opposite-gender cutscene files found.",
-            vi: "Không tìm thấy file cutscene giới tính khác."
+            en: "No \(genderShortName) cutscene files found.",
+            vi: "Không tìm thấy file cutscene \(genderShortName)."
         )
     }
-    var deleteOppositeGenderConfirmTitle: String { localized(en: "Delete opposite-gender cutscenes?", vi: "Xóa cutscene giới tính khác?") }
-    func deleteOppositeGenderConfirmMessage(_ count: Int, _ size: String) -> String {
+    var clearAllCutscenesConfirmTitle: String { localized(en: "Clear all these cutscenes?", vi: "Xóa toàn bộ cutscene này?") }
+    func clearAllCutscenesConfirmMessage(_ count: Int, _ size: String, _ genderShortName: String) -> String {
         localized(
-            en: "\(count) files (\(size)) ending in \"Boy.usm\" or \"Girl.usm\" that don't match your selected Traveler gender will be moved to the Trash. You can recover them from there if you change your mind.",
-            vi: "\(count) file (\(size)) có đuôi \"Boy.usm\" hoặc \"Girl.usm\" không khớp giới tính Traveler bạn đã chọn sẽ được chuyển vào Thùng rác. Bạn có thể khôi phục lại nếu đổi ý."
+            en: "\(count) \(genderShortName) files (\(size)) will be moved to the Trash. You can recover them from there if you change your mind.",
+            vi: "\(count) file \(genderShortName) (\(size)) sẽ được chuyển vào Thùng rác. Bạn có thể khôi phục lại nếu đổi ý."
         )
     }
 
@@ -470,8 +486,8 @@ struct AppText {
             }
         case let decryptionError as CutsceneDecryptionError:
             switch decryptionError {
-            case .decryptedFileNotProduced:
-                return cutsceneDecryptOutputMissing
+            case let .decryptedFileNotProduced(details):
+                return cutsceneDecryptOutputMissing(details)
             }
         case let sophonError as SophonInstallerError:
             switch sophonError {
@@ -615,8 +631,8 @@ struct AppText {
 
     // MARK: - Abyss
 
-    var abyssTitle: String { localized(en: "Abyss", vi: "Trầm Thủy") }
-    var abyssLoadingLabel: String { localized(en: "Loading Abyss data...", vi: "Đang tải dữ liệu Trầm Thủy...") }
+    var abyssTitle: String { localized(en: "Abyss", vi: "La Hoàn") }
+    var abyssLoadingLabel: String { localized(en: "Loading Abyss data...", vi: "Đang tải dữ liệu La Hoàn...") }
 
     var abyssRosterSection: String { localized(en: "My roster", vi: "Roster của tôi") }
     var abyssResultsSection: String { localized(en: "Suggested teams", vi: "Đội hình gợi ý") }
@@ -642,8 +658,44 @@ struct AppText {
     var abyssCancel: String { localized(en: "Stop", vi: "Dừng") }
     var abyssImport: String { localized(en: "Import", vi: "Nhập") }
     var abyssExport: String { localized(en: "Export", vi: "Xuất") }
-    var abyssSelectAllFourStar: String { localized(en: "Add every 4★ weapon", vi: "Thêm mọi vũ khí 4★") }
-    var abyssClearRoster: String { localized(en: "Clear", vi: "Xoá hết") }
+    func abyssSortLabel(_ sort: AbyssViewModel.RosterSort) -> String {
+        switch sort {
+        case .name: return localized(en: "Name", vi: "Tên")
+        case .rarity: return localized(en: "Stars", vi: "Số sao")
+        case .element: return localized(en: "Element", vi: "Nguyên tố")
+        case .release: return localized(en: "Release date", vi: "Ngày ra mắt")
+        case .attack: return localized(en: "Base ATK", vi: "ATK gốc")
+        case .owned: return localized(en: "Owned", vi: "Đang sở hữu")
+        }
+    }
+
+    /// Spells out which end of the sort comes first, because "descending" means
+    /// something different for each key — Z first, 5★ first, newest first.
+    func abyssSortDirection(_ sort: AbyssViewModel.RosterSort, descending: Bool) -> String {
+        switch sort {
+        case .name:
+            return descending ? "Z → A" : "A → Z"
+        case .rarity:
+            return descending ? "5★ → 1★" : "1★ → 5★"
+        case .element:
+            return descending ? localized(en: "Z → A", vi: "Z → A") : localized(en: "A → Z", vi: "A → Z")
+        case .release:
+            return descending ? localized(en: "newest first", vi: "mới nhất trước")
+                              : localized(en: "oldest first", vi: "cũ nhất trước")
+        case .attack:
+            return descending ? localized(en: "highest first", vi: "cao nhất trước")
+                              : localized(en: "lowest first", vi: "thấp nhất trước")
+        case .owned:
+            return descending ? localized(en: "owned first", vi: "đang có trước")
+                              : localized(en: "missing first", vi: "chưa có trước")
+        }
+    }
+
+    var abyssFlipSortDirection: String {
+        localized(en: "Reverse the order", vi: "Đảo chiều sắp xếp")
+    }
+    var abyssClearCharacters: String { localized(en: "Clear characters", vi: "Xoá hết nhân vật") }
+    var abyssClearWeapons: String { localized(en: "Clear weapons", vi: "Xoá hết vũ khí") }
 
     func abyssOwnedCount(characters: Int, weapons: Int) -> String {
         localized(en: "\(characters) characters · \(weapons) weapons",
@@ -789,12 +841,10 @@ struct AppText {
     /// asks which server the account is on.
     var abyssUIDHint: String {
         localized(
-            en: "Reads your Character Showcase from Enka.Network — no login, and no server to pick: "
-                + "your UID already says which one. It shows at most 8 characters, and only if "
-                + "\"Show Character Details\" is on in your in-game profile.",
-            vi: "Đọc Showcase nhân vật của bạn qua Enka.Network — không cần đăng nhập và không phải "
-                + "chọn server: UID đã cho biết server. Chỉ lấy được tối đa 8 nhân vật, và phải bật "
-                + "\"Hiển thị chi tiết nhân vật\" trong hồ sơ trong game.")
+            en: "Via Enka.Network — no login, no server to pick. Up to 8 characters; needs "
+                + "\"Show Character Details\" on in-game.",
+            vi: "Qua Enka.Network — không cần đăng nhập, không cần chọn server. Tối đa 8 nhân vật; "
+                + "cần bật \"Hiển thị chi tiết nhân vật\" trong game.")
     }
 
     func abyssShowcaseSummary(nickname: String, count: Int) -> String {
@@ -941,22 +991,17 @@ struct AppText {
     /// a measurement.
     var abyssMethodologyNotice: String {
         localized(
-            en: "Scores are an estimate for ranking teams, not a damage simulation: no rotation, "
-                + "energy, reaction cooldowns or constellations are modelled, artifacts are assumed "
-                + "to be a standard build, and some 4-piece set effects are hand-approximated.",
-            vi: "Điểm số chỉ là ước lượng để xếp hạng đội hình, không phải mô phỏng sát thương: "
-                + "chưa tính rotation, năng lượng, hồi chiêu phản ứng hay cung mệnh; thánh di vật "
-                + "giả định build chuẩn; một số hiệu ứng 4 món là số quy đổi tay.")
+            en: "Ranking estimate, not a damage simulation: no rotation/energy/constellations; "
+                + "artifacts assume a standard build.",
+            vi: "Điểm chỉ để xếp hạng, không mô phỏng sát thương: chưa tính rotation/năng lượng/"
+                + "cung mệnh; thánh di vật dùng build chuẩn giả định.")
     }
 
     var abyssDataNotice: String {
         localized(
-            en: "Genshin Impact and its game data are property of HoYoverse. Figures here are "
-                + "extracted via Yatta/Ambr and cross-checked against the Genshin Impact Wiki "
-                + "(Fandom, CC BY-SA 3.0), for reference only.",
-            vi: "Genshin Impact và toàn bộ số liệu game thuộc bản quyền HoYoverse. Số liệu ở đây "
-                + "trích xuất qua Yatta/Ambr và đối chiếu với Genshin Impact Wiki (Fandom, "
-                + "CC BY-SA 3.0), chỉ dùng để tham khảo.")
+            en: "Genshin data © HoYoverse, via Yatta/Ambr + Genshin Wiki (CC BY-SA 3.0). Reference only.",
+            vi: "Dữ liệu Genshin © HoYoverse, qua Yatta/Ambr + Genshin Wiki (CC BY-SA 3.0). "
+                + "Chỉ để tham khảo.")
     }
 
     /// Returns the string for the currently selected language.

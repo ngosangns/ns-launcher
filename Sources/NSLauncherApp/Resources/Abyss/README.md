@@ -31,6 +31,7 @@ là **bản duy nhất**; công cụ Python trong `toi-uu-doi-hinh/optimizer/` c
 | `team-bonus.json` | Cộng hưởng nguyên tố, Nguyệt Triệu, Hexerei, Nightsoul Burst |
 | `tuning.json` | Tham số thuật toán (xem bên dưới) |
 | `game-ids.json` | Id số trong game → slug ở đây, để nhập Showcase theo UID |
+| `icons/characters/<id>.png`, `icons/weapons/<id>.png` | Ảnh chân dung, 256×256 |
 | `manifest.json` | Số lượng bản ghi + các khoảng trống dữ liệu đã biết |
 
 `game-ids.json` **sinh tự động**, đừng sửa tay:
@@ -43,6 +44,25 @@ Chạy lại mỗi khi thêm nhân vật / vũ khí / bộ thánh di vật — b
 năng nhập theo UID lặng lẽ bỏ sót nhân vật. Script từ chối ghi nếu bảng mới mất
 id so với bảng đã commit, và `AbyssShowcaseImportTests` ghim bảng theo đúng bộ
 dữ liệu này.
+
+`icons/` cũng sinh tự động, cùng một kiểu:
+
+```bash
+python3 scripts/fetch-abyss-icons.py
+```
+
+Khớp tên với `gi.yatta.moe` rồi tải PNG về đúng theo slug của mình
+(`icons/characters/hu-tao.png`), nên lúc chạy Swift không cần biết mã icon nội
+bộ của Yatta — chỉ mở đúng file theo id, giống hệt cách `characters/<id>` và
+`weapons/<id>` đã hoạt động. File đã có thì bỏ qua, không tải lại; dùng
+`--force` nếu muốn tải lại toàn bộ. Nặng khoảng 8.6 MB, dùng riêng cho tab
+Trầm Thủy — không tính vào phần Story hay dung lượng game.
+
+Nhân vật Nhà Lữ Hành (Traveler) dùng chung một ảnh cho cả 7 biến thể nguyên
+tố — game không vẽ ảnh riêng theo nguyên tố, chỉ khác theo giới (chọn cố định
+Aether/nam cho nhất quán, không phải khẳng định "đây mới là" Nhà Lữ Hành đúng).
+Nhân vật hoặc vũ khí không tải được ảnh sẽ hiện icon SF Symbol tô màu như cũ,
+không hiện ô trống.
 
 Schema JSON của từng loại: `toi-uu-doi-hinh/data-model/schema/`.
 

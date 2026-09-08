@@ -39,28 +39,19 @@ struct AbyssRosterEditorView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 8) {
+                // Both hug their labels. Only the weapons button did, so the
+                // characters one grew to fill the row and the pair read as a
+                // banner rather than as two tabs.
                 SidebarTabButton(title: text.abyssCharactersTab, systemImage: "person.fill",
                                  isSelected: viewModel.rosterTab == .characters) {
                     viewModel.rosterTab = .characters
                 }
+                .fixedSize()
                 SidebarTabButton(title: text.abyssWeaponsTab, systemImage: "wand.and.rays",
                                  isSelected: viewModel.rosterTab == .weapons) {
                     viewModel.rosterTab = .weapons
                 }
                 .fixedSize()
-
-                Spacer()
-
-                if viewModel.rosterTab == .weapons {
-                    Button { viewModel.addEveryFourStarWeapon() } label: {
-                        Label(text.abyssSelectAllFourStar, systemImage: "plus.circle")
-                    }
-                    .quest(.quiet)
-                }
-                Button { viewModel.clearRoster() } label: {
-                    Label(text.abyssClearRoster, systemImage: "trash")
-                }
-                .quest(.quiet, disabled: viewModel.roster.isEmpty)
             }
 
             searchRow
@@ -129,23 +120,131 @@ struct AbyssRosterEditorView: View {
         }
     }
 
+    /// Chips, sort and the owned switch on one line when they fit, and on two
+    /// when they do not.
+    ///
+    /// They do not always fit: seven element chips plus a sort label plus its
+    /// direction runs to roughly 540pt, and Vietnamese is the longer of the two
+    /// languages ("Ngày ra mắt · mới nhất trước"). Measuring that budget by hand
+    /// would only hold until the next string, so the row is asked to lay itself
+    /// out instead.
     private var filterRow: some View {
-        HStack(spacing: 8) {
-            if viewModel.rosterTab == .characters {
-                elementFilterChips
-            } else {
-                weaponTypeFilterChips
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 8) {
+                typeChips
+                sortPicker
+                ownedOnlyToggle
+                clearTabButton
+                Spacer(minLength: 0)
             }
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 8) {
+                    typeChips
+                    ownedOnlyToggle
+                    clearTabButton
+                    Spacer(minLength: 0)
+                }
+                HStack(spacing: 8) {
+                    sortPicker
+                    Spacer(minLength: 0)
+                }
+            }
+        }
+    }
 
-            Toggle(text.abyssOwnedOnly, isOn: $viewModel.showsOwnedOnly)
-                .toggleStyle(.switch)
-                .controlSize(.mini)
-                .tint(LauncherPalette.gold)
-                .font(.system(.caption2, design: .rounded, weight: .semibold))
-                .foregroundStyle(LauncherPalette.mist.opacity(0.8))
-                .fixedSize()
+    /// Clears only the tab currently showing — a separate action per tab
+    /// rather than one button that empties both, since a slip of the mouse on
+    /// the weapons tab should not cost the whole character roster.
+    private var clearTabButton: some View {
+        let isEmpty = viewModel.rosterTab == .characters
+            ? viewModel.roster.characters.isEmpty
+            : viewModel.roster.weapons.isEmpty
+        let label = viewModel.rosterTab == .characters ? text.abyssClearCharacters : text.abyssClearWeapons
 
-            Spacer(minLength: 0)
+        return Button {
+            switch viewModel.rosterTab {
+            case .characters: viewModel.clearCharacters()
+            case .weapons: viewModel.clearWeapons()
+            }
+        } label: {
+            Label(label, systemImage: "trash")
+        }
+        .quest(.quiet, disabled: isEmpty)
+    }
+
+    @ViewBuilder
+    private var typeChips: some View {
+        if viewModel.rosterTab == .characters {
+            elementFilterChips
+        } else {
+            weaponTypeFilterChips
+        }
+    }
+
+    private var ownedOnlyToggle: some View {
+        Toggle(text.abyssOwnedOnly, isOn: $viewModel.showsOwnedOnly)
+            .toggleStyle(.switch)
+            .controlSize(.mini)
+            .tint(LauncherPalette.gold)
+            .font(.system(.caption2, design: .rounded, weight: .semibold))
+            .foregroundStyle(LauncherPalette.mist.opacity(0.8))
+            .fixedSize()
+    }
+
+    /// The options differ per tab — a weapon has no element and a character has
+    /// no base ATK — so the menu is rebuilt from whichever tab is showing, and
+    /// switching tabs falls back to name order rather than leaving an option
+    /// selected that no longer means anything.
+    private var sortPicker: some View {
+        let options = AbyssViewModel.RosterSort.options(for: viewModel.rosterTab)
+        return HStack(spacing: 4) {
+            Menu {
+                ForEach(options, id: \.self) { option in
+                    Button {
+                        viewModel.rosterSort = option
+                    } label: {
+                        if viewModel.rosterSort == option {
+                            Label(text.abyssSortLabel(option), systemImage: "checkmark")
+                        } else {
+                            Text(text.abyssSortLabel(option))
+                        }
+                    }
+                }
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "arrow.up.arrow.down")
+                        .font(.system(size: 9, weight: .semibold))
+                    Text(text.abyssSortLabel(viewModel.rosterSort))
+                        .font(.system(.caption2, design: .rounded, weight: .semibold))
+                }
+                .foregroundStyle(LauncherPalette.mist.opacity(0.85))
+                .padding(.horizontal, 9)
+                .padding(.vertical, 4)
+                .background(LauncherPalette.night.opacity(0.36),
+                            in: RoundedRectangle(cornerRadius: 7, style: .continuous))
+            }
+            .menuStyle(.borderlessButton)
+            .menuIndicator(.hidden)
+            .fixedSize()
+            .pointerOnHover()
+
+            // The direction reads as its two ends rather than as an abstract
+            // "descending": 5★ → 1★ says what will happen, "descending" does not.
+            Button {
+                viewModel.sortDescending.toggle()
+            } label: {
+                Text(text.abyssSortDirection(viewModel.rosterSort, descending: viewModel.sortDescending))
+                    .font(.system(.caption2, design: .rounded, weight: .semibold))
+                    .foregroundStyle(LauncherPalette.gold.opacity(0.9))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(LauncherPalette.night.opacity(0.36),
+                                in: RoundedRectangle(cornerRadius: 7, style: .continuous))
+            }
+            .buttonStyle(.plain)
+            .fixedSize()
+            .pointerOnHover()
+            .help(text.abyssFlipSortDirection)
         }
     }
 
@@ -232,12 +331,17 @@ struct AbyssRosterEditorView: View {
                     subtitle: measured
                         ? "\(text.abyssElementLabel(character.element)) · \(text.abyssMeasuredBadge)"
                         : "\(text.abyssElementLabel(character.element)) · \(text.abyssWeaponTypeLabel(character.weaponType))",
-                    systemImage: character.element.symbolName,
-                    accent: character.element.accentColor,
                     isSelected: owned,
                     level: owned
                         ? (value: viewModel.roster.constellation(for: character.id) ?? 0, range: 0...6, label: "C")
                         : nil,
+                    rarity: .genshin(character.rarity),
+                    icon: {
+                        AbyssPortraitImage(url: viewModel.characterIconURL(character.id),
+                                          systemImage: character.element.symbolName,
+                                          tint: owned ? LauncherPalette.ink.opacity(0.75) : character.element.accentColor,
+                                          size: 54, cornerRadius: 14)
+                    },
                     onToggle: { viewModel.toggleCharacter(character.id) },
                     onLevelChange: { viewModel.setConstellation($0, for: character.id) })
             }
@@ -245,31 +349,32 @@ struct AbyssRosterEditorView: View {
     }
 
     private var weaponList: some View {
-        LazyVStack(alignment: .leading, spacing: 16) {
-            ForEach(viewModel.weaponsByType, id: \.type) { group in
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(text.abyssWeaponTypeLabel(group.type).uppercased())
-                        .font(.system(.caption2, design: .rounded, weight: .bold))
-                        .tracking(0.8)
-                        .foregroundStyle(LauncherPalette.gold.opacity(0.88))
-
-                    LazyVGrid(columns: columns, spacing: 10) {
-                        ForEach(group.weapons, id: \.id) { weapon in
-                            let owned = viewModel.owns(weaponID: weapon.id)
-                            RosterCard(
-                                title: weapon.name,
-                                subtitle: String(repeating: "★", count: weapon.rarity),
-                                systemImage: weapon.type.symbolName,
-                                accent: LauncherPalette.goldHighlight,
-                                isSelected: owned,
-                                level: owned
-                                    ? (value: viewModel.roster.refinement(for: weapon.id), range: 1...5, label: "R")
-                                    : nil,
-                                onToggle: { viewModel.toggleWeapon(weapon.id) },
-                                onLevelChange: { viewModel.setRefinement($0, for: weapon.id) })
-                        }
-                    }
-                }
+        // Flat, not grouped by weapon type: the type chips above already filter
+        // to one type when that is what someone wants, and a flat list is what
+        // lets the "sort by stars" default put every 5★ weapon together
+        // regardless of type instead of scattering them across six headers.
+        LazyVGrid(columns: columns, spacing: 10) {
+            ForEach(viewModel.weapons, id: \.id) { weapon in
+                let owned = viewModel.owns(weaponID: weapon.id)
+                let rarity = RarityAppearance.genshin(weapon.rarity)
+                RosterCard(
+                    // The type no longer has a group header to live in, so it
+                    // moves into the subtitle, the way a character's does.
+                    title: weapon.name,
+                    subtitle: text.abyssWeaponTypeLabel(weapon.type),
+                    isSelected: owned,
+                    level: owned
+                        ? (value: viewModel.roster.refinement(for: weapon.id), range: 1...5, label: "R")
+                        : nil,
+                    rarity: rarity,
+                    icon: {
+                        AbyssPortraitImage(url: viewModel.weaponIconURL(weapon.id),
+                                           systemImage: weapon.type.symbolName,
+                                           tint: owned ? LauncherPalette.ink.opacity(0.75) : rarity.accent,
+                                           size: 54, cornerRadius: 14)
+                    },
+                    onToggle: { viewModel.toggleWeapon(weapon.id) },
+                    onLevelChange: { viewModel.setRefinement($0, for: weapon.id) })
             }
         }
     }

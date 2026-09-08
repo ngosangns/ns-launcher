@@ -44,6 +44,12 @@ brew install --cask crossover
 Screenshot automation uses AppleScript and requires Accessibility/Automation
 permission for the terminal running the script.
 
+### Submodules (`vendor/`)
+
+Reference-only checkouts, never built or linked into the app — consulted while
+implementing features (e.g. `vendor/CollapseLauncher` for how another launcher
+handles game-file cleanup).
+
 ## Daily Workflow
 
 Run the complete test suite:
@@ -229,6 +235,22 @@ Most of the gain the tab reports for the artifact pass is not exotic: it is the
 supports being handed sets that buff the party, which the neutral first pass
 cannot value because it scores every character alone.
 
+### Roster grid sorting
+
+`AbyssViewModel.RosterSort` only reorders what the grid shows — it is applied to
+a copy on the way out to the view. Never sort `library.characters` or
+`library.weapons` themselves: `AbyssOptimizer` breaks pool ties on that array's
+own order, so resorting it would silently change which characters make the
+search's candidate pool.
+
+Each sort key has its own "interesting end" — names open on A, stars open on
+5★, a release date opens on the newest — so picking a sort snaps
+`sortDescending` to that key's `startsDescending`, not to a shared default.
+Every ordering falls through to the name and then the id so it is total; Swift's
+`sort` is not stable, and a comparator that stopped at "same rarity" would leave
+equal-rarity characters in whatever order the algorithm's internals happened to
+produce, which looks like the grid rearranging itself between renders.
+
 ### Showcase import
 
 `AbyssEnkaClient` reads a player's Character Showcase from Enka.Network given
@@ -272,6 +294,42 @@ Regenerate it with `scripts/generate-abyss-game-ids.py` whenever characters,
 weapons or artifact sets are added — a stale table makes an import quietly
 return fewer characters. The script refuses to write a table that lost entries,
 and `AbyssShowcaseImportTests` pins it to the data set.
+
+### Character and weapon portraits
+
+`Resources/Abyss/icons/{characters,weapons}/<id>.png` are fetched once by
+`scripts/fetch-abyss-icons.py`, matched by name against `gi.yatta.moe` the same
+way `generate-abyss-game-ids.py` matches its ids, then saved under our own
+slugs. That means the runtime side never needs Yatta's icon codenames — it is
+the same `Resources/Abyss/<kind>/<id>` convention the rest of the data already
+uses, just for a `.png`. Regenerate it whenever characters or weapons are
+added; it skips files that already exist, so a re-run only fetches the new
+ones (`--force` to refetch everything). `AbyssIconLibraryTests` pins full
+coverage against the current data set.
+
+`AbyssIconLibrary` resolves ids to file URLs, checking presence once at load —
+built as a `Set` of filenames on disk, not a `FileManager.fileExists` call per
+lookup — because `RosterCard`'s grid asks for an icon on every redraw while
+scrolling. `AbyssPortraitImage` is the rendering half: it shows the portrait
+when there is one and a tinted SF Symbol glyph when there is not, so a
+character or weapon added without a matching icon degrades to what the tab
+looked like before this feature, not to a blank tile. Decoded images go through
+`AbyssPortraitCache` (an `NSCache`, `@MainActor`-isolated because only SwiftUI
+view bodies touch it) rather than being held resident — 371 icons at 256×256
+would be roughly 100MB of decoded bitmap data if kept around all at once, and
+the grid only ever shows a few dozen.
+
+`RosterCard` takes its leading glyph as a `@ViewBuilder icon: () -> Icon`
+closure rather than a fixed `systemImage`/`accent` pair, specifically so it
+did not have to hard-code a dependency on the Abyss-specific portrait types —
+see the type's own doc comment about staying reusable for the next grid
+picker.
+
+The Traveler shares one portrait across all seven element variants — the game
+has no per-element art for them, only per-gender — and the script picks
+Aether's icon for every `traveler-*` slug. That is documented as an arbitrary
+but consistent choice in the script, not a claim about which twin is "the"
+Traveler.
 
 Two things to know before changing the engine:
 

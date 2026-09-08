@@ -130,14 +130,15 @@ struct AbyssResultsView: View {
 
         return VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 8) {
-                Image(systemName: character?.element.symbolName ?? "questionmark")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(character?.element.accentColor ?? LauncherPalette.mist)
-                    .frame(width: 16)
+                AbyssPortraitImage(url: viewModel.characterIconURL(characterID),
+                                   systemImage: character?.element.symbolName ?? "questionmark",
+                                   tint: character?.element.accentColor ?? LauncherPalette.mist,
+                                   size: 34, cornerRadius: 8)
 
                 Text(character?.name ?? characterID)
                     .font(.system(.subheadline, design: .rounded, weight: .semibold))
-                    .foregroundStyle(LauncherPalette.parchment)
+                    .foregroundStyle(character.map { RarityAppearance.genshin($0.rarity).accent }
+                        ?? LauncherPalette.parchment)
 
                 if isOnField {
                     Image(systemName: "star.fill")
@@ -166,15 +167,28 @@ struct AbyssResultsView: View {
                     .help(text.abyssDamageShare)
             }
 
+            // The weapon is tinted by its rarity too: "which of my 5★ is this
+            // team asking for" is the first thing anyone checks.
+            let weapon = option?.weaponID.flatMap { viewModel.weapon($0) }
             HStack(spacing: 6) {
-                Image(systemName: character?.weaponType.symbolName ?? "wand.and.rays")
-                    .font(.system(size: 9))
-                    .foregroundStyle(LauncherPalette.mist.opacity(0.45))
-                    .frame(width: 16)
-                Text(option?.weaponID.flatMap { viewModel.weapon($0)?.name } ?? "—")
+                AbyssPortraitImage(url: option?.weaponID.flatMap { viewModel.weaponIconURL($0) },
+                                   systemImage: character?.weaponType.symbolName ?? "wand.and.rays",
+                                   tint: LauncherPalette.mist.opacity(0.7),
+                                   size: 20, cornerRadius: 5)
+                Text(weapon?.name ?? "—")
                     .font(.system(size: 10, design: .rounded))
-                    .foregroundStyle(LauncherPalette.mist.opacity(0.6))
+                    .foregroundStyle(weapon.map { RarityAppearance.genshin($0.rarity).accent.opacity(0.85) }
+                        ?? LauncherPalette.mist.opacity(0.6))
                     .lineLimit(1)
+                // Only for a weapon the player actually owns: `refinement(for:)`
+                // answers R1 for anything it has never seen, and printing that
+                // next to a weapon from a full-roster search would read as a
+                // claim about their account.
+                if let weaponID = option?.weaponID, viewModel.owns(weaponID: weaponID) {
+                    Text("R\(viewModel.roster.refinement(for: weaponID))")
+                        .font(.system(size: 9, design: .monospaced))
+                        .foregroundStyle(LauncherPalette.mist.opacity(0.45))
+                }
             }
 
             artifactBlock(characterID: characterID, team: team)
