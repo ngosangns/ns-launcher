@@ -436,3 +436,85 @@ struct GoldenProgressBar: View {
         .frame(height: 8)
     }
 }
+
+/// A compact own/don't-own tile for grid pickers, with an optional level stepper
+/// once the item is owned.
+///
+/// `InventoryRow` above is a full-width row; a roster picker shows 125 entries at
+/// once and needs a tile. Kept here with the rest of the design system rather
+/// than private to the Abyss views so the next grid picker does not invent a
+/// third look.
+struct RosterCard: View {
+    let title: String
+    let subtitle: String
+    let systemImage: String
+    let accent: Color
+    let isSelected: Bool
+    /// Current level and its range, shown only while selected. nil hides the stepper.
+    let level: (value: Int, range: ClosedRange<Int>, label: String)?
+    let onToggle: () -> Void
+    let onLevelChange: (Int) -> Void
+
+    @State private var isHovering = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 8) {
+                Image(systemName: systemImage)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(accent)
+                    .frame(width: 16)
+
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(title)
+                        .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                        .foregroundStyle(isSelected ? LauncherPalette.ink : LauncherPalette.parchment)
+                        .lineLimit(1)
+                    Text(subtitle)
+                        .font(.system(.caption2, design: .rounded))
+                        .foregroundStyle(isSelected
+                            ? LauncherPalette.ink.opacity(0.62)
+                            : LauncherPalette.mist.opacity(0.62))
+                        .lineLimit(1)
+                }
+
+                Spacer(minLength: 0)
+
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(isSelected ? LauncherPalette.ink.opacity(0.72) : LauncherPalette.mist.opacity(0.34))
+            }
+            .contentShape(Rectangle())
+            .onTapGesture(perform: onToggle)
+
+            if isSelected, let level {
+                HStack(spacing: 6) {
+                    Text("\(level.label)\(level.value)")
+                        .font(.system(.caption2, design: .rounded, weight: .bold))
+                        .foregroundStyle(LauncherPalette.ink.opacity(0.78))
+                        .frame(minWidth: 26, alignment: .leading)
+                    Stepper("", value: Binding(
+                        get: { level.value },
+                        set: { onLevelChange($0) }
+                    ), in: level.range)
+                    .labelsHidden()
+                    .controlSize(.mini)
+                }
+            }
+        }
+        .padding(.horizontal, 11)
+        .padding(.vertical, 9)
+        .background(
+            isSelected
+                ? LauncherPalette.goldHighlight.opacity(0.92)
+                : LauncherPalette.night.opacity(isHovering ? 0.52 : 0.34),
+            in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .strokeBorder(isSelected ? Color.clear : LauncherPalette.gold.opacity(0.16), lineWidth: 1)
+        )
+        .pointerOnHover()
+        .onHover { isHovering = $0 }
+    }
+}

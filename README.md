@@ -52,6 +52,10 @@ removal, but voice packs are not downloaded by the launcher.
 
 - The Home tab shows the game hero with **Play**, **Update**, and a
   diagnostics drawer for the current operation's progress and logs.
+- The Abyss tab suggests Spiral Abyss teams for the current rotation. Mark the
+  characters and weapons you own (or import a roster file), then press **Find
+  teams**. Scores rank teams against each other — they are an estimate, not a
+  damage simulation.
 - Installing or updating downloads and verifies game assets directly from
   HoYoPlay's Sophon CDN; you don't need the official launcher installed.
 - Settings covers the Wine runtime, display mode, install location, and

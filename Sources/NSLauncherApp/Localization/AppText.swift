@@ -536,6 +536,176 @@ struct AppText {
         )
     }
 
+    // MARK: - Abyss
+
+    var abyssTitle: String { localized(en: "Abyss", vi: "Trầm Thủy") }
+    var abyssLoadingLabel: String { localized(en: "Loading Abyss data...", vi: "Đang tải dữ liệu Trầm Thủy...") }
+
+    var abyssRosterSection: String { localized(en: "My roster", vi: "Roster của tôi") }
+    var abyssResultsSection: String { localized(en: "Suggested teams", vi: "Đội hình gợi ý") }
+    var abyssCharactersTab: String { localized(en: "Characters", vi: "Nhân vật") }
+    var abyssWeaponsTab: String { localized(en: "Weapons", vi: "Vũ khí") }
+
+    var abyssSearchPlaceholder: String { localized(en: "Search", vi: "Tìm kiếm") }
+    var abyssOwnedOnly: String { localized(en: "Owned only", vi: "Chỉ đồ đang có") }
+    var abyssRecompute: String { localized(en: "Find teams", vi: "Tìm đội hình") }
+    var abyssRecomputing: String { localized(en: "Searching...", vi: "Đang tìm...") }
+    var abyssCancel: String { localized(en: "Stop", vi: "Dừng") }
+    var abyssImport: String { localized(en: "Import", vi: "Nhập") }
+    var abyssExport: String { localized(en: "Export", vi: "Xuất") }
+    var abyssSelectAllFourStar: String { localized(en: "Add every 4★ weapon", vi: "Thêm mọi vũ khí 4★") }
+    var abyssClearRoster: String { localized(en: "Clear", vi: "Xoá hết") }
+
+    func abyssOwnedCount(characters: Int, weapons: Int) -> String {
+        localized(en: "\(characters) characters · \(weapons) weapons",
+                  vi: "\(characters) nhân vật · \(weapons) vũ khí")
+    }
+
+    var abyssEmptyRosterTitle: String {
+        localized(en: "Nothing in your roster yet", vi: "Roster còn trống")
+    }
+
+    var abyssEmptyRosterHint: String {
+        localized(
+            en: "Mark the characters and weapons you own, or import a roster file. "
+                + "You can also search teams across every character to compare in theory.",
+            vi: "Đánh dấu nhân vật và vũ khí bạn đang có, hoặc nhập từ file roster. "
+                + "Bạn cũng có thể tìm đội hình trên toàn bộ nhân vật để so sánh lý thuyết.")
+    }
+
+    var abyssUseFullRoster: String {
+        localized(en: "Compare across all characters", vi: "So sánh toàn bộ nhân vật")
+    }
+
+    var abyssNoResultsYet: String {
+        localized(en: "No teams computed yet", vi: "Chưa tính đội hình nào")
+    }
+
+    var abyssNoResultsHint: String {
+        localized(en: "Press \"Find teams\" to search.", vi: "Bấm \"Tìm đội hình\" để bắt đầu.")
+    }
+
+    /// Constellations are stored but do not change the score yet. Saying so
+    /// where the stepper is avoids everyone assuming otherwise.
+    var abyssConstellationNotScored: String {
+        localized(en: "C-level is saved but does not affect scoring yet",
+                  vi: "Cung mệnh được lưu nhưng chưa tính vào điểm")
+    }
+
+    func abyssFloorTitle(_ floor: Int) -> String {
+        localized(en: "Floor \(floor)", vi: "Tầng \(floor)")
+    }
+
+    func abyssMonsterLevel(_ level: Int) -> String {
+        localized(en: "Enemies ~Lv\(level)", vi: "Quái ~cấp \(level)")
+    }
+
+    var abyssOnFieldLabel: String { localized(en: "on-field", vi: "đứng sân") }
+    var abyssDamageShare: String { localized(en: "of team damage", vi: "sát thương đội") }
+
+    func abyssCyclePeriod(start: String, end: String) -> String {
+        localized(en: "Rotation \(start) → \(end)", vi: "Chu kỳ \(start) → \(end)")
+    }
+
+    var abyssCycleExpired: String { localized(en: "Rotation expired", vi: "Chu kỳ đã hết hạn") }
+
+    /// Bundled Abyss data goes stale every two weeks, so a released build will
+    /// eventually recommend teams for a rotation that is no longer live.
+    var abyssCycleExpiredHint: String {
+        localized(
+            en: "This build ships the rotation that was live when it was made. Drop an "
+                + "updated cycle file into ~/Library/Application Support/NSLauncher/abyss-cycles/ "
+                + "to refresh it without waiting for a new release.",
+            vi: "Bản này mang dữ liệu của chu kỳ lúc build. Đặt file chu kỳ mới vào "
+                + "~/Library/Application Support/NSLauncher/abyss-cycles/ để cập nhật mà "
+                + "không cần chờ bản phát hành mới.")
+    }
+
+    func abyssRosterUnknownIDs(_ ids: [String]) -> String {
+        localized(en: "Not in the data, ignored: \(ids.joined(separator: ", "))",
+                  vi: "Không có trong dữ liệu, đã bỏ qua: \(ids.joined(separator: ", "))")
+    }
+
+    func abyssRoleLabel(_ role: AbyssRole) -> String {
+        switch role {
+        case .mainDPS: return localized(en: "Main DPS", vi: "DPS chính")
+        case .subDPS: return localized(en: "Sub DPS", vi: "DPS phụ")
+        case .support: return localized(en: "Support", vi: "Hỗ trợ")
+        case .shield: return localized(en: "Shield", vi: "Khiên")
+        case .healer: return localized(en: "Healer", vi: "Hồi máu")
+        }
+    }
+
+    func abyssElementLabel(_ element: GenshinElement) -> String {
+        switch element {
+        case .anemo: return localized(en: "Anemo", vi: "Phong")
+        case .geo: return localized(en: "Geo", vi: "Nham")
+        case .electro: return localized(en: "Electro", vi: "Lôi")
+        case .dendro: return localized(en: "Dendro", vi: "Thảo")
+        case .hydro: return localized(en: "Hydro", vi: "Thủy")
+        case .pyro: return localized(en: "Pyro", vi: "Hỏa")
+        case .cryo: return localized(en: "Cryo", vi: "Băng")
+        }
+    }
+
+    func abyssWeaponTypeLabel(_ type: WeaponType) -> String {
+        switch type {
+        case .sword: return localized(en: "Sword", vi: "Kiếm")
+        case .claymore: return localized(en: "Claymore", vi: "Đại kiếm")
+        case .polearm: return localized(en: "Polearm", vi: "Thương")
+        case .bow: return localized(en: "Bow", vi: "Cung")
+        case .catalyst: return localized(en: "Catalyst", vi: "Pháp khí")
+        }
+    }
+
+    func abyssTeamNote(_ note: AbyssTeamNote) -> String {
+        switch note {
+        case .noSustainPenalty:
+            return localized(en: "No healer or shield — scored down for survivability",
+                             vi: "Không có hồi máu/khiên — bị trừ điểm sinh tồn")
+        case .breaksShield(let elements):
+            let names = elements.map { abyssElementLabel($0) }.joined(separator: "/")
+            return localized(en: "Can break \(names) shields", vi: "Phá được khiên \(names)")
+        case .exploitsWeakness(let elements):
+            let names = elements.map { abyssElementLabel($0) }.joined(separator: "/")
+            return localized(en: "Exploits \(names) weakness", vi: "Khai thác điểm yếu \(names)")
+        case .moonsignAscendantGleam:
+            return localized(en: "Moonsign: Ascendant Gleam", vi: "Nguyệt Triệu: Ascendant Gleam")
+        case .hexereiSecretRite:
+            return localized(en: "Hexerei: Secret Rite", vi: "Hexerei: Secret Rite")
+        case .resonance(let name):
+            return localized(en: "Resonance: \(name)", vi: "Cộng hưởng: \(name)")
+        case .weaponContested(let weapons):
+            let names = weapons.joined(separator: ", ")
+            return localized(
+                en: "Roster is short a weapon: \(names) is assigned to more than one character",
+                vi: "Roster thiếu vũ khí: \(names) đang xếp cho nhiều nhân vật")
+        }
+    }
+
+    /// The scores are a ranking heuristic, not a DPS simulation. This belongs
+    /// in the UI, not only in the repo docs — a number with no caveat reads as
+    /// a measurement.
+    var abyssMethodologyNotice: String {
+        localized(
+            en: "Scores are an estimate for ranking teams, not a damage simulation: no rotation, "
+                + "energy, reaction cooldowns or constellations are modelled, artifacts are assumed "
+                + "to be a standard build, and some 4-piece set effects are hand-approximated.",
+            vi: "Điểm số chỉ là ước lượng để xếp hạng đội hình, không phải mô phỏng sát thương: "
+                + "chưa tính rotation, năng lượng, hồi chiêu phản ứng hay cung mệnh; thánh di vật "
+                + "giả định build chuẩn; một số hiệu ứng 4 món là số quy đổi tay.")
+    }
+
+    var abyssDataNotice: String {
+        localized(
+            en: "Genshin Impact and its game data are property of HoYoverse. Figures here are "
+                + "extracted via Yatta/Ambr and cross-checked against the Genshin Impact Wiki "
+                + "(Fandom, CC BY-SA 3.0), for reference only.",
+            vi: "Genshin Impact và toàn bộ số liệu game thuộc bản quyền HoYoverse. Số liệu ở đây "
+                + "trích xuất qua Yatta/Ambr và đối chiếu với Genshin Impact Wiki (Fandom, "
+                + "CC BY-SA 3.0), chỉ dùng để tham khảo.")
+    }
+
     /// Returns the string for the currently selected language.
     private func localized(en: String, vi: String) -> String {
         switch language {

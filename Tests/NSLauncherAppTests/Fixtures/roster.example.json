@@ -1,0 +1,42 @@
+{
+  "_huong_dan": [
+    "Copy file này thành roster.json rồi sửa theo tài khoản của bạn.",
+    "id phải khớp id trong Sources/NSLauncherApp/Resources/Abyss/ (chạy script sẽ cảnh báo id sai).",
+    "Bỏ trống mảng artifactSets = coi như có đủ mọi bộ (thường đúng vì bộ nào cũng farm được).",
+    "constellation: số cung mệnh đang có (0-6). refinement: cấp tinh luyện vũ khí (1-5).",
+    "LƯU Ý: bản hiện tại chưa mô phỏng hiệu ứng cung mệnh — trường constellation chỉ để ghi chú."
+  ],
+  "characters": [
+    { "id": "hu-tao", "constellation": 0 },
+    { "id": "xingqiu", "constellation": 6 },
+    { "id": "zhongli", "constellation": 0 },
+    { "id": "venti", "constellation": 0 },
+    { "id": "raiden-shogun", "constellation": 0 },
+    { "id": "yelan", "constellation": 0 },
+    { "id": "bennett", "constellation": 5 },
+    { "id": "xiangling", "constellation": 6 },
+    { "id": "nahida", "constellation": 0 },
+    { "id": "furina", "constellation": 0 },
+    { "id": "kuki-shinobu", "constellation": 2 },
+    { "id": "fischl", "constellation": 6 },
+    { "id": "sucrose", "constellation": 6 },
+    { "id": "diona", "constellation": 4 },
+    { "id": "noelle", "constellation": 6 }
+  ],
+  "weapons": [
+    { "id": "staff-of-homa", "refinement": 1 },
+    { "id": "sacrificial-sword", "refinement": 3 },
+    { "id": "black-tassel", "refinement": 5 },
+    { "id": "favonius-codex", "refinement": 3 },
+    { "id": "the-catch", "refinement": 5 },
+    { "id": "aqua-simulacra", "refinement": 1 },
+    { "id": "the-alley-flash", "refinement": 1 },
+    { "id": "the-widsith", "refinement": 2 },
+    { "id": "sacrificial-fragments", "refinement": 3 },
+    { "id": "favonius-lance", "refinement": 2 },
+    { "id": "iron-sting", "refinement": 3 },
+    { "id": "the-stringless", "refinement": 3 },
+    { "id": "whiteblind", "refinement": 4 }
+  ],
+  "artifactSets": []
+}

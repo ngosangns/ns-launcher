@@ -87,6 +87,7 @@ The raw release binary is produced by SwiftPM at:
 | Sophon installer        | `Services/Installer/`                                                            | Manifest decoding, planning, downloads, verification, staging, and pruning      |
 | Wine runtime            | `Services/WineService.swift`, `Services/RenderBridges/`                          | Runtime discovery, render backend setup, launch arguments, and registry changes |
 | Process and diagnostics | `ProcessRunner.swift`, `GameProcess*.swift`, `RunLog.swift`, `GameLogFile.swift` | Process execution, monitoring, bounded output, and logs                         |
+| Abyss team planner      | `Domain/Abyss/`, `Services/Abyss/`, `Views/Abyss/`                               | Spiral Abyss data, damage model, team search, and roster editing                |
 | Localization            | `Localization/AppText.swift`                                                     | User-facing localized strings                                                   |
 
 `Package.swift` defines the `NSLauncherApp` executable target, the
@@ -128,6 +129,8 @@ stability risks. Runtime behavior depends on the installed Wine build.
 | Data                 | Path                                                             |
 | -------------------- | ---------------------------------------------------------------- |
 | Settings             | `~/Library/Application Support/NSLauncher/settings.json`         |
+| Abyss roster         | `~/Library/Application Support/NSLauncher/abyss-roster.json`     |
+| Abyss cycle override | `~/Library/Application Support/NSLauncher/abyss-cycles/*.json`   |
 | Managed Wine         | `~/Library/Application Support/NSLauncher/wine`                  |
 | Game logs            | `~/Library/Logs/NSLauncher`                                      |
 | Download/cache data  | `~/Library/Caches/NSLauncher`                                    |
@@ -180,3 +183,31 @@ The script builds and launches the app, captures the launcher window, starts the
 game through the Play button, waits for a Genshin window, and captures the
 pre-login screen. It writes generated captures to `Screenshots/` and skips the
 game image if the timeout is reached.
+
+## Abyss Team Planner
+
+The Abyss tab ranks four-character teams for the current Spiral Abyss rotation
+against the characters and weapons the player marks as owned.
+
+Data lives in `Sources/NSLauncherApp/Resources/Abyss/` (bundled, see that
+folder's README); the Markdown it was transcribed from and the JSON Schemas stay
+in `toi-uu-doi-hinh/`. `toi-uu-doi-hinh/optimizer/` holds the Python reference
+implementation the Swift engine was ported from — it reads the same data and the
+same `tuning.json`, and it generates `Tests/NSLauncherAppTests/Fixtures/abyss-golden.json`,
+which pins the Swift engine to the Python's numbers.
+
+Two things to know before changing the engine:
+
+- **The golden fixture is a baseline, not an expectation to update.** If a
+  change makes `AbyssGoldenValueTests` red, that is the test doing its job: the
+  stat-name mapping is a long switch and a misrouted name produces
+  plausible-but-wrong numbers rather than a crash. Regenerate only when the
+  model was deliberately changed, and change the Python at the same time.
+- **Some Python quirks are reproduced on purpose** and are commented where they
+  live (`AbyssTextParser`, `AbyssOptimizer.defaultRole`). Fixing one moves every
+  score, so it has to be done in both implementations together with the fixture
+  regenerated.
+
+Scores are a ranking heuristic, not a damage simulation — no rotation, energy,
+reaction cooldowns or constellations. That caveat is shown in the tab itself,
+not just here.
