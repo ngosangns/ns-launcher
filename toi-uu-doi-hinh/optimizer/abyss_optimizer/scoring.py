@@ -1,6 +1,6 @@
 """Công thức sát thương + chấm điểm đội hình cho 1 tầng Trầm Thủy.
 
-Triển khai đúng theo `data-model/data/damage-formula.json` (mục 1.6-1.8, 2)
+Triển khai đúng theo `Sources/NSLauncherApp/Resources/Abyss/damage-formula.json` (mục 1.6-1.8, 2)
 cho phần công thức lõi; phần rotation/uptime là heuristic (xem `tuning.py`).
 """
 
@@ -160,7 +160,8 @@ class TeamContext:
         return set(self.elements)
 
 
-STELLAR_JUBILEE_IDS = {"sandrone", "odette", "traveler-cryo"}
+# Định nghĩa trong `tuning.json` để bản Swift đọc chung cùng một danh sách.
+STELLAR_JUBILEE_IDS = tuning.STELLAR_JUBILEE_IDS
 
 
 def build_team_context(members: list[dict], team_bonus: dict) -> TeamContext:

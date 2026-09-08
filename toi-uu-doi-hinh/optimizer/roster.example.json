@@ -1,7 +1,7 @@
 {
   "_huong_dan": [
     "Copy file này thành roster.json rồi sửa theo tài khoản của bạn.",
-    "id phải khớp id trong ../data-model/data/ (chạy script sẽ cảnh báo id sai).",
+    "id phải khớp id trong Sources/NSLauncherApp/Resources/Abyss/ (chạy script sẽ cảnh báo id sai).",
     "Bỏ trống mảng artifactSets = coi như có đủ mọi bộ (thường đúng vì bộ nào cũng farm được).",
     "constellation: số cung mệnh đang có (0-6). refinement: cấp tinh luyện vũ khí (1-5).",
     "LƯU Ý: bản hiện tại chưa mô phỏng hiệu ứng cung mệnh — trường constellation chỉ để ghi chú."

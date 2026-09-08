@@ -1,0 +1,325 @@
+{
+  "_doc": "Hằng số và giả định của thuật toán gợi ý đội hình Trầm Thủy. Đọc bởi CẢ bản Python (toi-uu-doi-hinh/optimizer/) lẫn bản Swift (Services/Abyss/) — sửa ở đây là đổi cả hai. Xem README.md cùng thư mục để biết ý nghĩa từng nhóm.",
+  "artifactMainStats": {
+    "flat_hp": 4780.0,
+    "flat_atk": 311.0,
+    "atk_pct": 0.466,
+    "hp_pct": 0.466,
+    "def_pct": 0.583,
+    "em": 187.0,
+    "er": 0.518,
+    "elemental_dmg": 0.466,
+    "physical_dmg": 0.583,
+    "crit_rate": 0.311,
+    "crit_dmg": 0.622,
+    "healing_bonus": 0.359
+  },
+  "substatRollValue": {
+    "crit_rate": 0.0389,
+    "crit_dmg": 0.0777,
+    "atk_pct": 0.0583,
+    "hp_pct": 0.0583,
+    "def_pct": 0.0729,
+    "em": 23.31,
+    "er": 0.0648,
+    "flat_atk": 19.45,
+    "flat_hp": 298.75,
+    "flat_def": 23.15
+  },
+  "substatRollBudget": 25,
+  "substatPriority": {
+    "main-dps": {
+      "crit_rate": 0.3,
+      "crit_dmg": 0.34,
+      "atk_pct": 0.24,
+      "er": 0.12
+    },
+    "sub-dps": {
+      "crit_rate": 0.28,
+      "crit_dmg": 0.32,
+      "atk_pct": 0.22,
+      "er": 0.18
+    },
+    "support": {
+      "er": 0.34,
+      "em": 0.24,
+      "crit_rate": 0.16,
+      "crit_dmg": 0.16,
+      "atk_pct": 0.1
+    },
+    "healer": {
+      "er": 0.34,
+      "hp_pct": 0.36,
+      "em": 0.16,
+      "crit_rate": 0.14
+    },
+    "shield": {
+      "er": 0.3,
+      "hp_pct": 0.24,
+      "def_pct": 0.3,
+      "em": 0.16
+    }
+  },
+  "scalingBasisSwap": {
+    "DEF": {
+      "atk_pct": "def_pct"
+    },
+    "HP": {
+      "atk_pct": "hp_pct"
+    },
+    "EM": {
+      "atk_pct": "em"
+    }
+  },
+  "rotationSeconds": 20.0,
+  "normalCombosPerRotation": 6.0,
+  "offFieldUptime": 0.85,
+  "conditionalUptime": 0.6,
+  "assumedStacks": 2.5,
+  "amplifyingUptime": 0.55,
+  "noSustainPenalty": 0.8,
+  "shieldBreakBonus": 1.1,
+  "weaknessExploitBonus": 1.08,
+  "stellarJubileeCharacterIds": [
+    "odette",
+    "sandrone",
+    "traveler-cryo"
+  ],
+  "setEffectApprox": [
+    {
+      "setId": "emblem-of-severed-fate",
+      "note": "+ST Nộ theo Nạp Nguyên Tố (~25-30% ER→DMG)",
+      "damageBonus": 0.3,
+      "scope": "burst",
+      "requirement": null
+    },
+    {
+      "setId": "crimson-witch-of-flames",
+      "note": "Bốc cháy/Bốc hơi/Tan chảy +15%, Pyro +7.5%×3 stack",
+      "damageBonus": 0.28,
+      "scope": "all",
+      "requirement": null
+    },
+    {
+      "setId": "gilded-dreams",
+      "note": "EM +80 + ATK theo đồng đội cùng/khác hệ",
+      "damageBonus": 0.18,
+      "scope": "all",
+      "requirement": null
+    },
+    {
+      "setId": "deepwood-memories",
+      "note": "giảm 30% kháng Dendro địch (buff cả đội)",
+      "damageBonus": 0.2,
+      "scope": "all",
+      "requirement": null
+    },
+    {
+      "setId": "shimenawas-reminiscence",
+      "note": "đổi 15 Nộ lấy +50% ST đòn thường/trọng kích",
+      "damageBonus": 0.35,
+      "scope": "normal",
+      "requirement": null
+    },
+    {
+      "setId": "echoes-of-an-offering",
+      "note": "đòn thường có xác suất +70% ATK",
+      "damageBonus": 0.22,
+      "scope": "normal",
+      "requirement": null
+    },
+    {
+      "setId": "marechaussee-hunter",
+      "note": "CRIT Rate +36% khi HP đổi",
+      "damageBonus": 0.25,
+      "scope": "normal",
+      "requirement": null
+    },
+    {
+      "setId": "nymphs-dream",
+      "note": "stack Hydro: ATK% + Hydro DMG",
+      "damageBonus": 0.26,
+      "scope": "all",
+      "requirement": null
+    },
+    {
+      "setId": "vourukashas-glow",
+      "note": "HP +20%, Kỹ năng/Nộ +40% khi bị đánh",
+      "damageBonus": 0.2,
+      "scope": "all",
+      "requirement": null
+    },
+    {
+      "setId": "golden-troupe",
+      "note": "Kỹ năng +20%, off-field +25% nữa",
+      "damageBonus": 0.32,
+      "scope": "skill",
+      "requirement": null
+    },
+    {
+      "setId": "song-of-days-past",
+      "note": "hồi máu tích luỹ -> tăng ST cả đội",
+      "damageBonus": 0.18,
+      "scope": "all",
+      "requirement": null
+    },
+    {
+      "setId": "nighttime-whispers-in-the-echoing-woods",
+      "note": "ATK +20%, Geo DMG +20% sau Kỹ năng",
+      "damageBonus": 0.22,
+      "scope": "all",
+      "requirement": null
+    },
+    {
+      "setId": "fragment-of-harmonic-whimsy",
+      "note": "Bond of Life đổi -> +18% ST ×3",
+      "damageBonus": 0.28,
+      "scope": "all",
+      "requirement": null
+    },
+    {
+      "setId": "unfinished-reverie",
+      "note": "+50% ST khi địch bị Bốc cháy",
+      "damageBonus": 0.24,
+      "scope": "all",
+      "requirement": null
+    },
+    {
+      "setId": "obsidian-codex",
+      "note": "Nightsoul: +40% ST, +40% CRIT DMG",
+      "damageBonus": 0.35,
+      "scope": "all",
+      "requirement": "natlan"
+    },
+    {
+      "setId": "scroll-of-the-hero-of-cinder-city",
+      "note": "buff cả đội theo nguyên tố Nightsoul",
+      "damageBonus": 0.24,
+      "scope": "all",
+      "requirement": "natlan"
+    },
+    {
+      "setId": "long-nights-oath",
+      "note": "trọng kích/nhảy stack tới +100%",
+      "damageBonus": 0.26,
+      "scope": "charged",
+      "requirement": null
+    },
+    {
+      "setId": "finale-of-the-deep-galleries",
+      "note": "đòn thường/Nộ +60% khi hết Nộ",
+      "damageBonus": 0.2,
+      "scope": "all",
+      "requirement": null
+    },
+    {
+      "setId": "noblesse-oblige",
+      "note": "Nộ +20%, cả đội ATK +20%",
+      "damageBonus": 0.2,
+      "scope": "burst",
+      "requirement": null
+    },
+    {
+      "setId": "viridescent-venerer",
+      "note": "Swirl +60%, giảm 40% kháng nguyên tố bị cuốn",
+      "damageBonus": 0.25,
+      "scope": "all",
+      "requirement": null
+    },
+    {
+      "setId": "blizzard-strayer",
+      "note": "CRIT Rate +40% khi địch đóng băng",
+      "damageBonus": 0.3,
+      "scope": "all",
+      "requirement": null
+    },
+    {
+      "setId": "thundering-fury",
+      "note": "+40% ST phản ứng Electro, giảm CD Kỹ năng",
+      "damageBonus": 0.24,
+      "scope": "all",
+      "requirement": null
+    },
+    {
+      "setId": "heart-of-depth",
+      "note": "đòn thường/trọng kích +30% sau Kỹ năng",
+      "damageBonus": 0.22,
+      "scope": "normal",
+      "requirement": null
+    },
+    {
+      "setId": "lavawalker",
+      "note": "+35% ST lên địch dính Pyro",
+      "damageBonus": 0.2,
+      "scope": "all",
+      "requirement": null
+    },
+    {
+      "setId": "pale-flame",
+      "note": "ATK +18%×2 stack, Physical +25%",
+      "damageBonus": 0.24,
+      "scope": "all",
+      "requirement": null
+    },
+    {
+      "setId": "husk-of-opulent-dreams",
+      "note": "DEF/Geo DMG +24% (4 stack)",
+      "damageBonus": 0.22,
+      "scope": "all",
+      "requirement": null
+    },
+    {
+      "setId": "ocean-hued-clam",
+      "note": "nổ bong bóng theo lượng hồi máu",
+      "damageBonus": 0.12,
+      "scope": "all",
+      "requirement": null
+    },
+    {
+      "setId": "scarlet-proof",
+      "note": "CRIT Rate +16%, Stellar Swirl +40%",
+      "damageBonus": 0.3,
+      "scope": "all",
+      "requirement": "stellar"
+    },
+    {
+      "setId": "heart-of-the-furnace",
+      "note": "ATK +12%, cả đội +50% ST Stellar Glimmer",
+      "damageBonus": 0.28,
+      "scope": "all",
+      "requirement": "stellar"
+    },
+    {
+      "setId": "night-of-the-skys-unveiling",
+      "note": "buff Lunar Reaction cả đội",
+      "damageBonus": 0.24,
+      "scope": "all",
+      "requirement": "moonsign"
+    },
+    {
+      "setId": "silken-moons-serenade",
+      "note": "buff Lunar Reaction/Moonsign",
+      "damageBonus": 0.24,
+      "scope": "all",
+      "requirement": "moonsign"
+    }
+  ],
+  "notes": {
+    "artifactMainStats": "Main stat của từng vị trí ở thánh di vật 5★ cấp 20. Hằng số game chuẩn, ổn định qua các bản, nhưng CHƯA đối chiếu API trong repo này.",
+    "substatRollValue": "Giá trị trung bình 1 lần roll substat ở 5★ (mốc roll cao nhất trong 4 mốc). Cùng nhóm độ tin cậy với artifactMainStats.",
+    "substatRollBudget": "Tổng số roll substat giả định cho cả 5 món. 25 roll ≈ tài khoản nuôi tốt nhưng không phải 'artifact thần'.",
+    "substatPriority": "Phân bổ ngân sách roll theo vai trò; tổng mỗi vai trò = 1.0.",
+    "scalingBasisSwap": "Nhân vật scale DEF/HP/EM thì đổi trục ATK% sang trục tương ứng.",
+    "rotationSeconds": "Độ dài 1 vòng rotation giả định (giây) để quy damage về cùng mẫu số.",
+    "normalCombosPerRotation": "Số combo đòn thường nhân vật on-field thực hiện trong 1 rotation.",
+    "offFieldUptime": "Nhân vật off-field chỉ dùng Kỹ năng + Bùng nổ; hệ số phản ánh việc skill không phải lúc nào cũng sẵn sàng đúng nhịp.",
+    "conditionalUptime": "Buff có điều kiện (ghi trong ngoặc ở tên stat) hiếm khi đạt 100% uptime.",
+    "assumedStacks": "Số lớp trung bình giả định cho hiệu ứng vũ khí ghi 'per stack'. Đa số cho tối đa 4-5 lớp nhưng ít khi giữ đầy.",
+    "amplifyingUptime": "Tỉ lệ đòn thực sự kích hoạt được phản ứng khuếch đại. Phản ứng bị giới hạn bởi Internal Cooldown và thứ tự áp nguyên tố nên không phải đòn nào cũng ăn hệ số Vaporize/Melt.",
+    "noSustainPenalty": "Nhân vào tổng điểm khi đội không có cả heal lẫn khiên.",
+    "shieldBreakBonus": "Nhân vào tổng điểm khi đội có đúng nguyên tố phá khiên quái trong tầng.",
+    "weaknessExploitBonus": "Nhân vào tổng điểm khi đội có nguyên tố mà quái bị âm kháng.",
+    "stellarJubileeCharacterIds": "Nhân vật có passive Stellar Jubilee — biến Swirl/Superconduct thường thành Stellar Swirl/Stellar-Conduct.",
+    "setEffectApprox": "36/63 bộ có fourPiece.bonuses rỗng trong data model vì hiệu ứng quá phức tạp để tách số máy móc (stack, điều kiện, scale theo chỉ số khác). Bỏ trống thì thuật toán đánh giá thấp một cách hệ thống các bộ meta, nên bảng này ƯỚC LƯỢNG THỦ CÔNG phần %DMG hiệu dụng trung bình trong 1 rotation — KHÔNG phải số liệu game, sửa tự do. Đây là phần chủ quan nhất của cả thuật toán. Bộ không có trong bảng chỉ dùng `bonuses` đã tách được. `requirement`: null = ai cũng dùng được; 'natlan' = nhân vật Natlan (cần Nightsoul's Blessing); 'moonsign' = nhân vật Nguyệt Triệu; 'stellar' = nguyên tố tham gia phản ứng Stellar Glimmer (Cryo/Electro/Anemo). THỨ TỰ MẢNG này không ảnh hưởng kết quả, nhưng giữ nguyên để diff dễ đọc."
+  }
+}

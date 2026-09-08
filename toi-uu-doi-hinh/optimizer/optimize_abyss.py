@@ -239,6 +239,112 @@ def run_self_test() -> int:
     return 0 if ok else 1
 
 
+def dump_golden(path: Path) -> int:
+    """Xuất giá trị trung gian của thuật toán làm mốc đối chiếu cho bản Swift.
+
+    Bản Swift trong app phải cho ra **cùng những con số này**. Fixture được sinh
+    **một lần** lúc port; sau đó nó là baseline hồi quy phía Swift, chỉ sinh lại
+    khi cố ý đổi mô hình — nếu sinh lại mỗi lần lệch thì đã tái tạo đúng vấn đề
+    "hai bản trôi khỏi nhau" mà việc dùng chung `tuning.json` đang tránh.
+
+    Cố tình KHÔNG ghi các bộ đếm `scaling_ok`/`scaling_skipped`: chúng đếm số
+    lần *gọi* parser nên phụ thuộc vào việc bản nào cache ở đâu. Thứ đối chiếu
+    được là kết quả parse của từng nhân vật (đã nằm trong `characters` bên dưới)
+    và danh sách những chuỗi KHÔNG parse được (`unmapped`), vốn độc lập với
+    cách triển khai.
+    """
+    characters = gdata.load_characters()
+    weapons = gdata.load_weapons()
+    sets = [s for s in gdata.load_artifact_sets() if "5" in (s.get("rarity") or "")]
+    team_bonus = gdata.load_team_bonus()
+    cycle = gdata.latest_abyss_cycle()
+
+    from abyss_optimizer import build as gbuild
+    from abyss_optimizer.scoring import damage_profile
+    gbuild.MOONSIGN_IDS = set(team_bonus["moonsign"]["characterIds"])
+
+    index = {c["id"]: c for c in characters}
+    gear = {c["id"]: pick_gear(c, weapons, sets, {}) for c in characters}
+
+    def stats_dict(stats) -> dict:
+        out = {k: v for k, v in vars(stats).items() if k != "dmg_elemental"}
+        out["dmg_elemental"] = dict(sorted(stats.dmg_elemental.items()))
+        out["derived"] = {"atk": stats.atk, "hp": stats.hp, "def": stats.defense,
+                          "critMultiplier": stats.crit_multiplier()}
+        return out
+
+    golden = {
+        "_doc": "Giá trị trung gian sinh từ bản Python (optimize_abyss.py --dump-golden). "
+                "Bản Swift phải khớp trong sai số tương đối 1e-9. Sinh lại: xem "
+                "Sources/NSLauncherApp/Resources/Abyss/README.md.",
+        "characters": {},
+        "floors": {},
+        "teams": {},
+        "unmapped": {},
+    }
+
+    for cid in sorted(index):
+        character = index[cid]
+        option = gear[cid][0]
+        golden["characters"][cid] = {
+            "scalingBasis": gdata.scaling_basis(character),
+            "role": option.role,
+            "profile": [{"multiplier": m, "basis": b, "category": c}
+                        for m, b, c in damage_profile(character)],
+            "topGear": {
+                "weaponId": option.weapon["id"] if option.weapon else None,
+                "setIds": [s["id"] for s in option.sets],
+                "soloScore": option.solo_score,
+                "stats": stats_dict(option.stats),
+            },
+        }
+
+    for floor_number in [f["floor"] for f in cycle["floors"]]:
+        floor = build_floor_context(cycle, floor_number)
+        golden["floors"][str(floor_number)] = {
+            "monsterLevel": floor.monster_level,
+            "res": dict(sorted(floor.res.items())),
+            "shieldElements": floor.shield_elements,
+            "buffs": [{"bonus": b.bonus, "elements": sorted(b.elements),
+                       "reactions": sorted(b.reactions),
+                       "normalAttackOnly": b.normal_attack_only, "raw": b.raw}
+                      for b in floor.buffs],
+        }
+
+    # Đội hình: dùng đúng roster mẫu đã commit (C(15,4)=1365 tổ hợp — nhanh và
+    # tất định), để test phía Swift chạy được trong vài chục ms.
+    roster = load_roster(HERE / "roster.example.json")
+    r_chars, r_weapons, r_sets, _cons, refinements = apply_roster(
+        roster, gdata.load_characters(), gdata.load_weapons(), list(sets))
+    r_gear = {c["id"]: pick_gear(c, r_weapons, r_sets, refinements) for c in r_chars}
+    pool = sorted(r_chars, key=lambda c: r_gear[c["id"]][0].solo_score, reverse=True)
+    for floor_number in [f["floor"] for f in cycle["floors"]]:
+        floor = build_floor_context(cycle, floor_number)
+        results = enumerate_teams(pool, r_gear, floor, team_bonus, top_n=10)
+        golden["teams"][str(floor_number)] = [
+            {"memberIds": r.member_ids, "onFieldId": r.on_field_id, "score": r.score,
+             "perCharacter": dict(sorted(r.per_character.items())),
+             "notes": sorted(r.notes)}
+            for r in results
+        ]
+
+    parse = gdata.PARSE
+    golden["unmapped"] = {
+        "artifactBonus": sorted(set(parse.artifact_bonus_unmapped)),
+        "resistanceNotes": sorted(set(parse.res_notes_unparsed)),
+        "leyLine": sorted(set(parse.leyline_unparsed)),
+    }
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as fh:
+        json.dump(golden, fh, ensure_ascii=False, indent=1, sort_keys=False)
+        fh.write("\n")
+    print(f"Đã ghi {path}")
+    print(f"  {len(golden['characters'])} nhân vật, {len(golden['floors'])} tầng, "
+          f"{sum(len(v) for v in golden['teams'].values())} đội hình mẫu")
+    return 0
+
+
 # ---------------------------------------------------------------------------
 
 def main() -> int:
@@ -255,10 +361,14 @@ def main() -> int:
                         help="số nhân vật mạnh nhất giữ lại trước khi ghép đội (chống bùng nổ tổ hợp)")
     parser.add_argument("--self-test", action="store_true",
                         help="chỉ chạy kiểm chứng công thức sát thương rồi thoát")
+    parser.add_argument("--dump-golden", type=Path, metavar="PATH",
+                        help="xuất giá trị trung gian làm mốc đối chiếu cho bản Swift rồi thoát")
     args = parser.parse_args()
 
     if args.self_test:
         return run_self_test()
+    if args.dump_golden:
+        return dump_golden(args.dump_golden)
 
     characters = gdata.load_characters()
     weapons = gdata.load_weapons()

@@ -8,7 +8,7 @@
 > các buff **tự động kích hoạt theo thành phần đội hình** (không cần đeo
 > thánh di vật/vũ khí gì đặc biệt) nên **luôn luôn đáng cân nhắc** khi ghép
 > đội hình Trầm Thủy — dùng cùng
-> [`data-model/data/team-bonus.json`](data-model/data/team-bonus.json) để
+> [`Sources/NSLauncherApp/Resources/Abyss/team-bonus.json`](../Sources/NSLauncherApp/Resources/Abyss/team-bonus.json) để
 > tính vào tổng buff của đội trước khi áp dụng
 > [`cong-thuc-sat-thuong.md`](cong-thuc-sat-thuong.md).
 
@@ -41,7 +41,7 @@ toàn cho đội hình sinh tồn khi không có combo phản ứng rõ ràng.
 Cơ chế riêng của **nhân vật Nguyệt Triệu (Moonsign Characters)** — hiện tại
 gồm **10 nhân vật, toàn bộ là người Nod-Krai**: Aino, Columbina, Flins,
 Illuga, Ineffa, Jahoda, Lauma, Linnea, Nefer, Zibai (xem chi tiết từng
-người trong `data-model/data/characters/mondstadt.json` /
+người trong `Sources/NSLauncherApp/Resources/Abyss/characters/mondstadt.json` /
 `liyue.json`/`inazuma-fontaine.json` tuỳ quốc gia trong game — file
 `nhan-vat/mondstadt.md` liệt kê nhóm Nod-Krai).
 
@@ -66,7 +66,7 @@ trong đội:
 **Ứng dụng:** đội có ≥2 nhân vật Nguyệt Triệu (Ascendant Gleam) đáng cân
 nhắc mạnh cho các tầng có Ley Line Disorder/Uyên Nguyệt Chúc Phúc liên quan
 Lunar-Charged/Lunar-Bloom/Lunar-Crystallize (xem `quai-vat-la-hoan/` và
-`data-model/data/abyss-monsters/`).
+`Sources/NSLauncherApp/Resources/Abyss/abyss-monsters/`).
 
 ## 3. Hexerei
 
@@ -101,5 +101,5 @@ theo số nhân vật Natlan trong đội:
 trong game không phải Natlan** (vd. Bennett, Lữ Hành Pyro) **không** được
 tính vào số lượng này dù có thể tự vào trạng thái Nightsoul's Blessing.
 Danh sách đầy đủ nhân vật Natlan (quốc gia trong game): xem
-`data-model/data/characters/sumeru-natlan.json` (field `nationInGame` =
+`Sources/NSLauncherApp/Resources/Abyss/characters/sumeru-natlan.json` (field `nationInGame` =
 `"Natlan"`).

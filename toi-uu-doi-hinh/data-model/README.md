@@ -1,43 +1,71 @@
 # Data model — dữ liệu có cấu trúc cho thuật toán tối ưu đội hình
 
-Đây là bản **JSON có cấu trúc** của toàn bộ dữ liệu trong `../nhan-vat/`,
-`../vu-khi/`, `../thanh-di-vat/`, `../quai-vat-la-hoan/`,
-`../cong-thuc-sat-thuong.md` — dùng để một chương trình/thuật toán đọc và
-tính toán tự động, thay vì phải parse Markdown. Các file `.md` ở thư mục
-cha vẫn là **nguồn sự thật** (source of truth) để con người đọc/tra cứu và
-để cập nhật khi có bản game mới; JSON ở đây được sinh ra bằng cách transcribe
-lại đúng nguyên văn số liệu từ các file đó (không tra cứu/suy diễn thêm) —
-xem `sourceFile` trong mỗi record để đối chiếu ngược lại Markdown gốc.
+Đây là **hợp đồng dữ liệu (JSON Schema)** cho bản JSON có cấu trúc của toàn bộ
+dữ liệu trong `../nhan-vat/`, `../vu-khi/`, `../thanh-di-vat/`,
+`../quai-vat-la-hoan/`, `../cong-thuc-sat-thuong.md` — dùng để một chương
+trình/thuật toán đọc và tính toán tự động, thay vì phải parse Markdown. Các
+file `.md` ở thư mục cha vẫn là **nguồn sự thật** để con người đọc/tra cứu và
+để cập nhật khi có bản game mới; JSON được sinh ra bằng cách transcribe lại
+đúng nguyên văn số liệu từ các file đó (không tra cứu/suy diễn thêm) — xem
+`sourceFile` trong mỗi record để đối chiếu ngược lại Markdown gốc.
+
+> **Bản JSON đã chuyển đi.** Trước đây nằm ở `data-model/data/`, nay ở
+> **[`Sources/NSLauncherApp/Resources/Abyss/`](../../Sources/NSLauncherApp/Resources/Abyss/README.md)**
+> vì SwiftPM chỉ đóng gói được tài nguyên nằm trong thư mục target, và giữ
+> hai bản sao thì chúng sẽ lệch nhau. Thư mục `schema/` ở lại đây — nó là
+> công cụ validate, không phải dữ liệu chạy, đóng gói vào app chỉ tổ nặng.
 
 ## Cấu trúc thư mục
 
 ```
 data-model/
-├── schema/                          # JSON Schema (draft-07) — hợp đồng dữ liệu
-│   ├── character.schema.json
-│   ├── weapon.schema.json
-│   ├── artifact-set.schema.json
-│   ├── abyss-cycle.schema.json
-│   ├── damage-formula.schema.json
-│   ├── team-bonus.schema.json
-│   └── team.schema.json             # hợp đồng ĐẦU RA cho thuật toán tối ưu
-└── data/
-    ├── characters/                  # 1 file JSON/nation, mảng Character[]
-    │   ├── mondstadt.json
-    │   ├── liyue.json
-    │   ├── inazuma-fontaine.json
-    │   └── sumeru-natlan.json
-    ├── weapons/                     # 1 file JSON/loại vũ khí, mảng Weapon[]
-    │   ├── kiem.json                # Sword
-    │   ├── dai-kiem.json            # Claymore
-    │   ├── thuong.json              # Polearm
-    │   ├── cung.json                # Bow
-    │   └── phap-khi.json            # Catalyst
-    ├── artifact-sets.json           # mảng ArtifactSet[], toàn bộ 63 bộ
-    ├── abyss-monsters/              # 1 file JSON / chu kỳ Trầm Thủy
-    │   └── 2026-08-16-den-2026-09-15.json
-    ├── damage-formula.json          # hằng số + công thức DPS
-    └── team-bonus.json              # Cộng Hưởng Nguyên Tố, Nguyệt Triệu, Hexerei, Nightsoul Burst
+└── schema/                          # JSON Schema (draft-07) — hợp đồng dữ liệu
+    ├── character.schema.json
+    ├── weapon.schema.json
+    ├── artifact-set.schema.json
+    ├── abyss-cycle.schema.json
+    ├── damage-formula.schema.json
+    ├── team-bonus.schema.json
+    ├── tuning.schema.json           # tham số thuật toán (KHÔNG phải số liệu game)
+    └── team.schema.json             # hợp đồng ĐẦU RA cho thuật toán tối ưu
+
+Sources/NSLauncherApp/Resources/Abyss/     ← dữ liệu thật nằm ở đây
+├── characters/                      # 1 file JSON/nation, mảng Character[]
+│   ├── mondstadt.json  liyue.json  inazuma-fontaine.json  sumeru-natlan.json
+├── weapons/                         # 1 file JSON/loại vũ khí, mảng Weapon[]
+│   ├── kiem.json (Sword)  dai-kiem.json (Claymore)  thuong.json (Polearm)
+│   └── cung.json (Bow)    phap-khi.json (Catalyst)
+├── artifact-sets.json               # mảng ArtifactSet[], toàn bộ 63 bộ
+├── abyss-monsters/                  # 1 file JSON / chu kỳ Trầm Thủy
+├── damage-formula.json              # hằng số + công thức DPS
+├── team-bonus.json                  # Cộng Hưởng Nguyên Tố, Nguyệt Triệu, Hexerei, Nightsoul Burst
+└── tuning.json                      # tham số thuật toán, dùng chung Swift + Python
+```
+
+Validate toàn bộ dữ liệu ở vị trí mới:
+
+```bash
+python3 - <<'EOF'
+import json, glob, jsonschema
+S = 'toi-uu-doi-hinh/data-model/schema'
+D = 'Sources/NSLauncherApp/Resources/Abyss'
+for name, files, is_array in [
+    ('character', glob.glob(f'{D}/characters/*.json'), True),
+    ('weapon', glob.glob(f'{D}/weapons/*.json'), True),
+    ('artifact-set', [f'{D}/artifact-sets.json'], True),
+    ('abyss-cycle', glob.glob(f'{D}/abyss-monsters/*.json'), False),
+    ('damage-formula', [f'{D}/damage-formula.json'], False),
+    ('team-bonus', [f'{D}/team-bonus.json'], False),
+    ('tuning', [f'{D}/tuning.json'], False),
+]:
+    schema = json.load(open(f'{S}/{name}.schema.json'))
+    n = 0
+    for path in files:
+        doc = json.load(open(path))
+        for item in (doc if is_array else [doc]):
+            jsonschema.validate(item, schema); n += 1
+    print(f'{name}: {n} records OK')
+EOF
 ```
 
 Mỗi entity có `id` dạng slug kebab-case (vd. `hu-tao`, `wolfs-gravestone`,
@@ -73,7 +101,7 @@ Mỗi entity có `id` dạng slug kebab-case (vd. `hu-tao`, `wolfs-gravestone`,
 1. **Roster đầu vào** (KHÔNG có trong kho này — xem mục "Giới hạn" bên
    dưới): danh sách nhân vật/vũ khí/thánh di vật người chơi thực sự sở hữu,
    kèm cấp độ/cung mệnh/tinh luyện/substat roll thực tế.
-2. Lọc `data/characters/*.json` + `data/weapons/*.json` +
+2. Lọc `characters/*.json` + `weapons/*.json` +
    `data/artifact-sets.json` theo roster đó (nếu không có roster, coi như
    "full roster" để so sánh lý thuyết).
 3. Với mỗi ứng viên (character + weapon + artifact set), tính tổng chỉ số

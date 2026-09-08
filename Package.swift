@@ -17,7 +17,11 @@ let package = Package(
             dependencies: ["AppIconKit"],
             path: "Sources/NSLauncherApp",
             resources: [
-                .copy("Resources/Story")
+                .copy("Resources/Story"),
+                // Abyss team-planning data. `.copy` (not `.process`) because the
+                // loader resolves characters/, weapons/ and abyss-monsters/ as
+                // real subdirectories and `.process` may flatten them.
+                .copy("Resources/Abyss")
             ]
         ),
         .executableTarget(
@@ -28,7 +32,13 @@ let package = Package(
         .testTarget(
             name: "NSLauncherAppTests",
             dependencies: ["NSLauncherApp"],
-            path: "Tests/NSLauncherAppTests"
+            path: "Tests/NSLauncherAppTests",
+            resources: [
+                // Golden values generated once from the Python reference
+                // implementation (see Resources/Abyss/README.md) — the Swift
+                // Abyss engine is checked against them.
+                .copy("Fixtures")
+            ]
         ),
     ]
 )

@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "tuning.schema.json",
+  "title": "AbyssTuning",
+  "description": "Hằng số/giả định của thuật toán gợi ý đội hình. Khác với các file dữ liệu còn lại: đây KHÔNG phải số liệu game fetch về, mà là tham số mô hình — nhóm 'hằng số game chuẩn' (chưa đối chiếu API) và nhóm 'ước lượng heuristic' (chủ quan, chỉnh tay được).",
+  "type": "object",
+  "required": [
+    "artifactMainStats", "substatRollValue", "substatRollBudget", "substatPriority",
+    "scalingBasisSwap", "rotationSeconds", "normalCombosPerRotation", "offFieldUptime",
+    "conditionalUptime", "assumedStacks", "amplifyingUptime", "noSustainPenalty",
+    "shieldBreakBonus", "weaknessExploitBonus", "stellarJubileeCharacterIds", "setEffectApprox"
+  ],
+  "properties": {
+    "_doc": { "type": "string" },
+    "artifactMainStats": {
+      "type": "object",
+      "description": "Main stat từng vị trí ở thánh di vật 5★ cấp 20",
+      "additionalProperties": { "type": "number" }
+    },
+    "substatRollValue": {
+      "type": "object",
+      "description": "Giá trị trung bình 1 roll substat ở 5★",
+      "additionalProperties": { "type": "number" }
+    },
+    "substatRollBudget": { "type": "number", "minimum": 0 },
+    "substatPriority": {
+      "type": "object",
+      "description": "Phân bổ ngân sách roll theo vai trò; tổng mỗi vai trò = 1.0",
+      "additionalProperties": { "type": "object", "additionalProperties": { "type": "number" } }
+    },
+    "scalingBasisSwap": {
+      "type": "object",
+      "additionalProperties": { "type": "object", "additionalProperties": { "type": "string" } }
+    },
+    "rotationSeconds": { "type": "number", "exclusiveMinimum": 0 },
+    "normalCombosPerRotation": { "type": "number", "minimum": 0 },
+    "offFieldUptime": { "type": "number", "minimum": 0, "maximum": 1 },
+    "conditionalUptime": { "type": "number", "minimum": 0, "maximum": 1 },
+    "assumedStacks": { "type": "number", "minimum": 0 },
+    "amplifyingUptime": { "type": "number", "minimum": 0, "maximum": 1 },
+    "noSustainPenalty": { "type": "number", "exclusiveMinimum": 0 },
+    "shieldBreakBonus": { "type": "number", "exclusiveMinimum": 0 },
+    "weaknessExploitBonus": { "type": "number", "exclusiveMinimum": 0 },
+    "stellarJubileeCharacterIds": {
+      "type": "array",
+      "description": "id khớp Character.id trong characters/*.json",
+      "items": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" }
+    },
+    "setEffectApprox": {
+      "type": "array",
+      "description": "Mảng có thứ tự (không phải object) để phía Swift đọc được thứ tự ổn định và để test đối chiếu setId dễ viết",
+      "items": {
+        "type": "object",
+        "required": ["setId", "note", "damageBonus", "scope", "requirement"],
+        "properties": {
+          "setId": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+            "description": "PHẢI khớp một id trong artifact-sets.json — sai id thì bộ đó âm thầm mất bonus"
+          },
+          "note": { "type": "string" },
+          "damageBonus": { "type": "number", "minimum": 0 },
+          "scope": { "type": "string", "enum": ["all", "normal", "charged", "skill", "burst"] },
+          "requirement": {
+            "type": ["string", "null"],
+            "enum": ["natlan", "moonsign", "stellar", null],
+            "description": "Điều kiện nhân vật mới dùng được bộ; null = ai cũng dùng được"
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "object",
+      "description": "Giải thích ý nghĩa từng nhóm số — JSON không có comment nên phần văn xuôi giải thích 'vì sao con số này' phải nằm ở đây",
+      "additionalProperties": { "type": "string" }
+    }
+  }
+}

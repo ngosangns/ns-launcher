@@ -1,6 +1,6 @@
 """Đọc data model JSON và parse các chuỗi text thành số dùng được.
 
-Data model (`../data-model/data/`) được transcribe từ Markdown nên nhiều
+Data model (`Sources/NSLauncherApp/Resources/Abyss/`) được transcribe từ Markdown nên nhiều
 trường là text tự nhiên ("172.53% DEF", "kháng Anemo +20%"). Module này chịu
 trách nhiệm bóc số ra, và **đếm lại những chỗ không parse được** để người
 dùng biết phần nào của dữ liệu chưa được thuật toán dùng tới.
@@ -16,7 +16,11 @@ from typing import Any
 
 ELEMENTS = ["Anemo", "Geo", "Electro", "Dendro", "Hydro", "Pyro", "Cryo"]
 
-DATA_ROOT = Path(__file__).resolve().parents[2] / "data-model" / "data"
+# Dữ liệu nằm trong thư mục tài nguyên của app (được `Package.swift` đóng gói
+# qua `.copy("Resources/Abyss")`), không nằm trong `toi-uu-doi-hinh/` nữa:
+# SwiftPM chỉ đóng gói được tài nguyên nằm trong thư mục target, và giữ hai bản
+# sao thì chúng sẽ lệch nhau. Bản Markdown cho người đọc vẫn ở `toi-uu-doi-hinh/`.
+DATA_ROOT = Path(__file__).resolve().parents[3] / "Sources" / "NSLauncherApp" / "Resources" / "Abyss"
 
 # Nhãn scaling KHÔNG phải sát thương -> bỏ qua khi ước lượng damage.
 _NON_DAMAGE_LABEL = re.compile(

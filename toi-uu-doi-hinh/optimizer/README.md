@@ -1,9 +1,14 @@
 # Thuật toán gợi ý đội hình Trầm Thủy
 
 Script Python độc lập (chỉ dùng thư viện chuẩn, **không cần cài gì thêm**) đọc
-[`../data-model/`](../data-model/README.md) và xếp hạng các đội hình 4 người
-cho từng tầng Trầm Thủy của mùa hiện tại, lọc theo **những gì bạn thực sự sở
-hữu**.
+[dữ liệu Trầm Thủy](../../Sources/NSLauncherApp/Resources/Abyss/README.md) và xếp
+hạng các đội hình 4 người cho từng tầng Trầm Thủy của mùa hiện tại, lọc theo
+**những gì bạn thực sự sở hữu**.
+
+> **Bản Swift trong app mới là bản chính thức.** Tab Trầm Thủy của NS Launcher
+> chạy engine viết bằng Swift (`Sources/NSLauncherApp/Services/Abyss/`) trên
+> cùng bộ dữ liệu và cùng `tuning.json`. Script này giữ lại làm sân thử tham
+> số và bộ sinh fixture đối chiếu cho test phía Swift.
 
 ## Chạy nhanh
 
@@ -25,7 +30,7 @@ python3 optimize_abyss.py --pool-size 60        # xét nhiều nhân vật hơn 
 ## File roster
 
 Copy `roster.example.json` → `roster.json` rồi điền id nhân vật/vũ khí bạn có.
-Id phải khớp id trong `../data-model/data/`; **script sẽ cảnh báo từng id sai**
+Id phải khớp id trong `../../Sources/NSLauncherApp/Resources/Abyss/`; **script sẽ cảnh báo từng id sai**
 nên cứ chạy thử để dò.
 
 ```json
@@ -47,16 +52,16 @@ nên cứ chạy thử để dò.
 
 1. **Dựng build** cho từng nhân vật: chỉ số cấp 90 + vũ khí cấp 90 + thánh di
    vật 5★ cấp 20 (main stat theo vai trò, substat theo ngân sách roll giả
-   định trong `abyss_optimizer/tuning.py`).
+   định trong `Resources/Abyss/tuning.json`).
 2. **Chọn trang bị** cho mỗi nhân vật: xếp hạng vũ khí, rồi tìm bộ thánh di
    vật (4 món hoặc 2+2) cho điểm cao nhất; giữ lại 6 phương án để còn đường
    lùi khi tranh vũ khí trong đội.
-3. **Đọc bối cảnh tầng** từ `data-model/data/abyss-monsters/`: cấp quái, kháng
+3. **Đọc bối cảnh tầng** từ `Sources/NSLauncherApp/Resources/Abyss/abyss-monsters/`: cấp quái, kháng
    nguyên tố, khiên nguyên tố, Ley Line Disorder và Uyên Nguyệt Chúc Phúc.
 4. **Tính sát thương 1 rotation** cho từng nhân vật theo đúng công thức trong
-   `data-model/data/damage-formula.json` (DEF/RES/CRIT/phản ứng khuếch đại).
+   `Sources/NSLauncherApp/Resources/Abyss/damage-formula.json` (DEF/RES/CRIT/phản ứng khuếch đại).
 5. **Cộng buff cấp đội**: Cộng Hưởng Nguyên Tố, Nguyệt Triệu, Hexerei
-   (`data-model/data/team-bonus.json`), buff cả đội từ vũ khí/thánh di vật.
+   (`Sources/NSLauncherApp/Resources/Abyss/team-bonus.json`), buff cả đội từ vũ khí/thánh di vật.
 6. **Thử cả 4 người ở vị trí on-field**, lấy phương án tốt nhất; cộng thưởng/
    phạt cấu trúc đội (thiếu heal/khiên, phá được khiên nguyên tố, khai thác
    điểm yếu) rồi xếp hạng.
@@ -70,16 +75,17 @@ Mona/Sucrose/Klee của wiki và so với kết quả 52.246,50 ghi trong data m
 từng frame như KQM. Cụ thể:
 
 - **Chưa mô phỏng rotation thật**: không có năng lượng/hồi chiêu/thứ tự thao
-  tác, chỉ giả định 1 vòng 20s với các hệ số uptime cố định trong `tuning.py`.
+  tác, chỉ giả định 1 vòng 20s với các hệ số uptime cố định trong `tuning.json`.
 - **Chưa tính cung mệnh**: trường `constellation` trong roster hiện chỉ để ghi
   chú, chưa ảnh hưởng tới điểm.
 - **Chưa mô phỏng Internal Cooldown của phản ứng**: hệ số Vaporize/Melt được
   nhân theo tỉ lệ uptime giả định (`AMPLIFYING_UPTIME`), không theo thứ tự áp
   nguyên tố thật.
 - **Hiệu ứng 4 món phức tạp là số ước lượng thủ công**: 36/63 bộ trong data
-  model không tách được số một cách máy móc, nên `tuning.SET_EFFECT_APPROX`
-  gán tay một mức "%DMG hiệu dụng". Đây là phần chủ quan nhất — chỉnh nó là
-  cách nhanh nhất để đổi kết quả theo hiểu biết của bạn.
+  model không tách được số một cách máy móc, nên `setEffectApprox` trong
+  `tuning.json` gán tay một mức "%DMG hiệu dụng". Đây là phần chủ quan nhất —
+  chỉnh nó là cách nhanh nhất để đổi kết quả theo hiểu biết của bạn, và sửa
+  một lần là đổi cả bản Swift lẫn bản Python.
 - **Chỉ số thánh di vật là giả định chuẩn hoá**, không phải đồ thật trên tài
   khoản bạn; mọi nhân vật đều được giả định nuôi ngang nhau.
 - **Chỉ đọc được phần dữ liệu đã số hoá**: mỗi lần chạy, script in ra số mốc
@@ -93,10 +99,10 @@ nào, không dùng để chốt con số DPS tuyệt đối.
 
 | Loại | Ở đâu | Độ tin cậy |
 |---|---|---|
-| Nhân vật/vũ khí/thánh di vật/quái/buff | `../data-model/data/` | fetch từ Yatta API + Fandom, đã validate JSON Schema |
-| Công thức sát thương | `../data-model/data/damage-formula.json` | nguyên văn wiki, có self-test |
-| Main stat / giá trị roll thánh di vật | `abyss_optimizer/tuning.py` | hằng số chuẩn cộng đồng, **chưa đối chiếu API trong repo này** |
-| Rotation, uptime, quy đổi 4 món | `abyss_optimizer/tuning.py` | ước lượng heuristic, chỉnh tay được |
+| Nhân vật/vũ khí/thánh di vật/quái/buff | `../../Sources/NSLauncherApp/Resources/Abyss/` | fetch từ Yatta API + Fandom, đã validate JSON Schema |
+| Công thức sát thương | `../../Sources/NSLauncherApp/Resources/Abyss/damage-formula.json` | nguyên văn wiki, có self-test |
+| Main stat / giá trị roll thánh di vật | `Resources/Abyss/tuning.json` | hằng số chuẩn cộng đồng, **chưa đối chiếu API trong repo này** |
+| Rotation, uptime, quy đổi 4 món | `Resources/Abyss/tuning.json` | ước lượng heuristic, chỉnh tay được |
 
 ## Cấu trúc mã
 
@@ -108,7 +114,11 @@ optimizer/
     ├── data.py                # đọc data model + parse chuỗi text thành số
     ├── build.py               # dựng chỉ số (nhân vật + vũ khí + thánh di vật)
     ├── scoring.py             # công thức sát thương + chấm điểm đội
-    └── tuning.py              # TẤT CẢ hằng số/giả định chỉnh tay
+    └── tuning.py              # loader đọc Resources/Abyss/tuning.json
 ```
+
+Toàn bộ hằng số/giả định chỉnh tay nằm ở
+[`Resources/Abyss/tuning.json`](../../Sources/NSLauncherApp/Resources/Abyss/tuning.json)
+— dùng chung với bản Swift.
 
 Yêu cầu: Python 3.10+.

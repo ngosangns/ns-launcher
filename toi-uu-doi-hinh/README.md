@@ -1,9 +1,16 @@
 # Tối ưu đội hình — Dữ liệu tra cứu Genshin Impact
 
-Kho dữ liệu tham khảo (không phải mã nguồn ứng dụng, không được đóng gói vào
-NSLauncher) để lên đội hình tối ưu cho từng mùa Trầm Thủy (Spiral Abyss).
-Tách biệt khỏi `Sources/NSLauncherApp/Resources/Story/` vì đây là dữ liệu
-gameplay/thông số, thay đổi theo từng bản cập nhật, không phải cốt truyện.
+Tư liệu nguồn dạng Markdown cho tính năng gợi ý đội hình Trầm Thủy (Spiral
+Abyss) của NS Launcher — người viết đọc và cập nhật ở đây, còn app đọc bản
+JSON tương ứng.
+
+> **Đã đổi (2026-09-08):** trước đây thư mục này ghi rõ "không được đóng gói
+> vào NSLauncher". Quyết định đó đã đảo: tính năng nay chạy **trong app** nên
+> bản JSON đã chuyển sang
+> [`Sources/NSLauncherApp/Resources/Abyss/`](../Sources/NSLauncherApp/Resources/Abyss/README.md)
+> để SwiftPM đóng gói được (SwiftPM chỉ đóng gói tài nguyên nằm trong thư mục
+> target). Thư mục này giữ **bản Markdown cho người đọc** + JSON Schema; nó
+> vẫn không được đóng gói vào app.
 
 ## Cấu trúc
 
@@ -24,9 +31,14 @@ gameplay/thông số, thay đổi theo từng bản cập nhật, không phải 
   thành phần đội hình: Cộng Hưởng Nguyên Tố (Elemental Resonance), Nguyệt
   Triệu (Moonsign), Hexerei, Nightsoul Burst — luôn đáng cân nhắc khi ghép
   4 nhân vật vì không cần build gì thêm.
-- [`data-model/`](data-model/README.md) — Bản JSON có cấu trúc (JSON Schema
-  + dữ liệu) của toàn bộ 4 mục trên, để một thuật toán tối ưu đội hình đọc
-  và tính toán tự động thay vì phải parse Markdown.
+- [`data-model/`](data-model/README.md) — JSON Schema (hợp đồng dữ liệu) cho
+  bản JSON của toàn bộ các mục trên. **Dữ liệu JSON thật nằm ở
+  [`Sources/NSLauncherApp/Resources/Abyss/`](../Sources/NSLauncherApp/Resources/Abyss/README.md)**
+  vì nó được đóng gói vào app.
+- [`optimizer/`](optimizer/README.md) — Bản Python của thuật toán gợi ý đội
+  hình. Bản chính thức là engine Swift trong app
+  (`Sources/NSLauncherApp/Services/Abyss/`); bản Python giữ lại làm sân thử
+  tham số và bộ sinh fixture đối chiếu cho test.
 
 ## Nguồn dữ liệu
 
