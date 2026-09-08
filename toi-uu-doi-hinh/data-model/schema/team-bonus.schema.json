@@ -1,0 +1,104 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "team-bonus.schema.json",
+  "title": "TeamBonus",
+  "description": "Buff tự động theo thành phần đội hình (không cần build riêng): Cộng Hưởng Nguyên Tố, Nguyệt Triệu (Moonsign), Hexerei, Nightsoul Burst. Nguồn: cong-huong-nguyen-to.md",
+  "type": "object",
+  "required": ["elementalResonance", "moonsign", "hexerei", "nightsoulBurst"],
+  "properties": {
+    "elementalResonance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "elements", "requiredCount", "description", "bonuses"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+          "name": { "type": "string" },
+          "elements": { "type": "array", "items": { "type": "string" }, "description": "Rỗng cho Protective Canopy (yêu cầu 4 nguyên tố khác nhau, không phải 1 nguyên tố cụ thể)" },
+          "requiredCount": { "type": "integer", "description": "Số nhân vật cùng nguyên tố cần trong 4 vị trí đầu đội (2 cho 7 cộng hưởng thường; 4 cho Protective Canopy)" },
+          "requiresUniqueElements": { "type": "boolean", "description": "true chỉ với Protective Canopy" },
+          "description": { "type": "string", "description": "Mô tả đầy đủ nguyên văn" },
+          "bonuses": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["stat", "value"],
+              "properties": { "stat": { "type": "string" }, "value": { "type": "number" } }
+            }
+          }
+        }
+      }
+    },
+    "moonsign": {
+      "type": "object",
+      "required": ["characterIds", "levels", "maxBuffThresholds"],
+      "properties": {
+        "characterIds": { "type": "array", "items": { "type": "string" }, "description": "id khớp Character.id trong data/characters/" },
+        "levels": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "requiredCount", "description"],
+            "properties": {
+              "name": { "type": "string" },
+              "requiredCount": { "type": "integer" },
+              "description": { "type": "string" }
+            }
+          }
+        },
+        "lunarReactionDmgBonusByElement": {
+          "type": "array",
+          "description": "Ascendant Gleam: bonus sát thương Lunar Reaction theo nguyên tố nhân vật vừa thi triển Kỹ Năng/Bùng Nổ, tối đa 36%, không cộng dồn",
+          "items": {
+            "type": "object",
+            "required": ["elements", "statBasis", "ratePer100OrPer1000", "note"],
+            "properties": {
+              "elements": { "type": "array", "items": { "type": "string" } },
+              "statBasis": { "type": "string", "enum": ["ATK", "HP", "DEF", "Elemental Mastery"] },
+              "ratePer100OrPer1000": { "type": "number" },
+              "note": { "type": "string" }
+            }
+          }
+        },
+        "maxBuffThresholds": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["elements", "statBasis", "thresholdValue"],
+            "properties": {
+              "elements": { "type": "array", "items": { "type": "string" } },
+              "statBasis": { "type": "string" },
+              "thresholdValue": { "type": "number" }
+            }
+          }
+        }
+      }
+    },
+    "hexerei": {
+      "type": "object",
+      "required": ["characterIds", "requiredCount", "description", "requirement"],
+      "properties": {
+        "characterIds": { "type": "array", "items": { "type": "string" } },
+        "requiredCount": { "type": "integer" },
+        "description": { "type": "string" },
+        "requirement": { "type": "string" }
+      }
+    },
+    "nightsoulBurst": {
+      "type": "object",
+      "required": ["description", "intervalsByCount", "exclusionNote"],
+      "properties": {
+        "description": { "type": "string" },
+        "intervalsByCount": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["natlanCharacterCount", "intervalSeconds"],
+            "properties": { "natlanCharacterCount": { "type": "string" }, "intervalSeconds": { "type": "number" } }
+          }
+        },
+        "exclusionNote": { "type": "string" }
+      }
+    }
+  }
+}

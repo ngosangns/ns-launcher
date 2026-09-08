@@ -1,0 +1,125 @@
+{
+  "sourceFile": "cong-huong-nguyen-to.md",
+  "dataFetchDate": "2026-09-08",
+  "elementalResonance": [
+    {
+      "id": "fervent-flames",
+      "name": "Fervent Flames",
+      "elements": ["Pyro"],
+      "requiredCount": 2,
+      "description": "Giảm 40% thời gian dính hiệu ứng Cryo. Tăng ATK +25%.",
+      "bonuses": [{ "stat": "ATK", "value": 0.25 }]
+    },
+    {
+      "id": "soothing-water",
+      "name": "Soothing Water",
+      "elements": ["Hydro"],
+      "requiredCount": 2,
+      "description": "Giảm 40% thời gian dính hiệu ứng Pyro. Tăng HP tối đa +25%.",
+      "bonuses": [{ "stat": "HP", "value": 0.25 }]
+    },
+    {
+      "id": "high-voltage",
+      "name": "High Voltage",
+      "elements": ["Electro"],
+      "requiredCount": 2,
+      "description": "Giảm 40% thời gian dính hiệu ứng Hydro. Superconduct, Stellar-Conduct, Overloaded, Electro-Charged, Lunar-Charged, Quicken, Aggravate, hoặc Hyperbloom có 100% cơ hội tạo 1 Hạt Nguyên Tố Electro (hồi chuỗi 5s).",
+      "bonuses": []
+    },
+    {
+      "id": "shattering-ice",
+      "name": "Shattering Ice",
+      "elements": ["Cryo"],
+      "requiredCount": 2,
+      "description": "Giảm 40% thời gian dính hiệu ứng Electro. Tăng CRIT Rate +15% khi đánh địch đang Đóng Băng (Frozen) hoặc dính Cryo.",
+      "bonuses": [{ "stat": "CRIT Rate vs Frozen/Cryo-affected", "value": 0.15 }]
+    },
+    {
+      "id": "impetuous-winds",
+      "name": "Impetuous Winds",
+      "elements": ["Anemo"],
+      "requiredCount": 2,
+      "description": "Giảm 15% tiêu hao Thể Lực. Tăng Tốc Độ Di Chuyển +10%. Giảm hồi chiêu Kỹ Năng 5%.",
+      "bonuses": [
+        { "stat": "Stamina Consumption Reduction", "value": 0.15 },
+        { "stat": "Movement SPD", "value": 0.10 },
+        { "stat": "Elemental Skill CD Reduction", "value": 0.05 }
+      ]
+    },
+    {
+      "id": "enduring-rock",
+      "name": "Enduring Rock",
+      "elements": ["Geo"],
+      "requiredCount": 2,
+      "description": "Tăng 15% độ bền khiên. Ngoài ra khi nhân vật đang có khiên bảo vệ hoặc ở gần Moondrift (do phản ứng Lunar-Crystallize tạo ra): tăng 15% sát thương gây ra; gây sát thương lên địch giảm 20% kháng Geo của địch trong 15s.",
+      "bonuses": [
+        { "stat": "Shield Strength", "value": 0.15 },
+        { "stat": "DMG Bonus (khi có khiên/gần Moondrift)", "value": 0.15 },
+        { "stat": "Enemy Geo RES Reduction (khi có khiên/gần Moondrift)", "value": 0.20 }
+      ]
+    },
+    {
+      "id": "sprawling-greenery",
+      "name": "Sprawling Greenery",
+      "elements": ["Dendro"],
+      "requiredCount": 2,
+      "description": "Tăng Tinh Thông Nguyên Tố (EM) +50. Sau khi kích hoạt Thiêu Đốt (Burning), Nảy Mầm Nhanh (Quicken), Nảy Mầm (Bloom), hoặc Lunar-Bloom: đồng đội gần đó +30 EM trong 6s. Sau khi kích hoạt Cảm Điện Kích Phát (Aggravate), Lan Toả (Spread), Kích Nổ Siêu Cấp (Hyperbloom), hoặc Sinh Trưởng Kịch Phát (Burgeon): đồng đội gần đó +20 EM trong 6s. Các hiệu ứng này tính thời lượng độc lập, có thể cộng dồn nếu kích hoạt nhiều loại phản ứng.",
+      "bonuses": [{ "stat": "Elemental Mastery", "value": 50 }]
+    },
+    {
+      "id": "protective-canopy",
+      "name": "Protective Canopy",
+      "elements": [],
+      "requiredCount": 4,
+      "requiresUniqueElements": true,
+      "description": "Đủ 4 nguyên tố khác nhau (không lặp) trong đội. Tăng Kháng Nguyên Tố (mọi hệ) +15%, Kháng Vật Lý +15%.",
+      "bonuses": [
+        { "stat": "Elemental RES (all)", "value": 0.15 },
+        { "stat": "Physical RES", "value": 0.15 }
+      ]
+    }
+  ],
+  "moonsign": {
+    "characterIds": ["aino", "columbina", "flins", "illuga", "ineffa", "jahoda", "lauma", "linnea", "nefer", "zibai"],
+    "note": "10 nhân vật, toàn bộ người Nod-Krai. Khác với danh sách 'Reaction Base DMG Bonus' (Lunar/Stellar) trong damage-formula.json.lunarStellar.reactionBaseDmgBonusSources — danh sách đó gồm 1 phần nhân vật Nguyệt Triệu (Columbina, Lauma, Nefer, Flins, Ineffa, Zibai, Linnea) cộng thêm nhóm Stellar Jubilee (Sandrone, Odette, traveler-cryo) không phải Nguyệt Triệu.",
+    "levels": [
+      {
+        "name": "Nascent Gleam",
+        "requiredCount": 1,
+        "description": "Toàn đội nhận hiệu ứng 'Moonsign: Nascent Gleam' (tăng cường cụ thể theo từng nhân vật Nguyệt Triệu — xem cung mệnh/passive riêng của từng người trong data/characters/)."
+      },
+      {
+        "name": "Ascendant Gleam",
+        "requiredCount": 2,
+        "description": "Toàn đội nhận thêm 'Moonsign: Ascendant Gleam' (tăng cường Kỹ Năng/Bùng Nổ nhất định của nhân vật Nguyệt Triệu; hiệu ứng Nascent Gleam vẫn giữ). Cộng thêm: trong 20s sau khi một nhân vật KHÔNG phải Nguyệt Triệu thi triển Kỹ Năng/Bùng Nổ nguyên tố, tăng sát thương phản ứng Mặt Trăng (Lunar Reaction) của đồng đội gần đó theo chỉ số của chính nhân vật đó, tối đa +36%, không cộng dồn nhiều lần."
+      }
+    ],
+    "lunarReactionDmgBonusByElement": [
+      { "elements": ["Pyro", "Electro", "Cryo"], "statBasis": "ATK", "ratePer100OrPer1000": 0.009, "note": "+0.9% Lunar Reaction DMG mỗi 100 ATK" },
+      { "elements": ["Hydro"], "statBasis": "HP", "ratePer100OrPer1000": 0.006, "note": "+0.6% Lunar Reaction DMG mỗi 1000 HP tối đa" },
+      { "elements": ["Geo"], "statBasis": "DEF", "ratePer100OrPer1000": 0.01, "note": "+1% Lunar Reaction DMG mỗi 100 DEF" },
+      { "elements": ["Anemo", "Dendro"], "statBasis": "Elemental Mastery", "ratePer100OrPer1000": 0.0225, "note": "+2.25% Lunar Reaction DMG mỗi 100 EM" }
+    ],
+    "maxBuffThresholds": [
+      { "elements": ["Pyro", "Electro", "Cryo"], "statBasis": "ATK", "thresholdValue": 4000 },
+      { "elements": ["Hydro"], "statBasis": "HP", "thresholdValue": 60000 },
+      { "elements": ["Geo"], "statBasis": "DEF", "thresholdValue": 3600 },
+      { "elements": ["Anemo", "Dendro"], "statBasis": "Elemental Mastery", "thresholdValue": 1600 }
+    ]
+  },
+  "hexerei": {
+    "characterIds": ["albedo", "durin", "fischl", "klee", "lohen", "mona", "nicole", "prune", "razor", "sucrose", "varka", "venti"],
+    "requiredCount": 2,
+    "description": "Các nhân vật Hexerei trong đội được tăng cường thêm: kích hoạt 'Witch's Eve Rite Passive' (passive ẩn riêng), thêm hiệu ứng Kỹ Năng/Cung Mệnh bổ sung tuỳ nhân vật.",
+    "requirement": "Mỗi nhân vật phải hoàn thành nhiệm vụ riêng 'Witch's Homework' để trở thành nhân vật Hexerei."
+  },
+  "nightsoulBurst": {
+    "description": "Buff theo quốc gia trong game (không hiển thị trong màn hình Buff Đội, khác Cộng Hưởng/Nguyệt Triệu/Hexerei): khi đội có >=1 nhân vật người Natlan, Nightsoul Burst kích hoạt định kỳ.",
+    "intervalsByCount": [
+      { "natlanCharacterCount": "1", "intervalSeconds": 18 },
+      { "natlanCharacterCount": "2", "intervalSeconds": 12 },
+      { "natlanCharacterCount": "3+", "intervalSeconds": 9 }
+    ],
+    "exclusionNote": "Nhân vật gốc gác Natlan theo cốt truyện nhưng quốc gia trong game không phải Natlan (vd. Bennett, Lữ Hành Pyro) KHÔNG được tính vào số lượng này dù có thể tự vào trạng thái Nightsoul's Blessing. Danh sách đầy đủ: data/characters/sumeru-natlan.json với nationInGame = 'Natlan'."
+  }
+}

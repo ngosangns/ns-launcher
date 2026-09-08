@@ -6181,6 +6181,225 @@
     "sourceFile": "nhan-vat/mondstadt.md"
   },
   {
+    "id": "zibai",
+    "name": "Zibai",
+    "element": "Geo",
+    "weaponType": "Sword",
+    "rarity": 5,
+    "nationInGame": "Nod-Krai",
+    "releaseDate": "2026-02-03",
+    "baseStats": {
+      "lv1": {
+        "hp": 1005.75,
+        "atk": 17.5,
+        "def": 74.49
+      },
+      "lv90": {
+        "hp": 12919.47,
+        "atk": 224.83,
+        "def": 956.85,
+        "ascensionStatType": "CRIT DMG",
+        "ascensionStatValue": 0.384
+      }
+    },
+    "normalAttack": {
+      "name": "Golden Blade's Petaled Touch",
+      "hits": [
+        {
+          "label": "1-Hit",
+          "values": {
+            "lv1": "50.55% ATK",
+            "lv10": "99.93% ATK"
+          }
+        },
+        {
+          "label": "2-Hit",
+          "values": {
+            "lv1": "46.55% ATK",
+            "lv10": "92.02% ATK"
+          }
+        },
+        {
+          "label": "3-Hit (x2)",
+          "values": {
+            "lv1": "30.89%+30.89% ATK",
+            "lv10": "61.06%+61.06% ATK"
+          }
+        },
+        {
+          "label": "4-Hit",
+          "values": {
+            "lv1": "77.90% ATK",
+            "lv10": "153.98% ATK"
+          }
+        },
+        {
+          "label": "Trọng kích (x2)",
+          "values": {
+            "lv1": "73.66%+73.66% ATK",
+            "lv10": "145.61%+145.61% ATK"
+          }
+        },
+        {
+          "label": "Nhảy rơi",
+          "values": {
+            "lv1": "63.93% ATK",
+            "lv10": "126.38% ATK"
+          }
+        },
+        {
+          "label": "Nhảy thấp/cao",
+          "values": {
+            "lv1": "127.84%/159.68% ATK",
+            "lv10": "252.70%/315.64% ATK"
+          }
+        }
+      ]
+    },
+    "elementalSkill": {
+      "name": "Heaven and Earth Made Manifest",
+      "description": "Chuyển sang Lunar Phase Shift (15s): Đòn thường/nặng hoá Geo không ghi đè, tích Phase Shift Radiance; tiêu Radiance để tung Spirit Steed's Stride (đòn phụ, hệ số DEF rất cao). Moonsign Ascendant Gleam: đòn thường thứ 4 trong Lunar Phase Shift có thêm 1 đòn Geo tính là sát thương phản ứng Lunar-Crystallize. Toàn bộ hệ số scale theo DEF, không phải ATK.",
+      "scaling": [
+        {
+          "label": "Spirit Steed's Stride 1-Hit",
+          "values": {
+            "lv1": "172.53% DEF",
+            "lv10": "310.55% DEF"
+          }
+        },
+        {
+          "label": "Spirit Steed's Stride 2-Hit",
+          "values": {
+            "lv1": "140.97% DEF",
+            "lv10": "253.74% DEF"
+          }
+        },
+        {
+          "label": "Lunar Phase Shift 1-Hit",
+          "values": {
+            "lv1": "56.58% DEF",
+            "lv10": "101.84% DEF"
+          }
+        },
+        {
+          "label": "Lunar Phase Shift 2-Hit",
+          "values": {
+            "lv1": "52.10% DEF",
+            "lv10": "93.78% DEF"
+          }
+        },
+        {
+          "label": "Lunar Phase Shift 3-Hit (x2)",
+          "values": {
+            "lv1": "34.57%+34.57% DEF",
+            "lv10": "62.22%+62.22% DEF"
+          }
+        },
+        {
+          "label": "Lunar Phase Shift 4-Hit",
+          "values": {
+            "lv1": "87.18% DEF",
+            "lv10": "156.92% DEF"
+          }
+        },
+        {
+          "label": "Lunar Phase Shift 4-Hit thêm (Moonsign Ascendant)",
+          "values": {
+            "lv1": "29.46% DEF",
+            "lv10": "53.02% DEF"
+          }
+        },
+        {
+          "label": "Lunar Phase Shift Trọng kích (x2)",
+          "values": {
+            "lv1": "65.95%+65.95% DEF",
+            "lv10": "118.71%+118.71% DEF"
+          }
+        }
+      ],
+      "cooldown": "18s (Lunar Phase Shift kéo dài 15s)",
+      "energyCost": null
+    },
+    "elementalBurst": {
+      "name": "Tri-Sphere Eminence",
+      "description": "Vận hành Jadelight Canopy, gây 2 đòn Geo, đòn thứ 2 tính là sát thương phản ứng Lunar-Crystallize. Nếu đang ở Lunar Phase Shift, kéo dài thêm 1.7s. Hệ số scale theo DEF.",
+      "scaling": [
+        {
+          "label": "Đòn 1",
+          "values": {
+            "lv1": "126.96% DEF",
+            "lv10": "228.53% DEF"
+          }
+        },
+        {
+          "label": "Đòn 2 (Lunar-Crystallize)",
+          "values": {
+            "lv1": "177.74% DEF",
+            "lv10": "319.94% DEF"
+          }
+        }
+      ],
+      "cooldown": "15s",
+      "energyCost": 60
+    },
+    "passives": [
+      {
+        "name": "The Selenic Adeptus Descends",
+        "unlock": "A1",
+        "description": "Khi tung Kỹ năng hoặc đồng đội gần đó kích hoạt Moondrift Harmony, nhận hiệu ứng Selenic Descent 4s: đòn 2 của Spirit Steed's Stride +60% DEF sát thương."
+      },
+      {
+        "name": "Layered Peaks Pierce the Clouds",
+        "unlock": "A4",
+        "description": "Mỗi đồng đội Geo khác +15% DEF cho Zibai; mỗi đồng đội Hydro +60 Elemental Mastery cho Zibai."
+      },
+      {
+        "name": "Moonsign Benediction: The Coursing Sun and Moon",
+        "unlock": "Moonsign Benediction Passive",
+        "description": "Đồng đội kích hoạt Kết Tinh (Crystallize) hệ Hydro hoá thành Lunar-Crystallize; mỗi 100 DEF của Zibai +0.7% Base DMG Lunar-Crystallize (tối đa 14%); Zibai trong đội +1 cấp Moonsign (Nguyệt Triệu) cho cả đội."
+      },
+      {
+        "name": "Moonlit Flower Forest",
+        "unlock": "Utility",
+        "description": "Ban đêm (18:00-06:00), ngoài combat, hồi 1 năng lượng nguyên tố mỗi 2s (không hoạt động trong Vực nguyên/Vực khiêu chiến/Trầm Thủy)."
+      }
+    ],
+    "constellations": [
+      {
+        "level": 1,
+        "name": "Burst Forth With Vigor, But Enter in Silence",
+        "description": "Dùng Kỹ năng nhận ngay 100 Phase Shift Radiance, số lần dùng Spirit Steed's Stride tối đa mỗi lượt Lunar Phase Shift tăng lên 5; mỗi lần vào Lunar Phase Shift, đòn 2 của Spirit Steed's Stride đầu tiên +220% DMG Lunar-Crystallize."
+      },
+      {
+        "level": 2,
+        "name": "At Birth Are Souls Born, and in Death Leave But Husks",
+        "description": "Khi ở Lunar Phase Shift, đồng đội gần đó +30% DMG Lunar-Crystallize. Moonsign Ascendant Gleam: Passive A1 tăng cường, đòn 2 Spirit Steed's Stride +550% DEF nữa (cần mở A4 trước)."
+      },
+      {
+        "level": 3,
+        "name": "Free From Constraints and Worldly Ties",
+        "description": "Tăng cấp Heaven and Earth Made Manifest +3 (tối đa 15)."
+      },
+      {
+        "level": 4,
+        "name": "The Spirit Passes, Then Form Follows",
+        "description": "Khi ở Lunar Phase Shift, chuỗi đòn thường không reset; Spirit Steed's Stride trúng địch cho hiệu ứng Scattermoon Splendor: đòn thường thứ 4 tiếp theo gây thêm 250% sát thương gốc dưới dạng DMG Lunar-Crystallize."
+      },
+      {
+        "level": 5,
+        "name": "Perceive the Worthless and Debate It Not",
+        "description": "Tăng cấp Tri-Sphere Eminence +3 (tối đa 15)."
+      },
+      {
+        "level": 6,
+        "name": "The World, A Journey in Passing",
+        "description": "Khi ở Lunar Phase Shift, tốc độ tích Phase Shift Radiance +50%; Spirit Steed's Stride tiêu hết toàn bộ Radiance, elevate DMG của đòn đó và DMG Lunar-Crystallize trong 3s tiếp theo +1.6% mỗi điểm Radiance tiêu vượt quá 70 (không cộng dồn)."
+      }
+    ],
+    "abyssRoleNotes": "DPS Geo scale DEF, gây sát thương Lunar-Crystallize trực tiếp kèm hỗ trợ đồng đội kích hoạt Lunar-Crystallize (chuyển hoá Kết Tinh Hydro thường). Cần build DEF% thay vì ATK%. Kết hợp tốt với Geo Resonance (Enduring Rock) và nhân vật Hydro. Là 1 trong 10 nhân vật Nguyệt Triệu (Moonsign) — mang cùng >=1 nhân vật Nguyệt Triệu khác để đạt Moonsign Level Ascendant Gleam.",
+    "sourceFile": "nhan-vat/mondstadt.md"
+  },
+  {
     "id": "aino",
     "name": "Aino",
     "element": "Hydro",

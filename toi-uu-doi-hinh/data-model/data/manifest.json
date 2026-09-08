@@ -5,8 +5,8 @@
   "files": {
     "characters": {
       "mondstadt.json": {
-        "count": 40,
-        "note": "24 Mondstadt + 9 Nod-Krai + 7 Traveler element-variants (traveler-anemo..traveler-cryo)"
+        "count": 41,
+        "note": "24 Mondstadt + 10 Nod-Krai + 7 Traveler element-variants (traveler-anemo..traveler-cryo). Zibai (Nod-Krai) bổ sung 2026-09-08 sau khi phát hiện anh bị loại nhầm khỏi cả file này lẫn liyue.md do mâu thuẫn ghi chú region."
       },
       "liyue.json": {
         "count": 26,
@@ -20,7 +20,7 @@
         "count": 25,
         "note": "14 Sumeru + 11 Natlan"
       },
-      "total": 120
+      "total": 121
     },
     "weapons": {
       "kiem.json": {
@@ -73,6 +73,9 @@
         "critValueHeuristic",
         "workedExample"
       ]
+    },
+    "team-bonus.json": {
+      "sections": ["elementalResonance (8)", "moonsign (10 nhân vật)", "hexerei (12 nhân vật)", "nightsoulBurst"]
     }
   },
   "knownDataGaps": {

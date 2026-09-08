@@ -20,6 +20,10 @@ gameplay/thông số, thay đổi theo từng bản cập nhật, không phải 
   thương gốc của game (DEF/RES/CRIT, phản ứng khuếch đại/chuyển hóa/cộng
   dồn, và cơ chế Lunar & Stellar Glimmer Reaction mới) — dùng để tự tính
   DPS thực tế của một đội hình thay vì chỉ so % trên giấy.
+- [`cong-huong-nguyen-to.md`](cong-huong-nguyen-to.md) — Buff tự động theo
+  thành phần đội hình: Cộng Hưởng Nguyên Tố (Elemental Resonance), Nguyệt
+  Triệu (Moonsign), Hexerei, Nightsoul Burst — luôn đáng cân nhắc khi ghép
+  4 nhân vật vì không cần build gì thêm.
 - [`data-model/`](data-model/README.md) — Bản JSON có cấu trúc (JSON Schema
   + dữ liệu) của toàn bộ 4 mục trên, để một thuật toán tối ưu đội hình đọc
   và tính toán tự động thay vì phải parse Markdown.

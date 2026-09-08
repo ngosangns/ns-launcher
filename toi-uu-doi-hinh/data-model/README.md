@@ -19,6 +19,7 @@ data-model/
 │   ├── artifact-set.schema.json
 │   ├── abyss-cycle.schema.json
 │   ├── damage-formula.schema.json
+│   ├── team-bonus.schema.json
 │   └── team.schema.json             # hợp đồng ĐẦU RA cho thuật toán tối ưu
 └── data/
     ├── characters/                  # 1 file JSON/nation, mảng Character[]
@@ -35,7 +36,8 @@ data-model/
     ├── artifact-sets.json           # mảng ArtifactSet[], toàn bộ 63 bộ
     ├── abyss-monsters/              # 1 file JSON / chu kỳ Trầm Thủy
     │   └── 2026-08-16-den-2026-09-15.json
-    └── damage-formula.json          # hằng số + công thức DPS
+    ├── damage-formula.json          # hằng số + công thức DPS
+    └── team-bonus.json              # Cộng Hưởng Nguyên Tố, Nguyệt Triệu, Hexerei, Nightsoul Burst
 ```
 
 Mỗi entity có `id` dạng slug kebab-case (vd. `hu-tao`, `wolfs-gravestone`,
@@ -77,7 +79,10 @@ Mỗi entity có `id` dạng slug kebab-case (vd. `hu-tao`, `wolfs-gravestone`,
 3. Với mỗi ứng viên (character + weapon + artifact set), tính tổng chỉ số
    build (`estimatedStats` theo `team.schema.json`) từ `baseStats` (nhân
    vật) + `atkLv90`/`subStat` (vũ khí) + bonus set (thánh di vật) + main
-   stat giả định theo build phổ biến của role đó.
+   stat giả định theo build phổ biến của role đó + buff tự động từ
+   `team-bonus.json` (Cộng Hưởng Nguyên Tố theo tổ hợp nguyên tố của cả 4
+   nhân vật, Nguyệt Triệu/Hexerei/Nightsoul Burst nếu đội có đủ nhân vật
+   trong `characterIds` tương ứng).
 4. Đọc `data/abyss-monsters/<chu-kỳ-hiện-tại>.json` để lấy `elements`,
    `resistanceNotes`, `weakpoint`, `mechanics` của quái từng chặng/tầng
    muốn tối ưu, và `leyLineDisorder` (buff/nerf theo nguyên tố/loại phản

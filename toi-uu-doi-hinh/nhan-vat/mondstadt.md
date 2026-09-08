@@ -17,7 +17,7 @@ Durin/Varka/Prune/Lohen/Nicole) — các passive này đã được cập nhật
 # Mondstadt + Nod-Krai + Nhà Lữ Hành
 
 Danh sách đầy đủ 24 nhân vật Mondstadt (bao gồm các nhân vật hệ Hexerei mới xuất hiện từ cốt truyện Hexenzirkel:
-Durin, Varka, Prune, Lohen, Nicole), 9 nhân vật Nod-Krai, và Nhà Lữ Hành với cả 7 nguyên tố đã cộng hưởng
+Durin, Varka, Prune, Lohen, Nicole), 10 nhân vật Nod-Krai, và Nhà Lữ Hành với cả 7 nguyên tố đã cộng hưởng
 (Anemo/Geo/Electro/Dendro/Hydro/Pyro/Cryo).
 
 **Ghi chú phân loại quốc gia:** một số nhân vật có "quốc gia trong game" (region hiển thị trong hồ sơ, quyết định
@@ -27,14 +27,19 @@ Nefer/Columbina → Nod-Krai dù gốc Sumeru/Snezhnaya). Nicole không có Regi
 Hexenzirkel độc lập) — xếp tạm vào Mondstadt do gắn với cốt truyện/nhóm nhân vật Mondstadt (Alice, Klee).
 
 Nhân vật KHÔNG đưa vào file: Alice, Istaroth (NPC, chưa chơi được), Wonderland Manekin/Manekina (nhân vật chế độ
-Miliastra Wonderland riêng biệt, không dùng trong Trầm Thủy), Zibai (quốc gia trong game = Liyue, xem `liyue.md`),
-Sandrone/Odette/Alyosha (quốc gia trong game = Snezhnaya, xem `liyue.md`).
+Miliastra Wonderland riêng biệt, không dùng trong Trầm Thủy), Sandrone/Odette/Alyosha (quốc gia trong game =
+Snezhnaya, xem `liyue.md`).
+
+**Sửa lại (2026-09-08, đợt fetch buff cộng hưởng nguyên tố):** bản trước ghi nhầm Zibai "quốc gia trong game =
+Liyue" và loại khỏi file này. Đã xác minh trực tiếp qua `gi.yatta.moe/api/v2/en/avatar/10000126`: trường `region`
+của Zibai là `"NODKRAI_ZIBAI"` (Nod-Krai), không phải `"LIYUE"` — khớp với ghi chú của chính `liyue.md` (Zibai
+gắn nhãn NODKRAI_ZIBAI nên KHÔNG thuộc file đó). Zibai nay được thêm đầy đủ vào file này (nhóm Nod-Krai 5★).
 
 ## Mục lục
 - [Nhà Lữ Hành (Traveler)](#nhà-lữ-hành-traveler) — mọi nguyên tố
 - Mondstadt 5★: [Albedo](#albedo) · [Diluc](#diluc) · [Jean](#jean) · [Klee](#klee) · [Mona](#mona) · [Venti](#venti) · [Eula](#eula) · [Durin](#durin) · [Varka](#varka) · [Lohen](#lohen) · [Nicole](#nicole)
 - Mondstadt 4★: [Amber](#amber) · [Barbara](#barbara) · [Bennett](#bennett) · [Diona](#diona) · [Fischl](#fischl) · [Kaeya](#kaeya) · [Lisa](#lisa) · [Mika](#mika) · [Noelle](#noelle) · [Razor](#razor) · [Rosaria](#rosaria) · [Sucrose](#sucrose) · [Prune](#prune)
-- Nod-Krai 5★: [Ineffa](#ineffa) · [Flins](#flins) · [Columbina](#columbina) · [Linnea](#linnea) · [Nefer](#nefer)
+- Nod-Krai 5★: [Ineffa](#ineffa) · [Flins](#flins) · [Columbina](#columbina) · [Linnea](#linnea) · [Nefer](#nefer) · [Zibai](#zibai)
 - Nod-Krai 4★: [Aino](#aino) · [Lauma](#lauma) · [Illuga](#illuga) · [Jahoda](#jahoda)
 
 ---
@@ -2150,5 +2155,101 @@ tục cho đội (theo ATK), gây DMG Anemo tức thì.
 
 **Vai trò đội hình Trầm Thủy:** Hỗ trợ hồi máu + gây sát thương đa nguyên tố linh hoạt tuỳ đội hình, dễ nhét vào mọi
 đội 4 nguyên tố cơ bản. Combo phổ biến: Jahoda + đội đa nguyên tố (Pyro/Hydro/Electro/Cryo) để tối ưu hoá buff robot.
+
+---
+
+## Zibai
+
+**Nguyên tố:** Geo | **Vũ khí:** Kiếm | **Độ hiếm:** 5★ | **Quốc gia:** Nod-Krai (trong game; Liyue trong cốt
+truyện — "Bạch Mã Chi Xuân", Vị thần Adeptus trong truyền thuyết Liyue) | **Ngày ra mắt:** 03/02/2026 (Luna IV,
+cùng đợt Illuga)
+
+> Bổ sung 2026-09-08 (đợt fetch buff cộng hưởng nguyên tố) — trước đó bị loại nhầm khỏi cả file này lẫn
+> `liyue.md` do mâu thuẫn ghi chú giữa 2 file; nay xác minh trực tiếp qua Yatta API
+> (`gi.yatta.moe/api/v2/en/avatar/10000126`, region = `NODKRAI_ZIBAI`) và MediaWiki API trang `Zibai`. Chỉ số cấp
+> 90 tính từ `initValue` cấp 1 nhân với hệ số đường cong 5★ chuẩn (S5) suy ra chéo từ Diluc (hệ số ≈8.7390, sai
+> số giữa 3 chỉ số HP/ATK/DEF < 0.001% — cùng kỹ thuật đối chiếu đường cong đã dùng cho vũ khí trong `vu-khi/`).
+
+Cơ chế biến hình dùng chỉ số **DEF** làm nền (giống Noelle/Albedo/Itto — không phải ATK): Kỹ năng chuyển sang
+**Lunar Phase Shift**, tích luỹ tài nguyên **Phase Shift Radiance** để tung kỹ năng phụ **Spirit Steed's Stride**
+(đòn thật sự gây sát thương chính, hệ số scale DEF rất cao).
+
+### Chỉ số cơ bản
+
+| Cấp | HP | ATK | DEF | CRIT DMG |
+|---|---|---|---|---|
+| 1 | 1,005.75 | 17.50 | 74.49 | — |
+| 90 | 12,919.47 | 224.83 | 956.85 | 38.4% |
+
+### Bộ kỹ năng
+
+**Đòn thường — Golden Blade's Petaled Touch:** tối đa 4 đòn kiếm (scale ATK như thường lệ, không đổi khi ở Lunar
+Phase Shift — chỉ đổi loại DMG sang Geo không ghi đè).
+| Đòn | Cấp 1 | Cấp 10 |
+|---|---|---|
+| 1-Hit | 50.55% | 99.93% |
+| 2-Hit | 46.55% | 92.02% |
+| 3-Hit (×2) | 30.89%+30.89% | 61.06%+61.06% |
+| 4-Hit | 77.90% | 153.98% |
+| Đòn nặng (×2) | 73.66%+73.66% | 145.61%+145.61% |
+| Nhảy rơi | 63.93% | 126.38% |
+| Nhảy thấp/cao | 127.84%/159.68% | 252.70%/315.64% |
+
+**Kỹ năng — Heaven and Earth Made Manifest** (hồi chiêu 18s, thời lượng Lunar Phase Shift 15s): chuyển sang Lunar
+Phase Shift; Đòn thường/nặng hoá Geo không ghi đè, tích Phase Shift Radiance; tiêu Radiance để tung **Spirit
+Steed's Stride** (đòn phụ, hệ số DEF rất cao). Moonsign Ascendant Gleam: đòn thường thứ 4 trong Lunar Phase Shift
+có thêm 1 đòn Geo tính là sát thương phản ứng Lunar-Crystallize. Tất cả hệ số dưới đây **scale theo DEF**, không
+phải ATK.
+| Chỉ số (% DEF) | Cấp 1 | Cấp 10 |
+|---|---|---|
+| Spirit Steed's Stride 1-Hit | 172.53% | 310.55% |
+| Spirit Steed's Stride 2-Hit | 140.97% | 253.74% |
+| Lunar Phase Shift 1-Hit | 56.58% | 101.84% |
+| Lunar Phase Shift 2-Hit | 52.10% | 93.78% |
+| Lunar Phase Shift 3-Hit (×2) | 34.57%+34.57% | 62.22%+62.22% |
+| Lunar Phase Shift 4-Hit | 87.18% | 156.92% |
+| Lunar Phase Shift 4-Hit thêm (Moonsign Ascendant) | 29.46% | 53.02% |
+| Lunar Phase Shift Đòn nặng (×2) | 65.95%+65.95% | 118.71%+118.71% |
+
+**Bùng nổ — Tri-Sphere Eminence** (năng lượng 60, hồi chiêu 15s): vận hành Jadelight Canopy, gây 2 đòn Geo, đòn
+thứ 2 tính là sát thương phản ứng Lunar-Crystallize. Nếu đang ở Lunar Phase Shift, kéo dài thêm 1.7s. Hệ số
+**scale theo DEF**.
+| Chỉ số (% DEF) | Cấp 1 | Cấp 10 |
+|---|---|---|
+| Đòn 1 | 126.96% | 228.53% |
+| Đòn 2 (Lunar-Crystallize) | 177.74% | 319.94% |
+
+**Passive A1 — The Selenic Adeptus Descends:** khi tung Kỹ năng hoặc đồng đội gần đó kích hoạt Moondrift Harmony,
+nhận hiệu ứng Selenic Descent 4s: đòn 2 của Spirit Steed's Stride +60% DEF sát thương.
+**Passive A4 — Layered Peaks Pierce the Clouds:** mỗi đồng đội Geo khác +15% DEF cho Zibai; mỗi đồng đội Hydro
++60 EM cho Zibai.
+**Moonsign Benediction Passive — Moonsign Benediction: The Coursing Sun and Moon:** đồng đội kích hoạt Kết Tinh
+(Crystallize) hệ Hydro hoá thành Lunar-Crystallize; mỗi 100 DEF của Zibai +0.7% Base DMG Lunar-Crystallize (tối
+đa 14%); Zibai trong đội +1 cấp Moonsign (Nguyệt Triệu) cho cả đội.
+**Utility Passive — Moonlit Flower Forest:** ban đêm (18:00–06:00), ngoài combat, hồi 1 năng lượng nguyên tố/2s
+(không hoạt động trong Vực nguyên/Vực khiêu chiến/Trầm Thủy).
+
+### Cung mệnh
+1. Burst Forth With Vigor, But Enter in Silence — dùng Kỹ năng nhận ngay 100 Phase Shift Radiance, số lần dùng
+   Spirit Steed's Stride tối đa mỗi lượt Lunar Phase Shift tăng lên 5; mỗi lần vào Lunar Phase Shift, đòn 2 của
+   Spirit Steed's Stride đầu tiên +220% DMG Lunar-Crystallize.
+2. At Birth Are Souls Born, and in Death Leave But Husks — khi ở Lunar Phase Shift, đồng đội gần đó +30% DMG
+   Lunar-Crystallize; Moonsign Ascendant Gleam: Passive A1 tăng cường, đòn 2 Spirit Steed's Stride +550% DEF nữa
+   (cần mở A4 trước).
+3. Free From Constraints and Worldly Ties — tăng cấp Heaven and Earth Made Manifest +3 (tối đa 15).
+4. The Spirit Passes, Then Form Follows — khi ở Lunar Phase Shift, chuỗi đòn thường không reset; Spirit Steed's
+   Stride trúng địch cho hiệu ứng Scattermoon Splendor: đòn thường thứ 4 tiếp theo gây thêm 250% sát thương gốc
+   dưới dạng DMG Lunar-Crystallize.
+5. Perceive the Worthless and Debate It Not — tăng cấp Tri-Sphere Eminence +3 (tối đa 15).
+6. The World, A Journey in Passing — khi ở Lunar Phase Shift, tốc độ tích Phase Shift Radiance +50%; Spirit
+   Steed's Stride tiêu hết toàn bộ Radiance, elevate DMG của đòn đó + DMG Lunar-Crystallize trong 3s tiếp theo
+   +1.6% mỗi điểm Radiance tiêu vượt quá 70 (không cộng dồn).
+
+**Vai trò đội hình Trầm Thủy:** DPS Geo scale DEF, gây sát thương Lunar-Crystallize trực tiếp kèm hỗ trợ đồng đội
+kích hoạt Lunar-Crystallize (chuyển hoá Kết Tinh Hydro thường). Cần build DEF% (thánh di vật + vũ khí) thay vì
+ATK%. Kết hợp tốt với Geo Resonance (Enduring Rock, xem `cong-huong-nguyen-to.md`) và nhân vật Hydro để vừa tăng
+EM vừa có nguồn Kết Tinh để chuyển hoá. Là 1 trong 10 nhân vật Nguyệt Triệu (Moonsign) — mang cùng ≥1 nhân vật
+Nguyệt Triệu khác để đạt Moonsign Level "Ascendant Gleam", mở khoá thêm buff sát thương Lunar Reaction cho đồng
+đội (xem `cong-huong-nguyen-to.md` mục 2).
 
 ---
