@@ -42,6 +42,12 @@ enum AbyssTextParser {
 
     private static let comboHit = regex("^(?:\\d+-hit|đòn\\s*\\d+)", options: [.caseInsensitive])
 
+    /// A charged attack, however the transcription spells it. Plunging attacks
+    /// ("nhảy") are deliberately not here: no rotation the model assumes uses
+    /// them, and their bonus already routes to `dmgNormal`.
+    private static let chargedHit = regex("đòn nặng|trọng kích|charged|aimed|ngắm bắn|bắn nhắm",
+                                          options: [.caseInsensitive])
+
     private static let resistancePatterns = [
         // "kháng Anemo +20%", "kháng Dendro/Geo +20~30%"
         regex("kháng\\s+([A-Za-zÀ-ỹ/ ]+?)\\s*([+\\-−])\\s*(\\d+(?:\\.\\d+)?)", options: [.caseInsensitive]),
@@ -154,6 +160,78 @@ enum AbyssTextParser {
         return out
     }
 
+    /// The character's charged attack, or nil when they have none the parser
+    /// recognises.
+    ///
+    /// The **strongest** charged row, not the sum of them. A charged attack is
+    /// one action and a character uses their best one, but the data does not say
+    /// which rows are alternatives and which are sequential: a bow's "Aimed
+    /// Shot" and "Aimed Shot sạc đầy" are two ways to fire the same arrow, while
+    /// a claymore's spin and finisher happen one after the other. Summing would
+    /// double every bow in the data; taking the maximum only under-counts the
+    /// handful of claymores, which is the safer way to be wrong.
+    static func chargedAttack(_ character: AbyssCharacter,
+                              levelKey: String = "lv10") -> (Double, ScalingBasis)? {
+        var best: (Double, ScalingBasis)?
+        for hit in character.normalAttack.hits {
+            let label = hit.label.trimmingCharacters(in: .whitespaces)
+            guard matches(chargedHit, label) else { continue }
+            let raw = hit.values[levelKey] ?? hit.values["lv10"] ?? hit.values["lv1"] ?? ""
+            guard let parsed = scalingValue(raw) else { continue }
+            if best == nil || parsed.multiplier > best!.0 { best = (parsed.multiplier, parsed.basis) }
+        }
+        return best
+    }
+
+    // MARK: - Constellations
+
+    /// The data writes a talent-level constellation two ways — "Tăng cấp X thêm
+    /// 3" and "X +3 cấp" — and matching only the first missed a third of them,
+    /// Xingqiu's C3/C5 among them.
+    private static let talentLevelBoost = regex(
+        "tăng cấp|\\+\\s*3\\s*cấp|cấp\\s*\\+\\s*3|thêm 3 cấp", options: [.caseInsensitive])
+    private static let normalAttackBoost = regex("đòn thường|normal attack", options: [.caseInsensitive])
+    private static let burstWord = regex("\\bburst\\b|bùng nổ|\\bnộ\\b", options: [.caseInsensitive])
+    private static let skillWord = regex("kỹ năng|\\bskill\\b", options: [.caseInsensitive])
+
+    /// Which talent a constellation raises by three levels, or nil when it does
+    /// not raise one.
+    ///
+    /// Resolved by counting how many words of each talent's *name* appear in the
+    /// constellation text, and only falling back to the generic words ("Tăng cấp
+    /// kỹ năng thêm 3") when neither name wins. Counting rather than merely
+    /// looking for a name is what separates the characters whose two talents
+    /// share a prefix — Skirk's "Havoc: Warp" and "Havoc: Ruin", Candace's two
+    /// "Sacred Rite" — where a first-match rule picks the wrong one half the
+    /// time. Across the bundled data this resolves every boosting constellation.
+    ///
+    /// A normal-attack boost returns nil on purpose: normal attacks are read at
+    /// their base level and no constellation in the data raises the rows the
+    /// model actually uses.
+    static func boostedTalent(byConstellation description: String,
+                              of character: AbyssCharacter) -> AbyssTalentSlot? {
+        guard matches(talentLevelBoost, description), !matches(normalAttackBoost, description) else {
+            return nil
+        }
+        let lowered = description.lowercased()
+
+        func score(_ name: String?) -> Int {
+            guard let name else { return 0 }
+            let words = Set(name.lowercased()
+                .split(whereSeparator: { !$0.isLetter })
+                .filter { $0.count >= 4 })
+            return words.filter { lowered.contains($0) }.count
+        }
+
+        let skill = score(character.elementalSkill.name)
+        let burst = score(character.elementalBurst.name)
+        if skill > burst { return .skill }
+        if burst > skill { return .burst }
+        if matches(burstWord, description) { return .burst }
+        if matches(skillWord, description) { return .skill }
+        return nil
+    }
+
     /// The stat a character mostly scales off.
     ///
     /// Ties between non-ATK bases resolve through `ScalingBasis.tieBreakOrder`;
@@ -175,6 +253,32 @@ enum AbyssTextParser {
         }
         guard let bestBasis, bestCount > atkCount else { return .atk }
         return bestBasis
+    }
+
+    /// The `index`-th percentage on the talent row named exactly `label`.
+    ///
+    /// Only `tuning.json`'s party-buff table uses this. Those rows are
+    /// deliberately *not* damage instances, so `talentDamageEntries` drops them
+    /// — but their numbers are real and they live in the character data, which
+    /// is where they should be read from rather than retyped into the tuning
+    /// file where a talent correction would never reach them.
+    ///
+    /// Parentheticals are stripped first, exactly as `scalingValue` does, so a
+    /// constellation variant ("(cấp 14: 126%)") cannot be mistaken for the
+    /// second half of a two-part row.
+    static func talentPercentage(in talent: AbyssCharacter.Talent,
+                                 label: String,
+                                 index: Int = 0,
+                                 levelKey: String = "lv10") -> Double? {
+        guard let entry = talent.scaling.first(where: { $0.label == label }) else { return nil }
+        let raw = entry.values[levelKey] ?? entry.values["lv10"] ?? entry.values["lv1"] ?? ""
+        let cleaned = replaceMatches(parenthetical, in: raw, with: " ")
+        let values = captures(percent, in: cleaned).compactMap { groups -> Double? in
+            guard let raw = groups.indices.contains(1) ? groups[1] : nil else { return nil }
+            return Double(raw.replacingOccurrences(of: ",", with: "."))
+        }
+        guard index >= 0, index < values.count else { return nil }
+        return values[index] / 100.0
     }
 
     // MARK: - Enemy resistance
@@ -221,6 +325,7 @@ enum AbyssTextParser {
     /// Pulls "+X% to <something>" clauses out of a Ley Line Disorder or
     /// Blessing description.
     static func floorBuffs(_ text: String?,
+                           source: AbyssFloorBuff.Source = .leyLine,
                            diagnostics: inout AbyssParseDiagnostics) -> [AbyssFloorBuff] {
         guard let text, !text.isEmpty else { return [] }
         var buffs: [AbyssFloorBuff] = []
@@ -245,7 +350,8 @@ enum AbyssTextParser {
                 elements: elements,
                 reactions: reactions,
                 normalAttackOnly: normalOnly,
-                raw: clause.trimmingCharacters(in: .whitespaces)))
+                raw: clause.trimmingCharacters(in: .whitespaces),
+                source: source))
         }
 
         if buffs.isEmpty, matches(percent, text) {

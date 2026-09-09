@@ -1,8 +1,13 @@
 // AbyssRoster.swift
 //
-// What the player actually owns. Deliberately byte-compatible with the Python
-// tool's `roster.json` (same keys, same shapes) so the file can be copied in
-// either direction between the app and the command line.
+// What the player actually owns: characters and weapons, and nothing about
+// artifacts. Artifact sets are farmable, so "which sets do you have" is not a
+// constraint on the answer — the useful recommendation is the best set that
+// exists, and the optimiser always searches all of them.
+//
+// The file layout stays compatible with the Python tool's `roster.json` (same
+// keys, same shapes) so it can still be copied in either direction; an
+// `artifactSets` key left over from an older file decodes and is ignored.
 
 import Foundation
 
@@ -34,16 +39,12 @@ struct AbyssRoster: Codable, Sendable, Equatable {
     /// Each entry is assumed to be a single copy: two characters on the same
     /// team cannot both hold it.
     var weapons: [OwnedWeapon]
-    /// Empty means "any set is farmable", which is the normal case — artifact
-    /// sets are grindable, unlike weapons.
-    var artifactSets: [String]
 
-    static let empty = AbyssRoster(characters: [], weapons: [], artifactSets: [])
+    static let empty = AbyssRoster(characters: [], weapons: [])
 
-    init(characters: [OwnedCharacter] = [], weapons: [OwnedWeapon] = [], artifactSets: [String] = []) {
+    init(characters: [OwnedCharacter] = [], weapons: [OwnedWeapon] = []) {
         self.characters = characters
         self.weapons = weapons
-        self.artifactSets = artifactSets
     }
 
     var isEmpty: Bool { characters.isEmpty && weapons.isEmpty }
@@ -59,18 +60,17 @@ struct AbyssRoster: Codable, Sendable, Equatable {
     var characterIDs: Set<String> { Set(characters.map(\.id)) }
     var weaponIDs: Set<String> { Set(weapons.map(\.id)) }
 
-    /// The example roster file carries a `_huong_dan` key of usage notes.
-    /// Decoding ignores unknown keys, so it round-trips as a plain roster —
-    /// but re-encoding drops the notes, which is why export writes the three
-    /// real keys only.
+    /// The example roster file carries a `_huong_dan` key of usage notes, and
+    /// older files an `artifactSets` list. Decoding ignores unknown keys, so
+    /// both round-trip as a plain roster — re-encoding just drops them, which
+    /// is why export writes the two real keys only.
     private enum CodingKeys: String, CodingKey {
-        case characters, weapons, artifactSets
+        case characters, weapons
     }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         characters = try container.decodeIfPresent([OwnedCharacter].self, forKey: .characters) ?? []
         weapons = try container.decodeIfPresent([OwnedWeapon].self, forKey: .weapons) ?? []
-        artifactSets = try container.decodeIfPresent([String].self, forKey: .artifactSets) ?? []
     }
 }

@@ -16,11 +16,10 @@ struct AbyssResultsView: View {
                 emptyState
             } else {
                 ScrollView(showsIndicators: false) {
-                    // Lazy: a full run is four floors of five teams of four
-                    // members, and every member row carries two portraits and a
-                    // handful of formatted strings. Building all of them to show
-                    // the first screenful is what made opening this section
-                    // hitch.
+                    // Lazy: a run is five teams of four members, and every
+                    // member row carries two portraits and a handful of
+                    // formatted strings. Building all of them to show the first
+                    // screenful is what made opening this section hitch.
                     LazyVStack(alignment: .leading, spacing: 22) {
                         VStack(alignment: .leading, spacing: 6) {
                             Label(text.abyssArtifactAdviceNotice, systemImage: "seal")
@@ -72,7 +71,7 @@ struct AbyssResultsView: View {
             if !report.buffs.isEmpty {
                 VStack(alignment: .leading, spacing: 3) {
                     ForEach(Array(report.buffs.enumerated()), id: \.offset) { _, buff in
-                        Text("+\(Int((buff.bonus * 100).rounded()))%  \(buff.raw)")
+                        Text("+\(Int((buff.bonus * 100).rounded()))%  ·  \(text.abyssBuffSource(buff.source))  ·  \(buff.raw)")
                             .font(.system(size: 10, design: .rounded))
                             .foregroundStyle(LauncherPalette.mist.opacity(0.55))
                             .lineLimit(2)

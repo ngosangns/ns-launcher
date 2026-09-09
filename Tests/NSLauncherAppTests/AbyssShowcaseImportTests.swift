@@ -140,16 +140,90 @@ final class AbyssShowcaseImportTests: XCTestCase {
         let worn = build.activeSetIDs.compactMap { library.artifactSetsByID[$0] }
 
         let measured = build.stats.stats
-        var rebuilt = assembler.showcaseStats(build: build, weapon: nil, wornSets: worn)
+        var rebuilt = assembler.showcaseStats(build: build, character: character, weapon: nil,
+                                              wornSets: worn)
         var diagnostics = AbyssParseDiagnostics()
         assembler.applySets(worn, character: character, to: &rebuilt, diagnostics: &diagnostics)
 
         // Putting the same set back must land on the measured numbers again,
         // apart from the conditional part the game screen never showed.
-        XCTAssertEqual(rebuilt.baseATK, measured.baseATK, accuracy: 1e-9)
         XCTAssertEqual(rebuilt.atkPercent, measured.atkPercent, accuracy: 1e-9)
         XCTAssertEqual(rebuilt.critRate, measured.critRate, accuracy: 1e-9)
         XCTAssertGreaterThanOrEqual(rebuilt.elementalBonus(.pyro), measured.elementalBonus(.pyro))
+    }
+
+    /// Everyone is scored at level 90, imported or not. Without this an account
+    /// mid-way through levelling would be ranked on how far along it is rather
+    /// than on what its builds can do, and an imported character at 80 would
+    /// lose to a modelled one at 90 purely for being imported.
+    func testImportedBuildsAreScoredAtLevelNinety() throws {
+        let tuning = try XCTUnwrap(library.tuning)
+        let assembler = AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs,
+                                            artifactSets: library.artifactSets)
+        let character = try XCTUnwrap(library.charactersByID["hu-tao"])
+        let build = try XCTUnwrap(showcase().builds.first { $0.characterID == "hu-tao" })
+        let homa = try XCTUnwrap(library.weaponsByID["staff-of-homa"])
+
+        let atLv90 = assembler.showcaseStats(build: build, character: character, weapon: homa,
+                                             wornSets: [])
+        XCTAssertEqual(atLv90.baseATK,
+                       try XCTUnwrap(character.baseStats.lv90.atk) + XCTUnwrap(homa.atkLv90),
+                       accuracy: 1e-9,
+                       "base ATK should be the character and weapon at 90, not at the account's level")
+        XCTAssertEqual(atLv90.baseHP, try XCTUnwrap(character.baseStats.lv90.hp), accuracy: 1e-9)
+        XCTAssertEqual(atLv90.baseDEF, try XCTUnwrap(character.baseStats.lv90.def), accuracy: 1e-9)
+
+        // Nothing else is invented: the rolls stay exactly as measured.
+        XCTAssertEqual(atLv90.critDMG, build.stats.stats.critDMG, accuracy: 1e-9)
+
+        // And a build at a lower level lands on the same base numbers.
+        let lowered = AbyssShowcaseBuild(
+            characterID: build.characterID, level: 70, constellation: build.constellation,
+            weaponID: build.weaponID, weaponLevel: 70, weaponRefinement: build.weaponRefinement,
+            setPieces: build.setPieces, stats: AbyssMeasuredStats())
+        let loweredStats = assembler.showcaseStats(build: lowered, character: character,
+                                                   weapon: homa, wornSets: [])
+        XCTAssertEqual(loweredStats.baseATK, atLv90.baseATK, accuracy: 1e-9,
+                       "a level-70 import should still be scored at 90")
+    }
+
+    /// A measured sheet never contains what the character hands the *party* —
+    /// the game screen shows only what they keep — so there is nothing to take
+    /// back out when the set effects are stripped.
+    ///
+    /// Subtracting them anyway left the sheet granting a negative party buff,
+    /// and because the artifact advisor then dresses this character in some
+    /// other set, that negative reached the team score: an imported Noblesse
+    /// Oblige wearer moved to another set handed the whole party -20% ATK.
+    func testStrippingSetsFromAMeasuredSheetLeavesNoNegativePartyBuff() throws {
+        let tuning = try XCTUnwrap(library.tuning)
+        let assembler = AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs,
+                                            artifactSets: library.artifactSets,
+                                            talentPartyBuffs: library.talentPartyBuffsByCharacterID)
+        let character = try XCTUnwrap(library.charactersByID["hu-tao"])
+        let noblesse = try XCTUnwrap(library.artifactSetsByID["noblesse-oblige"])
+
+        let build = AbyssShowcaseBuild(characterID: "hu-tao", level: 90, constellation: 0,
+                                       weaponID: nil, weaponLevel: 90, weaponRefinement: 1,
+                                       setPieces: ["noblesse-oblige": 4], stats: AbyssMeasuredStats())
+        let base = assembler.showcaseStats(build: build, character: character, weapon: nil,
+                                           wornSets: [noblesse])
+        XCTAssertEqual(base.partyATKPercent, 0, accuracy: 1e-9,
+                       "stripping the set left a negative party ATK buff")
+
+        // Putting a different set on must give that set's party buff and only
+        // that set's — not this one's, and not a leftover debt from it.
+        var swapped = base
+        var diagnostics = AbyssParseDiagnostics()
+        let crimson = try XCTUnwrap(library.artifactSetsByID["crimson-witch-of-flames"])
+        assembler.applySets([crimson], character: character, to: &swapped, diagnostics: &diagnostics)
+        XCTAssertGreaterThanOrEqual(swapped.partyATKPercent, 0,
+                                    "an imported character handed the party a negative ATK buff")
+
+        // And wearing the same set again reproduces its party buff exactly.
+        var kept = base
+        assembler.applySets([noblesse], character: character, to: &kept, diagnostics: &diagnostics)
+        XCTAssertGreaterThan(kept.partyATKPercent, 0, "the set's own party buff went missing")
     }
 
     func testImportedCharactersAreScoredOnTheirOwnGear() async throws {

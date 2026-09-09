@@ -163,10 +163,9 @@ final class AbyssArtifactAdvisorTests: XCTestCase {
         // Any set whose 4-piece bonus reaches the party will do.
         let partySet = try XCTUnwrap(library.fiveStarArtifactSets.first { set in
             (set.twoPiece.bonuses + set.fourPiece.bonuses).contains { bonus in
-                guard let resolved = AbyssBuildAssembler.resolve(named: bonus.stat, value: bonus.value,
-                                                                 conditional: false, tuning: tuning)
-                else { return false }
-                return resolved.field == .partyATKPercent
+                AbyssBuildAssembler.resolve(named: bonus.stat, value: bonus.value,
+                                            conditional: false, tuning: tuning)
+                    .contains { $0.field == .partyATKPercent }
             }
         }, "the data has no set granting party ATK; this test needs updating")
 
@@ -194,20 +193,60 @@ final class AbyssArtifactAdvisorTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(mixed.atkPercent, one.atkPercent)
     }
 
-    /// Recommending a set the player cannot use would be worse than useless.
-    func testRefinementRespectsTheOwnedSetList() async throws {
+    /// Artifacts are farmable, so the search is over every 5★ set and a roster
+    /// cannot narrow it. The recommendation is "the best set that exists", and
+    /// the only constraint on it is that the set is real and reachable.
+    func testEverySetIsSearchedRegardlessOfWhatTheRosterHolds() async throws {
         let optimizer = try makeOptimizer()
-        var roster = try AbyssGoldenFixture.exampleRoster()
-        let allowed = library.fiveStarArtifactSets.prefix(4).map(\.id)
-        roster.artifactSets = allowed
+        let roster = try AbyssGoldenFixture.exampleRoster()
+        let fiveStarIDs = Set(library.fiveStarArtifactSets.map(\.id))
 
         let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 3))
+        var recommended: Set<String> = []
         for team in try XCTUnwrap(output.reports.first?.teams) {
             for advice in team.artifactAdvice.values {
                 for setID in advice.setIDs + advice.alternativeSetIDs {
-                    XCTAssertTrue(allowed.contains(setID), "recommended \(setID), which the roster does not own")
+                    XCTAssertTrue(fiveStarIDs.contains(setID),
+                                  "recommended \(setID), which is not a 5★ set")
+                    recommended.insert(setID)
                 }
             }
+        }
+        XCTAssertFalse(recommended.isEmpty, "the refinement pass recommended nothing at all")
+    }
+
+    /// The pass used to shortlist eight sets by the character's own damage
+    /// before scoring any of them as a team, which could not see a set that
+    /// earns its slot by buffing the other three. It is exhaustive now, so
+    /// every 5★ set and every 2+2 pair really is reachable.
+    func testRefinementConsidersEverySetAndEveryPair() throws {
+        let tuning = try XCTUnwrap(library.tuning)
+        let assembler = AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs,
+                                            artifactSets: library.artifactSets)
+        let advisor = AbyssArtifactAdvisor(library: library, assembler: assembler,
+                                           scorer: AbyssScorer(library: library, tuning: tuning))
+        let optimizer = try makeOptimizer()
+        let sets = library.fiveStarArtifactSets
+        let members = ["hu-tao", "xingqiu", "bennett", "zhongli"].compactMap { library.charactersByID[$0] }
+        XCTAssertEqual(members.count, 4)
+
+        var options: [String: [AbyssGearOption]] = [:]
+        for member in members {
+            options[member.id] = optimizer.gearOptions(for: member, weapons: library.weapons,
+                                                       sets: sets, roster: nil)
+        }
+        let scorer = AbyssScorer(library: library, tuning: tuning)
+        let team = try XCTUnwrap(scorer.score(members: members, options: options, floor: .neutral))
+        let refined = advisor.refine(team: team, members: members, floor: .neutral, sets: sets,
+                                     roster: nil)
+
+        // Refinement never returns a worse team, and it reports advice for
+        // everyone rather than only for whoever the shortlist happened to fit.
+        XCTAssertGreaterThanOrEqual(refined.score, team.score)
+        XCTAssertEqual(Set(refined.artifactAdvice.keys), Set(members.map(\.id)))
+        for advice in refined.artifactAdvice.values {
+            XCTAssertTrue((1...2).contains(advice.setIDs.count),
+                          "a build is one 4-piece or two 2-pieces, got \(advice.setIDs)")
         }
     }
 }

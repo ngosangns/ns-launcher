@@ -34,6 +34,11 @@
      "multiplier": 0.9729000000000001,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.2355,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -41,7 +46,7 @@
     "setIds": [
      "obsidian-codex"
     ],
-    "soloScore": 136156.59860077463,
+    "soloScore": 159114.66740240622,
     "stats": {
      "base_atk": 916.13,
      "base_hp": 11201.16,
@@ -65,6 +70,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Hydro": 0.466
      },
@@ -125,6 +132,11 @@
      "multiplier": 1.3263,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.2969,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -132,7 +144,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 239708.8864075112,
+    "soloScore": 266570.5036308616,
     "stats": {
      "base_atk": 859.14,
      "base_hp": 13225.58,
@@ -156,6 +168,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Geo": 0.754
      },
@@ -217,6 +231,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Dendro": 0.754
      },
@@ -277,6 +293,11 @@
      "multiplier": 1.1712,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.2319999999999998,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -284,7 +305,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 180604.37665389047,
+    "soloScore": 204856.49249661822,
     "stats": {
      "base_atk": 775.92,
      "base_hp": 10898.89,
@@ -308,6 +329,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Cryo": 0.754
      },
@@ -363,6 +386,11 @@
      "multiplier": 1.4994,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 1.4994,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -370,7 +398,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 229373.26640077977,
+    "soloScore": 245134.42223175606,
     "stats": {
      "base_atk": 939.5,
      "base_hp": 11962.46,
@@ -394,6 +422,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Electro": 0.466
      },
@@ -444,6 +474,11 @@
      "multiplier": 1.173,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.2319999999999998,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -451,7 +486,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 137958.18610772013,
+    "soloScore": 158004.32146564205,
     "stats": {
      "base_atk": 765.02,
      "base_hp": 9461.18,
@@ -475,6 +510,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Pyro": 0.466
      },
@@ -541,6 +578,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Geo": 0.466
      },
@@ -637,6 +676,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Pyro": 0.466
      },
@@ -677,6 +718,11 @@
      "multiplier": 0.9745,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.1787,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -684,7 +730,7 @@
     "setIds": [
      "shimenawas-reminiscence"
     ],
-    "soloScore": 31627.047483156613,
+    "soloScore": 38446.99665472233,
     "stats": {
      "base_atk": 800.54,
      "base_hp": 13348.07,
@@ -702,12 +748,14 @@
      "healing_bonus": 0.0,
      "dmg_all": 0.0,
      "dmg_normal": 0.85,
-     "dmg_charged": 0.0,
+     "dmg_charged": 0.5,
      "dmg_skill": 0.0,
      "dmg_burst": 0.0,
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Dendro": 0.466
      },
@@ -748,6 +796,11 @@
      "multiplier": 0.9936,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.9923,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -755,7 +808,7 @@
     "setIds": [
      "shimenawas-reminiscence"
     ],
-    "soloScore": 34085.82997065738,
+    "soloScore": 43208.19583513959,
     "stats": {
      "base_atk": 767.3,
      "base_hp": 9787.42,
@@ -773,12 +826,14 @@
      "healing_bonus": 0.599,
      "dmg_all": 0.0,
      "dmg_normal": 0.85,
-     "dmg_charged": 0.0,
+     "dmg_charged": 0.5,
      "dmg_skill": 0.0,
      "dmg_burst": 0.0,
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Hydro": 0.466
      },
@@ -839,6 +894,11 @@
      "multiplier": 2.2168,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.0128,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -846,7 +906,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 159044.44472981556,
+    "soloScore": 169864.87718767195,
     "stats": {
      "base_atk": 899.14,
      "base_hp": 13049.96,
@@ -870,6 +930,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Electro": 0.706
      },
@@ -935,6 +997,11 @@
      "multiplier": 1.4212,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.3051999999999997,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -942,7 +1009,7 @@
     "setIds": [
      "shimenawas-reminiscence"
     ],
-    "soloScore": 89899.5902077156,
+    "soloScore": 98224.72459376692,
     "stats": {
      "base_atk": 799.16,
      "base_hp": 12397.4,
@@ -960,12 +1027,14 @@
      "healing_bonus": 0.359,
      "dmg_all": 0.0,
      "dmg_normal": 0.85,
-     "dmg_charged": 0.0,
+     "dmg_charged": 0.5,
      "dmg_skill": 0.0,
      "dmg_burst": 0.0,
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 483.33196799999996,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Pyro": 0.466
      },
@@ -1027,6 +1096,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Hydro": 0.466
      },
@@ -1072,6 +1143,11 @@
      "multiplier": 1.163,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 1.8090000000000002,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -1079,7 +1155,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 37080.27266647123,
+    "soloScore": 44460.019985206745,
     "stats": {
      "base_atk": 781.0,
      "base_hp": 10772.0,
@@ -1103,6 +1179,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Cryo": 0.466
      },
@@ -1164,6 +1242,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Anemo": 0.466
      },
@@ -1214,6 +1294,11 @@
      "multiplier": 1.527,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.406,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -1221,7 +1306,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 144604.93980994466,
+    "soloScore": 164930.69907309557,
     "stats": {
      "base_atk": 867.0,
      "base_hp": 11968.0,
@@ -1245,6 +1330,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Pyro": 0.466
      },
@@ -1285,6 +1372,11 @@
      "multiplier": 1.485,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.148,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -1292,7 +1384,7 @@
     "setIds": [
      "obsidian-codex"
     ],
-    "soloScore": 201282.60957725992,
+    "soloScore": 218469.88730845513,
     "stats": {
      "base_atk": 865.0,
      "base_hp": 11437.0,
@@ -1316,6 +1408,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Geo": 0.466
      },
@@ -1361,6 +1455,11 @@
      "multiplier": 2.001,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.012,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -1368,7 +1467,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 266136.27555721346,
+    "soloScore": 291049.790953906,
     "stats": {
      "base_atk": 897.02,
      "base_hp": 10983.71,
@@ -1392,6 +1491,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Cryo": 0.466
      },
@@ -1458,6 +1559,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Cryo": 0.466
      },
@@ -1498,6 +1601,11 @@
      "multiplier": 1.7790000000000001,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.533,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -1505,7 +1613,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 154029.20872066548,
+    "soloScore": 191172.7717147102,
     "stats": {
      "base_atk": 879.0,
      "base_hp": 12956.0,
@@ -1529,6 +1637,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Electro": 0.466
      },
@@ -1590,6 +1700,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Dendro": 0.466
      },
@@ -1655,6 +1767,11 @@
      "multiplier": 1.0527,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.0894,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -1662,7 +1779,7 @@
     "setIds": [
      "shimenawas-reminiscence"
     ],
-    "soloScore": 67434.4348101247,
+    "soloScore": 82008.24194731515,
     "stats": {
      "base_atk": 703.67,
      "base_hp": 14695.09,
@@ -1680,12 +1797,14 @@
      "healing_bonus": 0.0,
      "dmg_all": 0.0,
      "dmg_normal": 0.85,
-     "dmg_charged": 0.0,
+     "dmg_charged": 0.5,
      "dmg_skill": 0.0,
      "dmg_burst": 0.0,
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Hydro": 0.466
      },
@@ -1747,6 +1866,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Electro": 0.466
      },
@@ -1792,6 +1913,11 @@
      "multiplier": 1.2978999999999998,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 1.8768,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -1799,7 +1925,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 76596.77136053689,
+    "soloScore": 84702.14012967625,
     "stats": {
      "base_atk": 797.03,
      "base_hp": 12506.21,
@@ -1823,6 +1949,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Hydro": 0.466
      },
@@ -1889,6 +2017,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Pyro": 0.466
      },
@@ -1954,6 +2084,11 @@
      "multiplier": 2.6486,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.465,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -1961,7 +2096,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 419219.95979414013,
+    "soloScore": 452107.9618339336,
     "stats": {
      "base_atk": 1008.85,
      "base_hp": 12980.67,
@@ -1985,6 +2120,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Pyro": 0.466
      },
@@ -2040,6 +2177,11 @@
      "multiplier": 1.0625,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.2319999999999998,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -2047,7 +2189,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 59781.88423568228,
+    "soloScore": 69216.75741018355,
     "stats": {
      "base_atk": 820.4,
      "base_hp": 9569.93,
@@ -2071,6 +2213,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Cryo": 0.706
      },
@@ -2132,6 +2276,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Electro": 0.466
      },
@@ -2197,6 +2343,11 @@
      "multiplier": 1.4065,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.2422999999999997,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -2204,7 +2355,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 292891.75669728563,
+    "soloScore": 320844.5035968378,
     "stats": {
      "base_atk": 954.81,
      "base_hp": 12429.6,
@@ -2228,6 +2379,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Pyro": 0.466
      },
@@ -2273,6 +2426,11 @@
      "multiplier": 1.485,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 1.805,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -2280,7 +2438,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 122098.59444879672,
+    "soloScore": 141605.9173055033,
     "stats": {
      "base_atk": 1009.0,
      "base_hp": 13568.0,
@@ -2304,6 +2462,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Dendro": 0.466
      },
@@ -2344,6 +2504,11 @@
      "multiplier": 1.449,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.281,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -2351,7 +2516,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 72947.04771547802,
+    "soloScore": 84605.2866952647,
     "stats": {
      "base_atk": 1088.0,
      "base_hp": 13348.0,
@@ -2375,6 +2540,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Cryo": 0.466
      },
@@ -2440,6 +2607,11 @@
      "multiplier": 2.84,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.4591,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -2447,7 +2619,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 594008.6795346008,
+    "soloScore": 627950.3369186649,
     "stats": {
      "base_atk": 1016.03,
      "base_hp": 13225.58,
@@ -2471,6 +2643,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Cryo": 0.466
      },
@@ -2532,6 +2706,10 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {
+      "Anemo": 0.16000000000000003
+     },
      "dmg_elemental": {
       "Anemo": 0.466
      },
@@ -2587,6 +2765,11 @@
      "multiplier": 1.4246,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.2319999999999998,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -2594,7 +2777,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 216008.9587242849,
+    "soloScore": 239824.59103021736,
     "stats": {
      "base_atk": 786.26,
      "base_hp": 9189.3,
@@ -2618,6 +2801,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Electro": 0.466
      },
@@ -2683,6 +2868,11 @@
      "multiplier": 1.518,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.0366,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -2690,7 +2880,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 280154.91959963087,
+    "soloScore": 306072.53124502464,
     "stats": {
      "base_atk": 1025.59,
      "base_hp": 12490.83,
@@ -2714,6 +2904,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Electro": 0.466
      },
@@ -2759,6 +2951,11 @@
      "multiplier": 2.447,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.2359999999999998,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -2766,7 +2963,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 254700.17211158347,
+    "soloScore": 283254.89069773507,
     "stats": {
      "base_atk": 929.0,
      "base_hp": 12077.0,
@@ -2790,6 +2987,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Cryo": 0.466
      },
@@ -2835,6 +3034,11 @@
      "multiplier": 1.449,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 1.4669999999999999,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -2842,7 +3046,7 @@
     "setIds": [
      "shimenawas-reminiscence"
     ],
-    "soloScore": 36605.44326613093,
+    "soloScore": 43009.35984808622,
     "stats": {
      "base_atk": 786.0,
      "base_hp": 15307.0,
@@ -2860,12 +3064,14 @@
      "healing_bonus": 0.359,
      "dmg_all": 0.64,
      "dmg_normal": 0.85,
-     "dmg_charged": 0.0,
+     "dmg_charged": 0.5,
      "dmg_skill": 0.0,
      "dmg_burst": 0.0,
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Hydro": 0.466
      },
@@ -2911,6 +3117,11 @@
      "multiplier": 2.52923,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.2355,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -2918,7 +3129,7 @@
     "setIds": [
      "obsidian-codex"
     ],
-    "soloScore": 345477.65198526933,
+    "soloScore": 372127.95166194096,
     "stats": {
      "base_atk": 975.61,
      "base_hp": 11418.71,
@@ -2942,6 +3153,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Pyro": 0.466
      },
@@ -2987,6 +3200,11 @@
      "multiplier": 1.139,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.2319999999999998,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -2994,7 +3212,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 124398.42921528357,
+    "soloScore": 151327.3478551837,
     "stats": {
      "base_atk": 876.85,
      "base_hp": 9796.75,
@@ -3018,6 +3236,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Cryo": 0.466
      },
@@ -3053,6 +3273,11 @@
      "multiplier": 1.103,
      "basis": "ATK",
      "category": "burst"
+    },
+    {
+     "multiplier": 2.2319999999999998,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -3060,7 +3285,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 21822.01272908576,
+    "soloScore": 41497.525720933634,
     "stats": {
      "base_atk": 725.0,
      "base_hp": 9575.0,
@@ -3084,6 +3309,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Geo": 0.706
      },
@@ -3149,6 +3376,11 @@
      "multiplier": 1.5336,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 1.5336,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -3156,7 +3388,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 224988.8230692561,
+    "soloScore": 238267.96507843718,
     "stats": {
      "base_atk": 780.4300000000001,
      "base_hp": 15552.34,
@@ -3180,6 +3412,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Pyro": 0.466
      },
@@ -3236,6 +3470,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Electro": 0.466
      },
@@ -3287,6 +3523,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Anemo": 0.466
      },
@@ -3337,6 +3575,11 @@
      "multiplier": 1.5078,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.1947,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -3344,7 +3587,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 178664.1240939935,
+    "soloScore": 190132.64580776755,
     "stats": {
      "base_atk": 733.16,
      "base_hp": 11962.41,
@@ -3368,6 +3611,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Geo": 0.466
      },
@@ -3418,6 +3663,11 @@
      "multiplier": 1.1083,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 1.8768,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -3425,7 +3675,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 61820.58477883316,
+    "soloScore": 71498.80048934094,
     "stats": {
      "base_atk": 1004.0699999999999,
      "base_hp": 12613.29,
@@ -3449,6 +3699,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Electro": 0.466
      },
@@ -3509,6 +3761,11 @@
      "multiplier": 1.012,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.2319999999999998,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -3516,7 +3773,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 141002.45059429226,
+    "soloScore": 162157.93644614218,
     "stats": {
      "base_atk": 765.02,
      "base_hp": 9646.05,
@@ -3540,6 +3797,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Anemo": 0.466
      },
@@ -3595,6 +3854,11 @@
      "multiplier": 1.5656999999999999,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 3.2028,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -3602,7 +3866,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 113138.89246412806,
+    "soloScore": 127688.74810577583,
     "stats": {
      "base_atk": 781.1800000000001,
      "base_hp": 14695.09,
@@ -3626,6 +3890,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Anemo": 0.466
      },
@@ -3682,6 +3948,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Geo": 0.706
      },
@@ -3747,6 +4015,11 @@
      "multiplier": 0.5015,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.3256,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -3754,7 +4027,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 266418.82257704297,
+    "soloScore": 295021.4139491898,
     "stats": {
      "base_atk": 904.5799999999999,
      "base_hp": 13348.07,
@@ -3778,6 +4051,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Anemo": 0.466
      },
@@ -3828,6 +4103,11 @@
      "multiplier": 1.7442,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.533,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -3835,7 +4115,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 251122.45736265866,
+    "soloScore": 280065.12126741733,
     "stats": {
      "base_atk": 831.02,
      "base_hp": 11636.16,
@@ -3859,6 +4139,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Cryo": 0.466
      },
@@ -3914,6 +4196,11 @@
      "multiplier": 1.545,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 1.09,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -3921,7 +4208,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 287700.2156585145,
+    "soloScore": 303403.03907644504,
     "stats": {
      "base_atk": 950.0,
      "base_hp": 12858.0,
@@ -3945,6 +4232,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Cryo": 0.466
      },
@@ -4000,6 +4289,11 @@
      "multiplier": 1.495,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.56,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -4007,7 +4301,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 119457.80393509334,
+    "soloScore": 149967.1522272492,
     "stats": {
      "base_atk": 907.0,
      "base_hp": 13715.0,
@@ -4031,6 +4325,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Hydro": 0.466
      },
@@ -4087,6 +4383,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Dendro": 0.466
      },
@@ -4157,6 +4455,11 @@
      "multiplier": 1.324,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 3.218,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -4164,7 +4467,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 276450.2185146974,
+    "soloScore": 321990.7877190986,
     "stats": {
      "base_atk": 930.89,
      "base_hp": 13103.16,
@@ -4188,6 +4491,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Electro": 0.466
      },
@@ -4249,6 +4554,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Dendro": 0.466
      },
@@ -4320,6 +4627,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Dendro": 0.466
      },
@@ -4365,6 +4674,11 @@
      "multiplier": 1.6186,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.8325,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -4372,7 +4686,7 @@
     "setIds": [
      "shimenawas-reminiscence"
     ],
-    "soloScore": 143558.61563996348,
+    "soloScore": 170311.46971405682,
     "stats": {
      "base_atk": 918.9300000000001,
      "base_hp": 10286.57,
@@ -4390,12 +4704,14 @@
      "healing_bonus": 0.0,
      "dmg_all": 0.0,
      "dmg_normal": 0.85,
-     "dmg_charged": 0.0,
+     "dmg_charged": 0.5,
      "dmg_skill": 0.0,
      "dmg_burst": 0.0,
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Pyro": 0.754
      },
@@ -4426,6 +4742,11 @@
      "multiplier": 0.614,
      "basis": "ATK",
      "category": "burst"
+    },
+    {
+     "multiplier": 2.2319999999999998,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -4433,7 +4754,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 51837.32176295256,
+    "soloScore": 74410.9052523507,
     "stats": {
      "base_atk": 738.0,
      "base_hp": 9575.0,
@@ -4457,6 +4778,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 228.1896,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Electro": 0.466
      },
@@ -4497,6 +4820,11 @@
      "multiplier": 1.504,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.42,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -4504,7 +4832,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 83042.51582739345,
+    "soloScore": 93760.73460235025,
     "stats": {
      "base_atk": 755.0,
      "base_hp": 12295.0,
@@ -4528,6 +4856,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Electro": 0.466
      },
@@ -4573,6 +4903,11 @@
      "multiplier": 1.1621,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 0.6811,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -4580,7 +4915,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 65787.54784698453,
+    "soloScore": 69010.2103066063,
     "stats": {
      "base_atk": 858.63,
      "base_hp": 9243.72,
@@ -4604,6 +4939,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Anemo": 0.466
      },
@@ -4664,6 +5001,11 @@
      "multiplier": 0.8009000000000001,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.3227,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -4671,7 +5013,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 110370.05900121848,
+    "soloScore": 129818.32336377374,
     "stats": {
      "base_atk": 862.96,
      "base_hp": 10653.94,
@@ -4695,6 +5037,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Dendro": 0.466
      },
@@ -4751,6 +5095,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Cryo": 0.466
      },
@@ -4796,6 +5142,11 @@
      "multiplier": 1.6136000000000001,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.2319999999999998,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -4803,7 +5154,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 54007.28791385138,
+    "soloScore": 61209.679461989086,
     "stats": {
      "base_atk": 751.51,
      "base_hp": 9894.7,
@@ -4827,6 +5178,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Geo": 0.466
      },
@@ -4882,6 +5235,11 @@
      "multiplier": 0.9893000000000001,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 3.1882,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -4889,7 +5247,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 167797.74182536756,
+    "soloScore": 198071.53614478858,
     "stats": {
      "base_atk": 839.51,
      "base_hp": 9569.93,
@@ -4913,6 +5271,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Electro": 0.466
      },
@@ -4973,6 +5333,11 @@
      "multiplier": 1.8215000000000001,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 1.3022,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -4980,7 +5345,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 260433.9971207393,
+    "soloScore": 276903.8152342237,
     "stats": {
      "base_atk": 1018.4200000000001,
      "base_hp": 12858.21,
@@ -5004,6 +5369,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Cryo": 0.466
      },
@@ -5054,6 +5421,11 @@
      "multiplier": 1.248,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.088,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -5061,7 +5433,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 135965.90070900074,
+    "soloScore": 162714.55107696546,
     "stats": {
      "base_atk": 840.0,
      "base_hp": 12404.0,
@@ -5085,6 +5457,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Anemo": 0.706
      },
@@ -5156,6 +5530,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Pyro": 0.466
      },
@@ -5212,6 +5588,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Pyro": 0.466
      },
@@ -5272,6 +5650,11 @@
      "multiplier": 1.401,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.2287,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -5279,7 +5662,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 68696.73974059954,
+    "soloScore": 78214.31475203298,
     "stats": {
      "base_atk": 964.02,
      "base_hp": 12506.15,
@@ -5303,6 +5686,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Cryo": 0.466
      },
@@ -5358,6 +5743,11 @@
      "multiplier": 1.067,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.8507,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -5365,7 +5755,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 135719.7398508118,
+    "soloScore": 160339.91869040742,
     "stats": {
      "base_atk": 895.01,
      "base_hp": 10409.02,
@@ -5389,6 +5779,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Hydro": 0.466
      },
@@ -5450,6 +5842,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Hydro": 0.466
      },
@@ -5506,6 +5900,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Dendro": 0.466
      },
@@ -5551,6 +5947,11 @@
      "multiplier": 2.638,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.2359999999999998,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -5558,7 +5959,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 226256.33900144178,
+    "soloScore": 253746.17376152676,
     "stats": {
      "base_atk": 1026.0,
      "base_hp": 12650.0,
@@ -5582,6 +5983,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Geo": 0.466
      },
@@ -5647,6 +6050,11 @@
      "multiplier": 1.0979,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.3558000000000003,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -5654,7 +6062,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 243127.51971288145,
+    "soloScore": 267346.97363495367,
     "stats": {
      "base_atk": 952.4200000000001,
      "base_hp": 12703.91,
@@ -5678,6 +6086,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Dendro": 0.466
      },
@@ -5743,12 +6153,14 @@
      "healing_bonus": 0.0,
      "dmg_all": 0.0,
      "dmg_normal": 0.85,
-     "dmg_charged": 0.0,
+     "dmg_charged": 0.5,
      "dmg_skill": 0.0,
      "dmg_burst": 0.0,
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Hydro": 0.466
      },
@@ -5799,6 +6211,11 @@
      "multiplier": 0.8314,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.0218000000000003,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -5806,7 +6223,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 50276.455344920534,
+    "soloScore": 59462.31966709881,
     "stats": {
      "base_atk": 950.03,
      "base_hp": 10409.02,
@@ -5830,6 +6247,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Pyro": 0.466
      },
@@ -5891,6 +6310,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Hydro": 0.466
      },
@@ -5916,6 +6337,11 @@
      "multiplier": 1.56528,
      "basis": "ATK",
      "category": "burst"
+    },
+    {
+     "multiplier": 3.1334,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -5923,7 +6349,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 11131.622424501445,
+    "soloScore": 23343.42034937219,
     "stats": {
      "base_atk": 820.4,
      "base_hp": 9787.47,
@@ -5947,6 +6373,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Geo": 0.706
      },
@@ -5997,6 +6425,11 @@
      "multiplier": 2.2422999999999997,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 1.7884,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -6004,7 +6437,7 @@
     "setIds": [
      "shimenawas-reminiscence"
     ],
-    "soloScore": 99809.0343590869,
+    "soloScore": 106762.25498872653,
     "stats": {
      "base_atk": 865.16,
      "base_hp": 12071.16,
@@ -6022,12 +6455,14 @@
      "healing_bonus": 0.359,
      "dmg_all": 0.4,
      "dmg_normal": 0.85,
-     "dmg_charged": 0.0,
+     "dmg_charged": 0.5,
      "dmg_skill": 0.0,
      "dmg_burst": 0.0,
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Geo": 0.466
      },
@@ -6103,6 +6538,11 @@
      "multiplier": 1.7830000000000001,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 1.7830000000000001,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -6110,7 +6550,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 412215.8534016685,
+    "soloScore": 437732.47840566706,
     "stats": {
      "base_atk": 942.85,
      "base_hp": 12980.7,
@@ -6134,6 +6574,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Cryo": 0.466
      },
@@ -6190,6 +6632,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Electro": 0.466
      },
@@ -6240,6 +6684,11 @@
      "multiplier": 1.2236,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.4034,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -6247,7 +6696,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 142332.03867871469,
+    "soloScore": 167195.6353265871,
     "stats": {
      "base_atk": 828.89,
      "base_hp": 9678.67,
@@ -6271,6 +6720,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Anemo": 0.466
      },
@@ -6326,6 +6777,11 @@
      "multiplier": 1.2461,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 1.2716,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -6333,7 +6789,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 61576.51950363272,
+    "soloScore": 67617.68098565748,
     "stats": {
      "base_atk": 829.01,
      "base_hp": 12368.4,
@@ -6357,6 +6813,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Cryo": 0.466
      },
@@ -6407,6 +6865,11 @@
      "multiplier": 1.294,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 1.969,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -6414,7 +6877,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 130632.22143233672,
+    "soloScore": 152699.622371646,
     "stats": {
      "base_atk": 1011.0,
      "base_hp": 12907.0,
@@ -6438,6 +6901,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Electro": 0.466
      },
@@ -6493,6 +6958,11 @@
      "multiplier": 2.4272,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.2355,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -6500,7 +6970,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 364479.92204971204,
+    "soloScore": 393096.02435405087,
     "stats": {
      "base_atk": 907.64,
      "base_hp": 11962.41,
@@ -6524,6 +6994,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Electro": 0.466
      },
@@ -6579,6 +7051,11 @@
      "multiplier": 1.6728,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.7030000000000003,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -6586,7 +7063,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 262794.18116534257,
+    "soloScore": 293147.27074841905,
     "stats": {
      "base_atk": 914.01,
      "base_hp": 12288.65,
@@ -6610,6 +7087,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Cryo": 0.466
      },
@@ -6665,6 +7144,11 @@
      "multiplier": 2.0322,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.4225,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -6672,7 +7156,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 319277.91044945363,
+    "soloScore": 356107.31957305316,
     "stats": {
      "base_atk": 1016.03,
      "base_hp": 13225.61,
@@ -6696,6 +7180,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Cryo": 0.466
      },
@@ -6741,6 +7227,11 @@
      "multiplier": 1.6980000000000002,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.67,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -6748,7 +7239,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 51806.71315935368,
+    "soloScore": 62127.90104074515,
     "stats": {
      "base_atk": 842.0,
      "base_hp": 13470.0,
@@ -6772,6 +7263,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Hydro": 0.754
      },
@@ -6822,6 +7315,11 @@
      "multiplier": 1.94,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.2359999999999998,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -6829,7 +7327,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 76501.04779458678,
+    "soloScore": 87658.59413003104,
     "stats": {
      "base_atk": 918.0,
      "base_hp": 11860.0,
@@ -6853,6 +7351,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Anemo": 0.466
      },
@@ -6909,6 +7409,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Electro": 0.466
      },
@@ -6974,6 +7476,11 @@
      "multiplier": 1.297,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 1.297,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -6981,7 +7488,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 228963.07904300815,
+    "soloScore": 244687.60021328865,
     "stats": {
      "base_atk": 977.76,
      "base_hp": 12992.94,
@@ -7005,6 +7512,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Cryo": 0.466
      },
@@ -7055,6 +7564,11 @@
      "multiplier": 1.1059999999999999,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 1.314,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -7062,7 +7576,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 125236.53798879943,
+    "soloScore": 139005.58881231802,
     "stats": {
      "base_atk": 833.0,
      "base_hp": 10663.0,
@@ -7086,6 +7600,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Anemo": 0.706
      },
@@ -7111,6 +7627,11 @@
      "multiplier": 0.212,
      "basis": "ATK",
      "category": "burst"
+    },
+    {
+     "multiplier": 2.2319999999999998,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -7118,7 +7639,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 406.7159614048402,
+    "soloScore": 7582.921699393799,
     "stats": {
      "base_atk": 801.0,
      "base_hp": 13348.0,
@@ -7142,6 +7663,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Hydro": 0.466
      },
@@ -7232,6 +7755,11 @@
      "multiplier": 1.6388,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 1.3209,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -7239,7 +7767,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 435132.2814191481,
+    "soloScore": 454456.4417547705,
     "stats": {
      "base_atk": 966.77,
      "base_hp": 12417.38,
@@ -7263,6 +7791,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Cryo": 0.466
      },
@@ -7313,6 +7843,11 @@
      "multiplier": 0.8625,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.1629,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -7320,7 +7855,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 116297.39272148124,
+    "soloScore": 137699.37438736443,
     "stats": {
      "base_atk": 777.92,
      "base_hp": 9243.68,
@@ -7344,6 +7879,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Anemo": 0.706
      },
@@ -7424,6 +7961,11 @@
      "multiplier": 1.4382,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.2319999999999998,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -7431,7 +7973,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 323057.49858339556,
+    "soloScore": 345885.8151005719,
     "stats": {
      "base_atk": 843.37,
      "base_hp": 13103.16,
@@ -7455,6 +7997,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Hydro": 0.754
      },
@@ -7495,6 +8039,11 @@
      "multiplier": 1.331,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.229,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -7502,7 +8051,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 41505.41543891709,
+    "soloScore": 51058.196928000645,
     "stats": {
      "base_atk": 876.0,
      "base_hp": 10336.0,
@@ -7526,6 +8075,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Pyro": 0.466
      },
@@ -7561,6 +8112,11 @@
      "multiplier": 1.357,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.23,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -7568,7 +8124,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 64548.64619166817,
+    "soloScore": 86592.05829081366,
     "stats": {
      "base_atk": 809.88,
      "base_hp": 10849.88,
@@ -7592,6 +8148,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Dendro": 0.754
      },
@@ -7632,6 +8190,11 @@
      "multiplier": 1.4,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.71,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -7639,7 +8202,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 196842.29630998353,
+    "soloScore": 230153.3131077889,
     "stats": {
      "base_atk": 820.4,
      "base_hp": 10874.91,
@@ -7663,6 +8226,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Anemo": 0.466
      },
@@ -7718,6 +8283,11 @@
      "multiplier": 1.4,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.71,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -7725,7 +8295,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 215450.3711363148,
+    "soloScore": 248761.38793412017,
     "stats": {
      "base_atk": 820.4,
      "base_hp": 10874.91,
@@ -7749,6 +8319,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Cryo": 0.466
      },
@@ -7789,6 +8361,11 @@
      "multiplier": 1.4,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.71,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -7796,7 +8373,7 @@
     "setIds": [
      "shimenawas-reminiscence"
     ],
-    "soloScore": 185483.8658519247,
+    "soloScore": 212129.1627649948,
     "stats": {
      "base_atk": 820.4,
      "base_hp": 10874.91,
@@ -7814,12 +8391,14 @@
      "healing_bonus": 0.0,
      "dmg_all": 0.0,
      "dmg_normal": 0.85,
-     "dmg_charged": 0.0,
+     "dmg_charged": 0.5,
      "dmg_skill": 0.0,
      "dmg_burst": 0.0,
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Dendro": 0.466
      },
@@ -7860,6 +8439,11 @@
      "multiplier": 1.4,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.71,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -7867,7 +8451,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 196842.29630998353,
+    "soloScore": 230153.3131077889,
     "stats": {
      "base_atk": 820.4,
      "base_hp": 10874.91,
@@ -7891,6 +8475,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Electro": 0.466
      },
@@ -7931,6 +8517,11 @@
      "multiplier": 1.4,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.71,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -7938,7 +8529,7 @@
     "setIds": [
      "shimenawas-reminiscence"
     ],
-    "soloScore": 185483.8658519247,
+    "soloScore": 212129.1627649948,
     "stats": {
      "base_atk": 820.4,
      "base_hp": 10874.91,
@@ -7956,12 +8547,14 @@
      "healing_bonus": 0.0,
      "dmg_all": 0.0,
      "dmg_normal": 0.85,
-     "dmg_charged": 0.0,
+     "dmg_charged": 0.5,
      "dmg_skill": 0.0,
      "dmg_burst": 0.0,
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Geo": 0.466
      },
@@ -8017,6 +8610,11 @@
      "multiplier": 1.4,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.71,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -8024,7 +8622,7 @@
     "setIds": [
      "shimenawas-reminiscence"
     ],
-    "soloScore": 206859.29170357657,
+    "soloScore": 233504.58861664668,
     "stats": {
      "base_atk": 820.4,
      "base_hp": 10874.91,
@@ -8042,12 +8640,14 @@
      "healing_bonus": 0.0,
      "dmg_all": 0.0,
      "dmg_normal": 0.85,
-     "dmg_charged": 0.0,
+     "dmg_charged": 0.5,
      "dmg_skill": 0.0,
      "dmg_burst": 0.0,
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Hydro": 0.466
      },
@@ -8108,6 +8708,11 @@
      "multiplier": 1.4,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.71,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -8115,7 +8720,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 230146.54235445894,
+    "soloScore": 258843.84491434114,
     "stats": {
      "base_atk": 820.4,
      "base_hp": 10874.91,
@@ -8139,6 +8744,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Pyro": 0.466
      },
@@ -8195,6 +8802,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Electro": 0.466
      },
@@ -8260,6 +8869,11 @@
      "multiplier": 2.1212,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.6044,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -8267,7 +8881,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 476016.27029615757,
+    "soloScore": 512298.98360067257,
     "stats": {
      "base_atk": 1026.79,
      "base_hp": 12613.29,
@@ -8291,6 +8905,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Anemo": 0.466
      },
@@ -8356,6 +8972,11 @@
      "multiplier": 1.4025,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.2319999999999998,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -8363,7 +8984,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 245969.53386102337,
+    "soloScore": 268045.8150833651,
     "stats": {
      "base_atk": 805.1,
      "base_hp": 10531.48,
@@ -8387,6 +9008,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Anemo": 0.466
      },
@@ -8443,6 +9066,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Anemo": 0.466
      },
@@ -8488,6 +9113,11 @@
      "multiplier": 1.794,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.753,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -8495,7 +9125,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 128672.52394987785,
+    "soloScore": 160535.10547823104,
     "stats": {
      "base_atk": 919.0,
      "base_hp": 13592.0,
@@ -8519,6 +9149,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Cryo": 0.466
      },
@@ -8574,6 +9206,11 @@
      "multiplier": 1.4040000000000001,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.406,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -8581,7 +9218,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 133612.07261353784,
+    "soloScore": 154586.10280162966,
     "stats": {
      "base_atk": 899.14,
      "base_hp": 10874.97,
@@ -8605,6 +9242,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Pyro": 0.466
      },
@@ -8660,6 +9299,11 @@
      "multiplier": 1.169,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.2159999999999997,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -8667,7 +9311,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 176756.21697811867,
+    "soloScore": 202859.43092124024,
     "stats": {
      "base_atk": 942.85,
      "base_hp": 10409.05,
@@ -8691,6 +9335,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Anemo": 0.466
      },
@@ -8751,6 +9397,11 @@
      "multiplier": 1.7097,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.1603,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -8758,7 +9409,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 327006.02332683944,
+    "soloScore": 355133.2557987664,
     "stats": {
      "base_atk": 1023.2,
      "base_hp": 12735.78,
@@ -8782,6 +9433,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Anemo": 0.466
      },
@@ -8838,6 +9491,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Geo": 0.466
      },
@@ -8888,6 +9543,11 @@
      "multiplier": 0.7090000000000001,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.045,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -8895,7 +9555,7 @@
     "setIds": [
      "shimenawas-reminiscence"
     ],
-    "soloScore": 146039.42164762184,
+    "soloScore": 165919.18256053978,
     "stats": {
      "base_atk": 809.78,
      "base_hp": 10222.47,
@@ -8913,12 +9573,14 @@
      "healing_bonus": 0.0,
      "dmg_all": 0.0,
      "dmg_normal": 0.85,
-     "dmg_charged": 0.0,
+     "dmg_charged": 0.5,
      "dmg_skill": 0.0,
      "dmg_burst": 0.0,
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Hydro": 0.466
      },
@@ -8974,6 +9636,11 @@
      "multiplier": 2.2899000000000003,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.2355,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -8981,7 +9648,7 @@
     "setIds": [
      "obsidian-codex"
     ],
-    "soloScore": 135441.4421016023,
+    "soloScore": 146776.52537290784,
     "stats": {
      "base_atk": 922.51,
      "base_hp": 11201.21,
@@ -9005,6 +9672,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Pyro": 0.466
      },
@@ -9045,6 +9714,11 @@
      "multiplier": 1.024,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.572,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -9052,7 +9726,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 137370.41364723953,
+    "soloScore": 167763.24839138577,
     "stats": {
      "base_atk": 1014.0,
      "base_hp": 10372.0,
@@ -9076,6 +9750,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Electro": 0.466
      },
@@ -9121,6 +9797,11 @@
      "multiplier": 1.368,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.447,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -9128,7 +9809,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 125778.18247285676,
+    "soloScore": 148563.1404615361,
     "stats": {
      "base_atk": 848.01,
      "base_hp": 9352.47,
@@ -9152,6 +9833,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Pyro": 0.706
      },
@@ -9202,6 +9885,11 @@
      "multiplier": 1.5405000000000002,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.227,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -9209,7 +9897,7 @@
     "setIds": [
      "shimenawas-reminiscence"
     ],
-    "soloScore": 128661.37892339862,
+    "soloScore": 146346.78775283968,
     "stats": {
      "base_atk": 886.4,
      "base_hp": 12288.71,
@@ -9227,12 +9915,14 @@
      "healing_bonus": 0.0,
      "dmg_all": 0.0,
      "dmg_normal": 0.97,
-     "dmg_charged": 0.0,
+     "dmg_charged": 0.5,
      "dmg_skill": 0.0,
      "dmg_burst": 0.0,
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Dendro": 0.466
      },
@@ -9283,6 +9973,11 @@
      "multiplier": 0.6426000000000001,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.2319999999999998,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -9290,7 +9985,7 @@
     "setIds": [
      "shimenawas-reminiscence"
     ],
-    "soloScore": 102388.67332373191,
+    "soloScore": 115603.47448560732,
     "stats": {
      "base_atk": 785.96,
      "base_hp": 14450.21,
@@ -9308,12 +10003,14 @@
      "healing_bonus": 0.0,
      "dmg_all": 0.0,
      "dmg_normal": 0.85,
-     "dmg_charged": 0.0,
+     "dmg_charged": 0.5,
      "dmg_skill": 0.0,
      "dmg_burst": 0.0,
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Hydro": 0.466
      },
@@ -9369,6 +10066,11 @@
      "multiplier": 1.889,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.2319999999999998,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -9376,7 +10078,7 @@
     "setIds": [
      "shimenawas-reminiscence"
     ],
-    "soloScore": 234169.71309674886,
+    "soloScore": 255909.6087122127,
     "stats": {
      "base_atk": 865.0,
      "base_hp": 10164.0,
@@ -9394,12 +10096,14 @@
      "healing_bonus": 0.0,
      "dmg_all": 0.0,
      "dmg_normal": 0.85,
-     "dmg_charged": 0.0,
+     "dmg_charged": 0.5,
      "dmg_skill": 0.0,
      "dmg_burst": 0.0,
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Pyro": 0.466
      },
@@ -9455,6 +10159,11 @@
      "multiplier": 1.285,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.34,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -9462,7 +10171,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 35598.41400655803,
+    "soloScore": 44526.15515390767,
     "stats": {
      "base_atk": 823.0,
      "base_hp": 12735.0,
@@ -9486,6 +10195,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Anemo": 0.466
      },
@@ -9546,6 +10257,11 @@
      "multiplier": 1.3311000000000002,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.4055,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -9553,7 +10269,7 @@
     "setIds": [
      "shimenawas-reminiscence"
     ],
-    "soloScore": 70357.0305013079,
+    "soloScore": 78669.81630630286,
     "stats": {
      "base_atk": 865.16,
      "base_hp": 10657.47,
@@ -9571,12 +10287,14 @@
      "healing_bonus": 0.0,
      "dmg_all": 0.0,
      "dmg_normal": 0.97,
-     "dmg_charged": 0.0,
+     "dmg_charged": 0.5,
      "dmg_skill": 0.0,
      "dmg_burst": 0.0,
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Geo": 0.466
      },
@@ -9632,6 +10350,11 @@
      "multiplier": 1.0773000000000001,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.1947,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -9639,7 +10362,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 81132.79109435293,
+    "soloScore": 91107.3397717087,
     "stats": {
      "base_atk": 925.14,
      "base_hp": 14695.13,
@@ -9663,6 +10386,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Geo": 0.754
      },
@@ -9748,6 +10473,11 @@
      "multiplier": 1.5397999999999998,
      "basis": "ATK",
      "category": "normal"
+    },
+    {
+     "multiplier": 2.9122000000000003,
+     "basis": "ATK",
+     "category": "charged"
     }
    ],
    "topGear": {
@@ -9755,7 +10485,7 @@
     "setIds": [
      "scarlet-proof"
     ],
-    "soloScore": 208606.28334390314,
+    "soloScore": 228544.9423528744,
     "stats": {
      "base_atk": 766.83,
      "base_hp": 12919.47,
@@ -9779,6 +10509,8 @@
      "party_atk_pct": 0.0,
      "party_em": 0.0,
      "party_dmg": 0.0,
+     "party_flat_atk": 0.0,
+     "party_elemental_dmg": {},
      "dmg_elemental": {
       "Geo": 0.466
      },
@@ -9811,6 +10543,28 @@
      ],
      "normalAttackOnly": false,
      "raw": "Sát thương Stellar Swirl gây bởi mọi nhân vật +50%"
+    },
+    {
+     "bonus": 0.4,
+     "elements": [
+      "Cryo",
+      "Electro"
+     ],
+     "reactions": [
+      "Stellar-Conduct"
+     ],
+     "normalAttackOnly": false,
+     "raw": "Polestar Field — vùng hiệu ứng do Starlight Prism duy trì 7s sau khi kích hoạt Stellar-Conduct: hệ số phản ứng Stellar-Conduct +40%+5%/đòn Cryo-Electro ghi nhận (tối đa 12 đòn, hệ số tối đa 2"
+    },
+    {
+     "bonus": 0.2,
+     "elements": [
+      "Cryo",
+      "Electro"
+     ],
+     "reactions": [],
+     "normalAttackOnly": false,
+     "raw": "nhân vật trong vùng +20% (hoặc +28% nếu có ghi nhận đòn) sát thương Cryo/Electro"
     }
    ]
   },
@@ -9827,6 +10581,28 @@
      ],
      "normalAttackOnly": false,
      "raw": "Sát thương Stellar-Conduct gây bởi mọi nhân vật +50%"
+    },
+    {
+     "bonus": 0.4,
+     "elements": [
+      "Cryo",
+      "Electro"
+     ],
+     "reactions": [
+      "Stellar-Conduct"
+     ],
+     "normalAttackOnly": false,
+     "raw": "Polestar Field — vùng hiệu ứng do Starlight Prism duy trì 7s sau khi kích hoạt Stellar-Conduct: hệ số phản ứng Stellar-Conduct +40%+5%/đòn Cryo-Electro ghi nhận (tối đa 12 đòn, hệ số tối đa 2"
+    },
+    {
+     "bonus": 0.2,
+     "elements": [
+      "Cryo",
+      "Electro"
+     ],
+     "reactions": [],
+     "normalAttackOnly": false,
+     "raw": "nhân vật trong vùng +20% (hoặc +28% nếu có ghi nhận đòn) sát thương Cryo/Electro"
     }
    ]
   },
@@ -9848,6 +10624,28 @@
      "reactions": [],
      "normalAttackOnly": false,
      "raw": "Toàn đội +60% sát thương Cryo và +60% sát thương Pyro (áp dụng cùng lúc cho cả tầng, không tách theo nửa)"
+    },
+    {
+     "bonus": 0.4,
+     "elements": [
+      "Cryo",
+      "Electro"
+     ],
+     "reactions": [
+      "Stellar-Conduct"
+     ],
+     "normalAttackOnly": false,
+     "raw": "Polestar Field — vùng hiệu ứng do Starlight Prism duy trì 7s sau khi kích hoạt Stellar-Conduct: hệ số phản ứng Stellar-Conduct +40%+5%/đòn Cryo-Electro ghi nhận (tối đa 12 đòn, hệ số tối đa 2"
+    },
+    {
+     "bonus": 0.2,
+     "elements": [
+      "Cryo",
+      "Electro"
+     ],
+     "reactions": [],
+     "normalAttackOnly": false,
+     "raw": "nhân vật trong vùng +20% (hoặc +28% nếu có ghi nhận đòn) sát thương Cryo/Electro"
     }
    ]
   },
@@ -9884,6 +10682,28 @@
      "reactions": [],
      "normalAttackOnly": true,
      "raw": "Nửa 2 (nửa sau): Sát thương Thường công (Normal Attack) hệ Pyro +75%"
+    },
+    {
+     "bonus": 0.4,
+     "elements": [
+      "Cryo",
+      "Electro"
+     ],
+     "reactions": [
+      "Stellar-Conduct"
+     ],
+     "normalAttackOnly": false,
+     "raw": "Polestar Field — vùng hiệu ứng do Starlight Prism duy trì 7s sau khi kích hoạt Stellar-Conduct: hệ số phản ứng Stellar-Conduct +40%+5%/đòn Cryo-Electro ghi nhận (tối đa 12 đòn, hệ số tối đa 2"
+    },
+    {
+     "bonus": 0.2,
+     "elements": [
+      "Cryo",
+      "Electro"
+     ],
+     "reactions": [],
+     "normalAttackOnly": false,
+     "raw": "nhân vật trong vùng +20% (hoặc +28% nếu có ghi nhận đòn) sát thương Cryo/Electro"
     }
    ]
   }
@@ -9892,158 +10712,18 @@
   "9": [
    {
     "memberIds": [
-     "hu-tao",
-     "xiangling",
-     "yelan",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 724019.3169012781,
-    "perCharacter": {
-     "diona": 7768.3723716504965,
-     "hu-tao": 539435.2205735999,
-     "xiangling": 59275.5298675125,
-     "yelan": 63909.133577309316
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames",
-     "khai thác điểm yếu nguyên tố: Pyro"
-    ]
-   },
-   {
-    "memberIds": [
-     "hu-tao",
-     "yelan",
-     "bennett",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 714181.7044771682,
-    "perCharacter": {
-     "bennett": 50166.629474818146,
-     "diona": 7768.3723716504965,
-     "hu-tao": 539435.2205735999,
-     "yelan": 63909.133577309316
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames",
-     "khai thác điểm yếu nguyên tố: Pyro"
-    ]
-   },
-   {
-    "memberIds": [
-     "hu-tao",
-     "xiangling",
-     "bennett",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 710287.6896397407,
-    "perCharacter": {
-     "bennett": 50166.629474818146,
-     "diona": 8796.406787533033,
-     "hu-tao": 539435.2205735999,
-     "xiangling": 59275.5298675125
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames",
-     "khai thác điểm yếu nguyên tố: Pyro"
-    ]
-   },
-   {
-    "memberIds": [
-     "venti",
-     "hu-tao",
-     "xiangling",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 701133.0131601506,
-    "perCharacter": {
-     "diona": 7768.3723716504965,
-     "hu-tao": 539435.2205735999,
-     "venti": 42718.11159478387,
-     "xiangling": 59275.5298675125
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames",
-     "khai thác điểm yếu nguyên tố: Pyro"
-    ]
-   },
-   {
-    "memberIds": [
-     "hu-tao",
-     "raiden-shogun",
-     "xiangling",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 696342.024063005,
-    "perCharacter": {
-     "diona": 8796.406787533033,
-     "hu-tao": 539435.2205735999,
-     "raiden-shogun": 43482.92392590392,
-     "xiangling": 53046.582104634355
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames",
-     "khai thác điểm yếu nguyên tố: Pyro"
-    ]
-   },
-   {
-    "memberIds": [
-     "hu-tao",
-     "raiden-shogun",
-     "bennett",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 693231.6752228034,
-    "perCharacter": {
-     "bennett": 50166.629474818146,
-     "diona": 8796.406787533033,
-     "hu-tao": 539435.2205735999,
-     "raiden-shogun": 43482.92392590392
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames",
-     "khai thác điểm yếu nguyên tố: Pyro"
-    ]
-   },
-   {
-    "memberIds": [
      "fischl",
      "hu-tao",
-     "xiangling",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 691693.2555779576,
-    "perCharacter": {
-     "diona": 7768.3723716504965,
-     "fischl": 33977.59531497545,
-     "hu-tao": 539435.2205735999,
-     "xiangling": 59275.5298675125
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames",
-     "khai thác điểm yếu nguyên tố: Pyro"
-    ]
-   },
-   {
-    "memberIds": [
-     "venti",
-     "hu-tao",
      "bennett",
      "diona"
     ],
     "onFieldId": "hu-tao",
-    "score": 691295.4007360407,
+    "score": 1021128.4387974,
     "perCharacter": {
-     "bennett": 50166.629474818146,
-     "diona": 7768.3723716504965,
-     "hu-tao": 539435.2205735999,
-     "venti": 42718.11159478387
+     "bennett": 66898.04648124083,
+     "diona": 116192.55099955582,
+     "fischl": 45152.17718779915,
+     "hu-tao": 717246.5205141818
     },
     "notes": [
      "Cộng hưởng: Fervent Flames",
@@ -10053,17 +10733,157 @@
    {
     "memberIds": [
      "hu-tao",
-     "xiangling",
+     "bennett",
      "kuki-shinobu",
      "diona"
     ],
     "onFieldId": "hu-tao",
-    "score": 688279.1429465761,
+    "score": 1011139.4866680087,
     "perCharacter": {
-     "diona": 8796.406787533033,
-     "hu-tao": 539435.2205735999,
-     "kuki-shinobu": 29788.345499665687,
-     "xiangling": 59275.5298675125
+     "bennett": 66898.04648124083,
+     "diona": 12890.811902115505,
+     "hu-tao": 717246.5205141818,
+     "kuki-shinobu": 139204.88653580332
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames",
+     "khai thác điểm yếu nguyên tố: Pyro"
+    ]
+   },
+   {
+    "memberIds": [
+     "hu-tao",
+     "raiden-shogun",
+     "bennett",
+     "diona"
+    ],
+    "onFieldId": "hu-tao",
+    "score": 1007163.586655435,
+    "perCharacter": {
+     "bennett": 144756.09453616815,
+     "diona": 12890.811902115505,
+     "hu-tao": 717246.5205141818,
+     "raiden-shogun": 57665.449580344735
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames",
+     "khai thác điểm yếu nguyên tố: Pyro"
+    ]
+   },
+   {
+    "memberIds": [
+     "hu-tao",
+     "xiangling",
+     "bennett",
+     "diona"
+    ],
+    "onFieldId": "hu-tao",
+    "score": 940823.2813109716,
+    "perCharacter": {
+     "bennett": 66898.04648124083,
+     "diona": 12890.811902115505,
+     "hu-tao": 717246.5205141818,
+     "xiangling": 74097.28898299107
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames",
+     "khai thác điểm yếu nguyên tố: Pyro"
+    ]
+   },
+   {
+    "memberIds": [
+     "venti",
+     "hu-tao",
+     "bennett",
+     "diona"
+    ],
+    "onFieldId": "hu-tao",
+    "score": 940769.5326219749,
+    "perCharacter": {
+     "bennett": 66898.04648124083,
+     "diona": 34330.58798800331,
+     "hu-tao": 717246.5205141818,
+     "venti": 52607.74559247681
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames",
+     "khai thác điểm yếu nguyên tố: Pyro"
+    ]
+   },
+   {
+    "memberIds": [
+     "hu-tao",
+     "yelan",
+     "bennett",
+     "diona"
+    ],
+    "onFieldId": "hu-tao",
+    "score": 928302.2167472285,
+    "perCharacter": {
+     "bennett": 66898.04648124083,
+     "diona": 11485.389008035167,
+     "hu-tao": 717246.5205141818,
+     "yelan": 63909.133577309316
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames",
+     "khai thác điểm yếu nguyên tố: Pyro"
+    ]
+   },
+   {
+    "memberIds": [
+     "hu-tao",
+     "yelan",
+     "bennett",
+     "kuki-shinobu"
+    ],
+    "onFieldId": "hu-tao",
+    "score": 915153.8643705635,
+    "perCharacter": {
+     "bennett": 54257.56353464417,
+     "hu-tao": 589993.1055842463,
+     "kuki-shinobu": 139204.88653580332,
+     "yelan": 63909.133577309316
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames",
+     "khai thác điểm yếu nguyên tố: Pyro"
+    ]
+   },
+   {
+    "memberIds": [
+     "hu-tao",
+     "raiden-shogun",
+     "yelan",
+     "bennett"
+    ],
+    "onFieldId": "hu-tao",
+    "score": 911177.9643579896,
+    "perCharacter": {
+     "bennett": 132115.6115895715,
+     "hu-tao": 589993.1055842463,
+     "raiden-shogun": 57665.449580344735,
+     "yelan": 63909.133577309316
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames",
+     "khai thác điểm yếu nguyên tố: Pyro"
+    ]
+   },
+   {
+    "memberIds": [
+     "hu-tao",
+     "sucrose",
+     "bennett",
+     "diona"
+    ],
+    "onFieldId": "hu-tao",
+    "score": 908751.055891742,
+    "perCharacter": {
+     "bennett": 83885.25696595226,
+     "diona": 12890.811902115505,
+     "hu-tao": 717246.5205141818,
+     "sucrose": 27413.57348047447
     },
     "notes": [
      "Cộng hưởng: Fervent Flames",
@@ -10074,16 +10894,16 @@
     "memberIds": [
      "fischl",
      "hu-tao",
-     "bennett",
-     "diona"
+     "yelan",
+     "bennett"
     ],
     "onFieldId": "hu-tao",
-    "score": 681855.6431538477,
+    "score": 898718.0696178883,
     "perCharacter": {
-     "bennett": 50166.629474818146,
-     "diona": 7768.3723716504965,
-     "fischl": 33977.59531497545,
-     "hu-tao": 539435.2205735999
+     "bennett": 54257.56353464417,
+     "fischl": 45152.17718779915,
+     "hu-tao": 589993.1055842463,
+     "yelan": 142743.51445061428
     },
     "notes": [
      "Cộng hưởng: Fervent Flames",
@@ -10094,75 +10914,56 @@
   "10": [
    {
     "memberIds": [
-     "hu-tao",
-     "xiangling",
-     "yelan",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 410298.45768454997,
-    "perCharacter": {
-     "diona": 7601.310600217152,
-     "hu-tao": 306484.52698562486,
-     "xiangling": 33677.876490803144,
-     "yelan": 62534.74360790481
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames"
-    ]
-   },
-   {
-    "memberIds": [
-     "hu-tao",
-     "yelan",
-     "bennett",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 405123.1615197101,
-    "perCharacter": {
-     "bennett": 28502.580325963274,
-     "diona": 7601.310600217152,
-     "hu-tao": 306484.52698562486,
-     "yelan": 62534.74360790481
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames"
-    ]
-   },
-   {
-    "memberIds": [
-     "venti",
-     "hu-tao",
-     "xiangling",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 401505.8544700829,
-    "perCharacter": {
-     "diona": 7601.310600217152,
-     "hu-tao": 306484.52698562486,
-     "venti": 53742.14039343777,
-     "xiangling": 33677.876490803144
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames"
-    ]
-   },
-   {
-    "memberIds": [
-     "venti",
+     "fischl",
      "hu-tao",
      "bennett",
      "diona"
     ],
     "onFieldId": "hu-tao",
-    "score": 396330.55830524303,
+    "score": 561735.4020640848,
     "perCharacter": {
-     "bennett": 28502.580325963274,
-     "diona": 7601.310600217152,
-     "hu-tao": 306484.52698562486,
-     "venti": 53742.14039343777
+     "bennett": 38008.67156998698,
+     "diona": 72036.09835777758,
+     "fischl": 44181.16262462067,
+     "hu-tao": 407509.4695116995
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames"
+    ]
+   },
+   {
+    "memberIds": [
+     "hu-tao",
+     "raiden-shogun",
+     "bennett",
+     "diona"
+    ],
+    "onFieldId": "hu-tao",
+    "score": 559764.9624781377,
+    "perCharacter": {
+     "bennett": 83216.57044058995,
+     "diona": 12613.590140779686,
+     "hu-tao": 407509.4695116995,
+     "raiden-shogun": 56425.3323850685
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames"
+    ]
+   },
+   {
+    "memberIds": [
+     "hu-tao",
+     "bennett",
+     "kuki-shinobu",
+     "diona"
+    ],
+    "onFieldId": "hu-tao",
+    "score": 552685.276180228,
+    "perCharacter": {
+     "bennett": 38008.67156998698,
+     "diona": 12613.590140779686,
+     "hu-tao": 407509.4695116995,
+     "kuki-shinobu": 94553.54495776171
     },
     "notes": [
      "Cộng hưởng: Fervent Flames"
@@ -10172,111 +10973,130 @@
     "memberIds": [
      "venti",
      "hu-tao",
-     "yelan",
+     "bennett",
      "diona"
     ],
     "onFieldId": "hu-tao",
-    "score": 393737.9125018395,
+    "score": 536205.4247265173,
     "perCharacter": {
-     "diona": 7439.202359140554,
-     "hu-tao": 278346.251403882,
-     "venti": 48637.623344365704,
-     "yelan": 59314.83539445126
+     "bennett": 38008.67156998698,
+     "diona": 24503.345641392254,
+     "hu-tao": 407509.4695116995,
+     "venti": 66183.93800343855
     },
     "notes": [
-     "Cộng hưởng: Protective Canopy"
+     "Cộng hưởng: Fervent Flames"
     ]
    },
    {
     "memberIds": [
-     "venti",
      "hu-tao",
+     "raiden-shogun",
      "yelan",
      "bennett"
     ],
     "onFieldId": "hu-tao",
-    "score": 388282.1921459783,
+    "score": 530204.2551329979,
     "perCharacter": {
-     "bennett": 23116.976418301037,
-     "hu-tao": 252108.23993978818,
-     "venti": 53742.14039343777,
-     "yelan": 59314.83539445126
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames"
-    ]
-   },
-   {
-    "memberIds": [
-     "hu-tao",
-     "raiden-shogun",
-     "xiangling",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 387778.41995475313,
-    "perCharacter": {
-     "diona": 8607.23674909146,
-     "hu-tao": 306484.52698562486,
-     "raiden-shogun": 42547.80728233609,
-     "xiangling": 30138.84893770068
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames"
-    ]
-   },
-   {
-    "memberIds": [
-     "hu-tao",
-     "raiden-shogun",
-     "bennett",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 386142.1513430157,
-    "perCharacter": {
-     "bennett": 28502.580325963274,
-     "diona": 8607.23674909146,
-     "hu-tao": 306484.52698562486,
-     "raiden-shogun": 42547.80728233609
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames"
-    ]
-   },
-   {
-    "memberIds": [
-     "hu-tao",
-     "raiden-shogun",
-     "yelan",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 385937.895849372,
-    "perCharacter": {
-     "diona": 6579.908807403277,
-     "hu-tao": 278346.251403882,
-     "raiden-shogun": 38476.992030181944,
+     "bennett": 76034.77679975562,
+     "hu-tao": 335209.40234026895,
+     "raiden-shogun": 56425.3323850685,
      "yelan": 62534.74360790481
     },
     "notes": [
-     "Cộng hưởng: Protective Canopy"
+     "Cộng hưởng: Fervent Flames"
+    ]
+   },
+   {
+    "memberIds": [
+     "hu-tao",
+     "yelan",
+     "bennett",
+     "kuki-shinobu"
+    ],
+    "onFieldId": "hu-tao",
+    "score": 523124.56883508817,
+    "perCharacter": {
+     "bennett": 30826.877929152663,
+     "hu-tao": 335209.40234026895,
+     "kuki-shinobu": 94553.54495776171,
+     "yelan": 62534.74360790481
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames"
     ]
    },
    {
     "memberIds": [
      "fischl",
      "hu-tao",
-     "xiangling",
+     "yelan",
+     "bennett"
+    ],
+    "onFieldId": "fischl",
+    "score": 522380.0444005021,
+    "perCharacter": {
+     "bennett": 30826.877929152663,
+     "fischl": 314885.40563458845,
+     "hu-tao": 69667.40888087945,
+     "yelan": 107000.3519558815
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames"
+    ]
+   },
+   {
+    "memberIds": [
+     "hu-tao",
+     "yelan",
+     "bennett",
      "diona"
     ],
     "onFieldId": "hu-tao",
-    "score": 381010.608417105,
+    "score": 519291.2760845504,
     "perCharacter": {
-     "diona": 7601.310600217152,
-     "fischl": 33246.89434045984,
-     "hu-tao": 306484.52698562486,
-     "xiangling": 33677.876490803144
+     "bennett": 38008.67156998698,
+     "diona": 11238.391394959142,
+     "hu-tao": 407509.4695116995,
+     "yelan": 62534.74360790481
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames"
+    ]
+   },
+   {
+    "memberIds": [
+     "venti",
+     "hu-tao",
+     "raiden-shogun",
+     "bennett"
+    ],
+    "onFieldId": "venti",
+    "score": 506012.52509638504,
+    "perCharacter": {
+     "bennett": 65833.447774269,
+     "hu-tao": 54641.10500461133,
+     "raiden-shogun": 56425.3323850685,
+     "venti": 329112.63993243617
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames"
+    ]
+   },
+   {
+    "memberIds": [
+     "hu-tao",
+     "sucrose",
+     "bennett",
+     "diona"
+    ],
+    "onFieldId": "hu-tao",
+    "score": 502483.3168503149,
+    "perCharacter": {
+     "bennett": 47872.213141754895,
+     "diona": 12613.590140779686,
+     "hu-tao": 407509.4695116995,
+     "sucrose": 34488.044056080784
     },
     "notes": [
      "Cộng hưởng: Fervent Flames"
@@ -10286,158 +11106,18 @@
   "11": [
    {
     "memberIds": [
-     "hu-tao",
-     "xiangling",
-     "yelan",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 560729.9345592877,
-    "perCharacter": {
-     "diona": 9296.964556921323,
-     "hu-tao": 396505.6041621777,
-     "xiangling": 42733.69455404607,
-     "yelan": 61218.222689843664
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames",
-     "phá được khiên Cryo/Electro/Geo"
-    ]
-   },
-   {
-    "memberIds": [
-     "hu-tao",
-     "yelan",
-     "bennett",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 556027.0408068122,
-    "perCharacter": {
-     "bennett": 38458.336597250156,
-     "diona": 9296.964556921323,
-     "hu-tao": 396505.6041621777,
-     "yelan": 61218.222689843664
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames",
-     "phá được khiên Cryo/Electro/Geo"
-    ]
-   },
-   {
-    "memberIds": [
-     "venti",
-     "hu-tao",
-     "xiangling",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 551261.6892030773,
-    "perCharacter": {
-     "diona": 9296.964556921323,
-     "hu-tao": 396505.6041621777,
-     "venti": 52610.726911470665,
-     "xiangling": 42733.69455404607
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames",
-     "phá được khiên Cryo/Electro/Geo"
-    ]
-   },
-   {
-    "memberIds": [
-     "venti",
-     "hu-tao",
-     "bennett",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 546558.7954506018,
-    "perCharacter": {
-     "bennett": 38458.336597250156,
-     "diona": 9296.964556921323,
-     "hu-tao": 396505.6041621777,
-     "venti": 52610.726911470665
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames",
-     "phá được khiên Cryo/Electro/Geo"
-    ]
-   },
-   {
-    "memberIds": [
-     "hu-tao",
-     "xiangling",
-     "bennett",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 537047.4140708473,
-    "perCharacter": {
-     "bennett": 38458.336597250156,
-     "diona": 10527.28656911454,
-     "hu-tao": 396505.6041621777,
-     "xiangling": 42733.69455404607
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames",
-     "phá được khiên Cryo/Electro/Geo"
-    ]
-   },
-   {
-    "memberIds": [
-     "hu-tao",
-     "raiden-shogun",
-     "xiangling",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 536443.8527869909,
-    "perCharacter": {
-     "diona": 10527.28656911454,
-     "hu-tao": 396505.6041621777,
-     "raiden-shogun": 41652.063971129006,
-     "xiangling": 38991.27510393411
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames",
-     "phá được khiên Cryo/Electro/Geo"
-    ]
-   },
-   {
-    "memberIds": [
-     "hu-tao",
-     "raiden-shogun",
-     "bennett",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 535857.6204296385,
-    "perCharacter": {
-     "bennett": 38458.336597250156,
-     "diona": 10527.28656911454,
-     "hu-tao": 396505.6041621777,
-     "raiden-shogun": 41652.063971129006
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames",
-     "phá được khiên Cryo/Electro/Geo"
-    ]
-   },
-   {
-    "memberIds": [
      "fischl",
      "hu-tao",
-     "xiangling",
+     "bennett",
      "diona"
     ],
     "onFieldId": "hu-tao",
-    "score": 529191.5452955023,
+    "score": 765679.3567246108,
     "perCharacter": {
-     "diona": 9296.964556921323,
-     "fischl": 32546.95972276595,
-     "hu-tao": 396505.6041621777,
-     "xiangling": 42733.69455404607
+     "bennett": 51284.840464825196,
+     "diona": 74332.5306552619,
+     "fischl": 43251.03288515498,
+     "hu-tao": 527203.7384716768
     },
     "notes": [
      "Cộng hưởng: Fervent Flames",
@@ -10447,17 +11127,157 @@
    {
     "memberIds": [
      "hu-tao",
-     "xiangling",
+     "raiden-shogun",
+     "bennett",
+     "diona"
+    ],
+    "onFieldId": "hu-tao",
+    "score": 763537.4301356707,
+    "perCharacter": {
+     "bennett": 96492.73933542817,
+     "diona": 15191.0280292224,
+     "hu-tao": 527203.7384716768,
+     "raiden-shogun": 55237.430650646
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames",
+     "phá được khiên Cryo/Electro/Geo"
+    ]
+   },
+   {
+    "memberIds": [
+     "hu-tao",
+     "bennett",
      "kuki-shinobu",
      "diona"
     ],
     "onFieldId": "hu-tao",
-    "score": 526130.7531245726,
+    "score": 756274.752972794,
     "perCharacter": {
-     "diona": 10527.28656911454,
-     "hu-tao": 396505.6041621777,
-     "kuki-shinobu": 28534.099373363977,
-     "xiangling": 42733.69455404607
+     "bennett": 51284.840464825196,
+     "diona": 15191.0280292224,
+     "hu-tao": 527203.7384716768,
+     "kuki-shinobu": 93842.89573681552
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames",
+     "phá được khiên Cryo/Electro/Geo"
+    ]
+   },
+   {
+    "memberIds": [
+     "venti",
+     "hu-tao",
+     "bennett",
+     "diona"
+    ],
+    "onFieldId": "hu-tao",
+    "score": 737086.8436971456,
+    "perCharacter": {
+     "bennett": 51284.840464825196,
+     "diona": 26799.77793887657,
+     "hu-tao": 527203.7384716768,
+     "venti": 64790.59194020828
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames",
+     "phá được khiên Cryo/Electro/Geo"
+    ]
+   },
+   {
+    "memberIds": [
+     "hu-tao",
+     "yelan",
+     "bennett",
+     "diona"
+    ],
+    "onFieldId": "hu-tao",
+    "score": 718565.787850668,
+    "perCharacter": {
+     "bennett": 51284.840464825196,
+     "diona": 13534.823692443459,
+     "hu-tao": 527203.7384716768,
+     "yelan": 61218.222689843664
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames",
+     "phá được khiên Cryo/Electro/Geo"
+    ]
+   },
+   {
+    "memberIds": [
+     "hu-tao",
+     "xiangling",
+     "bennett",
+     "diona"
+    ],
+    "onFieldId": "hu-tao",
+    "score": 711808.6789325856,
+    "perCharacter": {
+     "bennett": 51284.840464825196,
+     "diona": 15191.0280292224,
+     "hu-tao": 527203.7384716768,
+     "xiangling": 53419.192063898874
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames",
+     "phá được khiên Cryo/Electro/Geo"
+    ]
+   },
+   {
+    "memberIds": [
+     "hu-tao",
+     "sucrose",
+     "bennett",
+     "diona"
+    ],
+    "onFieldId": "hu-tao",
+    "score": 701035.6413590002,
+    "perCharacter": {
+     "bennett": 61148.38203659312,
+     "diona": 15191.0280292224,
+     "hu-tao": 527203.7384716768,
+     "sucrose": 33761.979970689616
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames",
+     "phá được khiên Cryo/Electro/Geo"
+    ]
+   },
+   {
+    "memberIds": [
+     "hu-tao",
+     "raiden-shogun",
+     "yelan",
+     "bennett"
+    ],
+    "onFieldId": "hu-tao",
+    "score": 700618.2028814879,
+    "perCharacter": {
+     "bennett": 86802.39431920505,
+     "hu-tao": 433667.59132347605,
+     "raiden-shogun": 55237.430650646,
+     "yelan": 61218.222689843664
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames",
+     "phá được khiên Cryo/Electro/Geo"
+    ]
+   },
+   {
+    "memberIds": [
+     "hu-tao",
+     "yelan",
+     "bennett",
+     "kuki-shinobu"
+    ],
+    "onFieldId": "hu-tao",
+    "score": 693355.5257186111,
+    "perCharacter": {
+     "bennett": 41594.495448602094,
+     "hu-tao": 433667.59132347605,
+     "kuki-shinobu": 93842.89573681552,
+     "yelan": 61218.222689843664
     },
     "notes": [
      "Cộng hưởng: Fervent Flames",
@@ -10468,16 +11288,16 @@
     "memberIds": [
      "fischl",
      "hu-tao",
-     "bennett",
-     "diona"
+     "yelan",
+     "bennett"
     ],
     "onFieldId": "hu-tao",
-    "score": 524488.6515430267,
+    "score": 686691.2120600283,
     "perCharacter": {
-     "bennett": 38458.336597250156,
-     "diona": 9296.964556921323,
-     "fischl": 32546.95972276595,
-     "hu-tao": 396505.6041621777
+     "bennett": 41594.495448602094,
+     "fischl": 43251.03288515498,
+     "hu-tao": 433667.59132347605,
+     "yelan": 105751.61857915622
     },
     "notes": [
      "Cộng hưởng: Fervent Flames",
@@ -10494,72 +11314,12 @@
      "diona"
     ],
     "onFieldId": "hu-tao",
-    "score": 933401.3992796355,
+    "score": 1281129.418049351,
     "perCharacter": {
-     "bennett": 61787.766237751064,
-     "diona": 15112.065694159011,
-     "hu-tao": 695960.488286851,
-     "raiden-shogun": 75686.4063990893
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames",
-     "phá được khiên Cryo"
-    ]
-   },
-   {
-    "memberIds": [
-     "hu-tao",
-     "raiden-shogun",
-     "xiangling",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 931288.6459690497,
-    "perCharacter": {
-     "diona": 15112.065694159011,
-     "hu-tao": 695960.488286851,
-     "raiden-shogun": 75686.4063990893,
-     "xiangling": 59867.08140994589
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames",
-     "phá được khiên Cryo"
-    ]
-   },
-   {
-    "memberIds": [
-     "hu-tao",
-     "raiden-shogun",
-     "yelan",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 919769.9952380876,
-    "perCharacter": {
-     "diona": 11552.605912640873,
-     "hu-tao": 631939.4174961125,
-     "raiden-shogun": 68445.01378147115,
-     "yelan": 124217.50393530945
-    },
-    "notes": [
-     "Cộng hưởng: Protective Canopy",
-     "phá được khiên Cryo"
-    ]
-   },
-   {
-    "memberIds": [
-     "fischl",
-     "hu-tao",
-     "xiangling",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 918260.912060447,
-    "perCharacter": {
-     "diona": 13345.921403209244,
-     "fischl": 61308.84165538205,
-     "hu-tao": 695960.488286851,
-     "xiangling": 64167.39598223686
+     "bennett": 127602.92721947725,
+     "diona": 21374.67163612957,
+     "hu-tao": 918959.22125062,
+     "raiden-shogun": 96726.28721136498
     },
     "notes": [
      "Cộng hưởng: Fervent Flames",
@@ -10574,32 +11334,12 @@
      "diona"
     ],
     "onFieldId": "hu-tao",
-    "score": 915643.3193415127,
+    "score": 1275298.3687376922,
     "perCharacter": {
-     "bennett": 61787.766237751064,
-     "diona": 13345.921403209244,
-     "fischl": 61308.84165538205,
-     "hu-tao": 695960.488286851
-    },
-    "notes": [
-     "Cộng hưởng: Fervent Flames",
-     "phá được khiên Cryo"
-    ]
-   },
-   {
-    "memberIds": [
-     "hu-tao",
-     "xiangling",
-     "kuki-shinobu",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 910398.7284739164,
-    "perCharacter": {
-     "diona": 15112.065694159011,
-     "hu-tao": 695960.488286851,
-     "kuki-shinobu": 52395.25774031356,
-     "xiangling": 64167.39598223686
+     "bennett": 82395.02834887429,
+     "diona": 79842.0014978799,
+     "fischl": 78165.90230052781,
+     "hu-tao": 918959.22125062
     },
     "notes": [
      "Cộng hưởng: Fervent Flames",
@@ -10614,12 +11354,92 @@
      "diona"
     ],
     "onFieldId": "hu-tao",
-    "score": 908586.4289295371,
+    "score": 1254959.4345906782,
     "perCharacter": {
-     "bennett": 61787.766237751064,
-     "diona": 15112.065694159011,
-     "hu-tao": 695960.488286851,
-     "kuki-shinobu": 53127.34244445432
+     "bennett": 82395.02834887429,
+     "diona": 21374.67163612957,
+     "hu-tao": 918959.22125062,
+     "kuki-shinobu": 118143.29202862896
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames",
+     "phá được khiên Cryo"
+    ]
+   },
+   {
+    "memberIds": [
+     "fischl",
+     "hu-tao",
+     "xiangling",
+     "diona"
+    ],
+    "onFieldId": "hu-tao",
+    "score": 1030331.4253892789,
+    "perCharacter": {
+     "diona": 74749.43505704944,
+     "fischl": 64252.13698209266,
+     "hu-tao": 733495.9641506927,
+     "xiangling": 64167.39598223686
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames",
+     "phá được khiên Cryo"
+    ]
+   },
+   {
+    "memberIds": [
+     "hu-tao",
+     "raiden-shogun",
+     "yelan",
+     "diona"
+    ],
+    "onFieldId": "hu-tao",
+    "score": 1028134.3667863688,
+    "perCharacter": {
+     "diona": 72874.71623054967,
+     "hu-tao": 665974.9020385949,
+     "raiden-shogun": 71600.48396497195,
+     "yelan": 124217.50393530945
+    },
+    "notes": [
+     "Cộng hưởng: Protective Canopy",
+     "phá được khiên Cryo"
+    ]
+   },
+   {
+    "memberIds": [
+     "hu-tao",
+     "raiden-shogun",
+     "xiangling",
+     "diona"
+    ],
+    "onFieldId": "hu-tao",
+    "score": 1018124.6711549249,
+    "perCharacter": {
+     "diona": 15798.042348455836,
+     "hu-tao": 733495.9641506927,
+     "raiden-shogun": 79175.72118615573,
+     "xiangling": 97098.15518280925
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames",
+     "phá được khiên Cryo"
+    ]
+   },
+   {
+    "memberIds": [
+     "fischl",
+     "xiangling",
+     "bennett",
+     "diona"
+    ],
+    "onFieldId": "xiangling",
+    "score": 1013690.629081662,
+    "perCharacter": {
+     "bennett": 82395.02834887429,
+     "diona": 79842.0014978799,
+     "fischl": 78165.90230052781,
+     "xiangling": 681134.0033815017
     },
     "notes": [
      "Cộng hưởng: Fervent Flames",
@@ -10634,15 +11454,35 @@
      "diona"
     ],
     "onFieldId": "hu-tao",
-    "score": 901331.3036380457,
+    "score": 1008877.5195598177,
     "perCharacter": {
-     "diona": 11552.605912640873,
-     "hu-tao": 631939.4174961125,
-     "kuki-shinobu": 51682.56687234212,
+     "diona": 72874.71623054967,
+     "hu-tao": 665974.9020385949,
+     "kuki-shinobu": 54094.25921356201,
      "yelan": 124217.50393530945
     },
     "notes": [
      "Cộng hưởng: Protective Canopy",
+     "phá được khiên Cryo"
+    ]
+   },
+   {
+    "memberIds": [
+     "hu-tao",
+     "xiangling",
+     "kuki-shinobu",
+     "diona"
+    ],
+    "onFieldId": "hu-tao",
+    "score": 1004860.4589359392,
+    "perCharacter": {
+     "diona": 15798.042348455836,
+     "hu-tao": 733495.9641506927,
+     "kuki-shinobu": 100048.10564219573,
+     "xiangling": 64167.39598223686
+    },
+    "notes": [
+     "Cộng hưởng: Fervent Flames",
      "phá được khiên Cryo"
     ]
    },
@@ -10654,32 +11494,12 @@
      "diona"
     ],
     "onFieldId": "hu-tao",
-    "score": 900692.8151288648,
+    "score": 994194.8041651564,
     "perCharacter": {
-     "diona": 13061.30155828948,
-     "fischl": 55989.37501336601,
-     "hu-tao": 631939.4174961125,
-     "yelan": 117821.55604938188
-    },
-    "notes": [
-     "Cộng hưởng: Protective Canopy",
-     "phá được khiên Cryo"
-    ]
-   },
-   {
-    "memberIds": [
-     "venti",
-     "hu-tao",
-     "raiden-shogun",
-     "diona"
-    ],
-    "onFieldId": "hu-tao",
-    "score": 881789.8201404007,
-    "perCharacter": {
-     "diona": 11552.605912640873,
-     "hu-tao": 631939.4174961125,
-     "raiden-shogun": 68445.01378147115,
-     "venti": 89690.07202832129
+     "diona": 13654.18860133485,
+     "fischl": 58677.29508121841,
+     "hu-tao": 665974.9020385949,
+     "yelan": 165507.07261081212
     },
     "notes": [
      "Cộng hưởng: Protective Canopy",

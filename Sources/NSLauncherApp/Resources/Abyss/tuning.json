@@ -73,10 +73,12 @@
   },
   "rotationSeconds": 20.0,
   "normalCombosPerRotation": 6.0,
+  "chargedAttacksPerRotation": 2.0,
   "offFieldUptime": 0.85,
   "conditionalUptime": 0.6,
   "assumedStacks": 2.5,
   "amplifyingUptime": 0.55,
+  "transformativeReactionsPerRotation": 6.0,
   "noSustainPenalty": 0.8,
   "shieldBreakBonus": 1.1,
   "weaknessExploitBonus": 1.08,
@@ -302,6 +304,36 @@
       "damageBonus": 0.24,
       "scope": "all",
       "requirement": "moonsign"
+    },
+    {
+      "setId": "archaic-petra",
+      "note": "4pc: nhặt mảnh Crystallize (hoặc Lunar-Crystallize) cho CẢ ĐỘI 35% DMG Bonus theo nguyên tố mảnh, 10s. Hạ xuống 0.12 vì hai lẽ: phải nhặt mảnh nên uptime không đầy, và mô hình chỉ có kênh partyDMG áp cho MỌI nguyên tố trong khi game chỉ nâng đúng một.",
+      "damageBonus": 0.12,
+      "scope": "all",
+      "requirement": null,
+      "party": true
+    },
+    {
+      "setId": "celestial-gift",
+      "note": "4pc: sau Elemental Skill, cả đội nhận 20% DMG Bonus theo nguyên tố người mặc (40% khi đội có Hexerei: Secret Rite). Lấy nhánh 20%, nhân uptime, và hạ thêm vì partyDMG áp cho mọi nguyên tố chứ không riêng nguyên tố người mặc.",
+      "damageBonus": 0.12,
+      "scope": "all",
+      "requirement": null,
+      "party": true
+    },
+    {
+      "setId": "vermillion-hereafter",
+      "note": "4pc: sau Elemental Burst nhận ATK +8%, mỗi lần mất HP thêm 10% (tối đa 4 lớp = +48%). Quy đổi thành %DMG hiệu dụng ở mức trung bình ~3 lớp, đã trừ hao phần loãng vì build đã có sẵn ATK% từ nguồn khác.",
+      "damageBonus": 0.26,
+      "scope": "all",
+      "requirement": null
+    },
+    {
+      "setId": "disenchantment-in-deep-shadow",
+      "note": "4pc: +80% DMG Superconduct và +40% DMG Stellar-Conduct (phần sát thương phản ứng mô hình CHƯA tính), cộng +16% CRIT Rate khi đánh địch đang dính hai phản ứng đó. Con số ở đây CHỈ quy đổi vế CRIT Rate — phần thực sự chạm vào sát thương trực tiếp.",
+      "damageBonus": 0.12,
+      "scope": "all",
+      "requirement": "stellar"
     }
   ],
   "notes": {
@@ -320,6 +352,36 @@
     "shieldBreakBonus": "Nhân vào tổng điểm khi đội có đúng nguyên tố phá khiên quái trong tầng.",
     "weaknessExploitBonus": "Nhân vào tổng điểm khi đội có nguyên tố mà quái bị âm kháng.",
     "stellarJubileeCharacterIds": "Nhân vật có passive Stellar Jubilee — biến Swirl/Superconduct thường thành Stellar Swirl/Stellar-Conduct.",
-    "setEffectApprox": "36/63 bộ có fourPiece.bonuses rỗng trong data model vì hiệu ứng quá phức tạp để tách số máy móc (stack, điều kiện, scale theo chỉ số khác). Bỏ trống thì thuật toán đánh giá thấp một cách hệ thống các bộ meta, nên bảng này ƯỚC LƯỢNG THỦ CÔNG phần %DMG hiệu dụng trung bình trong 1 rotation — KHÔNG phải số liệu game, sửa tự do. Đây là phần chủ quan nhất của cả thuật toán. Bộ không có trong bảng chỉ dùng `bonuses` đã tách được. `requirement`: null = ai cũng dùng được; 'natlan' = nhân vật Natlan (cần Nightsoul's Blessing); 'moonsign' = nhân vật Nguyệt Triệu; 'stellar' = nguyên tố tham gia phản ứng Stellar Glimmer (Cryo/Electro/Anemo). THỨ TỰ MẢNG này không ảnh hưởng kết quả, nhưng giữ nguyên để diff dễ đọc."
-  }
+    "setEffectApprox": "36/63 bộ có fourPiece.bonuses rỗng trong data model vì hiệu ứng quá phức tạp để tách số máy móc (stack, điều kiện, scale theo chỉ số khác). Bỏ trống thì thuật toán đánh giá thấp một cách hệ thống các bộ meta, nên bảng này ƯỚC LƯỢNG THỦ CÔNG phần %DMG hiệu dụng trung bình trong 1 rotation — KHÔNG phải số liệu game, sửa tự do. Đây là phần chủ quan nhất của cả thuật toán. Bộ không có trong bảng chỉ dùng `bonuses` đã tách được. `requirement`: null = ai cũng dùng được; 'natlan' = nhân vật Natlan (cần Nightsoul's Blessing); 'moonsign' = nhân vật Nguyệt Triệu; 'stellar' = nguyên tố tham gia phản ứng Stellar Glimmer (Cryo/Electro/Anemo). THỨ TỰ MẢNG này không ảnh hưởng kết quả, nhưng giữ nguyên để diff dễ đọc. Cờ `party: true` nghĩa là hiệu ứng chạm cả đội: giá trị đi vào partyDMG và được khử trùng lặp như mọi buff phe khác (mấy người cùng mặc vẫn chỉ tính một lần). Mục có `party` KHÔNG được mang `requirement`, vì bảng khử trùng lặp khoá theo bộ chứ không theo người mặc — có test chốt điều này. CỐ Ý để trống (4pc đóng góp đúng 0): flower-of-paradise-lost và aubade-of-morningstar-and-moon. Cả hai chỉ nâng sát thương phản ứng Bloom/Hyperbloom/Burgeon/Lunar, thứ mà mô hình chưa tính một chút nào; gán cho chúng một mức %DMG trực tiếp sẽ là ghi số vào nhầm chỗ chứ không phải xấp xỉ.",
+    "talentPartyBuff": "Buff CẢ ĐỘI đến từ chiêu của nhân vật. Con số được ĐỌC TỪ data nhân vật theo (talent, label) chứ không chép tay, nên khi hệ số chiêu được cập nhật thì mô hình cập nhật theo; chỉ phần 'dòng này nghĩa là gì' mới nằm ở đây, vì không luật nào trên nhãn phân biệt được — 'ATK Bonus 100.8% Base ATK' (buff phẳng cho cả đội) và 'ATK Bonus (%DEF) 103.7%' (tự quy đổi cho bản thân) là cùng ba chữ. Nếu label đổi, AbyssParseDiagnostics.talentPartyBuffUnresolved báo lên và test fail, thay vì buff biến mất im lặng. CHƯA mô hình hoá được, cố ý để ngoài bảng: (1) shenhe/faruzan giảm kháng nguyên tố địch — resMultiplier có nhánh RES<0 nhưng không nguồn nào đẩy xuống âm; (2) gorou 'Geo DMG Bonus (nếu đủ 3 Geo)' — cần điều kiện theo đội hình mà tầng dựng build chưa thấy; (3) mona 'DMG Bonus (Omen)' — là debuff lên địch, cơ chế khác; (4) các dòng tự buff theo lớp (heizou, lyney, aloy, skirk, raiden...) và các dòng buff sát thương phản ứng (lauma, columbina, illuga) — phần phản ứng transformative chưa có trong mô hình.",
+    "chargedAttacksPerRotation": "Số đòn nặng người đứng sân tung ra trong 1 rotation. Ít hơn hẳn combo đòn thường: đòn nặng tốn thể lực, mất khoảng 1 giây, và đa số nhân vật chỉ dùng để phá khiên hoặc kích hoạt hiệu ứng. Trước khi có hằng số này, HitCategory.charged không bao giờ xuất hiện trong profile nhân vật nào — nghĩa là mọi bonus 'Charged Attack DMG' (bloodstained-chivalry 4pc +50%, wanderers-troupe 4pc +35%, setEffectApprox long-nights-oath +26%, và nửa 'charged' của 5 bộ 'Normal/Charged Attack DMG') đều nhân với con số không.",
+    "transformativeReactionsPerRotation": "Số lần phản ứng transformative (Overloaded, Superconduct, Bloom, Hyperbloom, Burgeon, Electro-Charged, Burning, Swirl) nổ ra trong 1 rotation. Đây là con số CHỦ QUAN NHẤT trong file này: sát thương transformative độc lập hoàn toàn với ATK/DMG Bonus/CRIT/DEF địch — chỉ phụ thuộc cấp và EM người kích hoạt — nên chính tần suất, chứ không phải công thức, quyết định đội phản ứng xếp hạng ở đâu. 6.0 là mức thận trọng: đội Hyperbloom thật nổ nhiều hơn thế, còn đội Pyro-Electro bị ICD chặn thì ít hơn, và mô hình dùng chung một con số cho mọi loại. Chỉ tính MỘT phản ứng mạnh nhất mà đội mở ra, không cộng dồn mọi phản ứng: một rotation chỉ có ngần ấy lần áp nguyên tố và chúng tranh nhau cùng một aura."
+  },
+  "talentPartyBuff": [
+    {
+      "characterId": "bennett",
+      "talent": "burst",
+      "label": "ATK Bonus",
+      "kind": "flat-atk-from-base-atk",
+      "uptime": 0.6,
+      "note": "Fantastic Voyage: vùng buff cộng ATK phẳng theo ATK CƠ BẢN của Bennett (nhân vật + vũ khí) cho mọi người đứng trong vùng. Uptime 0.6 = 12s hiệu lực / CD 15s, đã trừ hao thời gian ra khỏi vùng."
+    },
+    {
+      "characterId": "kujou-sara",
+      "talent": "skill",
+      "label": "Tỉ lệ ATK Bonus (theo ATK cơ bản Sara)",
+      "kind": "flat-atk-from-base-atk",
+      "uptime": 0.4,
+      "note": "Crowfeather Cover: cộng ATK phẳng theo ATK cơ bản của Sara cho nhân vật nhận quạ. Uptime 0.4 = 6s hiệu lực / CD 10s, và chỉ phủ được 1 người mỗi lần nên đây là ước lượng rộng rãi."
+    },
+    {
+      "characterId": "faruzan",
+      "talent": "burst",
+      "label": "Giảm kháng Anemo địch / buff Anemo DMG đội",
+      "kind": "elemental-dmg",
+      "valueIndex": 1,
+      "uptime": 0.8,
+      "note": "Dòng này gộp 2 hiệu ứng: '40% giảm kháng Anemo địch / 20% Anemo DMG cho đội'. valueIndex 1 lấy vế thứ hai; vế giảm kháng KHÔNG được mô hình hoá (xem notes.talentPartyBuff). Uptime 0.8 = Burst 18s / CD 20s."
+    }
+  ]
 }

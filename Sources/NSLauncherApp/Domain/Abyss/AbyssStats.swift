@@ -44,6 +44,17 @@ struct AbyssStats: Sendable, Equatable {
     var partyATKPercent: Double = 0
     var partyElementalMastery: Double = 0
     var partyDMG: Double = 0
+    /// Flat ATK handed to the party. A separate channel from `partyATKPercent`
+    /// because the buffs that dominate this slot — Bennett's Fantastic Voyage,
+    /// Kujou Sara's Crowfeather — are a share of the *caster's* Base ATK given
+    /// to everyone as a flat number. Folding them into a percentage would scale
+    /// them by the receiver's own Base ATK instead, which is a different and
+    /// wrong quantity.
+    var partyFlatATK: Double = 0
+    /// Per-element DMG bonus handed to the party, indexed like `elementalDMG`.
+    /// Distinct from `partyDMG`, which reaches every element: a buff that only
+    /// lifts Anemo must not lift the Pyro member's damage too.
+    var partyElementalDMG: SIMD8<Double> = .zero
 
     var atk: Double { baseATK * (1 + atkPercent) + flatATK }
     var hp: Double { baseHP * (1 + hpPercent) + flatHP }

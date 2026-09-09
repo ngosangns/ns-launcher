@@ -2,7 +2,7 @@
   "_huong_dan": [
     "Copy file này thành roster.json rồi sửa theo tài khoản của bạn.",
     "id phải khớp id trong Sources/NSLauncherApp/Resources/Abyss/ (chạy script sẽ cảnh báo id sai).",
-    "Bỏ trống mảng artifactSets = coi như có đủ mọi bộ (thường đúng vì bộ nào cũng farm được).",
+    "Không cần khai thánh di vật: bộ nào cũng farm được nên công cụ luôn xét đủ 46 bộ 5 sao.",
     "constellation: số cung mệnh đang có (0-6). refinement: cấp tinh luyện vũ khí (1-5).",
     "LƯU Ý: bản hiện tại chưa mô phỏng hiệu ứng cung mệnh — trường constellation chỉ để ghi chú."
   ],
@@ -37,6 +37,5 @@
     { "id": "iron-sting", "refinement": 3 },
     { "id": "the-stringless", "refinement": 3 },
     { "id": "whiteblind", "refinement": 4 }
-  ],
-  "artifactSets": []
+  ]
 }

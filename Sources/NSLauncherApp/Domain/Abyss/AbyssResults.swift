@@ -13,6 +13,17 @@ import Foundation
 /// the parser rather than applied to everything: those are almost always prose
 /// that merely contains a number ("tối đa 1 lần mỗi 4 giây").
 struct AbyssFloorBuff: Sendable, Equatable {
+    /// Which of the Abyss's two buff layers a clause came from. Carried so the
+    /// UI can say which, rather than presenting a cycle-wide blessing and a
+    /// floor's own disorder as the same thing.
+    enum Source: Sendable, Equatable {
+        /// The floor's own Ley Line Disorder.
+        case leyLine
+        /// The Blessing of the Abyssal Moon, which applies to every floor for
+        /// the whole cycle.
+        case blessing
+    }
+
     /// 0.50 = +50% damage.
     let bonus: Double
     let elements: Set<GenshinElement>
@@ -21,6 +32,7 @@ struct AbyssFloorBuff: Sendable, Equatable {
     /// The clause this came from, shown in the UI so a surprising score can be
     /// traced back to the sentence that caused it.
     let raw: String
+    var source: Source = .leyLine
 }
 
 /// What the text parsers could not turn into numbers.
@@ -35,6 +47,14 @@ struct AbyssParseDiagnostics: Sendable, Equatable {
     var artifactBonusUnmapped: Set<String> = []
     var resistanceNotesUnparsed: Set<String> = []
     var leyLineUnparsed: Set<String> = []
+    /// Entries in `tuning.json`'s `talentPartyBuff` whose character or scaling
+    /// label no longer exists. That table points at rows in the character data
+    /// by name; without this, a renamed row would make a buff quietly vanish
+    /// instead of failing loudly.
+    var talentPartyBuffUnresolved: Set<String> = []
+    /// Parts of `damage-formula.json` the loader could not read, so the planner
+    /// fell back to the values the port was written with.
+    var damageFormulaUnread: Set<String> = []
 
     mutating func merge(_ other: AbyssParseDiagnostics) {
         scalingParsed += other.scalingParsed
@@ -43,7 +63,28 @@ struct AbyssParseDiagnostics: Sendable, Equatable {
         artifactBonusUnmapped.formUnion(other.artifactBonusUnmapped)
         resistanceNotesUnparsed.formUnion(other.resistanceNotesUnparsed)
         leyLineUnparsed.formUnion(other.leyLineUnparsed)
+        talentPartyBuffUnresolved.formUnion(other.talentPartyBuffUnresolved)
+        damageFormulaUnread.formUnion(other.damageFormulaUnread)
     }
+}
+
+/// One party-wide buff a character's talents grant, with its number already
+/// read out of the character data and scaled by the assumed uptime.
+///
+/// Resolved once at load, like `AbyssDamageProfile`, so the label matching that
+/// links `tuning.json` to the character data happens in one place and reports
+/// itself when it fails.
+struct AbyssTalentPartyBuff: Sendable, Equatable {
+    enum Kind: Sendable, Equatable {
+        /// Multiply by the caster's Base ATK to get flat ATK for the party.
+        case flatATKFromBaseATK
+        /// A DMG bonus for the caster's own element, party-wide.
+        case elementalDMG
+    }
+
+    let kind: Kind
+    /// Already multiplied by the entry's uptime.
+    let value: Double
 }
 
 /// A character's damage-relevant multipliers, parsed once at load.
@@ -219,7 +260,10 @@ struct AbyssOptimizerRequest: Sendable {
     /// Ignores `roster` for which weapons are candidates, without touching
     /// which characters are.
     var usesFullWeaponPool: Bool = false
-    /// `nil` covers every floor in the cycle.
+    /// `nil` runs the deepest floor only — floor 12, or the highest the cycle
+    /// file actually has. Floors 9-11 are cleared by anything that clears 12,
+    /// so ranking teams for them spent three quarters of the search on an
+    /// answer nobody acts on. Pass an explicit list to override.
     var floors: [Int]?
     var topN: Int = 5
     /// Ceiling on how many characters get combined. C(n,4) grows fast enough

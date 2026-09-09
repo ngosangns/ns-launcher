@@ -188,8 +188,12 @@ game image if the timeout is reached.
 
 ## Abyss Team Planner
 
-The Abyss tab ranks four-character teams for the current Spiral Abyss rotation
-against the characters and weapons the player marks as owned.
+The Abyss tab ranks four-character teams for **floor 12** of the current Spiral
+Abyss rotation against the characters and weapons the player marks as owned. Only
+floor 12: anything that clears it clears the floors below, so ranking teams for
+9-11 spent three quarters of the search on an answer nobody acts on. Artifacts
+are not part of the roster at all — sets are farmable, so the useful answer is
+the best set that exists, and the search always covers all 46 five-star sets.
 
 Data lives in `Sources/NSLauncherApp/Resources/Abyss/` (bundled, see that
 folder's README); the Markdown it was transcribed from and the JSON Schemas stay
@@ -205,9 +209,61 @@ and then enumerates every 4-character combination. The second,
 `AbyssArtifactAdvisor`, re-picks the artifacts of the teams that survived, this
 time against the floor they will actually fight and the three characters they
 will stand next to, and re-ranks on the result. It is a coordinate-ascent sweep
-over the members, it only ever accepts a strict improvement, and it costs a few
-hundred milliseconds because it runs over a shortlist rather than over every
-team.
+over the members, exhaustive within each member — every set as a 4-piece and
+every pair as 2+2, each scored on what the whole team does with it — and it only
+ever accepts a strict improvement. It is affordable because it runs over a
+shortlist of teams rather than every team, because the teams are refined
+concurrently, and because everything a swap cannot change (`DamageContext`,
+`TeamDamageContext` in `AbyssScorer`) is computed once per team instead of once
+per candidate. Those two types are pure caching: the golden fixture still
+matches to 1e-9 with them in place, which is what says so.
+
+Constants come from `damage-formula.json`, not from the code: the EM curves, the
+amplifying coefficients, the transformative coefficients and the level-90
+multiplier are all read at load into `AbyssDamageConstants`, with the port's own
+values as a fallback and anything unread reported in `AbyssParseDiagnostics`.
+What stays written in `AbyssDamageMath` is the *shape* of the formulas — the
+three-branch resistance curve, the defence formula — which the file expresses as
+prose, plus the level-90 assumption; a test holds those against the file.
+
+Talent levels follow constellations. C3 and C5 each raise one talent by three,
+and the data carries a `lv13` column for the characters transcribed that far, so
+`AbyssDataLibrary` precomputes a profile per reachable talent-level combination
+and the optimiser picks one per character from the roster (or the showcase, which
+knows the constellation for certain). Which talent a constellation raises is
+resolved by counting how many words of each talent's *name* appear in its text —
+counting rather than first-match, because several characters have two talents
+sharing a prefix.
+
+Transformative reactions are scored once for the team rather than per hit. They
+ignore ATK, DMG bonus, CRIT and enemy DEF entirely and depend only on the
+triggering character's Elemental Mastery, so `AbyssScorer` prices the strongest
+reaction the team unlocks — one, not the sum, since a rotation's elemental
+applications compete for the same aura — and credits it to whoever has the most
+EM. Frequency is the modelling assumption, not the formula:
+`tuning.transformativeReactionsPerRotation` is the most subjective number in the
+file and is what decides where reaction teams rank. Catalyze (Aggravate, Spread)
+and the Lunar/Stellar block are **not** modelled: catalyze is an additive base
+DMG bonus that would need the damage loop restructured, and the Lunar block has
+its own four-way aggregation rule.
+
+Normal and charged attacks are separate categories in a damage profile and are
+counted with separate per-rotation constants; plunging attacks are deliberately
+in neither, since no rotation the model assumes uses them. A charged attack is
+read as the *strongest* charged row rather than the sum, because the data does
+not say which rows are alternatives (a bow's plain and fully-charged aimed shot)
+and which are sequential (a claymore's spin and finisher).
+
+Two classes of buff reach the model through hand-written interpretation rather
+than a parser rule, because the prose does not distinguish them. `setEffectApprox`
+in `tuning.json` credits an effective %DMG to the 4-piece set effects that are
+too conditional to read mechanically. `talentPartyBuff` names the talent rows
+that buff the *whole party* — Bennett's ATK share, Kujou Sara's, Faruzan's Anemo
+bonus — which the damage filter drops because they are not damage instances. In
+both cases the numbers still come from the data (the party-buff table reads the
+value out of the character's own scaling row by label) and only the reading is
+written down; a label that drifts is reported in `AbyssParseDiagnostics` and
+fails a test rather than quietly contributing nothing.
 
 That second pass has **no counterpart in the Python**, which is why the golden
 fixture runs with `refinesArtifacts: false`. Do not "fix" that flag to make the

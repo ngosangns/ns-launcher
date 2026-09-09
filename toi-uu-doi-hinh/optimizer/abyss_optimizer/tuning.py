@@ -31,10 +31,12 @@ SUBSTAT_PRIORITY: dict[str, dict[str, float]] = _T["substatPriority"]
 SCALING_BASIS_SWAP: dict[str, dict[str, str]] = _T["scalingBasisSwap"]
 ROTATION_SECONDS: float = _T["rotationSeconds"]
 NORMAL_COMBOS_PER_ROTATION: float = _T["normalCombosPerRotation"]
+CHARGED_ATTACKS_PER_ROTATION: float = _T["chargedAttacksPerRotation"]
 OFFFIELD_UPTIME: float = _T["offFieldUptime"]
 CONDITIONAL_UPTIME: float = _T["conditionalUptime"]
 ASSUMED_STACKS: float = _T["assumedStacks"]
 AMPLIFYING_UPTIME: float = _T["amplifyingUptime"]
+TRANSFORMATIVE_REACTIONS_PER_ROTATION: float = _T["transformativeReactionsPerRotation"]
 NO_SUSTAIN_PENALTY: float = _T["noSustainPenalty"]
 SHIELD_BREAK_BONUS: float = _T["shieldBreakBonus"]
 WEAKNESS_EXPLOIT_BONUS: float = _T["weaknessExploitBonus"]
@@ -44,7 +46,14 @@ STELLAR_JUBILEE_IDS: set[str] = set(_T["stellarJubileeCharacterIds"])
 # JSON giữ dạng mảng có thứ tự (mỗi phần tử có `setId`) thay vì object, để phía
 # Swift đọc được thứ tự ổn định và để test "id này còn tồn tại không" viết được.
 # Ở đây dựng lại đúng shape tuple cũ mà `build.py` đang dùng.
-SET_EFFECT_APPROX: dict[str, tuple[str, float, str, str | None]] = {
-    entry["setId"]: (entry["note"], entry["damageBonus"], entry["scope"], entry["requirement"])
+SET_EFFECT_APPROX: dict[str, tuple[str, float, str, str | None, bool]] = {
+    entry["setId"]: (entry["note"], entry["damageBonus"], entry["scope"], entry["requirement"],
+                     bool(entry.get("party")))
     for entry in _T["setEffectApprox"]
 }
+
+# Buff CẢ ĐỘI đến từ chiêu nhân vật. Con số KHÔNG nằm ở đây — nó được đọc từ
+# data nhân vật theo (talent, label); ở đây chỉ có cách hiểu dòng đó, vì không
+# luật nào trên nhãn phân biệt được "ATK Bonus 100.8% Base ATK" (buff phẳng cho
+# cả đội) với "ATK Bonus (%DEF) 103.7%" (tự quy đổi cho bản thân).
+TALENT_PARTY_BUFF: list[dict] = _T["talentPartyBuff"]

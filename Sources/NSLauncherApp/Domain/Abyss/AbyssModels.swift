@@ -81,6 +81,39 @@ enum HitCategory: String, Codable, Sendable, CaseIterable {
     case burst
 }
 
+/// One of the two talents a constellation can raise.
+enum AbyssTalentSlot: Sendable, Hashable, CaseIterable {
+    case skill
+    case burst
+}
+
+/// Which talent-table column to read each talent from.
+///
+/// The data carries `lv1`, `lv10` and — for the characters whose constellations
+/// have been transcribed that far — `lv13`. Level 13 is what C3 and C5 reach:
+/// each raises one talent by three, so a C5 character reads both at 13 and a C3
+/// only one of them.
+struct AbyssTalentLevels: Sendable, Hashable {
+    var skill: String
+    var burst: String
+
+    static let base = AbyssTalentLevels(skill: "lv10", burst: "lv10")
+
+    func key(for slot: AbyssTalentSlot) -> String {
+        switch slot {
+        case .skill: return skill
+        case .burst: return burst
+        }
+    }
+
+    mutating func raise(_ slot: AbyssTalentSlot) {
+        switch slot {
+        case .skill: skill = "lv13"
+        case .burst: burst = "lv13"
+        }
+    }
+}
+
 enum AbyssRole: String, Codable, Sendable, CaseIterable {
     case mainDPS = "main-dps"
     case subDPS = "sub-dps"
@@ -103,6 +136,43 @@ enum AbyssReaction: String, Codable, Sendable, Hashable, CaseIterable {
     case lunarCrystallize = "Lunar-Crystallize"
     case overloaded = "Overloaded"
     case bloom = "Bloom"
+    case burning = "Burning"
+    case hyperbloom = "Hyperbloom"
+    case burgeon = "Burgeon"
+    case swirl = "Swirl"
+    case shatter = "Shatter"
+
+    /// The key this reaction has in `damage-formula.json`'s coefficient tables,
+    /// where the names are camelCase and the Lunar/Stellar variants live in a
+    /// separate block. Nil for the reactions that block does not price.
+    var transformativeKey: String? {
+        switch self {
+        case .burning: return "burning"
+        case .swirl: return "swirl"
+        case .superconduct: return "superconduct"
+        case .electroCharged: return "electroCharged"
+        case .bloom: return "bloom"
+        case .overloaded: return "overloaded"
+        case .burgeon: return "burgeon"
+        case .hyperbloom: return "hyperbloom"
+        case .shatter: return "shatter"
+        case .vaporize, .melt, .stellarConduct, .stellarSwirl,
+             .lunarCharged, .lunarBloom, .lunarCrystallize:
+            return nil
+        }
+    }
+
+    /// Which resistance a transformative reaction is checked against. Swirl is
+    /// nil because it takes the element it swirled, which the team decides.
+    var damageElement: GenshinElement? {
+        switch self {
+        case .burning, .overloaded: return .pyro
+        case .superconduct: return .cryo
+        case .electroCharged: return .electro
+        case .bloom, .hyperbloom, .burgeon: return .dendro
+        default: return nil
+        }
+    }
 }
 
 /// A named stat slot in `AbyssStats`.
@@ -119,6 +189,17 @@ enum AbyssStatField: Sendable, Hashable {
     case dmgAll, dmgNormal, dmgCharged, dmgSkill, dmgBurst
     case partyATKPercent, partyElementalMastery, partyDMG
     case elemental(GenshinElement)
+
+    /// Whether this slot holds something the character hands the *party* rather
+    /// than keeps. The game's own character screen shows only what a character
+    /// keeps, which is what makes the distinction matter when a measured sheet
+    /// is taken apart.
+    var isPartyScoped: Bool {
+        switch self {
+        case .partyATKPercent, .partyElementalMastery, .partyDMG: return true
+        default: return false
+        }
+    }
 
     static func dmg(for category: HitCategory) -> AbyssStatField {
         switch category {

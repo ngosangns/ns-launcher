@@ -43,6 +43,10 @@ class ParseStats:
     scaling_skipped: int = 0
     artifact_bonus_ok: int = 0
     artifact_bonus_unmapped: list[str] = field(default_factory=list)
+    # Mục trong tuning.json talentPartyBuff mà nhãn/nhân vật không còn tồn tại.
+    talent_party_buff_unresolved: list[str] = field(default_factory=list)
+    # Phần damage-formula.json không đọc được (đã fallback về số cũ).
+    damage_formula_unread: list[str] = field(default_factory=list)
     res_notes_unparsed: list[str] = field(default_factory=list)
     leyline_unparsed: list[str] = field(default_factory=list)
 
@@ -271,6 +275,165 @@ class FloorBuff:
     reactions: list[str] = field(default_factory=list)  # buff theo phản ứng
     normal_attack_only: bool = False
     raw: str = ""
+
+
+# --- Hằng số công thức, đọc từ damage-formula.json ---------------------------
+#
+# Trước đây các số này nằm hard-code trong scoring.py và damage-formula.json chỉ
+# được đọc để... không làm gì. Hai nguồn sự thật, không gì buộc chúng khớp nhau.
+
+_EM_CURVE = re.compile(r"([0-9.]+)\s*\*\s*EM\s*/\s*\(\s*EM\s*\+\s*([0-9.]+)\s*\)", re.I)
+
+CHARACTER_LEVEL = 90
+
+
+def _em_curve(text: str, fallback: tuple[float, float]) -> tuple[float, float]:
+    m = _EM_CURVE.search(text or "")
+    if not m:
+        PARSE.damage_formula_unread.append(text or "(trống)")
+        return fallback
+    return float(m.group(1)), float(m.group(2))
+
+
+def load_damage_formula() -> dict:
+    with open(DATA_ROOT / "damage-formula.json", encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+_DF = load_damage_formula()
+AMPLIFYING_EM = _em_curve(_DF["amplifying"]["emBonusFormula"], (2.78, 1400.0))
+TRANSFORMATIVE_EM = _em_curve(_DF["transformative"]["emBonusFormula"], (16.0, 2000.0))
+CATALYZE_EM = _em_curve(_DF["catalyze"]["emBonusFormula"], (5.0, 1200.0))
+
+# Tên trong data -> (nguyên tố kích hoạt, nguyên tố đã có trên địch)
+_AMPLIFYING_PAIRS = {
+    "meltPyroTrigger": ("Pyro", "Cryo"),
+    "meltCryoTrigger": ("Cryo", "Pyro"),
+    "vaporizeHydroTrigger": ("Hydro", "Pyro"),
+    "vaporizePyroTrigger": ("Pyro", "Hydro"),
+}
+AMPLIFYING_COEFFICIENTS = {
+    _AMPLIFYING_PAIRS[k]: v
+    for k, v in _DF["amplifying"]["coefficients"].items()
+    if k in _AMPLIFYING_PAIRS
+}
+TRANSFORMATIVE_COEFFICIENTS: dict[str, float] = dict(_DF["transformative"]["coefficients"])
+TRANSFORMATIVE_LEVEL_MULTIPLIER: float = (
+    _DF["transformative"]["levelMultiplier"].get(str(CHARACTER_LEVEL), {}).get("character", 0.0)
+)
+DEFAULT_MONSTER_RES: float = _DF["resMultiplier"]["defaultMonsterResAllElements"]
+
+
+# --- Cung mệnh ---------------------------------------------------------------
+
+# Data viết cung mệnh nâng cấp chiêu theo hai kiểu — "Tăng cấp X thêm 3" và
+# "X +3 cấp" — chỉ khớp kiểu đầu là mất một phần ba, trong đó có C3/C5 Xingqiu.
+_TALENT_LEVEL_BOOST = re.compile(r"tăng cấp|\+\s*3\s*cấp|cấp\s*\+\s*3|thêm 3 cấp", re.I)
+_NORMAL_ATTACK_BOOST = re.compile(r"đòn thường|normal attack", re.I)
+_BURST_WORD = re.compile(r"\bburst\b|bùng nổ|\bnộ\b", re.I)
+_SKILL_WORD = re.compile(r"kỹ năng|\bskill\b", re.I)
+
+
+def boosted_talent(description: str, character: dict) -> str | None:
+    """Cung mệnh này nâng chiêu nào thêm 3 cấp: "skill", "burst", hay không nâng.
+
+    Đếm xem có bao nhiêu TỪ trong TÊN từng chiêu xuất hiện trong mô tả, rồi lấy
+    chiêu thắng; chỉ khi hoà mới rơi xuống từ khoá chung ("Tăng cấp kỹ năng thêm
+    3"). Đếm chứ không chỉ tìm-thấy-là-được, vì có những nhân vật hai chiêu trùng
+    tiền tố — Skirk "Havoc: Warp" với "Havoc: Ruin", Candace hai chiêu "Sacred
+    Rite" — mà luật khớp-đầu-tiên sẽ chọn sai một nửa số lần.
+    """
+    if not _TALENT_LEVEL_BOOST.search(description or ""):
+        return None
+    if _NORMAL_ATTACK_BOOST.search(description):
+        return None
+    lowered = description.lower()
+
+    def score(name: str | None) -> int:
+        if not name:
+            return 0
+        words = {w.lower() for w in re.split(r"[^A-Za-zÀ-ỹ]+", name) if len(w) >= 4}
+        return sum(1 for w in words if w in lowered)
+
+    skill = score((character.get("elementalSkill") or {}).get("name"))
+    burst = score((character.get("elementalBurst") or {}).get("name"))
+    if skill > burst:
+        return "skill"
+    if burst > skill:
+        return "burst"
+    if _BURST_WORD.search(description):
+        return "burst"
+    if _SKILL_WORD.search(description):
+        return "skill"
+    return None
+
+
+def talent_levels(character: dict, constellation: int) -> tuple[str, str]:
+    """(khoá cấp cho skill, khoá cấp cho burst) theo số cung mệnh đang có."""
+    if constellation <= 0:
+        return "lv10", "lv10"
+    skill, burst = "lv10", "lv10"
+    for entry in character.get("constellations") or []:
+        if entry.get("level", 99) > constellation:
+            continue
+        slot = boosted_talent(entry.get("description") or "", character)
+        if slot == "skill":
+            skill = "lv13"
+        elif slot == "burst":
+            burst = "lv13"
+    return skill, burst
+
+
+_CHARGED_HIT = re.compile(r"đòn nặng|trọng kích|charged|aimed|ngắm bắn|bắn nhắm", re.IGNORECASE)
+
+
+def charged_attack(character: dict, level_key: str = "lv10") -> tuple[float, str] | None:
+    """Đòn nặng của nhân vật, hoặc None nếu parser không nhận ra dòng nào.
+
+    Lấy dòng MẠNH NHẤT chứ không cộng các dòng lại. Đòn nặng là MỘT hành động và
+    nhân vật dùng cái tốt nhất, nhưng data không nói dòng nào là thay thế nhau và
+    dòng nào là tuần tự: "Aimed Shot" với "Aimed Shot sạc đầy" của cung là hai
+    cách bắn cùng một mũi tên, còn đòn xoay và đòn kết thúc của claymore thì nối
+    tiếp nhau. Cộng lại sẽ nhân đôi mọi cung trong data; lấy max chỉ thiếu một ít
+    ở vài claymore — cách sai an toàn hơn.
+    """
+    best: tuple[float, str] | None = None
+    for hit in (character.get("normalAttack") or {}).get("hits") or []:
+        label = (hit.get("label") or "").strip()
+        if not _CHARGED_HIT.search(label):
+            continue
+        values = hit.get("values") or {}
+        raw = values.get(level_key) or values.get("lv10") or values.get("lv1") or ""
+        parsed = parse_scaling_value(raw)
+        if parsed is None:
+            continue
+        if best is None or parsed[0] > best[0]:
+            best = parsed
+    return best
+
+
+def talent_percentage(talent: dict, label: str, index: int = 0,
+                      level_key: str = "lv10") -> float | None:
+    """% thứ `index` trên dòng scaling có nhãn ĐÚNG BẰNG `label`.
+
+    Chỉ bảng `talentPartyBuff` trong tuning.json dùng hàm này. Các dòng đó cố ý
+    KHÔNG phải dòng sát thương nên `talent_damage_entries` bỏ chúng — nhưng con
+    số thì có thật và nằm trong data nhân vật, tức là chỗ nên đọc, thay vì chép
+    tay vào tuning.json nơi mà một lần sửa hệ số chiêu sẽ không bao giờ tới.
+
+    Ngoặc đơn bị bóc trước, y như `scaling_value`, để biến thể cung mệnh
+    ("(cấp 14: 126%)") không bị nhầm thành vế thứ hai của dòng 2 phần.
+    """
+    entry = next((r for r in (talent.get("scaling") or []) if r.get("label") == label), None)
+    if entry is None:
+        return None
+    values = entry.get("values") or {}
+    raw = values.get(level_key) or values.get("lv10") or values.get("lv1") or ""
+    cleaned = re.sub(r"\([^)]*\)", " ", raw)  # bỏ chú thích trong ngoặc
+    found = [float(m.replace(",", ".")) for m in _PERCENT.findall(cleaned)]
+    if not 0 <= index < len(found):
+        return None
+    return found[index] / 100.0
 
 
 def parse_floor_buffs(text: str | None) -> list[FloorBuff]:

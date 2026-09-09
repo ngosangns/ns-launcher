@@ -125,6 +125,39 @@ struct AbyssTeamContext: Sendable {
         return found
     }
 
+    /// The transformative reactions this team can trigger, which is a different
+    /// question from `enabledReactions`.
+    ///
+    /// Two differences, both deliberate. The Lunar upgrades are not applied
+    /// here: `damage-formula.json` prices Lunar and Stellar variants in their
+    /// own block with their own aggregation rules, so a Moonsign team's Bloom is
+    /// still counted as a Bloom rather than dropped for being called something
+    /// else. And the two-step reactions are derived: Hyperbloom and Burgeon need
+    /// a Bloom core to already exist, so they want three elements rather than
+    /// two.
+    ///
+    /// Shatter is absent: it needs a frozen target and a blunt hit, neither of
+    /// which the element list can tell us.
+    var transformativeReactions: Set<AbyssReaction> {
+        let elements = elementSet
+        var found: Set<AbyssReaction> = []
+
+        if elements.isSuperset(of: [.electro, .cryo]) { found.insert(.superconduct) }
+        if elements.isSuperset(of: [.electro, .hydro]) { found.insert(.electroCharged) }
+        if elements.isSuperset(of: [.electro, .pyro]) { found.insert(.overloaded) }
+        if elements.isSuperset(of: [.dendro, .pyro]) { found.insert(.burning) }
+        if elements.isSuperset(of: [.dendro, .hydro]) {
+            found.insert(.bloom)
+            // A Bloom core is what Electro and Pyro detonate.
+            if elements.contains(.electro) { found.insert(.hyperbloom) }
+            if elements.contains(.pyro) { found.insert(.burgeon) }
+        }
+        if elements.contains(.anemo), !elements.isDisjoint(with: [.pyro, .hydro, .electro, .cryo]) {
+            found.insert(.swirl)
+        }
+        return found
+    }
+
     /// Party-wide stats granted by the active elemental resonances.
     ///
     /// Only the resonance bonuses that map onto a modelled stat are counted;

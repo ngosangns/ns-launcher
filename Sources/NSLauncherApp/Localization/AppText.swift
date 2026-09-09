@@ -748,6 +748,19 @@ struct AppText {
         localized(en: "Enemies ~Lv\(level)", vi: "Quái ~cấp \(level)")
     }
 
+    /// Which layer a floor buff came from. Worth naming: the Blessing applies
+    /// to every floor for the whole rotation while the disorder is this floor's
+    /// own, and a reader tracing a score back to a sentence needs to know which
+    /// of the two they are looking at.
+    func abyssBuffSource(_ source: AbyssFloorBuff.Source) -> String {
+        switch source {
+        case .leyLine:
+            return localized(en: "Ley Line Disorder", vi: "Địa Mạch Dị Biến")
+        case .blessing:
+            return localized(en: "Abyssal Moon Blessing", vi: "Chúc Phúc Trăng Vực Sâu")
+        }
+    }
+
     var abyssOnFieldLabel: String { localized(en: "on-field", vi: "đứng sân") }
     var abyssDamageShare: String { localized(en: "of team damage", vi: "sát thương đội") }
 

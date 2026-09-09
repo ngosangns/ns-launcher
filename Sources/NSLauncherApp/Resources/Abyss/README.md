@@ -85,7 +85,10 @@ File đè cùng định dạng, trùng `periodStart` thì thắng bản đóng g
 Ba nhóm số, độ tin cậy **khác hẳn nhau**:
 
 1. **Số liệu game đã fetch** — mọi file *khác* `tuning.json`. Trích thẳng từ
-   file game, đã validate schema.
+   file game, đã validate schema. `damage-formula.json` giờ là NGUỒN THẬT của
+   các hệ số: đường cong EM, hệ số amplifying/transformative và levelMultiplier
+   đều được đọc lúc load (`AbyssDamageConstants`), không còn chép tay trong
+   Swift. Phần chưa đọc được sẽ báo ở `AbyssParseDiagnostics.damageFormulaUnread`.
 2. **Hằng số game chuẩn** — `artifactMainStats`, `substatRollValue`. Ổn định
    qua các bản cập nhật nhưng **chưa được đối chiếu API trong repo này**.
 3. **Ước lượng heuristic của thuật toán** — tất cả phần còn lại. Đây là các
@@ -94,6 +97,16 @@ Ba nhóm số, độ tin cậy **khác hẳn nhau**:
    phần chủ quan nhất: 36/63 bộ có hiệu ứng 4 món quá phức tạp để tách số máy
    móc, nên được gán tay một mức "%DMG hiệu dụng". Sửa bảng này là cách nhanh
    nhất để đổi kết quả theo hiểu biết của bạn.
+4. **`talentPartyBuff` — nửa data, nửa giả định.** Bảng này khai buff CẢ ĐỘI
+   đến từ chiêu nhân vật (Bennett, Kujou Sara, Faruzan). Con số hệ số được
+   **đọc từ data nhân vật** theo `(talent, label)` nên tự cập nhật khi hệ số
+   chiêu đổi; chỉ `kind` (dòng đó nghĩa là gì) và `uptime` là viết tay. Cần
+   bảng này vì nhãn không tự phân biệt được: "ATK Bonus 100.8% Base ATK" (buff
+   phẳng cho cả đội) và "ATK Bonus (%DEF) 103.7%" (tự quy đổi cho bản thân) là
+   cùng ba chữ, và bộ lọc sát thương bỏ cả hai vì cả hai đều không phải một
+   đòn đánh. Nếu `label` trôi, `AbyssParseDiagnostics.talentPartyBuffUnresolved`
+   báo lên và `AbyssBuildAssemblerTests` fail — buff không biến mất im lặng.
+   Khoá `notes.talentPartyBuff` liệt kê những buff **cố ý chưa mô hình hoá**.
 
 Giải thích từng nhóm nằm ở khoá `notes` trong chính `tuning.json` (JSON không
 có comment). Cả bản Swift lẫn bản Python đọc chung file này nên sửa một lần là

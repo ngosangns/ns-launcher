@@ -87,8 +87,25 @@ struct AbyssFloorContext: Sendable {
 
         // Ley Line Disorder is per-floor; the Blessing of the Abyssal Moon
         // applies to the whole Abyss for the cycle, so every floor gets it.
-        var buffs = AbyssTextParser.floorBuffs(floor.leyLineDisorder, diagnostics: &diagnostics)
-        buffs += AbyssTextParser.floorBuffs(cycle.blessingOfTheAbyssalMoon.description, diagnostics: &diagnostics)
+        //
+        // The blessing is read from `relatedMechanic` as well as `description`,
+        // and that is where its numbers actually live: the description is
+        // flavour prose about what the mechanic does, while the percentages a
+        // team can be scored on ("+20% sát thương Cryo/Electro" for characters
+        // inside the field) are written into the mechanic note. Parsing only
+        // the description meant the blessing contributed nothing at all — the
+        // model quietly scored every floor as if the cycle had no blessing.
+        var buffs = AbyssTextParser.floorBuffs(floor.leyLineDisorder, source: .leyLine,
+                                               diagnostics: &diagnostics)
+        let blessing = cycle.blessingOfTheAbyssalMoon
+        var blessingBuffs = AbyssTextParser.floorBuffs(blessing.description, source: .blessing,
+                                                       diagnostics: &diagnostics)
+        blessingBuffs += AbyssTextParser.floorBuffs(blessing.relatedMechanic, source: .blessing,
+                                                    diagnostics: &diagnostics)
+        // The two fields overlap in wording often enough that the same clause
+        // can be parsed twice; counting it twice would double the bonus.
+        var seen: Set<String> = []
+        buffs += blessingBuffs.filter { seen.insert($0.raw).inserted }
 
         // Rounded half-to-even to match the reference implementation. Swift's
         // default `.rounded()` rounds halves away from zero, which would differ

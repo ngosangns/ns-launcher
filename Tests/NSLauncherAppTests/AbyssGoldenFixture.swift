@@ -43,6 +43,9 @@ struct AbyssGoldenFixture: Decodable {
         let party_atk_pct: Double
         let party_em: Double
         let party_dmg: Double
+        let party_flat_atk: Double
+        /// Keyed by element name, only the non-zero entries.
+        let party_elemental_dmg: [String: Double]
     }
 
     struct Gear: Decodable {

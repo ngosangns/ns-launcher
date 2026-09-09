@@ -59,10 +59,16 @@ removal, but voice packs are not downloaded by the launcher.
   eight characters. For your full roster instead, paste your own HoYoLAB
   session (`ltuid_v2`/`ltoken_v2`, kept only in this Mac's Keychain) and turn
   on "Character Details" under your HoYoLAB privacy settings. Then press
-  **Find teams**. Each suggested team comes with the artifact set, main stats,
-  and substat priority for every member, chosen for that floor and those team
-  mates rather than in the abstract; for characters imported from your
-  Showcase, it compares against the artifacts you are actually wearing.
+  **Find teams**. It plans for floor 12 — clear that and the floors below come
+  with it. Each suggested team comes with the artifact set, main stats, and
+  substat priority for every member, picked out of every five-star set rather
+  than in the abstract, and for the team mates they will actually stand next
+  to; for characters imported from your Showcase, it compares against the
+  artifacts you are actually wearing. Everyone is scored at level 90, imported
+  or not, so a half-levelled account is ranked on what its builds can do —
+  though constellations do count, since C3 and C5 raise a talent's level.
+  Teams that set off a reaction (Hyperbloom, Overload, Superconduct and the
+  rest) are credited for it, which is most of what a Bloom team actually does.
   Scores rank teams against each other — they are an estimate, not a damage
   simulation.
 - Installing or updating downloads and verifies game assets directly from

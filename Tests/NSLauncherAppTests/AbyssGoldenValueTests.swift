@@ -89,6 +89,7 @@ final class AbyssGoldenValueTests: XCTestCase {
                 ("partyATKPercent", stats.partyATKPercent, want.party_atk_pct),
                 ("partyElementalMastery", stats.partyElementalMastery, want.party_em),
                 ("partyDMG", stats.partyDMG, want.party_dmg),
+                ("partyFlatATK", stats.partyFlatATK, want.party_flat_atk),
             ]
             for (name, got, wanted) in fields {
                 XCTAssertEqual(got, wanted, accuracy: max(abs(wanted), 1) * 1e-9,
@@ -99,6 +100,12 @@ final class AbyssGoldenValueTests: XCTestCase {
                 let element = try XCTUnwrap(GenshinElement(rawValue: rawElement))
                 XCTAssertEqual(stats.elementalBonus(element), value, accuracy: max(abs(value), 1) * 1e-9,
                                "\(characterID): \(rawElement) DMG bonus differs")
+            }
+            for (rawElement, value) in want.party_elemental_dmg {
+                let element = try XCTUnwrap(GenshinElement(rawValue: rawElement))
+                XCTAssertEqual(stats.partyElementalDMG[element.simdIndex], value,
+                               accuracy: max(abs(value), 1) * 1e-9,
+                               "\(characterID): party \(rawElement) DMG bonus differs")
             }
         }
     }
@@ -112,10 +119,16 @@ final class AbyssGoldenValueTests: XCTestCase {
         let optimizer = try XCTUnwrap(AbyssOptimizer(library: library))
         let roster = try AbyssGoldenFixture.exampleRoster()
 
+        // Every floor the fixture covers, not just the one a default request
+        // runs: the engine now plans for floor 12 alone, but the fixture holds
+        // numbers for all four and there is no reason to stop checking them.
+        //
         // Artifact refinement is deliberately off: it is a Swift-only pass with
         // no counterpart in the reference implementation, and this test's job is
         // to hold the ported engine to the reference's numbers.
-        let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, topN: 10, poolSize: 40,
+        let floors = golden.teams.keys.compactMap(Int.init).sorted()
+        let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: floors,
+                                                               topN: 10, poolSize: 40,
                                                                refinesArtifacts: false))
         XCTAssertFalse(output.reports.isEmpty, "optimizer produced no floors")
 

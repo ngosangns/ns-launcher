@@ -20,18 +20,21 @@ struct AbyssOptimizer: Sendable {
     /// How many weapons to keep per character. More than one because team
     /// members compete for the same weapon and need somewhere to fall back to.
     static let weaponAlternatives = 6
-    /// Set pairs are tried across the best few sets only; the tail never wins.
-    private static let setPairCandidates = 8
     /// Floor on how many teams reach the artifact pass, so a request for the
     /// single best team still gets a real shortlist to re-rank.
     private static let minimumRefinementCandidates = 20
+    /// The only floor worth optimising for. Anything that clears 12 clears the
+    /// floors below it, so the other three quarters of the search produced
+    /// rankings nobody acted on.
+    static let deepestFloor = 12
 
     init?(library: AbyssDataLibrary) {
         guard let tuning = library.tuning else { return nil }
         self.library = library
         self.tuning = tuning
         assembler = AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs,
-                                        artifactSets: library.artifactSets)
+                                        artifactSets: library.artifactSets,
+                                        talentPartyBuffs: library.talentPartyBuffsByCharacterID)
         scorer = AbyssScorer(library: library, tuning: tuning)
     }
 
@@ -43,10 +46,10 @@ struct AbyssOptimizer: Sendable {
         let unknownIDs = roster.map { unknownRosterIDs(in: $0) } ?? []
 
         // Each pool is gated independently, but `roster` itself is passed on
-        // unchanged everywhere else (refinement, constellation, artifact set
-        // ownership) — a full-character-pool search still credits a weapon the
-        // player actually owns with its real refinement, it just is not the
-        // thing being restricted.
+        // unchanged everywhere else (refinement, constellation) — a
+        // full-character-pool search still credits a weapon the player actually
+        // owns with its real refinement, it just is not the thing being
+        // restricted.
         let characterRoster = request.usesFullCharacterPool ? nil : roster
         let weaponRoster = request.usesFullWeaponPool ? nil : roster
 
@@ -63,10 +66,11 @@ struct AbyssOptimizer: Sendable {
             return library.weapons.filter { owned.contains($0.id) }
         } ?? library.weapons
 
-        let ownedSets = roster?.artifactSets ?? []
-        let sets = ownedSets.isEmpty
-            ? library.fiveStarArtifactSets
-            : library.fiveStarArtifactSets.filter { ownedSets.contains($0.id) }
+        // Every 5★ set, always. Artifacts are farmable — unlike a weapon, a set
+        // the player does not have yet is a thing to go and get, so the useful
+        // answer is the best one that exists rather than the best one already
+        // owned. There is deliberately no artifact roster to narrow this.
+        let sets = library.fiveStarArtifactSets
 
         guard characters.count >= 4 else {
             return AbyssOptimizerOutput(reports: [], consideredCharacterIDs: characters.map(\.id),
@@ -76,11 +80,38 @@ struct AbyssOptimizer: Sendable {
         let showcaseByID = Dictionary(request.showcase.map { ($0.characterID, $0) },
                                       uniquingKeysWith: { first, _ in first })
 
-        var options: [String: [AbyssGearOption]] = [:]
-        options.reserveCapacity(characters.count)
-        for character in characters {
-            options[character.id] = gearOptions(for: character, weapons: weapons, sets: sets,
-                                                roster: roster, showcase: showcaseByID[character.id])
+        // Talent levels follow the constellations the player actually has: C3
+        // and C5 each raise one talent by three, and the data carries the level
+        // 13 column for the characters whose constellations were transcribed
+        // that far. A showcase knows the constellation for certain; the roster
+        // is what the player typed in.
+        let profiles = Dictionary(uniqueKeysWithValues: characters.compactMap {
+            character -> (String, AbyssDamageProfile)? in
+            let constellation = showcaseByID[character.id]?.constellation
+                ?? roster?.constellation(for: character.id)
+                ?? 0
+            guard let profile = library.profile(for: character.id, constellation: constellation)
+            else { return nil }
+            return (character.id, profile)
+        })
+
+        // One task per character. Gear selection is now the second-heaviest part
+        // of a run — every character is dressed in all 1081 artifact
+        // configurations — and each character's answer depends on nothing but
+        // that character, so there is nothing to coordinate.
+        let options = await withTaskGroup(of: (String, [AbyssGearOption]).self) { group in
+            for character in characters {
+                group.addTask {
+                    (character.id,
+                     gearOptions(for: character, weapons: weapons, sets: sets,
+                                 roster: roster, showcase: showcaseByID[character.id],
+                                 profile: profiles[character.id]))
+                }
+            }
+            var collected: [String: [AbyssGearOption]] = [:]
+            collected.reserveCapacity(characters.count)
+            for await (id, entry) in group { collected[id] = entry }
+            return collected
         }
 
         // Characters far down on solo damage never appear in a winning team, and
@@ -102,7 +133,7 @@ struct AbyssOptimizer: Sendable {
                                         unknownRosterIDs: unknownIDs)
         }
 
-        let floorNumbers = request.floors ?? cycle.floors.map(\.floor)
+        let floorNumbers = request.floors ?? Self.defaultFloors(in: cycle)
         var reports: [AbyssFloorReport] = []
         var diagnostics = AbyssParseDiagnostics()
         let charactersByID = Dictionary(poolArray.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
@@ -117,16 +148,30 @@ struct AbyssOptimizer: Sendable {
             if Task.isCancelled { break }
             guard let floor = AbyssFloorContext.build(cycle: cycle, floor: floorNumber,
                                                       diagnostics: &diagnostics) else { continue }
-            var teams = await bestTeams(in: poolArray, options: options, floor: floor, topN: candidateCount)
+            var teams = await bestTeams(in: poolArray, options: options, profiles: profiles,
+                                        floor: floor, topN: candidateCount)
             if request.refinesArtifacts {
-                let advisor = AbyssArtifactAdvisor(library: library, tuning: tuning,
-                                                   assembler: assembler, scorer: scorer)
-                teams = Self.trim(teams.map { team in
-                    advisor.refine(team: team,
-                                   members: team.memberIDs.compactMap { charactersByID[$0] },
-                                   floor: floor, sets: sets, roster: roster,
-                                   showcase: showcaseByID)
-                }, topN: request.topN)
+                let advisor = AbyssArtifactAdvisor(library: library, assembler: assembler,
+                                                   scorer: scorer)
+                // One task per candidate team: each sweeps its four members
+                // through every artifact configuration and touches nothing the
+                // others touch. `trim` re-sorts, so the order the tasks finish
+                // in cannot reach the result.
+                let refined = await withTaskGroup(of: AbyssTeamResult.self) { group in
+                    for team in teams {
+                        group.addTask {
+                            advisor.refine(team: team,
+                                           members: team.memberIDs.compactMap { charactersByID[$0] },
+                                           floor: floor, sets: sets, roster: roster,
+                                           showcase: showcaseByID, profiles: profiles)
+                        }
+                    }
+                    var collected: [AbyssTeamResult] = []
+                    collected.reserveCapacity(teams.count)
+                    for await result in group { collected.append(result) }
+                    return collected
+                }
+                teams = Self.trim(refined, topN: request.topN)
             }
             reports.append(AbyssFloorReport(
                 floor: floorNumber,
@@ -143,10 +188,20 @@ struct AbyssOptimizer: Sendable {
                                     unknownRosterIDs: unknownIDs)
     }
 
+    /// Which floors a request with no explicit list runs.
+    ///
+    /// Floor 12 when the cycle has one, and the deepest floor it does have
+    /// otherwise: the cycle file can be replaced by the user, and a rotation
+    /// that stopped at 11 should still return teams rather than nothing.
+    private static func defaultFloors(in cycle: AbyssCycle) -> [Int] {
+        let numbers = cycle.floors.map(\.floor)
+        if numbers.contains(deepestFloor) { return [deepestFloor] }
+        return numbers.max().map { [$0] } ?? []
+    }
+
     private func unknownRosterIDs(in roster: AbyssRoster) -> [String] {
         var unknown = roster.characterIDs.filter { library.charactersByID[$0] == nil }
         unknown.formUnion(roster.weaponIDs.filter { library.weaponsByID[$0] == nil })
-        unknown.formUnion(roster.artifactSets.filter { library.artifactSetsByID[$0] == nil })
         return unknown.sorted()
     }
 
@@ -159,6 +214,7 @@ struct AbyssOptimizer: Sendable {
     /// first.
     private func bestTeams(in pool: [AbyssCharacter],
                            options: [String: [AbyssGearOption]],
+                           profiles: [String: AbyssDamageProfile],
                            floor: AbyssFloorContext,
                            topN: Int) async -> [AbyssTeamResult] {
         let combinations = Self.combinationCount(pool.count, choose: 4)
@@ -167,7 +223,8 @@ struct AbyssOptimizer: Sendable {
         let stripeCount = min(max(ProcessInfo.processInfo.activeProcessorCount, 1),
                               max(Int(combinations / 512), 1))
         if stripeCount <= 1 {
-            return Self.trim(scoreRange(0..<combinations, pool: pool, options: options, floor: floor),
+            return Self.trim(scoreRange(0..<combinations, pool: pool, options: options,
+                                        profiles: profiles, floor: floor),
                              topN: topN)
         }
 
@@ -178,7 +235,8 @@ struct AbyssOptimizer: Sendable {
                 let upper = min(lower + stride, combinations)
                 guard lower < upper else { continue }
                 group.addTask {
-                    Self.trim(scoreRange(lower..<upper, pool: pool, options: options, floor: floor),
+                    Self.trim(scoreRange(lower..<upper, pool: pool, options: options,
+                                         profiles: profiles, floor: floor),
                               topN: topN)
                 }
             }
@@ -192,6 +250,7 @@ struct AbyssOptimizer: Sendable {
     private func scoreRange(_ range: Range<Int64>,
                             pool: [AbyssCharacter],
                             options: [String: [AbyssGearOption]],
+                            profiles: [String: AbyssDamageProfile],
                             floor: AbyssFloorContext) -> [AbyssTeamResult] {
         var results: [AbyssTeamResult] = []
         var indices = [0, 1, 2, 3]
@@ -201,7 +260,8 @@ struct AbyssOptimizer: Sendable {
         while position < range.upperBound {
             if position % 4096 == 0, Task.isCancelled { break }
             let members = indices.map { pool[$0] }
-            if let result = scorer.score(members: members, options: options, floor: floor) {
+            if let result = scorer.score(members: members, options: options, floor: floor,
+                                         profiles: profiles) {
                 results.append(result)
             }
             position += 1
@@ -282,15 +342,24 @@ struct AbyssOptimizer: Sendable {
     /// Ranks a character's gear, best first.
     ///
     /// Weapon and artifacts are chosen in two passes rather than by trying every
-    /// pair: the two contribute almost additively, so the pairwise search costs
-    /// ~25× more for a result that differs only at the margins.
+    /// weapon × artifact pair: the two contribute almost additively, so the
+    /// joint search costs ~25× more for a result that differs only at the
+    /// margins. *Within* the artifact pass nothing is shortlisted — every set
+    /// as a 4-piece and every pair of sets as 2+2 is built and scored.
     func gearOptions(for character: AbyssCharacter,
                      weapons: [AbyssWeapon],
                      sets: [AbyssArtifactSet],
                      roster: AbyssRoster?,
-                     showcase: AbyssShowcaseBuild? = nil) -> [AbyssGearOption] {
-        guard let profile = library.profilesByCharacterID[character.id] else { return [] }
+                     showcase: AbyssShowcaseBuild? = nil,
+                     profile explicitProfile: AbyssDamageProfile? = nil) -> [AbyssGearOption] {
+        guard let profile = explicitProfile ?? library.profilesByCharacterID[character.id] else {
+            return []
+        }
         let role = defaultRole(for: character)
+
+        // The neutral yardstick every option here is measured against. Built
+        // once: gear selection scores over a thousand stat sheets against it.
+        let solo = scorer.soloContext(for: character, profile: profile)
 
         // An imported character needs no gear search: the app knows what they
         // are holding and what they rolled. One option, their own, and the
@@ -299,34 +368,49 @@ struct AbyssOptimizer: Sendable {
             let weapon = showcase.weaponID.flatMap { library.weaponsByID[$0] }
             let wornIDs = showcase.activeSetIDs
             let worn = wornIDs.compactMap { library.artifactSetsByID[$0] }
-            var stats = assembler.showcaseStats(build: showcase, weapon: weapon, wornSets: worn)
+            var stats = assembler.showcaseStats(build: showcase, character: character,
+                                                weapon: weapon, wornSets: worn)
             var diagnostics = AbyssParseDiagnostics()
             assembler.applySets(worn, character: character, to: &stats, diagnostics: &diagnostics)
             return [AbyssGearOption(stats: stats, weaponID: showcase.weaponID, setIDs: wornIDs,
                                     role: role,
-                                    soloScore: scorer.soloScore(for: character, stats: stats),
+                                    soloScore: scorer.soloScore(context: solo, stats: stats),
                                     statSource: .measured)]
         }
 
         let usable = weapons.filter { $0.type == character.weaponType }
         var diagnostics = AbyssParseDiagnostics()
 
+        // The half of the sheet that does not depend on which sets are worn.
+        // Split out because the artifact pass below dresses one weapon in over
+        // a thousand configurations that all share it, and this is the
+        // expensive half — the weapon passive is matched with regexes.
+        func base(_ weapon: AbyssWeapon?) -> AbyssStats {
+            assembler.statsWithoutSets(character: character, profile: profile, weapon: weapon,
+                                       role: role,
+                                       refinement: roster?.refinement(for: weapon?.id ?? "") ?? 1)
+        }
+
+        func wearing(_ chosenSets: [AbyssArtifactSet], over sheet: AbyssStats) -> AbyssStats {
+            var stats = sheet
+            assembler.applySets(chosenSets, character: character, to: &stats, diagnostics: &diagnostics)
+            return stats
+        }
+
         func build(_ weapon: AbyssWeapon?, _ chosenSets: [AbyssArtifactSet]) -> AbyssStats {
-            assembler.stats(character: character, profile: profile, weapon: weapon, sets: chosenSets,
-                            role: role, refinement: roster?.refinement(for: weapon?.id ?? "") ?? 1,
-                            diagnostics: &diagnostics)
+            wearing(chosenSets, over: base(weapon))
         }
 
         guard !usable.isEmpty else {
             let stats = build(nil, Array(sets.prefix(1)))
             return [AbyssGearOption(stats: stats, weaponID: nil, setIDs: sets.prefix(1).map(\.id),
-                                    role: role, soloScore: scorer.soloScore(for: character, stats: stats))]
+                                    role: role, soloScore: scorer.soloScore(context: solo, stats: stats))]
         }
         guard let baseline = sets.first else {
             return usable.map { weapon in
                 let stats = build(weapon, [])
                 return AbyssGearOption(stats: stats, weaponID: weapon.id, setIDs: [], role: role,
-                                       soloScore: scorer.soloScore(for: character, stats: stats))
+                                       soloScore: scorer.soloScore(context: solo, stats: stats))
             }
             .sorted { $0.soloScore > $1.soloScore }
             .prefix(Self.weaponAlternatives)
@@ -334,41 +418,42 @@ struct AbyssOptimizer: Sendable {
         }
 
         // Pass 1: rank weapons against one fixed set so they are comparable.
+        let bases = usable.map { base($0) }
         let rankedWeapons = usable
             .enumerated()
             .map { (offset: $0.offset, weapon: $0.element,
-                    score: scorer.soloScore(for: character, stats: build($0.element, [baseline]))) }
+                    score: scorer.soloScore(context: solo,
+                                            stats: wearing([baseline], over: bases[$0.offset]))) }
             .sorted { lhs, rhs in
                 if lhs.score != rhs.score { return lhs.score > rhs.score }
                 return lhs.offset < rhs.offset
             }
             .prefix(Self.weaponAlternatives)
 
-        guard let topWeapon = rankedWeapons.first?.weapon else { return [] }
+        guard let top = rankedWeapons.first else { return [] }
 
-        // Pass 2: find the best artifact configuration for that weapon.
+        // Pass 2: every artifact configuration for that weapon — each set worn
+        // as a 4-piece, and every pair of sets worn as 2+2. With 46 five-star
+        // sets that is 1081 configurations; all of them are built and scored,
+        // so no set is ruled out by a shortlist that was only ever a guess at
+        // which ones could win.
+        //
+        // Strict `>` keeps the first maximum, so ties resolve to the earlier
+        // set in file order and the pick is the same on every run.
+        let topBase = bases[top.offset]
         var bestSets = [baseline]
         var bestScore = -Double.infinity
-        var scoredSets: [(offset: Int, set: AbyssArtifactSet, score: Double)] = []
-        for (offset, set) in sets.enumerated() {
-            let score = scorer.soloScore(for: character, stats: build(topWeapon, [set]))
-            scoredSets.append((offset, set, score))
+        for set in sets {
+            let score = scorer.soloScore(context: solo, stats: wearing([set], over: topBase))
             if score > bestScore {
                 bestScore = score
                 bestSets = [set]
             }
         }
-        let topSets = scoredSets
-            .sorted { lhs, rhs in
-                if lhs.score != rhs.score { return lhs.score > rhs.score }
-                return lhs.offset < rhs.offset
-            }
-            .prefix(Self.setPairCandidates)
-            .map(\.set)
-        for first in 0..<topSets.count {
-            for second in (first + 1)..<topSets.count {
-                let pair = [topSets[first], topSets[second]]
-                let score = scorer.soloScore(for: character, stats: build(topWeapon, pair))
+        for first in 0..<sets.count {
+            for second in (first + 1)..<sets.count {
+                let pair = [sets[first], sets[second]]
+                let score = scorer.soloScore(context: solo, stats: wearing(pair, over: topBase))
                 if score > bestScore {
                     bestScore = score
                     bestSets = pair
@@ -378,10 +463,10 @@ struct AbyssOptimizer: Sendable {
 
         return rankedWeapons
             .map { entry -> AbyssGearOption in
-                let stats = build(entry.weapon, bestSets)
+                let stats = wearing(bestSets, over: bases[entry.offset])
                 return AbyssGearOption(stats: stats, weaponID: entry.weapon.id,
                                        setIDs: bestSets.map(\.id), role: role,
-                                       soloScore: scorer.soloScore(for: character, stats: stats))
+                                       soloScore: scorer.soloScore(context: solo, stats: stats))
             }
             .enumerated()
             .sorted { lhs, rhs in

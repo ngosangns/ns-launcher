@@ -22,8 +22,7 @@ final class AbyssRosterStoreTests: XCTestCase {
         let store = AbyssRosterStore(baseDirectory: directory)
         let roster = AbyssRoster(
             characters: [.init(id: "hu-tao", constellation: 1), .init(id: "bennett", constellation: 5)],
-            weapons: [.init(id: "staff-of-homa", refinement: 1), .init(id: "the-catch", refinement: 5)],
-            artifactSets: ["crimson-witch-of-flames"])
+            weapons: [.init(id: "staff-of-homa", refinement: 1), .init(id: "the-catch", refinement: 5)])
 
         try store.save(roster)
         XCTAssertEqual(try store.load(), roster)
@@ -44,11 +43,24 @@ final class AbyssRosterStoreTests: XCTestCase {
         let roster = try AbyssGoldenFixture.exampleRoster()
         XCTAssertEqual(roster.characters.count, 15)
         XCTAssertEqual(roster.weapons.count, 13)
-        XCTAssertTrue(roster.artifactSets.isEmpty, "an empty set list means every set is farmable")
         XCTAssertEqual(roster.constellation(for: "xingqiu"), 6)
         XCTAssertEqual(roster.refinement(for: "the-catch"), 5)
         // A weapon that is not owned still answers R1 rather than trapping.
         XCTAssertEqual(roster.refinement(for: "staff-of-the-scarlet-sands"), 1)
+    }
+
+    /// Rosters written before artifacts left the model carry an `artifactSets`
+    /// key. Decoding has to ignore it rather than fail, or every roster saved by
+    /// an older build stops loading.
+    func testRosterFileFromBeforeArtifactsLeftTheModelStillLoads() throws {
+        let legacy = """
+        {"characters":[{"id":"hu-tao","constellation":0}],
+         "weapons":[{"id":"staff-of-homa","refinement":1}],
+         "artifactSets":["crimson-witch-of-flames"]}
+        """
+        let roster = try JSONDecoder().decode(AbyssRoster.self, from: Data(legacy.utf8))
+        XCTAssertEqual(roster.characters.map(\.id), ["hu-tao"])
+        XCTAssertEqual(roster.weapons.map(\.id), ["staff-of-homa"])
     }
 
     func testExportProducesAFileThePythonToolCouldRead() throws {
@@ -61,7 +73,8 @@ final class AbyssRosterStoreTests: XCTestCase {
         let raw = try JSONSerialization.jsonObject(with: Data(contentsOf: exported)) as? [String: Any]
         XCTAssertNotNil(raw?["characters"])
         XCTAssertNotNil(raw?["weapons"])
-        XCTAssertNotNil(raw?["artifactSets"])
+        XCTAssertNil(raw?["artifactSets"],
+                     "artifacts are farmable, so the roster no longer records which sets are owned")
         XCTAssertEqual(try store.importRoster(from: exported), roster)
     }
 }

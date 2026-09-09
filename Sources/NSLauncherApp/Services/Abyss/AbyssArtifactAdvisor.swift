@@ -20,13 +20,9 @@ import Foundation
 
 struct AbyssArtifactAdvisor: Sendable {
     let library: AbyssDataLibrary
-    let tuning: AbyssTuning
     let assembler: AbyssBuildAssembler
     let scorer: AbyssScorer
 
-    /// Sets shortlisted per character before the expensive full-team pass. The
-    /// tail of a 63-set list never wins, and the pairs grow as the square.
-    private static let shortlist = 8
     /// Members buff each other, so moving one character's sets can change what
     /// the next one wants. A second sweep catches that; a third has never moved
     /// anything, and the loop stops early when a sweep changes nothing.
@@ -42,29 +38,44 @@ struct AbyssArtifactAdvisor: Sendable {
                 floor: AbyssFloorContext,
                 sets: [AbyssArtifactSet],
                 roster: AbyssRoster?,
-                showcase: [String: AbyssShowcaseBuild] = [:]) -> AbyssTeamResult {
+                showcase: [String: AbyssShowcaseBuild] = [:],
+                profiles: [String: AbyssDamageProfile] = [:]) -> AbyssTeamResult {
         guard sets.count > 1, !members.isEmpty else { return team }
 
         let context = AbyssTeamContext.build(members: members, library: library)
-        let setsByID = Dictionary(sets.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        // Fixed for the whole sweep: the members, the floor and the team never
+        // change while the artifacts move, so everything derived from them is
+        // built once here instead of once per candidate.
+        let damage = scorer.teamDamageContext(members: members, floor: floor, team: context,
+                                              profiles: profiles)
+        // Every set in the data, not just the candidates: this table only ever
+        // resolves ids that are *already* chosen — the incumbent build, and what
+        // a showcase says the player is wearing — and those can name a set that
+        // is not 5★ and so is not among the candidates at all.
+        let setsByID = library.artifactSetsByID
 
         // Per character, the half of the stat sheet that does not depend on the
-        // sets. Computed once here rather than for each of the ~40 candidates.
+        // sets. Computed once here rather than for each of the ~1000 candidates
+        // the sweep below dresses them in.
         //
         // For an imported character this is their *real* gear with the set
         // effects lifted out, so a candidate set is compared against what they
         // actually rolled rather than against a standardised build.
         var bases: [String: AbyssStats] = [:]
-        var profiles: [String: AbyssDamageProfile] = [:]
+        // Named apart from the `profiles` parameter on purpose: this one is the
+        // resolved per-member map the rest of the pass works from, and letting
+        // the two share a name would shadow the argument and silently drop every
+        // constellation the caller resolved.
+        var memberProfiles: [String: AbyssDamageProfile] = [:]
         for member in members {
-            guard let profile = library.profilesByCharacterID[member.id],
+            guard let profile = profiles[member.id] ?? library.profilesByCharacterID[member.id],
                   let option = team.assignment[member.id] else { continue }
-            profiles[member.id] = profile
+            memberProfiles[member.id] = profile
             let weapon = option.weaponID.flatMap { library.weaponsByID[$0] }
 
             if let build = showcase[member.id] {
                 bases[member.id] = assembler.showcaseStats(
-                    build: build, weapon: weapon,
+                    build: build, character: member, weapon: weapon,
                     wornSets: build.activeSetIDs.compactMap { library.artifactSetsByID[$0] })
             } else {
                 bases[member.id] = assembler.statsWithoutSets(
@@ -101,10 +112,10 @@ struct AbyssArtifactAdvisor: Sendable {
             var changed = false
             for member in order {
                 guard let slot = members.firstIndex(where: { $0.id == member.id }),
-                      let ranked = rankedConfigurations(for: member, at: slot, in: members,
+                      let ranked = rankedConfigurations(for: member, at: slot,
                                                         assignment: assignment, sheets: &sheets,
-                                                        worn: &worn, splits: &splits, floor: floor,
-                                                        context: context, sets: sets,
+                                                        worn: &worn, splits: &splits,
+                                                        damage: damage, sets: sets,
                                                         setsByID: setsByID, bases: bases),
                       let best = ranked.first else { continue }
 
@@ -125,20 +136,20 @@ struct AbyssArtifactAdvisor: Sendable {
         }
 
         guard let refined = scorer.evaluate(members: members, assignment: assignment,
-                                            floor: floor, team: context),
+                                            floor: floor, team: context, profiles: memberProfiles),
               refined.score > team.score else {
             // Nothing beat the neutral pick. Still attach advice, so the tab can
             // show the main stats and say the gain is zero rather than showing
             // nothing at all.
             return attachAdvice(to: team, members: members, floor: floor, context: context,
-                                bases: bases, profiles: profiles, setsByID: setsByID,
+                                bases: bases, profiles: memberProfiles, setsByID: setsByID,
                                 runnersUp: runnersUp, baseline: team, showcase: showcase)
         }
 
         var result = refined
         result.baseScore = team.baseScore > 0 ? team.baseScore : team.score
         return attachAdvice(to: result, members: members, floor: floor, context: context,
-                            bases: bases, profiles: profiles, setsByID: setsByID,
+                            bases: bases, profiles: memberProfiles, setsByID: setsByID,
                             runnersUp: runnersUp, baseline: team, showcase: showcase)
     }
 
@@ -150,23 +161,22 @@ struct AbyssArtifactAdvisor: Sendable {
         let score: Double
     }
 
-    /// Every configuration worth trying for one member, best team score first.
+    /// Every configuration for one member, best team score first.
     ///
-    /// Two stages, mirroring `AbyssOptimizer.gearOptions`: shortlist by what the
-    /// character alone gains, then decide among the shortlist by what the *team*
-    /// scores. The shortlist ignores the buffs this character hands the party,
-    /// so a pure support set could in principle miss the cut — the incumbent is
-    /// always in the list, so the worst case is that a swap is not found, never
-    /// that a good build is lost.
+    /// Exhaustive: each set worn as a 4-piece and each pair worn as 2+2, every
+    /// one of them scored on what the *whole team* does with it. There used to
+    /// be a cheap first stage that shortlisted eight sets by this character's
+    /// own damage, and that filter was wrong in exactly the case this pass
+    /// exists for — a set can earn its slot from what it hands the other three
+    /// members, which is invisible to a solo score. With one floor to plan and
+    /// 46 five-star sets, scoring all 1081 outright costs a few milliseconds.
     private func rankedConfigurations(for member: AbyssCharacter,
                                       at slot: Int,
-                                      in members: [AbyssCharacter],
                                       assignment: [String: AbyssGearOption],
                                       sheets: inout [AbyssStats],
                                       worn: inout [[String]],
                                       splits: inout [AbyssScorer.DamageSplit],
-                                      floor: AbyssFloorContext,
-                                      context: AbyssTeamContext,
+                                      damage: AbyssScorer.TeamDamageContext,
                                       sets: [AbyssArtifactSet],
                                       setsByID: [String: AbyssArtifactSet],
                                       bases: [String: AbyssStats]) -> [Configuration]? {
@@ -174,45 +184,21 @@ struct AbyssArtifactAdvisor: Sendable {
 
         let incumbentSheet = sheets[slot]
         let incumbentWorn = worn[slot]
-        let party = partyBuffs(excluding: slot, members: members, sheets: sheets, worn: worn,
-                               context: context)
-        let isOnField = scorer.teamDamage(members: members, stats: sheets, setIDs: worn, floor: floor,
-                                          team: context, splits: &splits).onFieldIndex == slot
 
-        // Stage 1: shortlist by this character's own damage.
-        let shortlisted = sets
-            .enumerated()
-            .map { entry -> (offset: Int, set: AbyssArtifactSet, score: Double) in
-                let stats = statsWearing([entry.element], base: base, member: member)
-                let split = scorer.damageSplit(
-                    for: member, stats: stats, floor: floor, team: context,
-                    partyBuffs: (party.atkPercent + stats.partyATKPercent,
-                                 party.elementalMastery + stats.partyElementalMastery,
-                                 party.dmg + stats.partyDMG))
-                let solo = isOnField
-                    ? split.ability + split.combo * tuning.normalCombosPerRotation
-                    : split.ability * tuning.offFieldUptime
-                return (entry.offset, entry.element, solo)
-            }
-            .sorted { lhs, rhs in
-                if lhs.score != rhs.score { return lhs.score > rhs.score }
-                return lhs.offset < rhs.offset
-            }
-            .prefix(Self.shortlist)
-            .map(\.set)
-
-        // Stage 2: full team score for each shortlisted 4-piece and 2+2 pair,
-        // plus whatever the character is already wearing.
-        var candidates: [[AbyssArtifactSet]] = shortlisted.map { [$0] }
-        for first in 0..<shortlisted.count {
-            for second in (first + 1)..<shortlisted.count {
-                candidates.append([shortlisted[first], shortlisted[second]])
+        // Every 4-piece and every 2+2 pair, plus whatever the character is
+        // already wearing — the incumbent is appended even when it duplicates
+        // an enumerated candidate, because a showcase can have them in a set
+        // that is not 5★ and so is not in `sets` at all. A duplicate costs one
+        // extra evaluation and loses the tie-break to the enumerated copy.
+        var candidates: [[AbyssArtifactSet]] = sets.map { [$0] }
+        candidates.reserveCapacity(sets.count * (sets.count + 1) / 2 + 1)
+        for first in 0..<sets.count {
+            for second in (first + 1)..<sets.count {
+                candidates.append([sets[first], sets[second]])
             }
         }
         let incumbent = option.setIDs.compactMap { setsByID[$0] }
-        if !incumbent.isEmpty, !candidates.contains(where: { $0.map(\.id) == incumbent.map(\.id) }) {
-            candidates.append(incumbent)
-        }
+        if !incumbent.isEmpty { candidates.append(incumbent) }
 
         // Scored on raw team damage, not the final team score: the team-level
         // multipliers depend only on who is in the team and which floor it is,
@@ -224,10 +210,9 @@ struct AbyssArtifactAdvisor: Sendable {
             let stats = statsWearing(candidate, base: base, member: member)
             sheets[slot] = stats
             worn[slot] = candidate.map(\.id)
-            let damage = scorer.teamDamage(members: members, stats: sheets, setIDs: worn,
-                                           floor: floor, team: context, splits: &splits)
-            scored.append((offset, Configuration(setIDs: worn[slot], stats: stats,
-                                                 score: damage.total)))
+            let total = scorer.teamDamage(context: damage, stats: sheets, setIDs: worn,
+                                          splits: &splits).total
+            scored.append((offset, Configuration(setIDs: worn[slot], stats: stats, score: total)))
         }
         sheets[slot] = incumbentSheet
         worn[slot] = incumbentWorn
@@ -249,22 +234,6 @@ struct AbyssArtifactAdvisor: Sendable {
         var diagnostics = AbyssParseDiagnostics()
         assembler.applySets(sets, character: member, to: &stats, diagnostics: &diagnostics)
         return stats
-    }
-
-    /// Party-wide buffs from the resonances and from every member but one,
-    /// de-duplicated the same way the scorer does it.
-    private func partyBuffs(excluding slot: Int,
-                            members: [AbyssCharacter],
-                            sheets: [AbyssStats],
-                            worn: [[String]],
-                            context: AbyssTeamContext) -> AbyssScorer.PartyBuff {
-        var others: [AbyssStats] = []
-        var otherSets: [[String]] = []
-        for index in sheets.indices where index != slot {
-            others.append(sheets[index])
-            otherSets.append(index < worn.count ? worn[index] : [])
-        }
-        return scorer.partyBuffs(stats: others, setIDs: otherSets, team: context)
     }
 
     // MARK: - Advice
@@ -303,7 +272,8 @@ struct AbyssArtifactAdvisor: Sendable {
                 reverted[member.id] = option.replacingSets(
                     neutralSetIDs, stats: statsWearing(neutralSets, base: base, member: member))
                 if let before = scorer.evaluate(members: members, assignment: reverted,
-                                                floor: floor, team: context)?.score, before > 0 {
+                                                floor: floor, team: context,
+                                                profiles: profiles)?.score, before > 0 {
                     gain = team.score / before - 1
                 }
             }
@@ -330,7 +300,8 @@ struct AbyssArtifactAdvisor: Sendable {
                     asEquipped[member.id] = option.replacingSets(
                         equipped, stats: statsWearing(wornSets, base: base, member: member))
                     if let before = scorer.evaluate(members: members, assignment: asEquipped,
-                                                    floor: floor, team: context)?.score, before > 0 {
+                                                    floor: floor, team: context,
+                                                    profiles: profiles)?.score, before > 0 {
                         upgrade = max(team.score / before - 1, 0)
                     }
                 }

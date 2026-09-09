@@ -311,7 +311,63 @@ struct AbyssDamageFormula: Decodable, Sendable {
         let defaultMonsterResAllElements: Double
     }
 
+    /// One `a * EM / (EM + b)` curve. All four EM curves in the data share this
+    /// shape, and the data writes them as prose ("2.78 * EM / (EM + 1400)")
+    /// rather than as two numbers, so they are parsed rather than decoded.
+    struct EMCurve: Sendable, Equatable {
+        let numerator: Double
+        let offset: Double
+
+        func bonus(_ elementalMastery: Double) -> Double {
+            numerator * elementalMastery / (elementalMastery + offset)
+        }
+
+        /// `"16 * EM / (EM + 2000)"` -> `EMCurve(16, 2000)`. Returns nil when the
+        /// text is not that shape, so the caller can fall back and say so rather
+        /// than silently scoring with a zero curve.
+        static func parse(_ text: String) -> EMCurve? {
+            guard let regex = try? NSRegularExpression(
+                pattern: "([0-9.]+)\\s*\\*\\s*EM\\s*/\\s*\\(\\s*EM\\s*\\+\\s*([0-9.]+)\\s*\\)",
+                options: [.caseInsensitive]) else { return nil }
+            let range = NSRange(text.startIndex..., in: text)
+            guard let match = regex.firstMatch(in: text, range: range),
+                  match.numberOfRanges > 2,
+                  let numeratorRange = Range(match.range(at: 1), in: text),
+                  let offsetRange = Range(match.range(at: 2), in: text),
+                  let numerator = Double(text[numeratorRange]),
+                  let offset = Double(text[offsetRange]) else { return nil }
+            return EMCurve(numerator: numerator, offset: offset)
+        }
+    }
+
+    struct Amplifying: Decodable, Sendable {
+        let emBonusFormula: String
+        /// Keyed by the data's own names: `meltPyroTrigger`, `vaporizeHydroTrigger`…
+        let coefficients: [String: Double]
+    }
+
+    struct LevelMultiplier: Decodable, Sendable {
+        let character: Double
+        let monster: Double
+    }
+
+    struct Transformative: Decodable, Sendable {
+        let emBonusFormula: String
+        /// Keyed by reaction: `hyperbloom`, `overloaded`, `swirl`…
+        let coefficients: [String: Double]
+        /// Keyed by character level as a string: "70", "80", "85", "90".
+        let levelMultiplier: [String: LevelMultiplier]
+    }
+
+    struct Catalyze: Decodable, Sendable {
+        let emBonusFormula: String
+        let coefficients: [String: Double]
+    }
+
     let resMultiplier: ResMultiplier
+    let amplifying: Amplifying
+    let transformative: Transformative
+    let catalyze: Catalyze
     let workedExample: WorkedExample
 }
 

@@ -38,12 +38,26 @@ struct AbyssDataLibrary: Sendable {
     /// Newest first.
     let cycles: [AbyssCycle]
 
+    /// Damage profiles at base talent levels. Constellation-aware callers go
+    /// through `profile(for:constellation:)` instead.
     let profilesByCharacterID: [String: AbyssDamageProfile]
+    /// Every talent-level combination a constellation can reach, per character.
+    /// At most four entries each, all built at load: the scorer must never parse
+    /// a talent table while it is running.
+    private let profileVariants: [String: [AbyssTalentLevels: AbyssDamageProfile]]
+    /// Which talent each constellation level raises by three.
+    let talentBoostsByCharacterID: [String: [Int: AbyssTalentSlot]]
+    /// Numbers read out of `damage-formula.json`, or the port's own values when
+    /// the file could not be read — see `diagnostics.damageFormulaUnread`.
+    let damageConstants: AbyssDamageConstants
     /// Whether each character can heal or shield the party. Derived by regex
     /// over their talent text, and needed for every team the scorer looks at —
     /// which is hundreds of thousands of times per run, so it is resolved once
     /// here instead.
     let sustainByCharacterID: [String: AbyssSustain]
+    /// Party-wide buffs each character's talents grant, resolved from
+    /// `tuning.json`'s `talentPartyBuff` against the character data.
+    let talentPartyBuffsByCharacterID: [String: [AbyssTalentPartyBuff]]
     let moonsignIDs: Set<String>
     let hexereiIDs: Set<String>
     let stellarJubileeIDs: Set<String>
@@ -88,30 +102,115 @@ struct AbyssDataLibrary: Sendable {
         stellarJubileeIDs = Set(tuning?.stellarJubileeCharacterIds ?? [])
 
         var diagnostics = AbyssParseDiagnostics()
+        damageConstants = AbyssDamageConstants(formula: damageFormula, diagnostics: &diagnostics)
+
         var profiles: [String: AbyssDamageProfile] = [:]
+        var variants: [String: [AbyssTalentLevels: AbyssDamageProfile]] = [:]
+        var boosts: [String: [Int: AbyssTalentSlot]] = [:]
         var sustain: [String: AbyssSustain] = [:]
         profiles.reserveCapacity(characters.count)
+        variants.reserveCapacity(characters.count)
         sustain.reserveCapacity(characters.count)
         for character in characters {
-            profiles[character.id] = Self.buildProfile(for: character, diagnostics: &diagnostics)
+            let base = Self.buildProfile(for: character, levels: .base, diagnostics: &diagnostics)
+            profiles[character.id] = base
             sustain[character.id] = AbyssTeamContext.capabilities(of: character)
+
+            var boosted: [Int: AbyssTalentSlot] = [:]
+            for constellation in character.constellations {
+                if let slot = AbyssTextParser.boostedTalent(byConstellation: constellation.description,
+                                                            of: character) {
+                    boosted[constellation.level] = slot
+                }
+            }
+            boosts[character.id] = boosted
+
+            // The reachable combinations only, so a character whose data has no
+            // lv13 column costs nothing beyond the base profile they already had.
+            var table: [AbyssTalentLevels: AbyssDamageProfile] = [.base: base]
+            for slots in [[AbyssTalentSlot.skill], [.burst], [.skill, .burst]] {
+                var levels = AbyssTalentLevels.base
+                for slot in slots { levels.raise(slot) }
+                guard table[levels] == nil else { continue }
+                var throwaway = AbyssParseDiagnostics()
+                table[levels] = Self.buildProfile(for: character, levels: levels,
+                                                  diagnostics: &throwaway)
+            }
+            variants[character.id] = table
         }
         profilesByCharacterID = profiles
+        profileVariants = variants
+        talentBoostsByCharacterID = boosts
         sustainByCharacterID = sustain
+
+        // The party-buff table names a character and one of their scaling rows
+        // by label. Resolving it here rather than at scoring time means the
+        // label matching happens once, and a row that has been renamed shows up
+        // in `diagnostics` — and fails a test — instead of quietly contributing
+        // nothing.
+        var talentBuffs: [String: [AbyssTalentPartyBuff]] = [:]
+        for entry in tuning?.talentPartyBuff ?? [] {
+            guard let character = charactersByID[entry.characterId] else {
+                diagnostics.talentPartyBuffUnresolved.insert("\(entry.characterId): no such character")
+                continue
+            }
+            let talent = entry.talent == .skill ? character.elementalSkill : character.elementalBurst
+            guard let value = AbyssTextParser.talentPercentage(in: talent, label: entry.label,
+                                                               index: entry.valueIndex ?? 0) else {
+                diagnostics.talentPartyBuffUnresolved.insert("\(entry.characterId): \(entry.label)")
+                continue
+            }
+            let kind: AbyssTalentPartyBuff.Kind = entry.kind == .flatATKFromBaseATK
+                ? .flatATKFromBaseATK
+                : .elementalDMG
+            talentBuffs[entry.characterId, default: []].append(
+                AbyssTalentPartyBuff(kind: kind, value: value * entry.uptime))
+        }
+        talentPartyBuffsByCharacterID = talentBuffs
+
         self.diagnostics = diagnostics
     }
 
+    /// The talent levels a character reads at, given how many constellations
+    /// they have unlocked.
+    ///
+    /// C3 and C5 each raise one talent by three; which one is written in the
+    /// constellation text and resolved at load. A character whose data carries
+    /// no `lv13` column falls back to `lv10` inside the parser, so this is safe
+    /// to ask for whatever the data holds.
+    func talentLevels(for characterID: String, constellation: Int) -> AbyssTalentLevels {
+        guard constellation > 0, let boosts = talentBoostsByCharacterID[characterID] else {
+            return .base
+        }
+        var levels = AbyssTalentLevels.base
+        for (level, slot) in boosts where level <= constellation {
+            levels.raise(slot)
+        }
+        return levels
+    }
+
+    func profile(for characterID: String, constellation: Int) -> AbyssDamageProfile? {
+        guard let table = profileVariants[characterID] else { return nil }
+        return table[talentLevels(for: characterID, constellation: constellation)] ?? table[.base]
+    }
+
     private static func buildProfile(for character: AbyssCharacter,
+                                     levels: AbyssTalentLevels,
                                      diagnostics: inout AbyssParseDiagnostics) -> AbyssDamageProfile {
         var hits: [AbyssDamageProfile.Term] = []
-        for (multiplier, basis) in AbyssTextParser.talentDamageEntries(character.elementalSkill, diagnostics: &diagnostics) {
+        for (multiplier, basis) in AbyssTextParser.talentDamageEntries(
+            character.elementalSkill, levelKey: levels.skill, diagnostics: &diagnostics) {
             hits.append(.init(multiplier: multiplier, basis: basis, category: .skill))
         }
-        for (multiplier, basis) in AbyssTextParser.talentDamageEntries(character.elementalBurst, diagnostics: &diagnostics) {
+        for (multiplier, basis) in AbyssTextParser.talentDamageEntries(
+            character.elementalBurst, levelKey: levels.burst, diagnostics: &diagnostics) {
             hits.append(.init(multiplier: multiplier, basis: basis, category: .burst))
         }
         for (multiplier, basis) in AbyssTextParser.normalAttackCombo(character) {
             hits.append(.init(multiplier: multiplier, basis: basis, category: .normal))
+        }
+        if let (multiplier, basis) = AbyssTextParser.chargedAttack(character) {
+            hits.append(.init(multiplier: multiplier, basis: basis, category: .charged))
         }
 
         // Collapse to one term per (basis, category). Every hit in a pair shares
