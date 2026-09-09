@@ -16,7 +16,12 @@ struct AbyssResultsView: View {
                 emptyState
             } else {
                 ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 22) {
+                    // Lazy: a full run is four floors of five teams of four
+                    // members, and every member row carries two portraits and a
+                    // handful of formatted strings. Building all of them to show
+                    // the first screenful is what made opening this section
+                    // hitch.
+                    LazyVStack(alignment: .leading, spacing: 22) {
                         VStack(alignment: .leading, spacing: 6) {
                             Label(text.abyssArtifactAdviceNotice, systemImage: "seal")
                             if viewModel.showcase != nil {
@@ -135,7 +140,7 @@ struct AbyssResultsView: View {
                                    tint: character?.element.accentColor ?? LauncherPalette.mist,
                                    size: 34, cornerRadius: 8)
 
-                Text(character?.name ?? characterID)
+                Text(character.map { text.pick(en: $0.name, vi: $0.nameVI) } ?? characterID)
                     .font(.system(.subheadline, design: .rounded, weight: .semibold))
                     .foregroundStyle(character.map { RarityAppearance.genshin($0.rarity).accent }
                         ?? LauncherPalette.parchment)
@@ -175,7 +180,7 @@ struct AbyssResultsView: View {
                                    systemImage: character?.weaponType.symbolName ?? "wand.and.rays",
                                    tint: LauncherPalette.mist.opacity(0.7),
                                    size: 20, cornerRadius: 5)
-                Text(weapon?.name ?? "—")
+                Text(weapon.map { text.pick(en: $0.name, vi: $0.nameVI) } ?? "—")
                     .font(.system(size: 10, design: .rounded))
                     .foregroundStyle(weapon.map { RarityAppearance.genshin($0.rarity).accent.opacity(0.85) }
                         ?? LauncherPalette.mist.opacity(0.6))
@@ -185,7 +190,7 @@ struct AbyssResultsView: View {
                 // next to a weapon from a full-roster search would read as a
                 // claim about their account.
                 if let weaponID = option?.weaponID, viewModel.owns(weaponID: weaponID) {
-                    Text("R\(viewModel.roster.refinement(for: weaponID))")
+                    Text("R\(viewModel.refinement(for: weaponID))")
                         .font(.system(size: 9, design: .monospaced))
                         .foregroundStyle(LauncherPalette.mist.opacity(0.45))
                 }
@@ -261,7 +266,9 @@ struct AbyssResultsView: View {
 
     /// A 4-piece set reads as one name; two 2-piece sets read as a pair.
     private func setNames(_ ids: [String]) -> String {
-        let names = ids.map { viewModel.artifactSet($0)?.name ?? $0 }
+        let names = ids.map { id in
+            viewModel.artifactSet(id).map { text.pick(en: $0.name, vi: $0.nameVI) } ?? id
+        }
         return ids.count == 1 ? names.joined() : names.joined(separator: " + ")
     }
 

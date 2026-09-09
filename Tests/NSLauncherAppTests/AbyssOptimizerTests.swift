@@ -134,4 +134,72 @@ final class AbyssOptimizerTests: XCTestCase {
         XCTAssertEqual(output.reports.first?.teams.count, 5)
         XCTAssertLessThan(elapsed, 20, "a single floor over a 40-character pool should not take this long")
     }
+
+    /// The two pool flags widen characters and weapons independently: "any
+    /// weapon" can pair with "owned characters only", or the reverse, without
+    /// one side dragging the other along.
+    func testCharacterAndWeaponPoolsWidenIndependently() async throws {
+        let optimizer = try makeOptimizer()
+        // One weapon nobody in this small roster particularly wants, so a team
+        // reaching for something else is a visible signal the pool opened up.
+        let roster = AbyssRoster(
+            characters: [.init(id: "hu-tao"), .init(id: "bennett"), .init(id: "xingqiu"), .init(id: "diona")],
+            weapons: [.init(id: "dragons-bane")])
+
+        let restricted = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 1))
+        XCTAssertEqual(Set(restricted.consideredCharacterIDs), Set(roster.characterIDs),
+                       "with neither flag set, only the four owned characters should be considered")
+        let restrictedTeam = try XCTUnwrap(restricted.reports.first?.teams.first)
+        for characterID in restrictedTeam.memberIDs {
+            let weaponID = restrictedTeam.assignment[characterID]?.weaponID
+            XCTAssertTrue(weaponID == nil || weaponID == "dragons-bane",
+                          "\(characterID) was assigned \(weaponID ?? "nil"), outside the owned-weapon roster")
+        }
+
+        let fullCharacters = await optimizer.run(AbyssOptimizerRequest(
+            roster: roster, usesFullCharacterPool: true, floors: [12], topN: 1))
+        XCTAssertGreaterThan(fullCharacters.consideredCharacterIDs.count, roster.characters.count,
+                             "usesFullCharacterPool should widen the character pool")
+
+        let fullWeapons = await optimizer.run(AbyssOptimizerRequest(
+            roster: roster, usesFullWeaponPool: true, floors: [12], topN: 1))
+        XCTAssertEqual(Set(fullWeapons.consideredCharacterIDs), Set(roster.characterIDs),
+                       "usesFullWeaponPool alone should not widen the character pool")
+        let fullWeaponsTeam = try XCTUnwrap(fullWeapons.reports.first?.teams.first)
+        let usesOutsideWeapon = fullWeaponsTeam.memberIDs.contains { characterID in
+            let weaponID = fullWeaponsTeam.assignment[characterID]?.weaponID
+            return weaponID != nil && weaponID != "dragons-bane"
+        }
+        XCTAssertTrue(usesOutsideWeapon,
+                      "opening the weapon pool should let someone use a weapon outside the owned roster")
+    }
+
+    /// Even with the pool widened, a weapon the player actually owns should
+    /// still be credited with its real refinement — widening *which* weapons
+    /// are candidates is not the same as forgetting what is already known
+    /// about the ones that are owned.
+    ///
+    /// The candidate lists are pinned to Hu Tao's actual best-in-slot weapon
+    /// and set rather than the library's full lists: `gearOptions` ranks
+    /// against whichever set is first in an arbitrary `sets` list, and Hu Tao
+    /// is HP-scaling, so an unrelated first set would make Homa look weak for
+    /// reasons that have nothing to do with refinement.
+    func testFullPoolStillCreditsOwnedRefinement() async throws {
+        let optimizer = try makeOptimizer()
+        let character = try XCTUnwrap(library.charactersByID["hu-tao"])
+        let homa = try XCTUnwrap(library.weaponsByID["staff-of-homa"])
+        let crimsonWitch = try XCTUnwrap(library.artifactSetsByID["crimson-witch-of-flames"])
+
+        var r5Roster = AbyssRoster(characters: [.init(id: "hu-tao")], weapons: [.init(id: "staff-of-homa")])
+        r5Roster.weapons[0].refinement = 5
+        var r1Roster = r5Roster
+        r1Roster.weapons[0].refinement = 1
+
+        let r5 = try XCTUnwrap(optimizer.gearOptions(for: character, weapons: [homa], sets: [crimsonWitch],
+                                                      roster: r5Roster).first)
+        let r1 = try XCTUnwrap(optimizer.gearOptions(for: character, weapons: [homa], sets: [crimsonWitch],
+                                                      roster: r1Roster).first)
+        XCTAssertGreaterThan(r5.soloScore, r1.soloScore,
+                             "R5 should outscore R1 on the same character and weapon")
+    }
 }

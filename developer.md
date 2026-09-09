@@ -138,6 +138,7 @@ stability risks. Runtime behavior depends on the installed Wine build.
 | Abyss roster         | `~/Library/Application Support/NSLauncher/abyss-roster.json`     |
 | Abyss showcase cache | `~/Library/Application Support/NSLauncher/abyss-showcase.json`   |
 | Abyss cycle override | `~/Library/Application Support/NSLauncher/abyss-cycles/*.json`   |
+| HoYoLAB credentials  | macOS Keychain, service `com.ns-launcher.abyss.hoyolab` (not a file) |
 | Managed Wine         | `~/Library/Application Support/NSLauncher/wine`                  |
 | Game logs            | `~/Library/Logs/NSLauncher`                                      |
 | Download/cache data  | `~/Library/Caches/NSLauncher`                                    |
@@ -294,6 +295,64 @@ Regenerate it with `scripts/generate-abyss-game-ids.py` whenever characters,
 weapons or artifact sets are added — a stale table makes an import quietly
 return fewer characters. The script refuses to write a table that lost entries,
 and `AbyssShowcaseImportTests` pins it to the data set.
+
+### Full roster import (HoYoLAB)
+
+`AbyssHoyolabClient` reads a player's *complete* character list — not capped at
+eight like the Showcase — from HoYoLAB's Battle Chronicle, on the *overseas*
+Game Record host (`sg-public-api.hoyolab.com/event/game_record/genshin/api/character/list`)
+— not `api-takumi-record.mihoyo.com/game_record/app/genshin/api/...`, which is
+the mainland-China host in `genshin.py`'s own routing table and rejects an
+overseas `ltuid_v2`/`ltoken_v2` session outright (an early version of this
+client used that host by mistake and every real import failed with "invalid
+cookies" until the mixup was found). It trades Enka's "no login"
+property for a much wider one: the request needs the player's own HoYoLAB
+session (`ltuid_v2`/`ltoken_v2`, pasted in by hand from their browser's
+cookies), and only returns anything if they separately turned on "Character
+Details" under their HoYoLAB privacy settings — a toggle most players have
+never touched, unlike Enka's in-game one.
+
+This is not an endpoint HoYoverse documents. The request shape, the app-version/
+client-type header pair, and the Dynamic Secret salt come from the
+actively-maintained open-source `genshin.py` client
+(`github.com/thesadru/genshin.py`) — arrived at by the same kind of reverse
+engineering this whole feature already leans on for Enka and Yatta, and just as
+liable to stop working the day HoYoverse changes it, with no notice. The `ds`
+header (`AbyssHoyolabClient.dynamicSecret`) is `"{t},{r},{md5("salt=...&t=...&r=...")}"`;
+`computeDynamicSecret` is the pure half, pinned in
+`AbyssHoyolabClientTests.testDynamicSecretMatchesTheReferenceImplementation`
+against a value computed independently in Python from the same formula, so a
+typo in the salt or the field order fails a test instead of a silent 401. What
+that test *cannot* do is confirm the whole pipeline against a real account —
+nobody's live login credentials belong in this repository or in a chat with an
+AI assistant, so the network path is unverified pending the first real run.
+`HoyolabCharacter.weapon.affix_level` is passed straight through as the
+refinement (1-5) rather than offset by one the way Enka's `affixMap` is —
+`genshin.py`'s model applies no such offset for this field, which is the best
+evidence available without a live account; if imported weapons come back one
+refinement short, that assumption is the first thing to check.
+
+Because HoYoLAB's character list carries no artifact detail, an import from it
+marks characters and their equipped weapon owned (with real constellation and
+refinement) but never sets `.measured` — those characters are scored on the
+same standardised build as anyone else marked owned by hand. Only a Showcase
+import produces `.measured` stats. The two imports share the UID field (it
+names the same account either way) but are otherwise independent: running one
+does not touch the other's data, and both follow the same "only ever adds,
+never removes what the player ticked by hand" rule the original Showcase
+import established.
+
+The credentials themselves live in the macOS Keychain
+(`AbyssHoyolabCredentialStore`), not in `settings.json` — that file is plain
+JSON already used for several preferences, and a live login session is a
+different kind of thing that belongs in the one place macOS actually protects
+secrets. They are saved only when the player actually presses import, not on
+every keystroke, and reload automatically on the next launch.
+`AbyssHoyolabCredentialStoreTests` exercises the *real* Keychain rather than a
+double — unlike everything else this app persists, mocking the OS keychain API
+would not have caught anything the API itself does not already guarantee, and
+a probe confirmed local, ad-hoc-signed builds read/write
+`kSecClassGenericPassword` items with no permission prompt.
 
 ### Character and weapon portraits
 

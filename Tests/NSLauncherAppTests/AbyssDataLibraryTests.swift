@@ -90,4 +90,19 @@ final class AbyssDataLibraryTests: XCTestCase {
                           "\(character.id) uses \(character.weaponType) but no such weapon exists in the data")
         }
     }
+
+    /// A missing `nameVI` would silently fall back to showing English in the
+    /// Vietnamese UI with nothing to notice — this pins that every record
+    /// actually carries one, not just that decoding didn't throw.
+    func testEveryRecordHasAVietnameseName() {
+        for character in library.characters {
+            XCTAssertFalse(character.nameVI.isEmpty, "\(character.id) has no nameVI")
+        }
+        for weapon in library.weapons {
+            XCTAssertFalse(weapon.nameVI.isEmpty, "\(weapon.id) has no nameVI")
+        }
+        for set in library.artifactSets {
+            XCTAssertFalse(set.nameVI.isEmpty, "\(set.id) has no nameVI")
+        }
+    }
 }

@@ -15,7 +15,8 @@
     "bestCharacters": [
       "Bất kỳ nhân vật dùng Cung nào ở giai đoạn đầu game"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Cung Săn Bắn"
   },
   {
     "id": "seasoned-hunters-bow",
@@ -33,7 +34,8 @@
     "bestCharacters": [
       "Bất kỳ nhân vật dùng Cung nào ở giai đoạn đầu game"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Cung Săn Bắn Tôi Luyện"
   },
   {
     "id": "raven-bow",
@@ -56,7 +58,8 @@
       "Yoimiya",
       "Fischl"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Cung Lông Quạ"
   },
   {
     "id": "sharpshooters-oath",
@@ -79,7 +82,8 @@
       "Tartaglia",
       "Ganyu"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Lời Thề Xạ Thủ Thần"
   },
   {
     "id": "recurve-bow",
@@ -102,7 +106,8 @@
       "Không có nhân vật Cung nào scale theo HP rõ rệt",
       "chỉ phù hợp dùng tạm giai đoạn đầu"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Cung Phản Khúc"
   },
   {
     "id": "slingshot",
@@ -125,7 +130,8 @@
       "Ganyu",
       "Yoimiya (giai đoạn đầu)"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Nỏ Kéo"
   },
   {
     "id": "messenger",
@@ -148,7 +154,8 @@
       "Ganyu",
       "Tartaglia"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Tín Sứ"
   },
   {
     "id": "favonius-warbow",
@@ -172,7 +179,8 @@
       "Gorou",
       "Kujou Sara"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Cung Tây Phong"
   },
   {
     "id": "the-stringless",
@@ -196,7 +204,8 @@
       "Tighnari",
       "Kujou Sara"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Tuyệt Huyền"
   },
   {
     "id": "sacrificial-bow",
@@ -220,7 +229,8 @@
       "Kujou Sara",
       "Tighnari"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Cung Tế Lễ"
   },
   {
     "id": "royal-bow",
@@ -244,7 +254,8 @@
       "Ganyu",
       "Tartaglia"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Trường Cung Tông Thất"
   },
   {
     "id": "rust",
@@ -267,7 +278,8 @@
       "Fischl",
       "Yoimiya"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Cung Rỉ Sét"
   },
   {
     "id": "prototype-crescent",
@@ -291,7 +303,8 @@
       "Tartaglia",
       "Yoimiya"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Mẫu Đạm Nguyệt"
   },
   {
     "id": "compound-bow",
@@ -314,7 +327,8 @@
       "Yoimiya",
       "Fischl"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Cung Thép"
   },
   {
     "id": "blackcliff-warbow",
@@ -337,7 +351,8 @@
       "Yoimiya",
       "Ganyu"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Cung Hắc Nham"
   },
   {
     "id": "the-viridescent-hunt",
@@ -361,7 +376,8 @@
       "Yoimiya",
       "Tartaglia (dùng để gom quái)"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Cung Sắc Xanh"
   },
   {
     "id": "alley-hunter",
@@ -384,7 +400,8 @@
       "Fischl",
       "Gorou (nhân vật hỗ trợ ngoài trận)"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Thợ Săn Hẻm Tối"
   },
   {
     "id": "fading-twilight",
@@ -407,7 +424,8 @@
       "Yoimiya",
       "Tartaglia"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Lạc Hà"
   },
   {
     "id": "mitternachts-waltz",
@@ -429,7 +447,8 @@
     "bestCharacters": [
       "Fischl"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Điệu Van Ban Đêm"
   },
   {
     "id": "windblume-ode",
@@ -452,7 +471,8 @@
       "Tighnari",
       "Yoimiya"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Bài Ca Hoa Gió"
   },
   {
     "id": "hamayumi",
@@ -475,7 +495,8 @@
       "Yoimiya",
       "Gorou"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Cung Trừ Ma"
   },
   {
     "id": "predator",
@@ -497,7 +518,8 @@
     "bestCharacters": [
       "Aloy"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Kẻ Săn Mồi"
   },
   {
     "id": "mouuns-moon",
@@ -520,7 +542,8 @@
       "Fischl",
       "Gorou (đội hình có tổng Năng lượng tối đa cao)"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Ánh Trăng Mouun"
   },
   {
     "id": "kings-squire",
@@ -543,7 +566,8 @@
       "Tighnari",
       "Collei"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Cận Vệ Nhà Vua"
   },
   {
     "id": "end-of-the-line",
@@ -567,7 +591,8 @@
       "Kujou Sara",
       "Gorou"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Sông Cạn"
   },
   {
     "id": "ibis-piercer",
@@ -590,7 +615,8 @@
       "Tighnari",
       "Ganyu"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Mỏ Cò Xuyên Thấu"
   },
   {
     "id": "scion-of-the-blazing-sun",
@@ -614,7 +640,8 @@
       "Ganyu",
       "Tighnari"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Hậu Duệ Mặt Trời"
   },
   {
     "id": "song-of-stillness",
@@ -637,7 +664,8 @@
       "Yoimiya",
       "Ganyu (DPS cung trong đội có healer)"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Khúc Ca Tĩnh Lặng"
   },
   {
     "id": "cloudforged",
@@ -660,7 +688,8 @@
       "Sethos (vũ khí đặc trưng)",
       "Tighnari"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Trúc Vân"
   },
   {
     "id": "range-gauge",
@@ -682,7 +711,8 @@
     "bestCharacters": [
       "DPS/sub-DPS cung trong đội có healer"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Máy Đo Cự Ly"
   },
   {
     "id": "flower-wreathed-feathers",
@@ -706,7 +736,8 @@
       "Tighnari",
       "Yoimiya"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Lông Vũ Thêu Hoa"
   },
   {
     "id": "chain-breaker",
@@ -729,7 +760,8 @@
       "Chasca",
       "Ororon (đội đa nguyên tố Natlan)"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Phá Xích"
   },
   {
     "id": "sequence-of-solitude",
@@ -751,7 +783,8 @@
     "bestCharacters": [
       "Yelan và các DPS cung scale theo HP"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Thanh Âm Lạnh Lẽo"
   },
   {
     "id": "snare-hook",
@@ -774,7 +807,8 @@
       "Tighnari",
       "Fischl (DPS/sub-DPS phản ứng)"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Móc Cạm Bẫy"
   },
   {
     "id": "rainbow-serpents-rain-bow",
@@ -797,7 +831,8 @@
       "Fischl",
       "Yelan (gây sát thương khi rời sân)"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Dây Mưa Của Cầu Vồng"
   },
   {
     "id": "jade-vista",
@@ -822,7 +857,8 @@
       "Chasca",
       "Yelan"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Cung Huyền Lê"
   },
   {
     "id": "covenant-of-frost-and-snow",
@@ -845,7 +881,8 @@
       "Fischl",
       "Tighnari (DPS/sub-DPS tạo phản ứng)"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Thệ Ước Sương Tuyết"
   },
   {
     "id": "skyward-harp",
@@ -869,7 +906,8 @@
       "Ganyu",
       "Tighnari"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Cánh Thiên Không"
   },
   {
     "id": "amos-bow",
@@ -893,7 +931,8 @@
       "Ganyu",
       "Childe (Tartaglia)"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Cung Amos"
   },
   {
     "id": "elegy-for-the-end",
@@ -916,7 +955,8 @@
       "Venti",
       "Fischl (hỗ trợ/battery Tinh Thông Nguyên Tố)"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Tiếng Thở Dài Vô Tận"
   },
   {
     "id": "polar-star",
@@ -939,7 +979,8 @@
       "Gaming",
       "Yoimiya"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Ngôi Sao Cực Đông"
   },
   {
     "id": "aqua-simulacra",
@@ -963,7 +1004,8 @@
       "Childe (Tartaglia)",
       "Nilou"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Nhược Thủy"
   },
   {
     "id": "thundering-pulse",
@@ -986,7 +1028,8 @@
       "Yoimiya",
       "Childe (Tartaglia)"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Sấm Sét Rung Động"
   },
   {
     "id": "hunters-path",
@@ -1008,7 +1051,8 @@
     "bestCharacters": [
       "Tighnari (vũ khí gắn liền khi ra mắt Sumeru)"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Con Đường Thợ Săn"
   },
   {
     "id": "the-first-great-magic",
@@ -1031,7 +1075,8 @@
       "Lyney (chủ đề ảo thuật sư trùng khớp",
       "DPS Charged Attack)"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Màn Ảo Thuật Đầu Tiên"
   },
   {
     "id": "silvershower-heartstrings",
@@ -1053,7 +1098,8 @@
     "bestCharacters": [
       "Yelan (DPS cung scale theo HP)"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Màn Mưa Tơ Lòng"
   },
   {
     "id": "astral-vultures-crimson-plumage",
@@ -1075,7 +1121,8 @@
     "bestCharacters": [
       "Chasca (DPS cung Anemo/Swirl)"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Xích Vũ Tinh Tựu"
   },
   {
     "id": "the-daybreak-chronicles",
@@ -1098,7 +1145,8 @@
       "Venti (vũ khí signature",
       "BiS)"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Biên Niên Sử Bình Minh"
   },
   {
     "id": "golden-frostbound-oath",
@@ -1121,6 +1169,7 @@
       "Linnea (vũ khí signature",
       "BiS)"
     ],
-    "sourceFile": "vu-khi/cung.md"
+    "sourceFile": "vu-khi/cung.md",
+    "nameVI": "Lời Thề Vàng Sương Giá"
   }
 ]

@@ -143,7 +143,8 @@
       }
     ],
     "abyssRoleNotes": "Nhà Lữ Hành luôn là lựa chọn linh hoạt chống chỉ định đội hình ở Trầm Thủy nhờ base ATK cao và buff cộng dồn theo nguyên tố đã cộng hưởng (Anemo +10% Tỉ lệ bạo kích, Geo +20% DEF, Electro +20% Nguyên Tố Hồi, Dendro +60 EM, Hydro +20% HP, Pyro +20% ATK, Cryo +20% Tỉ lệ st bạo kích, cộng dồn dù đứng nguyên tố khác). Hỗ trợ hút nguyên tố hoặc kích hoạt phản ứng lan toả; Anemo Traveler + Hyperbloom/Electro-Charged là combo phổ biến.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Nhà Lữ Hành (Phong)"
   },
   {
     "id": "traveler-geo",
@@ -270,7 +271,8 @@
       }
     ],
     "abyssRoleNotes": "Nhà Lữ Hành luôn là lựa chọn linh hoạt chống chỉ định đội hình ở Trầm Thủy nhờ base ATK cao và buff cộng dồn theo nguyên tố đã cộng hưởng (Anemo +10% Tỉ lệ bạo kích, Geo +20% DEF, Electro +20% Nguyên Tố Hồi, Dendro +60 EM, Hydro +20% HP, Pyro +20% ATK, Cryo +20% Tỉ lệ st bạo kích, cộng dồn dù đứng nguyên tố khác). Geo Traveler hỗ trợ khiên/kháng.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Nhà Lữ Hành (Nham)"
   },
   {
     "id": "traveler-electro",
@@ -397,7 +399,8 @@
       }
     ],
     "abyssRoleNotes": "Nhà Lữ Hành luôn là lựa chọn linh hoạt chống chỉ định đội hình ở Trầm Thủy nhờ base ATK cao và buff cộng dồn theo nguyên tố đã cộng hưởng (Anemo +10% Tỉ lệ bạo kích, Geo +20% DEF, Electro +20% Nguyên Tố Hồi, Dendro +60 EM, Hydro +20% HP, Pyro +20% ATK, Cryo +20% Tỉ lệ st bạo kích, cộng dồn dù đứng nguyên tố khác). Electro Traveler thường đóng vai trò hỗ trợ hút nguyên tố hoặc kích hoạt phản ứng lan toả.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Nhà Lữ Hành (Lôi)"
   },
   {
     "id": "traveler-dendro",
@@ -524,7 +527,8 @@
       }
     ],
     "abyssRoleNotes": "Nhà Lữ Hành luôn là lựa chọn linh hoạt chống chỉ định đội hình ở Trầm Thủy nhờ base ATK cao và buff cộng dồn theo nguyên tố đã cộng hưởng (Anemo +10% Tỉ lệ bạo kích, Geo +20% DEF, Electro +20% Nguyên Tố Hồi, Dendro +60 EM, Hydro +20% HP, Pyro +20% ATK, Cryo +20% Tỉ lệ st bạo kích, cộng dồn dù đứng nguyên tố khác). Dendro Traveler thường đóng vai trò hỗ trợ hút nguyên tố hoặc kích hoạt phản ứng lan toả.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Nhà Lữ Hành (Thảo)"
   },
   {
     "id": "traveler-hydro",
@@ -693,7 +697,8 @@
       }
     ],
     "abyssRoleNotes": "Nhà Lữ Hành luôn là lựa chọn linh hoạt chống chỉ định đội hình ở Trầm Thủy nhờ base ATK cao và buff cộng dồn theo nguyên tố đã cộng hưởng (Anemo +10% Tỉ lệ bạo kích, Geo +20% DEF, Electro +20% Nguyên Tố Hồi, Dendro +60 EM, Hydro +20% HP, Pyro +20% ATK, Cryo +20% Tỉ lệ st bạo kích, cộng dồn dù đứng nguyên tố khác). Hydro Traveler là DPS on-field linh hoạt cho đội cần chủ động Vaporize/Hồi máu.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Nhà Lữ Hành (Thủy)"
   },
   {
     "id": "traveler-pyro",
@@ -869,7 +874,8 @@
       }
     ],
     "abyssRoleNotes": "Nhà Lữ Hành luôn là lựa chọn linh hoạt chống chỉ định đội hình ở Trầm Thủy nhờ base ATK cao và buff cộng dồn theo nguyên tố đã cộng hưởng (Anemo +10% Tỉ lệ bạo kích, Geo +20% DEF, Electro +20% Nguyên Tố Hồi, Dendro +60 EM, Hydro +20% HP, Pyro +20% ATK, Cryo +20% Tỉ lệ st bạo kích, cộng dồn dù đứng nguyên tố khác). Pyro Traveler là DPS on-field gắn với cơ chế Nightsoul của Natlan.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Nhà Lữ Hành (Hỏa)"
   },
   {
     "id": "traveler-cryo",
@@ -1043,7 +1049,8 @@
       }
     ],
     "abyssRoleNotes": "Nhà Lữ Hành luôn là lựa chọn linh hoạt chống chỉ định đội hình ở Trầm Thủy nhờ base ATK cao và buff cộng dồn theo nguyên tố đã cộng hưởng (Anemo +10% Tỉ lệ bạo kích, Geo +20% DEF, Electro +20% Nguyên Tố Hồi, Dendro +60 EM, Hydro +20% HP, Pyro +20% ATK, Cryo +20% Tỉ lệ st bạo kích, cộng dồn dù đứng nguyên tố khác). Cryo Traveler là DPS on-field gắn với cơ chế Stellar Glimmer của Snezhnaya.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Nhà Lữ Hành (Băng)"
   },
   {
     "id": "albedo",
@@ -1221,7 +1228,8 @@
       }
     ],
     "abyssRoleNotes": "DPS phụ/hỗ trợ off-field theo DEF, dựng Solar Isotoma làm bệ nhảy liên tục kích Nhảy để cày sát thương diện rộng. Combo phổ biến: Albedo + Xiangling/Bennett (Vaporize/Melt buff ATK), hoặc Albedo + nhân vật Kết Tinh (C6) trong đội Geo/Hyperbloom.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Albedo"
   },
   {
     "id": "diluc",
@@ -1401,7 +1409,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính on-field Pyro thuần, dùng cả Kỹ năng lẫn Đòn thường mạnh. Combo phổ biến: Diluc + Kazuha/Sucrose (Xoáy để lan Pyro), hoặc Diluc + hỗ trợ Hydro (Vaporize) như Xingqiu/Yelan.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Diluc"
   },
   {
     "id": "jean",
@@ -1581,7 +1590,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ/hồi máu + hất tung/Xoáy hàng đầu, gần như bắt buộc trong đội cần cứu sinh AoE lớn. Combo phổ biến: Jean + bất kỳ DPS nguyên tố nào (Xoáy tăng sát thương/giảm kháng), Jean + Bennett (đệm/khoả HP).",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Jean"
   },
   {
     "id": "klee",
@@ -1738,7 +1748,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính on-field cực mạnh nhờ hệ số cao + AoE rộng. Combo phổ biến: Klee + Xingqiu (Vaporize Melt Nổ), hoặc Klee + Sucrose/Kazuha (gom mìn Jumpy Dumpty vào 1 điểm).",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Klee"
   },
   {
     "id": "mona",
@@ -1916,7 +1927,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ tăng sát thương/nhân sát thương hàng đầu qua Omen (+60% DMG lên toàn đội đánh trúng). Combo phổ biến: Mona + bất kỳ DPS Hydro/Electro nào (Vaporize/Electro-Charged buff), đội National-style (Hu Tao/Xiangling/Bennett/Mona) từng là đội huyền thoại.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Mona"
   },
   {
     "id": "venti",
@@ -2101,7 +2113,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ gom địch/kiểm soát hàng đầu, DPS off-field khi hút nguyên tố. Combo phổ biến: Venti + bất kỳ DPS AoE nào (gom địch để tối đa hoá sát thương diện rộng), Venti hút Pyro/Cryo cho combo Xoáy lan rộng.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Venti"
   },
   {
     "id": "eula",
@@ -2288,7 +2301,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính on-field bùng nổ (burst DPS) dựa vào Bùng nổ tích lũy Lightfall Sword. Combo phổ biến: Eula + Kaeya/Rosaria (đóng băng/kháng Vật lý giảm), Eula + hỗ trợ tạo khiên/kháng ngắt do bản thân thiếu tự vệ.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Eula"
   },
   {
     "id": "durin",
@@ -2480,7 +2494,8 @@
       }
     ],
     "abyssRoleNotes": "DPS phụ/hỗ trợ off-field linh hoạt Pyro, chuyển đổi 2 trạng thái để phù hợp đội Vaporize/Melt hoặc buff ATK toàn đội. Combo phổ biến: Durin + Prune/Nicole (Hexerei buff cộng dồn), Durin + DPS Hydro/Cryo tận dụng Vaporize/Melt.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Durin"
   },
   {
     "id": "varka",
@@ -2665,7 +2680,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính on-field linh hoạt nguyên tố (song kiếm gây 2 loại DMG cùng lúc), càng mạnh khi đội có 2 nhân vật cùng nguyên tố phụ. Combo phổ biến: Varka + Prune (Hexerei, Anemo Xoáy), Varka + cặp đôi Pyro/Hydro/Electro/Cryo để tối ưu +220% DMG.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Varka"
   },
   {
     "id": "lohen",
@@ -2843,7 +2859,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính on-field Cryo tần suất cao, càng mạnh khi đồng đội gây sát thương lớn để tích Will to Win. Combo phổ biến: Lohen + Nicole/Durin (Hexerei buff), Lohen + DPS phá giáp mạnh để tích Will to Win nhanh.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Lohen"
   },
   {
     "id": "nicole",
@@ -3021,7 +3038,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ buff ATK diện rộng + khiên + sát thương hộ tống (Arcane Projection biến DMG đồng đội thành DMG bổ sung). Combo phổ biến: Nicole + Prune/Durin/Varka/Lohen (Hexerei full buff), Nicole + bất kỳ DPS ATK-scale nào.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Nicole"
   },
   {
     "id": "amber",
@@ -3187,7 +3205,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ hút thù/gây Pyro sớm game, ít dùng ở đội hình cao cấp nhưng vẫn hữu ích để mồi Reverse Melt/Vaporize và hút damage cho đội mỏng máu.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Amber"
   },
   {
     "id": "barbara",
@@ -3353,7 +3372,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ hồi máu chủ lực cho đội cần sustain cao, đặc biệt hợp với Xiangling/Hu Tao (cân bằng HP) hoặc bất kỳ đội nào cần cứu sinh liên tục.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Barbara"
   },
   {
     "id": "bennett",
@@ -3547,7 +3567,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ buff ATK + hồi máu bậc nhất game, gần như universal cho mọi đội on-field DPS vật lý/nguyên tố (ngoại trừ đội cần né Pyro). Combo kinh điển: Bennett + bất kỳ DPS ATK-scale + Xiangling/Kazuha.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Bennett"
   },
   {
     "id": "diona",
@@ -3732,7 +3753,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ khiên + hồi máu Cryo phổ biến, phù hợp mọi đội Cryo/Freeze cần khiên rẻ và sustain nhẹ. Combo phổ biến: Diona + Kaeya/Chongyun (Đóng Băng), Diona + bất kỳ DPS Cryo chính nào.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Diona"
   },
   {
     "id": "fischl",
@@ -3903,7 +3925,8 @@
       }
     ],
     "abyssRoleNotes": "DPS off-field Electro cực bền (Oz gần như luôn tại sân), gần như bắt buộc trong mọi đội cần nguồn Electro ổn định. Combo phổ biến: Fischl + bất kỳ DPS Hydro (Electro-Charged), Fischl + Raiden/Electro support cho Hyperbloom/Aggravate.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Fischl"
   },
   {
     "id": "kaeya",
@@ -4062,7 +4085,8 @@
       }
     ],
     "abyssRoleNotes": "DPS off-field Cryo/tạo Đóng Băng đa năng, chi phí thấp nhưng hiệu quả cao trong đội Freeze/Melt. Combo phổ biến: Kaeya + bất kỳ DPS Hydro (Đóng Băng), Kaeya + Chongyun/Diona.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Kaeya"
   },
   {
     "id": "lisa",
@@ -4228,7 +4252,8 @@
       }
     ],
     "abyssRoleNotes": "DPS/khởi phát Electro linh hoạt, Giữ Kỹ năng gây sát thương lớn theo stack, phù hợp đội Electro-Charged/Aggravate. Combo phổ biến: Lisa + DPS Hydro (Electro-Charged), Lisa + Fischl/Razor.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Lisa"
   },
   {
     "id": "mika",
@@ -4415,7 +4440,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ hồi máu + buff tốc đánh/Vật lý cho đội on-field, đặc biệt hợp đội Vật lý/Cryo cần cả cứu sinh lẫn DPS phụ. Combo phổ biến: Mika + Eula/Diluc (buff Vật lý/tốc đánh).",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Mika"
   },
   {
     "id": "noelle",
@@ -4595,7 +4621,8 @@
       }
     ],
     "abyssRoleNotes": "DPS on-field Vật lý/Geo theo DEF hiếm có, kiêm khiên + tự cứu cho cả đội — cực kỳ tiết kiệm slot đội hình. Combo phổ biến: Noelle mono-DEF (Albedo/Gorou +DEF), hoặc Noelle làm khiên rẻ cho đội khác.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Noelle"
   },
   {
     "id": "razor",
@@ -4773,7 +4800,8 @@
       }
     ],
     "abyssRoleNotes": "DPS on-field Electro/Vật lý bền bỉ, tự cấp năng lượng tốt. Combo phổ biến: Razor + Fischl/Lisa (Electro-Charged/Aggravate), Razor + Bennett (buff ATK).",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Razor"
   },
   {
     "id": "rosaria",
@@ -4939,7 +4967,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ buff Tỉ lệ st bạo kích cho đội + DPS phụ Cryo giá rẻ. Combo phổ biến: Rosaria + bất kỳ DPS Vật lý/Cryo chính nào cần thêm crit rate.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Rosaria"
   },
   {
     "id": "sucrose",
@@ -5103,7 +5132,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ gom địch + buff Tinh Thông Nguyên Tố hàng đầu cho đội phản ứng (Xoáy/Bloom/Electro-Charged). Combo phổ biến: Sucrose + bất kỳ đội cần Xoáy lan rộng và EM cao.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Sucrose"
   },
   {
     "id": "prune",
@@ -5267,7 +5297,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ off-field Anemo chuyển đổi nguyên tố qua Xoáy, buff ATK toàn đội dựa trên ATK cao của chính Prune. Combo phổ biến: Prune + Varka (Hexerei, cùng cần Xoáy), Prune + đội Xoáy đa nguyên tố.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Prune"
   },
   {
     "id": "ineffa",
@@ -5438,7 +5469,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ khiên + khởi phát Lunar-Charged, gần như bắt buộc trong đội Lunar-Charged (Hydro + Electro biến hoá). Combo phổ biến: Ineffa + Flins + 1 Hydro (Xingqiu/Yelan/Columbina) cho vòng lặp Lunar-Charged liên tục.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Ineffa"
   },
   {
     "id": "flins",
@@ -5630,7 +5662,8 @@
       }
     ],
     "abyssRoleNotes": "DPS on-field Electro dồn sát thương Lunar-Charged trực tiếp, cặp bài trùng với Ineffa. Combo phổ biến: Flins + Ineffa + Hydro support (Xingqiu/Yelan/Columbina) cho đội Lunar-Charged mạnh nhất.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Flins"
   },
   {
     "id": "columbina",
@@ -5822,7 +5855,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ/DPS off-field trung tâm cho mọi đội Lunar (Lunar-Charged/Bloom/Crystallize), buff DMG Lunar toàn đội cực mạnh qua cung mệnh. Combo phổ biến: Columbina + Ineffa/Flins (Lunar-Charged), Columbina + Lauma/Nefer (Lunar-Bloom), Columbina + Linnea (Lunar-Crystallize).",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Columbina"
   },
   {
     "id": "linnea",
@@ -5993,7 +6027,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ off-field Geo/hồi máu, trung tâm đội Lunar-Crystallize (Hydro-Crystallize). Combo phổ biến: Linnea + Columbina (Lunar-Crystallize), Linnea + Noelle/Zhongli (Geo Crystallize khiên).",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Linnea"
   },
   {
     "id": "nefer",
@@ -6178,7 +6213,8 @@
       }
     ],
     "abyssRoleNotes": "DPS on-field Dendro EM-scale, tự cung Lunar-Bloom liên tục. Combo phổ biến: Nefer + Lauma/Columbina (Lunar-Bloom), Nefer + nguồn Hydro/Electro ổn định để duy trì Bloom Core. (Chỉ số phụ có EM cơ bản 100 kèm CRIT DMG.)",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Nefer"
   },
   {
     "id": "zibai",
@@ -6397,7 +6433,8 @@
       }
     ],
     "abyssRoleNotes": "DPS Geo scale DEF, gây sát thương Lunar-Crystallize trực tiếp kèm hỗ trợ đồng đội kích hoạt Lunar-Crystallize (chuyển hoá Kết Tinh Hydro thường). Cần build DEF% thay vì ATK%. Kết hợp tốt với Geo Resonance (Enduring Rock) và nhân vật Hydro. Là 1 trong 10 nhân vật Nguyệt Triệu (Moonsign) — mang cùng >=1 nhân vật Nguyệt Triệu khác để đạt Moonsign Level Ascendant Gleam.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Zibai"
   },
   {
     "id": "aino",
@@ -6554,7 +6591,8 @@
       }
     ],
     "abyssRoleNotes": "DPS off-field Hydro ổn định, dễ dùng cho mọi đội cần nguồn Hydro liên tục. Combo phổ biến: Aino + Ineffa (mẹ con, cùng buff Moonsign), Aino + DPS Electro/Pyro/Cryo bất kỳ.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Aino"
   },
   {
     "id": "lauma",
@@ -6732,7 +6770,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ trung tâm đội Bloom/Lunar-Bloom, buff DMG phản ứng cực lớn theo EM. Combo phổ biến: Lauma + Nefer/Columbina (Lunar-Bloom), Lauma + Nahida/Dendro core-Hyperbloom. (Chỉ số phụ có EM cơ bản 200 kèm ascension stat EM 115.2.)",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Lauma"
   },
   {
     "id": "illuga",
@@ -6910,7 +6949,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ off-field buff DMG Geo/Lunar-Crystallize toàn đội, phù hợp đội Geo hoặc Hydro-Crystallize. Combo phổ biến: Illuga + Linnea/Columbina (Lunar-Crystallize), Illuga + Noelle/Albedo (Geo mono).",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Illuga"
   },
   {
     "id": "jahoda",
@@ -7095,7 +7135,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ hồi máu + gây sát thương đa nguyên tố linh hoạt tuỳ đội hình, dễ nhét vào mọi đội 4 nguyên tố cơ bản. Combo phổ biến: Jahoda + đội đa nguyên tố (Pyro/Hydro/Electro/Cryo) để tối ưu hoá buff robot.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Jahoda"
   },
   {
     "id": "dahlia",
@@ -7260,7 +7301,8 @@
       }
     ],
     "abyssRoleNotes": "Support khiên Hydro 4★ scale HP: cấp khiên theo HP tối đa và buff tốc đánh cho DPS đòn thường. Cần build HP%. Hợp đội đòn thường (Freeze/Hydro infusion) và đội cần khiên thay Zhongli khi chưa có.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Dahlia"
   },
   {
     "id": "aloy",
@@ -7422,6 +7464,7 @@
     ],
     "constellations": [],
     "abyssRoleNotes": "DPS Cryo dùng đòn thường (collab Horizon, phát miễn phí). KHÔNG có cung mệnh — game ghi rõ \"Star of Another World: chưa tới lúc\" cho cả C1-C6, nên sức mạnh bị chặn ở mức C0 vĩnh viễn. Vai trò thực tế ở Trầm Thủy hạn chế; chủ yếu dùng khi thiếu DPS Cryo hoặc để lấp slot Cryo cho đội Đóng Băng/Siêu Dẫn.",
-    "sourceFile": "nhan-vat/mondstadt.md"
+    "sourceFile": "nhan-vat/mondstadt.md",
+    "nameVI": "Aloy"
   }
 ]

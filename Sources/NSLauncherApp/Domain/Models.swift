@@ -49,6 +49,17 @@ enum AppLanguage: String, Codable, CaseIterable, Identifiable {
     }
 }
 
+/// Player-selected Traveler gender. Informational only: NS Launcher has no reliable way to map
+/// cutscene files to a gender variant (see `CutsceneFile`), so this is not used to filter or
+/// auto-select anything — it's shown alongside the manual cutscene browser for the player's own
+/// reference.
+enum TravelerGender: String, Codable, CaseIterable, Identifiable {
+    case aether
+    case lumine
+
+    var id: String { rawValue }
+}
+
 /// Voice-over language pack downloaded alongside game resources.
 enum VoiceLanguage: String, Codable, CaseIterable, Identifiable {
     case english
@@ -194,6 +205,33 @@ struct RemovableCache: Identifiable, Hashable {
     let sizeBytes: Int64
 
     var id: Kind { kind }
+}
+
+/// One cutscene video file found under `StreamingAssets/VideoAssets`.
+///
+/// NS Launcher does not know which quest or Traveler-gender variant this file belongs to — see
+/// `QuestAssetAnalysis` above for why that mapping isn't available. This is a plain on-disk
+/// listing for the player to review and open/delete themselves, not a classified one.
+struct CutsceneFile: Identifiable, Hashable {
+    let url: URL
+    let relativePath: String
+    let sizeBytes: Int64
+
+    var id: URL { url }
+}
+
+/// Error from decrypting a cutscene through the user's own GI-cutscenes install.
+enum CutsceneDecryptionError: LocalizedError {
+    /// The tool exited successfully but left no `.mkv` in its output directory. `details` carries
+    /// its captured stdout/stderr so the failure is diagnosable instead of a silent no-op.
+    case decryptedFileNotProduced(details: String)
+
+    var errorDescription: String? {
+        switch self {
+        case let .decryptedFileNotProduced(details):
+            return "GI-cutscenes ran but did not produce a playable file.\(details.isEmpty ? "" : " \(details)")"
+        }
+    }
 }
 
 /// Installation backend selected for a game definition.
@@ -413,6 +451,11 @@ struct AppSettings: Codable, Equatable {
     /// Hours after launch the Home screen's playtime countdown reaches zero. Advisory only — it
     /// never stops the game, only flags the reminder as due (see `LauncherViewModel`).
     var playtimeReminderHours: Double = 3
+    /// Player-selected Traveler gender. See `TravelerGender` — informational only.
+    var travelerGender: TravelerGender = .aether
+    /// Path to a user-installed GI-cutscenes binary, used to decrypt a `.usm` cutscene before
+    /// opening it. Empty by default: NS Launcher never bundles this tool or its decryption keys.
+    var giCutscenesBinaryPath: String = ""
     /// Monotonic settings schema version used for one-time default migrations.
     var settingsVersion: Int = 0
 

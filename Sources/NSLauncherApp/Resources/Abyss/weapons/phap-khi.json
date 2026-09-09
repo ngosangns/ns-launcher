@@ -17,7 +17,8 @@
       "Klee giai đoạn đầu)",
       "chủ yếu để phân giải nguyên liệu"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Nhật Ký Học Sinh"
   },
   {
     "id": "pocket-grimoire",
@@ -36,7 +37,8 @@
       "Vũ khí tạm thời đầu game",
       "dùng để phân giải nguyên liệu"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Sổ Tay Ma Pháp"
   },
   {
     "id": "magic-guide",
@@ -60,7 +62,8 @@
       "Ningguang",
       "Lisa"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Tóm Tắt Ma Pháp"
   },
   {
     "id": "thrilling-tales-of-dragon-slayers",
@@ -83,7 +86,8 @@
       "Đội hình đánh nhanh cần buff ATK ngay khi vào sân trước đòn burst: Xiangling",
       "Bennett-style catalyst DPS"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Câu Chuyện Diệt Rồng"
   },
   {
     "id": "otherworldly-story",
@@ -107,7 +111,8 @@
       "Barbara",
       "Sucrose"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Tiểu Thuyết Dị Giới"
   },
   {
     "id": "emerald-orb",
@@ -131,7 +136,8 @@
       "Yanfei",
       "Lisa"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Quả Cầu Ngọc"
   },
   {
     "id": "twin-nephrite",
@@ -155,7 +161,8 @@
       "farm world: Yanfei",
       "Klee"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Ngọc Sinh Đôi"
   },
   {
     "id": "favonius-codex",
@@ -179,7 +186,8 @@
       "Sucrose",
       "Nahida"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Tây Phong Mật Điển"
   },
   {
     "id": "the-widsith",
@@ -203,7 +211,8 @@
       "Ningguang",
       "Sucrose-team"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Chương Nhạc Lang Thang"
   },
   {
     "id": "sacrificial-fragments",
@@ -227,7 +236,8 @@
       "Kokomi",
       "Nahida"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Mảnh Chương Tế Lễ"
   },
   {
     "id": "royal-grimoire",
@@ -251,7 +261,8 @@
       "Yanfei",
       "Ningguang"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Mật Pháp Tông Thất"
   },
   {
     "id": "solar-pearl",
@@ -274,7 +285,8 @@
       "Pháp sư luân chuyển đòn thường - kỹ năng liên tục: Yanfei",
       "Klee"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Nhật Nguyệt Hạp"
   },
   {
     "id": "prototype-amber",
@@ -298,7 +310,8 @@
       "Kokomi",
       "Baizhu"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Mẫu Kim Phách"
   },
   {
     "id": "mappa-mare",
@@ -323,7 +336,8 @@
       "Lisa",
       "Ningguang"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Hải Đồ Vạn Quốc"
   },
   {
     "id": "blackcliff-agate",
@@ -346,7 +360,8 @@
       "Pháp sư dọn quái/farm liên tục: Klee",
       "Yanfei"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Hắc Nham Phỉ Ngọc"
   },
   {
     "id": "eye-of-perception",
@@ -371,7 +386,8 @@
       "Ningguang",
       "Wanderer"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Chiêu Tâm"
   },
   {
     "id": "wine-and-song",
@@ -394,7 +410,8 @@
       "Pháp sư cần tiện lợi di chuyển + buff ATK: Yanfei",
       "Klee"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Rượu Và Thơ Nơi Hẻm Tối"
   },
   {
     "id": "frostbearer",
@@ -419,7 +436,8 @@
       "Yanfei",
       "Ningguang"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Trái Chịu Lạnh"
   },
   {
     "id": "dodoco-tales",
@@ -443,7 +461,8 @@
       "ngoài ra Yanfei",
       "Ningguang"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Tuyển tập các câu chuyện về Dodoco"
   },
   {
     "id": "hakushin-ring",
@@ -466,7 +485,8 @@
       "Pháp sư hệ Lôi/hỗ trợ phản ứng: Yae Miko",
       "Lisa"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Vòng Bạch Thần"
   },
   {
     "id": "oathsworn-eye",
@@ -490,7 +510,8 @@
       "Kokomi",
       "Sucrose"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Con Ngươi Tuyên Thệ"
   },
   {
     "id": "wandering-evenstar",
@@ -514,7 +535,8 @@
       "Sucrose",
       "Kokomi"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Sao Đêm Rong Ruổi"
   },
   {
     "id": "fruit-of-fulfillment",
@@ -539,7 +561,8 @@
       "Yae Miko",
       "Sucrose"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Quả Mọng"
   },
   {
     "id": "sacrificial-jade",
@@ -563,7 +586,8 @@
       "Yae Miko",
       "Baizhu"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Ngọc Bích Hiến Tế"
   },
   {
     "id": "flowing-purity",
@@ -585,7 +609,8 @@
     "bestCharacters": [
       "Wriothesley và các catalyst DPS tận dụng Bond of Life"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Dòng Chảy Tinh Khiết"
   },
   {
     "id": "ballad-of-the-boundless-blue",
@@ -609,7 +634,8 @@
       "Ningguang",
       "Lisa (catalyst DPS thường/trọng kích)"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Khúc Ca Xanh Bao La"
   },
   {
     "id": "ash-graven-drinking-horn",
@@ -632,7 +658,8 @@
       "Mualani",
       "Kokomi (catalyst scaling HP)"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Sừng Rượu Vân Xanh"
   },
   {
     "id": "waveriding-whirl",
@@ -655,7 +682,8 @@
       "Mualani",
       "Kokomi"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Vòng Xoáy Cưỡi Sóng"
   },
   {
     "id": "ring-of-yaxche",
@@ -678,7 +706,8 @@
       "Mualani",
       "Kokomi"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Vòng Yaxche"
   },
   {
     "id": "etherlight-spindlelute",
@@ -703,7 +732,8 @@
       "Mizuki",
       "Citlali"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Đàn Thiên Quang"
   },
   {
     "id": "blackmarrow-lantern",
@@ -727,7 +757,8 @@
       "Nahida",
       "Lauma (nhân vật gây Bloom/Lunar-Bloom)"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Đèn Tủy Đen"
   },
   {
     "id": "dawning-frost",
@@ -750,7 +781,8 @@
       "Nahida",
       "Yae Miko (catalyst phản ứng nguyên tố)"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Sương Mai"
   },
   {
     "id": "clash-of-kings",
@@ -775,7 +807,8 @@
       "Shenhe",
       "Ineffa"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Trò Chơi Của Các Nhà Vua"
   },
   {
     "id": "echoes-of-the-heart",
@@ -798,7 +831,8 @@
       "Mizuki",
       "Yae Miko"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Dư Âm Tấm Lòng"
   },
   {
     "id": "skyward-atlas",
@@ -822,7 +856,8 @@
       "Ningguang",
       "Yanfei"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Quyển Thiên Không"
   },
   {
     "id": "lost-prayer-to-the-sacred-winds",
@@ -846,7 +881,8 @@
       "Yanfei",
       "Ningguang"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Điển Tích Tây Phong"
   },
   {
     "id": "memory-of-dust",
@@ -869,7 +905,8 @@
       "Klee",
       "Yanfei (trong đội hình có khiên như Zhongli/Diona)"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Khóa Trần Thế"
   },
   {
     "id": "jadefalls-splendor",
@@ -891,7 +928,8 @@
     "bestCharacters": [
       "Baizhu"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Ngọc Bích Huy Hoàng"
   },
   {
     "id": "everlasting-moonglow",
@@ -913,7 +951,8 @@
     "bestCharacters": [
       "Yaoyao"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Vầng Trăng Bất Diệt"
   },
   {
     "id": "kaguras-verity",
@@ -935,7 +974,8 @@
     "bestCharacters": [
       "Yae Miko"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Chân Ý Của Kagura"
   },
   {
     "id": "a-thousand-floating-dreams",
@@ -957,7 +997,8 @@
     "bestCharacters": [
       "Nahida"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Cõi Mộng Ngàn Đêm"
   },
   {
     "id": "tulaytullahs-remembrance",
@@ -979,7 +1020,8 @@
     "bestCharacters": [
       "Kinich"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Hồi Ức Tulaytullah"
   },
   {
     "id": "cashflow-supervision",
@@ -1001,7 +1043,8 @@
     "bestCharacters": [
       "Wriothesley"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Quản Đốc Vàng Ròng"
   },
   {
     "id": "tome-of-the-eternal-flow",
@@ -1023,7 +1066,8 @@
     "bestCharacters": [
       "Neuvillette"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Nghi Thức Dòng Chảy Vĩnh Hằng"
   },
   {
     "id": "cranes-echoing-call",
@@ -1045,7 +1089,8 @@
     "bestCharacters": [
       "Xianyun"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Dư Âm Tiếng Hạc"
   },
   {
     "id": "surfs-up",
@@ -1067,7 +1112,8 @@
     "bestCharacters": [
       "Mualani"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Thời Khắc Lướt Sóng"
   },
   {
     "id": "starcallers-watch",
@@ -1089,7 +1135,8 @@
     "bestCharacters": [
       "Citlali"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Ánh Nhìn Tư Tế"
   },
   {
     "id": "sunny-morning-sleep-in",
@@ -1111,7 +1158,8 @@
     "bestCharacters": [
       "Yumemizuki Mizuki"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Hòa Giấc Trong Nắng Mai"
   },
   {
     "id": "vivid-notions",
@@ -1133,7 +1181,8 @@
     "bestCharacters": [
       "Varesa"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Tâm Niệm Sắc Màu"
   },
   {
     "id": "nightweavers-looking-glass",
@@ -1155,7 +1204,8 @@
     "bestCharacters": [
       "Lauma"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Kính Dệt Màn Đêm"
   },
   {
     "id": "reliquary-of-truth",
@@ -1177,7 +1227,8 @@
     "bestCharacters": [
       "Nefer"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Chân Ngôn Bí Hạp"
   },
   {
     "id": "nocturnes-curtain-call",
@@ -1199,7 +1250,8 @@
     "bestCharacters": [
       "Columbina"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Dạ Khúc Hạ Màn"
   },
   {
     "id": "angelos-heptades",
@@ -1221,6 +1273,7 @@
     "bestCharacters": [
       "Nicole"
     ],
-    "sourceFile": "vu-khi/phap-khi.md"
+    "sourceFile": "vu-khi/phap-khi.md",
+    "nameVI": "Trần Quang Thất Dụ"
   }
 ]

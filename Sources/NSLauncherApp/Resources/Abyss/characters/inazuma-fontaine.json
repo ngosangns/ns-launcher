@@ -182,7 +182,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính Cryo on-field dựa vào Hyouka + Soumetsu để đóng băng diện rộng. Combo phổ biến: Đóng băng (Cryo-Hydu) với Kokomi/Yelan, hoặc Tan chảy (Cryo-Pyro) với Xiangling/Bennett làm phụ trợ.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Kamisato Ayaka"
   },
   {
     "id": "yoimiya",
@@ -366,7 +367,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính Pyro bền bỉ dùng đòn thường liên tục, không cần nhắm elemental burst spam. Combo phổ biến: Thuận Pyro (Pyro mono/Pyro-Dendro Burning) hoặc Tan chảy (Pyro-Hydro) cùng Kokomi/Xingqiu hỗ trợ khiên + hồi máu.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Yoimiya"
   },
   {
     "id": "sayu",
@@ -539,7 +541,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ tạo phản ứng Xoáy Cuốn (Swirl) lan nguyên tố diện rộng kiêm hồi máu tự động qua Daruma, gần như không cần đứng lại. Combo phổ biến: đội Xoáy Cuốn EM cao (Anemo-Electro/Anemo-Hydro) hoặc đi cùng Traveler Anemo để tăng lan toả nguyên tố.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Sayu"
   },
   {
     "id": "raiden-shogun",
@@ -712,7 +715,8 @@
       }
     ],
     "abyssRoleNotes": "Hybrid hỗ trợ năng lượng + sub-DPS Electro hàng đầu, gần như bắt buộc trong mọi đội cần xoay vòng burst liên tục. Combo phổ biến: Quá Tải/Cảm Ứng Siêu Dẫn (Electro-Pyro/Electro-Cryo) hoặc đội tán xạ (Electro-Anemo/Electro-Hydro) tận dụng Eye of Stormy Judgment.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Raiden Shogun"
   },
   {
     "id": "kujou-sara",
@@ -857,7 +861,8 @@
       }
     ],
     "abyssRoleNotes": "Buffer ATK% chuyên biệt cho DPS Electro/dùng phản ứng Electro (Quá Tải, Cảm Ứng Siêu Dẫn, Kết Tinh). Combo phổ biến: đi cùng Raiden Shogun/Itto để cộng dồn ATK Bonus, hoặc đội Quá Tải Electro-Pyro.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Kujou Sara"
   },
   {
     "id": "sangonomiya-kokomi",
@@ -1035,7 +1040,8 @@
       }
     ],
     "abyssRoleNotes": "Support/sub-DPS hồi máu diện rộng theo % Max HP, gần như không thể chết, thường build HP thay vì Crit. Combo phổ biến: đóng băng (Hydro-Cryo) cùng Chongyun/Kaeya, hoặc Bắt Điện (Hydro-Electro) làm nền tảng phản ứng cho cả đội.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Sangonomiya Kokomi"
   },
   {
     "id": "thoma",
@@ -1200,7 +1206,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ khiên bền (theo Max HP) kiêm tráng Pyro liên tục — rất mạnh trong đội cần chống ngắt chiêu và tự tạo phản ứng Pyro. Combo phổ biến: Tan chảy (Pyro-Cryo) với Ayaka/Ganyu, hoặc đội Cháy nổ (Pyro-Dendro) đứng cạnh tráng nguyên tố an toàn.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Thoma"
   },
   {
     "id": "gorou",
@@ -1358,7 +1365,8 @@
       }
     ],
     "abyssRoleNotes": "Support Geo chuyên biệt, tăng DEF/Geo DMG cho đội toàn Geo hoặc mono-Geo. Combo phổ biến: đội Geo full (Itto/Ningguang/Albedo) tận dụng Crunch buff, hoặc Kết Tinh (Geo-Electro/Geo-Hydro) tạo khiên nguyên tố.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Gorou"
   },
   {
     "id": "arataki-itto",
@@ -1537,7 +1545,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính Geo dùng đòn nặng (Kesagiri) liên tục, cần Gorou/Albedo hỗ trợ Geo DMG Bonus và né bớt giảm kháng của Burst. Combo phổ biến: mono-Geo (Itto-Gorou-Albedo-Zhongli) hoặc Kết Tinh với Electro/Hydro để có thêm khiên nguyên tố.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Arataki Itto"
   },
   {
     "id": "yae-miko",
@@ -1691,7 +1700,8 @@
       }
     ],
     "abyssRoleNotes": "DPS Electro off-field mạnh nhất — đặt bùa rồi đổi nhân vật, gần như không cần đứng lại. Combo phổ biến: Quá Tải (Electro-Pyro) hoặc Cảm Ứng Siêu Dẫn/tán xạ Electro-Cryo cùng Kokomi/Yelan làm nền hồi máu.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Yae Miko"
   },
   {
     "id": "kamisato-ayato",
@@ -1872,7 +1882,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính Hydro cực nhanh, chỉ cần vài giây trên sân (bấm kỹ năng rồi đổi người) nhờ Takimeguri Kanka tự đánh. Combo phổ biến: Đóng băng (Hydro-Cryo) với Kamisato Ayaka/Shenhe, hoặc Bốc Hơi (Hydro-Pyro) với Yoimiya/Klee.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Kamisato Ayato"
   },
   {
     "id": "kuki-shinobu",
@@ -2029,7 +2040,8 @@
       }
     ],
     "abyssRoleNotes": "Support hồi máu + sát thương Electro theo % Max HP, build HP thay vì Crit, phù hợp đội cần dùng nguyên tố Electro liên tục mà không cần đứng sân lâu. Combo phổ biến: Quá Tải (Electro-Pyro) Bennett-Xiangling, hoặc Cảm Ứng Siêu Dẫn/tán xạ với Kaeya/Ayaka.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Kuki Shinobu"
   },
   {
     "id": "shikanoin-heizou",
@@ -2186,7 +2198,8 @@
       }
     ],
     "abyssRoleNotes": "Sub-DPS/hỗ trợ Xoáy Cuốn + cấp EM cho cả đội, burst gây sát thương AoE tốt với chi phí năng lượng thấp. Combo phổ biến: đội Xoáy Cuốn EM cao (Anemo-Electro/Anemo-Pyro) hoặc đi cùng Traveler Anemo để tối ưu lan nguyên tố.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Shikanoin Heizou"
   },
   {
     "id": "kirara",
@@ -2336,7 +2349,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ khiên Dendro + kích hoạt phản ứng Dendro (Bùng Phát/Cháy Nổ/Kết Tinh Rêu) off-field, build HP. Combo phổ biến: Bùng Phát Toả Hương (Dendro-Hydro-Electro/Pyro) hoặc đội cần khiên liên tục thay Zhongli.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Kirara"
   },
   {
     "id": "chiori",
@@ -2485,7 +2499,8 @@
       }
     ],
     "abyssRoleNotes": "DPS/sub-DPS Geo scale theo cả ATK và DEF, kết hợp Zhongli/Gorou/Albedo để cộng dồn DEF và Geo DMG Bonus. Combo phổ biến: mono-Geo hoặc Kết Tinh (Geo-Hydro/Geo-Electro) tận dụng passive Finishing Touch.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Chiori"
   },
   {
     "id": "yumemizuki-mizuki",
@@ -2663,7 +2678,8 @@
       }
     ],
     "abyssRoleNotes": "Support/sub-DPS Anemo scale theo EM, kích hoạt và khuếch đại Xoáy Cuốn liên tục trong lúc bay Dreamdrifter. Combo phổ biến: đội Xoáy Cuốn EM cao (Anemo-Electro/Anemo-Dendro Catalyze) hoặc thay thế Kazuha/Sucrose làm gom quái kiêm buff sát thương.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Yumemizuki Mizuki"
   },
   {
     "id": "lynette",
@@ -2828,7 +2844,8 @@
       }
     ],
     "abyssRoleNotes": "Support Xoáy Cuốn/gom quái kiêm buff ATK toàn đội đa nguyên tố (thường đi cặp với Lyney/Freminet). Combo phổ biến: đội 4 nguyên tố (Lyney-Lynette-Freminet + 1 hỗ trợ) hoặc Xoáy Cuốn Anemo-Pyro/Anemo-Cryo.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Lynette"
   },
   {
     "id": "lyney",
@@ -2989,7 +3006,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính Pyro dạng \"on-field ngắn, off-field đánh hộ\" qua Grin-Malkin Hat, cực mạnh khi có nhiều nguyên tố Pyro hỗ trợ. Combo phổ biến: đội 4 nguyên tố cùng Lynette/Freminet, hoặc Tan chảy (Pyro-Cryo)/Bốc hơi (Pyro-Hydro).",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Lyney"
   },
   {
     "id": "freminet",
@@ -3147,7 +3165,8 @@
       }
     ],
     "abyssRoleNotes": "Sub-DPS Cryo linh hoạt (Vật lý + Cryo pha trộn), mạnh nhất khi giữ Pressure Level cao trước khi tung Shattering Pressure. Combo phổ biến: Đóng băng (Cryo-Hydro) hoặc Kết Băng/Siêu Dẫn với Electro để tận dụng passive tăng ATK/Crit DMG.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Freminet"
   },
   {
     "id": "neuvillette",
@@ -3297,7 +3316,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính Hydro scale hoàn toàn theo Max HP, gần như không cần Crit ban đầu (Crit DMG đột phá vẫn hữu ích khi đã no HP). Combo phổ biến: Bốc Hơi/Đóng Băng với Bennett/Xiangling hoặc Kokomi/Chevreuse để vừa buff Hydro DMG vừa cấp Droplet. Ghi chú nguồn: HP cấp 90 cao nhất trò chơi.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Neuvillette"
   },
   {
     "id": "wriothesley",
@@ -3454,7 +3474,8 @@
       }
     ],
     "abyssRoleNotes": "DPS/sub-DPS Cryo chơi quanh vùng HP thấp để kích Gracious Rebuke liên tục, cần nguồn sát thương/tự trừ máu hỗ trợ. Combo phổ biến: Đóng băng (Cryo-Hydro) với Kokomi/Yelan hoặc Kết Băng-Siêu Dẫn với Electro.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Wriothesley"
   },
   {
     "id": "charlotte",
@@ -3619,7 +3640,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ hồi máu + Cryo DMG off-field, rất linh hoạt cho đội cần cả khiên/hồi máu lẫn tráng Cryo. Combo phổ biến: Đóng băng (Cryo-Hydro) hoặc Tan chảy (Cryo-Pyro), thường thay thế Bennett/Kokomi khi cần thêm Cryo.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Charlotte"
   },
   {
     "id": "furina",
@@ -3792,7 +3814,8 @@
       }
     ],
     "abyssRoleNotes": "Buffer sát thương toàn đội bậc nhất (qua Fanfare) kiêm cấp HP khủng để chống chịu — gần như bắt buộc trong đội cần %DMG bonus cực lớn. Combo phổ biến: bất kỳ đội DPS nào (Hydro-Pyro/Hydro-Cryo) miễn có nguồn dao động HP để tích Fanfare nhanh.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Furina"
   },
   {
     "id": "navia",
@@ -3949,7 +3972,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính Geo cần phản ứng Kết Tinh liên tục để giữ đầy lớp Crystal Shrapnel trước khi xả kỹ năng. Combo phổ biến: Kết Tinh (Geo-Electro/Geo-Pyro) với Fischl/Xiangling, hoặc mono-Geo cùng Gorou.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Navia"
   },
   {
     "id": "chevreuse",
@@ -4114,7 +4138,8 @@
       }
     ],
     "abyssRoleNotes": "Buffer + hồi máu chuyên biệt cho đội Quá Tải (Pyro-Electro), giảm kháng địch và cấp ATK cho cả 2 nguyên tố. Combo phổ biến: Quá Tải với Raiden Shogun/Yae Miko + Bennett/Xiangling.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Chevreuse"
   },
   {
     "id": "clorinde",
@@ -4279,7 +4304,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính Electro cơ chế Bond of Life (máu ảo thay vì thật), cần nguồn hồi máu để chuyển hoá Bond of Life an toàn. Combo phổ biến: Quá Tải (Electro-Pyro) hoặc Cảm Ứng Siêu Dẫn/tán xạ với Furina/Bennett hỗ trợ hồi máu.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Clorinde"
   },
   {
     "id": "sigewinne",
@@ -4436,7 +4462,8 @@
       }
     ],
     "abyssRoleNotes": "Healer bậc nhất scale theo Max HP, gần như không thể để đội chết, kiêm buff sát thương kỹ năng off-field. Combo phổ biến: bất kỳ đội cần healer bền (Hydro-bất kỳ), đặc biệt hợp với DPS scale Bond of Life như Clorinde/Arlecchino.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Sigewinne"
   },
   {
     "id": "emilie",
@@ -4601,7 +4628,8 @@
       }
     ],
     "abyssRoleNotes": "DPS off-field Dendro chuyên trị đội Cháy (Burning), cần Pyro liên tục để nuôi Scent nâng cấp hộp. Combo phổ biến: Cháy nổ (Dendro-Pyro-Anemo) với Xiangling/Yoimiya + Kazuha/Sucrose lan nguyên tố.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Emilie"
   },
   {
     "id": "escoffier",
@@ -4758,7 +4786,8 @@
       }
     ],
     "abyssRoleNotes": "Support hồi máu + buff giảm kháng Hydro/Cryo mạnh nhất cho đội Đóng Băng, gần như thay thế hoàn toàn nhu cầu healer khác. Combo phổ biến: Đóng băng (Cryo-Hydro) toàn Hydro/Cryo với Neuvillette/Ayaka/Ganyu để tối đa hoá passive giảm kháng.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Escoffier"
   },
   {
     "id": "kaedehara-kazuha",
@@ -4944,6 +4973,7 @@
       }
     ],
     "abyssRoleNotes": "Support Anemo hàng đầu: gom quái, hạ 40% kháng nguyên tố bị cuốn (4 món Viridescent Venerer) và buff DMG nguyên tố toàn đội theo EM (A4). Build EM là chính. Ghép được với hầu hết đội phản ứng: Vaporize (Hu Tao/Xiangling), Freeze, Aggravate, Melt.",
-    "sourceFile": "nhan-vat/inazuma-fontaine.md"
+    "sourceFile": "nhan-vat/inazuma-fontaine.md",
+    "nameVI": "Kaedehara Kazuha"
   }
 ]

@@ -177,7 +177,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính trên sàn (plunge/on-field), tiêu hao HP nên cần hỗ trợ hồi máu/khiên. Combo phổ biến: Anemo-Pyro (Xiao-Bennett-Faruzan) hoặc Anemo-Dendro Hyperbloom (Xiao-Nahida-hỗ trợ Dendro).",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Xiao"
   },
   {
     "id": "zhongli",
@@ -385,7 +386,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ/khiên toàn năng — giảm kháng nguyên tố + vật lý của địch qua hoá đá, gần như đi được mọi đội. Phổ biến trong đội Hypercarry (Zhongli-DPS chính-2 hỗ trợ) hoặc đội Vaporize/Melt cần khiên bền.",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Zhongli"
   },
   {
     "id": "qiqi",
@@ -586,7 +588,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ hồi máu + tạo Cryo diện rộng, hợp đội Freeze (Cryo-Hydro) cùng Ganyu/Mona hoặc bất kỳ đội Cryo cần cứu hộ (C6).",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Qiqi"
   },
   {
     "id": "ganyu",
@@ -773,7 +776,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính bắn Trọng Kích, Melt với Pyro (Ganyu-Bennett-Xiangling) hoặc Freeze với Hydro (Ganyu-Mona-Kokomi-Diona).",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Ganyu"
   },
   {
     "id": "keqing",
@@ -960,7 +964,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính/phụ đổi nhanh nhờ Stellar Restoration teleport, hợp Hyperbloom (Electro-Dendro với Nahida/Kuki Shinobu) hoặc Aggravate.",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Keqing"
   },
   {
     "id": "hu-tao",
@@ -1161,7 +1166,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính máu thấp — Vaporize với hỗ trợ Hydro on-field/off-field (Hu Tao-Xingqiu/Yelan-Zhongli-hỗ trợ hồi máu), luôn cần nguồn hồi máu đi kèm vì tự tốn HP.",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Hu Tao"
   },
   {
     "id": "yelan",
@@ -1341,7 +1347,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ/sub-DPS Hydro off-field bám theo %HP tối đa, tạo Vaporize cho Hu Tao hoặc Hyperbloom/Bloom cho đội Dendro (Yelan-Nahida-...).",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Yelan"
   },
   {
     "id": "shenhe",
@@ -1535,7 +1542,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ tăng sát thương Cryo/vật lý toàn đội, cột trụ của đội Freeze (Shenhe-Ganyu/Ayaka-Mona-Kokomi) hoặc Physical (Shenhe-Eula).",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Shenhe"
   },
   {
     "id": "baizhu",
@@ -1715,7 +1723,8 @@
       }
     ],
     "abyssRoleNotes": "Healer + khiên chủ lực cho các đội phản ứng Dendro (Hyperbloom, Bloom, Aggravate), phổ biến cùng Nahida/Kuki Shinobu hoặc Yelan/Xingqiu.",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Baizhu"
   },
   {
     "id": "xianyun",
@@ -1902,7 +1911,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ buff ATK theo đòn nhảy + hồi máu, cực mạnh với các DPS plunge/on-field cần đòn nhảy liên tục (đội \"Plunge team\").",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Xianyun"
   },
   {
     "id": "xiangling",
@@ -2075,7 +2085,8 @@
       }
     ],
     "abyssRoleNotes": "Sub-DPS Pyro off-field phổ biến bậc nhất, Vaporize với Hydro (Xingqiu/Yelan) hoặc Melt với Cryo.",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Xiangling"
   },
   {
     "id": "beidou",
@@ -2274,7 +2285,8 @@
       }
     ],
     "abyssRoleNotes": "Sub-DPS/hỗ trợ chống chịu nhờ khiên phản đòn, hợp Hyperbloom (Electro-Dendro) hoặc Overload/Electro-Charged.",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Beidou"
   },
   {
     "id": "xingqiu",
@@ -2454,7 +2466,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ Hydro gần như bắt buộc — khiên giảm dame + áp Hydro liên tục, nền tảng cho mọi đội Vaporize (Hu Tao/Yoimiya), Freeze hoặc Electro-Charged.",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Xingqiu"
   },
   {
     "id": "ningguang",
@@ -2599,7 +2612,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ/sub-DPS Geo tạo khiên + Crystallize, hợp cộng hưởng Geo cùng Zhongli/Albedo hoặc đội Crystallize.",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Ningguang"
   },
   {
     "id": "chongyun",
@@ -2758,7 +2772,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ Cryo infusion/tăng vật lý, hợp đội Physical DMG (Eula/Razor) hoặc Freeze phụ trợ.",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Chongyun"
   },
   {
     "id": "xinyan",
@@ -2945,7 +2960,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ/DPS vật lý có khiên, hợp đội Physical DMG hoặc làm nguồn Pyro off-field phụ khi cần khiên.",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Xinyan"
   },
   {
     "id": "yanfei",
@@ -3104,7 +3120,8 @@
       }
     ],
     "abyssRoleNotes": "Sub-DPS/DPS chính combo trọng kích liên tục, Vaporize với hỗ trợ Hydro (Xingqiu/Yelan) để tối ưu sát thương. Ghi chú nguồn: 3 giá trị chỉ số cấp 90 do công cụ trích xuất tự tính lại từ đường cong tăng trưởng thay vì đọc trực tiếp trường dữ liệu, độ chính xác thấp hơn các nhân vật khác — chưa xác nhận chính xác tuyệt đối (thứ tự độ lớn phù hợp Catalyst 4★ Pyro).",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Yanfei"
   },
   {
     "id": "yun-jin",
@@ -3291,7 +3308,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ tăng sát thương đòn thường + khiên, cột trụ của các đội \"Normal Attack DPS\" (vật lý hoặc Geo) như Yun Jin-Zhongli-Xingqiu-Bennett.",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Yun Jin"
   },
   {
     "id": "yaoyao",
@@ -3485,7 +3503,8 @@
       }
     ],
     "abyssRoleNotes": "Healer off-field cực dễ dùng, đi được mọi đội có phản ứng Dendro (Hyperbloom, Bloom, Aggravate, Burning).",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Yaoyao"
   },
   {
     "id": "gaming",
@@ -3651,7 +3670,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính on-field bùng nổ trong thời gian ngắn (Bestial Ascent), hợp Vaporize/Melt hoặc đội Hyperbloom-Burning tận dụng Pyro liên tục.",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Gaming"
   },
   {
     "id": "lan-yan",
@@ -3817,7 +3837,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ Anemo có khiên + sát thương theo Elemental Mastery, hợp đội phản ứng lan toả (Swirl, Hyperbloom) cần khuếch tán nguyên tố diện rộng.",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Lan Yan"
   },
   {
     "id": "tartaglia",
@@ -4032,7 +4053,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính linh hoạt cận chiến/tầm xa, Vaporize với Pyro (Bennett, Xiangling) hoặc Electro-Charged/Freeze với Cryo-Electro.",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Tartaglia (Childe)"
   },
   {
     "id": "arlecchino",
@@ -4219,7 +4241,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính on-field cực mạnh, chủ đạo trong đội Mono Pyro (Arlecchino-Xiangling/Bennett-Sethos-hỗ trợ) hoặc phối Vaporize nhẹ.",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Arlecchino"
   },
   {
     "id": "sandrone",
@@ -4396,7 +4419,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính dựa vào trọng kích, kích hoạt phản ứng Stellar-Conduct mới cùng nguồn Electro; đội hình mẫu: Sandrone-nguồn Electro off-field-hỗ trợ khiên/hồi máu.",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Sandrone"
   },
   {
     "id": "odette",
@@ -4609,7 +4633,8 @@
       }
     ],
     "abyssRoleNotes": "Sub-DPS/hỗ trợ off-field, kích hoạt và khuếch đại phản ứng Stellar Glimmer (Stellar-Conduct với Electro, Stellar Swirl với Anemo) cho cả đội.",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Odette"
   },
   {
     "id": "alyosha",
@@ -4794,7 +4819,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ off-field hồi máu + buff sát thương theo Energy Recharge, chủ lực trong đội Stellar-Conduct (Electro-Cryo, ví dụ cùng Sandrone/Odette).",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Alyosha"
   },
   {
     "id": "skirk",
@@ -5015,6 +5041,7 @@
       }
     ],
     "abyssRoleNotes": "DPS chính on-field Cryo scale ATK, cần đội thuần Hydro/Cryo để mở Utility Passive (+1 cấp Kỹ năng toàn đội) và để đồng đội cấp Death's Crossing. Combo phổ biến: Skirk + Furina/Escoffier + Citlali/Shenhe (Freeze/Melt tuỳ đội).",
-    "sourceFile": "nhan-vat/liyue.md"
+    "sourceFile": "nhan-vat/liyue.md",
+    "nameVI": "Skirk"
   }
 ]

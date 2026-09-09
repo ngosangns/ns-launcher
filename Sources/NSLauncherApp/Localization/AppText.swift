@@ -697,9 +697,12 @@ struct AppText {
     var abyssClearCharacters: String { localized(en: "Clear characters", vi: "Xoá hết nhân vật") }
     var abyssClearWeapons: String { localized(en: "Clear weapons", vi: "Xoá hết vũ khí") }
 
-    func abyssOwnedCount(characters: Int, weapons: Int) -> String {
-        localized(en: "\(characters) characters · \(weapons) weapons",
-                  vi: "\(characters) nhân vật · \(weapons) vũ khí")
+    func abyssOwnedCharacterCount(_ count: Int) -> String {
+        localized(en: "\(count) characters owned", vi: "\(count) nhân vật đang sở hữu")
+    }
+
+    func abyssOwnedWeaponCount(_ count: Int) -> String {
+        localized(en: "\(count) weapons owned", vi: "\(count) vũ khí đang sở hữu")
     }
 
     var abyssEmptyRosterTitle: String {
@@ -716,6 +719,10 @@ struct AppText {
 
     var abyssUseFullRoster: String {
         localized(en: "Compare across all characters", vi: "So sánh toàn bộ nhân vật")
+    }
+
+    var abyssUseFullWeaponPool: String {
+        localized(en: "Compare across all weapons", vi: "So sánh toàn bộ vũ khí")
     }
 
     var abyssNoResultsYet: String {
@@ -833,7 +840,6 @@ struct AppText {
     var abyssImportFromUID: String { localized(en: "Import from UID", vi: "Nhập từ UID") }
     var abyssUIDPlaceholder: String { localized(en: "UID (9-10 digits)", vi: "UID (9-10 chữ số)") }
     var abyssFetching: String { localized(en: "Fetching...", vi: "Đang tải...") }
-    var abyssClearShowcase: String { localized(en: "Forget import", vi: "Xoá dữ liệu đã nhập") }
     var abyssMeasuredBadge: String { localized(en: "your build", vi: "chỉ số thật") }
     var abyssModelledBadge: String { localized(en: "assumed build", vi: "build giả định") }
 
@@ -892,6 +898,65 @@ struct AppText {
         case .transport(let message):
             return localized(en: "Could not reach Enka.Network: \(message)",
                              vi: "Không kết nối được Enka.Network: \(message)")
+        }
+    }
+
+    // MARK: - Full roster import (HoYoLAB)
+
+    var abyssImportFullRoster: String { localized(en: "Import full roster", vi: "Nhập toàn bộ roster") }
+    var abyssLtuidPlaceholder: String { localized(en: "ltuid_v2", vi: "ltuid_v2") }
+    var abyssLtokenPlaceholder: String { localized(en: "ltoken_v2", vi: "ltoken_v2") }
+
+    func abyssCopyTokenNameHelp(_ name: String) -> String {
+        localized(en: "Copy \"\(name)\" — the cookie name to look for on hoyolab.com",
+                   vi: "Sao chép \"\(name)\" — tên cookie cần tìm trên hoyolab.com")
+    }
+
+    var abyssCopyErrorHelp: String { localized(en: "Copy error message", vi: "Sao chép thông báo lỗi") }
+
+    func abyssFullRosterImported(_ count: Int) -> String {
+        localized(en: "Imported \(count) characters", vi: "Đã nhập \(count) nhân vật")
+    }
+
+    /// Unlike the UID import above, this needs the player's own HoYoLAB login
+    /// session and a privacy toggle most people have never turned on — both
+    /// worth spelling out here, not just in a support doc, since pasting a
+    /// login token is a bigger ask than pasting a UID.
+    var abyssHoyolabHint: String {
+        localized(
+            en: "Every character you own, not just 8 — but needs your own HoYoLAB session "
+                + "(hoyolab.com → cookies → ltuid_v2/ltoken_v2) and \"Character Details\" turned on "
+                + "under your HoYoLAB privacy settings. Kept only in this Mac's Keychain.",
+            vi: "Toàn bộ nhân vật bạn có, không chỉ 8 — nhưng cần phiên đăng nhập HoYoLAB của chính bạn "
+                + "(hoyolab.com → cookie → ltuid_v2/ltoken_v2) và bật \"Character Details\" trong cài đặt "
+                + "riêng tư HoYoLAB. Chỉ lưu trong Keychain của máy này.")
+    }
+
+    func abyssHoyolabError(_ error: AbyssHoyolabError) -> String {
+        switch error {
+        case .malformedUID:
+            return localized(en: "That is not a valid UID.", vi: "UID không hợp lệ.")
+        case .notFound:
+            return localized(en: "No player with that UID.", vi: "Không tìm thấy người chơi với UID này.")
+        case .dataNotPublic:
+            return localized(
+                en: "Character Details are not public for that account. On hoyolab.com, open your "
+                    + "profile's privacy settings and turn on \"Character Details\" under Battle Chronicle.",
+                vi: "Chi tiết nhân vật của tài khoản này chưa công khai. Trên hoyolab.com, mở cài đặt "
+                    + "riêng tư của hồ sơ và bật \"Character Details\" trong Battle Chronicle.")
+        case .invalidCredentials:
+            return localized(
+                en: "That ltuid_v2/ltoken_v2 pair was rejected — the session may have expired.",
+                vi: "Cặp ltuid_v2/ltoken_v2 này bị từ chối — phiên đăng nhập có thể đã hết hạn.")
+        case .rateLimited:
+            return localized(en: "HoYoLAB is rate-limiting requests. Try again shortly.",
+                             vi: "HoYoLAB đang giới hạn truy cập. Thử lại sau ít phút.")
+        case .badResponse(let status):
+            return localized(en: "HoYoLAB answered with HTTP \(status).", vi: "HoYoLAB trả về HTTP \(status).")
+        case .server(let retcode, let message):
+            return localized(en: "HoYoLAB error \(retcode): \(message)", vi: "Lỗi HoYoLAB \(retcode): \(message)")
+        case .transport(let message):
+            return localized(en: "Could not reach HoYoLAB: \(message)", vi: "Không kết nối được HoYoLAB: \(message)")
         }
     }
 
@@ -1013,4 +1078,9 @@ struct AppText {
             return vi
         }
     }
+
+    /// The same choice as `localized`, exposed for data-driven content (e.g.
+    /// character/weapon/artifact-set names loaded from Resources/Abyss) rather
+    /// than this file's own hard-coded copy.
+    func pick(en: String, vi: String) -> String { localized(en: en, vi: vi) }
 }

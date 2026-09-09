@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 enum LauncherPalette {
@@ -33,24 +34,62 @@ struct CelestialBackdrop: View {
                 let width = proxy.size.width
                 let height = proxy.size.height
 
+                // Soft glows, drawn as gradients rather than as blurred circles.
+                // A `.blur` here is an offscreen pass over a rect ~70% of the
+                // window, redone on every resize frame and every full redraw,
+                // for a shape whose whole purpose is to have no visible edge —
+                // a radial fade reaches the same look with no pass at all.
                 Group {
-                    Circle()
-                        .fill(LauncherPalette.mist.opacity(0.12))
-                        .frame(width: width * 0.72, height: width * 0.30)
-                        .blur(radius: 28)
-                        .offset(x: -width * 0.26, y: height * 0.49)
+                    SoftGlow(color: LauncherPalette.mist.opacity(0.12),
+                             radius: width * 0.15,
+                             feather: 28,
+                             center: CGPoint(x: width * 0.10, y: width * 0.15 + height * 0.49))
 
-                    Circle()
-                        .fill(LauncherPalette.parchment.opacity(0.09))
-                        .frame(width: width * 0.66, height: width * 0.20)
-                        .blur(radius: 38)
-                        .offset(x: width * 0.40, y: -height * 0.36)
+                    SoftGlow(color: LauncherPalette.parchment.opacity(0.09),
+                             radius: width * 0.10,
+                             feather: 38,
+                             center: CGPoint(x: width * 0.73, y: width * 0.10 - height * 0.36))
                 }
 
                 ConstellationField(size: proxy.size)
             }
         }
         .ignoresSafeArea()
+    }
+}
+
+/// A circle of `color` fading to nothing over `feather` points beyond `radius`.
+///
+/// The falloff is a gradient stop rather than a `.blur`, so there is no
+/// offscreen pass — and because the fade reaches `.clear` exactly at the shape's
+/// own edge, the circle has no visible boundary to give it away.
+private struct SoftGlow: View {
+    let color: Color
+    /// Radius of the solid core, before the fade begins.
+    let radius: CGFloat
+    /// How far past the core the fade runs.
+    let feather: CGFloat
+    /// Where the glow sits in the parent's coordinate space.
+    let center: CGPoint
+
+    var body: some View {
+        let outer = max(radius + feather, 1)
+        // The core is pulled in by half the feather so the midpoint of the fade
+        // lands on the original circle's edge, which is where a blur of this
+        // radius would have put it.
+        let coreStop = max(0, min(1, (radius - feather / 2) / outer))
+        Circle()
+            .fill(RadialGradient(
+                stops: [
+                    .init(color: color, location: 0),
+                    .init(color: color, location: coreStop),
+                    .init(color: color.opacity(0), location: 1)
+                ],
+                center: .center,
+                startRadius: 0,
+                endRadius: outer))
+            .frame(width: outer * 2, height: outer * 2)
+            .offset(x: center.x - outer, y: center.y - outer)
     }
 }
 
@@ -299,8 +338,7 @@ struct SidebarTabButton: View {
             )
         }
         .buttonStyle(.plain)
-        .pointerOnHover()
-        .onHover { isHovering = $0 }
+        .pointerOnHover { isHovering = $0 }
         // The icon-only state still needs the name to reach a reader —
         // a hover tooltip for a sighted user, and always for VoiceOver.
         .help(title)
@@ -360,8 +398,7 @@ struct CircularActionButton: View {
         }
         .buttonStyle(.plain)
         .opacity(isPressed ? 0.92 : 1)
-        .pointerOnHover()
-        .onHover { isHovering = $0 }
+        .pointerOnHover { isHovering = $0 }
         .simultaneousGesture(
             DragGesture(minimumDistance: 0)
                 .onChanged { _ in isPressed = true }
@@ -491,6 +528,9 @@ struct RosterCard<Icon: View>: View {
     /// Rarity tier, drawn as pips and as the tile's own colour. nil for pickers
     /// whose items have no rarity.
     var rarity: RarityAppearance?
+    /// A solid colour bar down the left edge — a character's element, say.
+    /// nil for pickers with nothing categorical to put there.
+    var leadingAccent: Color?
     /// The leading glyph — an SF Symbol, a portrait, whatever the caller has.
     /// A closure rather than a fixed `systemImage`/`accent` pair so a picker
     /// that has real artwork (`AbyssPortraitImage`) is not stuck drawing a
@@ -534,16 +574,16 @@ struct RosterCard<Icon: View>: View {
 
                     if isSelected, let level {
                         HStack(spacing: 6) {
+                            levelButton(systemImage: "minus", disabled: level.value <= level.range.lowerBound) {
+                                onLevelChange(level.value - 1)
+                            }
                             Text("\(level.label)\(level.value)")
                                 .font(.system(.caption2, design: .rounded, weight: .bold))
                                 .foregroundStyle(LauncherPalette.ink.opacity(0.78))
-                                .frame(minWidth: 26, alignment: .leading)
-                            Stepper("", value: Binding(
-                                get: { level.value },
-                                set: { onLevelChange($0) }
-                            ), in: level.range)
-                            .labelsHidden()
-                            .controlSize(.mini)
+                                .frame(minWidth: 22, alignment: .center)
+                            levelButton(systemImage: "plus", disabled: level.value >= level.range.upperBound) {
+                                onLevelChange(level.value + 1)
+                            }
                         }
                     }
                 }
@@ -557,32 +597,66 @@ struct RosterCard<Icon: View>: View {
             .contentShape(Rectangle())
             .onTapGesture(perform: onToggle)
         }
-        .padding(.horizontal, 11)
+        .padding(.leading, 11 + (leadingAccent != nil ? 15 : 0))
+        .padding(.trailing, 11)
         .padding(.vertical, 9)
         .background(background)
-        .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .strokeBorder(isSelected ? Color.clear : tint.opacity(isHovering ? 0.55 : 0.32),
-                              lineWidth: 1)
-        )
+        .overlay(alignment: .leading) { leadingAccentBar }
         .overlay(alignment: .top) { sheen }
+        .pointerOnHover { isHovering = $0 }
+    }
+
+    /// A flat "-"/"+" pair flanking the value, rather than a stacked up/down
+    /// stepper: two side-by-side targets are easier to hit at this size than
+    /// two glyphs stacked in the same small control.
+    private func levelButton(systemImage: String, disabled: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: systemImage)
+                .font(.system(size: 9, weight: .bold))
+                .foregroundStyle(LauncherPalette.ink.opacity(disabled ? 0.25 : 0.85))
+                .frame(width: 16, height: 16)
+                .background(LauncherPalette.ink.opacity(0.12), in: Circle())
+        }
+        .buttonStyle(.plain)
+        .disabled(disabled)
         .pointerOnHover()
-        .onHover { isHovering = $0 }
+    }
+
+    /// The element-colour (or whatever the caller passes) bar down the left
+    /// edge. Rounded only on the left, so it reads as part of the card's own
+    /// frame rather than as a stripe painted across it.
+    @ViewBuilder
+    private var leadingAccentBar: some View {
+        if let leadingAccent {
+            UnevenRoundedRectangle(topLeadingRadius: 12, bottomLeadingRadius: 12, style: .continuous)
+                .fill(leadingAccent)
+                .frame(width: 15)
+        }
     }
 
     /// Rarity tints the tile itself in both states, so it survives selection —
     /// which is the state the player spends most of their time looking at.
+    ///
+    /// One shape carrying a border, rather than a fill under a second filled
+    /// shape under a separate stroked overlay: this is drawn once per tile and a
+    /// full grid is a hundred of them, so each extra layer here is a hundred
+    /// extra layers to composite.
     @ViewBuilder
     private var background: some View {
         let shape = RoundedRectangle(cornerRadius: 12, style: .continuous)
         if isSelected {
             shape.fill(selectedFill.opacity(0.92))
         } else {
-            shape.fill(LauncherPalette.night.opacity(isHovering ? 0.52 : 0.34))
-                .overlay(
+            shape
+                .fill(LauncherPalette.night.opacity(isHovering ? 0.52 : 0.34))
+                .overlay {
                     shape.fill(
                         LinearGradient(colors: [tint.opacity(isHovering ? 0.22 : 0.14), .clear],
-                                       startPoint: .topLeading, endPoint: .bottomTrailing)))
+                                       startPoint: .topLeading, endPoint: .bottomTrailing))
+                }
+                .overlay {
+                    shape.strokeBorder(tint.opacity(isHovering ? 0.55 : 0.32), lineWidth: 1)
+                }
         }
     }
 
@@ -619,5 +693,32 @@ struct RosterCard<Icon: View>: View {
         }
         .padding(.trailing, subtitle.isEmpty ? 0 : 2)
         .accessibilityLabel("\(rarity.stars) star")
+    }
+}
+
+/// A small clipboard button that swaps to a checkmark for a beat after
+/// copying, so the tap reads as confirmed without a toast or alert.
+struct CopyIconButton: View {
+    let value: String
+    var tint: Color = LauncherPalette.mist
+    var help: String? = nil
+
+    @State private var didCopy = false
+
+    var body: some View {
+        Button {
+            let pasteboard = NSPasteboard.general
+            pasteboard.clearContents()
+            pasteboard.setString(value, forType: .string)
+            didCopy = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { didCopy = false }
+        } label: {
+            Image(systemName: didCopy ? "checkmark" : "doc.on.doc")
+                .font(.system(size: 9, weight: .bold))
+                .foregroundStyle(tint.opacity(didCopy ? 0.95 : 0.6))
+        }
+        .buttonStyle(.plain)
+        .pointerOnHover()
+        .help(help ?? "")
     }
 }

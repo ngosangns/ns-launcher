@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 /// Home tab: a fixed layout sized to the window — the game hero on top, the activity panel filling
@@ -16,7 +17,6 @@ struct HomeView: View {
         case wine
     }
 
-    private static let logBottomID = "log-bottom"
 
     var body: some View {
         Group {
@@ -309,27 +309,12 @@ struct HomeView: View {
     private var logConsole: some View {
         Group {
             if let contents = logContents {
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        Text(contents)
-                            .font(.system(.caption, design: .monospaced))
-                            .foregroundStyle(LauncherPalette.mist.opacity(0.88))
-                            .textSelection(.enabled)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        Color.clear.frame(height: 1).id(Self.logBottomID)
-                    }
-                    // Also on appear: switching tabs rebuilds this view, and a console that came
-                    // back scrolled to the top of an old run would hide the live tail.
-                    .onAppear {
-                        proxy.scrollTo(Self.logBottomID, anchor: .bottom)
-                    }
-                    .onChange(of: viewModel.runLogVersion) { _, _ in
-                        proxy.scrollTo(Self.logBottomID, anchor: .bottom)
-                    }
-                    .onChange(of: activeChannel) { _, _ in
-                        proxy.scrollTo(Self.logBottomID, anchor: .bottom)
-                    }
-                }
+                // Tailing and selection are the text view's own job — see
+                // RunLogConsole for why this is not a `Text` in a `ScrollView`.
+                RunLogConsole(text: contents,
+                              font: .monospacedSystemFont(ofSize: NSFont.smallSystemFontSize, weight: .regular),
+                              textColor: NSColor(LauncherPalette.mist.opacity(0.88)))
+                    .frame(maxWidth: .infinity, alignment: .leading)
             } else {
                 emptyConsole
             }

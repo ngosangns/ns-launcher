@@ -53,7 +53,8 @@
       "Hu Tao",
       "các DPS máu cao scale theo HP"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Trượng Hộ Ma"
   },
   {
     "id": "primordial-jade-winged-spear",
@@ -102,7 +103,8 @@
       "Zhongli",
       "DPS thương on-field"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Hòa Phác Diên"
   },
   {
     "id": "vortex-vanquisher",
@@ -142,7 +144,8 @@
       "Zhongli",
       "DPS thương đội hình khiên"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Giáo Nịnh Thần"
   },
   {
     "id": "skyward-spine",
@@ -173,7 +176,8 @@
     "bestCharacters": [
       "DPS thương cần Energy Recharge/tốc đánh"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Xương Sống Thiên Không"
   },
   {
     "id": "calamity-queller",
@@ -228,7 +232,8 @@
     "bestCharacters": [
       "Nhân vật thương on-field bền bỉ"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Hủy Diệt"
   },
   {
     "id": "engulfing-lightning",
@@ -259,7 +264,8 @@
     "bestCharacters": [
       "Raiden Shogun"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Đoạn Thảo Trường Đao"
   },
   {
     "id": "staff-of-the-scarlet-sands",
@@ -282,7 +288,8 @@
       "Cyno",
       "DPS thương scale EM"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Quyền Trượng Cát Đỏ"
   },
   {
     "id": "crimson-moons-semblance",
@@ -304,7 +311,8 @@
     "bestCharacters": [
       "Arlecchino"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Hình Thái Xích Nguyệt"
   },
   {
     "id": "lumidouce-elegy",
@@ -326,7 +334,8 @@
     "bestCharacters": [
       "Emilie"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Bi Ca Lumidouce"
   },
   {
     "id": "bloodsoaked-ruins",
@@ -373,7 +382,8 @@
     "bestCharacters": [
       "Flins"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Tàn Tích Nhuốm Máu"
   },
   {
     "id": "disaster-and-remorse",
@@ -395,7 +405,8 @@
     "bestCharacters": [
       "Lohen"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Tai Họa Và Hối Hận"
   },
   {
     "id": "fractured-halo",
@@ -417,7 +428,8 @@
     "bestCharacters": [
       "Ineffa"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Hào Quang Tách Rời"
   },
   {
     "id": "symphonist-of-scents",
@@ -439,7 +451,8 @@
     "bestCharacters": [
       "Escoffier"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Nhạc Sĩ Hương Thơm"
   },
   {
     "id": "ballad-of-the-fjords",
@@ -461,7 +474,8 @@
     "bestCharacters": [
       "Hỗ trợ EM cho đội đa nguyên tố (3+ hệ khác nhau)"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Khúc Ca Vịnh Hẹp"
   },
   {
     "id": "blackcliff-pole",
@@ -492,7 +506,8 @@
     "bestCharacters": [
       "DPS thương CRIT DMG-focus"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Thương Hắc Nham"
   },
   {
     "id": "crescent-pike",
@@ -523,7 +538,8 @@
     "bestCharacters": [
       "DPS thương đòn thường/trọng kích kết hợp phản ứng"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Lưu Nguyệt Châm"
   },
   {
     "id": "deathmatch",
@@ -562,7 +578,8 @@
     "bestCharacters": [
       "DPS/tank thương đa mục tiêu"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Thương Quyết Chiến"
   },
   {
     "id": "dialogues-of-the-desert-sages",
@@ -586,7 +603,8 @@
       "Mika",
       "Yaoyao (healer scale HP)"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Đối Thoại Của Hiền Giả Sa Mạc"
   },
   {
     "id": "dragons-bane",
@@ -619,7 +637,8 @@
       "Hu Tao",
       "DPS thương hệ Hỏa/Thủy"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Tai Ương Của Rồng"
   },
   {
     "id": "dragonspine-spear",
@@ -642,7 +661,8 @@
       "DPS thương hệ Băng",
       "trọng kích"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Thương Long Tích"
   },
   {
     "id": "favonius-lance",
@@ -681,7 +701,8 @@
     "bestCharacters": [
       "Nhân vật thương cần Energy Recharge"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Thương Tây Phong"
   },
   {
     "id": "footprint-of-the-rainbow",
@@ -705,7 +726,8 @@
       "Yun Jin",
       "DPS/sub-DPS scale theo DEF"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Vết Tích Cầu Vồng"
   },
   {
     "id": "frostbreath",
@@ -730,7 +752,8 @@
       "Ineffa",
       "Xiangling"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Hàn Khí"
   },
   {
     "id": "kitain-cross-spear",
@@ -769,7 +792,8 @@
     "bestCharacters": [
       "DPS thương scale EM"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Giáo Thập Tự Kitain"
   },
   {
     "id": "lithic-spear",
@@ -794,7 +818,8 @@
       "Xingqiu",
       "Hu Tao"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Thương Thiên Nham"
   },
   {
     "id": "missive-windspear",
@@ -816,7 +841,8 @@
     "bestCharacters": [
       "Sub-DPS/support thương tạo phản ứng"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Mũi Nhọn Của Gió"
   },
   {
     "id": "moonpiercer",
@@ -855,7 +881,8 @@
     "bestCharacters": [
       "DPS/sub-DPS thương hệ Dendro"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Quán Nguyệt Thương"
   },
   {
     "id": "mountain-bracing-bolt",
@@ -877,7 +904,8 @@
     "bestCharacters": [
       "DPS/sub-DPS dùng Kỹ năng nguyên tố nhiều"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Mũi Đinh Trấn Núi"
   },
   {
     "id": "prospectors-drill",
@@ -899,7 +927,8 @@
     "bestCharacters": [
       "Support/hybrid cần hồi máu kết hợp sát thương nguyên tố"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Mũi Khoan Thăm Dò"
   },
   {
     "id": "prospectors-shovel",
@@ -921,7 +950,8 @@
     "bestCharacters": [
       "Sub-DPS/support gây phản ứng Electro-Charged hoặc Lunar-Charged"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Xẻng Đào Vàng"
   },
   {
     "id": "prototype-starglitter",
@@ -943,7 +973,8 @@
     "bestCharacters": [
       "Nhân vật thương cần Energy Recharge"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Mẫu Tinh Liêm"
   },
   {
     "id": "rightful-reward",
@@ -965,7 +996,8 @@
     "bestCharacters": [
       "Healer/support cần hồi Năng lượng nguyên tố"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Thù Lao Của Chính Nghĩa"
   },
   {
     "id": "royal-spear",
@@ -1004,7 +1036,8 @@
     "bestCharacters": [
       "DPS thương ưu tiên ATK% thuần"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Thương Săn Tông Thất"
   },
   {
     "id": "sacrificers-staff",
@@ -1030,7 +1063,8 @@
       "Arlecchino",
       "Ineffa (DPS/sub-DPS dùng Kỹ năng nguyên tố)"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Quyền Trượng Kẻ Thánh Tế"
   },
   {
     "id": "song-of-the-vigil",
@@ -1052,7 +1086,8 @@
     "bestCharacters": [
       "Hỗ trợ hồi Năng lượng qua phản ứng nguyên tố"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Ca Dao Hy Vọng"
   },
   {
     "id": "tamayuratei-no-ohanashi",
@@ -1074,7 +1109,8 @@
     "bestCharacters": [
       "DPS thương dùng Kỹ năng nguyên tố nhiều"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Tamayuratei no Ohanashi"
   },
   {
     "id": "the-catch",
@@ -1113,7 +1149,8 @@
     "bestCharacters": [
       "Nhân vật thương Bùng nổ nguyên tố: Raiden Shogun (dù dùng thương-support build)"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Lao Xiên Cá"
   },
   {
     "id": "wavebreakers-fin",
@@ -1152,7 +1189,8 @@
     "bestCharacters": [
       "Nhân vật thương Bùng nổ nguyên tố"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Vây Cá Chẻ Sóng"
   },
   {
     "id": "black-tassel",
@@ -1174,7 +1212,8 @@
     "bestCharacters": [
       "Nhân vật thương sơ khai"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Hắc Anh Thương"
   },
   {
     "id": "halberd",
@@ -1196,7 +1235,8 @@
     "bestCharacters": [
       "Nhân vật thương sơ khai"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Thuẫn Kích"
   },
   {
     "id": "white-tassel",
@@ -1218,7 +1258,8 @@
     "bestCharacters": [
       "Nhân vật thương sơ khai"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Thương Bạch Anh"
   },
   {
     "id": "iron-point",
@@ -1236,7 +1277,8 @@
     "bestCharacters": [
       "Chỉ dùng tạm giai đoạn đầu game"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Thương Sắt"
   },
   {
     "id": "beginners-protector",
@@ -1255,6 +1297,7 @@
       "Vũ khí khởi đầu",
       "không dùng trong đội hình thực chiến"
     ],
-    "sourceFile": "vu-khi/thuong.md"
+    "sourceFile": "vu-khi/thuong.md",
+    "nameVI": "Thương Tân Thủ"
   }
 ]

@@ -60,8 +60,15 @@ final class AbyssViewModel: ObservableObject {
         }
     }
 
-    @Published private(set) var library: AbyssDataLibrary?
-    @Published private(set) var roster: AbyssRoster = .empty
+    @Published private(set) var library: AbyssDataLibrary? {
+        didSet {
+            rebuildSearchKeys()
+            refreshVisibleRoster()
+        }
+    }
+    @Published private(set) var roster: AbyssRoster = .empty {
+        didSet { refreshRosterIndex() }
+    }
     @Published private(set) var reports: [AbyssFloorReport] = []
     @Published private(set) var isSearching = false
     @Published private(set) var progress: Double = 0
@@ -78,26 +85,41 @@ final class AbyssViewModel: ObservableObject {
             rosterSort = .name
         }
     }
-    @Published var searchText: String = ""
-    @Published var elementFilter: GenshinElement?
-    @Published var weaponTypeFilter: WeaponType?
+    @Published var searchText: String = "" {
+        didSet { refreshVisibleRoster() }
+    }
+    @Published var elementFilter: GenshinElement? {
+        didSet { refreshVisibleRoster() }
+    }
+    @Published var weaponTypeFilter: WeaponType? {
+        didSet { refreshVisibleRoster() }
+    }
     /// By stars first: the grid's own file order groups characters by nation,
     /// which this screen never shows, and rarity is what most people scan a
     /// roster grid by.
     @Published var rosterSort: RosterSort = .rarity {
         didSet {
             guard rosterSort != oldValue else { return }
+            // Assigning `sortDescending` reapplies the order on its own, so this
+            // deliberately does not refresh a second time.
             sortDescending = rosterSort.startsDescending
         }
     }
 
     /// Direction of `rosterSort`. Reset to the sort's own natural end whenever
     /// the sort changes, and flippable from there.
-    @Published var sortDescending = RosterSort.rarity.startsDescending
-    @Published var showsOwnedOnly = false
-    /// Search across every character instead of the roster — "what could I
-    /// build in theory".
-    @Published var usesFullRoster = false
+    @Published var sortDescending = RosterSort.rarity.startsDescending {
+        didSet { refreshVisibleRoster() }
+    }
+    @Published var showsOwnedOnly = false {
+        didSet { refreshVisibleRoster() }
+    }
+    /// Search across every character instead of the owned roster — "what
+    /// could I build in theory" — independent of `usesFullWeaponPool`, so
+    /// either can widen without the other.
+    @Published var usesFullCharacterPool = false
+    /// Same, for weapons.
+    @Published var usesFullWeaponPool = false
 
     // MARK: - Showcase import
 
@@ -112,22 +134,50 @@ final class AbyssViewModel: ObservableObject {
     }
 
     @Published var uid: String = ""
-    @Published private(set) var showcase: AbyssShowcase?
+    @Published private(set) var showcase: AbyssShowcase? {
+        didSet { measuredCharacterIDs = Set((showcase?.builds ?? []).map(\.characterID)) }
+    }
     @Published private(set) var isImporting = false
     @Published private(set) var importStatus: ImportStatus?
+
+    // MARK: - Full roster import (HoYoLAB)
+
+    /// Outcome of the last full-roster import, mirroring `ImportStatus` —
+    /// structured for the same reason: the view renders it, not this type.
+    enum FullRosterImportStatus: Equatable {
+        case imported(count: Int)
+        case failed(AbyssHoyolabError)
+        case failedOther(String)
+    }
+
+    /// The player's own HoYoLAB login — pasted in by hand, kept in the
+    /// Keychain (see `AbyssHoyolabCredentialStore`), never sent anywhere but
+    /// HoYoLAB's own API. Loaded once at init; `saveHoyolabCredentials()`
+    /// writes back only when the player actually uses them.
+    @Published var hoyolabLtuid: String = ""
+    @Published var hoyolabLtoken: String = ""
+    @Published private(set) var isImportingFullRoster = false
+    @Published private(set) var fullRosterImportStatus: FullRosterImportStatus?
 
     private let store: AbyssRosterStoring
     private let showcaseStore: AbyssShowcaseStoring
     private let enka: AbyssShowcaseFetching
+    private let hoyolab: AbyssFullRosterFetching
+    private let hoyolabCredentials: AbyssHoyolabCredentialStoring
     private var searchTask: Task<Void, Never>?
     private var importTask: Task<Void, Never>?
+    private var fullRosterImportTask: Task<Void, Never>?
 
     init(store: AbyssRosterStoring = AbyssRosterStore(),
          showcaseStore: AbyssShowcaseStoring = AbyssShowcaseStore(),
-         enka: AbyssShowcaseFetching = AbyssEnkaClient()) {
+         enka: AbyssShowcaseFetching = AbyssEnkaClient(),
+         hoyolab: AbyssFullRosterFetching = AbyssHoyolabClient(),
+         hoyolabCredentials: AbyssHoyolabCredentialStoring = AbyssHoyolabCredentialStore()) {
         self.store = store
         self.showcaseStore = showcaseStore
         self.enka = enka
+        self.hoyolab = hoyolab
+        self.hoyolabCredentials = hoyolabCredentials
 
         do {
             roster = try store.load()
@@ -140,6 +190,16 @@ final class AbyssViewModel: ObservableObject {
 
         showcase = try? showcaseStore.load()
         uid = showcase?.uid ?? ""
+
+        if let credentials = hoyolabCredentials.load() {
+            hoyolabLtuid = credentials.ltuid
+            hoyolabLtoken = credentials.ltoken
+        }
+
+        // Property observers do not fire for the assignments above, which all
+        // happen inside `init`, so the derived state is primed by hand once.
+        measuredCharacterIDs = Set((showcase?.builds ?? []).map(\.characterID))
+        refreshRosterIndex()
 
         Task.detached(priority: .userInitiated) { [weak self] in
             let library = AbyssDataLibrary()
@@ -155,11 +215,6 @@ final class AbyssViewModel: ObservableObject {
     }
 
     var canImport: Bool { !isImporting && AbyssEnkaClient.isPlausibleUID(uid) && library != nil }
-
-    /// Characters whose stats came from the player's own account.
-    var measuredCharacterIDs: Set<String> {
-        Set((showcase?.builds ?? []).map(\.characterID))
-    }
 
     func isMeasured(_ characterID: String) -> Bool {
         measuredCharacterIDs.contains(characterID)
@@ -214,27 +269,26 @@ final class AbyssViewModel: ObservableObject {
         self.showcase = showcase
         try? showcaseStore.save(showcase)
 
+        // Built up as a local copy and assigned once: every write to `roster`
+        // reindexes ownership and refilters both grids, and an import touches it
+        // once per imported character.
+        var updated = roster
         for build in showcase.builds {
-            if let index = roster.characters.firstIndex(where: { $0.id == build.characterID }) {
-                roster.characters[index].constellation = build.constellation
+            if let index = updated.characters.firstIndex(where: { $0.id == build.characterID }) {
+                updated.characters[index].constellation = build.constellation
             } else {
-                roster.characters.append(.init(id: build.characterID, constellation: build.constellation))
+                updated.characters.append(.init(id: build.characterID, constellation: build.constellation))
             }
             guard let weaponID = build.weaponID else { continue }
-            if let index = roster.weapons.firstIndex(where: { $0.id == weaponID }) {
-                roster.weapons[index].refinement = build.weaponRefinement
+            if let index = updated.weapons.firstIndex(where: { $0.id == weaponID }) {
+                updated.weapons[index].refinement = build.weaponRefinement
             } else {
-                roster.weapons.append(.init(id: weaponID, refinement: build.weaponRefinement))
+                updated.weapons.append(.init(id: weaponID, refinement: build.weaponRefinement))
             }
         }
+        roster = updated
         persist()
         importStatus = .imported(nickname: showcase.nickname, count: showcase.builds.count)
-    }
-
-    func clearShowcase() {
-        showcase = nil
-        importStatus = nil
-        try? showcaseStore.clear()
     }
 
     func cancelImport() {
@@ -243,21 +297,105 @@ final class AbyssViewModel: ObservableObject {
         isImporting = false
     }
 
+    var canImportFullRoster: Bool {
+        !isImportingFullRoster && !hoyolabLtuid.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            && !hoyolabLtoken.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            && AbyssEnkaClient.isPlausibleUID(uid) && library != nil
+    }
+
+    /// Fetches the player's full character list from HoYoLAB and folds it
+    /// into the roster — same "only ever adds" contract as the Enka import,
+    /// and the same UID field, since it names the same account either way.
+    ///
+    /// Unlike Enka, these characters are not scored on measured stats: HoYoLAB's
+    /// character list has no artifact detail, only identity, constellation, and
+    /// the equipped weapon's refinement. They still get the standardised build,
+    /// same as anyone else marked owned by hand.
+    func importFullRosterFromHoyolab() {
+        guard let library, canImportFullRoster else { return }
+        let uid = uid.trimmingCharacters(in: .whitespacesAndNewlines)
+        let ltuid = hoyolabLtuid.trimmingCharacters(in: .whitespacesAndNewlines)
+        let ltoken = hoyolabLtoken.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Saved only now, not on every keystroke: the player may still be
+        // editing, and a half-typed token is not worth persisting.
+        try? hoyolabCredentials.save(ltuid: ltuid, ltoken: ltoken)
+
+        isImportingFullRoster = true
+        fullRosterImportStatus = nil
+        let client = hoyolab
+        let map = library.gameIDs
+
+        fullRosterImportTask = Task { [weak self] in
+            let result: Result<AbyssHoyolabRoster, Error>
+            do {
+                result = .success(try await client.fetchFullRoster(uid: uid, ltuid: ltuid, ltoken: ltoken, map: map))
+            } catch {
+                result = .failure(error)
+            }
+
+            await MainActor.run {
+                guard let self, !Task.isCancelled else { return }
+                self.isImportingFullRoster = false
+                switch result {
+                case .success(let hoyolabRoster):
+                    self.apply(hoyolabRoster)
+                case .failure(let error):
+                    self.fullRosterImportStatus = (error as? AbyssHoyolabError).map(FullRosterImportStatus.failed)
+                        ?? .failedOther(String(describing: error))
+                }
+            }
+        }
+    }
+
+    private func apply(_ hoyolabRoster: AbyssHoyolabRoster) {
+        // One assignment for the whole import — see `apply(_ showcase:)`.
+        var updated = roster
+        for character in hoyolabRoster.characters {
+            if let index = updated.characters.firstIndex(where: { $0.id == character.characterID }) {
+                updated.characters[index].constellation = character.constellation
+            } else {
+                updated.characters.append(.init(id: character.characterID, constellation: character.constellation))
+            }
+            guard let weaponID = character.weaponID else { continue }
+            if let index = updated.weapons.firstIndex(where: { $0.id == weaponID }) {
+                updated.weapons[index].refinement = character.weaponRefinement
+            } else {
+                updated.weapons.append(.init(id: weaponID, refinement: character.weaponRefinement))
+            }
+        }
+        roster = updated
+        persist()
+        fullRosterImportStatus = .imported(count: hoyolabRoster.characters.count)
+    }
+
+    func cancelFullRosterImport() {
+        fullRosterImportTask?.cancel()
+        fullRosterImportTask = nil
+        isImportingFullRoster = false
+    }
+
     // MARK: - Derived data
 
-    var characters: [AbyssCharacter] {
-        guard let library else { return [] }
-        return sorted(filter(library.characters))
-    }
+    /// The grid contents, stored rather than recomputed on read.
+    ///
+    /// The view asks for these once per tile and again for the counter, and a
+    /// single pass filters 246 entries and then sorts them through ICU
+    /// collation — so computing them on read cost several passes over the whole
+    /// library per body evaluation, on every keystroke and every hover. They are
+    /// refreshed only when something they depend on actually changes.
+    @Published private(set) var characters: [AbyssCharacter] = []
+    @Published private(set) var weapons: [AbyssWeapon] = []
 
-    var weapons: [AbyssWeapon] {
-        guard let library else { return [] }
-        return sorted(library.weapons.filter { weapon in
-            if showsOwnedOnly, !roster.weaponIDs.contains(weapon.id) { return false }
-            if let weaponTypeFilter, weapon.type != weaponTypeFilter { return false }
-            return matches(name: weapon.name, id: weapon.id)
-        })
-    }
+    /// Ownership, as a set rather than `AbyssRoster`'s arrays: the grid asks
+    /// "do I own this" once per visible tile, which was a fresh `Set` built from
+    /// the whole roster each time.
+    @Published private(set) var ownedCharacterIDs: Set<String> = []
+    @Published private(set) var ownedWeaponIDs: Set<String> = []
+    /// Characters whose stats came from the player's own account.
+    @Published private(set) var measuredCharacterIDs: Set<String> = []
+    private var constellationByID: [String: Int] = [:]
+    private var refinementByID: [String: Int] = [:]
 
     /// How many rows the filters are hiding, for the "12 of 125" counter.
     var visibleCount: Int { rosterTab == .characters ? characters.count : weapons.count }
@@ -281,18 +419,25 @@ final class AbyssViewModel: ObservableObject {
 
     /// True once the bundled rotation's window has passed. The data is only
     /// valid for two weeks, so a released build will reach this state.
-    var isCycleExpired: Bool {
-        guard let cycle else { return false }
+    /// Parsing `periodEnd` needs a fixed format, and building a `DateFormatter`
+    /// is expensive enough to matter for something the banner reads on every
+    /// body evaluation.
+    private static let cycleDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        guard let end = formatter.date(from: cycle.periodEnd) else { return false }
+        return formatter
+    }()
+
+    var isCycleExpired: Bool {
+        guard let cycle else { return false }
+        guard let end = Self.cycleDateFormatter.date(from: cycle.periodEnd) else { return false }
         return Date() > end.addingTimeInterval(24 * 60 * 60)
     }
 
     var canSearch: Bool {
         guard library != nil, !isSearching else { return false }
-        return usesFullRoster || roster.characters.count >= 4
+        return usesFullCharacterPool || roster.characters.count >= 4
     }
 
     /// Applies `rosterSort` in `sortDescending`'s direction, then falls through
@@ -341,8 +486,8 @@ final class AbyssViewModel: ObservableObject {
                 return .orderedSame
             case .owned:
                 // Bool is not Comparable in Swift; 0/1 keeps one comparison path.
-                return Self.compare(roster.characterIDs.contains(lhs.id) ? 1 : 0,
-                                    roster.characterIDs.contains(rhs.id) ? 1 : 0)
+                return Self.compare(ownedCharacterIDs.contains(lhs.id) ? 1 : 0,
+                                    ownedCharacterIDs.contains(rhs.id) ? 1 : 0)
             }
         }
     }
@@ -357,49 +502,145 @@ final class AbyssViewModel: ObservableObject {
             case .attack:
                 return Self.compare(lhs.atkLv90 ?? 0, rhs.atkLv90 ?? 0)
             case .owned:
-                return Self.compare(roster.weaponIDs.contains(lhs.id) ? 1 : 0,
-                                    roster.weaponIDs.contains(rhs.id) ? 1 : 0)
+                return Self.compare(ownedWeaponIDs.contains(lhs.id) ? 1 : 0,
+                                    ownedWeaponIDs.contains(rhs.id) ? 1 : 0)
             case .element, .release:
                 return .orderedSame
             }
         }
     }
 
-    private func filter(_ characters: [AbyssCharacter]) -> [AbyssCharacter] {
-        characters.filter { character in
-            if showsOwnedOnly, !roster.characterIDs.contains(character.id) { return false }
-            if let elementFilter, character.element != elementFilter { return false }
-            if let weaponTypeFilter, character.weaponType != weaponTypeFilter { return false }
-            return matches(name: character.name, id: character.id)
-        }
+    // MARK: - Cached derivation
+
+    private static let searchOptions: String.CompareOptions = [.caseInsensitive, .diacriticInsensitive]
+    /// Separators stripped before matching, so "hutao", "hu tao" and "hu-tao"
+    /// all find the same entry. A `static let` because building a `CharacterSet`
+    /// is not free and this one never varies.
+    private static let searchSeparators = CharacterSet(charactersIn: " -_'")
+
+    /// One entry's precomputed haystacks, built once per library load.
+    ///
+    /// Stripping the separators is the expensive half of `matches` — several
+    /// `components(separatedBy:).joined()` allocations per candidate — and the
+    /// result only ever changes when the library does, not when the query does.
+    private struct SearchKey {
+        let name: String
+        /// nil when the Vietnamese name is the same string as the English one.
+        /// That is most characters — the game does not translate proper names —
+        /// so the common case does not pay for a second pass over the same text.
+        let nameVI: String?
+        let flatID: String
+        let flatName: String
+        let flatNameVI: String?
     }
 
-    /// Matches the display name or the id.
+    /// The query, prepared once per pass instead of once per candidate.
+    private struct SearchQuery {
+        let text: String
+        let flat: String
+    }
+
+    private var characterSearchKeys: [String: SearchKey] = [:]
+    private var weaponSearchKeys: [String: SearchKey] = [:]
+
+    private static func searchKey(name: String, nameVI: String, id: String) -> SearchKey {
+        let translated = nameVI == name ? nil : nameVI
+        return SearchKey(name: name,
+                         nameVI: translated,
+                         flatID: id.components(separatedBy: searchSeparators).joined(),
+                         flatName: name.components(separatedBy: searchSeparators).joined(),
+                         flatNameVI: translated?.components(separatedBy: searchSeparators).joined())
+    }
+
+    private func rebuildSearchKeys() {
+        guard let library else {
+            characterSearchKeys = [:]
+            weaponSearchKeys = [:]
+            return
+        }
+        characterSearchKeys = Dictionary(uniqueKeysWithValues: library.characters.map {
+            ($0.id, Self.searchKey(name: $0.name, nameVI: $0.nameVI, id: $0.id))
+        })
+        weaponSearchKeys = Dictionary(uniqueKeysWithValues: library.weapons.map {
+            ($0.id, Self.searchKey(name: $0.name, nameVI: $0.nameVI, id: $0.id))
+        })
+    }
+
+    /// Ownership and levels, rebuilt whenever the roster changes rather than
+    /// asked of `AbyssRoster`'s arrays once per tile.
+    private func refreshRosterIndex() {
+        ownedCharacterIDs = Set(roster.characters.map(\.id))
+        ownedWeaponIDs = Set(roster.weapons.map(\.id))
+        constellationByID = Dictionary(roster.characters.map { ($0.id, $0.constellation) },
+                                       uniquingKeysWith: { _, last in last })
+        refinementByID = Dictionary(roster.weapons.map { ($0.id, $0.refinement) },
+                                    uniquingKeysWith: { _, last in last })
+        refreshVisibleRoster()
+    }
+
+    /// Reapplies the filters and the sort to both grids.
     ///
-    /// Ignoring accents matters in both directions: the Vietnamese UI has them
-    /// and a keyboard often will not, and several names carry them in English
-    /// too. The id is matched with separators stripped, so "hutao", "hu tao" and
-    /// "hu-tao" all find the same character.
-    private func matches(name: String, id: String) -> Bool {
-        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !query.isEmpty else { return true }
+    /// Both tabs are refreshed together even though only one is on screen:
+    /// switching tabs is then free, and the work is the same either way since
+    /// the filters that differ between them are already cheap.
+    private func refreshVisibleRoster() {
+        guard let library else {
+            characters = []
+            weapons = []
+            return
+        }
+        let query = preparedQuery()
+        characters = sorted(library.characters.filter { character in
+            if showsOwnedOnly, !ownedCharacterIDs.contains(character.id) { return false }
+            if let elementFilter, character.element != elementFilter { return false }
+            if let weaponTypeFilter, character.weaponType != weaponTypeFilter { return false }
+            return matches(characterSearchKeys[character.id], query: query)
+        })
+        weapons = sorted(library.weapons.filter { weapon in
+            if showsOwnedOnly, !ownedWeaponIDs.contains(weapon.id) { return false }
+            if let weaponTypeFilter, weapon.type != weaponTypeFilter { return false }
+            return matches(weaponSearchKeys[weapon.id], query: query)
+        })
+    }
 
-        let options: String.CompareOptions = [.caseInsensitive, .diacriticInsensitive]
-        if name.range(of: query, options: options) != nil { return true }
+    private func preparedQuery() -> SearchQuery? {
+        let text = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { return nil }
+        return SearchQuery(text: text,
+                           flat: text.components(separatedBy: Self.searchSeparators).joined())
+    }
 
-        let separators = CharacterSet(charactersIn: " -_'")
-        let flatQuery = query.components(separatedBy: separators).joined()
-        guard !flatQuery.isEmpty else { return true }
-        let flatID = id.components(separatedBy: separators).joined()
-        let flatName = name.components(separatedBy: separators).joined()
-        return flatID.range(of: flatQuery, options: options) != nil
-            || flatName.range(of: flatQuery, options: options) != nil
+    /// Matches either display name, or the id.
+    ///
+    /// Both names, because the grid shows the Vietnamese one in the Vietnamese
+    /// UI: matching only the English name meant typing the name that was on
+    /// screen returned nothing. Ignoring accents matters in both directions —
+    /// the Vietnamese names carry them and a keyboard often will not, and
+    /// several English names carry them too.
+    private func matches(_ key: SearchKey?, query: SearchQuery?) -> Bool {
+        guard let query else { return true }
+        guard let key else { return false }
+        if key.name.range(of: query.text, options: Self.searchOptions) != nil { return true }
+        if let nameVI = key.nameVI, nameVI.range(of: query.text, options: Self.searchOptions) != nil {
+            return true
+        }
+        guard !query.flat.isEmpty else { return true }
+        if key.flatID.range(of: query.flat, options: Self.searchOptions) != nil { return true }
+        if key.flatName.range(of: query.flat, options: Self.searchOptions) != nil { return true }
+        guard let flatNameVI = key.flatNameVI else { return false }
+        return flatNameVI.range(of: query.flat, options: Self.searchOptions) != nil
     }
 
     // MARK: - Roster editing
 
-    func owns(characterID: String) -> Bool { roster.characterIDs.contains(characterID) }
-    func owns(weaponID: String) -> Bool { roster.weaponIDs.contains(weaponID) }
+    func owns(characterID: String) -> Bool { ownedCharacterIDs.contains(characterID) }
+    func owns(weaponID: String) -> Bool { ownedWeaponIDs.contains(weaponID) }
+
+    /// Level lookups for the grid's steppers, backed by the same index as
+    /// `owns` — `AbyssRoster` stores arrays, so asking it directly is a linear
+    /// scan per tile.
+    func constellation(for characterID: String) -> Int { constellationByID[characterID] ?? 0 }
+    func refinement(for weaponID: String) -> Int { refinementByID[weaponID] ?? 1 }
 
     func toggleCharacter(_ id: String) {
         if let index = roster.characters.firstIndex(where: { $0.id == id }) {
@@ -472,8 +713,10 @@ final class AbyssViewModel: ObservableObject {
         guard let library, !isSearching else { return }
         guard let optimizer = AbyssOptimizer(library: library) else { return }
 
-        let request = AbyssOptimizerRequest(roster: usesFullRoster ? nil : roster, topN: 5,
-                                            showcase: showcase?.builds ?? [])
+        let request = AbyssOptimizerRequest(roster: roster,
+                                            usesFullCharacterPool: usesFullCharacterPool,
+                                            usesFullWeaponPool: usesFullWeaponPool,
+                                            topN: 5, showcase: showcase?.builds ?? [])
         isSearching = true
         progress = 0
         reports = []

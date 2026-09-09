@@ -28,8 +28,27 @@ final class AbyssRosterSearchTests: XCTestCase {
         func fetchShowcase(uid: String, map: AbyssGameIDMap) async throws -> AbyssShowcase { showcase }
     }
 
-    private func makeViewModel(enka: AbyssShowcaseFetching = StubFetcher(showcase: .empty)) async -> AbyssViewModel {
-        let viewModel = AbyssViewModel(store: MemoryStore(), showcaseStore: MemoryShowcaseStore(), enka: enka)
+    /// Not backed by the real Keychain: a view model test should not depend on
+    /// or mutate whatever is actually saved on the machine running it.
+    private final class MemoryCredentialStore: AbyssHoyolabCredentialStoring, @unchecked Sendable {
+        var saved: (ltuid: String, ltoken: String)?
+        func load() -> (ltuid: String, ltoken: String)? { saved }
+        func save(ltuid: String, ltoken: String) throws { saved = (ltuid, ltoken) }
+    }
+
+    /// Returns a canned full roster instead of calling HoYoLAB.
+    private struct StubHoyolabFetcher: AbyssFullRosterFetching {
+        let roster: AbyssHoyolabRoster
+        func fetchFullRoster(uid: String, ltuid: String, ltoken: String, map: AbyssGameIDMap) async throws
+            -> AbyssHoyolabRoster { roster }
+    }
+
+    private func makeViewModel(enka: AbyssShowcaseFetching = StubFetcher(showcase: .empty),
+                               hoyolab: AbyssFullRosterFetching = StubHoyolabFetcher(roster: .empty),
+                               hoyolabCredentials: AbyssHoyolabCredentialStoring = MemoryCredentialStore())
+        async -> AbyssViewModel {
+        let viewModel = AbyssViewModel(store: MemoryStore(), showcaseStore: MemoryShowcaseStore(), enka: enka,
+                                       hoyolab: hoyolab, hoyolabCredentials: hoyolabCredentials)
         // The library loads on a detached task; wait for it rather than racing.
         for _ in 0..<200 where viewModel.library == nil {
             try? await Task.sleep(nanoseconds: 20_000_000)
@@ -60,6 +79,42 @@ final class AbyssRosterSearchTests: XCTestCase {
         viewModel.searchText = "CHILDE"
         XCTAssertEqual(accented.map(\.id), viewModel.characters.map(\.id),
                        "search should not be case sensitive")
+    }
+
+    /// The grid shows `nameVI` in the Vietnamese UI, so the name a player can
+    /// see on screen has to be the name they can type. Most characters are
+    /// unaffected — the game leaves proper names alone — but weapon and
+    /// artifact-set names are translated in full, and so are the handful of
+    /// characters named for what they are rather than who they are.
+    func testSearchMatchesTheVietnameseNameTheGridIsShowing() async throws {
+        let viewModel = await makeViewModel()
+        XCTAssertNotNil(viewModel.library, "the Abyss library never finished loading")
+
+        // A character whose Vietnamese name is nothing like the English one.
+        viewModel.searchText = "Kẻ Lang Thang"
+        XCTAssertTrue(viewModel.characters.contains { $0.id == "wanderer" },
+                      "the Vietnamese name shown on the tile should find the character")
+
+        // Typed without the accents, which is how most keyboards produce it.
+        viewModel.searchText = "ke lang thang"
+        XCTAssertTrue(viewModel.characters.contains { $0.id == "wanderer" })
+
+        // The element qualifier the app appends is part of the shown name too.
+        viewModel.searchText = "nhà lữ hành"
+        XCTAssertTrue(viewModel.characters.contains { $0.id == "traveler-anemo" })
+
+        // Weapons are translated in full, so this is the common case there.
+        viewModel.rosterTab = .weapons
+        viewModel.searchText = "Phong Ưng Kiếm"
+        XCTAssertTrue(viewModel.weapons.contains { $0.id == "aquila-favonia" })
+
+        viewModel.searchText = "phong ung kiem"
+        XCTAssertTrue(viewModel.weapons.contains { $0.id == "aquila-favonia" },
+                      "dropping the accents should still find the weapon")
+
+        // The English name still matches, since the English UI still shows it.
+        viewModel.searchText = "aquila"
+        XCTAssertTrue(viewModel.weapons.contains { $0.id == "aquila-favonia" })
     }
 
     func testEmptySearchShowsEverythingAndFiltersNarrow() async throws {
@@ -144,10 +199,6 @@ final class AbyssRosterSearchTests: XCTestCase {
             XCTFail("a second import inside the ttl should be refused, got \(String(describing: viewModel.importStatus))")
         }
 
-        viewModel.clearShowcase()
-        XCTAssertNil(viewModel.showcase)
-        XCTAssertTrue(viewModel.owns(characterID: "hu-tao"),
-                      "forgetting the import should not un-own what it added")
     }
 
     // MARK: - Sorting
@@ -289,6 +340,108 @@ final class AbyssRosterSearchTests: XCTestCase {
         XCTAssertFalse(viewModel.canImport)
         viewModel.uid = "618285856"
         XCTAssertTrue(viewModel.canImport)
+    }
+
+    // MARK: - Full roster import (HoYoLAB)
+
+    /// Same "only ever adds" contract as the Showcase import, but for many
+    /// more characters at once, and scored on the standard build rather than
+    /// measured stats — HoYoLAB's character list has no artifact detail.
+    func testFullRosterImportAddsOwnershipWithoutMeasuredStats() async throws {
+        let hoyolabRoster = AbyssHoyolabRoster(
+            uid: "618285856", fetchedAt: Date(),
+            characters: [
+                AbyssHoyolabCharacter(characterID: "hu-tao", constellation: 2,
+                                      weaponID: "staff-of-homa", weaponRefinement: 3),
+                AbyssHoyolabCharacter(characterID: "bennett", constellation: 6, weaponID: nil, weaponRefinement: 1),
+            ],
+            unmappedIDs: [])
+        let viewModel = await makeViewModel(hoyolab: StubHoyolabFetcher(roster: hoyolabRoster))
+
+        // Something the player ticked themselves, which must survive.
+        viewModel.toggleCharacter("diona")
+        viewModel.uid = "618285856"
+        viewModel.hoyolabLtuid = "618285856"
+        viewModel.hoyolabLtoken = "some-token"
+        XCTAssertTrue(viewModel.canImportFullRoster)
+
+        viewModel.importFullRosterFromHoyolab()
+        for _ in 0..<200 where viewModel.fullRosterImportStatus == nil {
+            try? await Task.sleep(nanoseconds: 10_000_000)
+        }
+
+        XCTAssertEqual(viewModel.fullRosterImportStatus, .imported(count: 2))
+        XCTAssertTrue(viewModel.owns(characterID: "hu-tao"))
+        XCTAssertTrue(viewModel.owns(characterID: "bennett"))
+        XCTAssertTrue(viewModel.owns(characterID: "diona"), "the hand-entered character was dropped")
+        XCTAssertTrue(viewModel.owns(weaponID: "staff-of-homa"))
+        XCTAssertEqual(viewModel.roster.constellation(for: "hu-tao"), 2)
+        XCTAssertEqual(viewModel.roster.refinement(for: "staff-of-homa"), 3)
+
+        // Not `.measured` — HoYoLAB's character list carries no artifact
+        // detail, so this import must not claim these characters were scored
+        // on real stats the way an Enka Showcase import is.
+        XCTAssertFalse(viewModel.isMeasured("hu-tao"))
+        XCTAssertFalse(viewModel.isMeasured("bennett"))
+    }
+
+    /// Credentials are only written to the store on an actual import, not on
+    /// every keystroke while the player is still typing.
+    func testCredentialsPersistOnlyOnImportAndReloadOnNextLaunch() async throws {
+        let credentialStore = MemoryCredentialStore()
+        let viewModel = await makeViewModel(hoyolabCredentials: credentialStore)
+
+        viewModel.hoyolabLtuid = "618285856"
+        viewModel.hoyolabLtoken = "some-token"
+        XCTAssertNil(credentialStore.saved, "typing into the fields should not touch storage yet")
+
+        viewModel.uid = "618285856"
+        viewModel.importFullRosterFromHoyolab()
+        for _ in 0..<200 where viewModel.fullRosterImportStatus == nil {
+            try? await Task.sleep(nanoseconds: 10_000_000)
+        }
+        XCTAssertEqual(credentialStore.saved?.ltuid, "618285856")
+        XCTAssertEqual(credentialStore.saved?.ltoken, "some-token")
+
+        // A fresh view model — the next launch — should come back pre-filled
+        // from the same store.
+        let relaunched = await makeViewModel(hoyolabCredentials: credentialStore)
+        XCTAssertEqual(relaunched.hoyolabLtuid, "618285856")
+        XCTAssertEqual(relaunched.hoyolabLtoken, "some-token")
+    }
+
+    func testFullRosterImportIsRefusedWithoutBothCredentials() async throws {
+        let viewModel = await makeViewModel()
+        viewModel.uid = "618285856"
+        XCTAssertFalse(viewModel.canImportFullRoster, "no credentials at all")
+
+        viewModel.hoyolabLtuid = "618285856"
+        XCTAssertFalse(viewModel.canImportFullRoster, "ltoken_v2 is still missing")
+
+        viewModel.hoyolabLtoken = "some-token"
+        XCTAssertTrue(viewModel.canImportFullRoster)
+
+        viewModel.uid = "not-a-uid"
+        XCTAssertFalse(viewModel.canImportFullRoster, "the UID itself still has to be plausible")
+    }
+
+    func testFullRosterImportSurfacesUnmappedIDsWithoutFailingTheWholeImport() async throws {
+        let hoyolabRoster = AbyssHoyolabRoster(
+            uid: "618285856", fetchedAt: Date(),
+            characters: [AbyssHoyolabCharacter(characterID: "hu-tao", constellation: 0,
+                                               weaponID: nil, weaponRefinement: 1)],
+            unmappedIDs: ["character 99999999"])
+        let viewModel = await makeViewModel(hoyolab: StubHoyolabFetcher(roster: hoyolabRoster))
+        viewModel.uid = "618285856"
+        viewModel.hoyolabLtuid = "618285856"
+        viewModel.hoyolabLtoken = "some-token"
+
+        viewModel.importFullRosterFromHoyolab()
+        for _ in 0..<200 where viewModel.fullRosterImportStatus == nil {
+            try? await Task.sleep(nanoseconds: 10_000_000)
+        }
+        XCTAssertEqual(viewModel.fullRosterImportStatus, .imported(count: 1))
+        XCTAssertTrue(viewModel.owns(characterID: "hu-tao"))
     }
 
     func testOwnedOnlyHidesEverythingWhileTheRosterIsEmpty() async throws {

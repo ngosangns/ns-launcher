@@ -42,12 +42,25 @@ struct AbyssOptimizer: Sendable {
         let roster = request.roster
         let unknownIDs = roster.map { unknownRosterIDs(in: $0) } ?? []
 
-        let characters = roster.map { roster in
-            library.characters.filter { roster.characterIDs.contains($0.id) }
+        // Each pool is gated independently, but `roster` itself is passed on
+        // unchanged everywhere else (refinement, constellation, artifact set
+        // ownership) — a full-character-pool search still credits a weapon the
+        // player actually owns with its real refinement, it just is not the
+        // thing being restricted.
+        let characterRoster = request.usesFullCharacterPool ? nil : roster
+        let weaponRoster = request.usesFullWeaponPool ? nil : roster
+
+        // The id sets are built once and captured, not asked of the roster from
+        // inside the filter: `characterIDs` builds a fresh `Set` from the whole
+        // owned list on every read, which inside a `filter` is one per candidate.
+        let characters = characterRoster.map { roster in
+            let owned = roster.characterIDs
+            return library.characters.filter { owned.contains($0.id) }
         } ?? library.characters
 
-        let weapons = roster.map { roster in
-            library.weapons.filter { roster.weaponIDs.contains($0.id) }
+        let weapons = weaponRoster.map { roster in
+            let owned = roster.weaponIDs
+            return library.weapons.filter { owned.contains($0.id) }
         } ?? library.weapons
 
         let ownedSets = roster?.artifactSets ?? []

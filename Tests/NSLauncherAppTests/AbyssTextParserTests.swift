@@ -134,6 +134,7 @@ extension AbyssCharacter {
         let json: [String: Any] = [
             "id": id,
             "name": id,
+            "nameVI": id,
             "element": element.rawValue,
             "weaponType": weaponType.rawValue,
             "rarity": 5,

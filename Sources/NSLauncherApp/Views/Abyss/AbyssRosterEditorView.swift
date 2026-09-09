@@ -52,6 +52,18 @@ struct AbyssRosterEditorView: View {
                     viewModel.rosterTab = .weapons
                 }
                 .fixedSize()
+
+                Spacer(minLength: 0)
+
+                // Whichever tab is open, not both counts at once: this used to
+                // live in the sidebar as "X characters · Y weapons" regardless
+                // of what was on screen, which said something about the tab
+                // that was not showing.
+                Text(viewModel.rosterTab == .characters
+                        ? text.abyssOwnedCharacterCount(viewModel.roster.characters.count)
+                        : text.abyssOwnedWeaponCount(viewModel.roster.weapons.count))
+                    .font(.system(.caption2, design: .rounded))
+                    .foregroundStyle(LauncherPalette.mist.opacity(0.62))
             }
 
             searchRow
@@ -327,15 +339,17 @@ struct AbyssRosterEditorView: View {
                 let owned = viewModel.owns(characterID: character.id)
                 let measured = viewModel.isMeasured(character.id)
                 RosterCard(
-                    title: character.name,
-                    subtitle: measured
-                        ? "\(text.abyssElementLabel(character.element)) · \(text.abyssMeasuredBadge)"
-                        : "\(text.abyssElementLabel(character.element)) · \(text.abyssWeaponTypeLabel(character.weaponType))",
+                    title: text.pick(en: character.name, vi: character.nameVI),
+                    // Element and weapon type used to live here as text; the
+                    // element now reads from the left border instead, and the
+                    // weapon type was not worth a field of its own.
+                    subtitle: measured ? text.abyssMeasuredBadge : "",
                     isSelected: owned,
                     level: owned
-                        ? (value: viewModel.roster.constellation(for: character.id) ?? 0, range: 0...6, label: "C")
+                        ? (value: viewModel.constellation(for: character.id), range: 0...6, label: "C")
                         : nil,
                     rarity: .genshin(character.rarity),
+                    leadingAccent: character.element.accentColor,
                     icon: {
                         AbyssPortraitImage(url: viewModel.characterIconURL(character.id),
                                           systemImage: character.element.symbolName,
@@ -360,11 +374,11 @@ struct AbyssRosterEditorView: View {
                 RosterCard(
                     // The type no longer has a group header to live in, so it
                     // moves into the subtitle, the way a character's does.
-                    title: weapon.name,
+                    title: text.pick(en: weapon.name, vi: weapon.nameVI),
                     subtitle: text.abyssWeaponTypeLabel(weapon.type),
                     isSelected: owned,
                     level: owned
-                        ? (value: viewModel.roster.refinement(for: weapon.id), range: 1...5, label: "R")
+                        ? (value: viewModel.refinement(for: weapon.id), range: 1...5, label: "R")
                         : nil,
                     rarity: rarity,
                     icon: {

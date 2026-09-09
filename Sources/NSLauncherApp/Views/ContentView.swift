@@ -13,8 +13,8 @@ private enum AppTab: Hashable {
 struct ContentView: View {
     @ObservedObject var viewModel: LauncherViewModel
     @State private var activeTab: AppTab = .home
-    // Held here, above the `.id(activeTab)` switch below, so switching away from
-    // and back to Story doesn't re-parse Resources/Story/ every time.
+    // Held here, above the tab switch below, so switching away from and back to
+    // Story doesn't re-parse Resources/Story/ every time.
     @StateObject private var storyViewModel = StoryViewModel()
     // Same reasoning, and more so: the Abyss library parses ~950 KB with regexes,
     // and the tab also holds computed teams that should survive a tab switch.
@@ -48,7 +48,6 @@ struct ContentView: View {
                         AbyssView(viewModel: abyssViewModel, text: text)
                     }
                 }
-                .id(activeTab)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
 

@@ -149,7 +149,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính trên trường (on-field), chuyên đội Dendro phản ứng (Bloom/Spread/Aggravate). Combo phổ biến: Tighnari + Nahida + Xingqiu/Yelan (Quicken-Bloom/Aggravate) hoặc Tighnari + Kuki Shinobu + Dendro core (Hyperbloom).",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Tighnari"
   },
   {
     "id": "collei",
@@ -280,7 +281,8 @@
       }
     ],
     "abyssRoleNotes": "Sub-DPS/hỗ trợ off-field Dendro giá rẻ (4★), bật phản ứng Quicken/Bloom/Burning liên tục. Combo phổ biến: Collei + Bennett + Xingqiu (Burning/Vaporize hỗ trợ) hoặc Collei + Nahida + Hydro DPS (Bloom).",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Collei"
   },
   {
     "id": "dori",
@@ -396,7 +398,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ hồi máu + hồi năng lượng off-field cho nhân vật cần nhiều năng lượng (Raiden, Yae Miko...). Combo phổ biến: Dori + Raiden Shogun (hồi năng lượng burst-spam) hoặc Dori + bất kỳ DPS cần sustain trong đội Hyperbloom/Aggravate.",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Dori"
   },
   {
     "id": "candace",
@@ -519,7 +522,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ khiên + buff DMG đòn thường nguyên tố cho đội Hydro Infusion (National-style). Combo phổ biến: Candace + Xiangling/Bennett (Hydro Infusion Vaporize) hoặc Candace + Raiden/Kazuha làm khiên phụ. Ghi chú nguồn: tên & mô tả chi tiết C1–C6 của Candace chưa xác nhận đầy đủ, cần đối chiếu lại nguồn trước khi dùng số liệu cung mệnh.",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Candace"
   },
   {
     "id": "cyno",
@@ -635,7 +639,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính on-field Electro, cực mạnh trong đội Hyperbloom/Aggravate nhờ scaling Tinh Thông Nguyên Tố. Combo phổ biến: Cyno + Nahida + Kuki Shinobu/Kokomi (Hyperbloom) hoặc Cyno + Nahida + Yae Miko (Electro thuần).",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Cyno"
   },
   {
     "id": "nilou",
@@ -751,7 +756,8 @@
       }
     ],
     "abyssRoleNotes": "Trái tim đội \"Nilou Bloom\" — hỗ trợ/DPS Hydro biến Dendro Core thành Bountiful Core sát thương cực cao. Combo bắt buộc: Nilou + Nahida + Dendro core support + Hydro phụ (Nilou-Nahida-Kokomi/Yaoyao-Barbara/Xingqiu).",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Nilou"
   },
   {
     "id": "layla",
@@ -867,7 +873,8 @@
       }
     ],
     "abyssRoleNotes": "Khiên + hỗ trợ Cryo off-field giá rẻ, phù hợp đội Cryo/Freeze/Melt cần khiên bền. Combo phổ biến: Layla + Kaeya/Chongyun (Freeze) hoặc Layla + bất kỳ đội cần khiên rẻ tiền thay Zhongli.",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Layla"
   },
   {
     "id": "wanderer",
@@ -983,7 +990,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính on-field Anemo scaling CRIT Rate/DMG, đổi nguyên tố linh hoạt qua C1. Combo phổ biến: Wanderer + Faruzan + Bennett (Anemo-Pyro buff ATK) hoặc Wanderer + Nahida + Kazuha/Faruzan (Anemo-Dendro).",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Kẻ Lang Thang"
   },
   {
     "id": "faruzan",
@@ -1106,7 +1114,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ giảm kháng Anemo + buff Anemo DMG bắt buộc cho mọi đội Anemo DPS (đặc biệt Wanderer). Combo phổ biến: Faruzan + Wanderer + Bennett/Xiangling, hoặc Faruzan + bất kỳ Anemo DPS nào cần shred kháng.",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Faruzan"
   },
   {
     "id": "alhaitham",
@@ -1222,7 +1231,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính on-field Dendro scaling Tinh Thông Nguyên Tố, phối hợp phản ứng Quicken/Spread/Aggravate/Hyperbloom. Combo phổ biến: Alhaitham + Nahida + Yae Miko/Fischl (Aggravate) hoặc Alhaitham + Nahida + Xingqiu (Quicken-Spread). Ghi chú nguồn: mô tả C1–C6 chính xác của Alhaitham chưa lấy được nguyên văn trong phiên lấy dữ liệu này, cần đối chiếu Fandom trước khi dùng.",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Alhaitham"
   },
   {
     "id": "dehya",
@@ -1345,7 +1355,8 @@
       }
     ],
     "abyssRoleNotes": "DPS phụ/off-field bền bỉ (sinh tồn cao), thường dùng làm sub-DPS Pyro hoặc DPS chính khi build HP. Combo phổ biến: Dehya + Bennett (đội Pyro Sunfire) hoặc Dehya + Nahida (Burning/Hyperbloom).",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Dehya"
   },
   {
     "id": "kaveh",
@@ -1454,7 +1465,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính on-field cho đội Bloom/Hyperbloom/Burgeon (kích nổ + khuếch đại Dendro Core). Combo phổ biến: Kaveh + Nahida + Hydro DPS + Electro (Hyperbloom) hoặc Kaveh + Nahida + Xingqiu (Burgeon/Bloom).",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Kaveh"
   },
   {
     "id": "nahida",
@@ -1562,7 +1574,8 @@
       }
     ],
     "abyssRoleNotes": "Xương sống mọi đội Dendro — hỗ trợ/DPS phụ kích hoạt phản ứng liên hoàn (Quicken/Aggravate/Spread/Bloom/Hyperbloom/Burgeon). Combo phổ biến: Nahida + Xingqiu/Yelan + Electro DPS (Aggravate/Hyperbloom) hoặc Nahida + Nilou (Bloom).",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Nahida"
   },
   {
     "id": "sethos",
@@ -1671,7 +1684,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính on-field Electro dựa vào Tinh Thông Nguyên Tố, hợp đội phản ứng Electro (Aggravate/Hyperbloom/Overload). Combo phổ biến: Sethos + Nahida + Xingqiu/Yelan (Aggravate) hoặc Sethos + Nahida + Hyperbloom enabler.",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Sethos"
   },
   {
     "id": "kachina",
@@ -1780,7 +1794,8 @@
       }
     ],
     "abyssRoleNotes": "Sub-DPS/hỗ trợ off-field Geo scaling DEF, tạo shard hỗ trợ Kết Tinh. Combo phổ biến: Kachina + Zhongli/Xilonen (Geo Resonance/khiên) hoặc Kachina + Navia (Crystallize burst).",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Kachina"
   },
   {
     "id": "mualani",
@@ -1896,7 +1911,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính on-field Hydro scaling Max HP, cực mạnh khi build HP cao. Combo phổ biến: Mualani + Kirara/Xilonen (buff HP) + Hydro-Cryo (Freeze) hoặc Mualani + Furina (Hydro thuần).",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Mualani"
   },
   {
     "id": "kinich",
@@ -2012,7 +2028,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính on-field Dendro, cực mạnh trong đội Burning/Hyperbloom nhờ Ajaw luôn ở trên trường. Combo phổ biến: Kinich + Nahida/Emilie + Bennett (Burning) hoặc Kinich + Nahida + Hydro-Electro (Hyperbloom).",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Kinich"
   },
   {
     "id": "xilonen",
@@ -2121,7 +2138,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ toàn diện (buff theo nguyên tố đội + giảm kháng + hồi máu) scaling DEF, gần như bắt buộc trong mọi đội Natlan đa nguyên tố. Combo phổ biến: Xilonen + bất kỳ 2 nguyên tố Pyro/Hydro/Cryo/Electro (Taser/Freeze/Vaporize team), rất phổ biến cùng Mavuika/Chasca.",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Xilonen"
   },
   {
     "id": "chasca",
@@ -2237,7 +2255,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính on-field Anemo đa nguyên tố hóa đạn (Taser/đa phản ứng), rất mạnh trong đội 4 nguyên tố khác nhau. Combo phổ biến: Chasca + Furina/Fischl/Bennett/Kazuha (mỗi người 1 nguyên tố để tối đa hóa Shining Shell).",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Chasca"
   },
   {
     "id": "ororon",
@@ -2346,7 +2365,8 @@
       }
     ],
     "abyssRoleNotes": "Sub-DPS/hỗ trợ off-field Electro dựa vào phản ứng Electro của đồng đội để tự động dội thêm sát thương. Combo phổ biến: Ororon + Furina/Nilou (Hydro) hoặc Ororon + bất kỳ DPS Electro-Charged/Hyperbloom.",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Ororon"
   },
   {
     "id": "mavuika",
@@ -2462,7 +2482,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính/hỗ trợ linh hoạt (on-field lẫn off-field), Pyro Archon với burst không cần Năng Lượng — bù đắp NL rất mạnh. Combo phổ biến: Mavuika + Xiangling/Bennett (Pyro thuần) hoặc Mavuika + Citlali/Emilie (Vaporize/Melt).",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Mavuika"
   },
   {
     "id": "citlali",
@@ -2585,7 +2606,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ/DPS phụ Cryo scaling Tinh Thông Nguyên Tố, khiên bền + giảm kháng Pyro/Hydro (bật Melt/Vaporize mạnh hơn). Combo phổ biến: Citlali + Mavuika/Yoimiya (Melt) hoặc Citlali + đội Freeze.",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Citlali"
   },
   {
     "id": "iansan",
@@ -2694,7 +2716,8 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ off-field buff ATK cho nhân vật ra trận (kiểu National buffer), rất linh hoạt trong đội Electro-Charged/Hyperbloom. Combo phổ biến: Iansan + bất kỳ DPS chính cần buff ATK, đặc biệt đội Hyperbloom hoặc National.",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Iansan"
   },
   {
     "id": "varesa",
@@ -2803,7 +2826,8 @@
       }
     ],
     "abyssRoleNotes": "DPS chính on-field Electro cơ động cao, tự buff qua chu trình Skill-Charged-Plunge. Combo phổ biến: Varesa + Xilonen/Kachina (Geo buff) hoặc Varesa + Furina/Iansan (Electro-Charged).",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Varesa"
   },
   {
     "id": "ifa",
@@ -2912,6 +2936,7 @@
       }
     ],
     "abyssRoleNotes": "Hỗ trợ hồi máu + khuếch đại DMG Swirl/Electro-Charged (giá rẻ 4★), phù hợp đội cần sustain nhẹ mà vẫn giữ DPS. Combo phổ biến: Ifa + Ororon/Sethos (Electro-Charged) hoặc Ifa + bất kỳ đội Swirl cần heal.",
-    "sourceFile": "nhan-vat/sumeru-natlan.md"
+    "sourceFile": "nhan-vat/sumeru-natlan.md",
+    "nameVI": "Ifa"
   }
 ]

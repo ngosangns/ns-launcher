@@ -5,7 +5,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Anemo DMG Bonus +15%.",
-      "bonuses": [{ "stat": "Anemo DMG Bonus", "value": 0.15 }]
+      "bonuses": [
+        {
+          "stat": "Anemo DMG Bonus",
+          "value": 0.15
+        }
+      ]
     },
     "fourPiece": {
       "description": "Tăng sát thương phản ứng Xoáy cuốn (Swirl) 60% và Xoáy cuốn Sao (Stellar Swirl) 20%. Giảm 40% kháng nguyên tố (loại nguyên tố bị cuốn theo) của đối phương trong 10s; nếu Xoáy cuốn Sao trúng, giảm thêm 40% kháng Băng. Các hiệu ứng giảm kháng cùng loại không cộng dồn.",
@@ -13,8 +18,14 @@
     },
     "domain": "Vực Hồi ức xanh biếc, Windwail Highland, Mondstadt.",
     "region": "Mondstadt",
-    "bestCharacters": ["Anemo support gom nguyên tố: Kazuha", "Sucrose", "Venti", "Traveler Anemo"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "Anemo support gom nguyên tố: Kazuha",
+      "Sucrose",
+      "Venti",
+      "Traveler Anemo"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Bóng Hình Màu Xanh"
   },
   {
     "id": "maiden-beloved",
@@ -22,16 +33,32 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Character Healing Effectiveness +15%.",
-      "bonuses": [{ "stat": "Character Healing Effectiveness", "value": 0.15 }]
+      "bonuses": [
+        {
+          "stat": "Character Healing Effectiveness",
+          "value": 0.15
+        }
+      ]
     },
     "fourPiece": {
       "description": "Dùng Elemental Skill hoặc Burst tăng 20% lượng hồi máu nhận được cho cả đội trong 10s.",
-      "bonuses": [{ "stat": "Party Incoming Healing", "value": 0.20 }]
+      "bonuses": [
+        {
+          "stat": "Party Incoming Healing",
+          "value": 0.2
+        }
+      ]
     },
     "domain": "Vực Hồi ức xanh biếc, Windwail Highland, Mondstadt.",
     "region": "Mondstadt",
-    "bestCharacters": ["Support hồi máu thuần: Qiqi", "Jean", "Barbara", "Bennett (khi build hồi máu)"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "Support hồi máu thuần: Qiqi",
+      "Jean",
+      "Barbara",
+      "Bennett (khi build hồi máu)"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Thiếu Nữ Đáng Yêu"
   },
   {
     "id": "blizzard-strayer",
@@ -39,7 +66,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Cryo DMG Bonus +15%.",
-      "bonuses": [{ "stat": "Cryo DMG Bonus", "value": 0.15 }]
+      "bonuses": [
+        {
+          "stat": "Cryo DMG Bonus",
+          "value": 0.15
+        }
+      ]
     },
     "fourPiece": {
       "description": "Khi đánh đối phương dính Băng, CRIT Rate +20%; nếu đối phương đang bị Đóng băng (Frozen), cộng thêm 20% CRIT Rate nữa (tối đa +40%).",
@@ -47,8 +79,14 @@
     },
     "domain": "Vực Đỉnh Vindagnyr, Dragonspine, Mondstadt.",
     "region": "Mondstadt",
-    "bestCharacters": ["DPS Băng đóng băng đối phương (Freeze team): Ayaka", "Ganyu", "Chongyun", "Kaeya trong đội Freeze Hydro-Cryo"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "DPS Băng đóng băng đối phương (Freeze team): Ayaka",
+      "Ganyu",
+      "Chongyun",
+      "Kaeya trong đội Freeze Hydro-Cryo"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Dũng Sĩ Trong Băng Giá"
   },
   {
     "id": "heart-of-depth",
@@ -56,16 +94,31 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Hydro DMG Bonus +15%.",
-      "bonuses": [{ "stat": "Hydro DMG Bonus", "value": 0.15 }]
+      "bonuses": [
+        {
+          "stat": "Hydro DMG Bonus",
+          "value": 0.15
+        }
+      ]
     },
     "fourPiece": {
       "description": "Sau khi dùng Elemental Skill, Normal/Charged Attack DMG +30% trong 15s.",
-      "bonuses": [{ "stat": "Normal/Charged Attack DMG", "value": 0.30 }]
+      "bonuses": [
+        {
+          "stat": "Normal/Charged Attack DMG",
+          "value": 0.3
+        }
+      ]
     },
     "domain": "Vực Đỉnh Vindagnyr, Dragonspine, Mondstadt.",
     "region": "Mondstadt",
-    "bestCharacters": ["Hydro DPS cận chiến dùng đòn thường: Tartaglia/Childe (kiếm)", "Kamisato Ayato", "Xingqiu (sub-DPS)"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "Hydro DPS cận chiến dùng đòn thường: Tartaglia/Childe (kiếm)",
+      "Kamisato Ayato",
+      "Xingqiu (sub-DPS)"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Trái Tim Trầm Luân"
   },
   {
     "id": "thundering-fury",
@@ -73,7 +126,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Electro DMG Bonus +15%.",
-      "bonuses": [{ "stat": "Electro DMG Bonus", "value": 0.15 }]
+      "bonuses": [
+        {
+          "stat": "Electro DMG Bonus",
+          "value": 0.15
+        }
+      ]
     },
     "fourPiece": {
       "description": "Tăng 40% DMG của Overloaded, Electro-Charged, Superconduct, Hyperbloom; tăng 20% DMG Bonus của Aggravate; tăng 20% DMG của Lunar-Charged và Stellar-Conduct. Khi kích hoạt Quicken hoặc các phản ứng trên, giảm 1s CD Elemental Skill (tối đa 1 lần/0.8s).",
@@ -81,8 +139,15 @@
     },
     "domain": "Vực Sân giữa hạ, Starfell Valley, Mondstadt.",
     "region": "Mondstadt",
-    "bestCharacters": ["DPS Electro gây phản ứng: Raiden Shogun (Overload/Hyperbloom phụ)", "Fischl", "Yae Miko", "Cyno (Aggravate)", "Beidou"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "DPS Electro gây phản ứng: Raiden Shogun (Overload/Hyperbloom phụ)",
+      "Fischl",
+      "Yae Miko",
+      "Cyno (Aggravate)",
+      "Beidou"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Như Sấm Thịnh Nộ"
   },
   {
     "id": "thundersoother",
@@ -90,16 +155,29 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Electro RES +40%.",
-      "bonuses": [{ "stat": "Electro RES", "value": 0.40 }]
+      "bonuses": [
+        {
+          "stat": "Electro RES",
+          "value": 0.4
+        }
+      ]
     },
     "fourPiece": {
       "description": "Tăng 35% DMG gây ra lên đối phương đang dính Electro.",
-      "bonuses": [{ "stat": "DMG vs Electro-afflicted enemies", "value": 0.35 }]
+      "bonuses": [
+        {
+          "stat": "DMG vs Electro-afflicted enemies",
+          "value": 0.35
+        }
+      ]
     },
     "domain": "Vực Sân giữa hạ, Starfell Valley, Mondstadt.",
     "region": "Mondstadt",
-    "bestCharacters": ["Chỉ tối ưu khi đối phương liên tục dính Electro suốt trận (hiếm gặp trong Trầm Thủy) — hầu như bị Thundering Fury/Emblem of Severed Fate thay thế trong meta hiện tại."],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "Chỉ tối ưu khi đối phương liên tục dính Electro suốt trận (hiếm gặp trong Trầm Thủy) — hầu như bị Thundering Fury/Emblem of Severed Fate thay thế trong meta hiện tại."
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Tôn Giả Trầm Lặng"
   },
   {
     "id": "celestial-gift",
@@ -107,7 +185,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Energy Recharge +20%.",
-      "bonuses": [{ "stat": "Energy Recharge", "value": 0.20 }]
+      "bonuses": [
+        {
+          "stat": "Energy Recharge",
+          "value": 0.2
+        }
+      ]
     },
     "fourPiece": {
       "description": "Nếu đã hoàn thành nhiệm vụ \"Witch's Homework\": sau khi dùng Elemental Skill, nhận \"Light's Guidance\" 20s — toàn đội gần đó nhận 20% DMG Bonus theo nguyên tố của người mặc (kể cả khi rời sân). Khi đội có hiệu ứng \"Hexerei: Secret Rite\", nâng cấp thành \"Mortal Hymn\": 40% DMG Bonus theo nguyên tố của cả người mặc lẫn nhân vật đang chiến đấu (không cộng dồn nếu cùng nguyên tố).",
@@ -115,8 +198,11 @@
     },
     "domain": "Vực Vương miện gai của gió núi, Windrest Peak, Mondstadt (bản 6.5).",
     "region": "Mondstadt",
-    "bestCharacters": ["Support buff nguyên tố nhóm Hexerei (phù thủy): các nhân vật thuộc nhóm \"Hexerei\" mới (chưa xác nhận đầy đủ danh sách nhân vật — meta còn đang định hình ở thời điểm lấy dữ liệu)."],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "Support buff nguyên tố nhóm Hexerei (phù thủy): các nhân vật thuộc nhóm \"Hexerei\" mới (chưa xác nhận đầy đủ danh sách nhân vật — meta còn đang định hình ở thời điểm lấy dữ liệu)."
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Phước Lành Trời Cao"
   },
   {
     "id": "disenchantment-in-deep-shadow",
@@ -124,7 +210,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "ATK +18%.",
-      "bonuses": [{ "stat": "ATK", "value": 0.18 }]
+      "bonuses": [
+        {
+          "stat": "ATK",
+          "value": 0.18
+        }
+      ]
     },
     "fourPiece": {
       "description": "Tăng 80% DMG phản ứng Siêu dẫn (Superconduct) và 40% DMG Stellar-Conduct. Khi đánh đối phương đang dính Superconduct/Stellar-Conduct, CRIT Rate của đòn đó +16%.",
@@ -132,8 +223,12 @@
     },
     "domain": "Vực Vương miện gai của gió núi, Windrest Peak, Mondstadt (bản 6.7).",
     "region": "Mondstadt",
-    "bestCharacters": ["DPS vật lý/Băng-Electro kết hợp Superconduct", "thường đi cùng Pale Flame trong đội Physical/Superconduct."],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "DPS vật lý/Băng-Electro kết hợp Superconduct",
+      "thường đi cùng Pale Flame trong đội Physical/Superconduct."
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Ảo Tưởng Vụn Vỡ Trong Bóng Tối"
   },
   {
     "id": "archaic-petra",
@@ -141,7 +236,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Geo DMG Bonus +15%.",
-      "bonuses": [{ "stat": "Geo DMG Bonus", "value": 0.15 }]
+      "bonuses": [
+        {
+          "stat": "Geo DMG Bonus",
+          "value": 0.15
+        }
+      ]
     },
     "fourPiece": {
       "description": "Khi nhận Elemental Shard (từ Crystallize) hoặc kích hoạt Lunar-Crystallize, toàn đội nhận 35% DMG Bonus cho nguyên tố tương ứng trong 10s. Chỉ 1 loại DMG Bonus tồn tại cùng lúc.",
@@ -149,8 +249,11 @@
     },
     "domain": "Domain of Guyun, Sea of Clouds, Liyue.",
     "region": "Liyue",
-    "bestCharacters": ["Đội Crystallize chuyên biệt quanh Geo support: Zhongli/Albedo/Navia tạo Crystallize cho cả đội hưởng DMG Bonus (Kẹo Kazuha/Xiangling/Fischl...)."],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "Đội Crystallize chuyên biệt quanh Geo support: Zhongli/Albedo/Navia tạo Crystallize cho cả đội hưởng DMG Bonus (Kẹo Kazuha/Xiangling/Fischl...)."
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Phiến Đá Lâu Đời"
   },
   {
     "id": "retracing-bolide",
@@ -158,16 +261,31 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Shield Strength +35%.",
-      "bonuses": [{ "stat": "Shield Strength", "value": 0.35 }]
+      "bonuses": [
+        {
+          "stat": "Shield Strength",
+          "value": 0.35
+        }
+      ]
     },
     "fourPiece": {
       "description": "Khi đang có khiên bảo vệ, Normal/Charged Attack DMG +40%.",
-      "bonuses": [{ "stat": "Normal/Charged Attack DMG", "value": 0.40 }]
+      "bonuses": [
+        {
+          "stat": "Normal/Charged Attack DMG",
+          "value": 0.4
+        }
+      ]
     },
     "domain": "Domain of Guyun, Sea of Clouds, Liyue.",
     "region": "Liyue",
-    "bestCharacters": ["DPS đòn thường có khiên đi kèm: Noelle (tự khiên)", "Albedo", "Itto (dùng chung khiên Geo)"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "DPS đòn thường có khiên đi kèm: Noelle (tự khiên)",
+      "Albedo",
+      "Itto (dùng chung khiên Geo)"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Sao Băng Bay Ngược"
   },
   {
     "id": "crimson-witch-of-flames",
@@ -175,7 +293,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Pyro DMG Bonus +15%.",
-      "bonuses": [{ "stat": "Pyro DMG Bonus", "value": 0.15 }]
+      "bonuses": [
+        {
+          "stat": "Pyro DMG Bonus",
+          "value": 0.15
+        }
+      ]
     },
     "fourPiece": {
       "description": "Tăng 40% DMG của Overloaded, Burning, Burgeon; tăng 15% DMG của Vaporize và Melt. Dùng Elemental Skill tăng thêm 50% giá trị hiệu ứng 2 món trong 10s, tối đa 3 lần cộng dồn.",
@@ -183,8 +306,16 @@
     },
     "domain": "Hidden Palace of Zhou Formula, Wuwang Hill, Liyue.",
     "region": "Liyue",
-    "bestCharacters": ["DPS Pyro chủ lực: Diluc", "Klee", "Yoimiya", "Hu Tao (Vaporize)", "Lyney", "Xiangling (sub-DPS/on-field burst)"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "DPS Pyro chủ lực: Diluc",
+      "Klee",
+      "Yoimiya",
+      "Hu Tao (Vaporize)",
+      "Lyney",
+      "Xiangling (sub-DPS/on-field burst)"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Diệm Liệt Ma Nữ Cháy Rực"
   },
   {
     "id": "lavawalker",
@@ -192,16 +323,29 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Pyro RES +40%.",
-      "bonuses": [{ "stat": "Pyro RES", "value": 0.40 }]
+      "bonuses": [
+        {
+          "stat": "Pyro RES",
+          "value": 0.4
+        }
+      ]
     },
     "fourPiece": {
       "description": "Tăng 35% DMG gây ra lên đối phương đang dính Pyro.",
-      "bonuses": [{ "stat": "DMG vs Pyro-afflicted enemies", "value": 0.35 }]
+      "bonuses": [
+        {
+          "stat": "DMG vs Pyro-afflicted enemies",
+          "value": 0.35
+        }
+      ]
     },
     "domain": "Hidden Palace of Zhou Formula, Wuwang Hill, Liyue.",
     "region": "Liyue",
-    "bestCharacters": ["Chỉ hữu ích khi cả đội đấu với quái luôn dính Pyro — không dùng trong meta DPS hiện tại."],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "Chỉ hữu ích khi cả đội đấu với quái luôn dính Pyro — không dùng trong meta DPS hiện tại."
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Hiền Nhân Bốc Lửa"
   },
   {
     "id": "noblesse-oblige",
@@ -209,16 +353,33 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Elemental Burst DMG +20%.",
-      "bonuses": [{ "stat": "Elemental Burst DMG", "value": 0.20 }]
+      "bonuses": [
+        {
+          "stat": "Elemental Burst DMG",
+          "value": 0.2
+        }
+      ]
     },
     "fourPiece": {
       "description": "Dùng Elemental Burst tăng ATK toàn đội 20% trong 12s (không cộng dồn).",
-      "bonuses": [{ "stat": "Party ATK", "value": 0.20 }]
+      "bonuses": [
+        {
+          "stat": "Party ATK",
+          "value": 0.2
+        }
+      ]
     },
     "domain": "Clear Pool and Mountain Cavern, Minlin, Liyue.",
     "region": "Liyue",
-    "bestCharacters": ["Support buff ATK toàn đội bằng Burst: Bennett", "Kazuha", "Zhongli", "Furina", "Fischl (đội Burst-support meta)"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "Support buff ATK toàn đội bằng Burst: Bennett",
+      "Kazuha",
+      "Zhongli",
+      "Furina",
+      "Fischl (đội Burst-support meta)"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Nghi Thức Tông Thất Cổ"
   },
   {
     "id": "bloodstained-chivalry",
@@ -226,16 +387,30 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Physical DMG +25%.",
-      "bonuses": [{ "stat": "Physical DMG", "value": 0.25 }]
+      "bonuses": [
+        {
+          "stat": "Physical DMG",
+          "value": 0.25
+        }
+      ]
     },
     "fourPiece": {
       "description": "Sau khi hạ gục đối phương, Charged Attack DMG +50% và Stamina cost về 0 trong 10s.",
-      "bonuses": [{ "stat": "Charged Attack DMG", "value": 0.50 }]
+      "bonuses": [
+        {
+          "stat": "Charged Attack DMG",
+          "value": 0.5
+        }
+      ]
     },
     "domain": "Clear Pool and Mountain Cavern, Minlin, Liyue.",
     "region": "Liyue",
-    "bestCharacters": ["DPS vật lý cần dọn quái nhỏ liên tục — ít giá trị trong Trầm Thủy (boss đơn, khó proc)", "phần lớn bị Pale Flame thay thế."],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "DPS vật lý cần dọn quái nhỏ liên tục — ít giá trị trong Trầm Thủy (boss đơn, khó proc)",
+      "phần lớn bị Pale Flame thay thế."
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Kỵ Sĩ Đạo Nhuốm Máu"
   },
   {
     "id": "pale-flame",
@@ -243,7 +418,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Physical DMG +25%.",
-      "bonuses": [{ "stat": "Physical DMG", "value": 0.25 }]
+      "bonuses": [
+        {
+          "stat": "Physical DMG",
+          "value": 0.25
+        }
+      ]
     },
     "fourPiece": {
       "description": "Khi Elemental Skill trúng đối phương, ATK +9% trong 7s (tối đa 2 lần cộng dồn, 1 lần/0.3s); khi đạt 2 lần cộng dồn, hiệu ứng 2 món tăng thêm 100% (tức Physical DMG hiệu quả +50%).",
@@ -251,8 +431,14 @@
     },
     "domain": "Ridge Watch, Liyue.",
     "region": "Liyue",
-    "bestCharacters": ["DPS vật lý cận chiến skill spam: Eula", "Arataki Itto (kèm Superconduct)", "Kaeya", "Chongyun"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "DPS vật lý cận chiến skill spam: Eula",
+      "Arataki Itto (kèm Superconduct)",
+      "Kaeya",
+      "Chongyun"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Lửa Trắng Xám"
   },
   {
     "id": "tenacity-of-the-millelith",
@@ -260,19 +446,36 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "HP +20%.",
-      "bonuses": [{ "stat": "HP", "value": 0.20 }]
+      "bonuses": [
+        {
+          "stat": "HP",
+          "value": 0.2
+        }
+      ]
     },
     "fourPiece": {
       "description": "Elemental Skill trúng đòn tăng ATK 20% và Shield Strength 30% cho cả đội gần đó trong 3s (1 lần/0.5s), hoạt động cả khi người mặc không ở trên sân.",
       "bonuses": [
-        { "stat": "Party ATK", "value": 0.20 },
-        { "stat": "Party Shield Strength", "value": 0.30 }
+        {
+          "stat": "Party ATK",
+          "value": 0.2
+        },
+        {
+          "stat": "Party Shield Strength",
+          "value": 0.3
+        }
       ]
     },
     "domain": "Ridge Watch, Liyue.",
     "region": "Liyue",
-    "bestCharacters": ["Support khiên/skill-spam: Zhongli", "Xiangling", "Yun Jin", "Gorou (đội Geo/Physical/khiên)"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "Support khiên/skill-spam: Zhongli",
+      "Xiangling",
+      "Yun Jin",
+      "Gorou (đội Geo/Physical/khiên)"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Thiên Nham Vững Chắc"
   },
   {
     "id": "vermillion-hereafter",
@@ -280,7 +483,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "ATK +18%.",
-      "bonuses": [{ "stat": "ATK", "value": 0.18 }]
+      "bonuses": [
+        {
+          "stat": "ATK",
+          "value": 0.18
+        }
+      ]
     },
     "fourPiece": {
       "description": "Sau khi dùng Elemental Burst, nhận \"Nascent Light\": ATK +8% trong 16s; mỗi lần HP giảm, ATK tăng thêm 10% (tối đa 4 lần, 1 lần/0.8s). Nascent Light mất khi rời sân; dùng lại Burst sẽ làm mới hiệu ứng.",
@@ -288,8 +496,13 @@
     },
     "domain": "The Lost Valley, The Chasm, Liyue.",
     "region": "Liyue",
-    "bestCharacters": ["DPS on-field mất máu liên tục dùng Burst: Hu Tao", "Yoimiya (kèm cơ chế tự trừ HP)", "Klee"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "DPS on-field mất máu liên tục dùng Burst: Hu Tao",
+      "Yoimiya (kèm cơ chế tự trừ HP)",
+      "Klee"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Thần Sa Vãng Sinh Lục"
   },
   {
     "id": "echoes-of-an-offering",
@@ -297,7 +510,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "ATK +18%.",
-      "bonuses": [{ "stat": "ATK", "value": 0.18 }]
+      "bonuses": [
+        {
+          "stat": "ATK",
+          "value": 0.18
+        }
+      ]
     },
     "fourPiece": {
       "description": "Normal Attack trúng đòn có 36% cơ hội kích hoạt \"Valley Rite\", tăng Normal Attack DMG thêm 70% ATK (mất sau 0.05s khi Normal Attack tiếp theo gây DMG); nếu không trúng, tỉ lệ lần sau +20%.",
@@ -305,8 +523,13 @@
     },
     "domain": "The Lost Valley, The Chasm, Liyue.",
     "region": "Liyue",
-    "bestCharacters": ["DPS Normal Attack thuần (không nguyên tố): Yoimiya", "Hu Tao build đánh thường", "Traveler"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "DPS Normal Attack thuần (không nguyên tố): Yoimiya",
+      "Hu Tao build đánh thường",
+      "Traveler"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Dư Âm Tế Lễ"
   },
   {
     "id": "shimenawas-reminiscence",
@@ -314,16 +537,32 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "ATK +18%.",
-      "bonuses": [{ "stat": "ATK", "value": 0.18 }]
+      "bonuses": [
+        {
+          "stat": "ATK",
+          "value": 0.18
+        }
+      ]
     },
     "fourPiece": {
       "description": "Khi dùng Elemental Skill nếu có ≥15 Energy, mất 15 Energy và Normal/Charged/Plunging Attack DMG +50% trong 10s (không tự kích hoạt lại trong lúc hiệu ứng còn hoạt động).",
-      "bonuses": [{ "stat": "Normal/Charged/Plunging Attack DMG", "value": 0.50 }]
+      "bonuses": [
+        {
+          "stat": "Normal/Charged/Plunging Attack DMG",
+          "value": 0.5
+        }
+      ]
     },
     "domain": "Momiji-Dyed Court, Yashiori Island, Inazuma.",
     "region": "Inazuma",
-    "bestCharacters": ["DPS ATT thường không cần ER (thay Energy Recharge bằng sát thương thô): Hu Tao", "Yoimiya", "Itto", "Klee (khi build crit thuần không cần burst)"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "DPS ATT thường không cần ER (thay Energy Recharge bằng sát thương thô): Hu Tao",
+      "Yoimiya",
+      "Itto",
+      "Klee (khi build crit thuần không cần burst)"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Dòng Hồi Ức Bất Tận"
   },
   {
     "id": "emblem-of-severed-fate",
@@ -331,7 +570,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Energy Recharge +20%.",
-      "bonuses": [{ "stat": "Energy Recharge", "value": 0.20 }]
+      "bonuses": [
+        {
+          "stat": "Energy Recharge",
+          "value": 0.2
+        }
+      ]
     },
     "fourPiece": {
       "description": "Elemental Burst DMG tăng thêm 25% giá trị Energy Recharge hiện có, tối đa +75% DMG.",
@@ -339,8 +583,14 @@
     },
     "domain": "Momiji-Dyed Court, Yashiori Island, Inazuma.",
     "region": "Inazuma",
-    "bestCharacters": ["DPS scale theo Burst + ER: Raiden Shogun (BiS tuyệt đối)", "Kokomi", "Yae Miko", "Kuki Shinobu"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "DPS scale theo Burst + ER: Raiden Shogun (BiS tuyệt đối)",
+      "Kokomi",
+      "Yae Miko",
+      "Kuki Shinobu"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Dấu Ấn Ngăn Cách"
   },
   {
     "id": "husk-of-opulent-dreams",
@@ -348,7 +598,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "DEF +30%.",
-      "bonuses": [{ "stat": "DEF", "value": 0.30 }]
+      "bonuses": [
+        {
+          "stat": "DEF",
+          "value": 0.3
+        }
+      ]
     },
     "fourPiece": {
       "description": "Nhận stack \"Curiosity\": on-field +1 khi đòn Geo trúng địch (tối đa 1 lần/0.3s), off-field +1 mỗi 3s; tối đa 4 stack, mỗi stack +6% DEF và +6% Geo DMG Bonus; mất 1 stack nếu 6s không có stack mới.",
@@ -356,8 +611,15 @@
     },
     "domain": "Slumbering Court, Seirai Island, Inazuma.",
     "region": "Inazuma",
-    "bestCharacters": ["DPS Geo scale theo DEF: Noelle", "Albedo", "Arataki Itto", "Yun Jin", "Gorou (sub-DPS)"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "DPS Geo scale theo DEF: Noelle",
+      "Albedo",
+      "Arataki Itto",
+      "Yun Jin",
+      "Gorou (sub-DPS)"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Giấc Mộng Phù Hoa"
   },
   {
     "id": "ocean-hued-clam",
@@ -365,7 +627,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Healing Bonus +15%.",
-      "bonuses": [{ "stat": "Healing Bonus", "value": 0.15 }]
+      "bonuses": [
+        {
+          "stat": "Healing Bonus",
+          "value": 0.15
+        }
+      ]
     },
     "fourPiece": {
       "description": "Khi người mặc hồi máu cho đồng đội, tạo \"Sea-Dyed Foam\" trong 3s tích lũy lượng máu hồi (kể cả dư); hết hạn sẽ nổ gây DMG bằng 90% lượng máu tích lũy lên quái gần đó (giống cơ chế Electro-Charged/Superconduct, không cộng EM/cấp độ/Reaction Bonus). Tối đa 1 quả/3.5s, mỗi quả tối đa 30.000 HP tích lũy; hoạt động cả khi không ở trên sân.",
@@ -373,8 +640,14 @@
     },
     "domain": "Slumbering Court, Seirai Island, Inazuma.",
     "region": "Inazuma",
-    "bestCharacters": ["Healer overheal làm sát thương: Kokomi (BiS kinh điển)", "Qiqi", "Barbara", "Baizhu"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "Healer overheal làm sát thương: Kokomi (BiS kinh điển)",
+      "Qiqi",
+      "Barbara",
+      "Baizhu"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Xà Cừ Đại Dương"
   },
   {
     "id": "deepwood-memories",
@@ -382,16 +655,33 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Dendro DMG Bonus +15%.",
-      "bonuses": [{ "stat": "Dendro DMG Bonus", "value": 0.15 }]
+      "bonuses": [
+        {
+          "stat": "Dendro DMG Bonus",
+          "value": 0.15
+        }
+      ]
     },
     "fourPiece": {
       "description": "Sau khi Elemental Skill/Burst trúng địch, giảm 30% Dendro RES của mục tiêu trong 8s (hoạt động cả khi người mặc không ở trên sân).",
-      "bonuses": [{ "stat": "Enemy Dendro RES", "value": -0.30 }]
+      "bonuses": [
+        {
+          "stat": "Enemy Dendro RES",
+          "value": -0.3
+        }
+      ]
     },
     "domain": "Spire of Solitary Enlightenment, Avidya Forest, Sumeru.",
     "region": "Sumeru",
-    "bestCharacters": ["Đội Dendro phản ứng (Bloom/Quicken/Aggravate/Spread): Nahida", "Alhaitham", "Tighnari", "Kirara", "Baizhu (bất kỳ đội Dendro-core nào)"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "Đội Dendro phản ứng (Bloom/Quicken/Aggravate/Spread): Nahida",
+      "Alhaitham",
+      "Tighnari",
+      "Kirara",
+      "Baizhu (bất kỳ đội Dendro-core nào)"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Ký Ức Rừng Sâu"
   },
   {
     "id": "gilded-dreams",
@@ -399,7 +689,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Elemental Mastery +80.",
-      "bonuses": [{ "stat": "Elemental Mastery", "value": 80 }]
+      "bonuses": [
+        {
+          "stat": "Elemental Mastery",
+          "value": 80
+        }
+      ]
     },
     "fourPiece": {
       "description": "Trong 8s sau khi kích hoạt phản ứng nguyên tố, nhận buff theo nguyên tố đồng đội: ATK +14% cho mỗi thành viên cùng nguyên tố với người mặc, EM +50 cho mỗi thành viên khác nguyên tố (tối đa 3 người mỗi loại, 1 lần/8s). Hoạt động cả khi không ở trên sân.",
@@ -407,8 +702,13 @@
     },
     "domain": "Spire of Solitary Enlightenment, Avidya Forest, Sumeru.",
     "region": "Sumeru",
-    "bestCharacters": ["Support/sub-DPS EM trong đội phản ứng đa dạng nguyên tố: Nahida", "Kuki Shinobu", "mono-nguyên tố kết hợp (mono-Pyro Xiangling, mono-Hydro...)"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "Support/sub-DPS EM trong đội phản ứng đa dạng nguyên tố: Nahida",
+      "Kuki Shinobu",
+      "mono-nguyên tố kết hợp (mono-Pyro Xiangling, mono-Hydro...)"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Giấc Mộng Hoàng Kim"
   },
   {
     "id": "desert-pavilion-chronicle",
@@ -416,19 +716,34 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Anemo DMG Bonus +15%.",
-      "bonuses": [{ "stat": "Anemo DMG Bonus", "value": 0.15 }]
+      "bonuses": [
+        {
+          "stat": "Anemo DMG Bonus",
+          "value": 0.15
+        }
+      ]
     },
     "fourPiece": {
       "description": "Khi Charged Attack trúng địch, Normal Attack SPD +10%, Normal/Charged/Plunging Attack DMG +40% trong 15s.",
       "bonuses": [
-        { "stat": "Normal Attack SPD", "value": 0.10 },
-        { "stat": "Normal/Charged/Plunging Attack DMG", "value": 0.40 }
+        {
+          "stat": "Normal Attack SPD",
+          "value": 0.1
+        },
+        {
+          "stat": "Normal/Charged/Plunging Attack DMG",
+          "value": 0.4
+        }
       ]
     },
     "domain": "City of Gold, Land of Lower Setekh, Sumeru.",
     "region": "Sumeru",
-    "bestCharacters": ["DPS Anemo dùng đòn thường/nặng: Wanderer (Scaramouche)", "Shikanoin Heizou"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "DPS Anemo dùng đòn thường/nặng: Wanderer (Scaramouche)",
+      "Shikanoin Heizou"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Sử Ký Đình Đài Cát"
   },
   {
     "id": "flower-of-paradise-lost",
@@ -436,7 +751,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Elemental Mastery +80.",
-      "bonuses": [{ "stat": "Elemental Mastery", "value": 80 }]
+      "bonuses": [
+        {
+          "stat": "Elemental Mastery",
+          "value": 80
+        }
+      ]
     },
     "fourPiece": {
       "description": "Tăng 40% DMG của Bloom, Hyperbloom, Burgeon; tăng 10% DMG của Lunar-Bloom. Sau khi kích hoạt các phản ứng trên, nhận thêm 25% giá trị này mỗi lần, kéo dài 10s, tối đa 4 stack (1 lần/giây). Hoạt động cả khi không ở trên sân.",
@@ -444,8 +764,16 @@
     },
     "domain": "City of Gold, Land of Lower Setekh, Sumeru.",
     "region": "Sumeru",
-    "bestCharacters": ["Đội Bloom/Hyperbloom chuyên biệt: Nahida", "Alhaitham", "Kuki Shinobu", "Yaoyao", "Traveler Dendro", "Kirara"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "Đội Bloom/Hyperbloom chuyên biệt: Nahida",
+      "Alhaitham",
+      "Kuki Shinobu",
+      "Yaoyao",
+      "Traveler Dendro",
+      "Kirara"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Đóa Hoa Trang Viên Thất Lạc"
   },
   {
     "id": "nymphs-dream",
@@ -453,7 +781,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Hydro DMG Bonus +15%.",
-      "bonuses": [{ "stat": "Hydro DMG Bonus", "value": 0.15 }]
+      "bonuses": [
+        {
+          "stat": "Hydro DMG Bonus",
+          "value": 0.15
+        }
+      ]
     },
     "fourPiece": {
       "description": "Sau khi Normal/Charged/Plunging Attack, Elemental Skill, Elemental Burst trúng địch, nhận 1 stack \"Mirrored Nymph\" (8s); ở 1/2/≥3 stack: ATK +7%/16%/25%, Hydro DMG Bonus +4%/9%/15%. Stack theo từng loại đòn tính độc lập.",
@@ -461,8 +794,13 @@
     },
     "domain": "Molten Iron Fortress, Gavireh Lajavard, Sumeru.",
     "region": "Sumeru",
-    "bestCharacters": ["DPS Hydro dùng đa dạng loại đòn: Tartaglia/Childe (đủ cả 5 loại đòn)", "Kamisato Ayato", "Yelan"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "DPS Hydro dùng đa dạng loại đòn: Tartaglia/Childe (đủ cả 5 loại đòn)",
+      "Kamisato Ayato",
+      "Yelan"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Giấc Mộng Thủy Tiên"
   },
   {
     "id": "vourukashas-glow",
@@ -470,16 +808,32 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "HP +20%.",
-      "bonuses": [{ "stat": "HP", "value": 0.20 }]
+      "bonuses": [
+        {
+          "stat": "HP",
+          "value": 0.2
+        }
+      ]
     },
     "fourPiece": {
       "description": "Elemental Skill và Burst DMG +10%. Sau khi người mặc nhận DMG, tăng thêm 80% giá trị đó trong 5s (tối đa 5 stack, mỗi stack tính thời gian riêng, hoạt động cả khi không ở trên sân).",
-      "bonuses": [{ "stat": "Elemental Skill and Burst DMG", "value": 0.10 }]
+      "bonuses": [
+        {
+          "stat": "Elemental Skill and Burst DMG",
+          "value": 0.1
+        }
+      ]
     },
     "domain": "Molten Iron Fortress, Gavireh Lajavard, Sumeru.",
     "region": "Sumeru",
-    "bestCharacters": ["DPS HP cao chủ động nhận sát thương: Dehya", "Nahida (đội cố ý nhận DMG)", "Alhaitham", "Hu Tao"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat.md"
+    "bestCharacters": [
+      "DPS HP cao chủ động nhận sát thương: Dehya",
+      "Nahida (đội cố ý nhận DMG)",
+      "Alhaitham",
+      "Hu Tao"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat.md",
+    "nameVI": "Vầng Sáng Vourukasha"
   },
   {
     "id": "marechaussee-hunter",
@@ -487,7 +841,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Normal/Charged Attack DMG +15%.",
-      "bonuses": [{ "stat": "Normal/Charged Attack DMG", "value": 0.15 }]
+      "bonuses": [
+        {
+          "stat": "Normal/Charged Attack DMG",
+          "value": 0.15
+        }
+      ]
     },
     "fourPiece": {
       "description": "Khi HP hiện tại tăng hoặc giảm, CRIT Rate +12% trong 5s, tối đa 3 stack.",
@@ -495,8 +854,13 @@
     },
     "domain": "Denouement of Sin, Belleau Region, Fontaine.",
     "region": "Fontaine",
-    "bestCharacters": ["DPS đòn thường có HP biến động liên tục: Neuvillette (BiS phổ biến)", "Arlecchino (lựa chọn phụ)", "Freminet"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "bestCharacters": [
+      "DPS đòn thường có HP biến động liên tục: Neuvillette (BiS phổ biến)",
+      "Arlecchino (lựa chọn phụ)",
+      "Freminet"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Thợ Săn Marechaussee"
   },
   {
     "id": "golden-troupe",
@@ -504,19 +868,37 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Elemental Skill DMG +20%.",
-      "bonuses": [{ "stat": "Elemental Skill DMG", "value": 0.20 }]
+      "bonuses": [
+        {
+          "stat": "Elemental Skill DMG",
+          "value": 0.2
+        }
+      ]
     },
     "fourPiece": {
       "description": "Elemental Skill DMG +25%; khi không ở trên sân, Elemental Skill DMG tăng thêm 25% nữa (mất sau 2s kể từ khi ra sân).",
       "bonuses": [
-        { "stat": "Elemental Skill DMG (on-field)", "value": 0.25 },
-        { "stat": "Elemental Skill DMG (off-field, additional)", "value": 0.25 }
+        {
+          "stat": "Elemental Skill DMG (on-field)",
+          "value": 0.25
+        },
+        {
+          "stat": "Elemental Skill DMG (off-field, additional)",
+          "value": 0.25
+        }
       ]
     },
     "domain": "Denouement of Sin, Belleau Region, Fontaine.",
     "region": "Fontaine",
-    "bestCharacters": ["DPS/sub-DPS off-field sát thương chủ yếu từ Elemental Skill: Yelan", "Xingqiu", "Nilou", "Baizhu", "Chevreuse"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "bestCharacters": [
+      "DPS/sub-DPS off-field sát thương chủ yếu từ Elemental Skill: Yelan",
+      "Xingqiu",
+      "Nilou",
+      "Baizhu",
+      "Chevreuse"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Đoàn Kịch Hoàng Kim"
   },
   {
     "id": "song-of-days-past",
@@ -524,7 +906,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Healing Bonus +15%.",
-      "bonuses": [{ "stat": "Healing Bonus", "value": 0.15 }]
+      "bonuses": [
+        {
+          "stat": "Healing Bonus",
+          "value": 0.15
+        }
+      ]
     },
     "fourPiece": {
       "description": "Khi người mặc hồi máu, tạo hiệu ứng \"Yearning\" 6s ghi nhận tổng lượng hồi (kể cả dư); hết hạn chuyển thành \"Waves of Days Past\": đòn đánh của nhân vật đang chiến đấu (mọi loại) được cộng thêm DMG bằng 8% tổng lượng hồi đã ghi nhận, tối đa 5 lần kích hoạt hoặc 10s. Một hiệu ứng Yearning tối đa ghi 15.000 HP hồi, có thể cộng dồn lượng hồi từ nhiều người mặc set này; kích hoạt được cả khi không ở trên sân.",
@@ -532,8 +919,14 @@
     },
     "domain": "Waterfall Wen, East Slopes of Mont Automnequi, Fontaine.",
     "region": "Fontaine",
-    "bestCharacters": ["Healer chuyển hồi máu thành sát thương: Furina (rất mạnh nhờ Fanfare)", "Bennett", "Kokomi", "Yaoyao"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "bestCharacters": [
+      "Healer chuyển hồi máu thành sát thương: Furina (rất mạnh nhờ Fanfare)",
+      "Bennett",
+      "Kokomi",
+      "Yaoyao"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Khúc Ca Ngày Cũ"
   },
   {
     "id": "nighttime-whispers-in-the-echoing-woods",
@@ -541,7 +934,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "ATK +18%.",
-      "bonuses": [{ "stat": "ATK", "value": 0.18 }]
+      "bonuses": [
+        {
+          "stat": "ATK",
+          "value": 0.18
+        }
+      ]
     },
     "fourPiece": {
       "description": "Sau khi dùng Elemental Skill, Geo DMG Bonus +20% trong 10s. Khi đang được khiên từ Crystallize bảo vệ, hoặc có Moondrift (Lunar-Crystallize) gần đó, hiệu ứng trên tăng thêm 150% (mất dần sau 1s nếu không còn thỏa điều kiện).",
@@ -549,8 +947,13 @@
     },
     "domain": "Waterfall Wen, East Slopes of Mont Automnequi, Fontaine.",
     "region": "Fontaine",
-    "bestCharacters": ["DPS Geo dùng khiên Crystallize: Navia", "Chiori", "Albedo"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "bestCharacters": [
+      "DPS Geo dùng khiên Crystallize: Navia",
+      "Chiori",
+      "Albedo"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Tiếng Đêm Trong Rừng Vang"
   },
   {
     "id": "fragment-of-harmonic-whimsy",
@@ -558,7 +961,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "ATK +18%.",
-      "bonuses": [{ "stat": "ATK", "value": 0.18 }]
+      "bonuses": [
+        {
+          "stat": "ATK",
+          "value": 0.18
+        }
+      ]
     },
     "fourPiece": {
       "description": "Khi giá trị \"Bond of Life\" tăng hoặc giảm, DMG +18% trong 6s, tối đa 3 stack.",
@@ -566,8 +974,13 @@
     },
     "domain": "Faded Theater, Petrichor Island, Nostoi (nam Fontaine).",
     "region": "Fontaine",
-    "bestCharacters": ["Nhân vật thao túng cơ chế Bond of Life: Clorinde (chính)", "Arlecchino (lựa chọn phụ ngoài Unfinished Reverie)", "các DPS kiếm dùng vũ khí Finale of the Deep để tự tạo Bond of Life."],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "bestCharacters": [
+      "Nhân vật thao túng cơ chế Bond of Life: Clorinde (chính)",
+      "Arlecchino (lựa chọn phụ ngoài Unfinished Reverie)",
+      "các DPS kiếm dùng vũ khí Finale of the Deep để tự tạo Bond of Life."
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Mảnh Hài Hòa Bất Thường"
   },
   {
     "id": "unfinished-reverie",
@@ -575,7 +988,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "ATK +18%.",
-      "bonuses": [{ "stat": "ATK", "value": 0.18 }]
+      "bonuses": [
+        {
+          "stat": "ATK",
+          "value": 0.18
+        }
+      ]
     },
     "fourPiece": {
       "description": "Sau khi rời giao tranh 3s, DMG +50%. Trong combat, nếu không có địch dính Burning gần đó quá 6s, DMG Bonus giảm dần 10%/giây đến 0%; nếu có địch dính Burning, tăng dần 10%/giây đến tối đa 50%. Kích hoạt được cả khi không ở trên sân.",
@@ -583,8 +1001,11 @@
     },
     "domain": "Faded Theater, Petrichor Island, Nostoi (nam Fontaine).",
     "region": "Fontaine",
-    "bestCharacters": ["Arlecchino (bộ dấu ấn/BiS, phù hợp lối chơi đổi nhân vật liên tục và né rời sân)."],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "bestCharacters": [
+      "Arlecchino (bộ dấu ấn/BiS, phù hợp lối chơi đổi nhân vật liên tục và né rời sân)."
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Ảo Mộng Chưa Hoàn Thành"
   },
   {
     "id": "scroll-of-the-hero-of-cinder-city",
@@ -600,8 +1021,13 @@
     },
     "domain": "Sanctum of Rainbow Spirits, Tollan (Toyac Springs), Natlan.",
     "region": "Natlan",
-    "bestCharacters": ["Support kích phản ứng off-field trong đội Natlan: Kachina", "cũng có lợi cho Mualani", "Kinich"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "bestCharacters": [
+      "Support kích phản ứng off-field trong đội Natlan: Kachina",
+      "cũng có lợi cho Mualani",
+      "Kinich"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Bức Tranh Dũng Sĩ Thành Tro Tàn"
   },
   {
     "id": "obsidian-codex",
@@ -609,16 +1035,29 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Khi đang ở trạng thái Nightsoul's Blessing và trên sân, DMG +15%.",
-      "bonuses": [{ "stat": "DMG (while Nightsoul's Blessing active, on-field)", "value": 0.15 }]
+      "bonuses": [
+        {
+          "stat": "DMG (while Nightsoul's Blessing active, on-field)",
+          "value": 0.15
+        }
+      ]
     },
     "fourPiece": {
       "description": "Sau khi tiêu 1 điểm Nightsoul trên sân, CRIT Rate +40% trong 6s (1 lần/giây).",
-      "bonuses": [{ "stat": "CRIT Rate", "value": 0.40 }]
+      "bonuses": [
+        {
+          "stat": "CRIT Rate",
+          "value": 0.4
+        }
+      ]
     },
     "domain": "Sanctum of Rainbow Spirits, Tollan (Toyac Springs), Natlan.",
     "region": "Natlan",
-    "bestCharacters": ["DPS Natlan dùng cơ chế Nightsoul: hầu hết DPS chính hệ Natlan (Mualani, Kinich, Mavuika, Citlali...)."],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "bestCharacters": [
+      "DPS Natlan dùng cơ chế Nightsoul: hầu hết DPS chính hệ Natlan (Mualani, Kinich, Mavuika, Citlali...)."
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Bí Điển Obsidian"
   },
   {
     "id": "long-nights-oath",
@@ -626,7 +1065,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Plunging Attack DMG +25%.",
-      "bonuses": [{ "stat": "Plunging Attack DMG", "value": 0.25 }]
+      "bonuses": [
+        {
+          "stat": "Plunging Attack DMG",
+          "value": 0.25
+        }
+      ]
     },
     "fourPiece": {
       "description": "Sau khi Plunging/Charged Attack hoặc Elemental Skill trúng địch, nhận 1/2/2 stack \"Radiance Everlasting\" (1 lần/giây/loại đòn); mỗi stack: Plunging Attack DMG +15% trong 6s, tối đa 5 stack tính thời gian riêng.",
@@ -634,8 +1078,12 @@
     },
     "domain": "Derelict Masonry Dock, Atocpan Region, Natlan.",
     "region": "Natlan",
-    "bestCharacters": ["DPS đòn nhảy bổ (Plunging Attack): Varesa (kit xoay quanh Plunging)", "Xiao"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "bestCharacters": [
+      "DPS đòn nhảy bổ (Plunging Attack): Varesa (kit xoay quanh Plunging)",
+      "Xiao"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Lời Thề Đêm Dài"
   },
   {
     "id": "finale-of-the-deep-galleries",
@@ -643,19 +1091,38 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Cryo DMG Bonus +15%.",
-      "bonuses": [{ "stat": "Cryo DMG Bonus", "value": 0.15 }]
+      "bonuses": [
+        {
+          "stat": "Cryo DMG Bonus",
+          "value": 0.15
+        }
+      ]
     },
     "fourPiece": {
       "description": "Khi người mặc có 0 Elemental Energy: Normal Attack DMG +60% và Elemental Burst DMG +60%. Sau khi gây DMG Normal Attack, tạm ngưng hiệu ứng Burst 6s; sau khi gây DMG Burst, tạm ngưng hiệu ứng Normal Attack 6s. Kích hoạt được cả khi không ở trên sân.",
       "bonuses": [
-        { "stat": "Normal Attack DMG (at 0 Energy)", "value": 0.60 },
-        { "stat": "Elemental Burst DMG (at 0 Energy)", "value": 0.60 }
+        {
+          "stat": "Normal Attack DMG (at 0 Energy)",
+          "value": 0.6
+        },
+        {
+          "stat": "Elemental Burst DMG (at 0 Energy)",
+          "value": 0.6
+        }
       ]
     },
     "domain": "Derelict Masonry Dock, Atocpan Region, Natlan.",
     "region": "Natlan",
-    "bestCharacters": ["Nhân vật không cần Energy Recharge (hệ năng lượng đặc biệt): Mavuika", "Skirk", "ngoài ra 2 món phù hợp DPS/sub-DPS Cryo thường như Rosaria", "Ayaka", "Wriothesley", "Ganyu"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "bestCharacters": [
+      "Nhân vật không cần Energy Recharge (hệ năng lượng đặc biệt): Mavuika",
+      "Skirk",
+      "ngoài ra 2 món phù hợp DPS/sub-DPS Cryo thường như Rosaria",
+      "Ayaka",
+      "Wriothesley",
+      "Ganyu"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Đoạn Kết Hành Lang Sâu"
   },
   {
     "id": "night-of-the-skys-unveiling",
@@ -663,7 +1130,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Elemental Mastery +80.",
-      "bonuses": [{ "stat": "Elemental Mastery", "value": 80 }]
+      "bonuses": [
+        {
+          "stat": "Elemental Mastery",
+          "value": 80
+        }
+      ]
     },
     "fourPiece": {
       "description": "Khi đồng đội gần đó kích hoạt phản ứng Lunar và người mặc đang trên sân, nhận \"Gleaming Moon: Intent\" 4s: CRIT Rate +15%/+30% khi Moonsign của đội là Nascent Gleam/Ascendant Gleam. Toàn đội nhận thêm 10% DMG phản ứng Lunar cho mỗi hiệu ứng Gleaming Moon khác nhau đang có (không cộng dồn nếu trùng loại).",
@@ -671,8 +1143,11 @@
     },
     "domain": "Frostladen Machinery, Kuuvahki Experimental Design Bureau, Nod-Krai (bản 6.0).",
     "region": "Nod-Krai",
-    "bestCharacters": ["DPS chính hệ Lunar on-field: Flins (BiS theo cộng đồng)."],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "bestCharacters": [
+      "DPS chính hệ Lunar on-field: Flins (BiS theo cộng đồng)."
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Đêm Trời Hé Lộ"
   },
   {
     "id": "silken-moons-serenade",
@@ -680,7 +1155,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Energy Recharge +20%.",
-      "bonuses": [{ "stat": "Energy Recharge", "value": 0.20 }]
+      "bonuses": [
+        {
+          "stat": "Energy Recharge",
+          "value": 0.2
+        }
+      ]
     },
     "fourPiece": {
       "description": "Khi gây Elemental DMG, nhận \"Gleaming Moon: Devotion\" 8s: toàn đội +60/+120 Elemental Mastery khi Moonsign là Nascent Gleam/Ascendant Gleam (kích hoạt được off-field). Toàn đội nhận thêm 10% DMG phản ứng Lunar cho mỗi hiệu ứng Gleaming Moon khác nhau đang có.",
@@ -688,8 +1168,12 @@
     },
     "domain": "Frostladen Machinery, Kuuvahki Experimental Design Bureau, Nod-Krai (bản 6.0).",
     "region": "Nod-Krai",
-    "bestCharacters": ["Support buff EM toàn đội cho team Lunar: Lauma (BiS theo cộng đồng)", "Aino có thể dùng thay Noblesse Oblige."],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "bestCharacters": [
+      "Support buff EM toàn đội cho team Lunar: Lauma (BiS theo cộng đồng)",
+      "Aino có thể dùng thay Noblesse Oblige."
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Khúc Ca Trăng Lụa"
   },
   {
     "id": "aubade-of-morningstar-and-moon",
@@ -697,7 +1181,12 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Elemental Mastery +80.",
-      "bonuses": [{ "stat": "Elemental Mastery", "value": 80 }]
+      "bonuses": [
+        {
+          "stat": "Elemental Mastery",
+          "value": 80
+        }
+      ]
     },
     "fourPiece": {
       "description": "Khi người mặc không ở trên sân, DMG phản ứng Lunar +20%; nếu Moonsign của đội ở mức Ascendant Gleam trở lên, tăng thêm 40% nữa. Hiệu ứng biến mất nếu người mặc ở trên sân quá 3s.",
@@ -705,8 +1194,13 @@
     },
     "domain": "Moonchild's Treasures, Nod-Krai (bản 6.3).",
     "region": "Nod-Krai",
-    "bestCharacters": ["Sub-DPS/support off-field trong đội Lunar Reaction: Ineffa", "Columbina (khi chơi lối off-field)", "theo cộng đồng còn \"Her\" là ứng viên tiềm năng."],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "bestCharacters": [
+      "Sub-DPS/support off-field trong đội Lunar Reaction: Ineffa",
+      "Columbina (khi chơi lối off-field)",
+      "theo cộng đồng còn \"Her\" là ứng viên tiềm năng."
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Khúc Ca Của Trăng Và Sao Mai"
   },
   {
     "id": "a-day-carved-from-rising-winds",
@@ -714,19 +1208,35 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "ATK +18%.",
-      "bonuses": [{ "stat": "ATK", "value": 0.18 }]
+      "bonuses": [
+        {
+          "stat": "ATK",
+          "value": 0.18
+        }
+      ]
     },
     "fourPiece": {
       "description": "Sau khi Normal/Charged/Skill/Burst trúng địch, nhận \"Blessing of Pastoral Winds\" 6s: ATK +25%. Nếu người mặc đã hoàn thành nhiệm vụ \"Witch's Homework\", nâng cấp thành \"Resolve of Pastoral Winds\": cộng thêm CRIT Rate +20%. Kích hoạt được cả khi không ở trên sân.",
       "bonuses": [
-        { "stat": "ATK", "value": 0.25 },
-        { "stat": "CRIT Rate (requires 'Witch's Homework' quest completed)", "value": 0.20 }
+        {
+          "stat": "ATK",
+          "value": 0.25
+        },
+        {
+          "stat": "CRIT Rate (requires 'Witch's Homework' quest completed)",
+          "value": 0.2
+        }
       ]
     },
     "domain": "Moonchild's Treasures, Nod-Krai (bản 6.3).",
     "region": "Nod-Krai",
-    "bestCharacters": ["DPS/sub-DPS thuộc nhóm nhân vật \"Hexerei\" (phù thủy): Venti", "Klee", "và các nhân vật phép thuật liên quan trong đội tập trung sát thương pháp thuật."],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "bestCharacters": [
+      "DPS/sub-DPS thuộc nhóm nhân vật \"Hexerei\" (phù thủy): Venti",
+      "Klee",
+      "và các nhân vật phép thuật liên quan trong đội tập trung sát thương pháp thuật."
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Ngày Nổi Gió"
   },
   {
     "id": "scarlet-proof",
@@ -734,19 +1244,33 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "ATK +18%.",
-      "bonuses": [{ "stat": "ATK", "value": 0.18 }]
+      "bonuses": [
+        {
+          "stat": "ATK",
+          "value": 0.18
+        }
+      ]
     },
     "fourPiece": {
       "description": "Sau khi kích hoạt phản ứng Xoáy cuốn Sao (Stellar Swirl), CRIT Rate +16% và DMG Stellar Swirl +40% trong 10s.",
       "bonuses": [
-        { "stat": "CRIT Rate", "value": 0.16 },
-        { "stat": "Stellar Swirl DMG", "value": 0.40 }
+        {
+          "stat": "CRIT Rate",
+          "value": 0.16
+        },
+        {
+          "stat": "Stellar Swirl DMG",
+          "value": 0.4
+        }
       ]
     },
     "domain": "Inverted Glacier, Everfrozen Earth, Snezhnaya (bản 7.0).",
     "region": "Snezhnaya",
-    "bestCharacters": ["DPS chính Anemo tự kích hoạt Stellar Swirl: Mizuki (BiS theo cộng đồng). Lưu ý: DPS Cryo chỉ gây DMG Stellar Swirl gián tiếp (không tự kích hoạt) sẽ không proc được 4 món."],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "bestCharacters": [
+      "DPS chính Anemo tự kích hoạt Stellar Swirl: Mizuki (BiS theo cộng đồng). Lưu ý: DPS Cryo chỉ gây DMG Stellar Swirl gián tiếp (không tự kích hoạt) sẽ không proc được 4 món."
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Bằng Chứng Máu Đỏ"
   },
   {
     "id": "heart-of-the-furnace",
@@ -754,19 +1278,36 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "ATK +18%.",
-      "bonuses": [{ "stat": "ATK", "value": 0.18 }]
+      "bonuses": [
+        {
+          "stat": "ATK",
+          "value": 0.18
+        }
+      ]
     },
     "fourPiece": {
       "description": "Khi kích hoạt hoặc gây DMG phản ứng Stellar Glimmer, người mặc nhận ATK +12% trong 12s; đồng thời toàn đội gần đó nhận thêm 50% DMG Bonus cho phản ứng Stellar Glimmer. Kích hoạt được cả khi không ở trên sân (không cộng dồn giữa nhiều bộ cùng tên).",
       "bonuses": [
-        { "stat": "Self ATK", "value": 0.12 },
-        { "stat": "Party Stellar Glimmer DMG Bonus", "value": 0.50 }
+        {
+          "stat": "Self ATK",
+          "value": 0.12
+        },
+        {
+          "stat": "Party Stellar Glimmer DMG Bonus",
+          "value": 0.5
+        }
       ]
     },
     "domain": "Inverted Glacier, Everfrozen Earth, Snezhnaya (bản 7.0).",
     "region": "Snezhnaya",
-    "bestCharacters": ["Support/sub-DPS cho đội Stellar nói chung: Odette", "Yae Miko", "Cryo Traveler", "Alyosha"],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "bestCharacters": [
+      "Support/sub-DPS cho đội Stellar nói chung: Odette",
+      "Yae Miko",
+      "Cryo Traveler",
+      "Alyosha"
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Trái Tim Lửa Nung"
   },
   {
     "id": "gladiators-finale",
@@ -774,16 +1315,31 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "ATK +18%.",
-      "bonuses": [{ "stat": "ATK", "value": 0.18 }]
+      "bonuses": [
+        {
+          "stat": "ATK",
+          "value": 0.18
+        }
+      ]
     },
     "fourPiece": {
       "description": "Nếu người mặc dùng Kiếm, Đại kiếm hoặc Thương, Normal Attack DMG +35%.",
-      "bonuses": [{ "stat": "Normal Attack DMG (Sword/Claymore/Polearm users)", "value": 0.35 }]
+      "bonuses": [
+        {
+          "stat": "Normal Attack DMG (Sword/Claymore/Polearm users)",
+          "value": 0.35
+        }
+      ]
     },
     "domain": "Rơi ngẫu nhiên từ các Trounce Domain/boss tuần (Andrius, Dvalin, Childe...); hiện tại lấy chủ động qua \"Mystic Offering\" ở bàn chế tác (đổi từ thánh di vật 5★ dư thừa).",
     "region": "Boss tuần",
-    "bestCharacters": ["DPS Kiếm/Đại kiếm/Thương đòn thường thuần vật lý không cần bonus nguyên tố: Eula", "Kaeya", "một số build tổng quát khi chưa có bộ chuyên biệt."],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "bestCharacters": [
+      "DPS Kiếm/Đại kiếm/Thương đòn thường thuần vật lý không cần bonus nguyên tố: Eula",
+      "Kaeya",
+      "một số build tổng quát khi chưa có bộ chuyên biệt."
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Lễ Bế Mạc Của Giác Đấu Sĩ"
   },
   {
     "id": "wanderers-troupe",
@@ -791,16 +1347,32 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Elemental Mastery +80.",
-      "bonuses": [{ "stat": "Elemental Mastery", "value": 80 }]
+      "bonuses": [
+        {
+          "stat": "Elemental Mastery",
+          "value": 80
+        }
+      ]
     },
     "fourPiece": {
       "description": "Nếu người mặc dùng Cung hoặc Pháp khí, Charged Attack DMG +35%.",
-      "bonuses": [{ "stat": "Charged Attack DMG (Bow/Catalyst users)", "value": 0.35 }]
+      "bonuses": [
+        {
+          "stat": "Charged Attack DMG (Bow/Catalyst users)",
+          "value": 0.35
+        }
+      ]
     },
     "domain": "Rơi ngẫu nhiên từ các Trounce Domain/boss tuần (Andrius, Dvalin, Childe...); hiện tại lấy chủ động qua \"Mystic Offering\".",
     "region": "Boss tuần",
-    "bestCharacters": ["DPS Cung/Pháp khí dùng Charged Attack: Ganyu (Charged Attack chính)", "Yoimiya (không dùng Charged nên ít hợp)", "Tighnari", "phần lớn đã bị các bộ chuyên biệt mới thay thế."],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "bestCharacters": [
+      "DPS Cung/Pháp khí dùng Charged Attack: Ganyu (Charged Attack chính)",
+      "Yoimiya (không dùng Charged nên ít hợp)",
+      "Tighnari",
+      "phần lớn đã bị các bộ chuyên biệt mới thay thế."
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Đoàn Hát Lang Thang Đại Lục"
   },
   {
     "id": "prayers-for-illumination",
@@ -816,8 +1388,11 @@
     },
     "domain": "Rơi từ các Normal Boss theo nguyên tố tương ứng (Cryo/Electro/Hydro/Pyro Hypostasis, Regisvine, Perpetual Mechanical Array...), không phải từ Domain of Blessing.",
     "region": "Boss thế giới",
-    "bestCharacters": ["Dùng để chống hiệu ứng bất lợi Pyro trong nội dung PvE khó, không dùng để tối ưu DMG trong Trầm Thủy."],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "bestCharacters": [
+      "Dùng để chống hiệu ứng bất lợi Pyro trong nội dung PvE khó, không dùng để tối ưu DMG trong Trầm Thủy."
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Người Tế Hỏa"
   },
   {
     "id": "prayers-for-destiny",
@@ -833,8 +1408,11 @@
     },
     "domain": "Rơi từ các Normal Boss theo nguyên tố tương ứng (Cryo/Electro/Hydro/Pyro Hypostasis, Regisvine, Perpetual Mechanical Array...), không phải từ Domain of Blessing.",
     "region": "Boss thế giới",
-    "bestCharacters": ["Tương tự, chỉ mang tính phòng thủ trước Hydro."],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "bestCharacters": [
+      "Tương tự, chỉ mang tính phòng thủ trước Hydro."
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Người Tế Thủy"
   },
   {
     "id": "prayers-for-wisdom",
@@ -850,8 +1428,11 @@
     },
     "domain": "Rơi từ các Normal Boss theo nguyên tố tương ứng (Cryo/Electro/Hydro/Pyro Hypostasis, Regisvine, Perpetual Mechanical Array...), không phải từ Domain of Blessing.",
     "region": "Boss thế giới",
-    "bestCharacters": ["Tương tự, chỉ mang tính phòng thủ trước Electro."],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "bestCharacters": [
+      "Tương tự, chỉ mang tính phòng thủ trước Electro."
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Người Tế Lôi"
   },
   {
     "id": "prayers-to-springtime",
@@ -867,8 +1448,11 @@
     },
     "domain": "Rơi từ các Normal Boss theo nguyên tố tương ứng (Cryo/Electro/Hydro/Pyro Hypostasis, Regisvine, Perpetual Mechanical Array...), không phải từ Domain of Blessing.",
     "region": "Boss thế giới",
-    "bestCharacters": ["Tương tự, chỉ mang tính phòng thủ trước Cryo."],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "bestCharacters": [
+      "Tương tự, chỉ mang tính phòng thủ trước Cryo."
+    ],
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Người Tế Băng"
   },
   {
     "id": "resolution-of-sojourner",
@@ -876,16 +1460,27 @@
     "rarity": "3-4",
     "twoPiece": {
       "description": "ATK +18%.",
-      "bonuses": [{ "stat": "ATK", "value": 0.18 }]
+      "bonuses": [
+        {
+          "stat": "ATK",
+          "value": 0.18
+        }
+      ]
     },
     "fourPiece": {
       "description": "Charged Attack CRIT Rate +30%.",
-      "bonuses": [{ "stat": "Charged Attack CRIT Rate", "value": 0.30 }]
+      "bonuses": [
+        {
+          "stat": "Charged Attack CRIT Rate",
+          "value": 0.3
+        }
+      ]
     },
     "domain": "Rơi ngẫu nhiên từ rương kho báu và quái vật khắp thế giới mở (không phải Domain of Blessing).",
     "region": "Thế giới mở",
     "bestCharacters": [],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Trái Tim Hành Giả"
   },
   {
     "id": "brave-heart",
@@ -893,16 +1488,27 @@
     "rarity": "3-4",
     "twoPiece": {
       "description": "ATK +18%.",
-      "bonuses": [{ "stat": "ATK", "value": 0.18 }]
+      "bonuses": [
+        {
+          "stat": "ATK",
+          "value": 0.18
+        }
+      ]
     },
     "fourPiece": {
       "description": "DMG +30% lên đối phương còn >50% HP.",
-      "bonuses": [{ "stat": "DMG vs enemies above 50% HP", "value": 0.30 }]
+      "bonuses": [
+        {
+          "stat": "DMG vs enemies above 50% HP",
+          "value": 0.3
+        }
+      ]
     },
     "domain": "Rơi ngẫu nhiên từ rương kho báu và quái vật khắp thế giới mở (không phải Domain of Blessing).",
     "region": "Thế giới mở",
     "bestCharacters": [],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Trái Tim Dũng Sĩ"
   },
   {
     "id": "defenders-will",
@@ -910,7 +1516,12 @@
     "rarity": "3-4",
     "twoPiece": {
       "description": "DEF +30%.",
-      "bonuses": [{ "stat": "DEF", "value": 0.30 }]
+      "bonuses": [
+        {
+          "stat": "DEF",
+          "value": 0.3
+        }
+      ]
     },
     "fourPiece": {
       "description": "Với mỗi nguyên tố khác nhau trong đội, kháng nguyên tố tương ứng của người mặc +30%.",
@@ -919,7 +1530,8 @@
     "domain": "Rơi ngẫu nhiên từ rương kho báu và quái vật khắp thế giới mở (không phải Domain of Blessing).",
     "region": "Thế giới mở",
     "bestCharacters": [],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Trái Tim Thủ Hộ"
   },
   {
     "id": "tiny-miracle",
@@ -927,7 +1539,12 @@
     "rarity": "3-4",
     "twoPiece": {
       "description": "All Elemental RES +20%.",
-      "bonuses": [{ "stat": "All Elemental RES", "value": 0.20 }]
+      "bonuses": [
+        {
+          "stat": "All Elemental RES",
+          "value": 0.2
+        }
+      ]
     },
     "fourPiece": {
       "description": "Trúng đòn nguyên tố tăng 30% kháng nguyên tố đó trong 10s (1 lần/10s).",
@@ -936,7 +1553,8 @@
     "domain": "Rơi ngẫu nhiên từ rương kho báu và quái vật khắp thế giới mở (không phải Domain of Blessing).",
     "region": "Thế giới mở",
     "bestCharacters": [],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Kỳ Tích"
   },
   {
     "id": "berserker",
@@ -944,16 +1562,27 @@
     "rarity": "3-4",
     "twoPiece": {
       "description": "CRIT Rate +12%.",
-      "bonuses": [{ "stat": "CRIT Rate", "value": 0.12 }]
+      "bonuses": [
+        {
+          "stat": "CRIT Rate",
+          "value": 0.12
+        }
+      ]
     },
     "fourPiece": {
       "description": "Khi HP <70%, CRIT Rate +24% (tổng +36%).",
-      "bonuses": [{ "stat": "CRIT Rate (when HP below 70%)", "value": 0.24 }]
+      "bonuses": [
+        {
+          "stat": "CRIT Rate (when HP below 70%)",
+          "value": 0.24
+        }
+      ]
     },
     "domain": "Rơi ngẫu nhiên từ rương kho báu và quái vật khắp thế giới mở (không phải Domain of Blessing).",
     "region": "Thế giới mở",
     "bestCharacters": [],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Cuồng Chiến"
   },
   {
     "id": "martial-artist",
@@ -961,16 +1590,27 @@
     "rarity": "3-4",
     "twoPiece": {
       "description": "Normal/Charged Attack DMG +15%.",
-      "bonuses": [{ "stat": "Normal/Charged Attack DMG", "value": 0.15 }]
+      "bonuses": [
+        {
+          "stat": "Normal/Charged Attack DMG",
+          "value": 0.15
+        }
+      ]
     },
     "fourPiece": {
       "description": "Sau Elemental Skill, Normal/Charged Attack DMG +25% trong 8s.",
-      "bonuses": [{ "stat": "Normal/Charged Attack DMG", "value": 0.25 }]
+      "bonuses": [
+        {
+          "stat": "Normal/Charged Attack DMG",
+          "value": 0.25
+        }
+      ]
     },
     "domain": "Rơi ngẫu nhiên từ rương kho báu và quái vật khắp thế giới mở (không phải Domain of Blessing).",
     "region": "Thế giới mở",
     "bestCharacters": [],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Võ Nhân"
   },
   {
     "id": "instructor",
@@ -978,16 +1618,27 @@
     "rarity": "3-4",
     "twoPiece": {
       "description": "Elemental Mastery +80.",
-      "bonuses": [{ "stat": "Elemental Mastery", "value": 80 }]
+      "bonuses": [
+        {
+          "stat": "Elemental Mastery",
+          "value": 80
+        }
+      ]
     },
     "fourPiece": {
       "description": "Kích hoạt phản ứng nguyên tố tăng EM toàn đội +120 trong 8s.",
-      "bonuses": [{ "stat": "Party Elemental Mastery", "value": 120 }]
+      "bonuses": [
+        {
+          "stat": "Party Elemental Mastery",
+          "value": 120
+        }
+      ]
     },
     "domain": "Rơi ngẫu nhiên từ rương kho báu và quái vật khắp thế giới mở (không phải Domain of Blessing).",
     "region": "Thế giới mở",
     "bestCharacters": [],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Giáo Quan"
   },
   {
     "id": "gambler",
@@ -995,7 +1646,12 @@
     "rarity": "3-4",
     "twoPiece": {
       "description": "Elemental Skill DMG +20%.",
-      "bonuses": [{ "stat": "Elemental Skill DMG", "value": 0.20 }]
+      "bonuses": [
+        {
+          "stat": "Elemental Skill DMG",
+          "value": 0.2
+        }
+      ]
     },
     "fourPiece": {
       "description": "Hạ gục địch có 100% xóa CD Elemental Skill (1 lần/15s).",
@@ -1004,7 +1660,8 @@
     "domain": "Rơi ngẫu nhiên từ rương kho báu và quái vật khắp thế giới mở (không phải Domain of Blessing).",
     "region": "Thế giới mở",
     "bestCharacters": [],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Con Bạc"
   },
   {
     "id": "the-exile",
@@ -1012,7 +1669,12 @@
     "rarity": "3-4",
     "twoPiece": {
       "description": "Energy Recharge +20%.",
-      "bonuses": [{ "stat": "Energy Recharge", "value": 0.20 }]
+      "bonuses": [
+        {
+          "stat": "Energy Recharge",
+          "value": 0.2
+        }
+      ]
     },
     "fourPiece": {
       "description": "Dùng Elemental Burst hồi 2 Energy/2s trong 6s cho cả đội (trừ người mặc), không cộng dồn.",
@@ -1021,7 +1683,8 @@
     "domain": "Rơi ngẫu nhiên từ rương kho báu và quái vật khắp thế giới mở (không phải Domain of Blessing).",
     "region": "Thế giới mở",
     "bestCharacters": [],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Kẻ Lưu Đày"
   },
   {
     "id": "adventurer",
@@ -1029,16 +1692,27 @@
     "rarity": "1-3",
     "twoPiece": {
       "description": "Max HP +1000.",
-      "bonuses": [{ "stat": "Max HP", "value": 1000 }]
+      "bonuses": [
+        {
+          "stat": "Max HP",
+          "value": 1000
+        }
+      ]
     },
     "fourPiece": {
       "description": "Mở rương hồi 30% Max HP trong 5s.",
-      "bonuses": [{ "stat": "HP restored on opening chest", "value": 0.30 }]
+      "bonuses": [
+        {
+          "stat": "HP restored on opening chest",
+          "value": 0.3
+        }
+      ]
     },
     "domain": "Rơi ngẫu nhiên từ rương kho báu và quái vật khắp thế giới mở (không phải Domain of Blessing).",
     "region": "Thế giới mở",
     "bestCharacters": [],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Nhà Mạo Hiểm"
   },
   {
     "id": "lucky-dog",
@@ -1046,7 +1720,12 @@
     "rarity": "1-3",
     "twoPiece": {
       "description": "DEF +100.",
-      "bonuses": [{ "stat": "DEF", "value": 100 }]
+      "bonuses": [
+        {
+          "stat": "DEF",
+          "value": 100
+        }
+      ]
     },
     "fourPiece": {
       "description": "Nhặt Mora hồi 300 HP.",
@@ -1055,7 +1734,8 @@
     "domain": "Rơi ngẫu nhiên từ rương kho báu và quái vật khắp thế giới mở (không phải Domain of Blessing).",
     "region": "Thế giới mở",
     "bestCharacters": [],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Vật May Mắn"
   },
   {
     "id": "scholar",
@@ -1063,7 +1743,12 @@
     "rarity": "3-4",
     "twoPiece": {
       "description": "Energy Recharge +20%.",
-      "bonuses": [{ "stat": "Energy Recharge", "value": 0.20 }]
+      "bonuses": [
+        {
+          "stat": "Energy Recharge",
+          "value": 0.2
+        }
+      ]
     },
     "fourPiece": {
       "description": "Nhặt Elemental Particle/Orb cho 3 Energy cho đồng đội dùng Cung/Pháp khí (1 lần/3s).",
@@ -1072,7 +1757,8 @@
     "domain": "Rơi ngẫu nhiên từ rương kho báu và quái vật khắp thế giới mở (không phải Domain of Blessing).",
     "region": "Thế giới mở",
     "bestCharacters": [],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Học Sĩ"
   },
   {
     "id": "traveling-doctor",
@@ -1080,15 +1766,26 @@
     "rarity": "1-3",
     "twoPiece": {
       "description": "Incoming Healing Effectiveness +20%.",
-      "bonuses": [{ "stat": "Incoming Healing Effectiveness", "value": 0.20 }]
+      "bonuses": [
+        {
+          "stat": "Incoming Healing Effectiveness",
+          "value": 0.2
+        }
+      ]
     },
     "fourPiece": {
       "description": "Dùng Elemental Burst hồi 20% HP.",
-      "bonuses": [{ "stat": "HP restored on Burst use", "value": 0.20 }]
+      "bonuses": [
+        {
+          "stat": "HP restored on Burst use",
+          "value": 0.2
+        }
+      ]
     },
     "domain": "Rơi ngẫu nhiên từ rương kho báu và quái vật khắp thế giới mở (không phải Domain of Blessing).",
     "region": "Thế giới mở",
     "bestCharacters": [],
-    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md"
+    "sourceFile": "thanh-di-vat/thanh-di-vat-2.md",
+    "nameVI": "Thầy Thuốc"
   }
 ]

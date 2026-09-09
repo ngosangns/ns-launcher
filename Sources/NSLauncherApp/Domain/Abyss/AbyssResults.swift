@@ -206,8 +206,19 @@ struct AbyssFloorReport: Sendable, Identifiable {
 
 struct AbyssOptimizerRequest: Sendable {
     /// `nil` runs against every character and weapon in the data — the
-    /// "what could I build in theory" mode.
+    /// "what could I build in theory" mode — with no reference gear, so
+    /// refinement and constellation both fall back to their defaults even for
+    /// things the player actually owns. Pass a real roster and set the pool
+    /// flags below instead when only *part* of the search should be
+    /// unrestricted; the roster still supplies real refinement/constellation
+    /// values wherever they are known, whichever way the pool flags point.
     var roster: AbyssRoster?
+    /// Ignores `roster` for which characters are candidates, without touching
+    /// which weapons are.
+    var usesFullCharacterPool: Bool = false
+    /// Ignores `roster` for which weapons are candidates, without touching
+    /// which characters are.
+    var usesFullWeaponPool: Bool = false
     /// `nil` covers every floor in the cycle.
     var floors: [Int]?
     var topN: Int = 5
@@ -227,9 +238,12 @@ struct AbyssOptimizerRequest: Sendable {
     /// standardised build.
     var showcase: [AbyssShowcaseBuild] = []
 
-    init(roster: AbyssRoster? = nil, floors: [Int]? = nil, topN: Int = 5, poolSize: Int = 40,
+    init(roster: AbyssRoster? = nil, usesFullCharacterPool: Bool = false, usesFullWeaponPool: Bool = false,
+         floors: [Int]? = nil, topN: Int = 5, poolSize: Int = 40,
          refinesArtifacts: Bool = true, showcase: [AbyssShowcaseBuild] = []) {
         self.roster = roster
+        self.usesFullCharacterPool = usesFullCharacterPool
+        self.usesFullWeaponPool = usesFullWeaponPool
         self.floors = floors
         self.topN = topN
         self.poolSize = poolSize

@@ -97,12 +97,23 @@ enum ETAFormatter {
         default:
             rounded = (seconds / 60).rounded() * 60
         }
-        let formatter = DateComponentsFormatter()
-        formatter.allowedUnits = rounded >= 3600 ? [.hour, .minute] : [.minute, .second]
-        formatter.unitsStyle = .full
-        formatter.maximumUnitCount = 2
-        return formatter.string(from: rounded)
+        return (rounded >= 3600 ? hourFormatter : minuteFormatter).string(from: rounded)
     }
+}
+
+/// One formatter per unit set, built once.
+///
+/// `DateComponentsFormatter` is expensive to construct and this runs on every
+/// progress event of a download, several times a second.
+private let hourFormatter = makeETAFormatter(allowing: [.hour, .minute])
+private let minuteFormatter = makeETAFormatter(allowing: [.minute, .second])
+
+private func makeETAFormatter(allowing units: NSCalendar.Unit) -> DateComponentsFormatter {
+    let formatter = DateComponentsFormatter()
+    formatter.allowedUnits = units
+    formatter.unitsStyle = .full
+    formatter.maximumUnitCount = 2
+    return formatter
 }
 
 /// Holds the speed and ETA labels steady between refreshes.

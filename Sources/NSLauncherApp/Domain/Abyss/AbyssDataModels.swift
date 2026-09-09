@@ -69,6 +69,7 @@ struct AbyssCharacter: Decodable, Sendable, Identifiable {
 
     let id: String
     let name: String
+    let nameVI: String
     let element: GenshinElement
     let weaponType: WeaponType
     let rarity: Int
@@ -141,6 +142,7 @@ struct AbyssWeapon: Decodable, Sendable, Identifiable {
 
     let id: String
     let name: String
+    let nameVI: String
     let type: WeaponType
     let rarity: Int
     let atkLv1: Double?
@@ -167,6 +169,7 @@ struct AbyssArtifactSet: Decodable, Sendable, Identifiable {
 
     let id: String
     let name: String
+    let nameVI: String
     let rarity: String
     let twoPiece: Effect
     let fourPiece: Effect

@@ -38,7 +38,8 @@
       "Itto",
       "các DPS Claymore on-field"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Đường Cùng Của Sói"
   },
   {
     "id": "skyward-pride",
@@ -78,7 +79,8 @@
       "Xinyan",
       "DPS Claymore cần Energy Recharge"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Thiên Không Kiêu Ngạo"
   },
   {
     "id": "song-of-broken-pines",
@@ -126,7 +128,8 @@
       "DPS Vật lý Claymore: Eula",
       "Razor"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Tiếng Gió Trong Rừng Thông"
   },
   {
     "id": "the-unforged",
@@ -174,7 +177,8 @@
       "DPS Claymore đội hình khiên (Zhongli",
       "Xingqiu-Zhongli)"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Kiếm Vô Công"
   },
   {
     "id": "redhorn-stonethresher",
@@ -213,7 +217,8 @@
     "bestCharacters": [
       "Arataki Itto"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Xích Giác Phá Thạch Đao"
   },
   {
     "id": "verdict",
@@ -252,7 +257,8 @@
     "bestCharacters": [
       "Navia"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Phán Quyết"
   },
   {
     "id": "a-thousand-blazing-suns",
@@ -291,7 +297,8 @@
     "bestCharacters": [
       "Mavuika"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Thiên Dương Rực Lửa"
   },
   {
     "id": "fang-of-the-mountain-king",
@@ -322,7 +329,8 @@
     "bestCharacters": [
       "Kinich"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Nanh Sơn Vương"
   },
   {
     "id": "a-teaspoon-of-transcendence",
@@ -361,7 +369,8 @@
     "bestCharacters": [
       "Sandrone"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Muỗng Trà Siêu Việt"
   },
   {
     "id": "beacon-of-the-reed-sea",
@@ -408,7 +417,8 @@
     "bestCharacters": [
       "Dehya"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Hải Đăng Bờ Biển Lau"
   },
   {
     "id": "gest-of-the-mighty-wolf",
@@ -447,7 +457,8 @@
     "bestCharacters": [
       "Varka"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Chiến Hùng Ca Của Sói"
   },
   {
     "id": "akuoumaru",
@@ -487,7 +498,8 @@
       "Gorou",
       "nhân vật Claymore burst-focused với đội nhiều Năng Lượng tối đa"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Akuoumaru"
   },
   {
     "id": "blackcliff-slasher",
@@ -519,7 +531,8 @@
       "DPS Claymore cần CRIT DMG giá rẻ",
       "dùng tạm cho hầu hết DPS"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Hắc Nham Trảm Đao"
   },
   {
     "id": "blade-of-atonement",
@@ -558,7 +571,8 @@
     "bestCharacters": [
       "DPS Claymore hệ phản ứng Stellar Glimmer (Sandrone)"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Nhát Chém Cứu Rỗi"
   },
   {
     "id": "earth-shaker",
@@ -589,7 +603,8 @@
     "bestCharacters": [
       "DPS/sub-DPS Claymore hệ Pyro dùng Kỹ năng nguyên tố nhiều"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Đao Chấn Động"
   },
   {
     "id": "favonius-greatsword",
@@ -628,7 +643,8 @@
     "bestCharacters": [
       "Nhân vật Claymore cần Energy Recharge"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Đại Kiếm Tây Phong"
   },
   {
     "id": "flame-forged-insight",
@@ -669,7 +685,8 @@
       "Sayu",
       "nhân vật scale Elemental Mastery cần hồi năng lượng"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Trí Tuệ Dung Luyện"
   },
   {
     "id": "forest-regalia",
@@ -700,7 +717,8 @@
     "bestCharacters": [
       "DPS/sub-DPS Claymore hệ phản ứng nguyên tố cần Energy Recharge"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Vương Khí Rừng Sâu"
   },
   {
     "id": "forged-by-the-golden-melody",
@@ -748,7 +766,8 @@
       "DPS Claymore hệ phản ứng Stellar Glimmer (Sandrone",
       "Beidou)"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Kim Luật Đúc Ảnh"
   },
   {
     "id": "fruitful-hook",
@@ -787,7 +806,8 @@
     "bestCharacters": [
       "DPS Claymore chuyên trọng kích rơi (build plunge)"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Móc Trĩu Quả"
   },
   {
     "id": "katsuragikiri-nagamasa",
@@ -828,7 +848,8 @@
       "Gorou",
       "nhân vật Claymore cần Energy Recharge/spam Kỹ năng"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Trường Đao Katsuragi"
   },
   {
     "id": "lithic-blade",
@@ -870,7 +891,8 @@
       "Noelle",
       "Xiao"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Thiên Nham Cổ Kiếm"
   },
   {
     "id": "luxurious-sea-lord",
@@ -909,7 +931,8 @@
     "bestCharacters": [
       "DPS/sub-DPS Claymore hệ Thủy"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Vua Biển Hàng Hiệu"
   },
   {
     "id": "mailed-flower",
@@ -949,7 +972,8 @@
       "Dehya",
       "DPS/sub-DPS Claymore hệ phản ứng nguyên tố"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Đóa Hoa Tôn Màu Thép"
   },
   {
     "id": "makhaira-aquamarine",
@@ -980,7 +1004,8 @@
     "bestCharacters": [
       "DPS Claymore scale Elemental Mastery"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Sắc Nước Makhaira"
   },
   {
     "id": "master-key",
@@ -1020,7 +1045,8 @@
       "Aino",
       "DPS/sub-DPS Claymore hệ phản ứng nguyên tố mùa Luna"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Chìa Khóa Vạn Năng"
   },
   {
     "id": "portable-power-saw",
@@ -1059,7 +1085,8 @@
     "bestCharacters": [
       "Nhân vật Claymore hồi máu/scale Elemental Mastery"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Máy Cưa Cầm Tay"
   },
   {
     "id": "prototype-archaic",
@@ -1090,7 +1117,8 @@
     "bestCharacters": [
       "DPS Claymore trọng kích Vật lý"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Mẫu Cổ Hoa"
   },
   {
     "id": "rainslasher",
@@ -1121,7 +1149,8 @@
     "bestCharacters": [
       "DPS Claymore hệ Thủy/Lôi"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Vũ Tài"
   },
   {
     "id": "royal-greatsword",
@@ -1153,7 +1182,8 @@
       "DPS Claymore ưu tiên ATK% thuần",
       "build stack CRIT Rate"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Đại Kiếm Tông Thất"
   },
   {
     "id": "sacrificial-greatsword",
@@ -1192,7 +1222,8 @@
     "bestCharacters": [
       "Nhân vật Claymore cần spam Kỹ năng"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Đại Kiếm Tế Lễ"
   },
   {
     "id": "serpent-spine",
@@ -1232,7 +1263,8 @@
       "DPS trụ sân bền bỉ (mọi hệ vũ khí",
       "đặc biệt Claymore)"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Kiếm Li Cốt"
   },
   {
     "id": "snow-tombed-starsilver",
@@ -1279,7 +1311,8 @@
     "bestCharacters": [
       "DPS Claymore hệ Băng"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Tuyết Vùi Tinh Ngân"
   },
   {
     "id": "talking-stick",
@@ -1319,7 +1352,8 @@
       "Razor",
       "nhân vật Claymore tự áp nguyên tố lên bản thân"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Gậy Đàm Phán"
   },
   {
     "id": "the-bell",
@@ -1359,7 +1393,8 @@
       "DPS/tank Claymore scale HP",
       "phổ thông giai đoạn đầu game"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Kiếm Chuông"
   },
   {
     "id": "tidal-shadow",
@@ -1391,7 +1426,8 @@
       "DPS/sub-DPS Claymore hệ Thủy",
       "đội hình hồi máu"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Bóng Tối Thủy Triều"
   },
   {
     "id": "whiteblind",
@@ -1422,7 +1458,8 @@
     "bestCharacters": [
       "DPS Claymore on-field phổ thông"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Kiếm Bạch Ảnh"
   },
   {
     "id": "ultimate-overlords-mega-magic-sword",
@@ -1462,7 +1499,8 @@
       "Vũ khí F2P ATK% thuần",
       "không gắn với nhân vật cụ thể"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Bá Vương Tối Thượng Siêu Cấp Ma Kiếm"
   },
   {
     "id": "bloodtainted-greatsword",
@@ -1494,7 +1532,8 @@
       "Sub-DPS Claymore hệ Hỏa/Lôi",
       "nhân vật sơ khai"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Kiếm Huyết Rồng"
   },
   {
     "id": "debate-club",
@@ -1526,7 +1565,8 @@
       "Nhân vật Claymore sơ khai",
       "trọng kích"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Gậy Thu Phục"
   },
   {
     "id": "ferrous-shadow",
@@ -1566,7 +1606,8 @@
       "Nhân vật Claymore sơ khai",
       "trọng kích"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Kiếm Thiết Ảnh"
   },
   {
     "id": "skyrider-greatsword",
@@ -1597,7 +1638,8 @@
     "bestCharacters": [
       "Nhân vật Claymore sơ khai"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Đại Kiếm Phi Thiên"
   },
   {
     "id": "white-iron-greatsword",
@@ -1628,7 +1670,8 @@
     "bestCharacters": [
       "Nhân vật Claymore sơ khai"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Kiếm Bạch Thiết"
   },
   {
     "id": "old-mercs-pal",
@@ -1646,7 +1689,8 @@
     "bestCharacters": [
       "Chỉ dùng tạm giai đoạn đầu game"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Kiếm Dụng Binh"
   },
   {
     "id": "waster-greatsword",
@@ -1665,6 +1709,7 @@
       "Vũ khí khởi đầu",
       "không dùng trong đội hình thực chiến"
     ],
-    "sourceFile": "vu-khi/dai-kiem.md"
+    "sourceFile": "vu-khi/dai-kiem.md",
+    "nameVI": "Kiếm Huấn Luyện"
   }
 ]

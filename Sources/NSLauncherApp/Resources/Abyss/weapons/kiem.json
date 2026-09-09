@@ -46,7 +46,8 @@
       "Bennett",
       "các DPS/sub-DPS hệ Vật lý"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Phong Ưng Kiếm"
   },
   {
     "id": "freedom-sworn",
@@ -95,7 +96,8 @@
       "Sucrose",
       "Yelan"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Lời Thề Tự Do Cổ Xưa"
   },
   {
     "id": "haran-geppaku-futsu",
@@ -135,7 +137,8 @@
       "Ayato",
       "các DPS đòn thường tần suất cao"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Haran Geppaku Futsu"
   },
   {
     "id": "mistsplitter-reforged",
@@ -169,7 +172,8 @@
       "Kazuha",
       "DPS on-field mono hệ"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Ánh Sáng Đêm Sương Mù"
   },
   {
     "id": "primordial-jade-cutter",
@@ -209,7 +213,8 @@
       "Hầu hết DPS kiếm on-field: Kamisato Ayaka",
       "Keqing"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Bàn Nham Kết Lục"
   },
   {
     "id": "skyward-blade",
@@ -249,7 +254,8 @@
       "DPS cần Energy Recharge",
       "đội cần tần suất Bùng nổ cao"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Thiên Không Kiếm"
   },
   {
     "id": "uraku-misugiri",
@@ -297,7 +303,8 @@
       "Chiori",
       "các DPS/sub-DPS scale theo DEF"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Uraku Misugiri"
   },
   {
     "id": "absolution",
@@ -337,7 +344,8 @@
       "Clorinde",
       "các DPS cơ chế Bond of Life"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Xá Tội"
   },
   {
     "id": "athame-artis",
@@ -385,7 +393,8 @@
       "Durin",
       "sub-DPS/hỗ trợ kiếm dùng Bùng nổ nguyên tố"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Hắc Ám Xâm Thực"
   },
   {
     "id": "azurelight",
@@ -432,7 +441,8 @@
     "bestCharacters": [
       "Skirk (gần như độc quyền do cơ chế 0 Năng lượng)"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Thương Diệu"
   },
   {
     "id": "exaiphanes-blade",
@@ -455,7 +465,8 @@
       "Nhà Lữ Hành (Traveler)",
       "đặc biệt bản Cryo mới"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Thanh Kiếm Exaiphanes"
   },
   {
     "id": "whitelake-frostfeather",
@@ -502,7 +513,8 @@
     "bestCharacters": [
       "Odette"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Bạch Hồ Đông Vũ"
   },
   {
     "id": "peak-patrol-song",
@@ -557,7 +569,8 @@
     "bestCharacters": [
       "DPS/hỗ trợ scale theo DEF"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Khúc Ca Núi Đá"
   },
   {
     "id": "summit-shaper",
@@ -598,7 +611,8 @@
       "Xianyun",
       "đội Geo mono)"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Kiếm Chước Phong"
   },
   {
     "id": "key-of-khaj-nisut",
@@ -645,7 +659,8 @@
     "bestCharacters": [
       "Nilou"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Chìa Khóa Khaj-Nisut"
   },
   {
     "id": "light-of-foliar-incision",
@@ -684,7 +699,8 @@
     "bestCharacters": [
       "Alhaitham"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Ánh Lá Phán Quyết"
   },
   {
     "id": "splendor-of-tranquil-waters",
@@ -723,7 +739,8 @@
     "bestCharacters": [
       "Furina"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Sắc Nước Lộng Lẫy"
   },
   {
     "id": "lightbearing-moonshard",
@@ -763,7 +780,8 @@
       "Zibai; các DPS/hỗ trợ scale DEF hệ Geo khác (Chiori",
       "Albedo) cũng dùng tốt nếu có nguồn Lunar-Crystallize"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Mảnh Trăng Ánh Sáng"
   },
   {
     "id": "amenoma-kageuchi",
@@ -794,7 +812,8 @@
     "bestCharacters": [
       "Nhân vật kiếm cần Energy Recharge sớm game"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Đoản Đao Amenoma"
   },
   {
     "id": "blackcliff-longsword",
@@ -825,7 +844,8 @@
     "bestCharacters": [
       "DPS kiếm CRIT DMG-focus giai đoạn giữa game"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Hắc Nham Trường Kiếm"
   },
   {
     "id": "calamity-of-eshu",
@@ -865,7 +885,8 @@
       "DPS kiếm đòn thường/trọng kích trong đội hình có khiên (Zhongli",
       "Xianyun)"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Tai Họa Eshu"
   },
   {
     "id": "cinnabar-spindle",
@@ -899,7 +920,8 @@
       "các DPS/sub-DPS kiếm dùng Kỹ năng nguyên tố",
       "scale theo DEF"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Con Thoi Chu Sa"
   },
   {
     "id": "emberwell",
@@ -939,7 +961,8 @@
       "Odette",
       "các DPS/sub-DPS kiếm hệ phản ứng Stellar Glimmer/Stellar-Conduct"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Ngọn Nguồn Dẫn Lửa"
   },
   {
     "id": "favonius-sword",
@@ -979,7 +1002,8 @@
       "Nhân vật cần Energy Recharge",
       "off-field support"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Tây Phong Kiếm"
   },
   {
     "id": "festering-desire",
@@ -1018,7 +1042,8 @@
     "bestCharacters": [
       "DPS/sub-DPS dùng Kỹ năng nguyên tố nhiều"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Răng Nanh Rỉ Sét"
   },
   {
     "id": "finale-of-the-deep",
@@ -1066,7 +1091,8 @@
       "Nhân vật kiếm dùng Kỹ năng nguyên tố",
       "scale Bond of Life"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Nhạc Khúc Biển Sâu"
   },
   {
     "id": "fleuve-cendre-ferryman",
@@ -1105,7 +1131,8 @@
     "bestCharacters": [
       "Nhân vật kiếm cần Energy Recharge và CRIT Rate cho Kỹ năng nguyên tố"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Ống Đồng Fleuve Cendre"
   },
   {
     "id": "flute-of-ezpitzal",
@@ -1138,7 +1165,8 @@
       "Zibai",
       "các DPS/tank kiếm scale DEF dùng nhiều Kỹ năng nguyên tố"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Sáo Ezpitzal"
   },
   {
     "id": "heretics-molten-blade",
@@ -1177,7 +1205,8 @@
     "bestCharacters": [
       "DPS kiếm cần di chuyển nhiều sau khi dùng Kỹ năng nguyên tố"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Lưỡi Kiếm Dung Luyện Dị Đoan"
   },
   {
     "id": "iron-sting",
@@ -1208,7 +1237,8 @@
     "bestCharacters": [
       "Sub-DPS/hỗ trợ tạo phản ứng nguyên tố"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Thiết Phong Kích"
   },
   {
     "id": "kagotsurube-isshin",
@@ -1231,7 +1261,8 @@
       "Kazuha (phần thưởng gắn với nhiệm vụ của chính anh)",
       "các DPS kiếm đòn thường Vật Lý khác (vũ khí không thể tinh luyện thêm)"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Kagotsurube Isshin"
   },
   {
     "id": "lions-roar",
@@ -1264,7 +1295,8 @@
       "Keqing",
       "Chevreuse-team"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Tiếng Hét Của Rồng"
   },
   {
     "id": "moonweavers-dawn",
@@ -1314,7 +1346,8 @@
       "Kaeya",
       "Jean — các DPS/support kiếm Bùng nổ nguyên tố có chi phí Năng Lượng ≤60"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Bình Minh Của Người Dệt Trăng"
   },
   {
     "id": "prototype-rancour",
@@ -1353,7 +1386,8 @@
     "bestCharacters": [
       "DPS kiếm on-field phổ thông giai đoạn đầu-giữa game"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Mẫu Trảm Nham"
   },
   {
     "id": "royal-longsword",
@@ -1393,7 +1427,8 @@
       "DPS kiếm cần ATK% thuần",
       "quản lý CRIT Rate qua stack"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Trường Kiếm Tông Thất"
   },
   {
     "id": "sacrificial-sword",
@@ -1433,7 +1468,8 @@
       "Nhân vật cần spam Kỹ năng nguyên tố: Kaeya",
       "Xingqiu (dù Xingqiu dùng kiếm)"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Kiếm Tế Lễ"
   },
   {
     "id": "sapwood-blade",
@@ -1466,7 +1502,8 @@
       "Nhà Lữ Hành (Thảo)",
       "các DPS/sub-DPS kiếm hệ phản ứng Thảo/Bloom"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Kiếm Gỗ"
   },
   {
     "id": "serenitys-call",
@@ -1506,7 +1543,8 @@
       "Nhân vật kiếm gây phản ứng nguyên tố cần Energy Recharge",
       "đặc biệt hưởng lợi mùa Luna (Moonsign: Ascendant Gleam)"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Còi Yên Tĩnh"
   },
   {
     "id": "sturdy-bone",
@@ -1537,7 +1575,8 @@
     "bestCharacters": [
       "DPS kiếm đòn thường Vật Lý tận dụng cơ chế Chạy nước rút tại Natlan"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Xương Cứng"
   },
   {
     "id": "sword-of-descension",
@@ -1559,7 +1598,8 @@
     "bestCharacters": [
       "Chỉ dùng được đầy đủ nếu có tài khoản liên kết PlayStation"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Kiếm Giáng Lâm"
   },
   {
     "id": "sword-of-narzissenkreuz",
@@ -1591,7 +1631,8 @@
       "Chưa xác nhận nhân vật đại diện cụ thể (vũ khí mới",
       "chưa có meta rõ ràng)"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Lưỡi Kiếm Narzissenkreuz"
   },
   {
     "id": "the-alley-flash",
@@ -1622,7 +1663,8 @@
     "bestCharacters": [
       "DPS kiếm EM/hybrid ít bị trúng đòn"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Tia Sáng Nơi Hẻm Tối"
   },
   {
     "id": "the-black-sword",
@@ -1661,7 +1703,8 @@
     "bestCharacters": [
       "DPS kiếm đòn thường: Kamisato Ayaka off-elemental build"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Kiếm Đen"
   },
   {
     "id": "the-dockhands-assistant",
@@ -1700,7 +1743,8 @@
     "bestCharacters": [
       "Nhân vật kiếm hồi máu/scale EM trong đội có healer"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Kiếm Bến Tàu"
   },
   {
     "id": "the-flute",
@@ -1731,7 +1775,8 @@
     "bestCharacters": [
       "DPS kiếm đòn thường/trọng kích tần suất cao"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Kiếm Sáo"
   },
   {
     "id": "toukabou-shigure",
@@ -1764,7 +1809,8 @@
       "Alhaitham",
       "các DPS/sub-DPS kiếm đơn mục tiêu cần Tinh Thông Nguyên Tố"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Toukabou Shigure"
   },
   {
     "id": "wolf-fang",
@@ -1812,7 +1858,8 @@
       "Kamisato Ayato",
       "các DPS kiếm scale sát thương Kỹ năng/Bùng nổ nguyên tố"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Nanh Sói"
   },
   {
     "id": "xiphos-moonlight",
@@ -1843,7 +1890,8 @@
     "bestCharacters": [
       "Hỗ trợ buff Energy Recharge toàn đội theo EM"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Ánh Trăng Xiphos"
   },
   {
     "id": "cool-steel",
@@ -1875,7 +1923,8 @@
       "Nhân vật kiếm sơ khai",
       "F2P giai đoạn đầu"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Lãnh Nhẫn"
   },
   {
     "id": "dark-iron-sword",
@@ -1906,7 +1955,8 @@
     "bestCharacters": [
       "Nhân vật kiếm sơ khai gây phản ứng Electro"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Kiếm Sắt Đen"
   },
   {
     "id": "fillet-blade",
@@ -1945,7 +1995,8 @@
     "bestCharacters": [
       "Nhân vật cần ATK% sơ khai"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Đao Săn Cá"
   },
   {
     "id": "harbinger-of-dawn",
@@ -1977,7 +2028,8 @@
       "DPS máu cao",
       "giữ HP trên 90%"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Thần Kiếm Lê Minh"
   },
   {
     "id": "skyrider-sword",
@@ -2008,7 +2060,8 @@
     "bestCharacters": [
       "Nhân vật kiếm sơ khai"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Kiếm Phi Thiên"
   },
   {
     "id": "travelers-handy-sword",
@@ -2040,7 +2093,8 @@
       "Nhân vật kiếm sơ khai",
       "F2P"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Kiếm Lữ Hành"
   },
   {
     "id": "silver-sword",
@@ -2058,7 +2112,8 @@
     "bestCharacters": [
       "Chỉ dùng tạm giai đoạn đầu game hoặc thử nghiệm chuỗi đòn"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Kiếm Bạc"
   },
   {
     "id": "dull-blade",
@@ -2077,6 +2132,7 @@
       "Vũ khí khởi đầu",
       "không dùng trong đội hình thực chiến"
     ],
-    "sourceFile": "vu-khi/kiem.md"
+    "sourceFile": "vu-khi/kiem.md",
+    "nameVI": "Vô Phong Kiếm"
   }
 ]
