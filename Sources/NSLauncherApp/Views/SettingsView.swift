@@ -1,16 +1,43 @@
 import AppKit
 import SwiftUI
 
+private enum CutsceneSortOrder: CaseIterable {
+    case sizeDescending
+    case sizeAscending
+    case nameAscending
+    case nameDescending
+
+    func title(_ text: AppText) -> String {
+        switch self {
+        case .sizeDescending: return text.cutsceneSortSizeDescending
+        case .sizeAscending: return text.cutsceneSortSizeAscending
+        case .nameAscending: return text.cutsceneSortNameAscending
+        case .nameDescending: return text.cutsceneSortNameDescending
+        }
+    }
+
+    func sort(_ files: [CutsceneFile]) -> [CutsceneFile] {
+        switch self {
+        case .sizeDescending: return files.sorted { $0.sizeBytes > $1.sizeBytes }
+        case .sizeAscending: return files.sorted { $0.sizeBytes < $1.sizeBytes }
+        case .nameAscending: return files.sorted { $0.relativePath.localizedStandardCompare($1.relativePath) == .orderedAscending }
+        case .nameDescending: return files.sorted { $0.relativePath.localizedStandardCompare($1.relativePath) == .orderedDescending }
+        }
+    }
+}
+
 private enum SettingsTab: CaseIterable {
     case general
     case display
     case cache
+    case cutscenes
 
     func title(_ text: AppText) -> String {
         switch self {
         case .general: return text.selectedGame
         case .display: return text.displayOptionsLabel
         case .cache: return text.cacheManagementTitle
+        case .cutscenes: return text.cutscenesTitle
         }
     }
 
@@ -19,6 +46,7 @@ private enum SettingsTab: CaseIterable {
         case .general: return "gamecontroller.fill"
         case .display: return "display"
         case .cache: return "trash.fill"
+        case .cutscenes: return "play.rectangle.on.rectangle"
         }
     }
 }
@@ -28,6 +56,11 @@ private enum SettingsTab: CaseIterable {
 struct SettingsView: View {
     @ObservedObject var viewModel: LauncherViewModel
     @State private var activeSection: SettingsTab = .general
+    @State private var cutsceneSearchQuery: String = ""
+    @State private var pendingCutsceneDelete: CutsceneFile?
+    @State private var cutsceneGenderTab: TravelerGender = .aether
+    @State private var cutsceneSortOrder: CutsceneSortOrder = .sizeDescending
+    @State private var showClearAllCutscenesConfirm = false
 
     private var text: AppText { viewModel.text }
 
@@ -54,6 +87,43 @@ struct SettingsView: View {
             }
         }
         .onAppear { viewModel.refreshCacheReport() }
+        .onChange(of: activeSection) { _, newValue in
+            if newValue == .cutscenes && viewModel.cutsceneFiles.isEmpty {
+                viewModel.refreshCutsceneFiles()
+            }
+        }
+        .alert(
+            text.deleteCutsceneConfirmTitle,
+            isPresented: Binding(
+                get: { pendingCutsceneDelete != nil },
+                set: { if !$0 { pendingCutsceneDelete = nil } }
+            ),
+            presenting: pendingCutsceneDelete
+        ) { file in
+            Button(text.deleteCutsceneTitle, role: .destructive) {
+                viewModel.deleteCutsceneFile(file)
+                pendingCutsceneDelete = nil
+            }
+            Button(text.cancel, role: .cancel) { pendingCutsceneDelete = nil }
+        } message: { file in
+            Text(text.deleteCutsceneConfirmMessage(file.relativePath))
+        }
+        .alert(
+            text.clearAllCutscenesConfirmTitle,
+            isPresented: $showClearAllCutscenesConfirm
+        ) {
+            Button(text.deleteCutsceneTitle, role: .destructive) {
+                viewModel.deleteAllCutscenes(forGender: cutsceneGenderTab)
+            }
+            Button(text.cancel, role: .cancel) {}
+        } message: {
+            let files = viewModel.cutsceneFiles(forGender: cutsceneGenderTab)
+            Text(text.clearAllCutscenesConfirmMessage(
+                files.count,
+                ByteCountFormatter.fileSize(files.reduce(0) { $0 + $1.sizeBytes }),
+                text.travelerGenderShortName(cutsceneGenderTab)
+            ))
+        }
     }
 
     private var sidebar: some View {
@@ -87,6 +157,8 @@ struct SettingsView: View {
                 }
             case .cache:
                 cacheSection(for: game)
+            case .cutscenes:
+                cutscenesSection(for: game)
             }
         }
         .id(activeSection)
@@ -185,7 +257,7 @@ struct SettingsView: View {
             subtitleLines: [text.cacheKindDescription(item.kind)]
         ) {
             VStack(alignment: .trailing, spacing: 6) {
-                Text(ByteCountFormatter.string(fromByteCount: item.sizeBytes, countStyle: .file))
+                Text(ByteCountFormatter.fileSize(item.sizeBytes))
                     .font(.system(.caption, design: .monospaced))
                     .foregroundStyle(LauncherPalette.mist.opacity(0.72))
                 Button(text.clearCacheTitle) {
@@ -203,11 +275,165 @@ struct SettingsView: View {
                 .font(.system(.body, design: .rounded, weight: .semibold))
                 .foregroundStyle(LauncherPalette.parchment)
             Spacer()
-            Text(ByteCountFormatter.string(fromByteCount: total, countStyle: .file))
+            Text(ByteCountFormatter.fileSize(total))
                 .font(.system(.caption, design: .monospaced))
                 .foregroundStyle(LauncherPalette.goldHighlight)
         }
         .padding(.vertical, 10)
+    }
+
+    private func cutscenesSection(for game: GameDefinition) -> some View {
+        SettingsSection(title: text.cutscenesTitle, subtitle: text.cutscenesSubtitle) {
+            VStack(alignment: .leading, spacing: 14) {
+                giCutscenesPathField
+                travelerGenderField
+
+                Picker("", selection: $cutsceneGenderTab) {
+                    ForEach(TravelerGender.allCases) { gender in
+                        Text(text.travelerGenderShortName(gender)).tag(gender)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .pointerOnHover()
+                .labelsHidden()
+
+                clearAllCutscenesRow
+
+                HStack {
+                    TextField(text.cutsceneSearchPlaceholder, text: $cutsceneSearchQuery)
+                        .textFieldStyle(.roundedBorder)
+
+                    Picker(text.cutsceneSortLabel, selection: $cutsceneSortOrder) {
+                        ForEach(CutsceneSortOrder.allCases, id: \.self) { order in
+                            Text(order.title(text)).tag(order)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .labelsHidden()
+                    .fixedSize()
+
+                    Spacer()
+                    Button(text.refreshCutscenesTitle) {
+                        viewModel.refreshCutsceneFiles()
+                    }
+                    .quest(.quiet, disabled: viewModel.isManagingCutscenes)
+                }
+
+                if filteredCutsceneFiles.isEmpty {
+                    Label(text.noCutscenesForGender(text.travelerGenderShortName(cutsceneGenderTab)), systemImage: "film.stack")
+                        .font(.subheadline)
+                        .foregroundStyle(LauncherPalette.mist.opacity(0.74))
+                        .padding(.vertical, 8)
+                } else {
+                    LazyVStack(alignment: .leading, spacing: 8) {
+                        ForEach(filteredCutsceneFiles) { file in
+                            cutsceneRow(file)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private var filteredCutsceneFiles: [CutsceneFile] {
+        var genderFiles = viewModel.cutsceneFiles(forGender: cutsceneGenderTab)
+        if !cutsceneSearchQuery.isEmpty {
+            genderFiles = genderFiles.filter {
+                $0.relativePath.localizedCaseInsensitiveContains(cutsceneSearchQuery)
+            }
+        }
+        return cutsceneSortOrder.sort(genderFiles)
+    }
+
+    private var giCutscenesPathField: some View {
+        SettingField(label: text.giCutscenesPathLabel) {
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 10) {
+                    TextField(text.giCutscenesPathLabel, text: Binding(
+                        get: { viewModel.settings.giCutscenesBinaryPath },
+                        set: { viewModel.update(\.giCutscenesBinaryPath, to: $0) }
+                    ))
+                    .textFieldStyle(.roundedBorder)
+                    .font(.system(.body, design: .monospaced))
+
+                    Button(text.browse) {
+                        if let chosen = chooseFilePath() {
+                            viewModel.update(\.giCutscenesBinaryPath, to: chosen)
+                        }
+                    }
+                    .quest(.quiet)
+                }
+                Text(text.giCutscenesPathHint)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private var travelerGenderField: some View {
+        SettingField(label: text.travelerGenderLabel) {
+            VStack(alignment: .leading, spacing: 6) {
+                Picker(text.travelerGenderLabel, selection: Binding(
+                    get: { viewModel.settings.travelerGender },
+                    set: { viewModel.update(\.travelerGender, to: $0) }
+                )) {
+                    ForEach(TravelerGender.allCases) { gender in
+                        Text(text.travelerGenderName(gender)).tag(gender)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .pointerOnHover()
+                Text(text.travelerGenderHint)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private var clearAllCutscenesRow: some View {
+        let genderShortName = text.travelerGenderShortName(cutsceneGenderTab)
+        let files = viewModel.cutsceneFiles(forGender: cutsceneGenderTab)
+        let totalBytes = files.reduce(Int64(0)) { $0 + $1.sizeBytes }
+        return SettingField(label: text.clearAllCutscenesTitle(genderShortName)) {
+            HStack {
+                Text(text.clearAllCutscenesSummary(
+                    files.count,
+                    ByteCountFormatter.fileSize(totalBytes)
+                ))
+                .font(.subheadline)
+                .foregroundStyle(LauncherPalette.mist.opacity(0.82))
+                Spacer()
+                Button(text.clearAllCutscenesTitle(genderShortName)) {
+                    showClearAllCutscenesConfirm = true
+                }
+                .quest(.quiet, disabled: viewModel.isManagingCutscenes || files.isEmpty)
+            }
+        }
+    }
+
+    private func cutsceneRow(_ file: CutsceneFile) -> some View {
+        InventoryRow(
+            icon: "film",
+            title: file.relativePath,
+            subtitleLines: [ByteCountFormatter.fileSize(file.sizeBytes)]
+        ) {
+            HStack(spacing: 6) {
+                Button(text.openCutsceneTitle) {
+                    viewModel.openCutsceneFile(file)
+                }
+                .quest(.quiet, disabled: viewModel.isManagingCutscenes)
+
+                Button(text.revealCutsceneTitle) {
+                    NSWorkspace.shared.activateFileViewerSelecting([file.url])
+                }
+                .quest(.quiet, disabled: viewModel.isManagingCutscenes)
+
+                Button(text.deleteCutsceneTitle) {
+                    pendingCutsceneDelete = file
+                }
+                .quest(.quiet, disabled: viewModel.isManagingCutscenes)
+            }
+        }
     }
 
     private static func cacheIcon(for kind: RemovableCache.Kind) -> String {
@@ -225,6 +451,14 @@ struct SettingsView: View {
         let panel = NSOpenPanel()
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
+        panel.allowsMultipleSelection = false
+        return panel.runModal() == .OK ? panel.url?.path : nil
+    }
+
+    private func chooseFilePath() -> String? {
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = true
+        panel.canChooseDirectories = false
         panel.allowsMultipleSelection = false
         return panel.runModal() == .OK ? panel.url?.path : nil
     }

@@ -135,6 +135,49 @@ struct LauncherCoordinator: Sendable {
         return freed
     }
 
+    /// Lists every cutscene video file under `StreamingAssets/VideoAssets` for manual review.
+    ///
+    /// This is a plain on-disk listing, not a classification: NS Launcher has no reliable way to
+    /// tell which quest or Traveler-gender variant a file belongs to (see `QuestAssetAnalysis`),
+    /// so nothing here is pre-selected or auto-removed — the player opens and deletes individually.
+    func listCutsceneFiles(for game: GameDefinition) -> [CutsceneFile] {
+        Self.listCutsceneFiles(for: game)
+    }
+
+    /// Sends one cutscene file to the macOS Trash (recoverable) and returns the bytes freed.
+    func trashCutsceneFile(_ file: CutsceneFile) throws -> Int64 {
+        try FileManager.default.trashItem(at: file.url, resultingItemURL: nil)
+        return file.sizeBytes
+    }
+
+    /// Decrypts one `.usm` cutscene through the user's own GI-cutscenes install and returns a
+    /// playable `.mkv`.
+    ///
+    /// NS Launcher never embeds the decryption key or CRI-format logic itself — this only shells
+    /// out to a separate binary the player installed and pointed at themselves, exactly like it
+    /// already shells out to `wine`. Results are cached per source file so re-opening the same
+    /// cutscene skips re-running the tool.
+    func decryptedCutsceneURL(for file: CutsceneFile, binaryPath: String) async throws -> URL {
+        let cacheDirectory = Self.cutsceneCacheDirectory(for: file)
+        if let cached = Self.firstMKV(in: cacheDirectory) {
+            return cached
+        }
+
+        try FileManager.default.createDirectory(at: cacheDirectory, withIntermediateDirectories: true)
+        let result = try await processRunner.run(
+            executable: binaryPath,
+            arguments: ["demuxUsm", file.url.path, "--output", cacheDirectory.path, "--merge"],
+            environment: [:],
+            currentDirectory: nil
+        )
+
+        guard let produced = Self.firstMKV(in: cacheDirectory) else {
+            let details = result.stderr.isEmpty ? result.stdout : result.stderr
+            throw CutsceneDecryptionError.decryptedFileNotProduced(details: details)
+        }
+        return produced
+    }
+
     /// Installs CrossOver via Homebrew so `DXMTBridge` has a build to select. Only ever called
     /// from an explicit user action — see `CrossOverInstaller` for why this must never run on its
     /// own (a paid trial and, if Homebrew is missing, a system-level installer this launcher will
@@ -265,6 +308,67 @@ struct LauncherCoordinator: Sendable {
             }
             return total
         }
+    }
+
+    /// Enumerates `.usm` cutscene files under `StreamingAssets/VideoAssets`.
+    ///
+    /// Recurses through whatever subfolder layout the client uses (e.g. `StandaloneWindows64`)
+    /// rather than assuming a fixed depth, since that platform folder name is not part of any
+    /// documented contract.
+    static func listCutsceneFiles(for game: GameDefinition) -> [CutsceneFile] {
+        let videoAssetsRoot = game.installDirectory
+            .appendingPathComponent("GenshinImpact_Data", isDirectory: true)
+            .appendingPathComponent("StreamingAssets/VideoAssets", isDirectory: true)
+        // `enumerator(atPath:)` yields paths relative to `videoAssetsRoot` directly, unlike
+        // `enumerator(at:)` — whose returned URLs silently canonicalize `/var` to `/private/var`
+        // and would otherwise need reconciling against the un-canonicalized root to recover a
+        // relative path.
+        guard let enumerator = FileManager.default.enumerator(atPath: videoAssetsRoot.path) else { return [] }
+
+        var files: [CutsceneFile] = []
+        for case let relativePath as String in enumerator {
+            guard relativePath.lowercased().hasSuffix(".usm") else { continue }
+            let fileURL = videoAssetsRoot.appendingPathComponent(relativePath)
+            let values = try? fileURL.resourceValues(forKeys: [.fileSizeKey, .isRegularFileKey])
+            guard values?.isRegularFile == true else { continue }
+            files.append(CutsceneFile(
+                url: fileURL,
+                relativePath: relativePath,
+                sizeBytes: Int64(values?.fileSize ?? 0)
+            ))
+        }
+        return files
+    }
+
+    /// Per-source-file cache directory for a decrypted cutscene, under the launcher's own cache
+    /// root. One directory per `relativePath` so different source files never collide.
+    static func cutsceneCacheDirectory(for file: CutsceneFile) -> URL {
+        let safeName = file.relativePath.replacingOccurrences(of: "/", with: "_")
+        return FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent("Library/Caches/NSLauncher/DecryptedCutscenes", isDirectory: true)
+            .appendingPathComponent(safeName, isDirectory: true)
+    }
+
+    /// The first `.mkv` file directly inside a directory, if any.
+    static func firstMKV(in directory: URL) -> URL? {
+        let entries = (try? FileManager.default.contentsOfDirectory(
+            at: directory,
+            includingPropertiesForKeys: nil,
+            options: [.skipsHiddenFiles]
+        )) ?? []
+        return entries.first { $0.pathExtension.lowercased() == "mkv" }
+    }
+
+    /// The Traveler-gender variant a cutscene filename belongs to, if any.
+    ///
+    /// Confirmed against a real install: Genshin ships an exact `_Boy.usm`/`_Girl.usm` (or
+    /// `PlayerBoy.usm`/`PlayerGirl.usm`) suffix pair for every gender-specific cutscene, fully and
+    /// consistently paired (one `Girl` file for every `Boy` file). Matched by exact, case-sensitive
+    /// suffix rather than a loose substring so an unrelated name never matches by accident.
+    static func travelerGenderToken(inRelativePath relativePath: String) -> TravelerGender? {
+        if relativePath.hasSuffix("Boy.usm") { return .aether }
+        if relativePath.hasSuffix("Girl.usm") { return .lumine }
+        return nil
     }
 
     /// Removes one cache location. Directory contents are emptied without removing the

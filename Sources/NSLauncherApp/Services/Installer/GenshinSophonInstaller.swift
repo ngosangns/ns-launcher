@@ -849,7 +849,7 @@ actor GenshinSophonInstaller: SophonInstalling {
     }
 
     private static func formatBytes(_ bytes: Int64) -> String {
-        ByteCountFormatter.string(fromByteCount: bytes, countStyle: .file)
+        ByteCountFormatter.fileSize(bytes)
     }
 
     /// Directories the game itself writes and owns, which never appear in a Sophon manifest.

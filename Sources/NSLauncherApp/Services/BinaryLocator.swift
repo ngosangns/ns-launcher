@@ -12,6 +12,10 @@ enum BinaryLocator {
     enum ManagedBinary: CaseIterable {
         case wine
         case brew
+        /// GI-cutscenes (https://github.com/ToaHartor/GI-cutscenes) — a separate, user-installed
+        /// tool the player points the launcher at to decrypt `.usm` cutscenes before opening them.
+        /// NS Launcher never bundles this or the decryption keys/logic itself.
+        case giCutscenes
 
         /// Ordered executable names to probe for this tool.
         var candidateNames: [String] {
@@ -20,6 +24,8 @@ enum BinaryLocator {
                 return ["wine64", "wine"]
             case .brew:
                 return ["brew"]
+            case .giCutscenes:
+                return ["GICutscenes", "gicutscenes", "gi-cutscenes"]
             }
         }
     }
