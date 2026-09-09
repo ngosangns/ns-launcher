@@ -44,12 +44,6 @@ brew install --cask crossover
 Screenshot automation uses AppleScript and requires Accessibility/Automation
 permission for the terminal running the script.
 
-### Submodules (`vendor/`)
-
-Reference-only checkouts, never built or linked into the app — consulted while
-implementing features (e.g. `vendor/CollapseLauncher` for how another launcher
-handles game-file cleanup).
-
 ## Daily Workflow
 
 Run the complete test suite:
