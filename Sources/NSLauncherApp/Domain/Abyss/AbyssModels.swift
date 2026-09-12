@@ -199,14 +199,36 @@ enum AbyssReaction: String, Codable, Sendable, Hashable, CaseIterable {
 /// cannot be expressed in Swift and should not be: making the slots an enum
 /// turns "this artifact bonus went into the wrong field" from a silent wrong
 /// answer into a compile-time exhaustive `switch`.
-enum AbyssStatField: Sendable, Hashable {
+enum AbyssStatField: Sendable, Hashable, CaseIterable {
     case atkPercent, hpPercent, defPercent
     case flatATK, flatHP, flatDEF
     case elementalMastery, energyRecharge
     case critRate, critDMG, healingBonus
     case dmgAll, dmgNormal, dmgCharged, dmgSkill, dmgBurst
-    case partyATKPercent, partyElementalMastery, partyDMG
+    case partyATKPercent, partyElementalMastery, partyDMG, partyFlatATK
     case elemental(GenshinElement)
+    case partyElementalDMG(GenshinElement)
+
+    /// Every case, with the two element-carrying ones expanded over the seven
+    /// elements. Hand-written because the associated values stop the compiler
+    /// from synthesising it; `AbyssStatVocabularyTests` pins that nothing is
+    /// missing by checking the count against a value written down separately.
+    static var allCases: [AbyssStatField] {
+        scalarCases
+            + GenshinElement.allCases.map { .elemental($0) }
+            + GenshinElement.allCases.map { .partyElementalDMG($0) }
+    }
+
+    /// The cases that name one slot rather than one slot per element. This is
+    /// the list the golden fixture writes and `tuning.json` keys its tables by.
+    static let scalarCases: [AbyssStatField] = [
+        .atkPercent, .hpPercent, .defPercent,
+        .flatATK, .flatHP, .flatDEF,
+        .elementalMastery, .energyRecharge,
+        .critRate, .critDMG, .healingBonus,
+        .dmgAll, .dmgNormal, .dmgCharged, .dmgSkill, .dmgBurst,
+        .partyATKPercent, .partyElementalMastery, .partyDMG, .partyFlatATK,
+    ]
 
     /// Whether this slot holds something the character hands the *party* rather
     /// than keeps. The game's own character screen shows only what a character
@@ -214,9 +236,62 @@ enum AbyssStatField: Sendable, Hashable {
     /// is taken apart.
     var isPartyScoped: Bool {
         switch self {
-        case .partyATKPercent, .partyElementalMastery, .partyDMG: return true
-        default: return false
+        case .partyATKPercent, .partyElementalMastery, .partyDMG, .partyFlatATK,
+             .partyElementalDMG:
+            return true
+        default:
+            return false
         }
+    }
+
+    /// The snake_case name this slot has outside Swift: in `tuning.json`'s
+    /// `artifactMainStats`, `substatRollValue` and `substatPriority`, and as a
+    /// column in the golden fixture.
+    ///
+    /// One spelling, in one place. It used to be three — a `substatField(_:)`
+    /// switch, a `tuningKey(for:)` switch and twenty hand-written lines in the
+    /// fixture dumper — each of which turned a typo into a silent zero rather
+    /// than an error, because every one of them looked the value up in a
+    /// dictionary and took `nil` for "none".
+    ///
+    /// The mapping is deliberately many-to-one at the elemental cases: a goblet
+    /// is worth the same whichever element it carries, and which element it
+    /// carries comes from the character, never from this key.
+    var tuningKey: String {
+        switch self {
+        case .atkPercent: return "atk_pct"
+        case .hpPercent: return "hp_pct"
+        case .defPercent: return "def_pct"
+        case .flatATK: return "flat_atk"
+        case .flatHP: return "flat_hp"
+        case .flatDEF: return "flat_def"
+        case .elementalMastery: return "em"
+        case .energyRecharge: return "er"
+        case .critRate: return "crit_rate"
+        case .critDMG: return "crit_dmg"
+        case .healingBonus: return "healing_bonus"
+        case .dmgAll: return "dmg_all"
+        case .dmgNormal: return "dmg_normal"
+        case .dmgCharged: return "dmg_charged"
+        case .dmgSkill: return "dmg_skill"
+        case .dmgBurst: return "dmg_burst"
+        case .partyATKPercent: return "party_atk_pct"
+        case .partyElementalMastery: return "party_em"
+        case .partyDMG: return "party_dmg"
+        case .partyFlatATK: return "party_flat_atk"
+        case .elemental: return "elemental_dmg"
+        case .partyElementalDMG: return "party_elemental_dmg"
+        }
+    }
+
+    /// The inverse, for the keys that have one.
+    ///
+    /// `elemental_dmg` deliberately does not resolve: it names a kind of stat,
+    /// not a slot, and picking a lane for it would mean guessing an element.
+    /// Callers that need a lane already know the character whose element it is.
+    init?(tuningKey key: String) {
+        guard let match = Self.scalarCases.first(where: { $0.tuningKey == key }) else { return nil }
+        self = match
     }
 
     static func dmg(for category: HitCategory) -> AbyssStatField {

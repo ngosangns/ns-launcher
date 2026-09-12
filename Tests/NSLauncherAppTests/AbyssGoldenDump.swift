@@ -124,36 +124,23 @@ final class AbyssGoldenDumpTests: XCTestCase {
     /// The stat sheet in the fixture's own snake_case spelling, kept from the
     /// original format so regenerating rewrites the file rather than replacing
     /// it with a differently shaped one.
+    ///
+    /// The scalar slots are written by walking `AbyssStatField.scalarCases`
+    /// rather than by listing them: the spelling of each column is the slot's
+    /// own `tuningKey`, so a slot added to the stat sheet appears here without
+    /// anyone remembering to add it, and one that is renamed is renamed in one
+    /// place. The three base stats are not modifier slots and the two elemental
+    /// blocks are nested rather than scalar, so those five stay written out.
     private static func encode(_ stats: AbyssStats) -> [String: Any] {
         func elemental(_ lanes: SIMD8<Double>) -> [String: Double] {
             Dictionary(uniqueKeysWithValues: GenshinElement.allCases
                 .map { ($0.rawValue, lanes[$0.simdIndex]) }
                 .filter { $0.1 != 0 })
         }
-        return [
+        var sheet: [String: Any] = [
             "base_atk": stats.baseATK,
             "base_hp": stats.baseHP,
             "base_def": stats.baseDEF,
-            "atk_pct": stats.atkPercent,
-            "hp_pct": stats.hpPercent,
-            "def_pct": stats.defPercent,
-            "flat_atk": stats.flatATK,
-            "flat_hp": stats.flatHP,
-            "flat_def": stats.flatDEF,
-            "em": stats.elementalMastery,
-            "er": stats.energyRecharge,
-            "crit_rate": stats.critRate,
-            "crit_dmg": stats.critDMG,
-            "healing_bonus": stats.healingBonus,
-            "dmg_all": stats.dmgAll,
-            "dmg_normal": stats.dmgNormal,
-            "dmg_charged": stats.dmgCharged,
-            "dmg_skill": stats.dmgSkill,
-            "dmg_burst": stats.dmgBurst,
-            "party_atk_pct": stats.partyATKPercent,
-            "party_em": stats.partyElementalMastery,
-            "party_dmg": stats.partyDMG,
-            "party_flat_atk": stats.partyFlatATK,
             "dmg_elemental": elemental(stats.elementalDMG),
             "party_elemental_dmg": elemental(stats.partyElementalDMG),
             "derived": [
@@ -163,5 +150,9 @@ final class AbyssGoldenDumpTests: XCTestCase {
                 "critMultiplier": stats.critMultiplier,
             ],
         ]
+        for field in AbyssStatField.scalarCases {
+            sheet[field.tuningKey] = stats.value(of: field)
+        }
+        return sheet
     }
 }

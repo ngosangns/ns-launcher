@@ -136,6 +136,13 @@ struct AbyssMainStatPlan: Sendable, Equatable, Hashable {
     var circlet: AbyssMainStat
 
     var slots: [AbyssMainStat] { [sands, goblet, circlet] }
+
+    /// The two slots that carry no choice: a Flower is flat HP and a Plume flat
+    /// ATK, always. Named here rather than spelled as two string keys where they
+    /// are applied, so they are part of the same vocabulary as the three that do
+    /// carry a choice — and so a test can require `artifactMainStats` to hold a
+    /// value for all five and nothing else.
+    static let fixedSlots: [AbyssStatField] = [.flatHP, .flatATK]
 }
 
 /// One way to equip a character: a weapon, one 4-piece set or two 2-piece sets,

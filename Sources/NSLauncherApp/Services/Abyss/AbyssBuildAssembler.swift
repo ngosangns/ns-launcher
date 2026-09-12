@@ -117,8 +117,9 @@ struct AbyssBuildAssembler: Sendable {
 
         // Flower and Plume are fixed HP and ATK; there is nothing to decide
         // about them, so they belong on this side of the split.
-        stats.flatHP += tuning.mainStat("flat_hp")
-        stats.flatATK += tuning.mainStat("flat_atk")
+        for slot in AbyssMainStatPlan.fixedSlots {
+            stats.add(tuning.mainStat(slot.tuningKey), to: slot)
+        }
         applySubstats(role: role, basis: profile.basis, to: &stats)
         applyTalentPartyBuffs(for: character, to: &stats)
 
@@ -544,19 +545,11 @@ struct AbyssBuildAssembler: Sendable {
         return (sands, [.elementalDMG(element)] + scaling, circlet)
     }
 
-    /// Tuning key holding a main stat's level-20 value.
+    /// Tuning key holding a main stat's level-20 value. One hop, because the
+    /// slot already knows its own name outside Swift — see
+    /// `AbyssStatField.tuningKey`.
     private static func tuningKey(for stat: AbyssMainStat) -> String {
-        switch stat {
-        case .atkPercent: return "atk_pct"
-        case .hpPercent: return "hp_pct"
-        case .defPercent: return "def_pct"
-        case .elementalMastery: return "em"
-        case .energyRecharge: return "er"
-        case .critRate: return "crit_rate"
-        case .critDMG: return "crit_dmg"
-        case .healingBonus: return "healing_bonus"
-        case .elementalDMG: return "elemental_dmg"
-        }
+        stat.statField.tuningKey
     }
 
     /// How the assumed substat roll budget is split, richest share first.
@@ -598,19 +591,7 @@ struct AbyssBuildAssembler: Sendable {
     }
 
     private static func substatField(_ key: String) -> AbyssStatField? {
-        switch key {
-        case "crit_rate": return .critRate
-        case "crit_dmg": return .critDMG
-        case "atk_pct": return .atkPercent
-        case "hp_pct": return .hpPercent
-        case "def_pct": return .defPercent
-        case "em": return .elementalMastery
-        case "er": return .energyRecharge
-        case "flat_atk": return .flatATK
-        case "flat_hp": return .flatHP
-        case "flat_def": return .flatDEF
-        default: return nil
-        }
+        AbyssStatField(tuningKey: key)
     }
 
     /// Credits the hand-estimated effect of a 4-piece set whose real behaviour

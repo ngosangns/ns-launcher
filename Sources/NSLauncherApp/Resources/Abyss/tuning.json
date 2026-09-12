@@ -9,7 +9,6 @@
     "em": 187.0,
     "er": 0.518,
     "elemental_dmg": 0.466,
-    "physical_dmg": 0.583,
     "crit_rate": 0.311,
     "crit_dmg": 0.622,
     "healing_bonus": 0.359
@@ -380,7 +379,7 @@
     }
   ],
   "notes": {
-    "artifactMainStats": "Main stat của từng vị trí ở thánh di vật 5★ cấp 20. Hằng số game chuẩn, ổn định qua các bản, nhưng CHƯA đối chiếu API trong repo này.",
+    "artifactMainStats": "Main stat của từng vị trí ở thánh di vật 5★ cấp 20. Hằng số game chuẩn, ổn định qua các bản, nhưng CHƯA đối chiếu API trong repo này. Bỏ physical_dmg (0.583) ngày 2026-09-12: không hit nào trong profile được phân loại là sát thương vật lý, nên ly vật lý đáng giá đúng 0 và AbyssBuildAssembler.mainStatCandidates chưa bao giờ chào nó. Giữ lại thì có một key không ai hỏi tới, mà đó chính là kiểu lỗ hổng im lặng test từ vựng stat sinh ra để bắt.",
     "substatRollValue": "Giá trị trung bình 1 lần roll substat ở 5★ (mốc roll cao nhất trong 4 mốc). Cùng nhóm độ tin cậy với artifactMainStats.",
     "substatRollBudget": "Tổng số roll substat giả định cho cả 5 món. 25 roll ≈ tài khoản nuôi tốt nhưng không phải 'artifact thần'.",
     "substatPriority": "Phân bổ ngân sách roll theo vai trò; tổng mỗi vai trò = 1.0.",

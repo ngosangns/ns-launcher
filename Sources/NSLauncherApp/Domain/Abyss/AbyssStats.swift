@@ -109,7 +109,40 @@ struct AbyssStats: Sendable, Equatable {
         case .partyATKPercent: partyATKPercent += value
         case .partyElementalMastery: partyElementalMastery += value
         case .partyDMG: partyDMG += value
+        case .partyFlatATK: partyFlatATK += value
         case .elemental(let element): elementalDMG[element.simdIndex] += value
+        case .partyElementalDMG(let element): partyElementalDMG[element.simdIndex] += value
+        }
+    }
+
+    /// Reads one slot back. The inverse of `add(_:to:)`, and total over the same
+    /// cases — which is what lets the golden fixture write its stat sheet by
+    /// walking `AbyssStatField.scalarCases` instead of twenty hand-written
+    /// lines that could drift from the struct without anything noticing.
+    func value(of field: AbyssStatField) -> Double {
+        switch field {
+        case .atkPercent: return atkPercent
+        case .hpPercent: return hpPercent
+        case .defPercent: return defPercent
+        case .flatATK: return flatATK
+        case .flatHP: return flatHP
+        case .flatDEF: return flatDEF
+        case .elementalMastery: return elementalMastery
+        case .energyRecharge: return energyRecharge
+        case .critRate: return critRate
+        case .critDMG: return critDMG
+        case .healingBonus: return healingBonus
+        case .dmgAll: return dmgAll
+        case .dmgNormal: return dmgNormal
+        case .dmgCharged: return dmgCharged
+        case .dmgSkill: return dmgSkill
+        case .dmgBurst: return dmgBurst
+        case .partyATKPercent: return partyATKPercent
+        case .partyElementalMastery: return partyElementalMastery
+        case .partyDMG: return partyDMG
+        case .partyFlatATK: return partyFlatATK
+        case .elemental(let element): return elementalDMG[element.simdIndex]
+        case .partyElementalDMG(let element): return partyElementalDMG[element.simdIndex]
         }
     }
 }

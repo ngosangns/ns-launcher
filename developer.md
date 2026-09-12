@@ -231,6 +231,18 @@ Data lives in `Sources/NSLauncherApp/Resources/Abyss/` (bundled, see that
 folder's README); the Markdown it was transcribed from and the JSON Schemas stay
 in `toi-uu-doi-hinh/`.
 
+### One spelling for a stat
+
+`AbyssStatField.tuningKey` is the only place a stat's snake_case name is written.
+It used to be three: a `substatField(_:)` switch, a `tuningKey(for:)` switch, and
+twenty hand-written lines in the fixture dumper. Every one of those fed a
+dictionary subscript whose miss is `nil`, which the callers read as zero — so a
+mistyped `crit_dmg` built every character without CRIT DMG and still produced a
+confident recommendation. `AbyssStatVocabularyTests` walks `tuning.json` and
+requires each key to land on a slot, in both directions; that is what turned up
+`artifactMainStats.physical_dmg`, a main stat no search had offered since the
+goblet candidates were cut down.
+
 The engine began as a port of a Python implementation that lived in
 `toi-uu-doi-hinh/optimizer/`. That Python is **deleted** as of 2026-09-09: it had
 stopped being a second opinion and become a second thing to keep in step — every
