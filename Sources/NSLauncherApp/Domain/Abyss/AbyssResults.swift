@@ -55,6 +55,21 @@ struct AbyssParseDiagnostics: Sendable, Equatable {
     /// Parts of `damage-formula.json` the loader could not read, so the planner
     /// fell back to the values the port was written with.
     var damageFormulaUnread: Set<String> = []
+    /// Rows in a character's normal-attack table that look like damage and were
+    /// classified as nothing: not a numbered combo hit, not a charged attack the
+    /// vocabulary or `tuning.chargedAttackLabels` recognises, not a plunge.
+    ///
+    /// They are dropped, and dropping them is how Ganyu lost every point of
+    /// Frostflake Arrow. Listing them is the difference between a gap somebody
+    /// can close and a gap nobody can see.
+    var normalAttackRowsUnclassified: Set<String> = []
+    /// Floor buffs that parsed cleanly and then reached nothing: they name a
+    /// reaction the damage model does not price at all.
+    ///
+    /// Recorded because the alternative is what used to happen: the bonus was
+    /// quietly added to every hit the team made instead, which is not a smaller
+    /// error than dropping it, only a less visible one.
+    var floorBuffsNotPriced: Set<String> = []
 
     mutating func merge(_ other: AbyssParseDiagnostics) {
         scalingParsed += other.scalingParsed
@@ -65,6 +80,8 @@ struct AbyssParseDiagnostics: Sendable, Equatable {
         leyLineUnparsed.formUnion(other.leyLineUnparsed)
         talentPartyBuffUnresolved.formUnion(other.talentPartyBuffUnresolved)
         damageFormulaUnread.formUnion(other.damageFormulaUnread)
+        floorBuffsNotPriced.formUnion(other.floorBuffsNotPriced)
+        normalAttackRowsUnclassified.formUnion(other.normalAttackRowsUnclassified)
     }
 }
 
@@ -105,11 +122,29 @@ struct AbyssDamageProfile: Sendable, Equatable {
     let basis: ScalingBasis
 }
 
-/// One way to equip a character: a weapon, one 4-piece set or two 2-piece sets.
+/// Which main stat sits in each of the three slots the model varies.
+///
+/// Flower and Plume are not here: they are fixed HP and ATK in game, so there is
+/// nothing to decide. The other three are decided by search — see
+/// `AbyssBuildAssembler.mainStatCandidates`. They used to be a fixed rule
+/// (ATK% sands, elemental goblet, CRIT DMG circlet), which handed a
+/// reaction-driven character a goblet and a circlet that contribute nothing to
+/// the reaction damage the model was crediting them with.
+struct AbyssMainStatPlan: Sendable, Equatable, Hashable {
+    var sands: AbyssMainStat
+    var goblet: AbyssMainStat
+    var circlet: AbyssMainStat
+
+    var slots: [AbyssMainStat] { [sands, goblet, circlet] }
+}
+
+/// One way to equip a character: a weapon, one 4-piece set or two 2-piece sets,
+/// and a main stat in each of the three slots that carry a choice.
 struct AbyssGearOption: Sendable {
     let stats: AbyssStats
     let weaponID: String?
     let setIDs: [String]
+    let mainStats: AbyssMainStatPlan
     let role: AbyssRole
     /// Damage this character alone would do on a neutral floor. Used to rank
     /// gear, to trim the candidate pool, and to decide who wins a contested
@@ -124,8 +159,16 @@ struct AbyssGearOption: Sendable {
     /// which keeps the weapon (contention was already settled) and only moves
     /// the sets.
     func replacingSets(_ setIDs: [String], stats: AbyssStats) -> AbyssGearOption {
-        AbyssGearOption(stats: stats, weaponID: weaponID, setIDs: setIDs, role: role,
-                        soloScore: soloScore, statSource: statSource)
+        AbyssGearOption(stats: stats, weaponID: weaponID, setIDs: setIDs, mainStats: mainStats,
+                        role: role, soloScore: soloScore, statSource: statSource)
+    }
+
+    /// Same option with different artifact main stats. The sets are untouched:
+    /// the advisor moves one at a time so it can tell which of the two moved the
+    /// score.
+    func replacingMainStats(_ plan: AbyssMainStatPlan, stats: AbyssStats) -> AbyssGearOption {
+        AbyssGearOption(stats: stats, weaponID: weaponID, setIDs: setIDs, mainStats: plan,
+                        role: role, soloScore: soloScore, statSource: statSource)
     }
 }
 
@@ -193,8 +236,8 @@ struct AbyssArtifactAdvice: Sendable, Equatable {
 }
 
 /// Something worth telling the user about a team, kept structured so it can be
-/// rendered in either language. The Python baked Vietnamese sentences into its
-/// results; that cannot ship in a bilingual app.
+/// rendered in either language: the original implementation baked Vietnamese
+/// sentences into its results, which cannot ship in a bilingual app.
 enum AbyssTeamNote: Sendable, Equatable, Hashable {
     case noSustainPenalty
     case breaksShield([GenshinElement])
@@ -233,16 +276,86 @@ struct AbyssTeamResult: Sendable, Identifiable {
     }
 }
 
+/// One half of a floor: the enemies one of the two teams meets, and the buffs
+/// in force while they do.
+///
+/// Every Abyss chamber is fought twice — a first team clears the first half, a
+/// second team the second — and a rotation can give the two halves different
+/// Ley Line Disorders. This one does: floor 12's first half pays +200% for
+/// Superconduct and its second +75% for Pyro normal attacks, so the two are not
+/// even the same optimisation problem, let alone the same team.
+struct AbyssHalfReport: Sendable, Identifiable {
+    var id: Int { half }
+
+    /// 1 for the first half ("nửa trước"), 2 for the second ("nửa sau").
+    let half: Int
+    /// Only what this half has and the other does not. Buffs both halves share
+    /// stay on `AbyssFloorReport` so they are not printed twice.
+    let buffs: [AbyssFloorBuff]
+    let shieldElements: [GenshinElement]
+    let weakElements: [GenshinElement]
+}
+
+/// A whole floor: one team for each half, with nobody in both.
+///
+/// The two halves cannot be planned separately and stapled together, because
+/// their best teams almost always want the same four people — deciding which
+/// half gives way is the actual problem, and it is what this type is the answer
+/// to.
+struct AbyssFloorPlan: Sendable, Identifiable {
+    var id: String { firstHalf.id + " | " + secondHalf.id }
+
+    let firstHalf: AbyssTeamResult
+    let secondHalf: AbyssTeamResult
+    /// `AbyssFloorPlan.combine(firstHalf.score, secondHalf.score)`.
+    let score: Double
+
+    var byHalf: [(half: Int, team: AbyssTeamResult)] {
+        [(1, firstHalf), (2, secondHalf)]
+    }
+
+    /// How two half scores make one plan score.
+    ///
+    /// Both halves have to be cleared inside one timer, so a plan is ranked on
+    /// how long it takes rather than on how much damage it does. Time is
+    /// proportional to 1/damage, so the plan that minimises t₁ + t₂ is the one
+    /// that maximises the harmonic mean of the two scores. Adding the scores
+    /// instead would let a crushing first half pay for a second half that
+    /// cannot clear at all, which is backwards: the half you are slow at is the
+    /// half that costs the star.
+    ///
+    /// This treats the two halves as holding a similar amount of enemy HP,
+    /// which the data does not record. That assumption is what makes two very
+    /// different score scales comparable at all — this rotation's first half
+    /// carries a +200% Superconduct bonus the second half has no equivalent of,
+    /// and its scores run several times higher for reasons that have nothing to
+    /// do with how good the team is.
+    static func combine(_ firstHalf: Double, _ secondHalf: Double) -> Double {
+        guard firstHalf > 0, secondHalf > 0 else { return 0 }
+        return 2 * firstHalf * secondHalf / (firstHalf + secondHalf)
+    }
+}
+
 struct AbyssFloorReport: Sendable, Identifiable {
     var id: Int { floor }
 
     let floor: Int
     let monsterLevel: Int
+    /// Buffs in force for the whole floor. On a split floor that is the ones
+    /// both halves share — a half's own are on `AbyssHalfReport`.
     let buffs: [AbyssFloorBuff]
     let shieldElements: [GenshinElement]
     /// Elements the floor's enemies resist less than the 10% baseline.
     let weakElements: [GenshinElement]
+    /// Ranked teams for the floor fought as one. Empty when the floor was
+    /// planned as two halves, because on such a floor there is no such thing as
+    /// one team for the whole of it — see `plans`.
     let teams: [AbyssTeamResult]
+    /// The two halves, when the floor was split. Empty otherwise.
+    var halves: [AbyssHalfReport] = []
+    /// Ranked plans: a team for each half, sharing no character. Empty when the
+    /// floor was fought as one.
+    var plans: [AbyssFloorPlan] = []
 }
 
 struct AbyssOptimizerRequest: Sendable {
@@ -273,18 +386,45 @@ struct AbyssOptimizerRequest: Sendable {
     /// Re-pick each surviving team's artifacts for its actual floor and team
     /// mates, then re-rank on the result.
     ///
-    /// Off is the reference implementation's behaviour, which is why the golden
-    /// fixture runs with it off: that fixture's job is to hold the port to the
-    /// Python's numbers, and this pass has no Python counterpart.
+    /// The golden fixture runs with it off. That fixture's subject is the
+    /// damage model, and this pass re-picks gear per floor and per team — it
+    /// would move every number in the file for reasons the file is not about.
     var refinesArtifacts: Bool = true
+    /// Plan each floor as its two halves — a team for the first, a different
+    /// team for the second, sharing nobody — instead of as one fight.
+    ///
+    /// On is what the game asks for: floor 12 is cleared by two teams, and this
+    /// rotation's Ley Line Disorder is not even the same for the two. Off reads
+    /// a floor's disorder whole and ranks one team for it, which is the shape
+    /// the golden fixture holds, and the shape any test wants whose subject is
+    /// how a single team is scored rather than how two are chosen.
+    var splitsHalves: Bool = true
+    /// Rank imported characters on the stats they actually have, instead of on
+    /// the standardised build everyone else is given.
+    ///
+    /// Off, and the reason is measurable. An imported character is scored on
+    /// real gear — level 80, half-finished artifacts — while the other forty are
+    /// scored at level 90 with 25 substat rolls and the best five-star set that
+    /// exists. Those are not the same yardstick, and the gap is not small: on a
+    /// real account the eight imported characters scored 8% to 53% of what the
+    /// same characters score modelled, and not one of them reached a single team
+    /// in the top five plans. Importing your showcase pushed the eight
+    /// characters you have actually built *out* of your own recommendations.
+    ///
+    /// So the ranking asks one question of everybody — "what could this
+    /// character do, built" — and the showcase is still read for everything it
+    /// is authoritative about: constellation, weapon, refinement, and what the
+    /// artifact advice compares against when it says an upgrade is worth
+    /// something. Turn this on to ask the other question instead, of a roster
+    /// where every character is imported.
+    var usesMeasuredStats: Bool = false
     /// Characters whose real stats were imported from the player's showcase.
-    /// These are scored on what they actually have rather than on the
-    /// standardised build.
     var showcase: [AbyssShowcaseBuild] = []
 
     init(roster: AbyssRoster? = nil, usesFullCharacterPool: Bool = false, usesFullWeaponPool: Bool = false,
          floors: [Int]? = nil, topN: Int = 5, poolSize: Int = 40,
-         refinesArtifacts: Bool = true, showcase: [AbyssShowcaseBuild] = []) {
+         refinesArtifacts: Bool = true, splitsHalves: Bool = true,
+         usesMeasuredStats: Bool = false, showcase: [AbyssShowcaseBuild] = []) {
         self.roster = roster
         self.usesFullCharacterPool = usesFullCharacterPool
         self.usesFullWeaponPool = usesFullWeaponPool
@@ -292,6 +432,8 @@ struct AbyssOptimizerRequest: Sendable {
         self.topN = topN
         self.poolSize = poolSize
         self.refinesArtifacts = refinesArtifacts
+        self.splitsHalves = splitsHalves
+        self.usesMeasuredStats = usesMeasuredStats
         self.showcase = showcase
     }
 }

@@ -3,12 +3,19 @@
 // Collapses one Abyss floor — three chambers of waves of monsters — into the
 // handful of numbers the scorer needs: how tough the enemies are, what they
 // resist, what shields must be broken, and which buffs the floor grants.
-// Ported from `build_floor_context` in the Python's `scoring.py`.
 
 import Foundation
 
 struct AbyssFloorContext: Sendable {
     let floor: Int
+    /// Which half of the floor this describes: 1 for the first team's fight, 2
+    /// for the second's, nil for the floor taken as one.
+    ///
+    /// A half, not a floor, is what a team is actually scored against. Both
+    /// halves have to be cleared, by two teams that share nobody, and they are
+    /// not the same fight — different enemies, and this rotation different Ley
+    /// Line Disorders.
+    var half: Int?
     /// Mean level across the floor's chambers. All three must be cleared, so
     /// the average is a fairer basis for the DEF multiplier than either extreme.
     let monsterLevel: Int
@@ -54,8 +61,31 @@ struct AbyssFloorContext: Sendable {
     private static let shieldHint = try? NSRegularExpression(
         pattern: "khiên\\s+([A-Za-zÀ-ỹ]+)", options: [.caseInsensitive])
 
+    /// Whether this floor is fought as two halves.
+    ///
+    /// The data records a chamber's two halves as its two waves — chamber 1 of
+    /// floor 12 lists the Ruin machines the first team meets and the Icewind
+    /// Suite the second one does. A chamber recorded any other way cannot be
+    /// taken apart that way, so a floor holding one is planned whole rather
+    /// than split down a line that was guessed at.
+    static func splitsIntoHalves(_ floor: AbyssCycle.Floor) -> Bool {
+        !floor.chambers.isEmpty && floor.chambers.allSatisfy { $0.waves.count == 2 }
+    }
+
+    /// The waves one half fights, or all of them when the floor is taken whole.
+    private static func waves(of chamber: AbyssCycle.Chamber, half: Int?) -> [AbyssCycle.Wave] {
+        guard let half, chamber.waves.count == 2 else { return chamber.waves }
+        let ordered = chamber.waves.sorted { $0.wave < $1.wave }
+        return [ordered[min(max(half, 1), ordered.count) - 1]]
+    }
+
+    /// - Parameter ownElementResistance: what an enemy resists the element it
+    ///   attacks or shields with at. `AbyssTuning.enemyOwnElementResistance`;
+    ///   pass `defaultResistance` to leave enemy elements out of the model.
     static func build(cycle: AbyssCycle,
                       floor floorNumber: Int,
+                      half: Int? = nil,
+                      ownElementResistance: Double,
                       diagnostics: inout AbyssParseDiagnostics) -> AbyssFloorContext? {
         guard let floor = cycle.floors.first(where: { $0.floor == floorNumber }) else { return nil }
 
@@ -65,8 +95,9 @@ struct AbyssFloorContext: Sendable {
 
         for chamber in floor.chambers {
             if let level = chamber.monsterLevel { levels.append(level) }
-            for wave in chamber.waves {
+            for wave in waves(of: chamber, half: half) {
                 for monster in wave.monsters {
+                    var spokenFor: Set<GenshinElement> = []
                     for (target, delta) in AbyssTextParser.resistanceNotes(monster.resistanceNotes,
                                                                           diagnostics: &diagnostics) {
                         // Physical resistance is parsed but not modelled: no
@@ -74,7 +105,23 @@ struct AbyssFloorContext: Sendable {
                         // reaches the damage calculation.
                         if case .element(let element) = target {
                             resistanceSamples[element, default: []].append(defaultResistance + delta)
+                            spokenFor.insert(element)
                         }
+                    }
+
+                    // An enemy resists what it throws. The data does not say so
+                    // — `elements` is documented as the elements a monster
+                    // attacks or shields *with* — and it does not say anything
+                    // else either: on floor 12 this rotation not one monster
+                    // carries a resistance note, so without this every element
+                    // sat at the 10% baseline and bringing Cryo against a Cryo
+                    // Abyss Mage cost a team nothing. Only for elements this
+                    // monster's own note did not already price, so a note and
+                    // the inference never count twice.
+                    for raw in monster.elements {
+                        guard let element = GenshinElement(rawValue: raw),
+                              !spokenFor.contains(element) else { continue }
+                        resistanceSamples[element, default: []].append(ownElementResistance)
                     }
                     shields.formUnion(shieldElements(in: monster))
                 }
@@ -95,7 +142,14 @@ struct AbyssFloorContext: Sendable {
         // inside the field) are written into the mechanic note. Parsing only
         // the description meant the blessing contributed nothing at all — the
         // model quietly scored every floor as if the cycle had no blessing.
-        var buffs = AbyssTextParser.floorBuffs(floor.leyLineDisorder, source: .leyLine,
+        //
+        // The disorder itself can differ between the two halves, and this
+        // rotation's floor 12 is written that way. Parsing the sentence whole
+        // and handing the result to both teams gave a Cryo/Electro first-half
+        // team the second half's Pyro normal-attack bonus as well.
+        let leyLine = half.flatMap { AbyssTextParser.leyLineHalves(floor.leyLineDisorder)[$0] }
+            ?? floor.leyLineDisorder
+        var buffs = AbyssTextParser.floorBuffs(leyLine, source: .leyLine,
                                                diagnostics: &diagnostics)
         let blessing = cycle.blessingOfTheAbyssalMoon
         var blessingBuffs = AbyssTextParser.floorBuffs(blessing.description, source: .blessing,
@@ -107,17 +161,33 @@ struct AbyssFloorContext: Sendable {
         var seen: Set<String> = []
         buffs += blessingBuffs.filter { seen.insert($0.raw).inserted }
 
-        // Rounded half-to-even to match the reference implementation. Swift's
-        // default `.rounded()` rounds halves away from zero, which would differ
-        // on a floor whose chamber levels average to exactly .5 — no such floor
-        // exists today, so the difference would first appear on a future
-        // rotation with nothing to point at it.
+        // A buff that names only reactions the damage model cannot price has
+        // nowhere to go. Say so rather than let it evaporate: this rotation's
+        // Stellar-Conduct clauses are exactly that, and until they were pulled
+        // out of the direct-damage path they were silently worth +75% to every
+        // hit a Cryo/Electro team made.
+        for buff in buffs where !buff.reactions.isEmpty {
+            let pricable = buff.reactions.contains { reaction in
+                reaction.transformativeKey != nil || reaction.lunarStellarKey != nil
+                    || reaction == .vaporize || reaction == .melt
+            }
+            if !pricable { diagnostics.floorBuffsNotPriced.insert(buff.raw) }
+        }
+
+        // Rounded half-to-even, which is what the golden fixture's numbers were
+        // produced with. Swift's default `.rounded()` rounds halves away from
+        // zero, which would differ on a floor whose chamber levels average to
+        // exactly .5 — no such floor exists today, so the difference would first
+        // appear on a future rotation with nothing to point at it.
         let meanLevel = levels.isEmpty
             ? 90
             : Int((Double(levels.reduce(0, +)) / Double(levels.count)).rounded(.toNearestOrEven))
 
+        // Monster level is a property of the chamber, so both halves of a floor
+        // are fought at the same level.
         return AbyssFloorContext(
             floor: floorNumber,
+            half: half,
             monsterLevel: meanLevel,
             resistances: resistances,
             buffs: buffs,

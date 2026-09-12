@@ -16,8 +16,7 @@ Bản Markdown cho người đọc vẫn ở `toi-uu-doi-hinh/` (kèm `data-mode
 để validate). Nhưng SwiftPM **chỉ đóng gói được tài nguyên nằm trong thư mục
 target**, nên bản JSON mà app đọc lúc chạy phải nằm ở đây. Giữ hai bản sao ở
 hai nơi thì sớm muộn cũng lệch nhau mà không ai phát hiện — nên thư mục này
-là **bản duy nhất**; công cụ Python trong `toi-uu-doi-hinh/optimizer/` cũng
-đọc thẳng từ đây (`DATA_ROOT` trong `abyss_optimizer/data.py`).
+là **bản duy nhất**.
 
 ## Nội dung
 
@@ -109,8 +108,7 @@ Ba nhóm số, độ tin cậy **khác hẳn nhau**:
    Khoá `notes.talentPartyBuff` liệt kê những buff **cố ý chưa mô hình hoá**.
 
 Giải thích từng nhóm nằm ở khoá `notes` trong chính `tuning.json` (JSON không
-có comment). Cả bản Swift lẫn bản Python đọc chung file này nên sửa một lần là
-đổi cả hai.
+có comment).
 
 ## Cập nhật dữ liệu
 
@@ -124,16 +122,19 @@ có comment). Cả bản Swift lẫn bản Python đọc chung file này nên s�
 
 `Tests/NSLauncherAppTests/Fixtures/abyss-golden.json` giữ giá trị trung gian
 (scaling basis, hệ số từng đòn, chỉ số build, bối cảnh tầng, top-10 đội hình
-của roster mẫu) sinh từ **bản Python** — engine Swift phải khớp trong sai số
-tương đối `1e-9`. Nó bắt đúng loại lỗi nguy hiểm nhất khi port: một nhánh
-quy đổi tên chỉ số đấu nhầm ô sẽ cho ra số *hợp lý nhưng sai*, không crash,
-không ai nhận ra.
+của roster mẫu) — engine phải khớp trong sai số tương đối `1e-9`. Nó bắt đúng
+loại lỗi nguy hiểm nhất ở đây: một nhánh quy đổi tên chỉ số đấu nhầm ô sẽ cho
+ra số *hợp lý nhưng sai*, không crash, không ai nhận ra.
 
-Sinh lại **chỉ khi cố ý đổi mô hình** (sửa `tuning.json`, sửa parser, cập
-nhật dữ liệu làm đổi kết quả) — nếu sinh lại mỗi lần test đỏ thì fixture hết
-tác dụng:
+Số trong file vốn do một bản Python sinh ra, bản đó đã bị xoá sau khi engine
+Swift chứng minh khớp từng chữ số. Nay file do **chính engine** sinh, nên nó
+là **mốc hồi quy**: "hôm kiểm, engine tính ra thế này". Vì vậy sinh lại là một
+**quyết định**, không phải cách chữa test đỏ — chỉ sinh lại khi cố ý đổi mô
+hình (sửa `tuning.json`, sửa parser, cập nhật dữ liệu làm đổi kết quả), rồi
+**đọc diff**: một thay đổi nhắm vào một nhân vật mà làm trôi ba trăm con số là
+diff đang nói cho bạn biết điều gì đó.
 
 ```bash
-cd toi-uu-doi-hinh/optimizer
-python3 optimize_abyss.py --dump-golden ../../Tests/NSLauncherAppTests/Fixtures/abyss-golden.json
+ABYSS_DUMP_GOLDEN=Tests/NSLauncherAppTests/Fixtures/abyss-golden.json \
+    swift test --filter testRegenerateGoldenFixture
 ```

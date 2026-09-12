@@ -226,6 +226,9 @@ final class AbyssShowcaseImportTests: XCTestCase {
         XCTAssertGreaterThan(kept.partyATKPercent, 0, "the set's own party buff went missing")
     }
 
+    /// A roster where every character is imported, which is the case
+    /// `usesMeasuredStats` is for: nobody is being compared against a build they
+    /// do not have, so scoring the real sheets is the honest thing to do.
     func testImportedCharactersAreScoredOnTheirOwnGear() async throws {
         let optimizer = try XCTUnwrap(AbyssOptimizer(library: library))
         let builds = try showcase().builds
@@ -234,6 +237,8 @@ final class AbyssShowcaseImportTests: XCTestCase {
         roster.weapons = builds.compactMap(\.weaponID).map { .init(id: $0) }
 
         let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 3,
+                                                               splitsHalves: false,
+                                                               usesMeasuredStats: true,
                                                                showcase: builds))
         let team = try XCTUnwrap(output.reports.first?.teams.first)
 
@@ -249,6 +254,33 @@ final class AbyssShowcaseImportTests: XCTestCase {
                       "a team mixing measured and modelled builds has to say so")
     }
 
+    /// And by default it does *not*, because the comparison is not fair: an
+    /// imported character is scored on real, half-finished gear while everyone
+    /// they are ranked against is scored at level 90 with ideal rolls and the
+    /// best set that exists. On a real account that gap ran from 2× to 12×, and
+    /// every imported character fell out of every recommended team — importing
+    /// pushed the eight characters the player had actually built out of their
+    /// own results.
+    func testTheRankingAsksTheSameQuestionOfEverybodyByDefault() async throws {
+        let optimizer = try XCTUnwrap(AbyssOptimizer(library: library))
+        let builds = try showcase().builds
+        var roster = AbyssRoster.empty
+        roster.characters = (builds.map(\.characterID) + ["diona", "fischl"]).map { .init(id: $0) }
+        roster.weapons = builds.compactMap(\.weaponID).map { .init(id: $0) }
+
+        let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 3,
+                                                               splitsHalves: false,
+                                                               showcase: builds))
+        for team in try XCTUnwrap(output.reports.first?.teams) {
+            for id in team.memberIDs {
+                XCTAssertEqual(team.assignment[id]?.statSource, .modelled,
+                               "\(id) was ranked on a different yardstick from the rest")
+            }
+            XCTAssertFalse(team.notes.contains(.mixedStatSources),
+                           "nothing is mixed when everyone is measured the same way")
+        }
+    }
+
     /// The point of importing: the advice stops being "wear this set" and
     /// becomes "this beats what you are wearing, by this much".
     func testAdviceComparesAgainstWhatThePlayerIsWearing() async throws {
@@ -259,6 +291,7 @@ final class AbyssShowcaseImportTests: XCTestCase {
         roster.weapons = builds.compactMap(\.weaponID).map { .init(id: $0) }
 
         let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 3,
+                                                               splitsHalves: false,
                                                                showcase: builds))
         for team in try XCTUnwrap(output.reports.first?.teams) {
             for build in builds {

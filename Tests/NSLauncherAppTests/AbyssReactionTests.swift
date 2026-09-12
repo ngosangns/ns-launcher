@@ -88,9 +88,11 @@ final class AbyssReactionTests: XCTestCase {
         atC6.weapons = []
 
         let low = await optimizer.run(AbyssOptimizerRequest(roster: atC0, floors: [12], topN: 1,
-                                                            refinesArtifacts: false))
+                                                            refinesArtifacts: false,
+                                                            splitsHalves: false))
         let high = await optimizer.run(AbyssOptimizerRequest(roster: atC6, floors: [12], topN: 1,
-                                                             refinesArtifacts: false))
+                                                             refinesArtifacts: false,
+                                                             splitsHalves: false))
         let lowScore = try XCTUnwrap(low.reports.first?.teams.first?.score)
         let highScore = try XCTUnwrap(high.reports.first?.teams.first?.score)
         XCTAssertGreaterThan(highScore, lowScore,
@@ -195,7 +197,8 @@ final class AbyssReactionTests: XCTestCase {
             characters: ["nahida", "xingqiu", "raiden-shogun", "diona"].map { .init(id: $0) },
             weapons: [])
         let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 1,
-                                                               refinesArtifacts: false))
+                                                               refinesArtifacts: false,
+                                                               splitsHalves: false))
         let team = try XCTUnwrap(output.reports.first?.teams.first)
 
         let tuning = try XCTUnwrap(library.tuning)

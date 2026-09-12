@@ -4,7 +4,7 @@
 // `~/Library/Application Support/NSLauncher/abyss-roster.json`, alongside
 // `settings.json` rather than inside it: it can reach several hundred entries,
 // it belongs to one feature, and keeping it separate makes import/export a plain
-// file copy — the same file the Python tool reads.
+// file copy.
 //
 // Writes are atomic so an interrupted save cannot leave a half-written roster.
 
@@ -48,7 +48,8 @@ struct AbyssRosterStore: AbyssRosterStoring {
         try decoder.decode(AbyssRoster.self, from: Data(contentsOf: url))
     }
 
-    /// The output is exactly what `load` and the Python tool accept.
+    /// The output is exactly what `load` accepts, so an export can be handed
+    /// straight back to an import.
     func exportRoster(_ roster: AbyssRoster, to url: URL) throws {
         try encoder.encode(roster).write(to: url, options: .atomic)
     }

@@ -98,7 +98,7 @@ struct AbyssWeapon: Decodable, Sendable, Identifiable {
     ///
     /// The schema allows number, string or null per refinement because a few
     /// weapons' data carries text there; anything non-numeric is treated as
-    /// absent, matching the Python's `isinstance(value, (int, float))` guard.
+    /// absent rather than as a decode failure.
     struct PassiveEffect: Decodable, Sendable {
         let stat: String
         let r1: Double?
@@ -121,8 +121,9 @@ struct AbyssWeapon: Decodable, Sendable, Identifiable {
             r5 = try container.decodeLenientDouble(forKey: .r5)
         }
 
-        /// Value at a refinement level, clamped to R1-R5 like the Python's
-        /// `max(1, min(5, refinement))`.
+        /// Value at a refinement level, clamped to R1-R5: a roster may carry
+        /// a refinement outside that range and it should read as the nearest
+        /// real one rather than as nothing.
         func value(refinement: Int) -> Double? {
             switch max(1, min(5, refinement)) {
             case 1: return r1
@@ -364,10 +365,37 @@ struct AbyssDamageFormula: Decodable, Sendable {
         let coefficients: [String: Double]
     }
 
+    /// The Lunar and Stellar Glimmer reactions — Lunar-Charged, Lunar-Bloom,
+    /// Lunar-Crystallize, Stellar-Conduct, Stellar Swirl.
+    ///
+    /// Their own block because they are their own mechanic: a different EM
+    /// curve, coefficients that depend on whether the reaction is dealt directly
+    /// or aggregated across everyone who applied an element, and a base-damage
+    /// bonus that a handful of characters bring with them.
+    struct LunarStellar: Decodable, Sendable {
+        struct Branch: Decodable, Sendable {
+            let coefficients: [String: Double]
+        }
+
+        /// One character who raises the base damage of a Lunar/Stellar reaction
+        /// just by being on the team.
+        struct BaseDamageBonusSource: Decodable, Sendable {
+            let character: String
+            let reactionType: String
+            let maxBonus: Double
+        }
+
+        let emBonusFormula: String
+        let direct: Branch
+        let indirect: Branch
+        let reactionBaseDmgBonusSources: [BaseDamageBonusSource]
+    }
+
     let resMultiplier: ResMultiplier
     let amplifying: Amplifying
     let transformative: Transformative
     let catalyze: Catalyze
+    let lunarStellar: LunarStellar?
     let workedExample: WorkedExample
 }
 
@@ -375,9 +403,8 @@ struct AbyssDamageFormula: Decodable, Sendable {
 
 private extension KeyedDecodingContainer {
     /// Decodes a number that the data model allows to be a number, a string or
-    /// null. Non-numeric values read as absent rather than throwing, matching
-    /// the Python's `isinstance(value, (int, float))` check — a weapon whose
-    /// refinement track carries text simply has no numeric buff there.
+    /// null. Non-numeric values read as absent rather than throwing — a weapon
+    /// whose refinement track carries text simply has no numeric buff there.
     func decodeLenientDouble(forKey key: Key) throws -> Double? {
         if let value = try? decodeIfPresent(Double.self, forKey: key) {
             return value

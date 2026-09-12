@@ -19,7 +19,8 @@ final class AbyssOptimizerTests: XCTestCase {
     func testSameInputProducesTheSameOrderEveryRun() async throws {
         let optimizer = try makeOptimizer()
         let roster = try AbyssGoldenFixture.exampleRoster()
-        let request = AbyssOptimizerRequest(roster: roster, floors: [12], topN: 10)
+        let request = AbyssOptimizerRequest(roster: roster, floors: [12], topN: 10,
+                                            splitsHalves: false)
 
         let first = await optimizer.run(request)
         let second = await optimizer.run(request)
@@ -46,9 +47,11 @@ final class AbyssOptimizerTests: XCTestCase {
 
         // A pool of 15 crosses the striping threshold; a pool of 6 stays under it.
         let wide = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [11], topN: 5,
-                                                             poolSize: 15, refinesArtifacts: false))
+                                                             poolSize: 15, refinesArtifacts: false,
+                                                             splitsHalves: false))
         let narrow = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [11], topN: 5,
-                                                               poolSize: 6, refinesArtifacts: false))
+                                                               poolSize: 6, refinesArtifacts: false,
+                                                               splitsHalves: false))
 
         let wideTop = try XCTUnwrap(wide.reports.first?.teams.first)
         let narrowTop = try XCTUnwrap(narrow.reports.first?.teams.first)
@@ -90,7 +93,8 @@ final class AbyssOptimizerTests: XCTestCase {
     func testNoWeaponIsUsedTwiceUnlessTheRosterCannotCoverTheTeam() async throws {
         let optimizer = try makeOptimizer()
         let roster = try AbyssGoldenFixture.exampleRoster()
-        let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 10))
+        let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 10,
+                                                               splitsHalves: false))
 
         for team in try XCTUnwrap(output.reports.first?.teams) {
             let weaponIDs = team.memberIDs.compactMap { team.assignment[$0]?.weaponID }
@@ -121,9 +125,57 @@ final class AbyssOptimizerTests: XCTestCase {
         XCTAssertEqual(output.unknownRosterIDs, ["not-a-character", "not-a-weapon"])
     }
 
+    /// Who gets to audition.
+    ///
+    /// Being cut by the pool trim means never being considered at all, so the
+    /// yardstick matters. It used to be a solo score — the character alone, on a
+    /// neutral floor, with nobody around them — which cannot see a reaction, a
+    /// resonance, a party buff or a floor bonus. Those are most of the reasons a
+    /// support is worth a slot, and on a real 49-character roster it cut
+    /// Bennett before he could be looked at.
+    func testTheTrimRanksCandidatesInATeamRatherThanAlone() async throws {
+        let optimizer = try makeOptimizer()
+        let tuning = try XCTUnwrap(library.tuning)
+        let cycle = try XCTUnwrap(library.latestCycle)
+        var diagnostics = AbyssParseDiagnostics()
+        let contexts = try [1, 2].map { half in
+            try XCTUnwrap(AbyssFloorContext.build(
+                cycle: cycle, floor: 12, half: half,
+                ownElementResistance: tuning.enemyOwnElementResistance, diagnostics: &diagnostics))
+        }
+
+        let characters = library.characters
+        let options = Dictionary(uniqueKeysWithValues: characters.map { character in
+            (character.id, optimizer.gearOptions(for: character, weapons: library.weapons,
+                                                 sets: library.fiveStarArtifactSets, roster: nil))
+        })
+        let size = 40
+        let inTeams = optimizer.trimmedPool(characters, options: options, profiles: [:],
+                                            contexts: contexts, size: size)
+        XCTAssertEqual(inTeams.count, size)
+
+        let alone = characters
+            .sorted { (options[$0.id]?.first?.soloScore ?? 0) > (options[$1.id]?.first?.soloScore ?? 0) }
+            .prefix(size)
+            .map(\.id)
+        let rescued = Set(inTeams.map(\.id)).subtracting(alone)
+        XCTAssertFalse(rescued.isEmpty,
+                       "the trim returned exactly the solo ranking, so it is still blind to "
+                       + "everything a character only does in a team")
+
+        // Same input, same answer: the pool decides which teams exist at all.
+        let again = optimizer.trimmedPool(characters, options: options, profiles: [:],
+                                          contexts: contexts, size: size)
+        XCTAssertEqual(inTeams.map(\.id), again.map(\.id))
+    }
+
     /// With no roster the optimizer considers everything, which is the "what
     /// could I build in theory" mode. It also has to stay fast enough to run
     /// from a button press.
+    ///
+    /// Left on the default path deliberately, halves and all: that is what the
+    /// button actually runs, and planning a floor as two halves enumerates it
+    /// twice. If that ever stops fitting in the budget this is where it shows.
     func testFullRosterRunCompletesQuickly() async throws {
         let optimizer = try makeOptimizer()
         let started = Date()
@@ -131,8 +183,8 @@ final class AbyssOptimizerTests: XCTestCase {
         let elapsed = Date().timeIntervalSince(started)
 
         XCTAssertEqual(output.reports.count, 1)
-        XCTAssertEqual(output.reports.first?.teams.count, 5)
-        XCTAssertLessThan(elapsed, 20, "a single floor over a 40-character pool should not take this long")
+        XCTAssertEqual(output.reports.first?.plans.count, 5)
+        XCTAssertLessThan(elapsed, 40, "a single floor over a 40-character pool should not take this long")
     }
 
     /// The two pool flags widen characters and weapons independently: "any
@@ -146,7 +198,8 @@ final class AbyssOptimizerTests: XCTestCase {
             characters: [.init(id: "hu-tao"), .init(id: "bennett"), .init(id: "xingqiu"), .init(id: "diona")],
             weapons: [.init(id: "dragons-bane")])
 
-        let restricted = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 1))
+        let restricted = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 1,
+                                                                   splitsHalves: false))
         XCTAssertEqual(Set(restricted.consideredCharacterIDs), Set(roster.characterIDs),
                        "with neither flag set, only the four owned characters should be considered")
         let restrictedTeam = try XCTUnwrap(restricted.reports.first?.teams.first)
@@ -157,12 +210,14 @@ final class AbyssOptimizerTests: XCTestCase {
         }
 
         let fullCharacters = await optimizer.run(AbyssOptimizerRequest(
-            roster: roster, usesFullCharacterPool: true, floors: [12], topN: 1))
+            roster: roster, usesFullCharacterPool: true, floors: [12], topN: 1,
+            splitsHalves: false))
         XCTAssertGreaterThan(fullCharacters.consideredCharacterIDs.count, roster.characters.count,
                              "usesFullCharacterPool should widen the character pool")
 
         let fullWeapons = await optimizer.run(AbyssOptimizerRequest(
-            roster: roster, usesFullWeaponPool: true, floors: [12], topN: 1))
+            roster: roster, usesFullWeaponPool: true, floors: [12], topN: 1,
+            splitsHalves: false))
         XCTAssertEqual(Set(fullWeapons.consideredCharacterIDs), Set(roster.characterIDs),
                        "usesFullWeaponPool alone should not widen the character pool")
         let fullWeaponsTeam = try XCTUnwrap(fullWeapons.reports.first?.teams.first)

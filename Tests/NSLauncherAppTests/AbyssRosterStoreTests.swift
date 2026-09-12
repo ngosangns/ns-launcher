@@ -37,9 +37,10 @@ final class AbyssRosterStoreTests: XCTestCase {
         XCTAssertThrowsError(try store.load())
     }
 
-    /// The example roster shipped with the Python tool must decode here, since
-    /// the whole point of the shared format is copying the file either way.
-    func testPythonExampleRosterDecodes() throws {
+    /// The example roster the golden fixture's teams were generated from. It
+    /// doubles as a check on the on-disk format, since it is a file a player
+    /// could have written by hand.
+    func testExampleRosterDecodes() throws {
         let roster = try AbyssGoldenFixture.exampleRoster()
         XCTAssertEqual(roster.characters.count, 15)
         XCTAssertEqual(roster.weapons.count, 13)
@@ -63,7 +64,7 @@ final class AbyssRosterStoreTests: XCTestCase {
         XCTAssertEqual(roster.weapons.map(\.id), ["staff-of-homa"])
     }
 
-    func testExportProducesAFileThePythonToolCouldRead() throws {
+    func testExportProducesAFileTheImporterCanRead() throws {
         let store = AbyssRosterStore(baseDirectory: directory)
         let roster = AbyssRoster(characters: [.init(id: "nahida")], weapons: [.init(id: "a-thousand-floating-dreams", refinement: 2)])
         let exported = directory.appendingPathComponent("exported.json")

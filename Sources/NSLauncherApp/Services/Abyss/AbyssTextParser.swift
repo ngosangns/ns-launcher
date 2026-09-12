@@ -4,36 +4,66 @@
 // enemy resistance notes ("kháng Anemo +20%"), and floor buff clauses
 // ("Sát thương Superconduct +200%").
 //
-// This is a deliberate line-for-line port of `data.py`, down to the pattern
-// strings, so the two can be diffed side by side. `NSRegularExpression` rather
-// than Swift `Regex` for the same reason — the patterns paste across unchanged,
-// it is ICU like Python's engine is close to, and it is already the precedent
-// in `StoryEntityLinker`.
+// `NSRegularExpression` rather than Swift `Regex`: it is ICU, these patterns
+// were written against ICU, and it is already the precedent in
+// `StoryEntityLinker`.
 //
-// Two Python behaviours are reproduced on purpose even though they look like
-// bugs, because "fixing" them silently moves every score in the app away from
-// the reference implementation and the golden fixture:
+// Two inherited behaviours are kept on purpose even though they look like bugs,
+// because "fixing" one silently moves every score in the app and every number
+// in the golden fixture:
 //   - a label written with an en dash ("1–2-Hit") does not match the combo-hit
 //     pattern, so that hit is skipped;
-//   - `default_role` never returns `sub-dps` or `support` (see AbyssScorer).
-// Both are worth changing eventually — together, in both implementations, with
-// the fixture regenerated.
+//   - the default role never comes back as `sub-dps` or `support` (see
+//     AbyssScorer).
+// Both are worth changing eventually — deliberately, with the fixture
+// regenerated and the diff read.
 
 import Foundation
 
 enum AbyssTextParser {
-    // MARK: - Patterns (kept verbatim from data.py)
+    // MARK: - Patterns
 
+    /// Rows that are not a damage instance and must not be read as one.
+    ///
+    /// A row here is dropped whole. The cost of missing one is invisible and
+    /// permanent: the value parses, lands in the profile as a multiplier of ATK,
+    /// and inflates that character forever — "DMG Bonus (Omen) 60%" was read as
+    /// 60% of Mona's ATK, and Lauma's burst, whose only two rows are Bloom
+    /// bonuses of 499% and 400%, was scored as nine times her ATK of damage that
+    /// does not exist.
+    ///
+    /// Three families, all bonuses wearing a percentage:
+    ///   - a named stat bonus ("ATK Bonus", "DMG Bonus");
+    ///   - a rate — per point, per stack, per 100 EM — which is never one hit;
+    ///   - a phrase that says it *increases* something ("Tăng DMG …", a
+    ///     percentage of another hit's damage).
     private static let nonDamageLabel = regex(
         "hồi máu|heal|khiên|shield|absorption|hấp thụ|thời lượng|duration|"
         + "^cd$|hồi chiêu|cooldown|năng lượng|energy|tốc đánh|atk spd|spd|"
         + "bond of life|kháng|res\\b|stamina|thể lực|tầm|bán kính|số lần|"
-        + "atk bonus|def bonus|hp bonus|em bonus|buff|giảm|tăng crit|crit rate|crit dmg",
+        + "atk bonus|def bonus|hp bonus|em bonus|dmg bonus|buff|giảm|tăng crit|crit rate|crit dmg|"
+        + "/\\s*(điểm|lớp)|/\\s*100\\s*EM|per\\s*(point|stack)|"
+        + "tăng\\s*(dmg|st)|%\\s*st\\s+đòn|resolve bonus|"
+        + "kế thừa|inherited|tiêu hao",
         options: [.caseInsensitive])
 
     private static let percent = regex("(\\d+(?:[.,]\\d+)?)\\s*%")
     private static let parenthetical = regex("\\([^)]*\\)")
     private static let wordHP = regex("\\bHP\\b")
+    /// Whether the *value* already names a scaling basis.
+    private static let basisInValue = regex("MAX\\s*HP|\\bHP\\b|\\bDEF\\b|\\bEM\\b|ELEMENTAL MASTERY")
+    /// A basis written in the label as an explicit share — "(%MaxHP)",
+    /// "(theo DEF)", "(%EM, ×3 đòn)" — with the stat it names.
+    private static let labelBases: [(pattern: NSRegularExpression, basis: ScalingBasis)] = [
+        (regex("(%|theo)\\s*(max\\s*hp|maxhp)\\b", options: [.caseInsensitive]), .hp),
+        (regex("(%|theo)\\s*hp\\b", options: [.caseInsensitive]), .hp),
+        (regex("(%|theo)\\s*def\\b", options: [.caseInsensitive]), .def),
+        (regex("(%|theo)\\s*em\\b", options: [.caseInsensitive]), .em),
+    ]
+
+    static func basis(inLabel label: String) -> ScalingBasis? {
+        labelBases.first { matches($0.pattern, label) }?.basis
+    }
     private static let wordDEF = regex("\\bDEF\\b")
 
     /// Splits alternatives that are mutually exclusive ("Press / Hold",
@@ -41,6 +71,22 @@ enum AbyssTextParser {
     private static let branchSplit = regex("(?<!\\d)\\s*/\\s*|(?<=%)\\s*/\\s*")
 
     private static let comboHit = regex("^(?:\\d+-hit|đòn\\s*\\d+)", options: [.caseInsensitive])
+
+    /// A label whose parenthetical names one *alternative* rather than one part.
+    ///
+    /// "Hold DMG (0 stack)" and "Hold DMG (3 stack)" are the same hit at two
+    /// stack counts and only one of them happens; summing them gave Lisa 14.5×
+    /// ATK of hold damage for a cast that deals at most 8.8×. Same for a press
+    /// versus a hold, a stance, and an HP threshold — Hu Tao's burst has an
+    /// above-50% row and a below-50% row and she is on one side of the line.
+    ///
+    /// Deliberately narrow. Two rows sharing a stem are usually *not*
+    /// alternatives: Tighnari's "Tanglevine Shaft (đợt 1)" and "(đợt 2)" are two
+    /// waves that both land, and Columbina's three Gravity Interference rows are
+    /// three different reactions. Those keep their sum.
+    private static let alternativeVariant = regex(
+        "\\([^)]*(bấm|giữ|press|hold|stance|dạng|stack|lớp|hp\\s*[<>≤≥])[^)]*\\)",
+        options: [.caseInsensitive])
 
     /// A charged attack, however the transcription spells it. Plunging attacks
     /// ("nhảy") are deliberately not here: no rotation the model assumes uses
@@ -57,6 +103,12 @@ enum AbyssTextParser {
 
     private static let resistanceMentioned = regex("kháng|res", options: [.caseInsensitive])
     private static let clauseSplit = regex("[;.]|(?<=%)\\s*,\\s*")
+
+    /// "Nửa 1", "Nửa 2" — the marker a Ley Line Disorder uses when its two
+    /// halves get different modifiers. The digit is required: floor 11 says
+    /// "không tách theo nửa" about a bonus that applies to both, and that is a
+    /// mention of halves, not a split.
+    private static let halfMarker = regex("[Nn]ửa\\s*([12])(?![0-9])")
     private static let normalAttackOnly = regex("thường công|normal attack|đòn thường", options: [.caseInsensitive])
 
     /// Vietnamese element names as they appear in resistance notes.
@@ -94,7 +146,7 @@ enum AbyssTextParser {
     /// - `a%+b%` in one branch are sequential hits and are summed.
     /// - `a% / b%` are mutually exclusive variants; the strongest is taken.
     /// - No named basis means ATK, which is the game's default.
-    static func scalingValue(_ text: String) -> (multiplier: Double, basis: ScalingBasis)? {
+    static func scalingValue(_ text: String, label: String = "") -> (multiplier: Double, basis: ScalingBasis)? {
         guard !text.isEmpty else { return nil }
 
         var cleaned = replaceMatches(parenthetical, in: text, with: " ")
@@ -110,6 +162,18 @@ enum AbyssTextParser {
         if matches(wordDEF, upper) { basis = .def }
         if upper.split(whereSeparator: \.isWhitespace).contains("EM") || upper.contains("ELEMENTAL MASTERY") {
             basis = .em
+        }
+
+        // The basis is normally written in the value ("172.53% DEF"). Some rows
+        // put it in the label instead and leave the value a bare percentage —
+        // Neuvillette's charged attack is "Equitable Judgment (%MaxHP)" over
+        // "14.47%", which read as ATK scaling is his damage divided by about
+        // twenty-seven. Only an explicit "%HP"/"theo DEF" form counts: Hu Tao's
+        // charged attack says "tốn HP thay thể lực" — it *costs* HP, it does not
+        // scale on it — and a looser rule reads that as HP scaling and triples
+        // her.
+        if !matches(basisInValue, upper), let fromLabel = Self.basis(inLabel: label) {
+            basis = fromLabel
         }
 
         var best = 0.0
@@ -130,20 +194,64 @@ enum AbyssTextParser {
                                     levelKey: String = "lv10",
                                     diagnostics: inout AbyssParseDiagnostics) -> [(Double, ScalingBasis)] {
         var out: [(Double, ScalingBasis)] = []
+        // Rows that are alternatives of one another, keyed by their label with
+        // the parenthetical taken off, pointing at the slot in `out` the winner
+        // occupies.
+        var alternatives: [String: Int] = [:]
+
         for entry in talent.scaling {
             if matches(nonDamageLabel, entry.label) {
                 diagnostics.scalingSkipped += 1
                 continue
             }
             let raw = entry.values[levelKey] ?? entry.values["lv10"] ?? entry.values["lv1"] ?? ""
-            guard let parsed = scalingValue(raw) else {
+            guard let parsed = scalingValue(raw, label: entry.label) else {
                 diagnostics.scalingSkipped += 1
                 continue
             }
             diagnostics.scalingParsed += 1
-            out.append(parsed)
+
+            guard matches(alternativeVariant, entry.label) else {
+                out.append(parsed)
+                continue
+            }
+            let stem = replaceMatches(parenthetical, in: entry.label, with: " ")
+                .trimmingCharacters(in: .whitespaces)
+                .lowercased()
+            if let slot = alternatives[stem] {
+                // The strongest branch, matching how `a% / b%` inside one value
+                // is already read. Ties keep the first, so the answer does not
+                // depend on row order.
+                if parsed.multiplier > out[slot].0 { out[slot] = parsed }
+                diagnostics.scalingSkipped += 1
+            } else {
+                out.append(parsed)
+                alternatives[stem] = out.count - 1
+            }
         }
         return out
+    }
+
+    /// A plunge. Deliberately not damage: no rotation the model assumes uses
+    /// one, so these rows are dropped rather than reported as unclassified.
+    private static let plungeHit = regex("nhảy|plunge", options: [.caseInsensitive])
+
+    /// Rows in the normal-attack table that look like damage and were sorted
+    /// into no bucket at all.
+    static func unclassifiedNormalAttackRows(_ character: AbyssCharacter,
+                                             extraLabels: [String] = [],
+                                             levelKey: String = "lv10") -> [String] {
+        character.normalAttack.hits.compactMap { hit -> String? in
+            let label = hit.label.trimmingCharacters(in: .whitespaces)
+            if matches(comboHit, label) || matches(chargedHit, label)
+                || matches(plungeHit, label) || matches(nonDamageLabel, label) { return nil }
+            if extraLabels.contains(where: { label.range(of: $0, options: .caseInsensitive) != nil }) {
+                return nil
+            }
+            let raw = hit.values[levelKey] ?? hit.values["lv10"] ?? hit.values["lv1"] ?? ""
+            guard scalingValue(raw, label: label) != nil else { return nil }
+            return "\(character.id): \(label)"
+        }
     }
 
     /// Only the numbered hits of the normal-attack string; charged and plunging
@@ -155,7 +263,7 @@ enum AbyssTextParser {
             let label = hit.label.trimmingCharacters(in: .whitespaces)
             guard matches(comboHit, label) else { continue }
             let raw = hit.values[levelKey] ?? hit.values["lv10"] ?? hit.values["lv1"] ?? ""
-            if let parsed = scalingValue(raw) { out.append(parsed) }
+            if let parsed = scalingValue(raw, label: label) { out.append(parsed) }
         }
         return out
     }
@@ -170,14 +278,22 @@ enum AbyssTextParser {
     /// a claymore's spin and finisher happen one after the other. Summing would
     /// double every bow in the data; taking the maximum only under-counts the
     /// handful of claymores, which is the safer way to be wrong.
+    /// - Parameter extraLabels: labels this character's data uses for a charged
+    ///   attack that the generic vocabulary does not cover — Ganyu's "Frostflake
+    ///   Arrow", Neuvillette's "Equitable Judgment". From
+    ///   `tuning.chargedAttackLabels`; without it those rows match nothing and
+    ///   are dropped, taking the character's main damage with them.
     static func chargedAttack(_ character: AbyssCharacter,
+                              extraLabels: [String] = [],
                               levelKey: String = "lv10") -> (Double, ScalingBasis)? {
         var best: (Double, ScalingBasis)?
         for hit in character.normalAttack.hits {
             let label = hit.label.trimmingCharacters(in: .whitespaces)
-            guard matches(chargedHit, label) else { continue }
+            guard matches(chargedHit, label) || extraLabels.contains(where: {
+                label.range(of: $0, options: .caseInsensitive) != nil
+            }) else { continue }
             let raw = hit.values[levelKey] ?? hit.values["lv10"] ?? hit.values["lv1"] ?? ""
-            guard let parsed = scalingValue(raw) else { continue }
+            guard let parsed = scalingValue(raw, label: label) else { continue }
             if best == nil || parsed.multiplier > best!.0 { best = (parsed.multiplier, parsed.basis) }
         }
         return best
@@ -360,6 +476,56 @@ enum AbyssTextParser {
         return buffs
     }
 
+    /// Splits a Ley Line Disorder that gives its two halves different modifiers.
+    ///
+    /// Every Abyss chamber is fought twice, by two teams, and this rotation's
+    /// floor 12 does not treat the two the same:
+    ///
+    ///     Nửa 1 (nửa trước): Sát thương Superconduct +200%, sát thương
+    ///     Stellar-Conduct +75%. Nửa 2 (nửa sau): Sát thương Thường công
+    ///     (Normal Attack) hệ Pyro +75%.
+    ///
+    /// Read whole, that text hands every team both bonuses — a Cryo/Electro
+    /// team scored as though it also collected the second half's Pyro
+    /// normal-attack bonus, and a Pyro team as though it collected +200%
+    /// Superconduct. Returns the text that applies to each half, with anything
+    /// written before the first marker (a clause about the whole floor) kept in
+    /// both. An empty result means the text names no halves and all of it
+    /// applies to both.
+    static func leyLineHalves(_ text: String?) -> [Int: String] {
+        guard let text, !text.isEmpty else { return [:] }
+        let nsText = text as NSString
+        let markers = halfMarker.matches(in: text,
+                                         range: NSRange(location: 0, length: nsText.length))
+        guard let firstMarker = markers.first else { return [:] }
+
+        let shared = nsText.substring(to: firstMarker.range.location)
+            .trimmingCharacters(in: .whitespaces)
+
+        var segments: [Int: [String]] = [:]
+        for (index, marker) in markers.enumerated() {
+            let numberRange = marker.range(at: 1)
+            guard numberRange.location != NSNotFound,
+                  let half = Int(nsText.substring(with: numberRange)) else { continue }
+            let start = marker.range.location
+            let end = index + 1 < markers.count ? markers[index + 1].range.location : nsText.length
+            segments[half, default: []].append(
+                nsText.substring(with: NSRange(location: start, length: end - start)))
+        }
+
+        // One half named on its own is a clause about that half inside a text
+        // that otherwise covers the floor; splitting on it would leave the other
+        // half with nothing but the shared prose.
+        guard segments.count >= 2 else { return [:] }
+
+        return segments.mapValues { parts in
+            ([shared] + parts)
+                .map { $0.trimmingCharacters(in: .whitespaces) }
+                .filter { !$0.isEmpty }
+                .joined(separator: " ")
+        }
+    }
+
     // MARK: - Regex plumbing
 
     /// Patterns here are fixed literals written above; a typo is a programmer
@@ -381,7 +547,7 @@ enum AbyssTextParser {
 
     /// All matches, each as its capture groups indexed by group number
     /// (0 = whole match). Groups that did not participate are nil, mirroring
-    /// Python's `None`.
+    /// a missing value.
     private static func captures(_ regex: NSRegularExpression, in text: String) -> [[String?]] {
         let nsText = text as NSString
         let range = NSRange(location: 0, length: nsText.length)
@@ -398,8 +564,9 @@ enum AbyssTextParser {
         return regex.stringByReplacingMatches(in: text, range: range, withTemplate: template)
     }
 
-    /// Foundation has no `re.split`, so this reproduces it: slice the text
-    /// between matches, keeping empty pieces exactly as Python does.
+    /// Foundation has no regex split, so this is one: slice the text between
+    /// matches, keeping empty pieces rather than dropping them — a clause that
+    /// splits to nothing still counts as a clause.
     static func split(_ text: String, by regex: NSRegularExpression) -> [String] {
         let nsText = text as NSString
         let full = NSRange(location: 0, length: nsText.length)

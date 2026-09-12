@@ -34,9 +34,9 @@ let package = Package(
             dependencies: ["NSLauncherApp"],
             path: "Tests/NSLauncherAppTests",
             resources: [
-                // Golden values generated once from the Python reference
-                // implementation (see Resources/Abyss/README.md) — the Swift
-                // Abyss engine is checked against them.
+                // The Abyss engine's regression baseline — see
+                // Tests/NSLauncherAppTests/AbyssGoldenDump.swift, which is what
+                // rewrites it.
                 .copy("Fixtures")
             ]
         ),

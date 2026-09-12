@@ -43,8 +43,8 @@ final class AbyssDamageFormulaTests: XCTestCase {
             * (1 + inputs.critDmg)
 
         // The published figure is itself rounded, so this is a relative
-        // tolerance rather than equality — the reference implementation lands
-        // on 52,247.00 against the wiki's 52,246.50.
+        // tolerance rather than equality — the chain lands on 52,247.00 against
+        // the wiki's 52,246.50.
         XCTAssertEqual(total, example.result.value, accuracy: example.result.value * 0.001,
                        "damage chain diverged from the published worked example")
     }

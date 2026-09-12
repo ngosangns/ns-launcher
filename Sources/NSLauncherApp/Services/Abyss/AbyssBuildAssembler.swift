@@ -1,7 +1,7 @@
 // AbyssBuildAssembler.swift
 //
 // Assembles a character's stat sheet: character base at level 90, weapon at 90,
-// and a 5★ level-20 artifact set chosen for their role. Ported from `build.py`.
+// and a 5★ level-20 artifact set chosen for their role.
 //
 // Artifacts are modelled, not read: the app has no idea what the player has
 // actually rolled, so every character is given the same standardised build from
@@ -12,9 +12,9 @@
 // The delicate part is `apply(named:)`. The data names its stats in prose
 // ("Normal/Charged Attack DMG", "Max HP", "Party ATK"), and every one has to
 // land in the right field. A misrouted name does not crash; it produces
-// plausible, permanently wrong numbers. The rules below are kept in the Python's
-// order because the order is load-bearing — "elemental skill dmg" has to be
-// tested before "elemental" would match something else.
+// plausible, permanently wrong numbers. The order of the rules below is
+// load-bearing — "elemental skill dmg" has to be tested before "elemental"
+// would match something else — so leave it alone unless that is the change.
 
 import Foundation
 
@@ -76,25 +76,26 @@ struct AbyssBuildAssembler: Sendable {
                sets: [AbyssArtifactSet],
                role: AbyssRole,
                refinement: Int = 1,
+               mainStats: AbyssMainStatPlan,
                diagnostics: inout AbyssParseDiagnostics) -> AbyssStats {
         var stats = statsWithoutSets(character: character, profile: profile, weapon: weapon,
-                                     role: role, refinement: refinement)
+                                     role: role, refinement: refinement, mainStats: mainStats)
         applySets(sets, character: character, to: &stats, diagnostics: &diagnostics)
         return stats
     }
 
-    /// Everything that does not depend on which artifact *sets* are worn:
-    /// character base, weapon, artifact main stats and substats.
+    /// The sheet before any of the three main stats that carry a choice:
+    /// character base, weapon, substats, talent party buffs, and the two
+    /// artifact slots whose main stat is fixed in game.
     ///
-    /// Separate from `applySets` because the artifact advisor tries dozens of
-    /// set combinations for one character and weapon, and this half is both the
-    /// expensive one — the weapon passive is matched with regexes — and the one
-    /// that does not change between them.
-    func statsWithoutSets(character: AbyssCharacter,
-                          profile: AbyssDamageProfile,
-                          weapon: AbyssWeapon?,
-                          role: AbyssRole,
-                          refinement: Int = 1) -> AbyssStats {
+    /// Split out because those three are searched: this half costs a regex sweep
+    /// over the weapon passive and is the same for every candidate plan, so the
+    /// search builds it once and adds three numbers per candidate.
+    func statsWithoutArtifactMainStats(character: AbyssCharacter,
+                                       profile: AbyssDamageProfile,
+                                       weapon: AbyssWeapon?,
+                                       role: AbyssRole,
+                                       refinement: Int = 1) -> AbyssStats {
         let lv90 = character.baseStats.lv90
         var stats = AbyssStats(
             baseATK: lv90.atk ?? 0,
@@ -114,11 +115,35 @@ struct AbyssBuildAssembler: Sendable {
             applyWeaponPassive(weapon, refinement: refinement, to: &stats)
         }
 
-        applyArtifactMainStats(role: role, basis: profile.basis, element: character.element, to: &stats)
+        // Flower and Plume are fixed HP and ATK; there is nothing to decide
+        // about them, so they belong on this side of the split.
+        stats.flatHP += tuning.mainStat("flat_hp")
+        stats.flatATK += tuning.mainStat("flat_atk")
         applySubstats(role: role, basis: profile.basis, to: &stats)
         applyTalentPartyBuffs(for: character, to: &stats)
 
         return stats
+    }
+
+    /// That sheet with a main stat in each of the three slots that carry one.
+    func applying(_ plan: AbyssMainStatPlan, to base: AbyssStats) -> AbyssStats {
+        var stats = base
+        for slot in plan.slots {
+            stats.add(tuning.mainStat(Self.tuningKey(for: slot)), to: slot.statField)
+        }
+        return stats
+    }
+
+    /// Both halves at once, for callers that already know the plan.
+    func statsWithoutSets(character: AbyssCharacter,
+                          profile: AbyssDamageProfile,
+                          weapon: AbyssWeapon?,
+                          role: AbyssRole,
+                          refinement: Int = 1,
+                          mainStats: AbyssMainStatPlan) -> AbyssStats {
+        applying(mainStats, to: statsWithoutArtifactMainStats(
+            character: character, profile: profile, weapon: weapon, role: role,
+            refinement: refinement))
     }
 
     /// Party-wide buffs this character's own talents grant.
@@ -422,7 +447,7 @@ struct AbyssBuildAssembler: Sendable {
     private static let partyScoped = try? NSRegularExpression(pattern: "team|party|toàn đội",
                                                               options: [.caseInsensitive])
 
-    /// Ordered like the Python's rule list: the first pattern that matches wins.
+    /// The first pattern that matches wins, so the order is part of the rule.
     private static let weaponEffectRules: [(pattern: NSRegularExpression?, field: AbyssStatField)] = [
         (try? NSRegularExpression(pattern: "crit\\s*rate", options: [.caseInsensitive]), .critRate),
         (try? NSRegularExpression(pattern: "crit\\s*dmg", options: [.caseInsensitive]), .critDMG),
@@ -486,50 +511,37 @@ struct AbyssBuildAssembler: Sendable {
 
     // MARK: - Artifacts
 
-    /// Which main stat goes in each of the three slots the model varies. Flower
-    /// and Plume are fixed HP/ATK and are not part of any decision.
+    /// What each slot is allowed to hold, for a search to pick from.
     ///
-    /// Returned as data rather than applied directly so the Abyss tab can *show*
-    /// the build it is recommending. The recommendation and the scored stat
-    /// sheet come from this one function, so the advice cannot describe a build
-    /// other than the one that produced the number next to it.
-    func mainStatPlan(role: AbyssRole,
-                      basis: ScalingBasis,
-                      element: GenshinElement) -> (sands: AbyssMainStat, goblet: AbyssMainStat, circlet: AbyssMainStat) {
-        // Sands: supports need energy, healers need HP, damage dealers follow
-        // whichever stat their kit scales off.
-        let sands: AbyssMainStat
+    /// Two of the lists are cut down, and both cuts are worth stating.
+    ///
+    /// The goblet offers one element rather than seven. A DMG bonus for an
+    /// element only ever multiplies that element's damage, and a character deals
+    /// their own; a Cryo goblet on a Pyro character contributes exactly zero
+    /// here, so the other six are not candidates, they are wasted evaluations.
+    ///
+    /// The other cut is a constraint standing in for something the objective
+    /// cannot see. The score is damage, and it has no term for "the heal landed"
+    /// or "the burst was up" — so Energy Recharge and Healing Bonus are worth
+    /// nothing to it, and a free search would strip both from every support and
+    /// call it an improvement. It would be an improvement in the model and a
+    /// worse team in the game. So a healer keeps the Healing Bonus circlet and a
+    /// support or shielder keeps the Energy Recharge sands, and the search picks
+    /// the rest. Model the two objectives properly and these two lines go away.
+    func mainStatCandidates(role: AbyssRole,
+                            element: GenshinElement) -> (sands: [AbyssMainStat],
+                                                         goblet: [AbyssMainStat],
+                                                         circlet: [AbyssMainStat]) {
+        let scaling: [AbyssMainStat] = [.atkPercent, .hpPercent, .defPercent, .elementalMastery]
+        let sands: [AbyssMainStat]
         switch role {
-        case .support, .shield:
-            sands = .energyRecharge
-        case .healer:
-            sands = .hpPercent
-        case .mainDPS, .subDPS:
-            switch basis {
-            case .def: sands = .defPercent
-            case .hp: sands = .hpPercent
-            case .em: sands = .elementalMastery
-            case .atk: sands = .atkPercent
-            }
+        case .support, .shield: sands = [.energyRecharge]
+        case .healer, .mainDPS, .subDPS: sands = scaling + [.energyRecharge]
         }
-
-        // Goblet is always the character's own element; the circlet is CRIT DMG
-        // for everyone who is not there to heal.
-        return (sands, .elementalDMG(element), role == .healer ? .healingBonus : .critDMG)
-    }
-
-    private func applyArtifactMainStats(role: AbyssRole,
-                                        basis: ScalingBasis,
-                                        element: GenshinElement,
-                                        to stats: inout AbyssStats) {
-        // Flower and Plume are fixed.
-        stats.flatHP += tuning.mainStat("flat_hp")
-        stats.flatATK += tuning.mainStat("flat_atk")
-
-        let plan = mainStatPlan(role: role, basis: basis, element: element)
-        for slot in [plan.sands, plan.goblet, plan.circlet] {
-            stats.add(tuning.mainStat(Self.tuningKey(for: slot)), to: slot.statField)
-        }
+        let circlet: [AbyssMainStat] = role == .healer
+            ? [.healingBonus]
+            : scaling + [.critRate, .critDMG]
+        return (sands, [.elementalDMG(element)] + scaling, circlet)
     }
 
     /// Tuning key holding a main stat's level-20 value.

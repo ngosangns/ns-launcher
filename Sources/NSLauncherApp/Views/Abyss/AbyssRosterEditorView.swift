@@ -42,16 +42,18 @@ struct AbyssRosterEditorView: View {
                 // Both hug their labels. Only the weapons button did, so the
                 // characters one grew to fill the row and the pair read as a
                 // banner rather than as two tabs.
-                SidebarTabButton(title: text.abyssCharactersTab, systemImage: "person.fill",
-                                 isSelected: viewModel.rosterTab == .characters) {
-                    viewModel.rosterTab = .characters
+                TabGroup {
+                    SidebarTabButton(title: text.abyssCharactersTab, systemImage: "person.fill",
+                                     isSelected: viewModel.rosterTab == .characters) {
+                        viewModel.rosterTab = .characters
+                    }
+                    .fixedSize()
+                    SidebarTabButton(title: text.abyssWeaponsTab, systemImage: "wand.and.rays",
+                                     isSelected: viewModel.rosterTab == .weapons) {
+                        viewModel.rosterTab = .weapons
+                    }
+                    .fixedSize()
                 }
-                .fixedSize()
-                SidebarTabButton(title: text.abyssWeaponsTab, systemImage: "wand.and.rays",
-                                 isSelected: viewModel.rosterTab == .weapons) {
-                    viewModel.rosterTab = .weapons
-                }
-                .fixedSize()
 
                 Spacer(minLength: 0)
 
@@ -261,7 +263,7 @@ struct AbyssRosterEditorView: View {
     }
 
     private var elementFilterChips: some View {
-        HStack(spacing: 5) {
+        TabGroup(spacing: 2) {
             ForEach(GenshinElement.allCases, id: \.self) { element in
                 let isSelected = viewModel.elementFilter == element
                 Button {
@@ -271,8 +273,8 @@ struct AbyssRosterEditorView: View {
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundStyle(isSelected ? LauncherPalette.ink : element.accentColor.opacity(0.85))
                         .frame(width: 26, height: 22)
-                        .background(isSelected ? element.accentColor : LauncherPalette.night.opacity(0.36),
-                                    in: RoundedRectangle(cornerRadius: 7, style: .continuous))
+                        .background(isSelected ? element.accentColor : Color.clear,
+                                    in: RoundedRectangle(cornerRadius: 6, style: .continuous))
                 }
                 .buttonStyle(.plain)
                 .pointerOnHover()
@@ -282,7 +284,7 @@ struct AbyssRosterEditorView: View {
     }
 
     private var weaponTypeFilterChips: some View {
-        HStack(spacing: 5) {
+        TabGroup(spacing: 2) {
             ForEach(WeaponType.allCases, id: \.self) { type in
                 let isSelected = viewModel.weaponTypeFilter == type
                 Button {
@@ -292,8 +294,8 @@ struct AbyssRosterEditorView: View {
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundStyle(isSelected ? LauncherPalette.ink : LauncherPalette.gold.opacity(0.85))
                         .frame(width: 26, height: 22)
-                        .background(isSelected ? LauncherPalette.goldHighlight : LauncherPalette.night.opacity(0.36),
-                                    in: RoundedRectangle(cornerRadius: 7, style: .continuous))
+                        .background(isSelected ? LauncherPalette.goldHighlight : Color.clear,
+                                    in: RoundedRectangle(cornerRadius: 6, style: .continuous))
                 }
                 .buttonStyle(.plain)
                 .pointerOnHover()

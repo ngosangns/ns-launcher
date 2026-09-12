@@ -2,16 +2,18 @@ import Foundation
 import XCTest
 @testable import NSLauncherApp
 
-/// Reads `Fixtures/abyss-golden.json` — the values the Python reference
-/// implementation produces for the same bundled data.
+/// Reads `Fixtures/abyss-golden.json` — what the engine computed on the day
+/// someone checked it, for the same bundled data.
 ///
-/// The port's most dangerous failure mode is silent: the stat-name mapping is a
-/// long switch, and one branch wired to the wrong field produces numbers that
-/// look plausible forever. Comparing intermediates against a recorded run is
-/// the only thing that catches that class of mistake.
+/// This model's most dangerous failure mode is silent: the stat-name mapping is
+/// a long switch, and one branch wired to the wrong field produces numbers that
+/// look plausible forever. Comparing intermediates against a recorded run is the
+/// only thing that catches that class of mistake.
 ///
-/// Regenerate deliberately, never to make a red test green:
-/// `python3 optimize_abyss.py --dump-golden ../../Tests/NSLauncherAppTests/Fixtures/abyss-golden.json`
+/// The numbers were first produced by a Python implementation this engine was
+/// ported from; that implementation is gone, and the fixture is now written by
+/// `AbyssGoldenDump.swift`. Regenerate deliberately, never to make a red test
+/// green.
 struct AbyssGoldenFixture: Decodable {
     struct Term: Decodable {
         let multiplier: Double
@@ -88,9 +90,9 @@ struct AbyssGoldenFixture: Decodable {
     let floors: [String: Floor]
     let teams: [String: [Team]]
 
-    /// The same roster the fixture's teams were generated from, copied from
-    /// `toi-uu-doi-hinh/optimizer/roster.example.json`. Loading it here also
-    /// pins the on-disk format the two implementations share.
+    /// The same roster the fixture's teams were generated from. Loading it
+    /// here also pins the on-disk roster format, since it is a file a player
+    /// could have written by hand.
     static func exampleRoster(file: StaticString = #filePath, line: UInt = #line) throws -> AbyssRoster {
         let url = try XCTUnwrap(
             Bundle.module.url(forResource: "Fixtures/roster.example", withExtension: "json")

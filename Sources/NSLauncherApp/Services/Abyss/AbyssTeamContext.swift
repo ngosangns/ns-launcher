@@ -2,7 +2,7 @@
 //
 // What a particular set of four characters unlocks: elemental resonances,
 // Moonsign level, Hexerei, which reactions they can trigger, and whether anyone
-// can keep the party alive. Ported from `build_team_context` in `scoring.py`.
+// can keep the party alive.
 
 import Foundation
 
@@ -16,6 +16,25 @@ struct AbyssTeamContext: Sendable {
     let hasShield: Bool
     /// Someone can turn Swirl/Superconduct into their Stellar variants.
     let stellarJubilee: Bool
+    /// What the team adds to the *base damage* of a Lunar or Stellar reaction
+    /// just by containing the right character — Lauma, Columbina, Sandrone and
+    /// the rest of `damage-formula.json`'s `reactionBaseDmgBonusSources`.
+    ///
+    /// The best single bonus, not the sum: the sources overlap by reaction and
+    /// the data records each as a maximum, so adding them would stack ceilings
+    /// that do not stack in game.
+    var reactionBaseDamageBonus: Double = 0
+    /// How much enemy resistance this team strips, per element, already scaled
+    /// by each source's uptime.
+    ///
+    /// The strongest source per element rather than the sum: two sources of
+    /// resistance reduction on the same element do not stack in game.
+    var resistanceShred: [GenshinElement: Double] = [:]
+
+    /// The floor's resistance to an element, after this team has worked on it.
+    func resistance(_ base: Double, to element: GenshinElement) -> Double {
+        base - (resistanceShred[element] ?? 0)
+    }
 
     var elementSet: Set<GenshinElement> { Set(elements) }
 
@@ -56,7 +75,11 @@ struct AbyssTeamContext: Sendable {
             hexerei: hexereiCount >= (library.teamBonus?.hexerei.requiredCount ?? .max),
             hasHeal: heal,
             hasShield: shield,
-            stellarJubilee: !ids.intersection(library.stellarJubileeIDs).isEmpty)
+            stellarJubilee: !ids.intersection(library.stellarJubileeIDs).isEmpty,
+            reactionBaseDamageBonus: members
+                .compactMap { library.damageConstants.reactionBaseDamageBonus[$0.id.lowercased()] }
+                .max() ?? 0,
+            resistanceShred: shred(elements: Set(elements), ids: ids, library: library))
     }
 
     // MARK: - Sustain
@@ -94,6 +117,31 @@ struct AbyssTeamContext: Sendable {
         return regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)) != nil
     }
 
+    /// What the team strips off the enemy's resistance, by element.
+    private static func shred(elements: Set<GenshinElement>,
+                              ids: Set<String>,
+                              library: AbyssDataLibrary) -> [GenshinElement: Double] {
+        // Anemo and Geo are not swirled, so they are never the element a
+        // Viridescent Venerer wearer strips.
+        let swirlable = elements.subtracting([.anemo, .geo])
+        var found: [GenshinElement: Double] = [:]
+
+        for source in library.tuning?.resistanceShred ?? [] {
+            if let required = source.characterId, !ids.contains(required) { continue }
+            if let required = source.requiresElement, !elements.contains(required) { continue }
+            let value = source.value * source.uptime
+            let targets: [GenshinElement] = source.elements.flatMap { name -> [GenshinElement] in
+                name == AbyssTuning.ResistanceShred.swirledToken
+                    ? Array(swirlable)
+                    : GenshinElement(rawValue: name).map { [$0] } ?? []
+            }
+            for element in targets {
+                found[element] = max(found[element] ?? 0, value)
+            }
+        }
+        return found
+    }
+
     // MARK: - Reactions
 
     /// Reactions this team can actually trigger, used to decide which floor
@@ -128,13 +176,16 @@ struct AbyssTeamContext: Sendable {
     /// The transformative reactions this team can trigger, which is a different
     /// question from `enabledReactions`.
     ///
-    /// Two differences, both deliberate. The Lunar upgrades are not applied
-    /// here: `damage-formula.json` prices Lunar and Stellar variants in their
-    /// own block with their own aggregation rules, so a Moonsign team's Bloom is
-    /// still counted as a Bloom rather than dropped for being called something
-    /// else. And the two-step reactions are derived: Hyperbloom and Burgeon need
-    /// a Bloom core to already exist, so they want three elements rather than
-    /// two.
+    /// The Lunar and Stellar variants are *added* here, not substituted. They
+    /// have their own coefficients and their own EM curve in
+    /// `damage-formula.json`, and which of the pair is worth more depends on the
+    /// floor — this rotation's floor 12 triples Superconduct, so a Stellar
+    /// Jubilee team's plain Superconduct can beat its Stellar-Conduct. Offering
+    /// both and letting the pricing choose is the only way to get that right;
+    /// substituting would have thrown the answer away before it was asked.
+    ///
+    /// The two-step reactions are derived: Hyperbloom and Burgeon need a Bloom
+    /// core to already exist, so they want three elements rather than two.
     ///
     /// Shatter is absent: it needs a frozen target and a blunt hit, neither of
     /// which the element list can tell us.
@@ -154,6 +205,18 @@ struct AbyssTeamContext: Sendable {
         }
         if elements.contains(.anemo), !elements.isDisjoint(with: [.pyro, .hydro, .electro, .cryo]) {
             found.insert(.swirl)
+        }
+
+        // Stellar Glimmer needs a character who upgrades the reaction; Lunar
+        // needs a Moonsign.
+        if stellarJubilee {
+            if elements.isSuperset(of: [.electro, .cryo]) { found.insert(.stellarConduct) }
+            if elements.isSuperset(of: [.anemo, .cryo]) { found.insert(.stellarSwirl) }
+        }
+        if moonsignLevel >= 1 {
+            if elements.isSuperset(of: [.electro, .hydro]) { found.insert(.lunarCharged) }
+            if elements.isSuperset(of: [.dendro, .hydro]) { found.insert(.lunarBloom) }
+            if elements.isSuperset(of: [.geo, .hydro]) { found.insert(.lunarCrystallize) }
         }
         return found
     }

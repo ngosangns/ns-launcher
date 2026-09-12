@@ -25,7 +25,7 @@ final class AbyssBuildAssemblerTests: XCTestCase {
         return assembler.statsWithoutSets(
             character: character, profile: profile,
             weapon: weaponID.flatMap { library.weaponsByID[$0] },
-            role: .mainDPS)
+            role: .mainDPS, mainStats: .damage(for: character))
     }
 
     // MARK: - Weapon passives
@@ -68,7 +68,8 @@ final class AbyssBuildAssemblerTests: XCTestCase {
 
         for weapon in library.weapons where weapon.type == character.weaponType {
             let stats = assembler.statsWithoutSets(character: character, profile: profile,
-                                                   weapon: weapon, role: .mainDPS)
+                                                   weapon: weapon, role: .mainDPS,
+                                                   mainStats: .damage(for: character))
             XCTAssertLessThan(stats.dmgAll, 3, "\(weapon.id): a damage instance leaked into dmgAll")
             XCTAssertLessThan(stats.atkPercent, 5, "\(weapon.id): a damage instance leaked into ATK%")
         }
@@ -250,7 +251,8 @@ final class AbyssBuildAssemblerTests: XCTestCase {
         let sheets = members.map { member -> AbyssStats in
             guard let profile = library.profilesByCharacterID[member.id] else { return AbyssStats() }
             return assembler.stats(character: member, profile: profile, weapon: nil, sets: [petra],
-                                   role: .mainDPS, diagnostics: &diagnostics)
+                                   role: .mainDPS, mainStats: .damage(for: member),
+                                   diagnostics: &diagnostics)
         }
 
         let one = scorer.partyBuffs(stats: [sheets[0]], setIDs: [[petra.id]], team: context)

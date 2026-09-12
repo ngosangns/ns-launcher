@@ -150,10 +150,11 @@ final class AbyssViewModel: ObservableObject {
         case failedOther(String)
     }
 
-    /// The player's own HoYoLAB login — pasted in by hand, kept in the
-    /// Keychain (see `AbyssHoyolabCredentialStore`), never sent anywhere but
-    /// HoYoLAB's own API. Loaded once at init; `saveHoyolabCredentials()`
-    /// writes back only when the player actually uses them.
+    /// The player's own HoYoLAB login — pasted in by hand, kept in
+    /// `abyss-hoyolab.json` (see `AbyssHoyolabCredentialStore`), never sent
+    /// anywhere but HoYoLAB's own API. Loaded once at init;
+    /// `saveHoyolabCredentials()` writes back only when the player actually
+    /// uses them.
     @Published var hoyolabLtuid: String = ""
     @Published var hoyolabLtoken: String = ""
     @Published private(set) var isImportingFullRoster = false
@@ -750,6 +751,14 @@ final class AbyssViewModel: ObservableObject {
     func character(_ id: String) -> AbyssCharacter? { library?.charactersByID[id] }
     func weapon(_ id: String) -> AbyssWeapon? { library?.weaponsByID[id] }
     func artifactSet(_ id: String) -> AbyssArtifactSet? { library?.artifactSetsByID[id] }
+
+    /// How the model prices a set whose 4-piece effect was too conditional to
+    /// read off the data, or nil when it reads the data's own numbers. Surfaced
+    /// so the tab can say which of the two it did — the estimate is the most
+    /// subjective input in the whole model.
+    func setEffectApproximation(_ id: String) -> AbyssTuning.SetEffectApproximation? {
+        library?.tuning?.setEffectApprox.first { $0.setId == id }
+    }
     func characterIconURL(_ id: String) -> URL? { library?.icons.characterIconURL(id) }
     func weaponIconURL(_ id: String) -> URL? { library?.icons.weaponIconURL(id) }
 

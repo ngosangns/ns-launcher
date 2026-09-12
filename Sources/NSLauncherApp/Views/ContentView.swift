@@ -92,7 +92,7 @@ struct ContentView: View {
     }
 
     private var tabSwitcher: some View {
-        HStack(spacing: 8) {
+        TabGroup {
             SidebarTabButton(title: text.homeTitle, systemImage: "house.fill", isSelected: activeTab == .home) {
                 activeTab = .home
             }

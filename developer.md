@@ -132,7 +132,7 @@ stability risks. Runtime behavior depends on the installed Wine build.
 | Abyss roster         | `~/Library/Application Support/NSLauncher/abyss-roster.json`     |
 | Abyss showcase cache | `~/Library/Application Support/NSLauncher/abyss-showcase.json`   |
 | Abyss cycle override | `~/Library/Application Support/NSLauncher/abyss-cycles/*.json`   |
-| HoYoLAB credentials  | macOS Keychain, service `com.ns-launcher.abyss.hoyolab` (not a file) |
+| HoYoLAB credentials  | `~/Library/Application Support/NSLauncher/abyss-hoyolab.json` (mode 0600) |
 | Managed Wine         | `~/Library/Application Support/NSLauncher/wine`                  |
 | Game logs            | `~/Library/Logs/NSLauncher`                                      |
 | Download/cache data  | `~/Library/Caches/NSLauncher`                                    |
@@ -195,12 +195,189 @@ floor 12: anything that clears it clears the floors below, so ranking teams for
 are not part of the roster at all — sets are farmable, so the useful answer is
 the best set that exists, and the search always covers all 46 five-star sets.
 
+A floor is planned as the two fights it actually is. Every chamber is cleared
+twice, by two teams that cannot share a character, and the rotation can pay the
+two halves for different things — this one does: floor 12's first half gives
++200% Superconduct and +75% Stellar-Conduct, its second +75% to Pyro normal
+attacks. Read as one sentence, which is how the model read it, every team
+collected both bonuses and neither ranking meant anything. So `AbyssTextParser`
+slices a disorder at its "Nửa 1"/"Nửa 2" markers (a text that merely mentions
+halves — floor 11 says a bonus applies "không tách theo nửa" — is not a split),
+`AbyssFloorContext` takes a `half` and reads only that half's enemies, which the
+data records as the chamber's two waves, and the optimiser enumerates each half
+separately and then pairs the two rankings.
+
+Pairing is the part worth knowing about. The two halves rank the same
+characters, so their favourite teams want the same people and the answer is
+never "each half's own best": `AbyssOptimizer.pair` finds the best *legal* pair
+by branch and bound, then the best pair among the teams no higher-ranked plan
+used, so five plans are five different answers rather than one shuffled five
+ways. A plan's score is the harmonic mean of its two halves — both have to be
+cleared inside one timer, time goes as 1/damage, so ranking on the harmonic mean
+ranks on how long the floor takes; adding the two would let a crushing first
+half pay for a second half that cannot clear. That treats the two halves as
+holding similar enemy HP, which the data does not record, and it is what makes
+two very different score scales comparable at all. How deep the two rankings go
+matters more than it looks: at 400 teams per half both lists were drawn from
+about twelve characters and the search found exactly one legal plan, which is
+why `pairingCandidates` is in the thousands.
+
+`AbyssOptimizerRequest.splitsHalves` turns this off. The golden fixture runs
+unsplit — its subject is the damage model, and splitting changes which teams come
+back — and so does any test whose subject is how a single team is scored rather
+than how two are chosen.
+
 Data lives in `Sources/NSLauncherApp/Resources/Abyss/` (bundled, see that
 folder's README); the Markdown it was transcribed from and the JSON Schemas stay
-in `toi-uu-doi-hinh/`. `toi-uu-doi-hinh/optimizer/` holds the Python reference
-implementation the Swift engine was ported from — it reads the same data and the
-same `tuning.json`, and it generates `Tests/NSLauncherAppTests/Fixtures/abyss-golden.json`,
-which pins the Swift engine to the Python's numbers.
+in `toi-uu-doi-hinh/`.
+
+The engine began as a port of a Python implementation that lived in
+`toi-uu-doi-hinh/optimizer/`. That Python is **deleted** as of 2026-09-09: it had
+stopped being a second opinion and become a second thing to keep in step — every
+model change had to be made twice, and the half-splitting above is the first
+change that was simply not worth porting back. What it leaves behind is
+`Tests/NSLauncherAppTests/Fixtures/abyss-golden.json`, which it generated and
+which the Swift engine matched to the last digit. The fixture stays; it is now
+written by `Tests/NSLauncherAppTests/AbyssGoldenDump.swift` — the same values,
+from the engine itself — so it went from "what another implementation computes"
+to "what this engine computed the day someone checked it". That is a regression
+baseline, and regenerating it is a decision rather than a repair:
+
+```bash
+ABYSS_DUMP_GOLDEN=Tests/NSLauncherAppTests/Fixtures/abyss-golden.json \
+    swift test --filter testRegenerateGoldenFixture
+```
+
+Scores are **damage per second**, not damage per rotation: the engine
+accumulates a rotation's worth of damage — that is the unit the multipliers are
+written in, `normalCombosPerRotation` attacks, a burst once — and divides by
+`tuning.rotationSeconds` on the way out. Be clear about what that did and did
+not do: every team's rotation is assumed to take the same 20 seconds, so the
+division is by a constant and **reordered nothing**; regenerating the fixture
+after the change moved all 325 scores by exactly ÷20 and left every team, every
+stat sheet and every floor untouched. What it bought is a number that means
+something, and a plan score (the harmonic mean of two halves) that is now
+literally "how long this floor takes". Making a shorter rotation count as the
+strength it is would need per-character cast and cooldown data the model does
+not have.
+
+Enemy resistance, enemy DEF and enemy element are all priced, but they came from
+different places and only two of them came from data. DEF is the standard level
+formula against the floor's mean monster level (`AbyssDamageMath.defMultiplier`,
+with `defReduction`/`defIgnore` at zero — nothing in the model shreds DEF).
+Resistance is `resMultiplier` on whatever the floor context holds. The floor
+context, though, used to hold only what a monster's `resistanceNotes` prose
+said, and **floor 12 has no such notes at all this rotation** — every monster is
+`null` or "chưa xác nhận", so every element was priced at the 10% baseline and
+bringing Cryo against a Cryo Abyss Mage cost a team exactly nothing. The
+`elements` field was sitting there unread. It is now read: an enemy is taken to
+resist the element it attacks or shields with at
+`tuning.enemyOwnElementResistance`, for elements its own note did not already
+price. That number is an inference and is labelled as one — 0.30 is anchored on
+the only two monsters in the whole file whose own-element resistance was
+transcribed, both of which say +20~30% over the baseline — and setting it to
+0.10 switches the rule off. It moved floor 10's ranking completely, left floor
+11's and floor 12's top ten in the same order, and took about 22% off every
+floor-12 score.
+
+Who gets to audition is decided in a team, not alone. The pool trim has to cut
+somebody — C(n,4) grows fast enough that keeping a whole account is pure cost —
+but it used to rank on a *solo* score, and a character alone triggers no
+reaction, gets no resonance, receives no party buff and collects no floor bonus.
+That is most of the reasons a support is worth a slot, invisible to the thing
+deciding whether the support is looked at. On a real 49-character roster it cut
+Bennett. Each candidate now auditions alongside four fixed anchors of four
+different elements, scored against each fight being planned.
+
+**The parser is where the quiet damage lives.** A misread row does not crash; it
+lands in the profile as a multiplier of ATK and is wrong forever. Five families
+have been found and each is now pinned by a test in `AbyssTextParserTests`:
+
+- A **stat bonus** is not a hit. The non-damage filter listed ATK/DEF/HP/EM Bonus
+  and not *DMG* Bonus, so "DMG Bonus (Omen) 60%" was 60% of Mona's ATK, and
+  Lauma's burst — whose only two rows are Bloom bonuses of 499% and 400% — was
+  nine times her ATK of damage that does not exist (-29% once it stopped).
+- A **rate** is not a hit: per point, per stack, per 100 EM. Nine such rows, worth
+  up to -6% each.
+- A **percentage of another hit** is not a hit ("% ST đòn thường").
+- **Alternatives are not additive.** Lisa's Hold DMG at 0 and at 3 stacks were
+  summed for 14.5× ATK on a cast worth 8.8×; Hu Tao's burst was scored above
+  *and* below 50% HP. Narrowly scoped: Tighnari's two waves and Columbina's three
+  reactions are additive and keep their sum.
+- **The basis is sometimes only in the label.** "Equitable Judgment (%MaxHP)"
+  over a bare "14.47%" read as ATK scaling was Neuvillette's damage divided by
+  about twenty-seven; reading the label more than doubled him (+140%), Sigewinne
+  +93%, Furina +42%, and moved Gorou and Yun Jin onto the DEF they really scale
+  on. Tight on purpose: Hu Tao's charged attack *costs* HP and must not be read
+  as scaling on it.
+
+Three mechanics the model did without for a long time, each a channel that
+existed with nothing feeding it. All three are data now, in `tuning.json` and
+`damage-formula.json`, not constants in code.
+
+**Enemy resistance reduction** (`tuning.resistanceShred`). `resMultiplier` has
+always had a negative branch — below zero the resistance is only halved, so
+stripping keeps paying where a DMG bonus saturates — and nothing could push it
+there. That is most of what Kazuha, Venti, Sucrose, Faruzan and Shenhe are, and
+without it they were close to invisible: none of them appeared in a single
+recommended team on a 49-character account. Four sources, each with its note and
+its uptime: Viridescent Venerer and Deepwood Memories (conditioned on the team
+having the element, because at team-context time the model does not know who
+wears what, and in practice the Anemo support wears VV), Faruzan's burst and
+Shenhe's burst (numbers that match their own scaling rows). The strongest source
+per element, not the sum — two shreds on one element do not stack. Deepwood's
+`setEffectApprox` %DMG went to zero and Viridescent Venerer's dropped, because
+that stand-in was the shred and it is now real. Turning it on put an Anemo
+character in every plan and Kazuha at 22% of a team's damage.
+
+**Lunar and Stellar reactions** (`damage-formula.json`'s `lunarStellar`). A whole
+block nothing read: five coefficients, a flatter EM curve (`6·EM/(EM+2000)`
+against the transformative `16·EM/(EM+2000)`, so the same EM is worth far less to
+them), and ten characters who raise a reaction's base damage by being present.
+A team that qualifies now unlocks the Lunar/Stellar variant *alongside* the plain
+one rather than instead of it, and the pricing picks whichever the floor pays
+more for — this rotation triples Superconduct, so a Stellar Jubilee team's plain
+Superconduct can still win. Stellar-Conduct is a range in the data (its
+coefficient climbs with the Cryo/Electro hits before it) and sits on that range
+at `tuning.stellarConductRamp`. The `indirect` branch — one reaction split across
+four contributors weighted 0.6/0.3/0.05/0.05 — is still not modelled; it needs
+per-character CRIT the transformative path does not carry, and the `direct`
+coefficients are both the honest reading and the larger of the two.
+
+**Charged attacks the vocabulary cannot see** (`tuning.chargedAttackLabels`). The
+parser recognises "trọng kích", "charged", "aimed"; the data sometimes names the
+attack after the skill instead, and those rows matched no bucket at all and were
+dropped. Ganyu lost every point of Frostflake Arrow, Tighnari his Wreath Arrow,
+Neuvillette his Equitable Judgment. Listed per character rather than by a wider
+regex, because whether "Frostflake Arrow" is a charged attack or a normal one is
+knowledge about the game and not a rule about words. Worth +15% to Ganyu, +24% to
+Itto, +28% to Neuvillette, +35% to Lyney. Whatever still falls through is
+reported in `AbyssParseDiagnostics.normalAttackRowsUnclassified`, so the table
+getting longer is visible progress rather than an invisible gap.
+
+A floor buff goes where its text says it goes. A clause naming a reaction —
+"Sát thương Superconduct +200%" — multiplies that reaction; a clause naming an
+element or normal attacks multiplies direct damage. The two used to share one
+route: `floorBonus` added *any* buff to every hit the team made, gated only on
+the team being able to trigger the named reaction. On this rotation's floor 12
+that was worth +85% to a team's score for a reaction worth 5% of its damage, and
+it picked the whole first-half team. `AbyssScorer.transformative` now takes the
+floor's buffs into its pricing, which also fixes the second half of the same bug:
+ranking reactions on the bare coefficient priced Overloaded (2.75) over a
+Superconduct (1.5) the floor was tripling, so the team was chosen for a reaction
+it was then not paid for. Vaporize and Melt clauses reach
+`amplifyingMultiplier`'s `reactionBonus`, a parameter that had existed unused
+since the port. A clause naming a reaction the model prices nowhere — the Stellar
+and Lunar variants — reaches nothing and is reported in
+`AbyssParseDiagnostics.floorBuffsNotPriced`, because the alternative is what used
+to happen and silence was the worse half of it.
+
+Pairing two halves requires disjoint **weapons** as well as disjoint characters.
+Both halves are fought in one run and a weapon is one item; the first version
+checked characters only, and all five plans it produced put the same Wolf's
+Gravestone in both teams. Nothing re-arms a team to dodge a clash — the
+alternative, re-picking the second half's weapons after the pair was chosen,
+would rank pairs on scores that then change underneath the ranking.
 
 The search runs in two passes. The first ranks characters and gear on neutral
 ground — level 95 enemies, baseline resistance, no team — because it has to
@@ -265,26 +442,71 @@ value out of the character's own scaling row by label) and only the reading is
 written down; a label that drifts is reported in `AbyssParseDiagnostics` and
 fails a test rather than quietly contributing nothing.
 
-That second pass has **no counterpart in the Python**, which is why the golden
-fixture runs with `refinesArtifacts: false`. Do not "fix" that flag to make the
-fixture cover more: with it on, the fixture would stop pinning the port.
+The golden fixture runs with `refinesArtifacts: false`. Do not "fix" that flag
+to make the fixture cover more: this pass re-picks gear per floor and per team,
+so with it on the fixture would move for reasons that have nothing to do with
+the damage model it exists to pin.
 
 Adding it also forced a correction in `AbyssScorer.partyBuffs`: an artifact
 set's party-wide buff is now counted once no matter how many members wear it.
-The reference implementation sums them, which is invisible while gear is chosen
-on solo damage — a party buff is then worth no more than a selfish one — and
-becomes the highest-scoring build the moment anything optimises the *team*
-score. The first thing the artifact pass recommended was Tenacity of the
-Millelith on three characters for a fictional +60% party ATK. The golden fixture
-is unchanged by the fix, so the two implementations still agree on every team it
-pins; a future rotation where a top team does share such a set would diverge,
-and the Python should be corrected then. Buffs from weapons and talents are
+It used to sum them, which is invisible while gear is chosen on solo damage — a
+party buff is then worth no more than a selfish one — and becomes the
+highest-scoring build the moment anything optimises the *team* score. The first
+thing the artifact pass recommended was Tenacity of the Millelith on three
+characters for a fictional +60% party ATK. The golden fixture is unchanged by the
+fix, because no team it pins happens to share such a set. Buffs from weapons and talents are
 still summed, so two different weapons granting the same buff still
 double-count — rarer, and it needs source tracking `AbyssStats` does not carry.
 
 Most of the gain the tab reports for the artifact pass is not exotic: it is the
 supports being handed sets that buff the party, which the neutral first pass
 cannot value because it scores every character alone.
+
+The set named on a member's row opens a popover on hover
+(`AbyssSetEffectPopover.swift`) carrying the game's effect text and, under it,
+what the model made of that text — because the two often differ. Three cases,
+decided by `AbyssSetPricing`: the data's own parsed bonuses went in; the effect
+was too conditional to read and `tuning.json` credits a hand-written %DMG
+estimate, which the popover labels as an estimate and quotes the reasoning for;
+or nothing was priced and the set was ranked on its 2-piece alone, which the
+popover says outright. That last line is the point of the whole thing — it is a
+recommendation admitting what it did not measure. Only effects actually in force
+are drawn: one set is a 4-piece and shows both bonuses, two sets are 2+2 and
+show one each.
+
+Main stats are searched, not ruled. Sands, goblet and circlet used to come from
+a fixed rule — scaling stat, own element, CRIT DMG — which was defensible for a
+damage dealer and wrong for anyone whose damage is a reaction: transformative
+damage ignores ATK, DMG bonus and CRIT entirely and scales on Elemental Mastery
+alone, so a Bloom carry was handed a goblet and a circlet worth nothing to the
+damage the model was crediting them with. `AbyssBuildAssembler.mainStatCandidates`
+now says what each slot may hold and the search picks. It runs in both passes,
+and it has to: a character scored *alone* triggers no reaction at all, so
+Elemental Mastery is worth exactly zero in gear selection and only the team pass
+can discover the build. It does — Nahida in a Bloom team comes back with EM in
+all three slots and ~836 EM, which the old rule could not express anywhere.
+
+Two slots stay pinned, and not out of laziness: the score is damage and has no
+term for a heal landing or a burst being up, so Energy Recharge and Healing Bonus
+are worth nothing to it. A free search sells both for a few percent and calls it
+an improvement — a better number and a worse team. So a healer keeps the Healing
+Bonus circlet and a support or shielder the Energy Recharge sands. Model those
+two objectives properly and the constraints go away.
+
+Weapon, sets and main stats are not separable — a CRIT Rate circlet wins on a
+weapon that has none and loses on one that does, and a set that hands out CRIT
+Rate turns that circlet into a wasted slot — so gear selection walks them in
+rounds and keeps the best complete build any round produced. The opening ranking
+compares weapons with the three slots *empty*, which is the one comparison the
+slots cannot bias, and each revision asks the slots again across the whole weapon
+shortlist rather than just the winner. That last detail is worth keeping: without
+it, coordinate ascent parked seven characters below where the old fixed rule had
+them. With it, the switch moved 81 of 125 characters up and 2 down (both under
+0.7%), median +5.1%.
+
+Substats are still a rule (`tuning.json`'s `substatPriority`, by role). They are
+a budget split rather than a discrete choice, so the same argument does not
+carry over unchanged.
 
 ### Roster grid sorting
 
@@ -392,17 +614,31 @@ does not touch the other's data, and both follow the same "only ever adds,
 never removes what the player ticked by hand" rule the original Showcase
 import established.
 
-The credentials themselves live in the macOS Keychain
-(`AbyssHoyolabCredentialStore`), not in `settings.json` — that file is plain
-JSON already used for several preferences, and a live login session is a
-different kind of thing that belongs in the one place macOS actually protects
-secrets. They are saved only when the player actually presses import, not on
-every keystroke, and reload automatically on the next launch.
-`AbyssHoyolabCredentialStoreTests` exercises the *real* Keychain rather than a
-double — unlike everything else this app persists, mocking the OS keychain API
-would not have caught anything the API itself does not already guarantee, and
-a probe confirmed local, ad-hoc-signed builds read/write
-`kSecClassGenericPassword` items with no permission prompt.
+The credentials themselves live in `abyss-hoyolab.json`
+(`AbyssHoyolabCredentialStore`), alongside the roster and the showcase cache.
+They are saved only when the player actually presses import, not on every
+keystroke, and reload automatically on the next launch.
+
+They were a Keychain item first, and that did not survive contact with how this
+app is built. The probe behind the original decision tested one binary against
+an item that same binary had created, and concluded ad-hoc builds get at
+`kSecClassGenericPassword` with no prompt. What it missed is that the ACL macOS
+puts on a keychain item names the *creating* app by its code identity, and an
+ad-hoc signature's identity is a cdhash that changes on every build. So the
+first launch after any `task install` was a different program as far as the
+Keychain was concerned, reaching for the previous build's secret — and since
+`AbyssViewModel` loads these in `init`, the dialog landed on app launch, before
+the player had touched the Abyss tab. "Always Allow" bought exactly one build's
+peace.
+
+A plain file has no such identity check, which is the point and also the cost:
+this is a live session token that anything running as the player can now read
+without being asked. `save` chmods it to 0600 so it is at least not readable
+from another account on the same Mac, and a test asserts that rather than
+trusting the comment. Nothing migrates the old keychain item — reading it is
+precisely the prompt being removed — so an upgrading player re-pastes once and
+can clear the leftover with
+`security delete-generic-password -s com.ns-launcher.abyss.hoyolab`.
 
 ### Character and weapon portraits
 
@@ -445,12 +681,14 @@ Two things to know before changing the engine:
 - **The golden fixture is a baseline, not an expectation to update.** If a
   change makes `AbyssGoldenValueTests` red, that is the test doing its job: the
   stat-name mapping is a long switch and a misrouted name produces
-  plausible-but-wrong numbers rather than a crash. Regenerate only when the
-  model was deliberately changed, and change the Python at the same time.
-- **Some Python quirks are reproduced on purpose** and are commented where they
-  live (`AbyssTextParser`, `AbyssOptimizer.defaultRole`). Fixing one moves every
-  score, so it has to be done in both implementations together with the fixture
-  regenerated.
+  plausible-but-wrong numbers rather than a crash. Regenerate only when the model
+  was deliberately changed — and then read the diff, because a change meant for
+  one character that moves three hundred numbers is the diff telling you
+  something.
+- **Some inherited quirks are kept on purpose** and are commented where they live
+  (`AbyssTextParser`, `AbyssOptimizer.defaultRole`). Fixing one moves every score
+  and every number in the fixture, so it is a deliberate change with the fixture
+  regenerated, not a drive-by.
 
 Scores are a ranking heuristic, not a damage simulation — no rotation, energy,
 reaction cooldowns or constellations. That caveat is shown in the tab itself,

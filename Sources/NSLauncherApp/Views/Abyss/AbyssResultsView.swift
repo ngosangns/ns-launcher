@@ -67,29 +67,75 @@ struct AbyssResultsView: View {
             }
 
             // The floor's own modifiers, so a surprising ranking can be traced
-            // back to the sentence that caused it.
-            if !report.buffs.isEmpty {
-                VStack(alignment: .leading, spacing: 3) {
-                    ForEach(Array(report.buffs.enumerated()), id: \.offset) { _, buff in
-                        Text("+\(Int((buff.bonus * 100).rounded()))%  ·  \(text.abyssBuffSource(buff.source))  ·  \(buff.raw)")
-                            .font(.system(size: 10, design: .rounded))
-                            .foregroundStyle(LauncherPalette.mist.opacity(0.55))
-                            .lineLimit(2)
-                    }
-                }
-            }
+            // back to the sentence that caused it. On a split floor these are
+            // only the ones both halves share; the rest sit with their half.
+            buffLines(report.buffs, prefix: nil)
 
-            ForEach(Array(report.teams.enumerated()), id: \.element.id) { index, team in
-                teamPanel(rank: index + 1, team: team)
+            if report.plans.isEmpty {
+                ForEach(Array(report.teams.enumerated()), id: \.element.id) { index, team in
+                    teamPanel(title: "#\(index + 1)", team: team)
+                }
+            } else {
+                ForEach(report.halves) { half in
+                    buffLines(half.buffs, prefix: text.abyssHalfTitle(half.half))
+                }
+
+                Label(text.abyssHalfPlanNotice, systemImage: "person.2")
+                    .font(.system(size: 10, design: .rounded))
+                    .foregroundStyle(LauncherPalette.mist.opacity(0.55))
+                    .fixedSize(horizontal: false, vertical: true)
+
+                ForEach(Array(report.plans.enumerated()), id: \.element.id) { index, plan in
+                    planPanel(rank: index + 1, plan: plan)
+                }
             }
         }
     }
 
-    private func teamPanel(rank: Int, team: AbyssTeamResult) -> some View {
+    /// The buff clauses behind a ranking, optionally tagged with the half they
+    /// belong to.
+    @ViewBuilder
+    private func buffLines(_ buffs: [AbyssFloorBuff], prefix: String?) -> some View {
+        if !buffs.isEmpty {
+            VStack(alignment: .leading, spacing: 3) {
+                ForEach(Array(buffs.enumerated()), id: \.offset) { _, buff in
+                    let tag = prefix.map { "\($0)  ·  " } ?? ""
+                    Text("\(tag)+\(Int((buff.bonus * 100).rounded()))%  ·  \(text.abyssBuffSource(buff.source))  ·  \(buff.raw)")
+                        .font(.system(size: 10, design: .rounded))
+                        .foregroundStyle(LauncherPalette.mist.opacity(0.55))
+                        .lineLimit(2)
+                }
+            }
+        }
+    }
+
+    /// One plan: the team for the first half and the team for the second, under
+    /// a single rank because they are chosen together and only work together.
+    private func planPanel(rank: Int, plan: AbyssFloorPlan) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 8) {
+                Text("#\(rank)")
+                    .font(.system(.headline, design: .rounded, weight: .bold))
+                    .foregroundStyle(LauncherPalette.goldHighlight)
+                Spacer()
+                Text(text.abyssScorePerSecond(
+                    Self.scoreFormatter.string(from: NSNumber(value: plan.score)) ?? ""))
+                    .font(.system(.caption, design: .monospaced))
+                    .foregroundStyle(LauncherPalette.mist.opacity(0.7))
+                    .help(text.abyssPlanScoreHint)
+            }
+
+            ForEach(plan.byHalf, id: \.half) { entry in
+                teamPanel(title: text.abyssHalfTitle(entry.half), team: entry.team)
+            }
+        }
+    }
+
+    private func teamPanel(title: String, team: AbyssTeamResult) -> some View {
         OrnamentalPanel(padding: 16, showsMark: false) {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 8) {
-                    Text("#\(rank)")
+                    Text(title)
                         .font(.system(.headline, design: .rounded, weight: .bold))
                         .foregroundStyle(LauncherPalette.goldHighlight)
 
@@ -101,9 +147,11 @@ struct AbyssResultsView: View {
                     }
 
                     Spacer()
-                    Text(Self.scoreFormatter.string(from: NSNumber(value: team.score)) ?? "")
+                    Text(text.abyssScorePerSecond(
+                        Self.scoreFormatter.string(from: NSNumber(value: team.score)) ?? ""))
                         .font(.system(.caption, design: .monospaced))
                         .foregroundStyle(LauncherPalette.mist.opacity(0.7))
+                        .help(text.abyssScoreHint)
                 }
 
                 // Members in damage order rather than team order: the reader
@@ -215,10 +263,8 @@ struct AbyssResultsView: View {
                         .font(.system(size: 9))
                         .foregroundStyle(LauncherPalette.gold.opacity(0.55))
                         .frame(width: 16)
-                    Text(setNames(setIDs))
-                        .font(.system(size: 10, weight: .semibold, design: .rounded))
-                        .foregroundStyle(LauncherPalette.parchment.opacity(0.82))
-                        .lineLimit(1)
+                    AbyssArtifactSetLabel(viewModel: viewModel, text: text,
+                                          title: setNames(setIDs), setIDs: setIDs)
                     if let gain = advice?.gainOverNeutralPick, gain > 0.0005 {
                         Text(text.abyssArtifactGain(gain))
                             .font(.system(size: 9, design: .rounded))

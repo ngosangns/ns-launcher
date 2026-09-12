@@ -1,5 +1,5 @@
 {
-  "_doc": "Hằng số và giả định của thuật toán gợi ý đội hình Trầm Thủy. Đọc bởi CẢ bản Python (toi-uu-doi-hinh/optimizer/) lẫn bản Swift (Services/Abyss/) — sửa ở đây là đổi cả hai. Xem README.md cùng thư mục để biết ý nghĩa từng nhóm.",
+  "_doc": "Hằng số và giả định của thuật toán gợi ý đội hình Trầm Thủy. Đọc bởi engine Swift trong Services/Abyss/. Xem README.md cùng thư mục để biết ý nghĩa từng nhóm.",
   "artifactMainStats": {
     "flat_hp": 4780.0,
     "flat_atk": 311.0,
@@ -79,14 +79,57 @@
   "assumedStacks": 2.5,
   "amplifyingUptime": 0.55,
   "transformativeReactionsPerRotation": 6.0,
+  "resistanceShred": [
+    {
+      "id": "viridescent-venerer",
+      "characterId": null,
+      "requiresElement": "Anemo",
+      "elements": [
+        "swirled"
+      ],
+      "value": 0.4,
+      "uptime": 0.5,
+      "note": "4pc Viridescent Venerer: giảm 40% kháng nguyên tố BỊ CUỐN. Điều kiện ghi là 'đội có Anemo' chứ không phải 'ai đó đang mặc bộ này', vì lúc dựng team context mô hình chưa biết ai mặc gì — và trong thực tế support Anemo luôn mặc VV. uptime 0.5 vì mỗi lần chỉ cuốn được MỘT nguyên tố còn bảng này áp cho mọi nguyên tố đội có thể cuốn."
+    },
+    {
+      "id": "deepwood-memories",
+      "characterId": null,
+      "requiresElement": "Dendro",
+      "elements": [
+        "Dendro"
+      ],
+      "value": 0.3,
+      "uptime": 0.7,
+      "note": "4pc Deepwood Memories: giảm 30% kháng Dendro của địch, buff cả đội. Cùng lối suy luận với VV. Phần %DMG xấp xỉ của bộ này trong setEffectApprox đã hạ xuống tương ứng để không tính hai lần."
+    },
+    {
+      "id": "faruzan",
+      "characterId": "faruzan",
+      "requiresElement": null,
+      "elements": [
+        "Anemo"
+      ],
+      "value": 0.4,
+      "uptime": 0.8,
+      "note": "Burst Faruzan, dòng 'Giảm kháng Anemo địch / buff Anemo DMG đội' = 40% / 20%. Vế 20% đã nằm ở talentPartyBuff (valueIndex 1); đây là vế 40% mà trước giờ KHÔNG được mô hình hoá. uptime 0.8 = Burst 18s / CD 20s."
+    },
+    {
+      "id": "shenhe",
+      "characterId": "shenhe",
+      "requiresElement": null,
+      "elements": [
+        "Cryo"
+      ],
+      "value": 0.15,
+      "uptime": 0.6,
+      "note": "Burst Shenhe, dòng 'Giảm kháng Cryo địch' = 15%, thời lượng 12s. uptime 0.6 ước theo 12s hiệu lực trên CD 20s."
+    }
+  ],
+  "stellarConductRamp": 0.5,
+  "enemyOwnElementResistance": 0.3,
   "noSustainPenalty": 0.8,
   "shieldBreakBonus": 1.1,
   "weaknessExploitBonus": 1.08,
-  "stellarJubileeCharacterIds": [
-    "odette",
-    "sandrone",
-    "traveler-cryo"
-  ],
   "setEffectApprox": [
     {
       "setId": "emblem-of-severed-fate",
@@ -111,8 +154,8 @@
     },
     {
       "setId": "deepwood-memories",
-      "note": "giảm 30% kháng Dendro địch (buff cả đội)",
-      "damageBonus": 0.2,
+      "note": "Giảm 30% kháng Dendro của địch. Toàn bộ giá trị của bộ này là phần hạ kháng, và phần đó nay được mô hình hoá thật ở resistanceShred — nên %DMG xấp xỉ ở đây về 0 để không tính hai lần.",
+      "damageBonus": 0.0,
       "scope": "all",
       "requirement": null
     },
@@ -223,8 +266,8 @@
     },
     {
       "setId": "viridescent-venerer",
-      "note": "Swirl +60%, giảm 40% kháng nguyên tố bị cuốn",
-      "damageBonus": 0.25,
+      "note": "Swirl +60%, Stellar Swirl +20%, và giảm 40% kháng nguyên tố bị cuốn. Phần hạ kháng đã chuyển sang resistanceShred; con số còn lại ở đây chỉ đại diện cho vế tăng sát thương Swirl.",
+      "damageBonus": 0.15,
       "scope": "all",
       "requirement": null
     },
@@ -348,6 +391,10 @@
     "conditionalUptime": "Buff có điều kiện (ghi trong ngoặc ở tên stat) hiếm khi đạt 100% uptime.",
     "assumedStacks": "Số lớp trung bình giả định cho hiệu ứng vũ khí ghi 'per stack'. Đa số cho tối đa 4-5 lớp nhưng ít khi giữ đầy.",
     "amplifyingUptime": "Tỉ lệ đòn thực sự kích hoạt được phản ứng khuếch đại. Phản ứng bị giới hạn bởi Internal Cooldown và thứ tự áp nguyên tố nên không phải đòn nào cũng ăn hệ số Vaporize/Melt.",
+    "resistanceShred": "Giảm kháng nguyên tố của địch — thứ mô hình TRƯỚC ĐÂY hoàn toàn không có, dù resMultiplier đã sẵn nhánh RES âm (RES < 0 chỉ bị chia đôi nên hạ kháng mạnh hơn hẳn cộng %DMG). Không có bảng này thì Kaedehara Kazuha, Venti, Sucrose, Faruzan và Shenhe gần như vô hình: phần lớn giá trị của họ nằm ở chỗ hạ kháng chứ không phải tự gây sát thương. `elements` nhận tên nguyên tố, hoặc token 'swirled' nghĩa là mọi nguyên tố đội có thể cuốn (không tính Anemo/Geo). `requiresElement` = đội phải có nguyên tố đó; `characterId` = đội phải có nhân vật đó. Giá trị của faruzan/shenhe đọc khớp với dòng scaling trong data nhân vật của họ; giá trị của hai bộ thánh di vật là con số ghi trong mô tả bộ. `uptime` là phần chủ quan — xem note từng mục.",
+    "stellarConductRamp": "Hệ số Stellar-Conduct chạy từ stellarConductMin tới stellarConductMax trong damage-formula.json, cộng dần theo số đòn Cryo/Electro ghi nhận trước đó (tối đa 12 đòn). Mô hình không đếm từng đòn nên lấy một điểm cố định trên dải đó: 0 = luôn ở mức thấp nhất, 1 = luôn ở mức cao nhất, 0.5 = giữa dải. Đây là giả định, không phải số liệu game.",
+    "chargedAttackLabels": "Nhãn trọng kích mà từ vựng chung (\"trọng kích\", \"charged\", \"aimed\", \"ngắm bắn\") KHÔNG bắt được, vì data đặt tên riêng của chiêu. Không có bảng này thì dòng đó rơi vào khoảng không: không khớp mẫu combo (\"1-Hit\") nên không phải đòn thường, không khớp mẫu trọng kích nên không phải trọng kích, và bị bỏ im lặng — Ganyu mất TOÀN BỘ Frostflake Arrow, Tighnari mất Wreath Arrow, Neuvillette mất Equitable Judgment. Liệt kê theo từng nhân vật chứ không mở rộng regex, vì phân loại một chiêu là trọng kích hay đòn thường là kiến thức game chứ không phải luật chữ. Dòng nào còn rơi ngoài đều được báo ở AbyssParseDiagnostics.normalAttackRowsUnclassified — bảng này dài ra thì danh sách đó ngắn lại. Đòn nhảy (\"Nhảy\") CỐ Ý không tính: mô hình không giả định rotation nào dùng chúng.",
+    "enemyOwnElementResistance": "Kháng nguyên tố của một con quái ĐỐI VỚI CHÍNH nguyên tố nó dùng để đánh/dựng khiên (trường `elements` trong file quái). Đây là SUY LUẬN, không phải số đọc từ data: schema ghi rõ `elements` là 'nguyên tố tấn công/khiên' chứ không phải kháng, và ở tầng 12 mùa này KHÔNG con quái nào có `resistanceNotes` — tức là nếu không có dòng này thì mọi nguyên tố ở tầng app thật sự tính toán đều nhận đúng mức nền 10%, và việc mang Băng đánh Cryo Abyss Mage không bị trừ điểm chút nào. 0.3 lấy neo từ hai con quái DUY NHẤT trong file có ghi kháng nguyên tố của chính mình: Winged Halberd-Knight (Anemo) 'kháng Anemo +20%' và Juvenile Tree Segment (Geo) 'kháng Dendro/Geo +20~30%' — cộng vào nền 0.1 ra 0.3. Thực tế trải rộng hơn nhiều (Abyss Mage gần như miễn nhiễm khi còn khiên), nên đây là mức thận trọng cho cả dải. Đặt về 0.1 là tắt hẳn quy tắc này. Chỉ áp cho nguyên tố mà `resistanceNotes` của chính con đó CHƯA nói tới, để không đếm hai lần.",
     "noSustainPenalty": "Nhân vào tổng điểm khi đội không có cả heal lẫn khiên.",
     "shieldBreakBonus": "Nhân vào tổng điểm khi đội có đúng nguyên tố phá khiên quái trong tầng.",
     "weaknessExploitBonus": "Nhân vào tổng điểm khi đội có nguyên tố mà quái bị âm kháng.",
@@ -357,6 +404,72 @@
     "chargedAttacksPerRotation": "Số đòn nặng người đứng sân tung ra trong 1 rotation. Ít hơn hẳn combo đòn thường: đòn nặng tốn thể lực, mất khoảng 1 giây, và đa số nhân vật chỉ dùng để phá khiên hoặc kích hoạt hiệu ứng. Trước khi có hằng số này, HitCategory.charged không bao giờ xuất hiện trong profile nhân vật nào — nghĩa là mọi bonus 'Charged Attack DMG' (bloodstained-chivalry 4pc +50%, wanderers-troupe 4pc +35%, setEffectApprox long-nights-oath +26%, và nửa 'charged' của 5 bộ 'Normal/Charged Attack DMG') đều nhân với con số không.",
     "transformativeReactionsPerRotation": "Số lần phản ứng transformative (Overloaded, Superconduct, Bloom, Hyperbloom, Burgeon, Electro-Charged, Burning, Swirl) nổ ra trong 1 rotation. Đây là con số CHỦ QUAN NHẤT trong file này: sát thương transformative độc lập hoàn toàn với ATK/DMG Bonus/CRIT/DEF địch — chỉ phụ thuộc cấp và EM người kích hoạt — nên chính tần suất, chứ không phải công thức, quyết định đội phản ứng xếp hạng ở đâu. 6.0 là mức thận trọng: đội Hyperbloom thật nổ nhiều hơn thế, còn đội Pyro-Electro bị ICD chặn thì ít hơn, và mô hình dùng chung một con số cho mọi loại. Chỉ tính MỘT phản ứng mạnh nhất mà đội mở ra, không cộng dồn mọi phản ứng: một rotation chỉ có ngần ấy lần áp nguyên tố và chúng tranh nhau cùng một aura."
   },
+  "stellarJubileeCharacterIds": [
+    "odette",
+    "sandrone",
+    "traveler-cryo"
+  ],
+  "chargedAttackLabels": [
+    {
+      "characterId": "ganyu",
+      "labels": [
+        "Frostflake Arrow",
+        "Frostflake Bloom"
+      ],
+      "note": "Mũi tên sạc đầy của Ganyu và vụ nổ của nó. Cả bộ damage của cô nằm ở đây; không có dòng này thì trọng kích của Ganyu bằng 0."
+    },
+    {
+      "characterId": "tighnari",
+      "labels": [
+        "Wreath Arrow",
+        "Clusterbloom Arrow"
+      ],
+      "note": "Wreath Arrow là mũi sạc đầy, Clusterbloom là các mũi con nó sinh ra."
+    },
+    {
+      "characterId": "neuvillette",
+      "labels": [
+        "Equitable Judgment"
+      ],
+      "note": "Chùm tia trọng kích scale theo Max HP — nguồn sát thương chính của Neuvillette."
+    },
+    {
+      "characterId": "yelan",
+      "labels": [
+        "Breakthrough Barb"
+      ],
+      "note": "Trọng kích được cường hoá sau khi tích đủ Breakthrough."
+    },
+    {
+      "characterId": "lyney",
+      "labels": [
+        "Prop Arrow"
+      ],
+      "note": "Mũi tên sạc đầy tiêu HP của Lyney. KHÔNG gồm Pyrotechnic Strike (mũ tự bắn, cơ chế khác)."
+    },
+    {
+      "characterId": "arataki-itto",
+      "labels": [
+        "Kesagiri",
+        "Saichimonji Slash"
+      ],
+      "note": "Chuỗi trọng kích của Itto: Kesagiri liên hoàn, Kesagiri đòn cuối và Saichimonji Slash."
+    },
+    {
+      "characterId": "sigewinne",
+      "labels": [
+        "Mini-Stration Bubble"
+      ],
+      "note": "Bong bóng trọng kích scale theo Max HP."
+    },
+    {
+      "characterId": "yoimiya",
+      "labels": [
+        "Kindling Arrow"
+      ],
+      "note": "Mũi ngắm bắn của Yoimiya."
+    }
+  ],
   "talentPartyBuff": [
     {
       "characterId": "bennett",

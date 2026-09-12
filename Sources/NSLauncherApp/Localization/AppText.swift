@@ -761,6 +761,97 @@ struct AppText {
         }
     }
 
+    /// Which half of a floor a team is for.
+    ///
+    /// Not a decoration: a floor is two fights, and the teams named here are the
+    /// two teams the player actually has to build.
+    func abyssHalfTitle(_ half: Int) -> String {
+        half == 1
+            ? localized(en: "First half", vi: "Nửa trước")
+            : localized(en: "Second half", vi: "Nửa sau")
+    }
+
+    var abyssHalfPlanNotice: String {
+        localized(en: "Floor 12 is two fights. Each plan is a team for each half, "
+                      + "with nobody in both.",
+                  vi: "Tầng 12 là hai lượt đánh. Mỗi phương án gồm một đội cho mỗi nửa, "
+                      + "không ai đứng cả hai.")
+    }
+
+    /// Why a plan's score is not the two team scores added up.
+    var abyssPlanScoreHint: String {
+        localized(en: "Both halves have to be cleared in one timer, so a plan is ranked on how "
+                      + "long it takes, not on how much damage it does — the half you are slow "
+                      + "at is the half that costs the star.",
+                  vi: "Phải qua cả hai nửa trong cùng một lượt đếm giờ, nên phương án được xếp "
+                      + "theo thời gian chứ không theo sát thương — nửa nào đánh chậm mới là "
+                      + "nửa làm mất sao.")
+    }
+
+    /// The score, with its unit. Damage per second under the model's
+    /// assumptions — not a figure to compare against a damage meter in game.
+    func abyssScorePerSecond(_ formatted: String) -> String { "\(formatted)/s" }
+
+    var abyssScoreHint: String {
+        localized(en: "Modelled damage per second: one rotation's damage over the rotation's "
+                      + "assumed length. A ranking heuristic, not a damage simulation.",
+                  vi: "Sát thương mỗi giây theo mô hình: sát thương một vòng rotation chia cho "
+                      + "độ dài rotation giả định. Đây là thang xếp hạng, không phải mô phỏng "
+                      + "sát thương thật.")
+    }
+
+    // MARK: - Artifact set effects
+
+    func abyssSetPieces(_ count: Int) -> String {
+        localized(en: "\(count)-piece", vi: "\(count) món")
+    }
+
+    /// What the engine took from an effect, as opposed to what the game says it
+    /// does. The two are not always the same, which is the whole reason this is
+    /// shown next to the effect text.
+    func abyssSetModelled(_ value: String) -> String {
+        localized(en: "Model applies \(value)", vi: "Mô hình tính \(value)")
+    }
+
+    func abyssSetApproximateBonus(_ bonus: Double, scope: String) -> String {
+        let percent = Int((bonus * 100).rounded())
+        return localized(en: "≈ +\(percent)% \(scope) DMG", vi: "≈ +\(percent)% ST \(scope)")
+    }
+
+    /// A 4-piece the model does not price at all. Better said than left to look
+    /// like the set was judged on its full strength.
+    var abyssSetNotModelled: String {
+        localized(en: "Not priced by the model — this set was ranked on its 2-piece alone",
+                  vi: "Mô hình chưa tính hiệu ứng này — bộ được xếp hạng chỉ nhờ hiệu ứng 2 món")
+    }
+
+    var abyssSetEstimated: String {
+        localized(en: "Hand-estimated:", vi: "Ước lượng thủ công:")
+    }
+
+    var abyssSetPartyWide: String {
+        localized(en: "whole party", vi: "cả đội")
+    }
+
+    func abyssSetScope(_ scope: AbyssTuning.HitCategoryScope) -> String {
+        switch scope {
+        case .all: return localized(en: "all", vi: "mọi loại")
+        case .normal: return localized(en: "normal attack", vi: "đòn thường")
+        case .charged: return localized(en: "charged attack", vi: "đòn nặng")
+        case .skill: return localized(en: "elemental skill", vi: "kỹ năng")
+        case .burst: return localized(en: "elemental burst", vi: "nộ")
+        }
+    }
+
+    func abyssSetRequirement(_ requirement: AbyssTuning.SetEffectApproximation.Requirement) -> String {
+        switch requirement {
+        case .natlan: return localized(en: "needs a Natlan character", vi: "cần nhân vật Natlan")
+        case .moonsign: return localized(en: "needs a Moonsign character", vi: "cần nhân vật Nguyệt Triệu")
+        case .stellar: return localized(en: "needs a Stellar Glimmer element",
+                                        vi: "cần nguyên tố phản ứng Stellar")
+        }
+    }
+
     var abyssOnFieldLabel: String { localized(en: "on-field", vi: "đứng sân") }
     var abyssDamageShare: String { localized(en: "of team damage", vi: "sát thương đội") }
 
@@ -939,10 +1030,10 @@ struct AppText {
         localized(
             en: "Every character you own, not just 8 — but needs your own HoYoLAB session "
                 + "(hoyolab.com → cookies → ltuid_v2/ltoken_v2) and \"Character Details\" turned on "
-                + "under your HoYoLAB privacy settings. Kept only in this Mac's Keychain.",
+                + "under your HoYoLAB privacy settings. Kept only on this Mac, in a file only you can read.",
             vi: "Toàn bộ nhân vật bạn có, không chỉ 8 — nhưng cần phiên đăng nhập HoYoLAB của chính bạn "
                 + "(hoyolab.com → cookie → ltuid_v2/ltoken_v2) và bật \"Character Details\" trong cài đặt "
-                + "riêng tư HoYoLAB. Chỉ lưu trong Keychain của máy này.")
+                + "riêng tư HoYoLAB. Chỉ lưu trên máy này, trong một file chỉ bạn đọc được.")
     }
 
     func abyssHoyolabError(_ error: AbyssHoyolabError) -> String {

@@ -33,19 +33,37 @@ struct AbyssDamageConstants: Sendable {
     let transformativeCoefficients: [AbyssReaction: Double]
     /// `transformative.levelMultiplier` at `AbyssDamageMath.characterLevel`.
     let transformativeLevelMultiplier: Double
+    /// The Lunar and Stellar reactions have their own EM curve — flatter than
+    /// the transformative one, `6·EM/(EM+2000)` against `16·EM/(EM+2000)`.
+    let lunarStellarEM: AbyssDamageFormula.EMCurve
+    /// Priced from the `direct` branch. The `indirect` branch splits one
+    /// reaction across everyone who applied an element and weights them
+    /// 0.6/0.3/0.05/0.05, which needs per-character CRIT the transformative path
+    /// deliberately does not carry; until that exists, the direct coefficients
+    /// are the honest reading and they are the larger of the two.
+    let lunarStellarCoefficients: [AbyssReaction: Double]
+    /// Characters who raise the base damage of a Lunar/Stellar reaction just by
+    /// being in the team, keyed by lowercased name.
+    let reactionBaseDamageBonus: [String: Double]
 
     init(amplifyingEM: AbyssDamageFormula.EMCurve,
          transformativeEM: AbyssDamageFormula.EMCurve,
          catalyzeEM: AbyssDamageFormula.EMCurve,
          amplifyingCoefficients: [AbyssDamageMath.Pair: Double],
          transformativeCoefficients: [AbyssReaction: Double],
-         transformativeLevelMultiplier: Double) {
+         transformativeLevelMultiplier: Double,
+         lunarStellarEM: AbyssDamageFormula.EMCurve = .init(numerator: 6, offset: 2000),
+         lunarStellarCoefficients: [AbyssReaction: Double] = [:],
+         reactionBaseDamageBonus: [String: Double] = [:]) {
         self.amplifyingEM = amplifyingEM
         self.transformativeEM = transformativeEM
         self.catalyzeEM = catalyzeEM
         self.amplifyingCoefficients = amplifyingCoefficients
         self.transformativeCoefficients = transformativeCoefficients
         self.transformativeLevelMultiplier = transformativeLevelMultiplier
+        self.lunarStellarEM = lunarStellarEM
+        self.lunarStellarCoefficients = lunarStellarCoefficients
+        self.reactionBaseDamageBonus = reactionBaseDamageBonus
     }
 
     /// What the port was written with, before the numbers were read from data.
@@ -71,7 +89,9 @@ struct AbyssDamageConstants: Sendable {
         "vaporizePyroTrigger": .init(trigger: .pyro, existing: .hydro),
     ]
 
-    init(formula: AbyssDamageFormula?, diagnostics: inout AbyssParseDiagnostics) {
+    init(formula: AbyssDamageFormula?,
+         stellarConductRamp: Double = 0.5,
+         diagnostics: inout AbyssParseDiagnostics) {
         guard let formula else {
             self = .fallback
             diagnostics.damageFormulaUnread.insert("damage-formula.json is missing")
@@ -127,6 +147,45 @@ struct AbyssDamageConstants: Sendable {
             transformativeLevelMultiplier = 0
             diagnostics.damageFormulaUnread.insert("transformative.levelMultiplier.\(level)")
         }
+
+        guard let lunar = formula.lunarStellar else {
+            lunarStellarEM = Self.fallback.lunarStellarEM
+            lunarStellarCoefficients = [:]
+            reactionBaseDamageBonus = [:]
+            diagnostics.damageFormulaUnread.insert("lunarStellar")
+            return
+        }
+        lunarStellarEM = curve(lunar.emBonusFormula, "lunarStellar.emBonusFormula",
+                               fallback: Self.fallback.lunarStellarEM)
+
+        var lunarCoefficients: [AbyssReaction: Double] = [:]
+        let lunarByKey = Dictionary(
+            AbyssReaction.allCases.compactMap { reaction in
+                reaction.lunarStellarKey.map { ($0, reaction) }
+            },
+            uniquingKeysWith: { first, _ in first })
+        // Stellar-Conduct is written as a range rather than a value; everything
+        // else is a plain coefficient.
+        let ramp = min(max(stellarConductRamp, 0), 1)
+        for (name, value) in lunar.direct.coefficients {
+            if name == "stellarConductMin" || name == "stellarConductMax" { continue }
+            guard let reaction = lunarByKey[name] else {
+                diagnostics.damageFormulaUnread.insert("lunarStellar.direct.coefficients.\(name)")
+                continue
+            }
+            lunarCoefficients[reaction] = value
+        }
+        if let low = lunar.direct.coefficients["stellarConductMin"],
+           let high = lunar.direct.coefficients["stellarConductMax"] {
+            lunarCoefficients[.stellarConduct] = low + ramp * (high - low)
+        } else {
+            diagnostics.damageFormulaUnread.insert("lunarStellar.direct.coefficients.stellarConduct")
+        }
+        lunarStellarCoefficients = lunarCoefficients
+
+        reactionBaseDamageBonus = Dictionary(
+            lunar.reactionBaseDmgBonusSources.map { ($0.character.lowercased(), $0.maxBonus) },
+            uniquingKeysWith: { max($0, $1) })
     }
 }
 

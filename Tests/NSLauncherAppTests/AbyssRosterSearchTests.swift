@@ -28,8 +28,8 @@ final class AbyssRosterSearchTests: XCTestCase {
         func fetchShowcase(uid: String, map: AbyssGameIDMap) async throws -> AbyssShowcase { showcase }
     }
 
-    /// Not backed by the real Keychain: a view model test should not depend on
-    /// or mutate whatever is actually saved on the machine running it.
+    /// Not backed by the real store: a view model test should not depend on or
+    /// mutate whatever is actually saved on the machine running it.
     private final class MemoryCredentialStore: AbyssHoyolabCredentialStoring, @unchecked Sendable {
         var saved: (ltuid: String, ltoken: String)?
         func load() -> (ltuid: String, ltoken: String)? { saved }

@@ -17,7 +17,8 @@ final class AbyssArtifactAdvisorTests: XCTestCase {
     func testAdviceIsCompleteAndResolvable() async throws {
         let optimizer = try makeOptimizer()
         let roster = try AbyssGoldenFixture.exampleRoster()
-        let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 5))
+        let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 5,
+                                                               splitsHalves: false))
 
         let teams = try XCTUnwrap(output.reports.first?.teams)
         XCTAssertFalse(teams.isEmpty)
@@ -40,27 +41,81 @@ final class AbyssArtifactAdvisorTests: XCTestCase {
         }
     }
 
-    /// The goblet is what makes the advice specific to the character, and the
-    /// circlet is what makes a healer's build different from a damage dealer's.
-    /// Both come from the same function the assembler builds stats with, so a
-    /// mismatch here means the tab would be describing a build nobody scored.
-    func testMainStatPlanMatchesTheBuildThatWasScored() throws {
+    /// What each slot is allowed to hold.
+    ///
+    /// Two of the lists are cut down and both cuts have to stay honest. The
+    /// goblet offers one element because the other six contribute exactly zero
+    /// to a character who deals their own. The healer's circlet and the
+    /// support's sands are *pinned*, and that is not the search giving up: the
+    /// score is damage and has no term for a heal landing or a burst being up,
+    /// so a free search would strip Healing Bonus and Energy Recharge from every
+    /// support and call it an improvement.
+    func testWhatEachSlotIsAllowedToHold() throws {
         let tuning = try XCTUnwrap(library.tuning)
         let assembler = AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs)
 
         for character in library.characters.prefix(30) {
-            guard let profile = library.profilesByCharacterID[character.id] else { continue }
+            let damage = assembler.mainStatCandidates(role: .mainDPS, element: character.element)
+            XCTAssertTrue(damage.goblet.contains(.elementalDMG(character.element)),
+                          "\(character.id): the character's own element is not a goblet option")
+            for other in GenshinElement.allCases where other != character.element {
+                XCTAssertFalse(damage.goblet.contains(.elementalDMG(other)),
+                               "\(character.id): a \(other.rawValue) goblet is worth nothing here")
+            }
+            XCTAssertTrue(damage.circlet.contains(.critDMG))
+            XCTAssertTrue(damage.circlet.contains(.elementalMastery),
+                          "EM has to be reachable, or a reaction carry can never be built")
+            XCTAssertGreaterThan(damage.sands.count, 1, "the sands should be a choice")
 
-            let damage = assembler.mainStatPlan(role: .mainDPS, basis: profile.basis,
-                                                element: character.element)
-            XCTAssertEqual(damage.goblet, .elementalDMG(character.element),
-                           "\(character.id): goblet should be the character's own element")
-            XCTAssertEqual(damage.circlet, .critDMG)
+            let healer = assembler.mainStatCandidates(role: .healer, element: character.element)
+            XCTAssertEqual(healer.circlet, [.healingBonus],
+                           "the model cannot value healing, so it must not trade it away")
+            let shield = assembler.mainStatCandidates(role: .shield, element: character.element)
+            XCTAssertEqual(shield.sands, [.energyRecharge],
+                           "the model cannot value energy, so it must not trade it away")
+        }
+    }
 
-            let healer = assembler.mainStatPlan(role: .healer, basis: profile.basis,
-                                                element: character.element)
-            XCTAssertEqual(healer.sands, .hpPercent)
-            XCTAssertEqual(healer.circlet, .healingBonus)
+    /// The line the tab prints and the sheet that produced the number next to it
+    /// have to be the same build. They used to be by construction, because both
+    /// came from one rule; now the plan is searched, so it is carried on the
+    /// option and this is what says the two did not come apart.
+    func testTheAdvisedMainStatsAreTheOnesThatWereScored() async throws {
+        let optimizer = try makeOptimizer()
+        let roster = try AbyssGoldenFixture.exampleRoster()
+        let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 3,
+                                                               splitsHalves: false))
+        let team = try XCTUnwrap(output.reports.first?.teams.first)
+        let tuning = try XCTUnwrap(library.tuning)
+        let assembler = AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs,
+                                            artifactSets: library.artifactSets,
+                                            talentPartyBuffs: library.talentPartyBuffsByCharacterID)
+
+        for memberID in team.memberIDs {
+            let option = try XCTUnwrap(team.assignment[memberID])
+            let advice = try XCTUnwrap(team.artifactAdvice[memberID],
+                                       "\(memberID): no advice attached")
+            XCTAssertEqual(advice.sands, option.mainStats.sands, "\(memberID): sands differ")
+            XCTAssertEqual(advice.goblet, option.mainStats.goblet, "\(memberID): goblet differs")
+            XCTAssertEqual(advice.circlet, option.mainStats.circlet, "\(memberID): circlet differs")
+
+            // And the sheet really carries them: rebuilding it from the advised
+            // plan reproduces the stats the score was computed from.
+            let character = try XCTUnwrap(library.charactersByID[memberID])
+            let profile = try XCTUnwrap(library.profilesByCharacterID[memberID])
+            var rebuilt = assembler.statsWithoutSets(
+                character: character, profile: profile,
+                weapon: option.weaponID.flatMap { library.weaponsByID[$0] },
+                role: option.role,
+                refinement: option.weaponID.map { roster.refinement(for: $0) } ?? 1,
+                mainStats: option.mainStats)
+            var diagnostics = AbyssParseDiagnostics()
+            assembler.applySets(option.setIDs.compactMap { library.artifactSetsByID[$0] },
+                                character: character, to: &rebuilt, diagnostics: &diagnostics)
+            XCTAssertEqual(rebuilt.critDMG, option.stats.critDMG, accuracy: 1e-9,
+                           "\(memberID): the scored sheet is not the advised build")
+            XCTAssertEqual(rebuilt.elementalMastery, option.stats.elementalMastery, accuracy: 1e-9,
+                           "\(memberID): the scored sheet is not the advised build")
         }
     }
 
@@ -86,9 +141,11 @@ final class AbyssArtifactAdvisorTests: XCTestCase {
         let optimizer = try makeOptimizer()
         let roster = try AbyssGoldenFixture.exampleRoster()
 
-        let refined = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 5))
+        let refined = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 5,
+                                                                splitsHalves: false))
         let plain = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 5,
-                                                              refinesArtifacts: false))
+                                                              refinesArtifacts: false,
+                                                              splitsHalves: false))
 
         let refinedBest = try XCTUnwrap(refined.reports.first?.teams.first)
         let plainBest = try XCTUnwrap(plain.reports.first?.teams.first)
@@ -106,7 +163,8 @@ final class AbyssArtifactAdvisorTests: XCTestCase {
     func testRefinementIsDeterministic() async throws {
         let optimizer = try makeOptimizer()
         let roster = try AbyssGoldenFixture.exampleRoster()
-        let request = AbyssOptimizerRequest(roster: roster, floors: [11], topN: 5)
+        let request = AbyssOptimizerRequest(roster: roster, floors: [11], topN: 5,
+                                            splitsHalves: false)
 
         let firstRun = await optimizer.run(request)
         let secondRun = await optimizer.run(request)
@@ -131,7 +189,8 @@ final class AbyssArtifactAdvisorTests: XCTestCase {
     func testRefinementActuallyChangesSomeRecommendations() async throws {
         let optimizer = try makeOptimizer()
         let roster = try AbyssGoldenFixture.exampleRoster()
-        let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, topN: 5))
+        let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, topN: 5,
+                                                               splitsHalves: false))
 
         let improved = output.reports
             .flatMap(\.teams)
@@ -175,7 +234,8 @@ final class AbyssArtifactAdvisorTests: XCTestCase {
         let sheets = members.map { member -> AbyssStats in
             guard let profile = library.profilesByCharacterID[member.id] else { return AbyssStats() }
             return assembler.stats(character: member, profile: profile, weapon: nil, sets: [partySet],
-                                   role: .mainDPS, diagnostics: &diagnostics)
+                                   role: .mainDPS, mainStats: .damage(for: member),
+                                   diagnostics: &diagnostics)
         }
 
         let one = scorer.partyBuffs(stats: [sheets[0]], setIDs: [[partySet.id]], team: context)
@@ -201,7 +261,8 @@ final class AbyssArtifactAdvisorTests: XCTestCase {
         let roster = try AbyssGoldenFixture.exampleRoster()
         let fiveStarIDs = Set(library.fiveStarArtifactSets.map(\.id))
 
-        let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 3))
+        let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 3,
+                                                               splitsHalves: false))
         var recommended: Set<String> = []
         for team in try XCTUnwrap(output.reports.first?.teams) {
             for advice in team.artifactAdvice.values {

@@ -57,10 +57,15 @@ removal, but voice packs are not downloaded by the launcher.
   or paste your UID to pull your Character Showcase straight from
   Enka.Network — no login, and no server to pick, though it only covers up to
   eight characters. For your full roster instead, paste your own HoYoLAB
-  session (`ltuid_v2`/`ltoken_v2`, kept only in this Mac's Keychain) and turn
+  session (`ltuid_v2`/`ltoken_v2`, kept only on this Mac, in a file only you
+  can read) and turn
   on "Character Details" under your HoYoLAB privacy settings. Then press
   **Find teams**. It plans for floor 12 — clear that and the floors below come
-  with it. Each suggested team comes with the artifact set, main stats, and
+  with it — and it plans it as the two fights it is: a team for the first half
+  and a different team for the second, with nobody in both, each scored against
+  the enemies and the Ley Line Disorder of its own half (this rotation the two
+  halves are not even paid for the same thing). Each suggested team comes with
+  the artifact set, main stats, and
   substat priority for every member, picked out of every five-star set rather
   than in the abstract, and for the team mates they will actually stand next
   to; for characters imported from your Showcase, it compares against the

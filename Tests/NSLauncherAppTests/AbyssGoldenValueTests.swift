@@ -1,9 +1,9 @@
 import XCTest
 @testable import NSLauncherApp
 
-/// Holds the Swift engine to the numbers the Python reference produces.
+/// Holds the engine to the numbers in `Fixtures/abyss-golden.json`.
 ///
-/// Split by stage so a failure says *where* the port diverged: parsing, stat
+/// Split by stage so a failure says *where* the model moved: parsing, stat
 /// assembly, floor context, or team scoring. A single "scores differ" test
 /// would leave that to bisection.
 final class AbyssGoldenValueTests: XCTestCase {
@@ -12,7 +12,7 @@ final class AbyssGoldenValueTests: XCTestCase {
 
     // MARK: - Parsing
 
-    func testDamageProfilesMatchReferenceImplementation() throws {
+    func testDamageProfilesMatchTheGoldenFixture() throws {
         let golden = try AbyssGoldenFixture.load()
         var compared = 0
 
@@ -45,7 +45,7 @@ final class AbyssGoldenValueTests: XCTestCase {
     /// The one that catches a misrouted stat name. Every field is compared, not
     /// just the totals, because a bonus landing in `dmgNormal` instead of
     /// `dmgSkill` leaves the total unchanged while quietly changing every score.
-    func testAssembledStatsMatchReferenceImplementation() throws {
+    func testAssembledStatsMatchTheGoldenFixture() throws {
         let golden = try AbyssGoldenFixture.load()
         let optimizer = try XCTUnwrap(AbyssOptimizer(library: library))
 
@@ -114,7 +114,7 @@ final class AbyssGoldenValueTests: XCTestCase {
 
     /// End-to-end: the same roster, the same floors, the same top-10 teams in
     /// the same order with the same scores.
-    func testTopTeamsMatchReferenceImplementation() async throws {
+    func testTopTeamsMatchTheGoldenFixture() async throws {
         let golden = try AbyssGoldenFixture.load()
         let optimizer = try XCTUnwrap(AbyssOptimizer(library: library))
         let roster = try AbyssGoldenFixture.exampleRoster()
@@ -123,13 +123,16 @@ final class AbyssGoldenValueTests: XCTestCase {
         // runs: the engine now plans for floor 12 alone, but the fixture holds
         // numbers for all four and there is no reason to stop checking them.
         //
-        // Artifact refinement is deliberately off: it is a Swift-only pass with
-        // no counterpart in the reference implementation, and this test's job is
-        // to hold the ported engine to the reference's numbers.
+        // Artifact refinement is deliberately off, and so is planning each floor
+        // as its two halves. This test's subject is the damage model; both of
+        // those change which teams come back for reasons that belong to their
+        // own tests, and either one would move every number in the fixture. A
+        // floor read whole, ranked as one team, is the shape the fixture holds.
         let floors = golden.teams.keys.compactMap(Int.init).sorted()
         let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: floors,
                                                                topN: 10, poolSize: 40,
-                                                               refinesArtifacts: false))
+                                                               refinesArtifacts: false,
+                                                               splitsHalves: false))
         XCTAssertFalse(output.reports.isEmpty, "optimizer produced no floors")
 
         for report in output.reports {
@@ -158,7 +161,7 @@ final class AbyssGoldenValueTests: XCTestCase {
 
     // MARK: - Floor context
 
-    func testFloorContextsMatchReferenceImplementation() throws {
+    func testFloorContextsMatchTheGoldenFixture() throws {
         let golden = try AbyssGoldenFixture.load()
         let cycle = try XCTUnwrap(library.latestCycle)
         var diagnostics = AbyssParseDiagnostics()
@@ -166,7 +169,10 @@ final class AbyssGoldenValueTests: XCTestCase {
         for (rawFloor, expected) in golden.floors {
             let floorNumber = try XCTUnwrap(Int(rawFloor))
             let context = try XCTUnwrap(
-                AbyssFloorContext.build(cycle: cycle, floor: floorNumber, diagnostics: &diagnostics),
+                AbyssFloorContext.build(
+                    cycle: cycle, floor: floorNumber,
+                    ownElementResistance: try XCTUnwrap(library.tuning).enemyOwnElementResistance,
+                    diagnostics: &diagnostics),
                 "no context for floor \(floorNumber)")
 
             XCTAssertEqual(context.monsterLevel, expected.monsterLevel,

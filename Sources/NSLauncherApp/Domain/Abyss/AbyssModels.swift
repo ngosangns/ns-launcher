@@ -1,14 +1,15 @@
 // AbyssModels.swift
 //
-// Value types shared by the Abyss team planner. Ported from
-// `toi-uu-doi-hinh/optimizer/` — that Python remains the reference for the
-// model's behaviour, and `Tests/.../Fixtures/abyss-golden.json` holds its
-// numbers so this port can be held to them.
+// Value types shared by the Abyss team planner.
 //
-// Python leaned on dynamic typing in three places that become explicit types
-// here: string stat names looked up with `getattr`/`setattr` (`AbyssStatField`),
-// a `dmg_{category}` name built by interpolation (`HitCategory`), and dict
-// iteration order deciding a tie-break (`ScalingBasis.tieBreakOrder`).
+// Three of these types exist because the implementation this was ported from
+// leaned on dynamic typing where Swift cannot: stat names looked up as strings
+// at runtime (`AbyssStatField`), a damage-category field name built by
+// interpolation (`HitCategory`), and dictionary iteration order deciding a
+// tie-break (`ScalingBasis.tieBreakOrder`). Writing all three down turned three
+// silent wrong answers into three things the compiler checks.
+//
+// `Tests/.../Fixtures/abyss-golden.json` pins what the model computes.
 
 import Foundation
 
@@ -64,16 +65,16 @@ enum ScalingBasis: String, Codable, Sendable, CaseIterable {
 
     /// Order used to break ties when deciding a character's dominant basis.
     ///
-    /// The Python takes `max()` over a dict built in the order ATK, DEF, HP, EM
-    /// and Python's `max` keeps the *first* maximum, so a tie between non-ATK
-    /// bases resolves to DEF, then HP, then EM. Swift's `Dictionary` has no
-    /// order, so the rule has to be written down or characters with balanced
-    /// DEF/HP scaling would silently pick a different basis — and with it a
-    /// different substat spread and a different score.
+    /// Inherited from the original implementation, which took `max()` over a
+    /// dict built in the order ATK, DEF, HP, EM and kept the *first* maximum:
+    /// a tie between non-ATK bases resolves to DEF, then HP, then EM. Swift's
+    /// `Dictionary` has no order, so the rule has to be written down or
+    /// characters with balanced DEF/HP scaling would silently pick a different
+    /// basis — and with it a different substat spread and a different score.
     static let tieBreakOrder: [ScalingBasis] = [.def, .hp, .em]
 }
 
-/// Damage category a hit belongs to, replacing Python's `f"dmg_{category}"`.
+/// Damage category a hit belongs to.
 enum HitCategory: String, Codable, Sendable, CaseIterable {
     case normal
     case charged
@@ -162,6 +163,22 @@ enum AbyssReaction: String, Codable, Sendable, Hashable, CaseIterable {
         }
     }
 
+    /// The key this reaction has in `damage-formula.json`'s `lunarStellar`
+    /// block. Nil for every reaction that block does not price.
+    var lunarStellarKey: String? {
+        switch self {
+        case .lunarBloom: return "lunarBloom"
+        case .lunarCharged: return "lunarCharged"
+        case .lunarCrystallize: return "lunarCrystallize"
+        case .stellarSwirl: return "stellarSwirl"
+        // The coefficient ramps from `stellarConductMin` to `stellarConductMax`
+        // over the Cryo/Electro hits recorded before it; see
+        // `AbyssTuning.stellarConductRamp`.
+        case .stellarConduct: return "stellarConduct"
+        default: return nil
+        }
+    }
+
     /// Which resistance a transformative reaction is checked against. Swirl is
     /// nil because it takes the element it swirled, which the team decides.
     var damageElement: GenshinElement? {
@@ -177,10 +194,11 @@ enum AbyssReaction: String, Codable, Sendable, Hashable, CaseIterable {
 
 /// A named stat slot in `AbyssStats`.
 ///
-/// Python resolved these at runtime from the text in the data (`setattr(stats,
-/// attr, ...)`), which cannot be expressed in Swift and should not be: making
-/// the slots an enum turns "this artifact bonus went into the wrong field" from
-/// a silent wrong answer into a compile-time exhaustive `switch`.
+/// The original implementation resolved these at runtime from the text in the
+/// data — a stat name from JSON used to set an attribute by that name — which
+/// cannot be expressed in Swift and should not be: making the slots an enum
+/// turns "this artifact bonus went into the wrong field" from a silent wrong
+/// answer into a compile-time exhaustive `switch`.
 enum AbyssStatField: Sendable, Hashable {
     case atkPercent, hpPercent, defPercent
     case flatATK, flatHP, flatDEF

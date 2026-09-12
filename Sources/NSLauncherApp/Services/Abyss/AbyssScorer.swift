@@ -1,11 +1,10 @@
 // AbyssScorer.swift
 //
-// Scores one team against one floor. Ported from `character_damage`,
-// `assign_gear` and `score_team` in `scoring.py`.
+// Scores one team against one floor.
 //
 // This runs on the order of a million times per optimisation, so two things are
-// done differently from the reference implementation while producing the same
-// numbers:
+// done the fast way rather than the obvious way, while producing the same
+// numbers to the last digit — the golden fixture is what says so:
 //
 //   1. The per-character damage is split into an `ability` part and a `combo`
 //      part once, instead of recomputing all four characters for each of the
@@ -143,6 +142,9 @@ struct AbyssScorer: Sendable {
         let defenceAndResistance: Double
         /// 1.0 when the team unlocks no amplifying reaction for this element.
         let amplifyingCoefficient: Double
+        /// What the floor pays on top of that coefficient, from a Ley Line
+        /// Disorder or Blessing that names Vaporize or Melt.
+        let amplifyingReactionBonus: Double
         let floorBonusNormal: Double
         let floorBonusOther: Double
 
@@ -150,8 +152,8 @@ struct AbyssScorer: Sendable {
         /// the damage loop produce zero, which is what the profile lookup used
         /// to return by an early exit.
         static let none = DamageContext(aggregate: [], element: .anemo, defenceAndResistance: 0,
-                                        amplifyingCoefficient: 1, floorBonusNormal: 0,
-                                        floorBonusOther: 0)
+                                        amplifyingCoefficient: 1, amplifyingReactionBonus: 0,
+                                        floorBonusNormal: 0, floorBonusOther: 0)
     }
 
     func damageContext(for character: AbyssCharacter,
@@ -162,12 +164,24 @@ struct AbyssScorer: Sendable {
             return .none
         }
         let element = character.element
-        let reactions = team.enabledReactions
+
+        // A floor buff naming Vaporize or Melt multiplies the amplifying
+        // reaction, not every hit — the same distinction the transformative
+        // buffs get below. `amplifyingMultiplier` has always taken a
+        // `reactionBonus`; nothing ever passed one.
+        let amplifying = team.enabledReactions.intersection([.vaporize, .melt])
+        let amplifyingBonus = amplifying.isEmpty ? 0 : floor.buffs
+            .filter { !$0.reactions.isDisjoint(with: amplifying) }
+            .reduce(0) { $0 + $1.bonus }
 
         let defMultiplier = AbyssDamageMath.defMultiplier(
             characterLevel: AbyssDamageMath.characterLevel,
             monsterLevel: floor.monsterLevel)
-        let resMultiplier = AbyssDamageMath.resMultiplier(floor.resistance(for: element))
+        // What the team strips off the enemy first. Below zero the resistance
+        // curve only halves, so this keeps paying where a DMG bonus saturates —
+        // which is most of what an Anemo support is for.
+        let resMultiplier = AbyssDamageMath.resMultiplier(
+            team.resistance(floor.resistance(for: element), to: element))
 
         return DamageContext(
             aggregate: profile.aggregate,
@@ -179,12 +193,11 @@ struct AbyssScorer: Sendable {
             amplifyingCoefficient: AbyssDamageMath.amplifyingCoefficient(
                 for: element, teamElements: team.elementSet,
                 constants: library.damageConstants),
+            amplifyingReactionBonus: amplifyingBonus,
             // The floor bonus only varies by whether the hit is a normal attack,
             // so it is resolved twice rather than per hit.
-            floorBonusNormal: floorBonus(floor, element: element, reactions: reactions,
-                                         isNormalAttack: true),
-            floorBonusOther: floorBonus(floor, element: element, reactions: reactions,
-                                        isNormalAttack: false))
+            floorBonusNormal: floorBonus(floor, element: element, isNormalAttack: true),
+            floorBonusOther: floorBonus(floor, element: element, isNormalAttack: false))
     }
 
     func damageSplit(context: DamageContext,
@@ -202,6 +215,7 @@ struct AbyssScorer: Sendable {
             let multiplier = AbyssDamageMath.amplifyingMultiplier(
                 coefficient: context.amplifyingCoefficient,
                 elementalMastery: effective.elementalMastery,
+                reactionBonus: context.amplifyingReactionBonus,
                 constants: library.damageConstants)
             amplifyingFactor = 1 + tuning.amplifyingUptime * (multiplier - 1)
         } else {
@@ -243,17 +257,24 @@ struct AbyssScorer: Sendable {
                     stats: stats, partyBuffs: partyBuffs)
     }
 
-    /// Total floor buff that applies to this element/reaction/hit type.
+    /// Total floor buff that applies to this element/hit type.
+    ///
+    /// Buffs that name a reaction are *not* here. "Sát thương Superconduct
+    /// +200%" is a multiplier on the Superconduct reaction, and this function
+    /// used to add it to every hit the team made instead — which on this
+    /// rotation's floor 12 was worth +85% to a team's score for a reaction
+    /// worth 5% of its damage, and picked the whole first-half team on that
+    /// basis. `AbyssScorer.transformative` prices them now, against the
+    /// reaction they actually name.
     private func floorBonus(_ floor: AbyssFloorContext,
                             element: GenshinElement,
-                            reactions: Set<AbyssReaction>,
                             isNormalAttack: Bool) -> Double {
         var bonus = 0.0
-        for buff in floor.buffs {
-            if !buff.reactions.isEmpty, buff.reactions.isDisjoint(with: reactions) { continue }
+        for buff in floor.buffs where buff.reactions.isEmpty {
             if !buff.elements.isEmpty, !buff.elements.contains(element) { continue }
             if buff.normalAttackOnly, !isNormalAttack { continue }
-            if buff.reactions.isEmpty, buff.elements.isEmpty, !buff.normalAttackOnly { continue }
+            // A number with neither an element nor a hit type is prose.
+            if buff.elements.isEmpty, !buff.normalAttackOnly { continue }
             bonus += buff.bonus
         }
         return bonus
@@ -271,7 +292,26 @@ struct AbyssScorer: Sendable {
 
     func soloScore(context: DamageContext, stats: AbyssStats) -> Double {
         let split = damageSplit(context: context, stats: stats, partyBuffs: .none)
-        return onFieldDamage(split)
+        return perSecond(onFieldDamage(split))
+    }
+
+    /// Damage per rotation into damage per second.
+    ///
+    /// Every number this type hands *out* — a team's score, a character's share
+    /// of it, a gear option's solo score — is per second. Inside, damage is
+    /// accumulated per rotation, because that is the unit the multipliers are
+    /// written in: `normalCombosPerRotation` attacks, a burst once, a reaction
+    /// `transformativeReactionsPerRotation` times.
+    ///
+    /// A rotation is assumed to take `tuning.rotationSeconds` for every team, so
+    /// this does not reorder anything — it is the same ranking in units that
+    /// mean something. Teams do *not* all take the same time in the real game;
+    /// making that difference count would need per-character cast and cooldown
+    /// data the model does not have, and until it does, a shorter rotation is a
+    /// strength this ranking cannot see.
+    private func perSecond(_ damagePerRotation: Double) -> Double {
+        guard tuning.rotationSeconds > 0 else { return damagePerRotation }
+        return damagePerRotation / tuning.rotationSeconds
     }
 
     /// What a split is worth to a character who is standing on field: everything
@@ -374,19 +414,20 @@ struct AbyssScorer: Sendable {
         var perCharacter: [String: Double] = [:]
         perCharacter.reserveCapacity(splits.count)
         for (index, split) in splits.enumerated() {
-            perCharacter[members[index].id] = index == damage.onFieldIndex
+            perCharacter[members[index].id] = perSecond(index == damage.onFieldIndex
                 ? onFieldDamage(split)
-                : split.ability * tuning.offFieldUptime
+                : split.ability * tuning.offFieldUptime)
         }
         // Reaction damage is credited to whoever sets it off, so the per-member
         // bars in the tab show a high-EM support carrying a Bloom team rather
         // than looking idle next to damage they are in fact causing.
         if damage.reactionTriggerIndex >= 0 {
-            perCharacter[members[damage.reactionTriggerIndex].id, default: 0] += damage.reactionDamage
+            perCharacter[members[damage.reactionTriggerIndex].id, default: 0]
+                += perSecond(damage.reactionDamage)
         }
 
         let modifiers = teamModifiers(team: team, floor: floor)
-        let score = damage.total * modifiers.multiplier
+        let score = perSecond(damage.total * modifiers.multiplier)
         var notes = modifiers.notes
 
         let usedWeapons = members.compactMap { assignment[$0.id]?.weaponID }
@@ -434,12 +475,18 @@ struct AbyssScorer: Sendable {
     /// artifact advisor reuse this a thousand times per member.
     struct Transformative: Sendable {
         let reaction: AbyssReaction
-        /// coefficient × levelMultiplier × resMultiplier.
+        /// coefficient × levelMultiplier × resMultiplier × floor and team bonuses.
         let base: Double
+        /// Which Elemental Mastery curve pays this reaction. The Lunar and
+        /// Stellar family has its own, much flatter than the transformative one
+        /// (`6·EM/(EM+2000)` against `16·EM/(EM+2000)`), so the same EM is worth
+        /// far less to them and stacking it for a Stellar-Conduct team is a
+        /// different decision from stacking it for a Hyperbloom one.
+        let emCurve: AbyssDamageFormula.EMCurve
     }
 
     /// The strongest transformative reaction a team unlocks, priced against the
-    /// floor's resistances.
+    /// floor's resistances *and* the floor's buffs.
     ///
     /// One reaction, not the sum of all of them. A Dendro/Hydro/Electro/Pyro
     /// team technically unlocks Bloom, Hyperbloom, Burgeon, Burning, Overloaded
@@ -447,31 +494,51 @@ struct AbyssScorer: Sendable {
     /// applications to spend and they compete for the same aura. Counting the
     /// best one is the conservative reading; counting them all would make
     /// four-element soup the answer to every floor.
+    ///
+    /// "Strongest" has to include what the floor pays for it, which is the whole
+    /// point of a Ley Line Disorder that names a reaction. Ranking on the bare
+    /// coefficient priced Overloaded (2.75) over Superconduct (1.5) on a floor
+    /// that triples Superconduct — so the team was chosen for a reaction the
+    /// floor rewards and then paid for a different one.
     func transformative(for team: AbyssTeamContext, floor: AbyssFloorContext) -> Transformative? {
         var best: Transformative?
         // Sorted, because Hyperbloom and Burgeon share a coefficient and a
         // resistance: the damage is the same either way, but the reaction that
         // gets named should not depend on how a Set happened to hash.
+        // Lunar and Stellar reactions are priced from their own block, with
+        // their own EM curve; everything else from the transformative one.
         for reaction in team.transformativeReactions.sorted(by: { $0.rawValue < $1.rawValue }) {
-            guard let coefficient = library.damageConstants.transformativeCoefficients[reaction] else {
+            let constants = library.damageConstants
+            let lunar = constants.lunarStellarCoefficients[reaction]
+            guard let coefficient = lunar ?? constants.transformativeCoefficients[reaction] else {
                 continue
             }
+            let emCurve = lunar == nil ? constants.transformativeEM : constants.lunarStellarEM
+            // A Lunar/Stellar reaction is worth more when someone on the team
+            // raises its base damage just by being there.
+            let teamBonus = lunar == nil ? 0 : team.reactionBaseDamageBonus
             // Swirl takes the resistance of whatever element was swirled, so the
             // team picks whichever of its own elements the floor resists least.
             let resistance: Double
             if let element = reaction.damageElement {
-                resistance = floor.resistance(for: element)
+                resistance = team.resistance(floor.resistance(for: element), to: element)
             } else {
                 resistance = team.elementSet
                     .subtracting([.anemo, .geo])
-                    .map { floor.resistance(for: $0) }
+                    .map { team.resistance(floor.resistance(for: $0), to: $0) }
                     .min() ?? AbyssFloorContext.defaultResistance
             }
+            // Every floor buff that names this reaction, and only this one.
+            let floorBonus = floor.buffs
+                .filter { $0.reactions.contains(reaction) }
+                .reduce(0) { $0 + $1.bonus }
             let base = coefficient
                 * library.damageConstants.transformativeLevelMultiplier
                 * AbyssDamageMath.resMultiplier(resistance)
+                * (1 + floorBonus)
+                * (1 + teamBonus)
             if base > (best?.base ?? 0) {
-                best = Transformative(reaction: reaction, base: base)
+                best = Transformative(reaction: reaction, base: base, emCurve: emCurve)
             }
         }
         return best
@@ -518,8 +585,8 @@ struct AbyssScorer: Sendable {
                 + tuning.chargedAttacksPerRotation * split.charged
         }
 
-        // First maximum wins, matching the reference implementation's strict
-        // `>` comparison over members in order.
+        // First maximum wins: strict `>` over members in order, so a tie
+        // resolves to the earlier member and the pick is the same every run.
         var bestIndex = 0
         var bestGain = onFieldGain(splits[0])
         for index in 1..<splits.count where onFieldGain(splits[index]) > bestGain {
@@ -543,7 +610,7 @@ struct AbyssScorer: Sendable {
                     triggerIndex = index
                 }
             }
-            let bonus = library.damageConstants.transformativeEM.bonus(max(bestEM, 0))
+            let bonus = transformative.emCurve.bonus(max(bestEM, 0))
             reactionDamage = tuning.transformativeReactionsPerRotation
                 * transformative.base * (1 + bonus)
         }

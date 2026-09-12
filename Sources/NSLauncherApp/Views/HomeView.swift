@@ -291,7 +291,7 @@ struct HomeView: View {
     }
 
     private var channelTabs: some View {
-        HStack(spacing: 8) {
+        TabGroup {
             ForEach(availableChannels, id: \.self) { channel in
                 SidebarTabButton(
                     title: title(for: channel),

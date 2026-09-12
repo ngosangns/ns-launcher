@@ -1,7 +1,7 @@
 // AbyssStats.swift
 //
 // A character's assembled stat sheet: character base + weapon + artifacts +
-// party buffs. Ported from `Stats` in the Python's `build.py`.
+// party buffs.
 //
 // The scorer copies this value roughly a million times per run, so the
 // elemental DMG bonuses are a `SIMD8<Double>` rather than a dictionary — a

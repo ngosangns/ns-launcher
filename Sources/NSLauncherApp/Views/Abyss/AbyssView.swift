@@ -372,18 +372,19 @@ struct AbyssView: View {
     /// Results.
     private var sectionSwitcher: some View {
         HStack(spacing: 8) {
-            SidebarTabButton(title: text.abyssRosterSection,
-                             systemImage: "person.3.fill",
-                             isSelected: viewModel.section == .roster,
-                             showsLabelWhenInactive: false) {
-                viewModel.section = .roster
+            TabGroup(equalWidth: true) {
+                SidebarTabButton(title: text.abyssRosterSection,
+                                 systemImage: "person.3.fill",
+                                 isSelected: viewModel.section == .roster) {
+                    viewModel.section = .roster
+                }
+                SidebarTabButton(title: text.abyssResultsSection,
+                                 systemImage: "trophy.fill",
+                                 isSelected: viewModel.section == .results) {
+                    viewModel.section = .results
+                }
             }
-            SidebarTabButton(title: text.abyssResultsSection,
-                             systemImage: "trophy.fill",
-                             isSelected: viewModel.section == .results,
-                             showsLabelWhenInactive: false) {
-                viewModel.section = .results
-            }
+            .fixedSize()
 
             Spacer(minLength: 0)
 
@@ -426,7 +427,7 @@ struct AbyssView: View {
     private func exportRoster() {
         let panel = NSSavePanel()
         panel.allowedContentTypes = [.json]
-        // The same filename the Python tool looks for, so an exported roster can
+        // The name the importer offers by default too, so an exported roster can
         // be dropped straight next to it.
         panel.nameFieldStringValue = "roster.json"
         if panel.runModal() == .OK, let url = panel.url {

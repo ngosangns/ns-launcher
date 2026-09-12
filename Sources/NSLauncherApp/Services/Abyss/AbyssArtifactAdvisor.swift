@@ -13,8 +13,9 @@
 // during the search would be unaffordable; running it over the handful that made
 // the cut costs a few milliseconds.
 //
-// This pass has no counterpart in the Python reference, which is why the golden
-// fixture runs with it switched off — see `AbyssOptimizerRequest.refinesArtifacts`.
+// The golden fixture runs with this switched off — its job is the damage model,
+// and this pass moves the answer for reasons that belong to a different test.
+// See `AbyssOptimizerRequest.refinesArtifacts`.
 
 import Foundation
 
@@ -33,12 +34,19 @@ struct AbyssArtifactAdvisor: Sendable {
     /// Returns the team with its artifacts re-picked, its score recomputed, and
     /// per-character advice attached. Never returns a worse team than it was
     /// given: every swap has to beat the incumbent outright.
+    /// - Parameter measuresStats: whether an imported character is *scored* on
+    ///   their real sheet. When false — the default the app runs — the showcase
+    ///   is still read, but only for the comparison that says what changing off
+    ///   the sets they are wearing would be worth. See
+    ///   `AbyssOptimizerRequest.usesMeasuredStats` for why the ranking does not
+    ///   use it.
     func refine(team: AbyssTeamResult,
                 members: [AbyssCharacter],
                 floor: AbyssFloorContext,
                 sets: [AbyssArtifactSet],
                 roster: AbyssRoster?,
                 showcase: [String: AbyssShowcaseBuild] = [:],
+                measuresStats: Bool = false,
                 profiles: [String: AbyssDamageProfile] = [:]) -> AbyssTeamResult {
         guard sets.count > 1, !members.isEmpty else { return team }
 
@@ -67,23 +75,40 @@ struct AbyssArtifactAdvisor: Sendable {
         // the two share a name would shadow the argument and silently drop every
         // constellation the caller resolved.
         var memberProfiles: [String: AbyssDamageProfile] = [:]
+        // The main stats a member's three slots may hold. Empty for an imported
+        // character: their sheet is measured, their real main stats are already
+        // inside it, and there is nothing here to move.
+        var plans: [String: [AbyssMainStatPlan]] = [:]
         for member in members {
             guard let profile = profiles[member.id] ?? library.profilesByCharacterID[member.id],
                   let option = team.assignment[member.id] else { continue }
             memberProfiles[member.id] = profile
             let weapon = option.weaponID.flatMap { library.weaponsByID[$0] }
 
-            if let build = showcase[member.id] {
+            if measuresStats, let build = showcase[member.id] {
                 bases[member.id] = assembler.showcaseStats(
                     build: build, character: member, weapon: weapon,
                     wornSets: build.activeSetIDs.compactMap { library.artifactSetsByID[$0] })
+                plans[member.id] = []
             } else {
-                bases[member.id] = assembler.statsWithoutSets(
+                // Without the three searched main stats, so the sweep can move
+                // them: the base is the expensive half and it does not change
+                // when they do.
+                bases[member.id] = assembler.statsWithoutArtifactMainStats(
                     character: member,
                     profile: profile,
                     weapon: weapon,
                     role: option.role,
                     refinement: option.weaponID.map { roster?.refinement(for: $0) ?? 1 } ?? 1)
+                let candidates = assembler.mainStatCandidates(role: option.role,
+                                                              element: member.element)
+                plans[member.id] = candidates.sands.flatMap { sands in
+                    candidates.goblet.flatMap { goblet in
+                        candidates.circlet.map {
+                            AbyssMainStatPlan(sands: sands, goblet: goblet, circlet: $0)
+                        }
+                    }
+                }
             }
         }
         guard bases.count == members.count else { return team }
@@ -131,6 +156,29 @@ struct AbyssArtifactAdvisor: Sendable {
                 }
                 sheets[slot] = best.stats
                 worn[slot] = best.setIDs
+
+                // Then the three main stats, against the sets just chosen. A
+                // separate sweep rather than a joint one: 150 plans times 1081
+                // set configurations is a search nobody can afford for a result
+                // that differs at the margins, and this is the same coordinate
+                // ascent the members themselves are walked in.
+                //
+                // This is where Elemental Mastery can finally win. Gear
+                // selection scores a character alone, and alone they trigger no
+                // reaction at all — so EM is worth nothing there and no solo
+                // pass could ever pick it. Here the team is real and its
+                // reactions are priced.
+                if let candidates = plans[member.id], !candidates.isEmpty,
+                   let option = assignment[member.id], let base = bases[member.id],
+                   let bestPlan = bestMainStats(for: member, at: slot, from: candidates,
+                                                base: base, sets: option.setIDs.compactMap { setsByID[$0] },
+                                                sheets: &sheets, worn: &worn, splits: &splits,
+                                                damage: damage) {
+                    if bestPlan.plan != option.mainStats { changed = true }
+                    assignment[member.id] = option.replacingMainStats(bestPlan.plan,
+                                                                      stats: bestPlan.stats)
+                    sheets[slot] = bestPlan.stats
+                }
             }
             if !changed { break }
         }
@@ -207,7 +255,8 @@ struct AbyssArtifactAdvisor: Sendable {
         var scored: [(offset: Int, configuration: Configuration)] = []
         scored.reserveCapacity(candidates.count)
         for (offset, candidate) in candidates.enumerated() {
-            let stats = statsWearing(candidate, base: base, member: member)
+            let stats = statsWearing(candidate, base: base, mainStats: appliedPlan(of: option),
+                                     member: member)
             sheets[slot] = stats
             worn[slot] = candidate.map(\.id)
             let total = scorer.teamDamage(context: damage, stats: sheets, setIDs: worn,
@@ -227,10 +276,52 @@ struct AbyssArtifactAdvisor: Sendable {
             .map(\.configuration)
     }
 
+    /// The plan to dress a base sheet in, or nil when there is none to apply.
+    ///
+    /// An imported character's sheet is measured: the main stats they really
+    /// rolled are already inside it, and applying a plan on top would count them
+    /// twice. Their `mainStats` is a recommendation, not a description.
+    private func appliedPlan(of option: AbyssGearOption) -> AbyssMainStatPlan? {
+        option.statSource == .measured ? nil : option.mainStats
+    }
+
+    /// `mainStats` is nil for an imported character, whose measured sheet
+    /// already carries whatever they really rolled.
+    /// The best main stat for each of the three slots, holding the sets fixed.
+    ///
+    /// Scored on raw team damage like the set sweep, and for the same reason:
+    /// the team-level multipliers are a constant here and cannot change which
+    /// candidate wins. Ties keep the earlier candidate, so the pick does not
+    /// depend on how the candidate list happened to be built.
+    private func bestMainStats(for member: AbyssCharacter,
+                               at slot: Int,
+                               from candidates: [AbyssMainStatPlan],
+                               base: AbyssStats,
+                               sets: [AbyssArtifactSet],
+                               sheets: inout [AbyssStats],
+                               worn: inout [[String]],
+                               splits: inout [AbyssScorer.DamageSplit],
+                               damage: AbyssScorer.TeamDamageContext)
+        -> (plan: AbyssMainStatPlan, stats: AbyssStats)? {
+        let incumbentSheet = sheets[slot]
+        var best: (plan: AbyssMainStatPlan, stats: AbyssStats, score: Double)?
+        for plan in candidates {
+            let stats = statsWearing(sets, base: base, mainStats: plan, member: member)
+            sheets[slot] = stats
+            let total = scorer.teamDamage(context: damage, stats: sheets, setIDs: worn,
+                                          splits: &splits).total
+            if best == nil || total > best!.score { best = (plan, stats, total) }
+        }
+        sheets[slot] = incumbentSheet
+        guard let best else { return nil }
+        return (best.plan, best.stats)
+    }
+
     private func statsWearing(_ sets: [AbyssArtifactSet],
                               base: AbyssStats,
+                              mainStats: AbyssMainStatPlan?,
                               member: AbyssCharacter) -> AbyssStats {
-        var stats = base
+        var stats = mainStats.map { assembler.applying($0, to: base) } ?? base
         var diagnostics = AbyssParseDiagnostics()
         assembler.applySets(sets, character: member, to: &stats, diagnostics: &diagnostics)
         return stats
@@ -259,8 +350,11 @@ struct AbyssArtifactAdvisor: Sendable {
                   let profile = profiles[member.id],
                   let base = bases[member.id] else { continue }
 
-            let plan = assembler.mainStatPlan(role: option.role, basis: profile.basis,
-                                              element: member.element)
+            // The option's own plan, so the line the tab prints and the sheet
+            // that produced the number next to it cannot describe different
+            // builds. For an imported character it is a recommendation instead
+            // of a description — see `gearOptions`.
+            let plan = option.mainStats
 
             // What this character's change alone was worth: put their neutral
             // sets back, leave everyone else refined, and compare.
@@ -270,7 +364,8 @@ struct AbyssArtifactAdvisor: Sendable {
                 let neutralSets = neutralSetIDs.compactMap { setsByID[$0] }
                 var reverted = team.assignment
                 reverted[member.id] = option.replacingSets(
-                    neutralSetIDs, stats: statsWearing(neutralSets, base: base, member: member))
+                    neutralSetIDs, stats: statsWearing(neutralSets, base: base,
+                                                       mainStats: appliedPlan(of: option), member: member))
                 if let before = scorer.evaluate(members: members, assignment: reverted,
                                                 floor: floor, team: context,
                                                 profiles: profiles)?.score, before > 0 {
@@ -298,7 +393,8 @@ struct AbyssArtifactAdvisor: Sendable {
                     let wornSets = equipped.compactMap { setsByID[$0] }
                     var asEquipped = team.assignment
                     asEquipped[member.id] = option.replacingSets(
-                        equipped, stats: statsWearing(wornSets, base: base, member: member))
+                        equipped, stats: statsWearing(wornSets, base: base,
+                                                      mainStats: appliedPlan(of: option), member: member))
                     if let before = scorer.evaluate(members: members, assignment: asEquipped,
                                                     floor: floor, team: context,
                                                     profiles: profiles)?.score, before > 0 {

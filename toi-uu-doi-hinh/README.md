@@ -4,6 +4,12 @@ Tư liệu nguồn dạng Markdown cho tính năng gợi ý đội hình Trầm 
 Abyss) của NS Launcher — người viết đọc và cập nhật ở đây, còn app đọc bản
 JSON tương ứng.
 
+> **Đã đổi (2026-09-09):** thư mục `optimizer/` — bản Python của thuật toán —
+> đã bị xoá. Engine Swift trong `Sources/NSLauncherApp/Services/Abyss/` là bản
+> duy nhất, và fixture đối chiếu
+> (`Tests/NSLauncherAppTests/Fixtures/abyss-golden.json`) nay do chính engine
+> đó sinh ra: xem `Tests/NSLauncherAppTests/AbyssGoldenDump.swift`.
+
 > **Đã đổi (2026-09-08):** trước đây thư mục này ghi rõ "không được đóng gói
 > vào NSLauncher". Quyết định đó đã đảo: tính năng nay chạy **trong app** nên
 > bản JSON đã chuyển sang
@@ -35,10 +41,6 @@ JSON tương ứng.
   bản JSON của toàn bộ các mục trên. **Dữ liệu JSON thật nằm ở
   [`Sources/NSLauncherApp/Resources/Abyss/`](../Sources/NSLauncherApp/Resources/Abyss/README.md)**
   vì nó được đóng gói vào app.
-- [`optimizer/`](optimizer/README.md) — Bản Python của thuật toán gợi ý đội
-  hình. Bản chính thức là engine Swift trong app
-  (`Sources/NSLauncherApp/Services/Abyss/`); bản Python giữ lại làm sân thử
-  tham số và bộ sinh fixture đối chiếu cho test.
 
 ## Nguồn dữ liệu
 

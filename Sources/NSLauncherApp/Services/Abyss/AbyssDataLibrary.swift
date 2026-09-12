@@ -4,7 +4,7 @@
 // front. Follows `StoryLibrary`: bundled static content, synchronous load,
 // build one and hold onto it.
 //
-// Everything here is `let`. The Python kept four module-level mutable caches
+// Everything here is `let`. The original implementation kept four module-level mutable caches
 // (`_PROFILE_CACHE`, `_BASIS_CACHE`, `PARSE`, and a `MOONSIGN_IDS` the CLI
 // assigned into at runtime); under Swift 6 those would each need an escape
 // hatch, and they are also what would stop the scorer from running in
@@ -102,7 +102,9 @@ struct AbyssDataLibrary: Sendable {
         stellarJubileeIDs = Set(tuning?.stellarJubileeCharacterIds ?? [])
 
         var diagnostics = AbyssParseDiagnostics()
-        damageConstants = AbyssDamageConstants(formula: damageFormula, diagnostics: &diagnostics)
+        damageConstants = AbyssDamageConstants(formula: damageFormula,
+                                               stellarConductRamp: tuning?.stellarConductRamp ?? 0.5,
+                                               diagnostics: &diagnostics)
 
         var profiles: [String: AbyssDamageProfile] = [:]
         var variants: [String: [AbyssTalentLevels: AbyssDamageProfile]] = [:]
@@ -111,8 +113,16 @@ struct AbyssDataLibrary: Sendable {
         profiles.reserveCapacity(characters.count)
         variants.reserveCapacity(characters.count)
         sustain.reserveCapacity(characters.count)
+        // Per character, the labels their data uses for a charged attack that
+        // the generic vocabulary cannot see.
+        let chargedLabels = Dictionary(
+            (tuning?.chargedAttackLabels ?? []).map { ($0.characterId, $0.labels) },
+            uniquingKeysWith: { first, _ in first })
+
         for character in characters {
-            let base = Self.buildProfile(for: character, levels: .base, diagnostics: &diagnostics)
+            let charged = chargedLabels[character.id] ?? []
+            let base = Self.buildProfile(for: character, levels: .base,
+                                         chargedLabels: charged, diagnostics: &diagnostics)
             profiles[character.id] = base
             sustain[character.id] = AbyssTeamContext.capabilities(of: character)
 
@@ -134,6 +144,7 @@ struct AbyssDataLibrary: Sendable {
                 guard table[levels] == nil else { continue }
                 var throwaway = AbyssParseDiagnostics()
                 table[levels] = Self.buildProfile(for: character, levels: levels,
+                                                  chargedLabels: charged,
                                                   diagnostics: &throwaway)
             }
             variants[character.id] = table
@@ -196,6 +207,7 @@ struct AbyssDataLibrary: Sendable {
 
     private static func buildProfile(for character: AbyssCharacter,
                                      levels: AbyssTalentLevels,
+                                     chargedLabels: [String] = [],
                                      diagnostics: inout AbyssParseDiagnostics) -> AbyssDamageProfile {
         var hits: [AbyssDamageProfile.Term] = []
         for (multiplier, basis) in AbyssTextParser.talentDamageEntries(
@@ -209,9 +221,12 @@ struct AbyssDataLibrary: Sendable {
         for (multiplier, basis) in AbyssTextParser.normalAttackCombo(character) {
             hits.append(.init(multiplier: multiplier, basis: basis, category: .normal))
         }
-        if let (multiplier, basis) = AbyssTextParser.chargedAttack(character) {
+        if let (multiplier, basis) = AbyssTextParser.chargedAttack(character,
+                                                                   extraLabels: chargedLabels) {
             hits.append(.init(multiplier: multiplier, basis: basis, category: .charged))
         }
+        diagnostics.normalAttackRowsUnclassified.formUnion(
+            AbyssTextParser.unclassifiedNormalAttackRows(character, extraLabels: chargedLabels))
 
         // Collapse to one term per (basis, category). Every hit in a pair shares
         // the same stat and the same bonus, so factoring the multipliers out is

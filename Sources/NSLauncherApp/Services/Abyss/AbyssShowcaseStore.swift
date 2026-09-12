@@ -4,9 +4,9 @@
 // `~/Library/Application Support/NSLauncher/abyss-showcase.json`.
 //
 // Deliberately *not* part of `abyss-roster.json`: that file is hand-entered by
-// the player and is byte-compatible with the Python tool's `roster.json`, and
-// this is fetched data with a shelf life. Keeping them apart means clearing one
-// never touches the other, and an exported roster stays a plain roster.
+// the player and is theirs to keep, and this is fetched data with a shelf life.
+// Keeping them apart means clearing one never touches the other, and an exported
+// roster stays a plain roster.
 
 import Foundation
 

@@ -5,9 +5,9 @@
 // constraint on the answer — the useful recommendation is the best set that
 // exists, and the optimiser always searches all of them.
 //
-// The file layout stays compatible with the Python tool's `roster.json` (same
-// keys, same shapes) so it can still be copied in either direction; an
-// `artifactSets` key left over from an older file decodes and is ignored.
+// The on-disk layout is the one the roster has always had, kept stable so a
+// file written by an older version still loads; an `artifactSets` key left over
+// from back when artifacts were part of the roster decodes and is ignored.
 
 import Foundation
 

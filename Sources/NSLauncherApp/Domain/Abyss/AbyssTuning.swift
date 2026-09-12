@@ -4,9 +4,9 @@
 //
 // These are the planner's assumptions, not game data — rotation length, buff
 // uptimes, and a hand-written approximation of the artifact set effects that
-// were too conditional to extract mechanically. The Python reference reads the
-// same file, so tweaking a number there changes both implementations and they
-// cannot drift apart on the values that decide every recommendation.
+// were too conditional to extract mechanically. Every number that decides a
+// recommendation lives in that file rather than in this code, so changing an
+// assumption is a data edit with the reasoning next to it.
 //
 // The file's `notes` object explains why each number has the value it does;
 // that prose is load-bearing and is why the values live in JSON with a notes
@@ -76,11 +76,11 @@ struct AbyssTuning: Decodable, Sendable {
         }
 
         let characterId: String
-        let talent: Talent
         /// The exact scaling label to read the number from. Exact, not a
         /// pattern: this names one row, and a rename should be reported rather
         /// than guessed around.
         let label: String
+        let talent: Talent
         let kind: Kind
         /// Which percentage on that row, for the rows that carry two.
         let valueIndex: Int?
@@ -113,6 +113,53 @@ struct AbyssTuning: Decodable, Sendable {
     /// so the frequency — not the formula — is what decides where reaction teams
     /// rank. See `notes.transformativeReactionsPerRotation`.
     let transformativeReactionsPerRotation: Double
+    /// One source of enemy elemental resistance reduction.
+    ///
+    /// The channel the model never had. `resMultiplier` has always had a
+    /// negative branch — below zero the resistance is only halved, so stripping
+    /// resistance keeps paying where a DMG bonus saturates — and nothing in the
+    /// model could ever push it there. Kazuha, Venti, Sucrose, Faruzan and
+    /// Shenhe are mostly *this*, and without it they were close to invisible.
+    struct ResistanceShred: Decodable, Sendable {
+        /// `"swirled"` means every element the team can swirl; anything else is
+        /// a `GenshinElement` raw value.
+        static let swirledToken = "swirled"
+
+        let id: String
+        /// The team must contain this character.
+        let characterId: String?
+        /// The team must contain this element.
+        let requiresElement: GenshinElement?
+        let elements: [String]
+        let value: Double
+        let uptime: Double
+        let note: String
+    }
+
+    /// Labels that name a charged attack the generic vocabulary cannot see,
+    /// listed per character.
+    ///
+    /// Not a wider regex: deciding whether "Frostflake Arrow" is a charged
+    /// attack or a normal one is knowledge about the game, not a rule about
+    /// words, and getting it wrong moves a character's damage between two
+    /// buckets the floor buffs treat differently.
+    struct ChargedAttackLabels: Decodable, Sendable {
+        let characterId: String
+        let labels: [String]
+        let note: String
+    }
+
+    /// What an enemy resists its *own* element at — the one it attacks or
+    /// shields with. An inference, not data: see this key's note in
+    /// `tuning.json` for where the number comes from and how to switch it off.
+    let resistanceShred: [ResistanceShred]
+    /// Where on the Stellar-Conduct coefficient ramp to sit, 0 for its minimum
+    /// and 1 for its maximum. An assumption: the real coefficient climbs with
+    /// the Cryo/Electro hits recorded before the reaction and the model does not
+    /// count hits.
+    let stellarConductRamp: Double
+    let chargedAttackLabels: [ChargedAttackLabels]
+    let enemyOwnElementResistance: Double
     let noSustainPenalty: Double
     let shieldBreakBonus: Double
     let weaknessExploitBonus: Double

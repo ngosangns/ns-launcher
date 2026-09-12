@@ -295,6 +295,66 @@ struct WindowFrameOrnament: View {
     }
 }
 
+/// Wraps a row of mutually-exclusive controls — `SidebarTabButton`s or filter
+/// chips — in one shared "track" so the row reads as a single connected tab
+/// group instead of loose pills scattered across the bar. The active item
+/// still draws its own highlight; everything else sits flush against this
+/// track's background.
+struct TabGroup<Content: View>: View {
+    var spacing: CGFloat = 3
+    /// When true, every segment shares one width — the widest segment's own
+    /// ideal width — instead of each hugging its own label. Two tabs that
+    /// switch the same pane in and out (e.g. "Roster" / "Results") read as one
+    /// balanced control this way; a row of differently-sized filter chips
+    /// should leave this off.
+    var equalWidth: Bool = false
+    @ViewBuilder let content: () -> Content
+
+    var body: some View {
+        Group {
+            if equalWidth {
+                EqualWidthHStack(spacing: spacing) { content() }
+            } else {
+                HStack(spacing: spacing) { content() }
+            }
+        }
+        .padding(3)
+        .background(LauncherPalette.night.opacity(0.30), in: RoundedRectangle(cornerRadius: 13, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 13, style: .continuous)
+                .stroke(LauncherPalette.mist.opacity(0.10), lineWidth: 1)
+        }
+    }
+}
+
+/// A row layout that gives every subview the same width — the widest
+/// subview's own ideal width — rather than each hugging its own content
+/// (`HStack`) or all stretching to fill the parent (`.frame(maxWidth:
+/// .infinity)`, which ignores what its siblings need).
+private struct EqualWidthHStack: Layout {
+    var spacing: CGFloat = 0
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        guard !subviews.isEmpty else { return .zero }
+        let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
+        let segmentWidth = sizes.map(\.width).max() ?? 0
+        let height = sizes.map(\.height).max() ?? 0
+        let totalWidth = segmentWidth * CGFloat(subviews.count) + spacing * CGFloat(subviews.count - 1)
+        return CGSize(width: totalWidth, height: height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        guard !subviews.isEmpty else { return }
+        let segmentWidth = subviews.map { $0.sizeThatFits(.unspecified).width }.max() ?? 0
+        var x = bounds.minX
+        for subview in subviews {
+            subview.place(at: CGPoint(x: x, y: bounds.minY),
+                           proposal: ProposedViewSize(width: segmentWidth, height: bounds.height))
+            x += segmentWidth + spacing
+        }
+    }
+}
+
 /// A pill-shaped tab used for the app's Home/Settings switch and the settings sidebar list.
 struct SidebarTabButton: View {
     let title: String
@@ -331,10 +391,13 @@ struct SidebarTabButton: View {
             .frame(maxWidth: showsLabel ? .infinity : nil, minHeight: 22,
                    alignment: showsLabel ? .leading : .center)
             .background(
+                // Unselected tabs stay flush against the shared `TabGroup` track
+                // rather than drawing a second pill on top of it — only a hover
+                // tint and the active tab's highlight ever show here.
                 isSelected
                     ? LauncherPalette.goldHighlight
-                    : LauncherPalette.night.opacity(isHovering ? 0.48 : 0.30),
-                in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    : (isHovering ? LauncherPalette.mist.opacity(0.14) : Color.clear),
+                in: RoundedRectangle(cornerRadius: 10, style: .continuous)
             )
         }
         .buttonStyle(.plain)
