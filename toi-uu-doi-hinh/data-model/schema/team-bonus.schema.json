@@ -31,9 +31,9 @@
     },
     "moonsign": {
       "type": "object",
-      "required": ["characterIds", "levels", "maxBuffThresholds"],
+      "required": ["levels", "maxBuffThresholds"],
       "properties": {
-        "characterIds": { "type": "array", "items": { "type": "string" }, "description": "id khớp Character.id trong data/characters/" },
+        "characterIdsNote": { "type": "string", "description": "Danh sách nhân vật đã chuyển sang character-traits.json (tags) ngày 2026-09-12. Ở lại đây là LUẬT: luật đổi theo phiên bản game, danh sách đổi theo mỗi banner." },
         "levels": {
           "type": "array",
           "items": {
@@ -76,9 +76,9 @@
     },
     "hexerei": {
       "type": "object",
-      "required": ["characterIds", "requiredCount", "description", "requirement"],
+      "required": ["requiredCount", "description", "requirement"],
       "properties": {
-        "characterIds": { "type": "array", "items": { "type": "string" } },
+        "characterIdsNote": { "type": "string", "description": "Danh sách nhân vật đã chuyển sang character-traits.json (tags) ngày 2026-09-12. Ở lại đây là LUẬT: luật đổi theo phiên bản game, danh sách đổi theo mỗi banner." },
         "requiredCount": { "type": "integer" },
         "description": { "type": "string" },
         "requirement": { "type": "string" }

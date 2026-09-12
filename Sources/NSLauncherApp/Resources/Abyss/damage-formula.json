@@ -89,18 +89,7 @@
       },
       "note": "stellarConduct bắt đầu 1.4, +0.05 mỗi đòn Băng/Điện ghi nhận trước đó, tối đa 12 đòn (tối đa hệ số 2)."
     },
-    "reactionBaseDmgBonusSources": [
-      { "character": "Columbina", "reactionType": "Lunar-Charged/Bloom/Crystallize", "maxBonus": 0.07 },
-      { "character": "Lauma", "reactionType": "Lunar-Bloom", "maxBonus": 0.14 },
-      { "character": "Nefer", "reactionType": "Lunar-Bloom", "maxBonus": 0.14 },
-      { "character": "Flins", "reactionType": "Lunar-Charged", "maxBonus": 0.14 },
-      { "character": "Ineffa", "reactionType": "Lunar-Charged", "maxBonus": 0.14 },
-      { "character": "Zibai", "reactionType": "Lunar-Crystallize", "maxBonus": 0.14 },
-      { "character": "Linnea", "reactionType": "Lunar-Crystallize", "maxBonus": 0.14 },
-      { "character": "Sandrone", "reactionType": "Stellar-Conduct, Stellar Swirl", "maxBonus": 0.14 },
-      { "character": "Odette", "reactionType": "Stellar-Conduct, Stellar Swirl", "maxBonus": 0.14 },
-      { "character": "traveler-cryo", "reactionType": "Stellar-Conduct, Stellar Swirl", "maxBonus": 0.07 }
-    ]
+    "reactionBaseDmgBonusNote": "Danh sách nhân vật nâng base damage phản ứng Lunar/Stellar đã chuyển sang character-traits.json (reactionBaseDamageBonus) ngày 2026-09-12. Cột reactionType ở đây là chuỗi tự do (\"Lunar-Charged/Bloom/Crystallize\") mà engine decode rồi bỏ qua, nên mọi nguồn cộng cho MỌI phản ứng Lunar/Stellar — Lauma chỉ nâng Lunar-Bloom mà đang trả tiền cho Stellar-Conduct của đội khác. Bản mới ghi thẳng mảng tên phản ứng. Cột character cũng trộn 2 quy ước id (9 tên hiển thị + 1 slug traveler-cryo) trong khi tra cứu là theo slug."
   },
   "trueDamage": {
     "note": "Bỏ qua hoàn toàn DEF/RES/DMG Reduction của địch (vẫn bị khiên chặn). Chỉ tăng qua Vaporize/Melt. Hiếm khi liên quan build đội hình (sát thương rơi/va chạm, Ley Line Disorder đặc biệt, Electrogranum, Thunderstone...)."

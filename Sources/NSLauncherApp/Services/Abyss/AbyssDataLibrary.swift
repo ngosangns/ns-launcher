@@ -56,8 +56,13 @@ struct AbyssDataLibrary: Sendable {
     /// here instead.
     let sustainByCharacterID: [String: AbyssSustain]
     /// Party-wide buffs each character's talents grant, resolved from
-    /// `tuning.json`'s `talentPartyBuff` against the character data.
+    /// `character-traits.json`'s `partyBuffs` against the character data.
     let talentPartyBuffsByCharacterID: [String: [AbyssTalentPartyBuff]]
+    /// Everything `character-traits.json` says about each character, by id.
+    let traitsByCharacterID: [String: AbyssCharacterTraits]
+    /// How much each character adds to the base damage of the Lunar/Stellar
+    /// reactions they name, by character id then reaction.
+    let reactionBaseDamageBonusByCharacterID: [String: [AbyssReaction: Double]]
     let moonsignIDs: Set<String>
     let hexereiIDs: Set<String>
     let stellarJubileeIDs: Set<String>
@@ -97,14 +102,51 @@ struct AbyssDataLibrary: Sendable {
 
         gameIDs = Self.decode(from: root?.appendingPathComponent("game-ids.json")) ?? .empty
         icons = AbyssIconLibrary(root: root)
-        moonsignIDs = Set(teamBonus?.moonsign.characterIds ?? [])
-        hexereiIDs = Set(teamBonus?.hexerei.characterIds ?? [])
-        stellarJubileeIDs = Set(tuning?.stellarJubileeCharacterIds ?? [])
 
         var diagnostics = AbyssParseDiagnostics()
         damageConstants = AbyssDamageConstants(formula: damageFormula,
                                                stellarConductRamp: tuning?.stellarConductRamp ?? 0.5,
                                                diagnostics: &diagnostics)
+
+        // Everything the data says about one named character, in one pass and
+        // checked. Six of the seven tables this replaces were read without ever
+        // asking whether the id existed, so a typo removed a mechanic in silence
+        // — a character missing from a list and a character the list does not
+        // apply to are indistinguishable once the list has been read.
+        let traitsFile: AbyssCharacterTraitsFile? =
+            Self.decode(from: root?.appendingPathComponent("character-traits.json"))
+        var traits: [String: AbyssCharacterTraits] = [:]
+        for entry in traitsFile?.traits ?? [] {
+            guard charactersByID[entry.characterId] != nil else {
+                diagnostics.unknownTraitCharacterIDs.insert(entry.characterId)
+                continue
+            }
+            guard traits[entry.characterId] == nil else {
+                diagnostics.unknownTraitCharacterIDs.insert("\(entry.characterId): listed twice")
+                continue
+            }
+            traits[entry.characterId] = entry
+        }
+        traitsByCharacterID = traits
+        moonsignIDs = Set(traits.values.filter { $0.has(.moonsign) }.map(\.characterId))
+        hexereiIDs = Set(traits.values.filter { $0.has(.hexerei) }.map(\.characterId))
+        stellarJubileeIDs = Set(traits.values.filter { $0.has(.stellarJubilee) }.map(\.characterId))
+
+        var reactionBonuses: [String: [AbyssReaction: Double]] = [:]
+        for entry in traits.values {
+            for bonus in entry.reactionBaseDamageBonus ?? [] {
+                for name in bonus.reactions {
+                    guard let reaction = AbyssReaction(rawValue: name) else {
+                        diagnostics.unknownTraitCharacterIDs.insert(
+                            "\(entry.characterId): \"\(name)\" is no reaction")
+                        continue
+                    }
+                    reactionBonuses[entry.characterId, default: [:]][reaction] =
+                        max(reactionBonuses[entry.characterId]?[reaction] ?? 0, bonus.value)
+                }
+            }
+        }
+        reactionBaseDamageBonusByCharacterID = reactionBonuses
 
         var profiles: [String: AbyssDamageProfile] = [:]
         var variants: [String: [AbyssTalentLevels: AbyssDamageProfile]] = [:]
@@ -115,9 +157,7 @@ struct AbyssDataLibrary: Sendable {
         sustain.reserveCapacity(characters.count)
         // Per character, the labels their data uses for a charged attack that
         // the generic vocabulary cannot see.
-        let chargedLabels = Dictionary(
-            (tuning?.chargedAttackLabels ?? []).map { ($0.characterId, $0.labels) },
-            uniquingKeysWith: { first, _ in first })
+        let chargedLabels = traits.mapValues { $0.chargedAttackLabels?.labels ?? [] }
 
         for character in characters {
             let charged = chargedLabels[character.id] ?? []
@@ -160,22 +200,21 @@ struct AbyssDataLibrary: Sendable {
         // in `diagnostics` — and fails a test — instead of quietly contributing
         // nothing.
         var talentBuffs: [String: [AbyssTalentPartyBuff]] = [:]
-        for entry in tuning?.talentPartyBuff ?? [] {
-            guard let character = charactersByID[entry.characterId] else {
-                diagnostics.talentPartyBuffUnresolved.insert("\(entry.characterId): no such character")
-                continue
+        for (id, entry) in traits {
+            guard let character = charactersByID[id] else { continue }
+            for buff in entry.partyBuffs ?? [] {
+                let talent = buff.talent == .skill ? character.elementalSkill : character.elementalBurst
+                guard let value = AbyssTextParser.talentPercentage(in: talent, label: buff.label,
+                                                                   index: buff.valueIndex ?? 0) else {
+                    diagnostics.talentPartyBuffUnresolved.insert("\(id): \(buff.label)")
+                    continue
+                }
+                let kind: AbyssTalentPartyBuff.Kind = buff.kind == .flatATKFromBaseATK
+                    ? .flatATKFromBaseATK
+                    : .elementalDMG
+                talentBuffs[id, default: []].append(
+                    AbyssTalentPartyBuff(kind: kind, value: value * buff.uptime))
             }
-            let talent = entry.talent == .skill ? character.elementalSkill : character.elementalBurst
-            guard let value = AbyssTextParser.talentPercentage(in: talent, label: entry.label,
-                                                               index: entry.valueIndex ?? 0) else {
-                diagnostics.talentPartyBuffUnresolved.insert("\(entry.characterId): \(entry.label)")
-                continue
-            }
-            let kind: AbyssTalentPartyBuff.Kind = entry.kind == .flatATKFromBaseATK
-                ? .flatATKFromBaseATK
-                : .elementalDMG
-            talentBuffs[entry.characterId, default: []].append(
-                AbyssTalentPartyBuff(kind: kind, value: value * entry.uptime))
         }
         talentPartyBuffsByCharacterID = talentBuffs
 

@@ -55,41 +55,6 @@ struct AbyssTuning: Decodable, Sendable {
         }
     }
 
-    /// A party-wide buff one character's talents grant, and how to read it.
-    ///
-    /// The *number* is not here: it is read out of the character's own talent
-    /// table by `label`, so a corrected talent value reaches the model without
-    /// anyone editing this file. What is here is the part no rule can infer —
-    /// "ATK Bonus: 100.8% Base ATK" (a flat buff for the whole party) and "ATK
-    /// Bonus (%DEF): 103.7%" (the caster converting their own DEF) are the same
-    /// three words, and `AbyssTextParser`'s damage filter drops both because
-    /// neither is a damage instance.
-    struct TalentPartyBuff: Decodable, Sendable {
-        enum Talent: String, Decodable, Sendable { case skill, burst }
-
-        enum Kind: String, Decodable, Sendable {
-            /// The value is a share of the caster's Base ATK, handed to every
-            /// member as flat ATK.
-            case flatATKFromBaseATK = "flat-atk-from-base-atk"
-            /// The value is a DMG bonus for the caster's own element, party-wide.
-            case elementalDMG = "elemental-dmg"
-        }
-
-        let characterId: String
-        /// The exact scaling label to read the number from. Exact, not a
-        /// pattern: this names one row, and a rename should be reported rather
-        /// than guessed around.
-        let label: String
-        let talent: Talent
-        let kind: Kind
-        /// Which percentage on that row, for the rows that carry two.
-        let valueIndex: Int?
-        /// Share of a rotation the buff is actually up. The most subjective
-        /// number here; each entry's `note` says how it was arrived at.
-        let uptime: Double
-        let note: String
-    }
-
     let artifactMainStats: [String: Double]
     let substatRollValue: [String: Double]
     let substatRollBudget: Double
@@ -121,51 +86,40 @@ struct AbyssTuning: Decodable, Sendable {
     /// model could ever push it there. Kazuha, Venti, Sucrose, Faruzan and
     /// Shenhe are mostly *this*, and without it they were close to invisible.
     struct ResistanceShred: Decodable, Sendable {
-        /// `"swirled"` means every element the team can swirl; anything else is
-        /// a `GenshinElement` raw value.
-        static let swirledToken = "swirled"
-
         let id: String
-        /// The team must contain this character.
-        let characterId: String?
         /// The team must contain this element.
+        ///
+        /// An element, not a character, because these two entries are artifact
+        /// sets: nothing has chosen who wears what at the point a team context
+        /// is built, and in practice an Anemo support wears Viridescent Venerer.
+        /// That makes them assumptions rather than facts, which is why they stay
+        /// in this file while Faruzan's and Shenhe's live in
+        /// `character-traits.json`.
         let requiresElement: GenshinElement?
+        /// `GenshinElement` raw values, or `AbyssResistanceShredScope.swirled`.
         let elements: [String]
         let value: Double
         let uptime: Double
         let note: String
     }
 
-    /// Labels that name a charged attack the generic vocabulary cannot see,
-    /// listed per character.
-    ///
-    /// Not a wider regex: deciding whether "Frostflake Arrow" is a charged
-    /// attack or a normal one is knowledge about the game, not a rule about
-    /// words, and getting it wrong moves a character's damage between two
-    /// buckets the floor buffs treat differently.
-    struct ChargedAttackLabels: Decodable, Sendable {
-        let characterId: String
-        let labels: [String]
-        let note: String
-    }
-
-    /// What an enemy resists its *own* element at — the one it attacks or
-    /// shields with. An inference, not data: see this key's note in
-    /// `tuning.json` for where the number comes from and how to switch it off.
+    /// Resistance reduction the model credits to an artifact set the planner
+    /// assumes somebody is wearing. The character-borne sources are in
+    /// `character-traits.json`.
     let resistanceShred: [ResistanceShred]
     /// Where on the Stellar-Conduct coefficient ramp to sit, 0 for its minimum
     /// and 1 for its maximum. An assumption: the real coefficient climbs with
     /// the Cryo/Electro hits recorded before the reaction and the model does not
     /// count hits.
     let stellarConductRamp: Double
-    let chargedAttackLabels: [ChargedAttackLabels]
+    /// What an enemy resists its *own* element at — the one it attacks or
+    /// shields with. An inference, not data: see this key's note in
+    /// `tuning.json` for where the number comes from and how to switch it off.
     let enemyOwnElementResistance: Double
     let noSustainPenalty: Double
     let shieldBreakBonus: Double
     let weaknessExploitBonus: Double
-    let stellarJubileeCharacterIds: [String]
     let setEffectApprox: [SetEffectApproximation]
-    let talentPartyBuff: [TalentPartyBuff]
 
     func mainStat(_ key: String) -> Double { artifactMainStats[key] ?? 0 }
     func rollValue(_ key: String) -> Double { substatRollValue[key] ?? 0 }

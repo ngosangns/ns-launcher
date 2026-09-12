@@ -55,14 +55,17 @@ final class AbyssDataLibraryTests: XCTestCase {
         }
     }
 
-    func testTeamBonusCharacterIdsResolve() throws {
-        let teamBonus = try XCTUnwrap(library.teamBonus)
-        for id in teamBonus.moonsign.characterIds + teamBonus.hexerei.characterIds {
-            XCTAssertNotNil(library.charactersByID[id], "team-bonus.json references unknown character \"\(id)\"")
+    /// The three rosters now come from one file that validates itself; this is
+    /// the belt to `AbyssCharacterTraitsTests`' braces, checking the tables the
+    /// engine actually holds rather than the file they were read from.
+    func testEveryTaggedCharacterResolves() {
+        for id in library.moonsignIDs.union(library.hexereiIDs).union(library.stellarJubileeIDs) {
+            XCTAssertNotNil(library.charactersByID[id],
+                            "character-traits.json references unknown character \"\(id)\"")
         }
-        for id in library.stellarJubileeIDs {
-            XCTAssertNotNil(library.charactersByID[id], "tuning.json references unknown character \"\(id)\"")
-        }
+        XCTAssertFalse(library.moonsignIDs.isEmpty)
+        XCTAssertFalse(library.hexereiIDs.isEmpty)
+        XCTAssertFalse(library.stellarJubileeIDs.isEmpty)
     }
 
     func testEveryCharacterHasADamageProfile() {

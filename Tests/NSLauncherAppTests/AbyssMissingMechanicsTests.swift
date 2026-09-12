@@ -113,14 +113,18 @@ final class AbyssMissingMechanicsTests: XCTestCase {
     }
 
     /// A character who raises Lunar/Stellar base damage is worth something to a
-    /// team even when they do nothing else.
-    func testAReactionBaseDamageBonusReachesTheReaction() throws {
+    /// team even when they do nothing else — but only to the reactions the data
+    /// says they raise.
+    func testAReactionBaseDamageBonusReachesOnlyTheReactionsItNames() throws {
         let scorer = AbyssScorer(library: library, tuning: try tuning())
         let floor = AbyssFloorContext(floor: 12, half: nil, monsterLevel: 100, resistances: [:],
                                       buffs: [], shieldElements: [])
         let withSource = try team(["odette", "fischl", "diona", "bennett"])
-        XCTAssertGreaterThan(withSource.reactionBaseDamageBonus, 0,
+        // `"Stellar-Conduct, Stellar Swirl"` in the data, and nothing else.
+        XCTAssertGreaterThan(withSource.reactionBaseDamageBonus[.stellarConduct] ?? 0, 0,
                              "Odette is listed in reactionBaseDmgBonusSources")
+        XCTAssertNil(withSource.reactionBaseDamageBonus[.lunarBloom],
+                     "Odette's column names no Lunar reaction")
         XCTAssertNotNil(scorer.transformative(for: withSource, floor: floor))
     }
 
@@ -152,10 +156,11 @@ final class AbyssMissingMechanicsTests: XCTestCase {
     /// Every entry in the table has to still match a row, or it is quietly doing
     /// nothing after a data update.
     func testEveryChargedLabelStillMatchesARow() throws {
-        for entry in try tuning().chargedAttackLabels {
+        for entry in library.traitsByCharacterID.values {
+            guard let charged = entry.chargedAttackLabels else { continue }
             let character = try XCTUnwrap(library.charactersByID[entry.characterId],
                                           "\(entry.characterId) is no longer in the data")
-            for label in entry.labels {
+            for label in charged.labels {
                 XCTAssertTrue(character.normalAttack.hits.contains {
                     $0.label.range(of: label, options: .caseInsensitive) != nil
                 }, "\(entry.characterId): no row matches \"\(label)\" any more")

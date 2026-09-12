@@ -77,18 +77,19 @@ final class AbyssBuildAssemblerTests: XCTestCase {
 
     // MARK: - Talent party buffs
 
-    /// The table in `tuning.json` points at rows in the character data by exact
-    /// label. A rename would make a buff vanish silently, so every entry has to
-    /// resolve at load.
+    /// `character-traits.json`'s `partyBuffs` point at rows in the character
+    /// data by exact label. A rename would make a buff vanish silently, so every
+    /// entry has to resolve at load.
     func testEveryTalentPartyBuffEntryResolvesAgainstTheCharacterData() throws {
-        let tuning = try XCTUnwrap(library.tuning)
-        XCTAssertFalse(tuning.talentPartyBuff.isEmpty, "the table is empty; nothing is being modelled")
+        let entries = library.traitsByCharacterID.values.filter { !($0.partyBuffs ?? []).isEmpty }
+        XCTAssertFalse(entries.isEmpty, "the table is empty; nothing is being modelled")
         XCTAssertEqual(library.diagnostics.talentPartyBuffUnresolved, [],
-                       "a talentPartyBuff entry no longer matches the character data")
+                       "a partyBuffs entry no longer matches the character data")
 
-        for entry in tuning.talentPartyBuff {
+        for entry in entries {
             let resolved = library.talentPartyBuffsByCharacterID[entry.characterId] ?? []
-            XCTAssertFalse(resolved.isEmpty, "\(entry.characterId) resolved to no buff")
+            XCTAssertEqual(resolved.count, entry.partyBuffs?.count,
+                           "\(entry.characterId): not every buff resolved")
             for buff in resolved {
                 XCTAssertGreaterThan(buff.value, 0, "\(entry.characterId): buff resolved to zero")
             }
@@ -99,8 +100,7 @@ final class AbyssBuildAssemblerTests: XCTestCase {
     /// party as flat ATK. It is the single largest buff in the game and the
     /// model credited him with none of it.
     func testBennettGrantsFlatATKScaledByHisOwnBaseATK() throws {
-        let tuning = try XCTUnwrap(library.tuning)
-        let entry = try XCTUnwrap(tuning.talentPartyBuff.first { $0.characterId == "bennett" })
+        let entry = try XCTUnwrap(library.traitsByCharacterID["bennett"]?.partyBuffs?.first)
         let bennett = try XCTUnwrap(library.charactersByID["bennett"])
         let ratio = try XCTUnwrap(AbyssTextParser.talentPercentage(
             in: bennett.elementalBurst, label: entry.label, index: entry.valueIndex ?? 0))

@@ -27,11 +27,41 @@ là **bản duy nhất**.
 | `artifact-sets.json` | 63 bộ thánh di vật |
 | `abyss-monsters/<khoảng-ngày>.json` | Quái + Ley Line Disorder + Uyên Nguyệt Chúc Phúc của một chu kỳ |
 | `damage-formula.json` | Hằng số công thức sát thương + ví dụ mẫu để test |
-| `team-bonus.json` | Cộng hưởng nguyên tố, Nguyệt Triệu, Hexerei, Nightsoul Burst |
+| `team-bonus.json` | Cộng hưởng nguyên tố, Nguyệt Triệu, Hexerei, Nightsoul Burst — **luật**, không phải danh sách nhân vật |
+| `character-traits.json` | Mọi thứ chỉ đúng với **một** nhân vật: tag cơ chế, nhãn đòn nặng, buff toàn đội theo talent, giảm kháng, base damage phản ứng |
 | `tuning.json` | Tham số thuật toán (xem bên dưới) |
 | `game-ids.json` | Id số trong game → slug ở đây, để nhập Showcase theo UID |
 | `icons/characters/<id>.png`, `icons/weapons/<id>.png` | Ảnh chân dung, 256×256 |
 | `manifest.json` | Số lượng bản ghi + các khoảng trống dữ liệu đã biết |
+
+## Thêm nhân vật mới thì sửa ở đâu
+
+`character-traits.json` là chỗ duy nhất cần sửa cho phần "nhân vật này đặc biệt
+ở chỗ nào". Trước 2026-09-12 thì không: 48 sự thật kiểu đó nằm rải ở bảy bảng
+thuộc ba file khác nhau —
+
+| Nằm ở | Bảng |
+|---|---|
+| `tuning.json` | `chargedAttackLabels`, `talentPartyBuff`, `stellarJubileeCharacterIds`, `resistanceShred` (các dòng gắn nhân vật) |
+| `team-bonus.json` | `moonsign.characterIds`, `hexerei.characterIds` |
+| `damage-formula.json` | `lunarStellar.reactionBaseDmgBonusSources` |
+
+— với hai quy ước id lẫn nhau (chín tên hiển thị và một slug `traveler-cryo`
+nằm chung một cột), và **sáu trên bảy bảng đọc mà không kiểm id**. Đó mới là chỗ
+đau: gõ sai id không làm hỏng gì cả. Nó gỡ mất một cơ chế, và một đội thiếu
+Stellar Jubilee vì gõ sai trông y hệt một đội vốn không có ai Stellar Jubilee.
+
+Giờ: một entry mỗi nhân vật, `characterId` luôn là slug trùng `characters/*.json`,
+và `AbyssDataLibrary` ghi mọi id/tên phản ứng không phân giải được vào
+`diagnostics.unknownTraitCharacterIDs` — `AbyssCharacterTraitsTests` ghim nó
+rỗng, nên id sai làm **đỏ test** thay vì làm sai lặng lẽ.
+
+Ranh giới với `tuning.json`: **câu đó có gọi tên một nhân vật không?** Uptime
+burst của Faruzan là sự thật về Faruzan → `character-traits.json`. `rotationSeconds`,
+`conditionalUptime`, `setEffectApprox` là giả định của thuật toán áp cho mọi
+người → ở lại `tuning.json`. Hai dòng `resistanceShred` còn lại trong `tuning.json`
+là ví dụ rõ nhất: chúng gate theo *nguyên tố của đội* để đại diện cho "support
+Anemo thì chắc mặc Viridescent Venerer" — một giả định, không phải sự thật về ai.
 
 `game-ids.json` **sinh tự động**, đừng sửa tay:
 

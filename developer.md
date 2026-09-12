@@ -231,6 +231,50 @@ Data lives in `Sources/NSLauncherApp/Resources/Abyss/` (bundled, see that
 folder's README); the Markdown it was transcribed from and the JSON Schemas stay
 in `toi-uu-doi-hinh/`.
 
+### Where a fact belongs
+
+The data files are split by **what kind of claim** they make, not by which part
+of the engine reads them. Four homes, and the boundary between them is the thing
+worth remembering, because it is the one that went wrong:
+
+| File | Holds | Test of membership |
+|---|---|---|
+| `characters/`, `weapons/`, `artifact-sets.json`, `abyss-monsters/` | Transcribed game data | Someone could read it off the wiki |
+| `damage-formula.json`, `team-bonus.json` | Game **rules** | Changes with a game version |
+| `character-traits.json` | Everything true of **one named character** | The sentence names a character |
+| `tuning.json` | The planner's **assumptions** about every character | Changes because we changed our minds |
+
+`character-traits.json` was added on 2026-09-12 and is the reason this table
+exists. Forty-eight facts about individual characters had accumulated across the
+other three files in seven shapes — `tuning.json` held four tables,
+`team-bonus.json` two flat id lists, `damage-formula.json` one more — so each new
+character meant editing three files in three different ways. The split had been
+made along "which subsystem reads this", and characters are not a subsystem: they
+are the axis that grows every six weeks.
+
+The part that actually cost something was quieter. **Six of the seven tables were
+read without checking that the id existed.** A typo in `stellarJubileeCharacterIds`
+did not crash and did not warn; it removed the mechanic, and a roster where
+nobody has Stellar Jubilee looks exactly the same from the inside. One of the
+seven columns was worse than untyped — `reactionBaseDmgBonusSources.reactionType`
+was free text (`"Lunar-Charged/Bloom/Crystallize"`) that the engine decoded and
+then ignored, so every source raised every Lunar and Stellar reaction: Lauma,
+who raises Lunar-Bloom, was paying for other teams' Stellar-Conduct. The same
+column mixed two id conventions — nine display names and one slug
+(`traveler-cryo`) — against a lookup that was by slug, which worked only because
+every name in it happened to be one word.
+
+Now: one entry per character, `characterId` always the slug from
+`characters/*.json`, `reactions` an explicit array, and every unresolved id,
+reaction name or duplicate lands in `AbyssParseDiagnostics.unknownTraitCharacterIDs`.
+`AbyssCharacterTraitsTests` pins that set empty, so a typo is a red test.
+
+Two `resistanceShred` entries stayed in `tuning.json`, and they are the clearest
+illustration of the boundary: they are artifact sets, gated on an element the
+team has, standing in for "an Anemo support probably wears Viridescent Venerer".
+That is an assumption about who wears what. Faruzan's and Shenhe's are gated on
+the character being present, which is a fact, and they moved.
+
 ### One spelling for a stat
 
 `AbyssStatField.tuningKey` is the only place a stat's snake_case name is written.

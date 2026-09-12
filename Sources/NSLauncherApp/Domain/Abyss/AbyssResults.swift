@@ -47,17 +47,27 @@ struct AbyssParseDiagnostics: Sendable, Equatable {
     var artifactBonusUnmapped: Set<String> = []
     var resistanceNotesUnparsed: Set<String> = []
     var leyLineUnparsed: Set<String> = []
-    /// Entries in `tuning.json`'s `talentPartyBuff` whose character or scaling
-    /// label no longer exists. That table points at rows in the character data
-    /// by name; without this, a renamed row would make a buff quietly vanish
-    /// instead of failing loudly.
+    /// Entries in `character-traits.json`'s `partyBuffs` whose scaling label no
+    /// longer exists. That table points at rows in the character data by name;
+    /// without this, a renamed row would make a buff quietly vanish instead of
+    /// failing loudly.
     var talentPartyBuffUnresolved: Set<String> = []
+    /// Entries in `character-traits.json` that name a character the data does
+    /// not have — or a reaction it does not have, or the same character twice.
+    ///
+    /// The gap this closes is the whole reason that file exists. The seven
+    /// tables it replaces were spread over three files, and six of them were
+    /// read with no check at all: a mistyped id in `stellarJubileeCharacterIds`
+    /// removed the mechanic for everybody and looked exactly like a rotation
+    /// where nobody had it.
+    var unknownTraitCharacterIDs: Set<String> = []
     /// Parts of `damage-formula.json` the loader could not read, so the planner
     /// fell back to the values the port was written with.
     var damageFormulaUnread: Set<String> = []
     /// Rows in a character's normal-attack table that look like damage and were
     /// classified as nothing: not a numbered combo hit, not a charged attack the
-    /// vocabulary or `tuning.chargedAttackLabels` recognises, not a plunge.
+    /// vocabulary or `character-traits.json`'s `chargedAttackLabels`
+    /// recognises, not a plunge.
     ///
     /// They are dropped, and dropping them is how Ganyu lost every point of
     /// Frostflake Arrow. Listing them is the difference between a gap somebody
@@ -79,6 +89,7 @@ struct AbyssParseDiagnostics: Sendable, Equatable {
         resistanceNotesUnparsed.formUnion(other.resistanceNotesUnparsed)
         leyLineUnparsed.formUnion(other.leyLineUnparsed)
         talentPartyBuffUnresolved.formUnion(other.talentPartyBuffUnresolved)
+        unknownTraitCharacterIDs.formUnion(other.unknownTraitCharacterIDs)
         damageFormulaUnread.formUnion(other.damageFormulaUnread)
         floorBuffsNotPriced.formUnion(other.floorBuffsNotPriced)
         normalAttackRowsUnclassified.formUnion(other.normalAttackRowsUnclassified)

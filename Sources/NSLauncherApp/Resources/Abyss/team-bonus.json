@@ -80,7 +80,7 @@
     }
   ],
   "moonsign": {
-    "characterIds": ["aino", "columbina", "flins", "illuga", "ineffa", "jahoda", "lauma", "linnea", "nefer", "zibai"],
+    "characterIdsNote": "Danh sách nhân vật đã chuyển sang character-traits.json (tags: \"moonsign\") ngày 2026-09-12. Ở lại đây là LUẬT — bậc, số lượng cần, hiệu ứng — vì luật đổi theo phiên bản game còn danh sách đổi theo mỗi nhân vật mới ra.",
     "note": "10 nhân vật, toàn bộ người Nod-Krai. Khác với danh sách 'Reaction Base DMG Bonus' (Lunar/Stellar) trong damage-formula.json.lunarStellar.reactionBaseDmgBonusSources — danh sách đó gồm 1 phần nhân vật Nguyệt Triệu (Columbina, Lauma, Nefer, Flins, Ineffa, Zibai, Linnea) cộng thêm nhóm Stellar Jubilee (Sandrone, Odette, traveler-cryo) không phải Nguyệt Triệu.",
     "levels": [
       {
@@ -108,7 +108,7 @@
     ]
   },
   "hexerei": {
-    "characterIds": ["albedo", "durin", "fischl", "klee", "lohen", "mona", "nicole", "prune", "razor", "sucrose", "varka", "venti"],
+    "characterIdsNote": "Danh sách nhân vật đã chuyển sang character-traits.json (tags: \"hexerei\") ngày 2026-09-12. Ở lại đây là LUẬT — bậc, số lượng cần, hiệu ứng — vì luật đổi theo phiên bản game còn danh sách đổi theo mỗi nhân vật mới ra.",
     "requiredCount": 2,
     "description": "Các nhân vật Hexerei trong đội được tăng cường thêm: kích hoạt 'Witch's Eve Rite Passive' (passive ẩn riêng), thêm hiệu ứng Kỹ Năng/Cung Mệnh bổ sung tuỳ nhân vật.",
     "requirement": "Mỗi nhân vật phải hoàn thành nhiệm vụ riêng 'Witch's Homework' để trở thành nhân vật Hexerei."

@@ -253,6 +253,10 @@ struct AbyssTeamBonus: Decodable, Sendable {
         let bonuses: [Bonus]
     }
 
+    /// The rules, not the roster. Which characters count towards Moonsign and
+    /// Hexerei is in `character-traits.json` — a roster changes with every
+    /// banner and a rule changes with a game version, so they are edited at
+    /// different times by different evidence.
     struct Moonsign: Decodable, Sendable {
         struct Level: Decodable, Sendable {
             let name: String
@@ -260,13 +264,11 @@ struct AbyssTeamBonus: Decodable, Sendable {
             let description: String
         }
 
-        let characterIds: [String]
         let note: String?
         let levels: [Level]
     }
 
     struct Hexerei: Decodable, Sendable {
-        let characterIds: [String]
         let requiredCount: Int
         let description: String
         let requirement: String
@@ -369,26 +371,18 @@ struct AbyssDamageFormula: Decodable, Sendable {
     /// Lunar-Crystallize, Stellar-Conduct, Stellar Swirl.
     ///
     /// Their own block because they are their own mechanic: a different EM
-    /// curve, coefficients that depend on whether the reaction is dealt directly
-    /// or aggregated across everyone who applied an element, and a base-damage
-    /// bonus that a handful of characters bring with them.
+    /// curve, and coefficients that depend on whether the reaction is dealt
+    /// directly or aggregated across everyone who applied an element. The
+    /// base-damage bonus a handful of characters bring is in
+    /// `character-traits.json`, with the reactions each one raises written out.
     struct LunarStellar: Decodable, Sendable {
         struct Branch: Decodable, Sendable {
             let coefficients: [String: Double]
         }
 
-        /// One character who raises the base damage of a Lunar/Stellar reaction
-        /// just by being on the team.
-        struct BaseDamageBonusSource: Decodable, Sendable {
-            let character: String
-            let reactionType: String
-            let maxBonus: Double
-        }
-
         let emBonusFormula: String
         let direct: Branch
         let indirect: Branch
-        let reactionBaseDmgBonusSources: [BaseDamageBonusSource]
     }
 
     let resMultiplier: ResMultiplier

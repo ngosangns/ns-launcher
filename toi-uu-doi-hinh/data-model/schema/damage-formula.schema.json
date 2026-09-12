@@ -47,10 +47,7 @@
         "emBonusFormula": { "type": "string" },
         "indirect": { "type": "object" },
         "direct": { "type": "object" },
-        "reactionBaseDmgBonusSources": {
-          "type": "array",
-          "items": { "type": "object", "properties": { "character": { "type": "string" }, "reactionType": { "type": "string" }, "maxBonus": { "type": "number" } } }
-        }
+        "reactionBaseDmgBonusNote": { "type": "string", "description": "Danh sách nhân vật nâng base damage phản ứng Lunar/Stellar đã chuyển sang character-traits.json ngày 2026-09-12, nơi reactions là mảng tên tường minh. Cột reactionType cũ là chuỗi tự do mà engine decode rồi bỏ qua, nên mọi nguồn cộng cho mọi phản ứng Lunar/Stellar." }
       }
     },
     "critValueHeuristic": { "type": "object", "properties": { "formula": { "type": "string" }, "targetRatio": { "type": "string" } } },

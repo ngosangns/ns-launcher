@@ -42,9 +42,6 @@ struct AbyssDamageConstants: Sendable {
     /// deliberately does not carry; until that exists, the direct coefficients
     /// are the honest reading and they are the larger of the two.
     let lunarStellarCoefficients: [AbyssReaction: Double]
-    /// Characters who raise the base damage of a Lunar/Stellar reaction just by
-    /// being in the team, keyed by lowercased name.
-    let reactionBaseDamageBonus: [String: Double]
 
     init(amplifyingEM: AbyssDamageFormula.EMCurve,
          transformativeEM: AbyssDamageFormula.EMCurve,
@@ -53,8 +50,7 @@ struct AbyssDamageConstants: Sendable {
          transformativeCoefficients: [AbyssReaction: Double],
          transformativeLevelMultiplier: Double,
          lunarStellarEM: AbyssDamageFormula.EMCurve = .init(numerator: 6, offset: 2000),
-         lunarStellarCoefficients: [AbyssReaction: Double] = [:],
-         reactionBaseDamageBonus: [String: Double] = [:]) {
+         lunarStellarCoefficients: [AbyssReaction: Double] = [:]) {
         self.amplifyingEM = amplifyingEM
         self.transformativeEM = transformativeEM
         self.catalyzeEM = catalyzeEM
@@ -63,7 +59,6 @@ struct AbyssDamageConstants: Sendable {
         self.transformativeLevelMultiplier = transformativeLevelMultiplier
         self.lunarStellarEM = lunarStellarEM
         self.lunarStellarCoefficients = lunarStellarCoefficients
-        self.reactionBaseDamageBonus = reactionBaseDamageBonus
     }
 
     /// What the port was written with, before the numbers were read from data.
@@ -151,7 +146,6 @@ struct AbyssDamageConstants: Sendable {
         guard let lunar = formula.lunarStellar else {
             lunarStellarEM = Self.fallback.lunarStellarEM
             lunarStellarCoefficients = [:]
-            reactionBaseDamageBonus = [:]
             diagnostics.damageFormulaUnread.insert("lunarStellar")
             return
         }
@@ -182,10 +176,6 @@ struct AbyssDamageConstants: Sendable {
             diagnostics.damageFormulaUnread.insert("lunarStellar.direct.coefficients.stellarConduct")
         }
         lunarStellarCoefficients = lunarCoefficients
-
-        reactionBaseDamageBonus = Dictionary(
-            lunar.reactionBaseDmgBonusSources.map { ($0.character.lowercased(), $0.maxBonus) },
-            uniquingKeysWith: { max($0, $1) })
     }
 }
 

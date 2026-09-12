@@ -2,13 +2,15 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "tuning.schema.json",
   "title": "AbyssTuning",
-  "description": "Hằng số/giả định của thuật toán gợi ý đội hình. Khác với các file dữ liệu còn lại: đây KHÔNG phải số liệu game fetch về, mà là tham số mô hình — nhóm 'hằng số game chuẩn' (chưa đối chiếu API) và nhóm 'ước lượng heuristic' (chủ quan, chỉnh tay được).",
+  "description": "Hằng số/giả định của thuật toán gợi ý đội hình. Khác với các file dữ liệu còn lại: đây KHÔNG phải số liệu game fetch về, mà là tham số mô hình — nhóm 'hằng số game chuẩn' (chưa đối chiếu API) và nhóm 'ước lượng heuristic' (chủ quan, chỉnh tay được). LƯU Ý 2026-09-12: mọi thứ chỉ đúng với MỘT nhân vật cụ thể — nhãn đòn nặng, party buff theo talent, tag Stellar Jubilee, giảm kháng từ talent — đã chuyển sang character-traits.json. File này chỉ giữ hằng số áp cho mọi nhân vật.",
   "type": "object",
   "required": [
     "artifactMainStats", "substatRollValue", "substatRollBudget", "substatPriority",
     "scalingBasisSwap", "rotationSeconds", "normalCombosPerRotation", "offFieldUptime",
     "conditionalUptime", "assumedStacks", "amplifyingUptime", "noSustainPenalty",
-    "shieldBreakBonus", "weaknessExploitBonus", "stellarJubileeCharacterIds", "setEffectApprox"
+    "shieldBreakBonus", "weaknessExploitBonus", "setEffectApprox",
+    "chargedAttacksPerRotation", "transformativeReactionsPerRotation",
+    "stellarConductRamp", "enemyOwnElementResistance", "resistanceShred"
   ],
   "properties": {
     "_doc": { "type": "string" },
@@ -41,10 +43,25 @@
     "noSustainPenalty": { "type": "number", "exclusiveMinimum": 0 },
     "shieldBreakBonus": { "type": "number", "exclusiveMinimum": 0 },
     "weaknessExploitBonus": { "type": "number", "exclusiveMinimum": 0 },
-    "stellarJubileeCharacterIds": {
+    "chargedAttacksPerRotation": { "type": "number", "minimum": 0, "description": "Số đòn nặng của nhân vật on-field trong một rotation. Ít hơn hẳn số combo đòn thường: đòn nặng tốn thể lực và mất khoảng một giây" },
+    "transformativeReactionsPerRotation": { "type": "number", "minimum": 0, "description": "Số lần phản ứng biến đổi nổ trong một rotation. Con số chủ quan nhất file: phản ứng biến đổi bỏ qua ATK/DMG bonus/CRIT/giáp địch, nên TẦN SUẤT mới là thứ quyết định đội phản ứng đứng ở đâu" },
+    "stellarConductRamp": { "type": "number", "minimum": 0, "maximum": 1, "description": "Vị trí trên dải hệ số Stellar-Conduct: 0 = stellarConductMin, 1 = stellarConductMax. Giả định, vì hệ số thật leo theo số đòn Cryo/Electro trước đó mà model không đếm đòn" },
+    "enemyOwnElementResistance": { "type": "number", "minimum": 0, "maximum": 1, "description": "Kháng của quái với CHÍNH nguyên tố nó dùng để đánh/khiên. Suy luận, không phải dữ liệu: đặt 0.10 để tắt" },
+    "resistanceShred": {
       "type": "array",
-      "description": "id khớp Character.id trong characters/*.json",
-      "items": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" }
+      "description": "Nguồn giảm kháng nguyên tố gắn với BỘ THÁNH DI VẬT, gate theo nguyên tố của đội — một giả định về ai mặc gì. Nguồn gắn với nhân vật (Faruzan, Shenhe) nằm ở character-traits.json, vì đó là sự thật chứ không phải giả định",
+      "items": {
+        "type": "object",
+        "required": ["id", "elements", "value", "uptime", "note"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+          "requiresElement": { "type": ["string", "null"], "description": "Đội phải có nguyên tố này" },
+          "elements": { "type": "array", "items": { "type": "string" }, "description": "Tên nguyên tố, hoặc \"swirled\" = mọi nguyên tố đội khuếch tán được" },
+          "value": { "type": "number", "minimum": 0, "maximum": 1 },
+          "uptime": { "type": "number", "minimum": 0, "maximum": 1 },
+          "note": { "type": "string" }
+        }
+      }
     },
     "setEffectApprox": {
       "type": "array",

@@ -20,10 +20,14 @@ struct AbyssTeamContext: Sendable {
     /// just by containing the right character — Lauma, Columbina, Sandrone and
     /// the rest of `damage-formula.json`'s `reactionBaseDmgBonusSources`.
     ///
-    /// The best single bonus, not the sum: the sources overlap by reaction and
+    /// Per reaction, because that is how the data records it: Lauma raises
+    /// Lunar-Bloom and nothing else, and a team bonus kept as one number handed
+    /// her +14% to a Stellar-Conduct she has no part in.
+    ///
+    /// The best single bonus per reaction, not the sum: the sources overlap and
     /// the data records each as a maximum, so adding them would stack ceilings
     /// that do not stack in game.
-    var reactionBaseDamageBonus: Double = 0
+    var reactionBaseDamageBonus: [AbyssReaction: Double] = [:]
     /// How much enemy resistance this team strips, per element, already scaled
     /// by each source's uptime.
     ///
@@ -76,9 +80,11 @@ struct AbyssTeamContext: Sendable {
             hasHeal: heal,
             hasShield: shield,
             stellarJubilee: !ids.intersection(library.stellarJubileeIDs).isEmpty,
-            reactionBaseDamageBonus: members
-                .compactMap { library.damageConstants.reactionBaseDamageBonus[$0.id.lowercased()] }
-                .max() ?? 0,
+            reactionBaseDamageBonus: members.reduce(into: [AbyssReaction: Double]()) { found, member in
+                for (reaction, bonus) in library.reactionBaseDamageBonusByCharacterID[member.id] ?? [:] {
+                    found[reaction] = max(found[reaction] ?? 0, bonus)
+                }
+            },
             resistanceShred: shred(elements: Set(elements), ids: ids, library: library))
     }
 
@@ -126,17 +132,29 @@ struct AbyssTeamContext: Sendable {
         let swirlable = elements.subtracting([.anemo, .geo])
         var found: [GenshinElement: Double] = [:]
 
-        for source in library.tuning?.resistanceShred ?? [] {
-            if let required = source.characterId, !ids.contains(required) { continue }
-            if let required = source.requiresElement, !elements.contains(required) { continue }
-            let value = source.value * source.uptime
-            let targets: [GenshinElement] = source.elements.flatMap { name -> [GenshinElement] in
-                name == AbyssTuning.ResistanceShred.swirledToken
+        // Two lists, because there are two kinds of claim. `tuning.json` holds
+        // the artifact sets, gated on an element the team has, which is an
+        // assumption about who wears what; `character-traits.json` holds the
+        // talents, gated on the character being present, which is a fact.
+        func credit(_ names: [String], _ value: Double, _ uptime: Double) {
+            let scaled = value * uptime
+            let targets: [GenshinElement] = names.flatMap { name -> [GenshinElement] in
+                name == AbyssResistanceShredScope.swirled
                     ? Array(swirlable)
                     : GenshinElement(rawValue: name).map { [$0] } ?? []
             }
             for element in targets {
-                found[element] = max(found[element] ?? 0, value)
+                found[element] = max(found[element] ?? 0, scaled)
+            }
+        }
+
+        for source in library.tuning?.resistanceShred ?? [] {
+            if let required = source.requiresElement, !elements.contains(required) { continue }
+            credit(source.elements, source.value, source.uptime)
+        }
+        for id in ids {
+            for source in library.traitsByCharacterID[id]?.resistanceShred ?? [] {
+                credit(source.elements, source.value, source.uptime)
             }
         }
         return found

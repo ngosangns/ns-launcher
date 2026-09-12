@@ -515,8 +515,8 @@ struct AbyssScorer: Sendable {
             }
             let emCurve = lunar == nil ? constants.transformativeEM : constants.lunarStellarEM
             // A Lunar/Stellar reaction is worth more when someone on the team
-            // raises its base damage just by being there.
-            let teamBonus = lunar == nil ? 0 : team.reactionBaseDamageBonus
+            // raises *that* reaction's base damage just by being there.
+            let teamBonus = team.reactionBaseDamageBonus[reaction] ?? 0
             // Swirl takes the resistance of whatever element was swirled, so the
             // team picks whichever of its own elements the floor resists least.
             let resistance: Double
