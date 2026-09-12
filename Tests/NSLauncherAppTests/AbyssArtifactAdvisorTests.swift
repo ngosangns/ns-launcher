@@ -20,7 +20,7 @@ final class AbyssArtifactAdvisorTests: XCTestCase {
         let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 5,
                                                                splitsHalves: false))
 
-        let teams = try XCTUnwrap(output.reports.first?.teams)
+        let teams = try XCTUnwrap(output.reports.first?.wholeFloorTeams)
         XCTAssertFalse(teams.isEmpty)
 
         for team in teams {
@@ -85,7 +85,7 @@ final class AbyssArtifactAdvisorTests: XCTestCase {
         let roster = try AbyssGoldenFixture.exampleRoster()
         let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 3,
                                                                splitsHalves: false))
-        let team = try XCTUnwrap(output.reports.first?.teams.first)
+        let team = try XCTUnwrap(output.reports.first?.wholeFloorTeams?.first)
         let tuning = try XCTUnwrap(library.tuning)
         let assembler = AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs,
                                             artifactSets: library.artifactSets,
@@ -147,11 +147,11 @@ final class AbyssArtifactAdvisorTests: XCTestCase {
                                                               refinesArtifacts: false,
                                                               splitsHalves: false))
 
-        let refinedBest = try XCTUnwrap(refined.reports.first?.teams.first)
-        let plainBest = try XCTUnwrap(plain.reports.first?.teams.first)
+        let refinedBest = try XCTUnwrap(refined.reports.first?.wholeFloorTeams?.first)
+        let plainBest = try XCTUnwrap(plain.reports.first?.wholeFloorTeams?.first)
         XCTAssertGreaterThanOrEqual(refinedBest.score, plainBest.score)
 
-        for team in try XCTUnwrap(refined.reports.first?.teams) {
+        for team in try XCTUnwrap(refined.reports.first?.wholeFloorTeams) {
             XCTAssertGreaterThanOrEqual(team.score, team.baseScore,
                                         "team \(team.id) came back worse than it went in")
             XCTAssertGreaterThan(team.baseScore, 0, "team \(team.id) has no pre-refinement score to compare against")
@@ -168,8 +168,8 @@ final class AbyssArtifactAdvisorTests: XCTestCase {
 
         let firstRun = await optimizer.run(request)
         let secondRun = await optimizer.run(request)
-        let first = try XCTUnwrap(firstRun.reports.first?.teams)
-        let second = try XCTUnwrap(secondRun.reports.first?.teams)
+        let first = try XCTUnwrap(firstRun.reports.first?.wholeFloorTeams)
+        let second = try XCTUnwrap(secondRun.reports.first?.wholeFloorTeams)
 
         XCTAssertEqual(first.map(\.id), second.map(\.id))
         for (lhs, rhs) in zip(first, second) {
@@ -193,7 +193,7 @@ final class AbyssArtifactAdvisorTests: XCTestCase {
                                                                splitsHalves: false))
 
         let improved = output.reports
-            .flatMap(\.teams)
+            .flatMap(\.allTeams)
             .flatMap { team in team.artifactAdvice.values.map(\.gainOverNeutralPick) }
             .filter { $0 > 0 }
         XCTAssertFalse(improved.isEmpty,
@@ -264,7 +264,7 @@ final class AbyssArtifactAdvisorTests: XCTestCase {
         let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 3,
                                                                splitsHalves: false))
         var recommended: Set<String> = []
-        for team in try XCTUnwrap(output.reports.first?.teams) {
+        for team in try XCTUnwrap(output.reports.first?.wholeFloorTeams) {
             for advice in team.artifactAdvice.values {
                 for setID in advice.setIDs + advice.alternativeSetIDs {
                     XCTAssertTrue(fiveStarIDs.contains(setID),

@@ -71,12 +71,13 @@ struct AbyssResultsView: View {
             // only the ones both halves share; the rest sit with their half.
             buffLines(report.buffs, prefix: nil)
 
-            if report.plans.isEmpty {
-                ForEach(Array(report.teams.enumerated()), id: \.element.id) { index, team in
+            switch report.outcome {
+            case .whole(let teams):
+                ForEach(Array(teams.enumerated()), id: \.element.id) { index, team in
                     teamPanel(title: "#\(index + 1)", team: team)
                 }
-            } else {
-                ForEach(report.halves) { half in
+            case .split(let halves, let plans):
+                ForEach(halves) { half in
                     buffLines(half.buffs, prefix: text.abyssHalfTitle(half.half))
                 }
 
@@ -85,7 +86,7 @@ struct AbyssResultsView: View {
                     .foregroundStyle(LauncherPalette.mist.opacity(0.55))
                     .fixedSize(horizontal: false, vertical: true)
 
-                ForEach(Array(report.plans.enumerated()), id: \.element.id) { index, plan in
+                ForEach(Array(plans.enumerated()), id: \.element.id) { index, plan in
                     planPanel(rank: index + 1, plan: plan)
                 }
             }

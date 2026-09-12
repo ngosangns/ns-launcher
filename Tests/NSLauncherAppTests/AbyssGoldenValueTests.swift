@@ -138,11 +138,14 @@ final class AbyssGoldenValueTests: XCTestCase {
         for report in output.reports {
             let expectedTeams = try XCTUnwrap(golden.teams[String(report.floor)],
                                               "fixture has no teams for floor \(report.floor)")
-            XCTAssertEqual(report.teams.count, expectedTeams.count,
+            let teams = try XCTUnwrap(report.wholeFloorTeams,
+                                      "floor \(report.floor) was planned as halves; the fixture "
+                                      + "holds the floor read whole")
+            XCTAssertEqual(teams.count, expectedTeams.count,
                            "floor \(report.floor): different number of teams returned")
 
-            for (rank, expected) in expectedTeams.enumerated() where rank < report.teams.count {
-                let team = report.teams[rank]
+            for (rank, expected) in expectedTeams.enumerated() where rank < teams.count {
+                let team = teams[rank]
                 XCTAssertEqual(team.memberIDs.sorted(), expected.memberIds.sorted(),
                                "floor \(report.floor) rank \(rank + 1): different members")
                 XCTAssertEqual(team.onFieldID, expected.onFieldId,

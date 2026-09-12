@@ -25,8 +25,8 @@ final class AbyssOptimizerTests: XCTestCase {
         let first = await optimizer.run(request)
         let second = await optimizer.run(request)
 
-        let firstTeams = try XCTUnwrap(first.reports.first?.teams)
-        let secondTeams = try XCTUnwrap(second.reports.first?.teams)
+        let firstTeams = try XCTUnwrap(first.reports.first?.wholeFloorTeams)
+        let secondTeams = try XCTUnwrap(second.reports.first?.wholeFloorTeams)
         XCTAssertEqual(firstTeams.map(\.id), secondTeams.map(\.id), "team order changed between runs")
         for (lhs, rhs) in zip(firstTeams, secondTeams) {
             XCTAssertEqual(lhs.score, rhs.score, accuracy: 1e-12)
@@ -53,8 +53,8 @@ final class AbyssOptimizerTests: XCTestCase {
                                                                poolSize: 6, refinesArtifacts: false,
                                                                splitsHalves: false))
 
-        let wideTop = try XCTUnwrap(wide.reports.first?.teams.first)
-        let narrowTop = try XCTUnwrap(narrow.reports.first?.teams.first)
+        let wideTop = try XCTUnwrap(wide.reports.first?.wholeFloorTeams?.first)
+        let narrowTop = try XCTUnwrap(narrow.reports.first?.wholeFloorTeams?.first)
         // The wider pool can only find something at least as good.
         XCTAssertGreaterThanOrEqual(wideTop.score, narrowTop.score)
     }
@@ -96,7 +96,7 @@ final class AbyssOptimizerTests: XCTestCase {
         let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 10,
                                                                splitsHalves: false))
 
-        for team in try XCTUnwrap(output.reports.first?.teams) {
+        for team in try XCTUnwrap(output.reports.first?.wholeFloorTeams) {
             let weaponIDs = team.memberIDs.compactMap { team.assignment[$0]?.weaponID }
             let duplicated = Set(weaponIDs.filter { id in weaponIDs.filter { $0 == id }.count > 1 })
             let reportsContention = team.notes.contains { note in
@@ -183,7 +183,7 @@ final class AbyssOptimizerTests: XCTestCase {
         let elapsed = Date().timeIntervalSince(started)
 
         XCTAssertEqual(output.reports.count, 1)
-        XCTAssertEqual(output.reports.first?.plans.count, 5)
+        XCTAssertEqual(output.reports.first?.halfPlans?.count, 5)
         XCTAssertLessThan(elapsed, 40, "a single floor over a 40-character pool should not take this long")
     }
 
@@ -202,7 +202,7 @@ final class AbyssOptimizerTests: XCTestCase {
                                                                    splitsHalves: false))
         XCTAssertEqual(Set(restricted.consideredCharacterIDs), Set(roster.characterIDs),
                        "with neither flag set, only the four owned characters should be considered")
-        let restrictedTeam = try XCTUnwrap(restricted.reports.first?.teams.first)
+        let restrictedTeam = try XCTUnwrap(restricted.reports.first?.wholeFloorTeams?.first)
         for characterID in restrictedTeam.memberIDs {
             let weaponID = restrictedTeam.assignment[characterID]?.weaponID
             XCTAssertTrue(weaponID == nil || weaponID == "dragons-bane",
@@ -220,7 +220,7 @@ final class AbyssOptimizerTests: XCTestCase {
             splitsHalves: false))
         XCTAssertEqual(Set(fullWeapons.consideredCharacterIDs), Set(roster.characterIDs),
                        "usesFullWeaponPool alone should not widen the character pool")
-        let fullWeaponsTeam = try XCTUnwrap(fullWeapons.reports.first?.teams.first)
+        let fullWeaponsTeam = try XCTUnwrap(fullWeapons.reports.first?.wholeFloorTeams?.first)
         let usesOutsideWeapon = fullWeaponsTeam.memberIDs.contains { characterID in
             let weaponID = fullWeaponsTeam.assignment[characterID]?.weaponID
             return weaponID != nil && weaponID != "dragons-bane"

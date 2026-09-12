@@ -228,7 +228,7 @@ struct AbyssOptimizer: Sendable {
                 buffs: floor.buffs,
                 shieldElements: floor.shieldElements,
                 weakElements: floor.weakElements,
-                teams: teams))
+                outcome: .whole(teams)))
             progress?(Double(index + 1) / Double(max(fights.count, 1)))
         }
 
@@ -410,9 +410,8 @@ struct AbyssOptimizer: Sendable {
                 .sorted { $0.rawValue < $1.rawValue },
             weakElements: Set(first.weakElements + second.weakElements)
                 .sorted { $0.rawValue < $1.rawValue },
-            teams: [],
-            halves: [half(1, first), half(2, second)],
-            plans: Array(plans.prefix(topN)))
+            outcome: .split(halves: [half(1, first), half(2, second)],
+                            plans: Array(plans.prefix(topN))))
     }
 
     /// Pairs two halves' rankings into plans that share no character.

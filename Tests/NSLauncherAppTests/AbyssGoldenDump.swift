@@ -93,7 +93,9 @@ final class AbyssGoldenDumpTests: XCTestCase {
             topN: 10, poolSize: 40, refinesArtifacts: false, splitsHalves: false))
         var teams: [String: Any] = [:]
         for report in output.reports {
-            teams[String(report.floor)] = report.teams.map { team in
+            // `splitsHalves: false` above, so every report is a whole floor.
+            guard let ranked = report.wholeFloorTeams else { continue }
+            teams[String(report.floor)] = ranked.map { team in
                 [
                     "memberIds": team.memberIDs,
                     "onFieldId": team.onFieldID,

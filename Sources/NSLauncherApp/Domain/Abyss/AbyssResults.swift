@@ -355,6 +355,23 @@ struct AbyssFloorPlan: Sendable, Identifiable {
 }
 
 struct AbyssFloorReport: Sendable, Identifiable {
+    /// How the floor was planned, and therefore what there is to show.
+    ///
+    /// An enum rather than three arrays, because the three were never all
+    /// meaningful at once: a floor planned as two halves has no "best team for
+    /// the floor", and a floor fought whole has no halves. Carried as arrays,
+    /// that rule lived in four "Empty when…" comments and in one
+    /// `report.plans.isEmpty` in the view — a reader had to know which emptiness
+    /// meant "not applicable" and which meant "nothing found". Here the question
+    /// cannot be asked of the wrong shape.
+    enum Outcome: Sendable {
+        /// Ranked teams for the floor fought as one.
+        case whole([AbyssTeamResult])
+        /// A team for each half, sharing no character, with the halves they
+        /// were ranked against.
+        case split(halves: [AbyssHalfReport], plans: [AbyssFloorPlan])
+    }
+
     var id: Int { floor }
 
     let floor: Int
@@ -365,15 +382,42 @@ struct AbyssFloorReport: Sendable, Identifiable {
     let shieldElements: [GenshinElement]
     /// Elements the floor's enemies resist less than the 10% baseline.
     let weakElements: [GenshinElement]
-    /// Ranked teams for the floor fought as one. Empty when the floor was
-    /// planned as two halves, because on such a floor there is no such thing as
-    /// one team for the whole of it — see `plans`.
-    let teams: [AbyssTeamResult]
-    /// The two halves, when the floor was split. Empty otherwise.
-    var halves: [AbyssHalfReport] = []
-    /// Ranked plans: a team for each half, sharing no character. Empty when the
-    /// floor was fought as one.
-    var plans: [AbyssFloorPlan] = []
+    let outcome: Outcome
+
+    /// Every team this report puts forward, however the floor was planned. For
+    /// callers that only want to count characters or check a roster — anything
+    /// that does not care which half a team is for.
+    var allTeams: [AbyssTeamResult] {
+        switch outcome {
+        case .whole(let teams): return teams
+        case .split(_, let plans): return plans.flatMap { [$0.firstHalf, $0.secondHalf] }
+        }
+    }
+
+    /// Ranked teams for the floor fought as one, or `nil` when it was planned as
+    /// two halves.
+    ///
+    /// Optional, not empty. "No team was found" and "this floor has no such
+    /// thing as a team for the whole of it" are different answers, and an empty
+    /// array said both. A caller that unwraps this is stating which shape it
+    /// expects, which is what the old `teams` array let it skip.
+    var wholeFloorTeams: [AbyssTeamResult]? {
+        if case .whole(let teams) = outcome { return teams }
+        return nil
+    }
+
+    /// Ranked plans — a team per half, sharing nobody — or `nil` when the floor
+    /// was fought as one.
+    var halfPlans: [AbyssFloorPlan]? {
+        if case .split(_, let plans) = outcome { return plans }
+        return nil
+    }
+
+    /// The two halves a split floor was planned against, or `nil`.
+    var halves: [AbyssHalfReport]? {
+        if case .split(let halves, _) = outcome { return halves }
+        return nil
+    }
 }
 
 struct AbyssOptimizerRequest: Sendable {

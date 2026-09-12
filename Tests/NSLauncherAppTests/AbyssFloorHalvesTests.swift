@@ -129,12 +129,13 @@ final class AbyssFloorHalvesTests: XCTestCase {
                                                                refinesArtifacts: false))
         let report = try XCTUnwrap(output.reports.first)
 
-        XCTAssertTrue(report.teams.isEmpty,
+        XCTAssertNil(report.wholeFloorTeams,
                       "a floor planned as two halves has no single team for the whole of it")
-        XCTAssertEqual(report.plans.count, 5)
-        XCTAssertEqual(report.halves.map(\.half), [1, 2])
+        let plans = try XCTUnwrap(report.halfPlans)
+        XCTAssertEqual(plans.count, 5)
+        XCTAssertEqual(report.halves?.map(\.half), [1, 2])
 
-        for (rank, plan) in report.plans.enumerated() {
+        for (rank, plan) in plans.enumerated() {
             XCTAssertTrue(Set(plan.firstHalf.memberIDs).isDisjoint(with: Set(plan.secondHalf.memberIDs)),
                           "plan \(rank + 1) puts the same character in both halves")
             XCTAssertEqual(plan.score,
@@ -142,7 +143,7 @@ final class AbyssFloorHalvesTests: XCTestCase {
                            accuracy: max(plan.score, 1) * 1e-9)
         }
 
-        let scores = report.plans.map(\.score)
+        let scores = plans.map(\.score)
         XCTAssertEqual(scores, scores.sorted(by: >), "plans are not ranked best first")
     }
 
@@ -155,7 +156,7 @@ final class AbyssFloorHalvesTests: XCTestCase {
         let roster = try AbyssGoldenFixture.exampleRoster()
         let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 5,
                                                                refinesArtifacts: false))
-        let plans = try XCTUnwrap(output.reports.first?.plans)
+        let plans = try XCTUnwrap(output.reports.first?.halfPlans)
         XCTAssertFalse(plans.isEmpty)
 
         for (rank, plan) in plans.enumerated() {
@@ -175,7 +176,7 @@ final class AbyssFloorHalvesTests: XCTestCase {
         let roster = try AbyssGoldenFixture.exampleRoster()
         let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 5,
                                                                refinesArtifacts: false))
-        let plans = try XCTUnwrap(output.reports.first?.plans)
+        let plans = try XCTUnwrap(output.reports.first?.halfPlans)
 
         XCTAssertEqual(Set(plans.map(\.firstHalf.id)).count, plans.count)
         XCTAssertEqual(Set(plans.map(\.secondHalf.id)).count, plans.count)
@@ -227,9 +228,9 @@ final class AbyssFloorHalvesTests: XCTestCase {
                                                                refinesArtifacts: false,
                                                                splitsHalves: false))
         let report = try XCTUnwrap(output.reports.first)
-        XCTAssertEqual(report.teams.count, 3)
-        XCTAssertTrue(report.plans.isEmpty)
-        XCTAssertTrue(report.halves.isEmpty)
+        XCTAssertEqual(report.wholeFloorTeams?.count, 3)
+        XCTAssertNil(report.halfPlans)
+        XCTAssertNil(report.halves)
     }
 
     /// Both halves have to be cleared inside one timer, so the half a team is

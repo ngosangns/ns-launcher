@@ -28,7 +28,7 @@ final class AbyssMainStatSearchTests: XCTestCase {
             weapons: [])
         let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 1,
                                                                splitsHalves: false))
-        let team = try XCTUnwrap(output.reports.first?.teams.first)
+        let team = try XCTUnwrap(output.reports.first?.wholeFloorTeams?.first)
 
         let members = try team.memberIDs.map { try XCTUnwrap(library.charactersByID[$0]) }
         let context = AbyssTeamContext.build(members: members, library: library)
@@ -77,7 +77,7 @@ final class AbyssMainStatSearchTests: XCTestCase {
         let output = await optimizer.run(AbyssOptimizerRequest(floors: [12], topN: 5, poolSize: 40,
                                                                refinesArtifacts: false,
                                                                splitsHalves: false))
-        let plans = try XCTUnwrap(output.reports.first?.teams).flatMap { team in
+        let plans = try XCTUnwrap(output.reports.first?.wholeFloorTeams).flatMap { team in
             team.memberIDs.compactMap { team.assignment[$0]?.mainStats }
         }
         XCTAssertFalse(plans.isEmpty)
@@ -95,7 +95,7 @@ final class AbyssMainStatSearchTests: XCTestCase {
             weapons: [])
         let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 1,
                                                                splitsHalves: false))
-        let team = try XCTUnwrap(output.reports.first?.teams.first)
+        let team = try XCTUnwrap(output.reports.first?.wholeFloorTeams?.first)
 
         var healers = 0
         for id in team.memberIDs {

@@ -93,8 +93,8 @@ final class AbyssReactionTests: XCTestCase {
         let high = await optimizer.run(AbyssOptimizerRequest(roster: atC6, floors: [12], topN: 1,
                                                              refinesArtifacts: false,
                                                              splitsHalves: false))
-        let lowScore = try XCTUnwrap(low.reports.first?.teams.first?.score)
-        let highScore = try XCTUnwrap(high.reports.first?.teams.first?.score)
+        let lowScore = try XCTUnwrap(low.reports.first?.wholeFloorTeams?.first?.score)
+        let highScore = try XCTUnwrap(high.reports.first?.wholeFloorTeams?.first?.score)
         XCTAssertGreaterThan(highScore, lowScore,
                              "a C6 roster scored no better than the same characters at C0")
     }
@@ -199,7 +199,7 @@ final class AbyssReactionTests: XCTestCase {
         let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 1,
                                                                refinesArtifacts: false,
                                                                splitsHalves: false))
-        let team = try XCTUnwrap(output.reports.first?.teams.first)
+        let team = try XCTUnwrap(output.reports.first?.wholeFloorTeams?.first)
 
         let tuning = try XCTUnwrap(library.tuning)
         let scorer = AbyssScorer(library: library, tuning: tuning)

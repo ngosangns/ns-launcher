@@ -240,7 +240,7 @@ final class AbyssShowcaseImportTests: XCTestCase {
                                                                splitsHalves: false,
                                                                usesMeasuredStats: true,
                                                                showcase: builds))
-        let team = try XCTUnwrap(output.reports.first?.teams.first)
+        let team = try XCTUnwrap(output.reports.first?.wholeFloorTeams?.first)
 
         let huTao = try XCTUnwrap(team.assignment["hu-tao"])
         XCTAssertEqual(huTao.statSource, .measured)
@@ -271,7 +271,7 @@ final class AbyssShowcaseImportTests: XCTestCase {
         let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 3,
                                                                splitsHalves: false,
                                                                showcase: builds))
-        for team in try XCTUnwrap(output.reports.first?.teams) {
+        for team in try XCTUnwrap(output.reports.first?.wholeFloorTeams) {
             for id in team.memberIDs {
                 XCTAssertEqual(team.assignment[id]?.statSource, .modelled,
                                "\(id) was ranked on a different yardstick from the rest")
@@ -293,7 +293,7 @@ final class AbyssShowcaseImportTests: XCTestCase {
         let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 3,
                                                                splitsHalves: false,
                                                                showcase: builds))
-        for team in try XCTUnwrap(output.reports.first?.teams) {
+        for team in try XCTUnwrap(output.reports.first?.wholeFloorTeams) {
             for build in builds {
                 guard let advice = team.artifactAdvice[build.characterID] else { continue }
                 if advice.currentSetIDs.isEmpty {
