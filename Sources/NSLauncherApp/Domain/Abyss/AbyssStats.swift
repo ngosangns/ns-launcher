@@ -10,7 +10,7 @@
 
 import Foundation
 
-struct AbyssStats: Sendable, Equatable {
+struct AbyssStats: Sendable, Equatable, Codable {
     /// Character base ATK plus the weapon's base ATK. Percentage buffs scale
     /// this total, which is why weapon ATK belongs here and not in `flatATK`.
     var baseATK: Double = 0

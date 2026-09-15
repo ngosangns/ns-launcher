@@ -73,6 +73,11 @@ final class AbyssViewModel: ObservableObject {
     @Published private(set) var isSearching = false
     @Published private(set) var progress: Double = 0
     @Published private(set) var unknownRosterIDs: [String] = []
+    /// When `reports` was computed — by a fresh run or by reading
+    /// `AbyssSearchCacheStore`, either way. `nil` before the first search of the
+    /// session. Shown next to the results so "these are last week's numbers"
+    /// is something the player can see rather than has to guess.
+    @Published private(set) var resultsComputedAt: Date?
     @Published var errorMessage: String?
 
     @Published var section: Section = .roster
@@ -162,6 +167,7 @@ final class AbyssViewModel: ObservableObject {
 
     private let store: AbyssRosterStoring
     private let showcaseStore: AbyssShowcaseStoring
+    private let searchCacheStore: AbyssSearchCacheStoring
     private let enka: AbyssShowcaseFetching
     private let hoyolab: AbyssFullRosterFetching
     private let hoyolabCredentials: AbyssHoyolabCredentialStoring
@@ -171,11 +177,13 @@ final class AbyssViewModel: ObservableObject {
 
     init(store: AbyssRosterStoring = AbyssRosterStore(),
          showcaseStore: AbyssShowcaseStoring = AbyssShowcaseStore(),
+         searchCacheStore: AbyssSearchCacheStoring = AbyssSearchCacheStore(),
          enka: AbyssShowcaseFetching = AbyssEnkaClient(),
          hoyolab: AbyssFullRosterFetching = AbyssHoyolabClient(),
          hoyolabCredentials: AbyssHoyolabCredentialStoring = AbyssHoyolabCredentialStore()) {
         self.store = store
         self.showcaseStore = showcaseStore
+        self.searchCacheStore = searchCacheStore
         self.enka = enka
         self.hoyolab = hoyolab
         self.hoyolabCredentials = hoyolabCredentials
@@ -718,6 +726,25 @@ final class AbyssViewModel: ObservableObject {
                                             usesFullCharacterPool: usesFullCharacterPool,
                                             usesFullWeaponPool: usesFullWeaponPool,
                                             topN: 5, showcase: showcase?.builds ?? [])
+        let cacheKey = AbyssSearchCacheKey(request: request,
+                                          cyclePeriodStart: library.latestCycle?.periodStart,
+                                          dataDigest: library.dataDigest).digest
+
+        // The search is deterministic in its inputs, so a matching digest
+        // *is* what running it again would produce — no separate "is this
+        // still fresh" question beyond the store's own expiry. Applying it
+        // is synchronous: decoding the cache is a fraction of what a real
+        // search costs, so there is nothing to show a progress bar for.
+        if let cached = searchCacheStore.load(), cached.key == cacheKey {
+            reports = cached.output.reports
+            unknownRosterIDs = cached.output.unknownRosterIDs
+            resultsComputedAt = cached.computedAt
+            if !cached.output.reports.isEmpty {
+                section = .results
+            }
+            return
+        }
+
         isSearching = true
         progress = 0
         reports = []
@@ -729,13 +756,20 @@ final class AbyssViewModel: ObservableObject {
 
             await MainActor.run {
                 guard let self, !Task.isCancelled else { return }
+                let computedAt = Date()
                 self.reports = output.reports
                 self.unknownRosterIDs = output.unknownRosterIDs
                 self.isSearching = false
                 self.progress = 1
+                self.resultsComputedAt = computedAt
                 if !output.reports.isEmpty {
                     self.section = .results
                 }
+                // Best-effort: a cache write that fails costs the next visit a
+                // re-run, not correctness, so it is not worth surfacing as an
+                // error the player has to act on.
+                try? self.searchCacheStore.save(
+                    AbyssSearchCache(key: cacheKey, computedAt: computedAt, output: output))
             }
         }
     }

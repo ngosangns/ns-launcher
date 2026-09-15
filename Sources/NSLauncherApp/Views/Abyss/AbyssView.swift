@@ -96,6 +96,16 @@ struct AbyssView: View {
                     .frame(maxWidth: .infinity)
             }
             .quest(.primary, disabled: !viewModel.canSearch && !viewModel.isSearching)
+
+            // Pressing the button again when nothing about the roster, pool
+            // toggles or showcase has changed just reads the cached result
+            // back — this is the only place that says so, since otherwise an
+            // instant response could look like the button did nothing.
+            if !viewModel.isSearching, let computedAt = viewModel.resultsComputedAt {
+                Text(text.abyssResultsComputedAt(computedAt))
+                    .font(.system(.caption2, design: .rounded))
+                    .foregroundStyle(LauncherPalette.mist.opacity(0.6))
+            }
         }
         .padding(.top, 8)
     }

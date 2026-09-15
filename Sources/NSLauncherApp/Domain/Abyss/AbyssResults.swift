@@ -12,11 +12,11 @@ import Foundation
 /// A clause with no element, reaction or normal-attack qualifier is dropped by
 /// the parser rather than applied to everything: those are almost always prose
 /// that merely contains a number ("tối đa 1 lần mỗi 4 giây").
-struct AbyssFloorBuff: Sendable, Equatable {
+struct AbyssFloorBuff: Sendable, Equatable, Codable {
     /// Which of the Abyss's two buff layers a clause came from. Carried so the
     /// UI can say which, rather than presenting a cycle-wide blessing and a
     /// floor's own disorder as the same thing.
-    enum Source: Sendable, Equatable {
+    enum Source: Sendable, Equatable, Codable {
         /// The floor's own Ley Line Disorder.
         case leyLine
         /// The Blessing of the Abyssal Moon, which applies to every floor for
@@ -141,7 +141,7 @@ struct AbyssDamageProfile: Sendable, Equatable {
 /// (ATK% sands, elemental goblet, CRIT DMG circlet), which handed a
 /// reaction-driven character a goblet and a circlet that contribute nothing to
 /// the reaction damage the model was crediting them with.
-struct AbyssMainStatPlan: Sendable, Equatable, Hashable {
+struct AbyssMainStatPlan: Sendable, Equatable, Hashable, Codable {
     var sands: AbyssMainStat
     var goblet: AbyssMainStat
     var circlet: AbyssMainStat
@@ -158,7 +158,7 @@ struct AbyssMainStatPlan: Sendable, Equatable, Hashable {
 
 /// One way to equip a character: a weapon, one 4-piece set or two 2-piece sets,
 /// and a main stat in each of the three slots that carry a choice.
-struct AbyssGearOption: Sendable {
+struct AbyssGearOption: Sendable, Codable {
     let stats: AbyssStats
     let weaponID: String?
     let setIDs: [String]
@@ -195,7 +195,7 @@ struct AbyssGearOption: Sendable {
 /// This is not a display string: `AbyssBuildAssembler` builds its stat sheet
 /// from the same plan the UI renders, so the advice cannot describe a build
 /// different from the one that was scored.
-enum AbyssMainStat: Sendable, Equatable, Hashable {
+enum AbyssMainStat: Sendable, Equatable, Hashable, Codable {
     case atkPercent
     case hpPercent
     case defPercent
@@ -229,7 +229,7 @@ enum AbyssMainStat: Sendable, Equatable, Hashable {
 /// who plays, and the wrong one for choosing what they wear: a set is worth
 /// having because of what the enemies resist and what the other three members
 /// enable. This is the second pass, run only on the teams that made the cut.
-struct AbyssArtifactAdvice: Sendable, Equatable {
+struct AbyssArtifactAdvice: Sendable, Equatable, Codable {
     /// One id for a 4-piece set, two ids for two 2-piece sets.
     let setIDs: [String]
     let sands: AbyssMainStat
@@ -256,7 +256,7 @@ struct AbyssArtifactAdvice: Sendable, Equatable {
 /// Something worth telling the user about a team, kept structured so it can be
 /// rendered in either language: the original implementation baked Vietnamese
 /// sentences into its results, which cannot ship in a bilingual app.
-enum AbyssTeamNote: Sendable, Equatable, Hashable {
+enum AbyssTeamNote: Sendable, Equatable, Hashable, Codable {
     case noSustainPenalty
     case breaksShield([GenshinElement])
     case exploitsWeakness([GenshinElement])
@@ -272,7 +272,7 @@ enum AbyssTeamNote: Sendable, Equatable, Hashable {
     case mixedStatSources
 }
 
-struct AbyssTeamResult: Sendable, Identifiable {
+struct AbyssTeamResult: Sendable, Identifiable, Codable {
     var id: String { memberIDs.joined(separator: "+") + "@" + onFieldID }
 
     let memberIDs: [String]
@@ -302,7 +302,7 @@ struct AbyssTeamResult: Sendable, Identifiable {
 /// Ley Line Disorders. This one does: floor 12's first half pays +200% for
 /// Superconduct and its second +75% for Pyro normal attacks, so the two are not
 /// even the same optimisation problem, let alone the same team.
-struct AbyssHalfReport: Sendable, Identifiable {
+struct AbyssHalfReport: Sendable, Identifiable, Codable {
     var id: Int { half }
 
     /// 1 for the first half ("nửa trước"), 2 for the second ("nửa sau").
@@ -320,7 +320,7 @@ struct AbyssHalfReport: Sendable, Identifiable {
 /// their best teams almost always want the same four people — deciding which
 /// half gives way is the actual problem, and it is what this type is the answer
 /// to.
-struct AbyssFloorPlan: Sendable, Identifiable {
+struct AbyssFloorPlan: Sendable, Identifiable, Codable {
     var id: String { firstHalf.id + " | " + secondHalf.id }
 
     let firstHalf: AbyssTeamResult
@@ -354,7 +354,7 @@ struct AbyssFloorPlan: Sendable, Identifiable {
     }
 }
 
-struct AbyssFloorReport: Sendable, Identifiable {
+struct AbyssFloorReport: Sendable, Identifiable, Codable {
     /// How the floor was planned, and therefore what there is to show.
     ///
     /// An enum rather than three arrays, because the three were never all
@@ -364,7 +364,7 @@ struct AbyssFloorReport: Sendable, Identifiable {
     /// `report.plans.isEmpty` in the view — a reader had to know which emptiness
     /// meant "not applicable" and which meant "nothing found". Here the question
     /// cannot be asked of the wrong shape.
-    enum Outcome: Sendable {
+    enum Outcome: Sendable, Codable {
         /// Ranked teams for the floor fought as one.
         case whole([AbyssTeamResult])
         /// A team for each half, sharing no character, with the halves they
@@ -500,7 +500,15 @@ struct AbyssOptimizerRequest: Sendable {
     }
 }
 
-struct AbyssOptimizerOutput: Sendable {
+/// What one run of the optimiser produced.
+///
+/// `Codable`, and that conformance is load-bearing rather than incidental: this
+/// is what `AbyssSearchCacheStore` persists so a search does not have to be
+/// re-run every time the tab is opened. Every type this contains had to grow
+/// the same conformance — see `AbyssSearchCache` for why that is safe (the
+/// search is a pure function of its inputs) and what is deliberately not
+/// captured by the cache key.
+struct AbyssOptimizerOutput: Sendable, Codable {
     let reports: [AbyssFloorReport]
     let consideredCharacterIDs: [String]
     /// Ids in the roster that no longer exist in the data — surfaced so a

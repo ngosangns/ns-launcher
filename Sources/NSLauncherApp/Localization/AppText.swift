@@ -656,6 +656,18 @@ struct AppText {
     var abyssRecompute: String { localized(en: "Find teams", vi: "Tìm đội hình") }
     var abyssRecomputing: String { localized(en: "Searching...", vi: "Đang tìm...") }
     var abyssCancel: String { localized(en: "Stop", vi: "Dừng") }
+
+    /// Shown next to the results once there is a `resultsComputedAt` — from a
+    /// fresh search or from `AbyssSearchCacheStore`'s week-long cache, either
+    /// way, since to the player both are just "when were these teams worked
+    /// out".
+    func abyssResultsComputedAt(_ date: Date) -> String {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.locale = Locale(identifier: language == .vietnamese ? "vi" : "en")
+        formatter.unitsStyle = .short
+        let relative = formatter.localizedString(for: date, relativeTo: Date())
+        return localized(en: "Updated \(relative)", vi: "Cập nhật \(relative)")
+    }
     var abyssImport: String { localized(en: "Import", vi: "Nhập") }
     var abyssExport: String { localized(en: "Export", vi: "Xuất") }
     func abyssSortLabel(_ sort: AbyssViewModel.RosterSort) -> String {

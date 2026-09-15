@@ -15,6 +15,7 @@
 // bundled data and pin its counts, so a broken file fails the build instead of
 // quietly emptying the tab.
 
+import CryptoKit
 import Foundation
 
 struct AbyssDataLibrary: Sendable {
@@ -71,6 +72,16 @@ struct AbyssDataLibrary: Sendable {
     /// Bundled character/weapon portrait files.
     let icons: AbyssIconLibrary
     let diagnostics: AbyssParseDiagnostics
+    /// SHA-256 over the bytes of every data file this library was built from,
+    /// bundled and override cycles included.
+    ///
+    /// Exists for one caller: `AbyssSearchCacheKey`. A cached search is only
+    /// still the right answer while the data it ran over is the data on disk,
+    /// and the rotation's `periodStart` alone cannot say so — the change that
+    /// first showed this was one that left `periodStart` exactly as it was and
+    /// rewrote every floor-12 monster's resistance underneath it. Hashing the
+    /// bytes as they are read costs nothing measurable next to parsing them.
+    let dataDigest: String
 
     var latestCycle: AbyssCycle? { cycles.first }
     var isEmpty: Bool { characters.isEmpty || weapons.isEmpty || tuning == nil }
@@ -79,9 +90,13 @@ struct AbyssDataLibrary: Sendable {
 
     init(root: URL? = Self.resourceRootURL(),
          cycleOverrideDirectory: URL? = Self.defaultCycleOverrideDirectory) {
-        let characters = Self.decodeArray([AbyssCharacter].self, in: root?.appendingPathComponent("characters"))
-        let weapons = Self.decodeArray([AbyssWeapon].self, in: root?.appendingPathComponent("weapons"))
-        let artifactSets: [AbyssArtifactSet] = Self.decode(from: root?.appendingPathComponent("artifact-sets.json")) ?? []
+        var hasher = SHA256()
+        let characters = Self.decodeArray([AbyssCharacter].self, in: root?.appendingPathComponent("characters"),
+                                          hasher: &hasher)
+        let weapons = Self.decodeArray([AbyssWeapon].self, in: root?.appendingPathComponent("weapons"),
+                                       hasher: &hasher)
+        let artifactSets: [AbyssArtifactSet] = Self.decode(from: root?.appendingPathComponent("artifact-sets.json"),
+                                                           hasher: &hasher) ?? []
 
         self.characters = characters
         charactersByID = Dictionary(characters.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
@@ -91,16 +106,17 @@ struct AbyssDataLibrary: Sendable {
         artifactSetsByID = Dictionary(artifactSets.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         fiveStarArtifactSets = artifactSets.filter(\.existsAtFiveStar)
 
-        let teamBonus: AbyssTeamBonus? = Self.decode(from: root?.appendingPathComponent("team-bonus.json"))
+        let teamBonus: AbyssTeamBonus? = Self.decode(from: root?.appendingPathComponent("team-bonus.json"),
+                                                     hasher: &hasher)
         self.teamBonus = teamBonus
-        damageFormula = Self.decode(from: root?.appendingPathComponent("damage-formula.json"))
-        let tuning: AbyssTuning? = Self.decode(from: root?.appendingPathComponent("tuning.json"))
+        damageFormula = Self.decode(from: root?.appendingPathComponent("damage-formula.json"), hasher: &hasher)
+        let tuning: AbyssTuning? = Self.decode(from: root?.appendingPathComponent("tuning.json"), hasher: &hasher)
         self.tuning = tuning
 
         cycles = Self.loadCycles(bundled: root?.appendingPathComponent("abyss-monsters"),
-                                 overrides: cycleOverrideDirectory)
+                                 overrides: cycleOverrideDirectory, hasher: &hasher)
 
-        gameIDs = Self.decode(from: root?.appendingPathComponent("game-ids.json")) ?? .empty
+        gameIDs = Self.decode(from: root?.appendingPathComponent("game-ids.json"), hasher: &hasher) ?? .empty
         icons = AbyssIconLibrary(root: root)
 
         var diagnostics = AbyssParseDiagnostics()
@@ -114,7 +130,8 @@ struct AbyssDataLibrary: Sendable {
         // — a character missing from a list and a character the list does not
         // apply to are indistinguishable once the list has been read.
         let traitsFile: AbyssCharacterTraitsFile? =
-            Self.decode(from: root?.appendingPathComponent("character-traits.json"))
+            Self.decode(from: root?.appendingPathComponent("character-traits.json"), hasher: &hasher)
+        dataDigest = hasher.finalize().map { String(format: "%02x", $0) }.joined()
         var traits: [String: AbyssCharacterTraits] = [:]
         for entry in traitsFile?.traits ?? [] {
             guard charactersByID[entry.characterId] != nil else {
@@ -296,12 +313,13 @@ struct AbyssDataLibrary: Sendable {
     /// released build would otherwise recommend teams for a rotation that is no
     /// longer live. Dropping a fresh file into Application Support fixes that
     /// without waiting for a new release.
-    private static func loadCycles(bundled: URL?, overrides: URL?) -> [AbyssCycle] {
+    private static func loadCycles(bundled: URL?, overrides: URL?,
+                                   hasher: inout SHA256) -> [AbyssCycle] {
         var byPeriod: [String: AbyssCycle] = [:]
-        for cycle in decodeArray([AbyssCycle].self, in: bundled, isArrayPerFile: false) {
+        for cycle in decodeArray([AbyssCycle].self, in: bundled, isArrayPerFile: false, hasher: &hasher) {
             byPeriod[cycle.periodStart] = cycle
         }
-        for cycle in decodeArray([AbyssCycle].self, in: overrides, isArrayPerFile: false) {
+        for cycle in decodeArray([AbyssCycle].self, in: overrides, isArrayPerFile: false, hasher: &hasher) {
             byPeriod[cycle.periodStart] = cycle
         }
         return byPeriod.values.sorted { $0.periodStart > $1.periodStart }
@@ -309,8 +327,10 @@ struct AbyssDataLibrary: Sendable {
 
     // MARK: - File plumbing
 
-    private static func decode<T: Decodable>(from url: URL?) -> T? {
+    /// Every byte read goes through `hasher` on its way in — see `dataDigest`.
+    private static func decode<T: Decodable>(from url: URL?, hasher: inout SHA256) -> T? {
         guard let url, let data = try? Data(contentsOf: url) else { return nil }
+        hasher.update(data: data)
         return try? JSONDecoder().decode(T.self, from: data)
     }
 
@@ -319,21 +339,23 @@ struct AbyssDataLibrary: Sendable {
     /// get concatenated, `abyss-monsters/` holds one object per file.
     private static func decodeArray<Element: Decodable>(_ type: [Element].Type,
                                                         in directory: URL?,
-                                                        isArrayPerFile: Bool = true) -> [Element] {
+                                                        isArrayPerFile: Bool = true,
+                                                        hasher: inout SHA256) -> [Element] {
         guard let directory,
               let files = try? FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
         else { return [] }
 
-        return files
-            .filter { $0.pathExtension == "json" }
-            .sorted { $0.lastPathComponent < $1.lastPathComponent }
-            .flatMap { url -> [Element] in
-                guard let data = try? Data(contentsOf: url) else { return [] }
-                if isArrayPerFile {
-                    return (try? JSONDecoder().decode([Element].self, from: data)) ?? []
-                }
-                return (try? JSONDecoder().decode(Element.self, from: data)).map { [$0] } ?? []
+        var collected: [Element] = []
+        for url in files.filter({ $0.pathExtension == "json" }).sorted(by: { $0.lastPathComponent < $1.lastPathComponent }) {
+            guard let data = try? Data(contentsOf: url) else { continue }
+            hasher.update(data: data)
+            if isArrayPerFile {
+                collected += (try? JSONDecoder().decode([Element].self, from: data)) ?? []
+            } else if let one = try? JSONDecoder().decode(Element.self, from: data) {
+                collected.append(one)
             }
+        }
+        return collected
     }
 
     /// `.copy("Resources/Abyss")` puts the folder in the resource bundle, but

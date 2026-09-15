@@ -131,6 +131,7 @@ stability risks. Runtime behavior depends on the installed Wine build.
 | Settings             | `~/Library/Application Support/NSLauncher/settings.json`         |
 | Abyss roster         | `~/Library/Application Support/NSLauncher/abyss-roster.json`     |
 | Abyss showcase cache | `~/Library/Application Support/NSLauncher/abyss-showcase.json`   |
+| Abyss search cache   | `~/Library/Application Support/NSLauncher/abyss-search-cache.json` |
 | Abyss cycle override | `~/Library/Application Support/NSLauncher/abyss-cycles/*.json`   |
 | HoYoLAB credentials  | `~/Library/Application Support/NSLauncher/abyss-hoyolab.json` (mode 0600) |
 | Managed Wine         | `~/Library/Application Support/NSLauncher/wine`                  |
@@ -563,6 +564,37 @@ them. With it, the switch moved 81 of 125 characters up and 2 down (both under
 Substats are still a rule (`tuning.json`'s `substatPriority`, by role). They are
 a budget split rather than a discrete choice, so the same argument does not
 carry over unchanged.
+
+### Search result cache
+
+`AbyssSearchCacheStore` persists the last `AbyssOptimizerOutput` to
+`abyss-search-cache.json` for up to `AbyssSearchCacheStore.maxAge` (a week), so
+opening the tab a second time — or relaunching the app — does not re-run the
+search over the same question. `AbyssViewModel.search()` checks it first and, on
+a hit, applies the saved reports synchronously with no `isSearching` state at
+all; there is no separate "force refresh" action, because the search has no
+randomness in it — the same inputs always produce the same teams, so a matching
+cache key *is* a fresh result, not a stand-in for one.
+
+The key (`AbyssSearchCacheKey`) is a SHA-256 digest of everything the output
+depends on: the roster (sorted by id — the search reads it as a set, so order
+must not cause a miss), both pool toggles, the showcase, the request's
+floors/topN/poolSize/refinesArtifacts/splitsHalves, the loaded cycle's
+`periodStart`, and `AbyssDataLibrary.dataDigest` — a hash of the bytes of every
+data file the library read, override cycles included. That last one is what
+makes a data change invalidate the cache even when nothing the player did
+changed; the first draft left it out as an "accepted gap", and the very next
+change to the data (real monster resistances, same `periodStart`) was exactly
+the case it would have missed. The week-long expiry remains for the one thing
+no digest sees: this app's own code changing what it computes from the same
+bytes.
+
+The cache is a single slot, not a history: every entry `AbyssOptimizerOutput`'s
+type graph carries had to grow `Codable` for this (`AbyssStats`'s `SIMD8<Double>`
+included — the standard library already conforms it, no encoding written by
+hand), and `AbyssSearchCacheTests` round-trips a real search result through
+`JSONEncoder`/`JSONDecoder` to pin that synthesis dropped nothing, rather than
+trusting the compiler accepted it.
 
 ### Roster grid sorting
 
