@@ -234,25 +234,34 @@ final class AbyssOptimizerTests: XCTestCase {
     /// are candidates is not the same as forgetting what is already known
     /// about the ones that are owned.
     ///
-    /// The candidate lists are pinned to Hu Tao's actual best-in-slot weapon
-    /// and set rather than the library's full lists: `gearOptions` ranks
-    /// against whichever set is first in an arbitrary `sets` list, and Hu Tao
-    /// is HP-scaling, so an unrelated first set would make Homa look weak for
-    /// reasons that have nothing to do with refinement.
+    /// The candidate lists are pinned to one weapon and one set rather than
+    /// the library's full lists: `gearOptions` ranks against whichever set is
+    /// first in an arbitrary `sets` list, and an unrelated first set would make
+    /// the weapon look weak for reasons that have nothing to do with
+    /// refinement.
+    ///
+    /// Vortex Vanquisher rather than Homa, and the reason is a model gap worth
+    /// knowing: Homa's refinement scales HP% and an HP→ATK conversion, and Hu
+    /// Tao's hits scale on ATK — the game's table says so, and the HP-basis
+    /// "hit" the prose path read for her was her skill's ATK *buff* copied
+    /// into the wrong column. The conversion is real and unmodelled (see
+    /// `docs/redesign.md`, Phase 2), so on Hu Tao a Homa refinement currently
+    /// changes nothing, which is a fact about the model, not about refinement
+    /// being credited. Vortex Vanquisher's refinement is a plain ATK buff.
     func testFullPoolStillCreditsOwnedRefinement() async throws {
         let optimizer = try makeOptimizer()
         let character = try XCTUnwrap(library.charactersByID["hu-tao"])
-        let homa = try XCTUnwrap(library.weaponsByID["staff-of-homa"])
+        let weapon = try XCTUnwrap(library.weaponsByID["vortex-vanquisher"])
         let crimsonWitch = try XCTUnwrap(library.artifactSetsByID["crimson-witch-of-flames"])
 
-        var r5Roster = AbyssRoster(characters: [.init(id: "hu-tao")], weapons: [.init(id: "staff-of-homa")])
+        var r5Roster = AbyssRoster(characters: [.init(id: "hu-tao")], weapons: [.init(id: "vortex-vanquisher")])
         r5Roster.weapons[0].refinement = 5
         var r1Roster = r5Roster
         r1Roster.weapons[0].refinement = 1
 
-        let r5 = try XCTUnwrap(optimizer.gearOptions(for: character, weapons: [homa], sets: [crimsonWitch],
+        let r5 = try XCTUnwrap(optimizer.gearOptions(for: character, weapons: [weapon], sets: [crimsonWitch],
                                                       roster: r5Roster).first)
-        let r1 = try XCTUnwrap(optimizer.gearOptions(for: character, weapons: [homa], sets: [crimsonWitch],
+        let r1 = try XCTUnwrap(optimizer.gearOptions(for: character, weapons: [weapon], sets: [crimsonWitch],
                                                       roster: r1Roster).first)
         XCTAssertGreaterThan(r5.soloScore, r1.soloScore,
                              "R5 should outscore R1 on the same character and weapon")

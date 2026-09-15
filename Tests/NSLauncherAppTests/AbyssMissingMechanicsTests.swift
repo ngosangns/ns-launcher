@@ -154,26 +154,50 @@ final class AbyssMissingMechanicsTests: XCTestCase {
     }
 
     /// Every entry in the table has to still match a row, or it is quietly doing
-    /// nothing after a data update.
+    /// nothing after a data update. Checked against whichever table the
+    /// character is actually read from: the game's own lines when
+    /// `talent-params.json` has them, the transcription otherwise.
     func testEveryChargedLabelStillMatchesARow() throws {
         for entry in library.traitsByCharacterID.values {
             guard let charged = entry.chargedAttackLabels else { continue }
             let character = try XCTUnwrap(library.charactersByID[entry.characterId],
                                           "\(entry.characterId) is no longer in the data")
+            let rows: [String]
+            if let structured = library.talentParams?.characters[entry.characterId] {
+                rows = structured.normalAttack.lines.compactMap { AbyssTalentReader.split($0)?.label }
+            } else {
+                rows = character.normalAttack.hits.map(\.label)
+            }
             for label in charged.labels {
-                XCTAssertTrue(character.normalAttack.hits.contains {
-                    $0.label.range(of: label, options: .caseInsensitive) != nil
-                }, "\(entry.characterId): no row matches \"\(label)\" any more")
+                XCTAssertTrue(rows.contains { $0.range(of: label, options: .caseInsensitive) != nil },
+                              "\(entry.characterId): no row matches \"\(label)\" in \(rows)")
             }
         }
     }
 
-    /// What is still falling through, kept visible rather than silent.
+    /// What is still falling through, kept visible rather than silent — and
+    /// named, now that the rows come from the game's own tables and the names
+    /// are stable. Three kinds: a stance's own combo that replaces the normal
+    /// one (Varesa's Fiery Passion, Xilonen's Blade Roller, Kinich's mid-air),
+    /// an extra hit riding on a normal attack (the Fontaine arkhe
+    /// "Spiritbreath Thorn", Tartaglia's Riptide, Lyney's hat), and a
+    /// conditional replacement (Sandrone's Power Overdrive). Every one is a
+    /// kit fact — which of two combos a rotation uses — and lands in the kit
+    /// file of Phase 2, not in a wider regex.
     func testTheRowsStillUnclassifiedAreKnownOnes() throws {
+        let known: Set<String> = [
+            "charlotte: Spiritbreath Thorn DMG", "columbina: Moondew Cleanse DMG",
+            "furina: Spiritbreath Thorn/Surging Blade DMG", "iansan: Swift Stormflight DMG",
+            "kinich: Mid-Air Normal Attack DMG", "lauma: Spiritcall Prayer DMG",
+            "lyney: Pyrotechnic Strike DMG", "lyney: Spiritbreath Thorn DMG",
+            "sandrone: DMG When in Power Overdrive",
+            "tartaglia: Riptide Burst DMG", "tartaglia: Riptide Flash DMG",
+            "varesa: Fiery Passion 1-Hit DMG", "varesa: Fiery Passion 2-Hit DMG", "varesa: Fiery Passion 3-Hit DMG",
+            "xilonen: Blade Roller 1-Hit DMG", "xilonen: Blade Roller 2-Hit DMG",
+            "xilonen: Blade Roller 3-Hit DMG", "xilonen: Blade Roller 4-Hit DMG",
+        ]
         let unclassified = library.diagnostics.normalAttackRowsUnclassified
-        XCTAssertFalse(unclassified.contains { $0.hasPrefix("ganyu") },
-                       "Ganyu's Frostflake Arrow is classified now")
-        XCTAssertLessThanOrEqual(unclassified.count, 8,
-                                 "more rows are falling through than before: \(unclassified.sorted())")
+        XCTAssertEqual(unclassified, known,
+                       "new: \(unclassified.subtracting(known).sorted()) gone: \(known.subtracting(unclassified).sorted())")
     }
 }

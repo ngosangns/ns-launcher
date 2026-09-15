@@ -92,7 +92,7 @@ xem mục 4 (Pha 0) về hướng thay thế đã chọn.
 | Pha | Việc | Xoá được hằng số nào | Trạng thái |
 |---|---|---|---|
 | **0** | Nhập kháng quái thật từ Yatta; đặt nền benchmark | `enemyOwnElementResistance` làm fallback thay vì luật chính | **Xong — xem mục 4** |
-| 1 | Talent → `params` cấu trúc từ Yatta, thay 26 regex trong `AbyssTextParser` | — (gỡ nguồn lỗi lớn nhất) | Chưa bắt đầu |
+| 1 | Talent → `params` cấu trúc từ Yatta, thay 26 regex trong `AbyssTextParser` | — (gỡ nguồn lỗi lớn nhất) | **Xong cho 118/125 — xem mục 5** |
 | 2 | `character-kits.json` cho ~30 nhân vật hay dùng nhất; nhân vật chưa có kit rơi về mô hình cũ | — | Chưa bắt đầu |
 | 3 | Dựng rotation + năng lượng | `offFieldUptime`, hack ER | Chưa bắt đầu |
 | 4 | Gauge/ICD/phản ứng theo timeline | `amplifyingUptime`, `transformativeReactionsPerRotation` | Chưa bắt đầu |
@@ -209,10 +209,78 @@ repo → thêm tham số đường dẫn; hai chỗ sai sự thật trong chính
 (Volkodlak Archer "ở tầng khác 12" — thực ra ở tầng 12 nửa 1; "HP đã có từ
 Pha 0" — Pha 0 cố tình không lấy HP).
 
-## 5. Chưa xác minh, cần làm trước Pha 1
+## 5. Pha 1 — kết quả
+
+### 5.1. Nguồn số liệu talent: file game, không phải văn xuôi
+
+`scripts/sync-abyss-talent-params.py` lấy từng talent của 118 nhân vật (7 Nhà
+Lữ Hành không có avatar riêng trên Yatta — vẫn đi đường cũ) và ghi **nguyên
+văn** vào `talent-params.json`: dòng mô tả như game viết
+(`"Skill DMG|{param1:P} Max HP"`) và mảng `params` theo cấp 1–15. File không
+chứa suy diễn nào; `AbyssTalentReader` (Swift) đọc nó theo một grammar nhỏ
+trên từ vựng khép kín — mọi hình dạng biểu thức đã được liệt kê trên toàn bộ
+dữ liệu **trước** khi viết reader (`@`, `@+@`, `@×3`, `(@ ATK+@ EM)×2`,
+`@/@`, `@ Max HP`, …), và mỗi luật là một test.
+
+Ba lần script từ chối chạy, đều đúng: (a) dòng mô tả **không** giống nhau ở
+mọi cấp — 43 talent đổi độ chính xác format, 5 đổi chữ, và 2 (Freminet, Jean
+cấp 15) **đánh lại số thứ tự placeholder** → phải lưu dòng theo cấp
+(`lineOverrides`), không được lấy một bản; (b) Ayaka/Mona có "chạy nước rút"
+là talent type-0 không bảng; (c) Ningguang đánh một đòn ghi "Normal Attack
+DMG" chứ không "1-Hit". Mỗi lần là một giả định sai bị bắt bởi dữ liệu.
+
+### 5.2. Hai nguồn lệch ở đâu — đo trên 118 nhân vật
+
+`AbyssTalentSourceComparisonTests` chạy cả hai đường và in bảng. **16/118 khớp
+trong 0,5%.** Các lệch chia thành nhóm, đa số là lỗi transcription:
+
+| Nhóm | Ví dụ | Phía đúng |
+|---|---|---|
+| **Đòn thường = 0** | 28 nhân vật (toàn bộ Sumeru + Natlan): bản transcription ghi "chưa xác nhận" cho cả bảng đòn thường — mô hình đã chấm họ với đòn thường và đòn nặng bằng **0** | Game |
+| Đòn cùng trúng bị đọc là lựa chọn | Hu Tao 5-Hit `{a}+{b}`: prose lấy max, game cộng | Game |
+| Buff đọc thành đòn | Hu Tao "ATK cộng thêm 6.256% Max HP"; Sethos/Xiao burst là buff thuần | Game |
+| Sai cơ sở | Candace/Columbina scale HP, Linnea DEF, Nefer EM, Illuga/Chiori có cả EM/DEF lẫn ATK | Game |
+| Số chép sai | Hu Tao trọng kích 153% (đúng: 243%); Xingqiu skill 3.02% (đúng: 302%) | Game |
+| Biến thể bị cộng dồn | Bennett/Beidou/Freminet/Shenhe: prose cộng mọi cấp giữ chiêu, reader lấy max | Game (reader) |
+| Chế độ (stance) burst/skill | Raiden, Cyno, Varka, Mavuika: bảng liệt kê cả chuỗi đòn thường của chế độ; reader cộng mỗi dòng một lần (định nghĩa burst của mô hình), prose chỉ đọc đòn đầu | Không bên nào — cần Pha 3 (thời gian) |
+
+Golden fixture tái tạo: 118/125 profile đổi; tầng 12 đội đầu **giữ nguyên**
+(Bennett/Diona/Hu Tao/Venti), tầng 9–11 đổi đội đầu; điểm đội đầu +6–8%.
+
+### 5.3. Giới hạn còn lại — đã ghim bằng test, chưa sửa
+
+- **Biến thể mà chữ không nói lên**: Varesa "Rush DMG" / "Fiery Passion Rush
+  DMG" (một chế độ), Bennett "Press DMG" / "Charge Level 2 DMG" (một lần bấm)
+  vẫn cộng — đây là tri thức kit, thuộc `character-kits.json` (Pha 2). 18 dòng
+  đòn thường chưa phân loại (chuỗi đòn của chế độ, đòn phụ arkhe, Riptide)
+  được ghim đích danh trong `AbyssMissingMechanicsTests`.
+- **7 dòng DMG cố ý không đọc** (Razor/Wanderer/Wriothesley/Yoimiya "% Normal
+  Attack DMG" là *phần* của đòn khác; Lauma "per Verdant Dew"; Nicole "ATK của
+  nhân vật khác") — ghim trong `AbyssTalentReaderTests`.
+- **Đòn nặng khác cơ sở**: so hệ số thô giữa 246% ATK và 14.5% Max HP là vô
+  nghĩa (Neuvillette: dòng HP mạnh gấp bốn). Giải quyết bằng luật: nhãn trong
+  `character-traits.json` chỉ đích danh dòng nào là đòn nặng thì dòng đó thắng;
+  hệ số chỉ quyết định giữa các dòng cùng hạng. Sethos được thêm nhãn
+  "Shadowpiercing Shot" vì lý do này.
+- **Chuyển đổi chỉ số (HP→ATK) chưa có chỗ đứng**: Hu Tao E ("ATK cộng thêm
+  6.256% Max HP") và Trượng Hộ Ma ("ATK from HP") trước đây *vô tình* được
+  tính vì prose đọc dòng buff của Hu Tao thành một đòn scale HP; nay đòn đó
+  đúng là buff nên HP của Hu Tao không còn được tính gì — cả hai đều đúng về
+  số liệu và đều thiếu cùng một cơ chế. Thuộc `character-kits.json` (Pha 2:
+  `conversions: [{from: hp, to: atk, rate}]`), và weapon passive cần cùng
+  khung đó thay vì regex "buff|bonus" hiện tại.
+- **Basis chủ đạo đếm số dòng**, không cân theo hệ số: Chiori (ATK+DEF mỗi
+  đòn) và Kokomi/Nilou/Dehya/Layla rơi về ATK vì hoà. Chỉ ảnh hưởng phân bổ
+  substat; sửa bằng cân theo `hệ số × chỉ số điển hình` là việc riêng.
+- `AbyssTextParser` **chưa xoá**: còn phục vụ 7 Nhà Lữ Hành và
+  `character-traits.json.partyBuffs` (đọc số theo nhãn tiếng Việt). Xoá được
+  khi hai chỗ đó chuyển sang `talent-params.json`.
+
+## 6. Chưa xác minh, cần làm trước Pha 2–3
 
 - Yatta có ghi **hạt năng lượng/kỹ năng** không (particle count mỗi hit) —
   cộng đồng có bảng riêng nếu Yatta không có; Pha 3 (năng lượng) cần số này.
-- Format string `params` của Yatta (`"Blood Blossom DMG|{param3:P}"`) phân
-  loại được bao nhiêu % tự động (P=percent, F2P...) — bao nhiêu % còn lại
-  cần người xếp loại bằng tay khi viết `character-kits.json`.
+  `talent-params.json` đã mang `cooldown` và `energyCost` cho từng talent.
+- ~~Format string phân loại được bao nhiêu~~ — đã trả lời ở Pha 1: grammar phủ
+  100% dòng DMG trừ 7 dòng cố ý bỏ (5.3); phần cần người xếp loại là *biến
+  thể theo chế độ*, không phải format.

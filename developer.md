@@ -572,10 +572,20 @@ the search and the per-hit formula are sound, but the model has no notion of
 *time* — every rotation-dependent quantity (uptime, reaction frequency, ER,
 stack count) is a flat constant in `tuning.json` shared by every character,
 rather than something computed from an actual timeline. Phase 0 (real
-per-monster resistance from the game's own files, replacing the flat "an
-enemy resists its own element" guess) is done; read that file before
-touching `AbyssScorer`, `AbyssFloorContext`, or `tuning.json`'s uptime-shaped
-constants, so a change lands as part of the plan rather than beside it.
+per-monster resistance from the game's own files) and Phase 1 (talent
+multipliers from the game's own tables, `talent-params.json` read by
+`AbyssTalentReader`, replacing the regex parse of transcribed prose for
+118 of 125 characters) are done; read that file before touching
+`AbyssScorer`, `AbyssFloorContext`, `AbyssTextParser`, or `tuning.json`'s
+uptime-shaped constants, so a change lands as part of the plan rather than
+beside it.
+
+One consequence worth knowing before editing data: `characters/*.json`'s
+`scaling` tables no longer drive anyone's damage except the seven Travelers.
+Correcting a multiplier there changes nothing for the other 118 — the number
+comes from `talent-params.json`, which is regenerated from the game and must
+not be hand-edited. If the game's own number looks wrong, the reader's
+reading of it is what to look at (`AbyssTalentReaderTests`).
 
 ### Search result cache
 

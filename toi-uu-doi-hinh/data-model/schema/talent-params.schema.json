@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "talent-params.schema.json",
+  "title": "TalentParams",
+  "description": "Hệ số talent của từng nhân vật ĐÚNG NHƯ FILE GAME GHI, mọi cấp 1-15, lấy qua gi.yatta.moe/api/v2/en/avatar. Sinh tự động bằng scripts/sync-abyss-talent-params.py — đừng sửa tay. Đây là nguồn thay thế cho bảng `scaling` văn xuôi trong characters/*.json: dòng mô tả nguyên văn ('Skill DMG|{param1:P} Max HP') + mảng số theo cấp, còn việc dòng nào là damage, dòng nào là lựa chọn thay thế, cộng/nhân ra sao thì AbyssTalentReader (Swift) quyết định, mỗi luật là một test. Bảy Nhà Lữ Hành không có ở đây (Yatta gộp một avatar), vẫn đi đường parse văn xuôi.",
+  "type": "object",
+  "required": ["characters"],
+  "properties": {
+    "_doc": { "type": "string" },
+    "source": { "type": "string" },
+    "characters": {
+      "type": "object",
+      "description": "Khoá là slug nhân vật trùng characters/*.json.",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["gameId", "normalAttack", "elementalSkill", "elementalBurst"],
+        "properties": {
+          "gameId": { "type": "integer" },
+          "normalAttack": { "$ref": "#/definitions/talent" },
+          "elementalSkill": { "$ref": "#/definitions/talent" },
+          "elementalBurst": { "$ref": "#/definitions/talent" }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "talent": {
+      "type": "object",
+      "required": ["name", "cooldown", "energyCost", "lines", "params"],
+      "properties": {
+        "name": { "type": "string" },
+        "cooldown": { "type": "number", "description": "Giây; 0 với đòn thường." },
+        "energyCost": { "type": "number", "description": "Năng lượng nộ; 0 với hai talent kia." },
+        "lines": {
+          "type": "array", "items": { "type": "string" },
+          "description": "Dòng mô tả ở cấp 10, nguyên văn: 'Nhãn|{paramN:FMT} hậu-tố'. FMT kết thúc bằng P là phần trăm (giá trị đã là phân số). Hậu tố sau placeholder là chỉ số cơ sở (' Max HP', ' DEF', ' Elemental Mastery'; trống = ATK)."
+        },
+        "lineOverrides": {
+          "type": "object",
+          "additionalProperties": { "type": "array", "items": { "type": "string" } },
+          "description": "Cấp nào có dòng mô tả khác `lines` (sau khi chuẩn hoá format P/không-P) thì ghi đủ danh sách dòng của cấp đó ở đây, khoá là số cấp dạng chuỗi. Hiếm (7 talent) nhưng thật: Freminet/Jean cấp 15 đánh lại số thứ tự placeholder — dòng cấp 15 phải đọc với params cấp 15."
+        },
+        "params": {
+          "type": "array", "minItems": 15, "maxItems": 15,
+          "items": { "type": "array", "items": { "type": "number" } },
+          "description": "params[i] là mảng số của cấp i+1; '{param3:P}' đọc params[cấp-1][2]."
+        }
+      }
+    }
+  }
+}

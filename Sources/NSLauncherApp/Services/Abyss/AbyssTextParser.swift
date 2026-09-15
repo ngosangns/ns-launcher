@@ -4,6 +4,13 @@
 // enemy resistance notes ("kháng Anemo +20%"), and floor buff clauses
 // ("Sát thương Superconduct +200%").
 //
+// The talent-multiplier half is no longer the main road. Since redesign Phase 1
+// every character with an entry in `talent-params.json` reads their hits from
+// the game's own tables through `AbyssTalentReader`; this parser's scaling
+// code still serves the seven Travelers (no structured entry) and the labelled
+// numbers in `character-traits.json`. A transcription fix in `characters/*.json`
+// therefore changes nothing for the other 118 — see `AbyssDataLibrary.hits`.
+//
 // `NSRegularExpression` rather than Swift `Regex`: it is ICU, these patterns
 // were written against ICU, and it is already the precedent in
 // `StoryEntityLinker`.

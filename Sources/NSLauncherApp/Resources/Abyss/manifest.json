@@ -49,6 +49,10 @@
       "count": 37,
       "note": "Gộp 2026-09-12 từ 7 bảng nằm rải ở tuning.json, team-bonus.json và damage-formula.json. Tags: moonsign 10, hexerei 12, stellar-jubilee 3. chargedAttackLabels 8, partyBuffs 3, resistanceShred 2, reactionBaseDamageBonus 10."
     },
+    "talent-params.json": {
+      "count": 118,
+      "note": "Sinh 2026-09-15 bằng scripts/sync-abyss-talent-params.py từ gi.yatta.moe (Pha 1 docs/redesign.md). 118/125 nhân vật — 7 Nhà Lữ Hành không có avatar riêng trên Yatta, vẫn đi đường parse văn xuôi. Nguồn ưu tiên cho damage profile; bảng scaling trong characters/*.json giờ chỉ là dự phòng."
+    },
     "artifact-sets.json": {
       "textSource": "name/nameVI/description/descriptionVI đồng bộ từ bản địa hoá chính thức qua gi.yatta.moe/api/v2/{en,vi}/reliquary bằng scripts/sync-abyss-artifact-text.py, ngày 2026-09-14",
       "count": 63

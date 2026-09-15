@@ -53,11 +53,18 @@ final class AbyssMainStatSearchTests: XCTestCase {
     /// reaction, so Elemental Mastery is worth nothing to a solo score and no
     /// amount of searching there would ever pick it. The team pass is where it
     /// becomes visible.
+    ///
+    /// Xingqiu, not Nahida: this used to run on Nahida, and held only because
+    /// the transcription of her skill dropped the "+ x% Elemental Mastery" half
+    /// of Tri-Karma Purification. The game's own table has it, so a solo score
+    /// *does* see EM on her now — through her multiplier, not a reaction. The
+    /// premise needs a character whose kit scales on nothing but ATK.
     func testASoloScoreCannotSeeWhatMakesTheReactionCarryWork() throws {
-        let optimizer = try makeOptimizer()
         let scorer = AbyssScorer(library: library, tuning: try XCTUnwrap(library.tuning))
-        let character = try XCTUnwrap(library.charactersByID["nahida"])
-        let profile = try XCTUnwrap(library.profilesByCharacterID["nahida"])
+        let character = try XCTUnwrap(library.charactersByID["xingqiu"])
+        let profile = try XCTUnwrap(library.profilesByCharacterID["xingqiu"])
+        XCTAssertTrue(profile.hits.allSatisfy { $0.basis == .atk },
+                      "xingqiu's kit now scales on something other than ATK; pick another character")
         let context = scorer.soloContext(for: character, profile: profile)
 
         var bare = AbyssStats()

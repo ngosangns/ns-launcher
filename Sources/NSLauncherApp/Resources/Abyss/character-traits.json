@@ -244,11 +244,8 @@
     {
       "characterId": "ganyu",
       "chargedAttackLabels": {
-        "labels": [
-          "Frostflake Arrow",
-          "Frostflake Bloom"
-        ],
-        "note": "Mũi tên sạc đầy của Ganyu và vụ nổ của nó. Cả bộ damage của cô nằm ở đây; không có dòng này thì trọng kích của Ganyu bằng 0."
+        "labels": ["Frostflake Arrow"],
+        "note": "Mũi tên sạc đầy của Ganyu và vụ nổ của nó. Cả bộ damage của cô nằm ở đây; không có dòng này thì trọng kích của Ganyu bằng 0. [2026-09-15] Một nhãn thay vì hai: game gọi hai dòng là 'Frostflake Arrow DMG' và 'Frostflake Arrow Bloom DMG', nên 'Frostflake Arrow' khớp cả hai và đòn nặng lấy dòng mạnh hơn (Bloom). 'Frostflake Bloom' là chữ của bản transcription, không có trong file game."
       }
     },
     {
@@ -375,6 +372,13 @@
           "note": "Burst Shenhe, dòng 'Giảm kháng Cryo địch' = 15%, thời lượng 12s. uptime 0.6 ước theo 12s hiệu lực trên CD 20s."
         }
       ]
+    },
+    {
+      "characterId": "sethos",
+      "chargedAttackLabels": {
+        "labels": ["Shadowpiercing Shot"],
+        "note": "Đòn nặng thật của Sethos là mũi tên sạc cấp 2 'Shadowpiercing Shot' (tiêu năng lượng), không phải Aimed Shot thường. Game ghi dòng này là 'Shadowpiercing Shot DMG' trong bảng đòn thường; không có nhãn này thì reader coi nó là dòng chưa phân loại và đòn nặng của anh rơi về Aimed Shot sạc đầy thường. Thêm 2026-09-15 khi đối chiếu bảng talent với file game (Pha 1)."
+      }
     }
   ]
 }

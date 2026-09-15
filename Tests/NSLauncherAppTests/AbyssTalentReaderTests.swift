@@ -1,0 +1,193 @@
+import XCTest
+@testable import NSLauncherApp
+
+/// `AbyssTalentReader` against the grammar of `talent-params.json`, and
+/// against the prose path it replaces.
+///
+/// Two kinds of test. The grammar tests pin each expression shape the data
+/// was found to contain — every one was enumerated before the reader was
+/// written — with a hand-built talent, so a rule can be checked without
+/// wondering which character exercises it. The comparison test then runs both
+/// readers over every character that has structured data and reports where
+/// they disagree; a disagreement means one of them is wrong, and the whole
+/// point of Phase 1 is that it is usually the transcription.
+final class AbyssTalentReaderTests: XCTestCase {
+
+    private var library: AbyssDataLibrary { AbyssDataLibraryTests.library }
+
+    private func talent(_ lines: [String], params: [Double]) -> AbyssTalentParams.Talent {
+        AbyssTalentParams.Talent(name: "t", cooldown: 0, energyCost: 0, lines: lines,
+                                 lineOverrides: nil, params: Array(repeating: params, count: 15))
+    }
+
+    private func terms(_ lines: [String], params: [Double],
+                       category: HitCategory = .skill) -> [AbyssDamageProfile.Term] {
+        var diagnostics = AbyssParseDiagnostics()
+        return AbyssTalentReader.abilityTerms(talent(lines, params: params), level: 10,
+                                              category: category, characterID: "x",
+                                              diagnostics: &diagnostics)
+    }
+
+    // MARK: - The grammar, one shape at a time
+
+    func testAPlainPercentIsAnATKHit() {
+        XCTAssertEqual(terms(["Skill DMG|{param1:P}"], params: [3.024]),
+                       [.init(multiplier: 3.024, basis: .atk, category: .skill)])
+    }
+
+    func testASuffixNamesTheBasis() {
+        XCTAssertEqual(terms(["Skill DMG|{param1:F2P} Max HP"], params: [0.231552]),
+                       [.init(multiplier: 0.231552, basis: .hp, category: .skill)])
+        XCTAssertEqual(terms(["ATK Bonus|{param1:F1P} DEF", "Skill DMG|{param2:P} DEF"], params: [1.0, 2.0]),
+                       [.init(multiplier: 2.0, basis: .def, category: .skill)],
+                       "ATK Bonus is a buff, not a hit, whatever its suffix")
+        XCTAssertEqual(terms(["Skill DMG|{param1:P} Elemental Mastery"], params: [4.0]),
+                       [.init(multiplier: 4.0, basis: .em, category: .skill)])
+    }
+
+    /// Xingqiu: `{p1}+{p2}` — two hits that both land, so they add.
+    func testPlusAddsSimultaneousHits() {
+        XCTAssertEqual(terms(["Skill DMG|{param1:P}+{param2:P}"], params: [3.024, 3.4416]),
+                       [.init(multiplier: 6.4656, basis: .atk, category: .skill)])
+    }
+
+    /// Kazuha's 5-hit: `{p}×3`. And the wrapped form `({a} ATK+{b} EM)×2`.
+    func testTimesMultipliesAHit() {
+        let tripled = terms(["Skill DMG|{param1:F1P}×3"], params: [0.5015])
+        XCTAssertEqual(tripled.count, 1)
+        XCTAssertEqual(tripled.first?.multiplier ?? 0, 1.5045, accuracy: 1e-9)
+        XCTAssertEqual(tripled.first?.basis, .atk)
+        let mixed = terms(["Skill DMG|({param1:P} ATK+{param2:P} Elemental Mastery)×2"], params: [1.0, 2.0])
+        XCTAssertEqual(Set(mixed), [.init(multiplier: 2.0, basis: .atk, category: .skill),
+                                    .init(multiplier: 4.0, basis: .em, category: .skill)])
+    }
+
+    /// A sum across two bases is two terms, not one guessed basis.
+    func testAMixedBasisSumKeepsBothTerms() {
+        let mixed = terms(["Skill DMG|{param1:P} ATK+{param2:P} DEF"], params: [1.5, 0.5])
+        XCTAssertEqual(Set(mixed), [.init(multiplier: 1.5, basis: .atk, category: .skill),
+                                    .init(multiplier: 0.5, basis: .def, category: .skill)])
+    }
+
+    /// `{a}/{b}` inside one line is two alternatives; the stronger is the one
+    /// that counts — the reading the prose path gives "a% / b%".
+    func testSlashInsideALineTakesTheStrongerAlternative() {
+        XCTAssertEqual(terms(["Skill DMG|{param1:P}/{param2:P}"], params: [1.0, 1.5]),
+                       [.init(multiplier: 1.5, basis: .atk, category: .skill)])
+    }
+
+    /// A `/` followed by a unit is a rate, not an alternative, and a rate is
+    /// not a hit. Neither is a duration.
+    func testRatesAndDurationsAreNotHits() {
+        XCTAssertEqual(terms(["Skill DMG|{param1:P}/s"], params: [1.0]), [])
+        XCTAssertEqual(terms(["Skill DMG|{param1:P} per Fighting Spirit"], params: [1.0]), [])
+        XCTAssertEqual(terms(["Skill DMG|{param1:F1}s"], params: [6.0]), [])
+        XCTAssertEqual(terms(["Skill DMG|{param1:I}"], params: [60]), [], "an integer format is a count")
+    }
+
+    /// The vocabulary that makes a row not a hit even when it says DMG.
+    func testNonDamageLabelsAreSkipped() {
+        for label in ["Skill DMG Bonus", "DMG Increase", "Damage Reduction Ratio", "Shield DMG Absorption",
+                      "HP Regeneration", "Charged Attack Stamina Cost", "Duration", "CD", "Energy Cost",
+                      "Inherited HP", "ATK Increase"] {
+            XCTAssertEqual(terms(["\(label)|{param1:P}"], params: [1.0]), [], "\(label) was read as a hit")
+        }
+    }
+
+    /// Hu Tao's burst: "Skill DMG" and "Low HP Skill DMG" are one hit on two
+    /// sides of a threshold, and she is on one side of it.
+    func testVariantRowsKeepOnlyTheStrongest() {
+        XCTAssertEqual(terms(["Skill DMG|{param1:P}", "Low HP Skill DMG|{param2:P}"], params: [4.93952, 6.1744]),
+                       [.init(multiplier: 6.1744, basis: .atk, category: .skill)])
+        XCTAssertEqual(terms(["Press Skill DMG|{param1:P}", "Hold Skill DMG|{param2:P}"], params: [3.456, 4.6944]),
+                       [.init(multiplier: 4.6944, basis: .atk, category: .skill)])
+    }
+
+    /// Two differently named hits both land; nothing about them is a variant.
+    func testDifferentlyNamedRowsBothCount() {
+        XCTAssertEqual(terms(["Slashing DMG|{param1:P}", "DoT|{param2:P}"], params: [4.7232, 2.16]).count, 2)
+    }
+
+    /// The platform layout tag the game puts in front of some labels.
+    func testLayoutTagsAreStripped() {
+        let split = AbyssTalentReader.split("#{LAYOUT_MOBILE#Tap}{LAYOUT_PC#Press}{LAYOUT_PS#Press} Skill DMG|{param1:P}")
+        XCTAssertEqual(split?.label, "Press Skill DMG")
+    }
+
+    // MARK: - Normal attacks
+
+    func testTheComboIsTheNumberedHitsOnly() {
+        let na = talent(["1-Hit DMG|{param1:F1P}", "2-Hit DMG|{param2:F1P}+{param3:F1P}",
+                         "Charged Attack|{param4:F1P}", "Plunge DMG|{param5:F1P}",
+                         "Low/High Plunge DMG|{param6:P}/{param7:P}"],
+                        params: [0.8, 0.5, 0.6, 2.4, 1.1, 2.3, 2.9])
+        XCTAssertEqual(AbyssTalentReader.comboTerms(na, level: 10).map(\.multiplier), [0.8, 1.1])
+        XCTAssertEqual(AbyssTalentReader.chargedTerms(na, level: 10, extraLabels: []).map(\.multiplier), [2.4])
+        XCTAssertEqual(AbyssTalentReader.unclassifiedRows(na, level: 10, characterID: "x", extraLabels: []), [],
+                       "plunges are dropped on purpose, not reported")
+    }
+
+    /// A bow's plain and fully-charged shots are one action; the strongest
+    /// wins, as on the prose path. A character-specific label from
+    /// `character-traits.json` joins the charged set.
+    func testChargedIsTheStrongestNamedRow() {
+        let bow = talent(["Aimed Shot|{param1:F1P}", "Fully-Charged Aimed Shot|{param2:P}",
+                          "Frostflake Arrow DMG|{param3:P}", "Charged Attack Stamina Cost|{param4:F1}"],
+                         params: [0.867, 2.232, 2.304, 20])
+        XCTAssertEqual(AbyssTalentReader.chargedTerms(bow, level: 10, extraLabels: []).map(\.multiplier), [2.232])
+        XCTAssertEqual(AbyssTalentReader.chargedTerms(bow, level: 10, extraLabels: ["Frostflake Arrow"])
+                            .map(\.multiplier), [2.304])
+        XCTAssertEqual(AbyssTalentReader.unclassifiedRows(bow, level: 10, characterID: "ganyu", extraLabels: []),
+                       ["ganyu: Frostflake Arrow DMG"],
+                       "without the trait label, the row is reported rather than dropped")
+    }
+
+    // MARK: - Against the data
+
+    /// The DMG lines in the real data the reader deliberately does not count
+    /// as hits, named exactly. Each is one of three things the grammar knows
+    /// and refuses: a share of *another* hit ("{p} Normal Attack DMG" —
+    /// Razor's wolf, Wanderer's Kuugo, Wriothesley's fist, Yoimiya's arrows,
+    /// which the model prices through the hit they copy), a per-stack rate
+    /// ("per Verdant Dew"), or another character's stat ("Corresponding
+    /// Character's ATK"). A new entry here is a shape the grammar has not
+    /// seen; one vanishing means the data changed under it. Either way, look.
+    func testTheDamageLinesNotReadAsHitsAreKnownOnes() {
+        let known: Set<String> = [
+            "lauma: 2-Hit Hold DMG|{param3:F1P} Elemental Mastery Per Verdant Dew",
+            "nicole: Arcane Projection DMG|{param2:F1P} Corresponding Character's ATK",
+            "razor: Soul Companion DMG|{param2:F1P} Normal Attack DMG",
+            "wanderer: Kuugo: Fushoudan DMG|{param2:F1P} Normal Attack DMG",
+            "wanderer: Kuugo: Toufukai DMG|{param3:F1P} Charged Attack DMG",
+            "wriothesley: Enhanced Repelling Fist DMG|{param1:F1P} Normal Attack DMG",
+            "yoimiya: Blazing Arrow DMG|{param4:F1P} Normal Attack DMG",
+        ]
+        XCTAssertEqual(library.diagnostics.talentParamsUnread, known,
+                       "new: \(library.diagnostics.talentParamsUnread.subtracting(known).sorted()) "
+                       + "gone: \(known.subtracting(library.diagnostics.talentParamsUnread).sorted())")
+    }
+
+    /// Level 13 exists for everyone now, so a C3/C5 talent boost reads real
+    /// numbers for every structured character rather than only the ones whose
+    /// prose carried an `lv13` column. Checked per boosted slot, and only where
+    /// that slot has hits — a boost to a burst that is pure buff (Sethos)
+    /// rightly changes nothing.
+    func testLevelThirteenIsRealForEveryStructuredCharacter() throws {
+        let params = try XCTUnwrap(library.talentParams)
+        var checked = 0
+        for id in params.characters.keys {
+            guard let boosts = library.talentBoostsByCharacterID[id], !boosts.isEmpty else { continue }
+            let base = try XCTUnwrap(library.profile(for: id, constellation: 0))
+            let boosted = try XCTUnwrap(library.profile(for: id, constellation: 6))
+            for slot in Set(boosts.values) {
+                let category: HitCategory = slot == .skill ? .skill : .burst
+                let before = base.hits.filter { $0.category == category }.map(\.multiplier).reduce(0, +)
+                let after = boosted.hits.filter { $0.category == category }.map(\.multiplier).reduce(0, +)
+                guard before > 0 else { continue }
+                XCTAssertGreaterThan(after, before, "\(id): \(category) did not grow from level 10 to 13")
+                checked += 1
+            }
+        }
+        XCTAssertGreaterThan(checked, 50, "too few boosted slots exercised")
+    }
+}

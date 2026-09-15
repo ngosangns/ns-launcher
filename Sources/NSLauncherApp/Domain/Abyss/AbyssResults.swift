@@ -80,6 +80,12 @@ struct AbyssParseDiagnostics: Sendable, Equatable {
     /// quietly added to every hit the team made instead, which is not a smaller
     /// error than dropping it, only a less visible one.
     var floorBuffsNotPriced: Set<String> = []
+    /// Lines in `talent-params.json` that say DMG and that `AbyssTalentReader`
+    /// could not read as a hit: an expression shape the grammar does not know.
+    /// Every shape in the data was enumerated before the reader was written, so
+    /// an entry here is new data, not a known gap — and it is a row the model
+    /// is scoring as zero until somebody looks.
+    var talentParamsUnread: Set<String> = []
 
     mutating func merge(_ other: AbyssParseDiagnostics) {
         scalingParsed += other.scalingParsed
@@ -93,6 +99,7 @@ struct AbyssParseDiagnostics: Sendable, Equatable {
         damageFormulaUnread.formUnion(other.damageFormulaUnread)
         floorBuffsNotPriced.formUnion(other.floorBuffsNotPriced)
         normalAttackRowsUnclassified.formUnion(other.normalAttackRowsUnclassified)
+        talentParamsUnread.formUnion(other.talentParamsUnread)
     }
 }
 
@@ -117,7 +124,7 @@ struct AbyssTalentPartyBuff: Sendable, Equatable {
 
 /// A character's damage-relevant multipliers, parsed once at load.
 struct AbyssDamageProfile: Sendable, Equatable {
-    struct Term: Sendable, Equatable {
+    struct Term: Sendable, Equatable, Hashable {
         let multiplier: Double
         let basis: ScalingBasis
         let category: HitCategory

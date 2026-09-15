@@ -61,6 +61,13 @@ struct AbyssDataLibrary: Sendable {
     let talentPartyBuffsByCharacterID: [String: [AbyssTalentPartyBuff]]
     /// Everything `character-traits.json` says about each character, by id.
     let traitsByCharacterID: [String: AbyssCharacterTraits]
+    /// `talent-params.json`: every talent's multipliers as the game's files
+    /// state them. A character present here has their damage profile read by
+    /// `AbyssTalentReader` from these; one absent (the seven Travelers) keeps
+    /// the prose path through `AbyssTextParser`. Nil when the file is missing,
+    /// in which case everyone keeps the prose path — the same degradation the
+    /// rest of the data has.
+    let talentParams: AbyssTalentParams?
     /// How much each character adds to the base damage of the Lunar/Stellar
     /// reactions they name, by character id then reaction.
     let reactionBaseDamageBonusByCharacterID: [String: [AbyssReaction: Double]]
@@ -131,6 +138,9 @@ struct AbyssDataLibrary: Sendable {
         // apply to are indistinguishable once the list has been read.
         let traitsFile: AbyssCharacterTraitsFile? =
             Self.decode(from: root?.appendingPathComponent("character-traits.json"), hasher: &hasher)
+        let talentParams: AbyssTalentParams? =
+            Self.decode(from: root?.appendingPathComponent("talent-params.json"), hasher: &hasher)
+        self.talentParams = talentParams
         dataDigest = hasher.finalize().map { String(format: "%02x", $0) }.joined()
         var traits: [String: AbyssCharacterTraits] = [:]
         for entry in traitsFile?.traits ?? [] {
@@ -178,7 +188,8 @@ struct AbyssDataLibrary: Sendable {
 
         for character in characters {
             let charged = chargedLabels[character.id] ?? []
-            let base = Self.buildProfile(for: character, levels: .base,
+            let structured = talentParams?.characters[character.id]
+            let base = Self.buildProfile(for: character, levels: .base, structured: structured,
                                          chargedLabels: charged, diagnostics: &diagnostics)
             profiles[character.id] = base
             sustain[character.id] = AbyssTeamContext.capabilities(of: character)
@@ -200,7 +211,7 @@ struct AbyssDataLibrary: Sendable {
                 for slot in slots { levels.raise(slot) }
                 guard table[levels] == nil else { continue }
                 var throwaway = AbyssParseDiagnostics()
-                table[levels] = Self.buildProfile(for: character, levels: levels,
+                table[levels] = Self.buildProfile(for: character, levels: levels, structured: structured,
                                                   chargedLabels: charged,
                                                   diagnostics: &throwaway)
             }
@@ -261,10 +272,35 @@ struct AbyssDataLibrary: Sendable {
         return table[talentLevels(for: characterID, constellation: constellation)] ?? table[.base]
     }
 
-    private static func buildProfile(for character: AbyssCharacter,
-                                     levels: AbyssTalentLevels,
-                                     chargedLabels: [String] = [],
-                                     diagnostics: inout AbyssParseDiagnostics) -> AbyssDamageProfile {
+    /// The hits a character's talents deal, from the game's own tables when
+    /// `structured` is present and from the transcribed prose otherwise. The
+    /// two are read by the same rules — see `AbyssTalentReader`'s header — so
+    /// a character can move from one to the other without the meaning of a
+    /// profile changing, only its accuracy.
+    static func hits(for character: AbyssCharacter,
+                     levels: AbyssTalentLevels,
+                     structured: AbyssTalentParams.Character?,
+                     chargedLabels: [String],
+                     diagnostics: inout AbyssParseDiagnostics) -> [AbyssDamageProfile.Term] {
+        if let structured {
+            let skillLevel = Self.talentLevel(levels.skill), burstLevel = Self.talentLevel(levels.burst)
+            var hits = AbyssTalentReader.abilityTerms(structured.elementalSkill, level: skillLevel,
+                                                      category: .skill, characterID: character.id,
+                                                      diagnostics: &diagnostics)
+            hits += AbyssTalentReader.abilityTerms(structured.elementalBurst, level: burstLevel,
+                                                   category: .burst, characterID: character.id,
+                                                   diagnostics: &diagnostics)
+            // Normal attacks are read at their base level on both paths: no
+            // constellation in the data raises the rows the model uses.
+            hits += AbyssTalentReader.comboTerms(structured.normalAttack, level: Self.talentLevel(AbyssTalentLevels.base.skill))
+            hits += AbyssTalentReader.chargedTerms(structured.normalAttack, level: Self.talentLevel(AbyssTalentLevels.base.skill),
+                                                   extraLabels: chargedLabels)
+            diagnostics.normalAttackRowsUnclassified.formUnion(
+                AbyssTalentReader.unclassifiedRows(structured.normalAttack, level: Self.talentLevel(AbyssTalentLevels.base.skill),
+                                                   characterID: character.id, extraLabels: chargedLabels))
+            return hits
+        }
+
         var hits: [AbyssDamageProfile.Term] = []
         for (multiplier, basis) in AbyssTextParser.talentDamageEntries(
             character.elementalSkill, levelKey: levels.skill, diagnostics: &diagnostics) {
@@ -283,6 +319,42 @@ struct AbyssDataLibrary: Sendable {
         }
         diagnostics.normalAttackRowsUnclassified.formUnion(
             AbyssTextParser.unclassifiedNormalAttackRows(character, extraLabels: chargedLabels))
+        return hits
+    }
+
+    /// `"lv10"` → 10. The prose keys and the structured levels name the same
+    /// thing; this is the seam between the two spellings.
+    static func talentLevel(_ key: String) -> Int {
+        Int(key.dropFirst(2)) ?? 10
+    }
+
+    /// The stat a set of hits mostly scales off — the structured counterpart
+    /// of `AbyssTextParser.scalingBasis`, same rule: the non-ATK basis with the
+    /// most skill and burst hits wins only if it beats ATK outright, ties
+    /// between non-ATK bases through `ScalingBasis.tieBreakOrder`.
+    static func dominantBasis(of hits: [AbyssDamageProfile.Term]) -> ScalingBasis {
+        var counts: [ScalingBasis: Int] = [:]
+        for hit in hits where hit.category == .skill || hit.category == .burst {
+            counts[hit.basis, default: 0] += 1
+        }
+        let atkCount = counts[.atk] ?? 0
+        var bestBasis: ScalingBasis?
+        var bestCount = 0
+        for basis in ScalingBasis.tieBreakOrder where (counts[basis] ?? 0) > bestCount {
+            bestBasis = basis
+            bestCount = counts[basis] ?? 0
+        }
+        guard let bestBasis, bestCount > atkCount else { return .atk }
+        return bestBasis
+    }
+
+    private static func buildProfile(for character: AbyssCharacter,
+                                     levels: AbyssTalentLevels,
+                                     structured: AbyssTalentParams.Character? = nil,
+                                     chargedLabels: [String] = [],
+                                     diagnostics: inout AbyssParseDiagnostics) -> AbyssDamageProfile {
+        let hits = Self.hits(for: character, levels: levels, structured: structured,
+                             chargedLabels: chargedLabels, diagnostics: &diagnostics)
 
         // Collapse to one term per (basis, category). Every hit in a pair shares
         // the same stat and the same bonus, so factoring the multipliers out is
@@ -303,7 +375,9 @@ struct AbyssDataLibrary: Sendable {
         return AbyssDamageProfile(
             hits: hits,
             aggregate: aggregate,
-            basis: AbyssTextParser.scalingBasis(for: character, diagnostics: &diagnostics))
+            basis: structured != nil
+                ? Self.dominantBasis(of: hits)
+                : AbyssTextParser.scalingBasis(for: character, diagnostics: &diagnostics))
     }
 
     /// Bundled cycles, with any user-supplied file of the same `periodStart`

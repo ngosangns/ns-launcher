@@ -29,6 +29,7 @@ là **bản duy nhất**.
 | `damage-formula.json` | Hằng số công thức sát thương + ví dụ mẫu để test |
 | `team-bonus.json` | Cộng hưởng nguyên tố, Nguyệt Triệu, Hexerei, Nightsoul Burst — **luật**, không phải danh sách nhân vật |
 | `character-traits.json` | Mọi thứ chỉ đúng với **một** nhân vật: tag cơ chế, nhãn đòn nặng, buff toàn đội theo talent, giảm kháng, base damage phản ứng |
+| `talent-params.json` | Hệ số talent **đúng như file game**, mọi cấp 1–15, sinh tự động — nguồn thay thế cho bảng `scaling` văn xuôi (xem "Số liệu talent") |
 | `tuning.json` | Tham số thuật toán (xem bên dưới) |
 | `game-ids.json` | Id số trong game → slug ở đây, để nhập Showcase theo UID |
 | `icons/characters/<id>.png`, `icons/weapons/<id>.png` | Ảnh chân dung, 256×256 |
@@ -91,6 +92,35 @@ hiển thị văn tiếng Việt. Script khớp theo id số qua `game-ids.json`
 sau `generate-abyss-game-ids.py` khi thêm bộ mới) và từ chối ghi nếu có bộ nào
 không phân giải được ở cả hai ngôn ngữ. `bonuses` — số liệu model đọc — không bị
 đụng tới; không có gì parse phần văn xuôi.
+
+## Số liệu talent: file game thay cho văn xuôi
+
+`talent-params.json` cũng sinh tự động:
+
+```bash
+python3 scripts/sync-abyss-talent-params.py
+```
+
+Trước 2026-09-15, hệ số talent đi từ bảng `scaling` trong `characters/*.json` —
+nhãn tiếng Việt + chuỗi kiểu `"172.53% DEF"` mỗi cấp, transcribe từ wiki — qua
+26 regex trong `AbyssTextParser`. Đối chiếu với file game (Yatta) trên toàn bộ
+118 nhân vật có id cho thấy chỉ **16/118** khớp; phần lớn lệch là lỗi
+transcription, và nặng nhất: **28 nhân vật Sumeru/Natlan ghi "chưa xác nhận"
+cho toàn bộ đòn thường → mô hình đang chấm họ với đòn thường và đòn nặng bằng 0**.
+
+File này là dữ liệu nguyên văn của game: mỗi talent có `lines` (dòng mô tả,
+vd. `"Skill DMG|{param1:P} Max HP"`) và `params` theo cấp. **Không có suy diễn
+nào trong file** — dòng nào là damage, dòng nào là lựa chọn thay thế ("Skill
+DMG" / "Low HP Skill DMG"), `+` cộng và `×3` nhân ra sao, đều do
+`AbyssTalentReader` (Swift) quyết định, và mỗi luật là một test trong
+`AbyssTalentReaderTests`. Muốn biết hai nguồn lệch ở đâu, chạy
+`AbyssTalentSourceComparisonTests` — nó in bảng so sánh từng nhân vật.
+
+`AbyssDataLibrary` ưu tiên file này; nhân vật không có ở đây (7 Nhà Lữ Hành —
+Yatta gộp chung một avatar) vẫn đi đường văn xuôi. Bảng `scaling` trong
+`characters/*.json` vì thế chỉ còn là nguồn dự phòng cho Nhà Lữ Hành và cho
+`character-traits.json.partyBuffs` (đọc số theo nhãn tiếng Việt) — chưa xoá,
+nhưng đừng sửa nó để "chỉnh" damage của ai nữa: sửa ở đây không có tác dụng.
 
 `icons/` cũng sinh tự động, cùng một kiểu:
 

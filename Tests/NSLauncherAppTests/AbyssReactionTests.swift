@@ -64,12 +64,18 @@ final class AbyssReactionTests: XCTestCase {
     }
 
     /// A character whose data has no level 13 column must be unaffected rather
-    /// than fall through to some other level.
+    /// than fall through to some other level. Only the Travelers still read
+    /// their talents from prose (`talent-params.json` has no entry for them),
+    /// so a Traveler is the only kind of character this can still happen to.
     func testAConstellationWithoutLevelThirteenDataChangesNothing() throws {
-        let id = "hu-tao"
-        let withoutData = library.charactersByID[id]?.elementalSkill.scaling
-            .allSatisfy { $0.values["lv13"] == nil } ?? false
-        XCTAssertTrue(withoutData, "hu-tao now has lv13 data; this test needs a different character")
+        let id = "traveler-pyro"
+        XCTAssertNil(library.talentParams?.characters[id], "\(id) has structured data now; every level is real")
+        let character = try XCTUnwrap(library.charactersByID[id])
+        let withoutData = (character.elementalSkill.scaling + character.elementalBurst.scaling)
+            .allSatisfy { $0.values["lv13"] == nil }
+        XCTAssertTrue(withoutData, "\(id) now has lv13 data; this test needs a different character")
+        XCTAssertFalse(library.talentBoostsByCharacterID[id]?.isEmpty ?? true,
+                       "\(id) has no talent-boosting constellation; the test would pass vacuously")
 
         let base = try XCTUnwrap(library.profile(for: id, constellation: 0))
         let atC6 = try XCTUnwrap(library.profile(for: id, constellation: 6))
