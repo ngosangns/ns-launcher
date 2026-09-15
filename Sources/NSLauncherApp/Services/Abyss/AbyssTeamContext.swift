@@ -198,13 +198,23 @@ struct AbyssTeamContext: Sendable {
     /// The transformative reactions this team can trigger, which is a different
     /// question from `enabledReactions`.
     ///
-    /// The Lunar and Stellar variants are *added* here, not substituted. They
-    /// have their own coefficients and their own EM curve in
-    /// `damage-formula.json`, and which of the pair is worth more depends on the
-    /// floor — this rotation's floor 12 triples Superconduct, so a Stellar
-    /// Jubilee team's plain Superconduct can beat its Stellar-Conduct. Offering
-    /// both and letting the pricing choose is the only way to get that right;
-    /// substituting would have thrown the answer away before it was asked.
+    /// Stellar Swirl is *added* here, not substituted: it has its own
+    /// coefficient and its own EM curve in `damage-formula.json`, and whether
+    /// it or a plain Swirl is worth more depends on the floor — this
+    /// rotation's floor 12 triples Superconduct, so a Stellar Jubilee team's
+    /// plain Swirl can beat its Stellar one. Offering both and letting the
+    /// pricing choose is the only way to get that right; substituting would
+    /// have thrown the answer away before it was asked.
+    ///
+    /// Lunar-Charged and Lunar-Crystallize are absent on purpose:
+    /// `damage-formula.json`'s `lunarStellar.indirect` prices them by a
+    /// different formula entirely — ranked per contributor, weighted
+    /// 0.6/0.3/0.05/0.05, each at their own Elemental Mastery and CRIT, not
+    /// the team's single best Elemental Mastery the way a candidate here is —
+    /// see `AbyssScorer.indirectLunarStellarDamage`. Lunar-Bloom and
+    /// Stellar-Conduct are absent too, and stay that way: the data records
+    /// both as direct-only, so a team gets them only from a character whose
+    /// own kit deals that damage, never from bare elemental overlap.
     ///
     /// The two-step reactions are derived: Hyperbloom and Burgeon need a Bloom
     /// core to already exist, so they want three elements rather than two.
@@ -229,17 +239,8 @@ struct AbyssTeamContext: Sendable {
             found.insert(.swirl)
         }
 
-        // Stellar Glimmer needs a character who upgrades the reaction; Lunar
-        // needs a Moonsign.
-        if stellarJubilee {
-            if elements.isSuperset(of: [.electro, .cryo]) { found.insert(.stellarConduct) }
-            if elements.isSuperset(of: [.anemo, .cryo]) { found.insert(.stellarSwirl) }
-        }
-        if moonsignLevel >= 1 {
-            if elements.isSuperset(of: [.electro, .hydro]) { found.insert(.lunarCharged) }
-            if elements.isSuperset(of: [.dendro, .hydro]) { found.insert(.lunarBloom) }
-            if elements.isSuperset(of: [.geo, .hydro]) { found.insert(.lunarCrystallize) }
-        }
+        // Stellar Glimmer needs a character who upgrades the reaction.
+        if stellarJubilee, elements.isSuperset(of: [.anemo, .cryo]) { found.insert(.stellarSwirl) }
         return found
     }
 

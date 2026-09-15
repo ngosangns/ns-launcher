@@ -2299,6 +2299,20 @@
           "action" : "skill",
           "basis" : "HP",
           "category" : "skill",
+          "multiplier" : 0.084671999999999997,
+          "reaction" : "Lunar-Charged"
+        },
+        {
+          "action" : "skill",
+          "basis" : "HP",
+          "category" : "skill",
+          "multiplier" : 0.12672,
+          "reaction" : "Lunar-Bloom"
+        },
+        {
+          "action" : "skill",
+          "basis" : "HP",
+          "category" : "skill",
           "multiplier" : 0.158832,
           "reaction" : "Lunar-Crystallize"
         },
@@ -2339,26 +2353,26 @@
         "setIds" : [
           "nymphs-dream"
         ],
-        "soloScore" : 5989.355584530409,
+        "soloScore" : 4961.2658329617725,
         "stats" : {
           "atk_pct" : 0.25,
-          "base_atk" : 637.66999999999996,
+          "base_atk" : 703.66999999999996,
           "base_def" : 514.92999999999995,
           "base_hp" : 14695.09,
           "burst_party_elemental_dmg" : {
 
           },
           "burst_party_flat_atk" : 0,
-          "crit_dmg" : 2.2344499999999998,
-          "crit_rate" : 0.73275000000000001,
+          "crit_dmg" : 1.3524500000000002,
+          "crit_rate" : 0.9837499999999999,
           "def_pct" : 0,
           "derived" : {
-            "atk" : 1108.0875000000001,
-            "critMultiplier" : 2.6372932374999998,
+            "atk" : 1190.5875000000001,
+            "critMultiplier" : 2.3304726874999999,
             "def" : 514.92999999999995,
             "hp" : 31463.344422000002
           },
-          "dmg_all" : 0,
+          "dmg_all" : 0.32000000000000001,
           "dmg_burst" : 0,
           "dmg_charged" : 0,
           "dmg_elemental" : {
@@ -2366,7 +2380,7 @@
           },
           "dmg_normal" : 0,
           "dmg_skill" : 0,
-          "em" : 73.154860718609171,
+          "em" : 0,
           "er" : 1.1943999999999999,
           "flat_atk" : 311,
           "flat_def" : 0,
@@ -2381,7 +2395,7 @@
           "party_em" : 0,
           "party_flat_atk" : 0
         },
-        "weaponId" : "reliquary-of-truth"
+        "weaponId" : "lost-prayer-to-the-sacred-winds"
       }
     },
     "cyno" : {
@@ -3811,7 +3825,7 @@
         "setIds" : [
           "shimenawas-reminiscence"
         ],
-        "soloScore" : 10610.849944464038,
+        "soloScore" : 9874.148046177168,
         "stats" : {
           "atk_pct" : 1.2198,
           "base_atk" : 1025.5899999999999,
@@ -3832,11 +3846,11 @@
           },
           "dmg_all" : 0.12,
           "dmg_burst" : 0,
-          "dmg_charged" : 0.5,
+          "dmg_charged" : 0.47415983138025702,
           "dmg_elemental" : {
             "Electro" : 0.46600000000000003
           },
-          "dmg_normal" : 0.5,
+          "dmg_normal" : 0.47415983138025702,
           "dmg_skill" : 0,
           "em" : 0,
           "er" : 1.1943999999999999,
@@ -8482,7 +8496,8 @@
           "action" : "skill",
           "basis" : "ATK",
           "category" : "skill",
-          "multiplier" : 8.2555200000000006
+          "multiplier" : 8.2555200000000006,
+          "reaction" : "Stellar Swirl"
         },
         {
           "action" : "skill",
@@ -8494,7 +8509,8 @@
           "action" : "skill",
           "basis" : "ATK",
           "category" : "skill",
-          "multiplier" : 0.72950400000000004
+          "multiplier" : 0.72950400000000004,
+          "reaction" : "Stellar Swirl"
         },
         {
           "action" : "skill",
@@ -8506,7 +8522,8 @@
           "action" : "skill",
           "basis" : "ATK",
           "category" : "skill",
-          "multiplier" : 0.87235200000000002
+          "multiplier" : 0.87235200000000002,
+          "reaction" : "Stellar Swirl"
         },
         {
           "action" : "burst",
@@ -8563,7 +8580,7 @@
         "setIds" : [
           "shimenawas-reminiscence"
         ],
-        "soloScore" : 10805.450903913477,
+        "soloScore" : 8076.0711595719531,
         "stats" : {
           "atk_pct" : 0.99580000000000002,
           "base_atk" : 942.85000000000002,
@@ -8588,7 +8605,7 @@
           "dmg_elemental" : {
             "Cryo" : 0.46600000000000003
           },
-          "dmg_normal" : 0.76666666666666661,
+          "dmg_normal" : 0.69811225215083339,
           "dmg_skill" : 0,
           "em" : 0,
           "er" : 1.1943999999999999,
@@ -8836,7 +8853,8 @@
           "action" : "burst",
           "basis" : "ATK",
           "category" : "burst",
-          "multiplier" : 5.3520050000000001
+          "multiplier" : 5.3520050000000001,
+          "reaction" : "Stellar-Conduct"
         },
         {
           "action" : "combo",
@@ -8881,7 +8899,7 @@
         "setIds" : [
           "gladiators-finale"
         ],
-        "soloScore" : 2608.0110472687747,
+        "soloScore" : 2508.4736662228761,
         "stats" : {
           "atk_pct" : 1.3419999999999999,
           "base_atk" : 895.00999999999999,
@@ -9289,6 +9307,20 @@
           "multiplier" : 0.58320000000000005
         },
         {
+          "action" : "skill",
+          "basis" : "ATK",
+          "category" : "skill",
+          "multiplier" : 0.38879999999999998,
+          "reaction" : "Stellar-Conduct"
+        },
+        {
+          "action" : "skill",
+          "basis" : "ATK",
+          "category" : "skill",
+          "multiplier" : 0.58320000000000005,
+          "reaction" : "Stellar Swirl"
+        },
+        {
           "action" : "burst",
           "basis" : "ATK",
           "category" : "burst",
@@ -9299,6 +9331,20 @@
           "basis" : "ATK",
           "category" : "burst",
           "multiplier" : 5.9543999999999997
+        },
+        {
+          "action" : "burst",
+          "basis" : "ATK",
+          "category" : "burst",
+          "multiplier" : 3.9695999999999998,
+          "reaction" : "Stellar-Conduct"
+        },
+        {
+          "action" : "burst",
+          "basis" : "ATK",
+          "category" : "burst",
+          "multiplier" : 5.9543999999999997,
+          "reaction" : "Stellar Swirl"
         },
         {
           "action" : "combo",

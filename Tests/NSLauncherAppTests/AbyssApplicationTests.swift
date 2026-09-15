@@ -113,7 +113,11 @@ final class AbyssApplicationTests: XCTestCase {
         let flins = try XCTUnwrap(library.profilesByCharacterID["flins"])
         XCTAssertTrue(flins.hits.contains { $0.reaction == .lunarCharged })
         let scorer = try scorer()
-        let members = try characters(["flins"])
+        // Flins is Electro and Moonsign on his own, but Lunar-Charged still
+        // needs a Hydro teammate to pair with — a talent row that *is* Lunar
+        // damage only fires when the team's own elements actually trigger
+        // that reaction.
+        let members = try characters(["flins", "xingqiu"])
         let context = scorer.teamDamageContext(members: members, floor: .neutral,
                                                team: AbyssTeamContext.build(members: members, library: library))
         var sheet = AbyssStats()

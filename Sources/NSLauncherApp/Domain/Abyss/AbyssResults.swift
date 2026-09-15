@@ -204,10 +204,13 @@ struct AbyssDamageProfile: Sendable, Equatable {
         let basis: ScalingBasis
         let category: HitCategory
         let action: Action
-        /// A Lunar reaction the game says this hit *is* — "Lunar-Charged DMG"
-        /// on Flins's burst. Such a hit is priced by the Lunar direct formula
+        /// A Lunar or Stellar reaction the game says this hit *is* —
+        /// "Lunar-Charged DMG" on Flins's burst, "Stellar-Conduct DMG" on
+        /// Qiqi's. Such a hit is priced by the Lunar/Stellar direct formula
         /// (the reaction's coefficient, its own EM curve, no DMG bonus, no
-        /// enemy DEF), not as an ordinary hit.
+        /// enemy DEF), not as an ordinary hit, and only fires when the
+        /// team's own elements actually trigger that reaction — see
+        /// `AbyssScorer.DamageContext.enabledReactions`.
         var reaction: AbyssReaction?
 
         init(multiplier: Double, basis: ScalingBasis, category: HitCategory, action: Action? = nil,
@@ -219,10 +222,15 @@ struct AbyssDamageProfile: Sendable, Equatable {
             self.reaction = reaction
         }
 
-        /// The Lunar reaction a talent row's label names, if any.
+        /// Every reaction a talent row's label can name a hit *as* — the ones
+        /// `damage-formula.json`'s `lunarStellar` block prices directly.
+        static let namedReactions: [AbyssReaction] = [
+            .lunarCharged, .lunarBloom, .lunarCrystallize, .stellarConduct, .stellarSwirl,
+        ]
+
+        /// The Lunar or Stellar reaction a talent row's label names, if any.
         static func lunarReaction(inLabel label: String) -> AbyssReaction? {
-            for reaction in [AbyssReaction.lunarCharged, .lunarBloom, .lunarCrystallize]
-            where label.contains(reaction.rawValue + " DMG") {
+            for reaction in namedReactions where label.contains(reaction.rawValue + " DMG") {
                 return reaction
             }
             return nil

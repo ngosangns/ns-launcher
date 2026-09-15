@@ -89,10 +89,17 @@ final class AbyssMissingMechanicsTests: XCTestCase {
     /// A Stellar Jubilee team unlocks both the plain reaction and its upgrade,
     /// and the pricing picks whichever the floor pays more for — which is the
     /// point of offering both.
-    func testAStellarTeamUnlocksBothAndTheFloorDecides() throws {
+    /// Stellar-Conduct is direct-only — `damage-formula.json`'s
+    /// `lunarStellar.indirect` never names it — so a Stellar Jubilee team
+    /// gets it only from a character whose own kit deals that damage, never
+    /// from bare Electro+Cryo overlap. `transformativeReactions` only ever
+    /// offers the classic pair this team's elements allow, and the floor
+    /// still decides between those.
+    func testAStellarTeamDoesNotUnlockConductIndirectly() throws {
         let context = try team(["odette", "fischl", "bennett", "diona"])
         XCTAssertTrue(context.stellarJubilee)
-        XCTAssertTrue(context.transformativeReactions.isSuperset(of: [.superconduct, .stellarConduct]))
+        XCTAssertTrue(context.transformativeReactions.isSuperset(of: [.superconduct, .overloaded]))
+        XCTAssertFalse(context.transformativeReactions.contains(.stellarConduct))
 
         let scorer = AbyssScorer(library: library, tuning: try tuning())
         func floor(_ buffs: [AbyssFloorBuff]) -> AbyssFloorContext {
@@ -103,8 +110,8 @@ final class AbyssMissingMechanicsTests: XCTestCase {
             AbyssFloorBuff(bonus: bonus, elements: [], reactions: [reaction],
                            normalAttackOnly: false, raw: "test")
         }
-        XCTAssertEqual(scorer.transformative(for: context, floor: floor([buff(3, .stellarConduct)]))?
-                            .reaction, .stellarConduct)
+        XCTAssertEqual(scorer.transformative(for: context, floor: floor([buff(3, .overloaded)]))?
+                            .reaction, .overloaded)
         XCTAssertEqual(scorer.transformative(for: context, floor: floor([buff(3, .superconduct)]))?
                             .reaction, .superconduct)
     }

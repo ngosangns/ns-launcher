@@ -266,19 +266,37 @@ enum AbyssTalentReader {
                 diagnostics.talentParamsUnread.insert("\(characterID): \(label)|\(expression)")
                 continue
             }
+            let reaction = AbyssDamageProfile.Term.lunarReaction(inLabel: label)
             let ordered = totals.sorted { $0.key.rawValue < $1.key.rawValue }
                 .map { AbyssDamageProfile.Term(multiplier: $0.value, basis: $0.key, category: category,
-                                               reaction: AbyssDamageProfile.Term.lunarReaction(inLabel: label)) }
+                                               reaction: reaction) }
             let total = totals.values.reduce(0, +)
 
             // Every row is keyed by its stem — the label with any variant
             // marker taken off — so "Skill DMG" and a later "Low HP Skill DMG"
             // meet in the same slot. A row with no marker is its own stem; two
             // rows can only collide if one is a marked variant of the other.
+            //
+            // A row naming a Lunar or Stellar reaction is the odd one out:
+            // `variantMarker` strips the reaction name too, on the same
+            // reasoning as "Low HP" or "Stack 3" — only one variant of a hit
+            // happens — but *which* Lunar/Stellar reaction fires is a fact
+            // about the team's elements, not about which row has the largest
+            // number. Columbina's skill lists Lunar-Charged, Lunar-Bloom and
+            // Lunar-Crystallize on the same three lines every team reads;
+            // picking the single largest at parse time baked in whichever her
+            // data happens to rank highest (Lunar-Crystallize) regardless of
+            // whether the team can ever trigger it. So the reaction name, once
+            // found, goes back into the stem: rows naming *different*
+            // reactions never collide and all of them survive into the
+            // profile, each gated at scoring time by
+            // `AbyssTeamContext.enabledReactions` — see
+            // `AbyssScorer.DamageContext.enabledReactions`.
             guard let variantMarker else { terms += ordered; continue }
-            let stem = variantMarker.stringByReplacingMatches(
+            var stem = variantMarker.stringByReplacingMatches(
                 in: label, range: NSRange(label.startIndex..., in: label), withTemplate: " ")
                 .split(separator: " ").joined(separator: " ").lowercased()
+            if let reaction { stem += " #\(reaction.rawValue)" }
             if let incumbent = alternatives[stem] {
                 if total > incumbent.total {
                     terms.replaceSubrange(incumbent.range, with: ordered)

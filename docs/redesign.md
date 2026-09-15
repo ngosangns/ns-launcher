@@ -100,6 +100,7 @@ Chạy: `ABYSS_BENCHMARK=1 swift test --filter AbyssBenchmarkTests`. Xem mục 7
 | 4 | Gauge/ICD/phản ứng theo timeline | `amplifyingUptime`, `transformativeReactionsPerRotation` | **Xong (đếm theo số lần áp, chưa phải timeline) — xem mục 8** |
 | 5 | Timeline buff + stack | `conditionalUptime`, `assumedStacks`, phần lớn `setEffectApprox` | **Xong (cả ba; uptime tính từ rotation, chưa phải mô phỏng khung giờ) — xem mục 10** |
 | 6 | Điểm = thời gian dọn — HP quái từ wiki, đối chiếu đường cong game trên Yatta | trung bình điều hoà giả định HP bằng nhau | **Xong cho tầng 9, 10, 12 (tầng 11 bị từ chối: wiki không chắc số lượng) — xem mục 11** |
+| 7 | Lunar-Charged/Lunar-Crystallize gián tiếp — công thức `lunarStellar.indirect` (đã có trong dữ liệu từ Pha 4, chưa từng đọc) | — (sửa lỗi mô hình, không xoá hằng số) | **Xong — xem mục 12** |
 
 Quy mô thật: làm đủ 125 nhân vật là việc nhiều tháng, Pha 2 là nút thắt.
 ~80% giá trị nằm ở Pha 0–3 trên ~30 nhân vật hay dùng, và nhờ cơ chế rơi về
@@ -689,3 +690,87 @@ dòng (kháng/cấp tầng và điểm đội).
 - Kháng vẫn trung bình theo giá trị (có trọng số); chính xác hơn là trung bình
   hệ số kháng `ΣH / Σ(Hᵢ/mᵢ)` — cần đổi cấu trúc `resistances` sang hệ số.
 - Tầng 11 chờ wiki chốt số lượng; chạy lại script là đủ.
+
+## 12. Pha 7 — kết quả
+
+### 12.1. Benchmark trước khi làm: đúng nhóm mục 8.4 đã ghi
+
+Columbina −0.316, Ineffa −0.285, Aino −0.282, và nhóm `T:Lunar-Charged` −0.275
+(3,645 đội) — khớp mục 8.4: "Lunar gián tiếp chưa có". Soát lại thì không chỉ
+thiếu — phần "trực tiếp" đã có từ Pha 4 cũng sai theo hai cách độc lập.
+
+### 12.2. Hai lỗi trong phần "trực tiếp", trước khi đụng tới phần "gián tiếp"
+
+- **Chọn nhầm dòng talent.** Kỹ năng của Columbina liệt kê ba dòng "Gravity
+  Interference: Lunar-Charged/Lunar-Bloom/Lunar-Crystallize DMG" — chữ game
+  ghi cả ba vì phản ứng nào nổ ra tuỳ đội. `AbyssTalentReader` coi ba dòng đó
+  là "biến thể của nhau" (giống "Low HP Skill DMG" so với "Skill DMG") và giữ
+  dòng có số phần trăm thô lớn nhất — luôn là Lunar-Crystallize, bất kể đội có
+  Thổ hay không. Một đội Lunar-Charged thật (Thuỷ + Điện) vì vậy bị tính sát
+  thương của một phản ứng đội đó không bao giờ kích hoạt được. Sandrone,
+  Odette (Stellar-Conduct/Stellar Swirl) cùng lỗi.
+- **Không cổng theo đội.** Dòng talent *là* sát thương Lunar/Stellar (Flins,
+  Qiqi) tính sát thương vô điều kiện, không kiểm tra đội có thật sự kích hoạt
+  được phản ứng đó không (`AbyssTeamContext.enabledReactions`) — Flins vẫn ra
+  sát thương Lunar-Charged trên một đội không có Thuỷ.
+
+Sửa: dòng nào gọi tên một phản ứng thì giữ tên đó lại trong khoá gộp (không
+còn bị coi là biến thể của dòng gọi tên phản ứng khác), nên cả ba dòng của
+Columbina sống sót riêng lẻ; mỗi dòng có `reaction` được chấm 0 khi
+`enabledReactions` của đội không chứa đúng phản ứng đó.
+
+### 12.3. Phần "gián tiếp": có công thức trong `damage-formula.json`, chưa từng đọc
+
+`damage-formula.json.lunarStellar.indirect` (ghi từ Pha 4) liệt kê công thức
+riêng cho Lunar-Charged, Lunar-Crystallize và Stellar Swirl — phản ứng những
+người *không* mang kit Lunar/Stellar cũng góp phần kích hoạt, tính theo **từng
+người góp** (Elemental Mastery, CRIT, kháng theo nguyên tố của chính họ) chứ
+không phải theo Elemental Mastery cao nhất đội như một phản ứng biến đổi
+thường: `DMG cuối = Cao nhất×0.6 + Nhì×0.3 + Ba×0.05 + Tư×0.05` xếp theo sát
+thương cá nhân giảm dần, đội ít hơn 4 người góp thì bỏ phần thiếu, giữ nguyên
+hệ số phần còn lại. Trường này tồn tại từ Pha 4 nhưng không có code nào đọc nó
+— `AbyssTeamContext.transformativeReactions` gộp Lunar-Charged/Lunar-Crystallize
+chung với các phản ứng biến đổi cổ điển (một hit, không CRIT, chỉ Elemental
+Mastery cao nhất đội), sai công thức.
+
+Cùng lúc, `lunarStellar.indirect.appliesTo` không có Lunar-Bloom lẫn
+Stellar-Conduct — hai phản ứng đó **chỉ trực tiếp**, một đội chỉ có được từ
+nhân vật có kit gây đúng sát thương đó, không bao giờ từ áp nguyên tố trần.
+Nhưng `transformativeReactions` cũ lại thêm cả hai vào mỗi khi đội đủ nguyên
+tố + Moonsign/Tinh Vực Rực Rỡ — một đội Thảo+Thuỷ+Moonsign được cộng khống sát
+thương Lunar-Bloom dù không ai mang kit gây nó.
+
+Sửa: xoá Lunar-Charged/Lunar-Bloom/Lunar-Crystallize/Stellar-Conduct khỏi
+`transformativeReactions` (Stellar Swirl giữ nguyên — đã đúng chỗ, chưa đổi
+công thức); thêm `AbyssScorer.indirectLunarPricing`/`indirectLunarStellarDamage`
+tính riêng Lunar-Charged và Lunar-Crystallize theo đúng công thức xếp hạng
+0.6/0.3/0.05/0.05, cộng thẳng vào sát thương đội bên cạnh phần trực tiếp.
+Stellar Swirl chưa được viết lại theo công thức gián tiếp riêng (hệ số của nó
+tăng dần theo số đòn, phức tạp hơn và không có tín hiệu benchmark để đối
+chiếu) — vẫn dùng xấp xỉ cũ.
+
+### 12.4. Đo lại
+
+**Spearman 0.394 → 0.416** (3,645 đội). Ineffa và Aino ra khỏi danh sách đánh
+giá thấp hẳn (từ −0.285 và −0.282); Columbina −0.316 → −0.169; nhóm
+`T:Lunar-Charged` không còn đủ lệch để lên báo cáo. Golden đổi hồ sơ sát thương
+của Columbina, Sandrone, Odette, Qiqi (số dòng, hệ số, phản ứng đúng dòng) và
+điểm/vũ khí chọn cho Columbina.
+
+### 12.5. Còn lại
+
+- **Stellar Swirl và Stellar-Conduct** chưa theo cùng chuẩn: Stellar-Conduct đã
+  chuyển đúng "chỉ trực tiếp", nhưng Stellar Swirl vẫn tính theo mô hình phản
+  ứng biến đổi cổ điển (một hit, Elemental Mastery cao nhất đội) thay vì công
+  thức gián tiếp xếp hạng — không có đội Tinh Vực Rực Rỡ nào trong benchmark
+  để đo, nên chưa đủ căn cứ viết công thức đúng và tin số ra.
+- **Loại trừ lẫn nhau chưa xử lý cho Sandrone/Odette.** Kỹ năng của Sandrone
+  liệt kê "Prism Shot DMG" (không tên phản ứng) cạnh "…Stellar-Conduct DMG" và
+  "…Stellar Swirl DMG" — cùng một đòn, ba kết quả loại trừ nhau tuỳ đội. Bản
+  sửa Pha 7 khiến dòng không tên phản ứng luôn cộng thêm bất kể đội có kích
+  hoạt Stellar hay không, cộng dồn lên hai dòng có tên khi đội đủ điều kiện —
+  chỉ đúng khi đội không kích hoạt được Stellar. Không xuất hiện trong benchmark
+  (không đội Sandrone/Odette nào lệch đáng kể) nên chưa sửa.
+- Người được ghi công kích hoạt phản ứng trong `reactionTriggerIndex` (UI) vẫn
+  là người Elemental Mastery cao nhất đội — đúng cho phần biến đổi cổ điển,
+  chỉ là xấp xỉ cho phần Lunar/Stellar gián tiếp giờ chia cho nhiều người.

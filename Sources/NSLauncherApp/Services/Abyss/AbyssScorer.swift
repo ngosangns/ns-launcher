@@ -247,6 +247,13 @@ struct AbyssScorer: Sendable {
         var resistanceMultiplier: Double = 1
         var lunarBaseBonus: [AbyssReaction: Double] = [:]
         var lunarFloorBonus: [AbyssReaction: Double] = [:]
+        /// The reactions this character's team actually triggers for the pair
+        /// of elements each names — `AbyssTeamContext.enabledReactions`. A
+        /// talent row that *is* Lunar or Stellar damage only fires when its
+        /// own reaction is in here: Flins's Lunar-Charged burst deals nothing
+        /// on a team without a Moonsign character, whatever the talent table
+        /// says.
+        var enabledReactions: Set<AbyssReaction> = []
         /// What the team holds that a gated weapon or set buff waits on — see
         /// `AbyssGates`.
         var conditions: AbyssTeamConditions = .zero
@@ -377,7 +384,8 @@ struct AbyssScorer: Sendable {
         context.conditions = team.conditions(for: character)
         if profile.aggregate.contains(where: { $0.reaction != nil }) {
             context.lunarBaseBonus = team.reactionBaseDamageBonus
-            for reaction in [AbyssReaction.lunarCharged, .lunarBloom, .lunarCrystallize] {
+            context.enabledReactions = team.enabledReactions
+            for reaction in AbyssDamageProfile.Term.namedReactions {
                 context.lunarFloorBonus[reaction] = floor.buffs
                     .filter { $0.reactions.contains(reaction) }
                     .reduce(0) { $0 + $1.bonus }
@@ -402,9 +410,10 @@ struct AbyssScorer: Sendable {
         return context
     }
 
-    func damageSplit(context: DamageContext,
-                     stats: AbyssStats,
-                     partyBuffs: PartyBuff) -> DamageSplit {
+    /// A wearer's stat sheet with the party's buffs folded in and their own
+    /// gated buffs opened against `context.conditions` — everywhere a hit
+    /// needs the sheet a character actually fights with, on field or off.
+    func effectiveStats(context: DamageContext, stats: AbyssStats, partyBuffs: PartyBuff) -> AbyssStats {
         var effective = stats
         effective.atkPercent += partyBuffs.atkPercent
         effective.flatATK += partyBuffs.flatATK
@@ -412,7 +421,7 @@ struct AbyssScorer: Sendable {
         effective.dmgAll += partyBuffs.dmg
         effective.elementalDMG += partyBuffs.elementalDMG
         // The wearer's own buffs that wait on the team; party ones were opened
-        // in `partyBuffs`.
+        // above.
         if stats.gates.count > 0 {
             for index in 0..<stats.gates.count {
                 let gate = stats.gates[index]
@@ -421,6 +430,13 @@ struct AbyssScorer: Sendable {
                 effective.add(gate.value * gate.factor(context.conditions), to: field)
             }
         }
+        return effective
+    }
+
+    func damageSplit(context: DamageContext,
+                     stats: AbyssStats,
+                     partyBuffs: PartyBuff) -> DamageSplit {
+        let effective = effectiveStats(context: context, stats: stats, partyBuffs: partyBuffs)
         let categoryCrit = effective.hasCategoryCrit
 
         var amplifyingGain = 0.0
@@ -451,17 +467,26 @@ struct AbyssScorer: Sendable {
                 ? context.defenceAndResistance * effective.critMultiplier(term.category) : common
             var damage = term.multiplier * effective.stat(for: term.basis) * (1 + bonus) * crit
             if let reaction = term.reaction {
-                // Lunar direct damage: the reaction's coefficient on the talent
-                // multiplier, raised by the team's base-damage bonus and the
-                // Lunar EM curve; no DMG bonus and no enemy DEF, but CRIT.
-                let constants = library.damageConstants
-                damage = term.multiplier * effective.stat(for: term.basis)
-                    * (constants.lunarStellarCoefficients[reaction] ?? 1)
-                    * (1 + (context.lunarBaseBonus[reaction] ?? 0))
-                    * (1 + constants.lunarStellarEM.bonus(effective.elementalMastery)
-                        + (context.lunarFloorBonus[reaction] ?? 0))
-                    * context.resistanceMultiplier * (categoryCrit ? effective.critMultiplier(term.category)
-                        : effective.critMultiplier)
+                // A talent row that *is* Lunar or Stellar damage only deals it
+                // when the team's own elements actually trigger that reaction
+                // — Flins's Lunar-Charged burst is a normal-looking hit on a
+                // team without a Moonsign character, not a smaller Lunar one.
+                if context.enabledReactions.contains(reaction) {
+                    // Lunar/Stellar direct damage: the reaction's coefficient on
+                    // the talent multiplier, raised by the team's base-damage
+                    // bonus and the Lunar/Stellar EM curve; no DMG bonus and no
+                    // enemy DEF, but CRIT.
+                    let constants = library.damageConstants
+                    damage = term.multiplier * effective.stat(for: term.basis)
+                        * (constants.lunarStellarCoefficients[reaction] ?? 1)
+                        * (1 + (context.lunarBaseBonus[reaction] ?? 0))
+                        * (1 + constants.lunarStellarEM.bonus(effective.elementalMastery)
+                            + (context.lunarFloorBonus[reaction] ?? 0))
+                        * context.resistanceMultiplier * (categoryCrit ? effective.critMultiplier(term.category)
+                            : effective.critMultiplier)
+                } else {
+                    damage = 0
+                }
             }
             switch term.action {
             case .combo: combo += damage
@@ -788,6 +813,10 @@ struct AbyssScorer: Sendable {
         let transformative: Transformative?
         /// What reactions come to with each member on field, in `members` order.
         var variants: [ReactionVariant] = []
+        /// Lunar-Charged and Lunar-Crystallize, priced for this team and floor
+        /// — empty when the team triggers neither. See
+        /// `AbyssScorer.indirectLunarStellarDamage`.
+        var indirectLunarPricing: [IndirectLunarPricing] = []
     }
 
     /// The reactions a team sets off in one rotation with one particular
@@ -810,6 +839,11 @@ struct AbyssScorer: Sendable {
         /// many times it goes off.
         var transformative: Transformative?
         var transformativeCount: Double = 0
+        /// Per member: how many times they apply their element, with this
+        /// driver on field — the same figure `transformativeCount` is counted
+        /// from, kept per member for `indirectLunarStellarDamage`, which needs
+        /// to know *who* contributed, not just how many applications happened.
+        var applications: [Double] = []
     }
 
     /// A transformative reaction priced for one team on one floor.
@@ -827,6 +861,100 @@ struct AbyssScorer: Sendable {
         /// far less to them and stacking it for a Stellar-Conduct team is a
         /// different decision from stacking it for a Hyperbloom one.
         let emCurve: AbyssDamageFormula.EMCurve
+    }
+
+    /// The pair of elements an indirectly-priced Lunar reaction needs, and
+    /// everything about pricing it that does not depend on who is on field or
+    /// which member contributes — see `indirectLunarStellarDamage`.
+    struct IndirectLunarPricing: Sendable {
+        let reaction: AbyssReaction
+        let pair: (GenshinElement, GenshinElement)
+        /// coefficient × levelMultiplier × (1 + team base-damage bonus).
+        let prefix: Double
+        /// What the floor adds to this reaction's base damage, from a Ley Line
+        /// Disorder or Blessing that names it.
+        let floorBonus: Double
+        /// Each element's resistance multiplier, for the two elements
+        /// `pair` names — a contributor is priced against their own element,
+        /// the same convention the direct Lunar formula uses.
+        let resistanceByElement: [GenshinElement: Double]
+    }
+
+    /// Lunar-Charged and Lunar-Crystallize, and the two elements each needs —
+    /// see `indirectLunarStellarDamage`. Lunar-Bloom is absent: the data
+    /// records it as direct-only, never triggered by bare elemental overlap.
+    static let indirectLunarReactions: [(AbyssReaction, GenshinElement, GenshinElement)] = [
+        (.lunarCharged, .hydro, .electro),
+        (.lunarCrystallize, .geo, .hydro),
+    ]
+
+    /// Pricing for every indirect Lunar reaction this team can trigger on this
+    /// floor — empty for a team with no Moonsign character, since
+    /// `AbyssTeamContext.enabledReactions` never substitutes one in without it.
+    func indirectLunarPricing(for team: AbyssTeamContext, floor: AbyssFloorContext) -> [IndirectLunarPricing] {
+        Self.indirectLunarReactions.compactMap { reaction, first, second -> IndirectLunarPricing? in
+            guard team.enabledReactions.contains(reaction),
+                  let coefficient = library.damageConstants.lunarStellarCoefficients[reaction] else { return nil }
+            let floorBonus = floor.buffs.filter { $0.reactions.contains(reaction) }.reduce(0) { $0 + $1.bonus }
+            let baseBonus = team.reactionBaseDamageBonus[reaction] ?? 0
+            var resistance: [GenshinElement: Double] = [:]
+            for element in [first, second] {
+                resistance[element] = AbyssDamageMath.resMultiplier(team.resistance(floor.resistance(for: element),
+                                                                                     to: element))
+            }
+            return IndirectLunarPricing(
+                reaction: reaction, pair: (first, second),
+                prefix: coefficient * library.damageConstants.transformativeLevelMultiplier * (1 + baseBonus),
+                floorBonus: floorBonus, resistanceByElement: resistance)
+        }
+    }
+
+    /// Lunar-Charged and Lunar-Crystallize also happen *indirectly*, on top of
+    /// whatever a character's own kit deals with the same name directly:
+    /// every pair of Hydro/Electro (or Geo/Hydro) applications the team lands
+    /// procs one, and `damage-formula.json`'s `lunarStellar.indirect` prices
+    /// that proc per contributor rather than at the team's single best
+    /// Elemental Mastery the way a classic transformative reaction is —
+    /// Columbina's team still gets credit for Lunar-Charged when she is
+    /// nobody's idea of the highest-EM member on it.
+    ///
+    /// Ranked by each contributor's own damage (their own Elemental Mastery,
+    /// their own CRIT, their own element's resistance), the strongest pays
+    /// 0.6 of the proc, the next 0.3, and the rest 0.05 each; a team with
+    /// fewer than four contributors keeps those weights for the ranks it has
+    /// rather than spreading them out, exactly as the data records it. A
+    /// contributor is anyone of the reaction's two elements who lands at
+    /// least one application with this member on field.
+    func indirectLunarStellarDamage(pricing: [IndirectLunarPricing],
+                                    members: [DamageContext],
+                                    stats: [AbyssStats],
+                                    party: PartyBuff,
+                                    applications: [Double]) -> Double {
+        guard !pricing.isEmpty else { return 0 }
+        var byElement = SIMD8<Double>(repeating: 0)
+        for (index, member) in members.enumerated() { byElement[member.element.simdIndex] += applications[index] }
+
+        var total = 0.0
+        for entry in pricing {
+            let count = Self.reactionCount(entry.reaction, lanes: byElement)
+            guard count > 0 else { continue }
+            var contributions: [Double] = []
+            for (index, member) in members.enumerated()
+            where applications[index] > 0 && (member.element == entry.pair.0 || member.element == entry.pair.1) {
+                let effective = effectiveStats(context: member, stats: stats[index], partyBuffs: party)
+                let resistance = entry.resistanceByElement[member.element] ?? 1
+                contributions.append(entry.prefix
+                    * (1 + library.damageConstants.lunarStellarEM.bonus(max(effective.elementalMastery, 0))
+                        + entry.floorBonus)
+                    * resistance * effective.critMultiplier)
+            }
+            guard !contributions.isEmpty else { continue }
+            contributions.sort(by: >)
+            let weights: [Double] = [0.6, 0.3, 0.05, 0.05]
+            let reactionBase = zip(contributions.prefix(4), weights).reduce(0) { $0 + $1.0 * $1.1 }
+            total += count * reactionBase
+        }
+        return total
     }
 
     /// The strongest transformative reaction a team unlocks, priced against the
@@ -989,6 +1117,7 @@ struct AbyssScorer: Sendable {
             }
             variant.transformative = best?.0
             variant.transformativeCount = best?.1 ?? 0
+            variant.applications = applications
             return variant
         }
     }
@@ -1008,6 +1137,7 @@ struct AbyssScorer: Sendable {
             resonance: resonanceBuff(for: team),
             transformative: candidates.max { $0.base < $1.base })
         context.variants = reactionVariants(members: contexts, candidates: candidates)
+        context.indirectLunarPricing = indirectLunarPricing(for: team, floor: floor)
         return context
     }
 
@@ -1088,6 +1218,11 @@ struct AbyssScorer: Sendable {
             if let variant, let transformative = variant.transformative, triggerIndex >= 0 {
                 reaction = variant.transformativeCount * transformative.base
                     * (1 + transformative.emCurve.bonus(max(bestEM, 0)))
+            }
+            if let variant {
+                reaction += indirectLunarStellarDamage(pricing: context.indirectLunarPricing,
+                                                        members: context.members, stats: stats, party: party,
+                                                        applications: variant.applications)
             }
             total += reaction
             // First maximum wins: strict `>` over members in order, so a tie
