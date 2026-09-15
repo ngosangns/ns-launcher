@@ -4,7 +4,8 @@
     "name": "Viridescent Venerer",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Anemo DMG Bonus +15%.",
+      "description": "Anemo DMG Bonus +15%",
+      "descriptionVI": "Nhận 15% buff sát thương nguyên tố Phong.",
       "bonuses": [
         {
           "stat": "Anemo DMG Bonus",
@@ -13,7 +14,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Tăng sát thương phản ứng Xoáy cuốn (Swirl) 60% và Xoáy cuốn Sao (Stellar Swirl) 20%. Giảm 40% kháng nguyên tố (loại nguyên tố bị cuốn theo) của đối phương trong 10s; nếu Xoáy cuốn Sao trúng, giảm thêm 40% kháng Băng. Các hiệu ứng giảm kháng cùng loại không cộng dồn.",
+      "description": "Increases Swirl reaction DMG dealt by 60%, and Stellar Swirl reaction DMG dealt by 20%. Decreases opponent's Elemental RES to the element infused in the Swirl by 40% for 10s. Upon triggering a Stellar Swirl in the opponent, will also decrease their Cryo RES by 40%. RES debuffs of the same elemental type do not stack.",
+      "descriptionVI": "Sát thương phản ứng Khuếch Tán tăng 60%, sát thương phản ứng Tinh-Khuếch Tán tăng 20%. Dựa theo loại nguyên tố khuếch tán, giảm 40% Kháng Nguyên Tố tương ứng của kẻ địch bị ảnh hưởng, duy trì 10s. Khi kích hoạt phản ứng Tinh-Khuếch Tán lên kẻ địch, cũng sẽ giảm 40% Kháng Nguyên Tố Băng của mục tiêu. Hiệu quả giảm Kháng Nguyên Tố cùng loại sẽ không thể cộng dồn.",
       "bonuses": []
     },
     "domain": "Vực Hồi ức xanh biếc, Windwail Highland, Mondstadt.",
@@ -32,7 +34,8 @@
     "name": "Maiden Beloved",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Character Healing Effectiveness +15%.",
+      "description": "Character Healing Effectiveness +15%",
+      "descriptionVI": "Hiệu quả trị liệu nhân vật tạo ra tăng 15%.",
       "bonuses": [
         {
           "stat": "Character Healing Effectiveness",
@@ -41,7 +44,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Dùng Elemental Skill hoặc Burst tăng 20% lượng hồi máu nhận được cho cả đội trong 10s.",
+      "description": "Using an Elemental Skill or Burst increases healing received by all party members by 20% for 10s.",
+      "descriptionVI": "10s sau khi thi triển kỹ năng Nguyên Tố hoặc Kỹ Năng Nộ, hiệu quả trị liệu tất cả nhân vật trong đội nhận được tăng 20%.",
       "bonuses": [
         {
           "stat": "Party Incoming Healing",
@@ -65,7 +69,8 @@
     "name": "Blizzard Strayer",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Cryo DMG Bonus +15%.",
+      "description": "Cryo DMG Bonus +15%",
+      "descriptionVI": "Tăng sát thương nguyên tố Băng 15%",
       "bonuses": [
         {
           "stat": "Cryo DMG Bonus",
@@ -74,7 +79,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Khi đánh đối phương dính Băng, CRIT Rate +20%; nếu đối phương đang bị Đóng băng (Frozen), cộng thêm 20% CRIT Rate nữa (tối đa +40%).",
+      "description": "When a character attacks an opponent affected by Cryo, their CRIT Rate is increased by 20%. If the opponent is Frozen, CRIT Rate is increased by an additional 20%.",
+      "descriptionVI": "Khi tấn công kẻ địch đang bị Nguyên Tố Băng ảnh hưởng, sẽ tăng 20% tỷ lệ bạo kích, nếu địch ở trạng thái đóng băng, sẽ tăng thêm 20% tỷ lệ bạo kích.",
       "bonuses": []
     },
     "domain": "Vực Đỉnh Vindagnyr, Dragonspine, Mondstadt.",
@@ -93,7 +99,8 @@
     "name": "Heart of Depth",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Hydro DMG Bonus +15%.",
+      "description": "Hydro DMG Bonus +15%",
+      "descriptionVI": "Nhận 15% buff sát thương nguyên tố Thủy.",
       "bonuses": [
         {
           "stat": "Hydro DMG Bonus",
@@ -102,7 +109,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Sau khi dùng Elemental Skill, Normal/Charged Attack DMG +30% trong 15s.",
+      "description": "After using Elemental Skill, increases Normal Attack and Charged Attack DMG by 30% for 15s.",
+      "descriptionVI": "Trong 15s sau khi sử dụng kỹ năng Nguyên Tố, tấn công thường và trọng kích tăng 30% sát thương.",
       "bonuses": [
         {
           "stat": "Normal/Charged Attack DMG",
@@ -125,7 +133,8 @@
     "name": "Thundering Fury",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Electro DMG Bonus +15%.",
+      "description": "Electro DMG Bonus +15%",
+      "descriptionVI": "Nhận 15% buff sát thương nguyên tố Lôi",
       "bonuses": [
         {
           "stat": "Electro DMG Bonus",
@@ -134,7 +143,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Tăng 40% DMG của Overloaded, Electro-Charged, Superconduct, Hyperbloom; tăng 20% DMG Bonus của Aggravate; tăng 20% DMG của Lunar-Charged và Stellar-Conduct. Khi kích hoạt Quicken hoặc các phản ứng trên, giảm 1s CD Elemental Skill (tối đa 1 lần/0.8s).",
+      "description": "Increases the DMG caused by Overloaded, Electro-Charged, Superconduct, and Hyperbloom by 40%, the DMG Bonus conferred by Aggravate by 20%, and the DMG caused by Lunar-Charged and Stellar-Conduct by 20%. When Quicken or the aforementioned Elemental Reactions are triggered, Elemental Skill CD is decreased by 1s. Can only occur once every 0.8s.",
+      "descriptionVI": "Sát thương gây ra từ phản ứng Quá Tải, Điện Cảm, Siêu Dẫn, Nở Rộ tăng 40%. Sát thương từ phản ứng Tăng Cường tăng 20%. Sát thương từ phản ứng Nguyệt-Điện Cảm, Tinh-Siêu Dẫn tăng 20%. Khi kích hoạt phản ứng Sinh Trưởng hoặc những phản ứng nêu trên, CD Kỹ Năng Nguyên Tố giảm 1s. Hiệu quả này mỗi 0.8s tối đa kích hoạt một lần.",
       "bonuses": []
     },
     "domain": "Vực Sân giữa hạ, Starfell Valley, Mondstadt.",
@@ -154,7 +164,8 @@
     "name": "Thundersoother",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Electro RES +40%.",
+      "description": "Electro RES increased by 40%.",
+      "descriptionVI": "Kháng nguyên tố Lôi tăng 40%.",
       "bonuses": [
         {
           "stat": "Electro RES",
@@ -163,7 +174,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Tăng 35% DMG gây ra lên đối phương đang dính Electro.",
+      "description": "Increases DMG against opponents affected by Electro by 35%.",
+      "descriptionVI": "Tăng 35% sát thương tạo thành cho kẻ địch bị ảnh hưởng nguyên tố Lôi.",
       "bonuses": [
         {
           "stat": "DMG vs Electro-afflicted enemies",
@@ -185,6 +197,7 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Energy Recharge +20%.",
+      "descriptionVI": "Hiệu Quả Nạp Nguyên Tố tăng 20%.",
       "bonuses": [
         {
           "stat": "Energy Recharge",
@@ -193,7 +206,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Nếu đã hoàn thành nhiệm vụ \"Witch's Homework\": sau khi dùng Elemental Skill, nhận \"Light's Guidance\" 20s — toàn đội gần đó nhận 20% DMG Bonus theo nguyên tố của người mặc (kể cả khi rời sân). Khi đội có hiệu ứng \"Hexerei: Secret Rite\", nâng cấp thành \"Mortal Hymn\": 40% DMG Bonus theo nguyên tố của cả người mặc lẫn nhân vật đang chiến đấu (không cộng dồn nếu cùng nguyên tố).",
+      "description": "If the equipping character has completed Witch's Homework, after they use an Elemental Skill, they gain \"Light's Guidance\" for 20s: All nearby party members gain a 20% Elemental DMG Bonus corresponding to the equipping character's Elemental Type. The equipping character can trigger this effect while off-field. DMG Bonuses provided by Artifact Sets with the same name do not stack.\n· When your party has the Hexerei: Secret Rite effect, Light's Guidance is upgraded to \"Mortal Hymn\": All nearby party members gain a 40% Elemental DMG Bonus corresponding to both the equipping character and the current active party member's Elemental Type instead. If both characters have the same Elemental Type, these bonuses will not stack.",
+      "descriptionVI": "Nếu người trang bị đã hoàn thành Bài Tập Của Ma Nữ, thì sau khi thi triển Kỹ Năng Nguyên Tố sẽ nhận được hiệu quả \"Thiên Quang Chỉ Dẫn\": Căn cứ vào Loại Nguyên Tố của người trang bị, khiến tất cả nhân vật trong đội ở gần nhận 20% buff Sát Thương Nguyên Tố tương ứng, duy trì 20s. Người trang bị không ra trận cũng có thể kích hoạt hiệu quả nêu trên. Hiệu quả tăng sát thương sản sinh từ bộ Thánh Di Vật cùng tên sẽ không thể cộng dồn.\nKhi đội ngũ có hiệu ứng \"Hexerei - Nghi Thức Bí Mật\": Hiệu quả \"Thiên Quang Chỉ Dẫn\" nâng cấp thành \"Khúc Ca Phàm Trần\": Ngoài Loại Nguyên Tố của người trang bị, sẽ còn căn cứ vào Loại Nguyên Tố của nhân vật ra trận hiện tại trong đội bản thân, khiến tất cả nhân vật trong đội ở gần nhận buff Sát Thương Nguyên Tố tương ứng, đồng thời cả hai loại buff Sát Thương Nguyên Tố kể trên tăng đến 40%. Buff sát thương cho cùng loại nguyên tố sẽ không thể cộng dồn.",
       "bonuses": []
     },
     "domain": "Vực Vương miện gai của gió núi, Windrest Peak, Mondstadt (bản 6.5).",
@@ -210,6 +224,7 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "ATK +18%.",
+      "descriptionVI": "Tấn Công tăng 18%.",
       "bonuses": [
         {
           "stat": "ATK",
@@ -218,7 +233,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Tăng 80% DMG phản ứng Siêu dẫn (Superconduct) và 40% DMG Stellar-Conduct. Khi đánh đối phương đang dính Superconduct/Stellar-Conduct, CRIT Rate của đòn đó +16%.",
+      "description": "Increases Superconduct Reaction DMG by 80% and Stellar-Conduct Reaction DMG by 40%. When the wielder attacks opponents affected by Superconduct or Stellar-Conduct, this attack's CRIT Rate is increased by 16%.",
+      "descriptionVI": "Sát thương phản ứng Siêu Dẫn tăng 80%, sát thương phản ứng Tinh-Siêu Dẫn tăng 40%. Khi người trang bị tấn công kẻ địch bị ảnh hưởng bởi phản ứng Siêu Dẫn hoặc Tinh-Siêu Dẫn, lần tấn công này tăng 16% Tỷ Lệ Bạo Kích.",
       "bonuses": []
     },
     "domain": "Vực Vương miện gai của gió núi, Windrest Peak, Mondstadt (bản 6.7).",
@@ -235,7 +251,8 @@
     "name": "Archaic Petra",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Geo DMG Bonus +15%.",
+      "description": "Gain a 15% Geo DMG Bonus.",
+      "descriptionVI": "Nhận 15% buff sát thương nguyên tố Nham.",
       "bonuses": [
         {
           "stat": "Geo DMG Bonus",
@@ -244,7 +261,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Khi nhận Elemental Shard (từ Crystallize) hoặc kích hoạt Lunar-Crystallize, toàn đội nhận 35% DMG Bonus cho nguyên tố tương ứng trong 10s. Chỉ 1 loại DMG Bonus tồn tại cùng lúc.",
+      "description": "Upon obtaining an Elemental Shard created through Crystallize or triggering a Lunar-Crystallize reaction, all party members gain a 35% DMG Bonus for that particular element for 10s. Only one form of Elemental DMG Bonus can be gained in this manner at any one time.",
+      "descriptionVI": "Khi nhận mảnh tinh thể sinh ra từ phản ứng Kết Tinh hoặc kích hoạt phản ứng Nguyệt-Kết Tinh, tất cả nhân vật trong đội nhận 35% buff sát thương nguyên tố tương ứng, duy trì 10s. Chỉ được nhận một loại buff sát thương nguyên tố cùng lúc.",
       "bonuses": []
     },
     "domain": "Domain of Guyun, Sea of Clouds, Liyue.",
@@ -260,7 +278,8 @@
     "name": "Retracing Bolide",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Shield Strength +35%.",
+      "description": "Increases Shield Strength by 35%.",
+      "descriptionVI": "Hiệu quả khiên tăng 35%",
       "bonuses": [
         {
           "stat": "Shield Strength",
@@ -269,7 +288,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Khi đang có khiên bảo vệ, Normal/Charged Attack DMG +40%.",
+      "description": "While protected by a shield, gain an additional 40% Normal and Charged Attack DMG.",
+      "descriptionVI": "Khi được khiên bảo vệ, nhận thêm 40% tăng sát thương của tấn công thường và trọng kích.",
       "bonuses": [
         {
           "stat": "Normal/Charged Attack DMG",
@@ -292,7 +312,8 @@
     "name": "Crimson Witch of Flames",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Pyro DMG Bonus +15%.",
+      "description": "Pyro DMG Bonus +15%",
+      "descriptionVI": "Nhận 15% buff sát thương nguyên tố Hỏa.",
       "bonuses": [
         {
           "stat": "Pyro DMG Bonus",
@@ -301,7 +322,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Tăng 40% DMG của Overloaded, Burning, Burgeon; tăng 15% DMG của Vaporize và Melt. Dùng Elemental Skill tăng thêm 50% giá trị hiệu ứng 2 món trong 10s, tối đa 3 lần cộng dồn.",
+      "description": "Increases Overloaded, Burning, and Burgeon DMG by 40%. Increases Vaporize and Melt DMG by 15%. Using Elemental Skill increases the 2-Piece Set Bonus by 50% of its starting value for 10s. Max 3 stacks.",
+      "descriptionVI": "Sát thương phản ứng Quá Tải, Thiêu Đốt, Bung Tỏa gây ra tăng 40%, phản ứng Bốc Hơi, Tan Chảy tăng hệ số buff 15%. 10s sau khi thi triển kỹ năng Nguyên Tố, hiệu quả của 2 món tăng 50%. Hiệu quả này tối đa cộng dồn 3 lần.",
       "bonuses": []
     },
     "domain": "Hidden Palace of Zhou Formula, Wuwang Hill, Liyue.",
@@ -322,7 +344,8 @@
     "name": "Lavawalker",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Pyro RES +40%.",
+      "description": "Pyro RES increased by 40%.",
+      "descriptionVI": "Kháng nguyên tố Hỏa tăng 40%.",
       "bonuses": [
         {
           "stat": "Pyro RES",
@@ -331,7 +354,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Tăng 35% DMG gây ra lên đối phương đang dính Pyro.",
+      "description": "Increases DMG against opponents affected by Pyro by 35%.",
+      "descriptionVI": "Tăng 35% sát thương tạo thành cho kẻ địch bị ảnh hưởng nguyên tố Hỏa.",
       "bonuses": [
         {
           "stat": "DMG vs Pyro-afflicted enemies",
@@ -352,7 +376,8 @@
     "name": "Noblesse Oblige",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Elemental Burst DMG +20%.",
+      "description": "Elemental Burst DMG +20%",
+      "descriptionVI": "Sát thương Kỹ Năng Nộ tạo thành tăng 20%.",
       "bonuses": [
         {
           "stat": "Elemental Burst DMG",
@@ -361,7 +386,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Dùng Elemental Burst tăng ATK toàn đội 20% trong 12s (không cộng dồn).",
+      "description": "Using an Elemental Burst increases all party members' ATK by 20% for 12s. This effect cannot stack.",
+      "descriptionVI": "Sau khi thi triển kỹ năng nộ, tấn công cả đội tăng 20%, kéo dài 12s, hiệu quả này không cộng dồn.",
       "bonuses": [
         {
           "stat": "Party ATK",
@@ -386,7 +412,8 @@
     "name": "Bloodstained Chivalry",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Physical DMG +25%.",
+      "description": "Physical DMG +25%",
+      "descriptionVI": "Sát thương vật lý tạo thành tăng 25%.",
       "bonuses": [
         {
           "stat": "Physical DMG",
@@ -395,7 +422,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Sau khi hạ gục đối phương, Charged Attack DMG +50% và Stamina cost về 0 trong 10s.",
+      "description": "After defeating an opponent, increases Charged Attack DMG by 50%, and reduces its Stamina cost to 0 for 10s.",
+      "descriptionVI": "Trong 10s sau khi đánh bại kẻ địch, khi thi triển trọng kích không tiêu hao thể lực, và sát thương trọng kích tạo thành tăng 50%.",
       "bonuses": [
         {
           "stat": "Charged Attack DMG",
@@ -417,7 +445,8 @@
     "name": "Pale Flame",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Physical DMG +25%.",
+      "description": "Physical DMG is increased by 25%.",
+      "descriptionVI": "Sát thương vật lý tạo thành tăng 25%.",
       "bonuses": [
         {
           "stat": "Physical DMG",
@@ -426,7 +455,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Khi Elemental Skill trúng đối phương, ATK +9% trong 7s (tối đa 2 lần cộng dồn, 1 lần/0.3s); khi đạt 2 lần cộng dồn, hiệu ứng 2 món tăng thêm 100% (tức Physical DMG hiệu quả +50%).",
+      "description": "When an Elemental Skill hits an opponent, ATK is increased by 9% for 7s. This effect stacks up to 2 times and can be triggered once every 0.3s. Once 2 stacks are reached, the 2-set effect is increased by 100%.",
+      "descriptionVI": "Sau khi kỹ năng nguyên tố đánh trúng kẻ địch, tấn công tăng 9%, kéo dài 7s, tối đa cộng dồn 2 tầng. Mỗi 0.3s tối đa kích hoạt 1 lần, sau khi tích đầy 2 tầng, hiệu quả bộ 2 món tăng 100%.",
       "bonuses": []
     },
     "domain": "Ridge Watch, Liyue.",
@@ -445,7 +475,8 @@
     "name": "Tenacity of the Millelith",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "HP +20%.",
+      "description": "HP +20%",
+      "descriptionVI": "HP tăng 20%",
       "bonuses": [
         {
           "stat": "HP",
@@ -454,7 +485,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Elemental Skill trúng đòn tăng ATK 20% và Shield Strength 30% cho cả đội gần đó trong 3s (1 lần/0.5s), hoạt động cả khi người mặc không ở trên sân.",
+      "description": "When an Elemental Skill hits an opponent, the ATK of all nearby party members is increased by 20% and their Shield Strength is increased by 30% for 3s. This effect can be triggered once every 0.5s. This effect can still be triggered even when the character who is using this artifact set is not on the field.",
+      "descriptionVI": "Sau khi Kỹ Năng Nguyên Tố đánh trúng địch, sẽ tăng 20% tấn công cho tất cả nhân vật trong đội ở gần, tăng 30% hiệu quả Khiên, kéo dài 3s. Hiệu quả này mỗi 0.5s tối đa kích hoạt 1 lần. Khi nhân vật trang bị bộ Thánh Di Vật này ở trong đội nhưng không ra trận, vẫn có thể kích hoạt hiệu quả này.",
       "bonuses": [
         {
           "stat": "Party ATK",
@@ -483,6 +515,7 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "ATK +18%.",
+      "descriptionVI": "Tấn công tăng 18%",
       "bonuses": [
         {
           "stat": "ATK",
@@ -491,7 +524,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Sau khi dùng Elemental Burst, nhận \"Nascent Light\": ATK +8% trong 16s; mỗi lần HP giảm, ATK tăng thêm 10% (tối đa 4 lần, 1 lần/0.8s). Nascent Light mất khi rời sân; dùng lại Burst sẽ làm mới hiệu ứng.",
+      "description": "After using an Elemental Burst, this character will gain the Nascent Light effect, increasing their ATK by 8% for 16s. When the character's HP decreases, their ATK will further increase by 10%. This further increase can occur this way a maximum of 4 times. This effect can be triggered once every 0.8s. Nascent Light will be dispelled when the character leaves the field. If an Elemental Burst is used again during the duration of Nascent Light, the original Nascent Light will be dispelled.",
+      "descriptionVI": "Sau khi thi triển kỹ năng nộ, sẽ sinh ra hiệu quả \"Ánh Sáng Ngầm\" duy trì 16s: Tăng 8% tấn công; đồng thời khi nhân vật bị giảm HP, sẽ tiếp tục tăng 10% tấn công, tối đa tăng 4 lần bằng cách này, mỗi 0.8s tối đa kích hoạt 1 lần. Hiệu quả \"Ánh Sáng Ngầm\" sẽ biến mất khi nhân vật rời trận; thi triển kỹ năng nộ lần nữa khi đang trong thời gian duy trì, sẽ xóa \"Ánh Sáng Ngầm\" đã có.",
       "bonuses": []
     },
     "domain": "The Lost Valley, The Chasm, Liyue.",
@@ -510,6 +544,7 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "ATK +18%.",
+      "descriptionVI": "Tấn công tăng 18%",
       "bonuses": [
         {
           "stat": "ATK",
@@ -518,7 +553,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Normal Attack trúng đòn có 36% cơ hội kích hoạt \"Valley Rite\", tăng Normal Attack DMG thêm 70% ATK (mất sau 0.05s khi Normal Attack tiếp theo gây DMG); nếu không trúng, tỉ lệ lần sau +20%.",
+      "description": "When Normal Attacks hit opponents, there is a 36% chance that it will trigger Valley Rite, which will increase Normal Attack DMG by 70% of ATK. This effect will be dispelled 0.05s after a Normal Attack deals DMG. If a Normal Attack fails to trigger Valley Rite, the odds of it triggering the next time will increase by 20%. This trigger can occur once every 0.2s.",
+      "descriptionVI": "Khi tấn công thường đánh trúng kẻ địch, sẽ có 36% tỷ lệ kích hoạt \"Nghi Lễ Vực Thẳm\": Tăng sát thương do tấn công thường gây ra, lượng tăng thêm bằng 70% tấn công; 0.05s sau khi tấn công thường gây ra sát thương, hiệu quả này sẽ biến mất. Khi tấn công thường chưa kích hoạt \"Nghi Lễ Vực Thẳm\", sẽ tăng 20% tỷ lệ kích hoạt lần sau, trong 0.2s tối đa kích hoạt 1 lần.",
       "bonuses": []
     },
     "domain": "The Lost Valley, The Chasm, Liyue.",
@@ -537,6 +573,7 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "ATK +18%.",
+      "descriptionVI": "Tấn công tăng 18%",
       "bonuses": [
         {
           "stat": "ATK",
@@ -545,7 +582,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Khi dùng Elemental Skill nếu có ≥15 Energy, mất 15 Energy và Normal/Charged/Plunging Attack DMG +50% trong 10s (không tự kích hoạt lại trong lúc hiệu ứng còn hoạt động).",
+      "description": "When casting an Elemental Skill, if the character has 15 or more Energy, they lose 15 Energy and Normal/Charged/Plunging Attack DMG is increased by 50% for 10s. This effect will not trigger again during that duration.",
+      "descriptionVI": "Khi thi triển Kỹ Năng Nguyên Tố, nhân vật có Năng Lượng Nguyên Tố cao hơn hoặc bằng 15 điểm thì sẽ mất đi 15 điểm để tăng 50% sát thương tấn công thường, trọng kích và tấn công khi đáp trong 10 giây tiếp theo, trong thời gian duy trì, hiệu quả này sẽ không kích hoạt lần nữa.",
       "bonuses": [
         {
           "stat": "Normal/Charged/Plunging Attack DMG",
@@ -569,7 +607,8 @@
     "name": "Emblem of Severed Fate",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Energy Recharge +20%.",
+      "description": "Energy Recharge +20%",
+      "descriptionVI": "Hiệu Quả Nạp Nguyên Tố tăng 20%",
       "bonuses": [
         {
           "stat": "Energy Recharge",
@@ -578,7 +617,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Elemental Burst DMG tăng thêm 25% giá trị Energy Recharge hiện có, tối đa +75% DMG.",
+      "description": "Increases Elemental Burst DMG by 25% of Energy Recharge. A maximum of 75% bonus DMG can be obtained in this way.",
+      "descriptionVI": "Tăng sát thương Kỹ Năng Nộ dựa trên 25% Hiệu Quả Nạp Nguyên Tố. Chỉ có thể tăng tối đa 75% thông qua cách này.",
       "bonuses": []
     },
     "domain": "Momiji-Dyed Court, Yashiori Island, Inazuma.",
@@ -597,7 +637,8 @@
     "name": "Husk of Opulent Dreams",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "DEF +30%.",
+      "description": "DEF +30%",
+      "descriptionVI": "Phòng ngự tăng 30%.",
       "bonuses": [
         {
           "stat": "DEF",
@@ -606,7 +647,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Nhận stack \"Curiosity\": on-field +1 khi đòn Geo trúng địch (tối đa 1 lần/0.3s), off-field +1 mỗi 3s; tối đa 4 stack, mỗi stack +6% DEF và +6% Geo DMG Bonus; mất 1 stack nếu 6s không có stack mới.",
+      "description": "A character equipped with this Artifact set will obtain the Curiosity effect in the following conditions: When on the field, the character gains 1 stack after hitting an opponent with a Geo attack, triggering a maximum of once every 0.3s. When off the field, the character gains 1 stack every 3s. Curiosity can stack up to 4 times, each providing 6% DEF and a 6% Geo DMG Bonus. When 6 seconds pass without gaining a Curiosity stack, 1 stack is lost.",
+      "descriptionVI": "Nhân vật trang bị bộ Thánh Di Vật này sẽ nhận hiệu quả \"Vấn Đáp\" trong các trường hợp sau đây: Sau khi nhân vật trong trận sử dụng tấn công Nguyên Tố Nham đánh trúng kẻ địch sẽ nhận 1 tầng, mỗi 0.3s tối đa kích hoạt 1 lần; trong đội chờ, mỗi 3s nhận 1 tầng. Vấn Đáp cộng dồn tối đa 4 tầng, mỗi tầng sẽ tăng 6% phòng ngự và 6% buff sát thương Nguyên Tố Nham. Mỗi 6s, nếu chưa nhận hiệu quả Vấn Đáp sẽ mất đi 1 tầng.",
       "bonuses": []
     },
     "domain": "Slumbering Court, Seirai Island, Inazuma.",
@@ -627,6 +669,7 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Healing Bonus +15%.",
+      "descriptionVI": "Tăng Trị Liệu lên 15%.",
       "bonuses": [
         {
           "stat": "Healing Bonus",
@@ -635,7 +678,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Khi người mặc hồi máu cho đồng đội, tạo \"Sea-Dyed Foam\" trong 3s tích lũy lượng máu hồi (kể cả dư); hết hạn sẽ nổ gây DMG bằng 90% lượng máu tích lũy lên quái gần đó (giống cơ chế Electro-Charged/Superconduct, không cộng EM/cấp độ/Reaction Bonus). Tối đa 1 quả/3.5s, mỗi quả tối đa 30.000 HP tích lũy; hoạt động cả khi không ở trên sân.",
+      "description": "When the character equipping this artifact set heals a character in the party, a Sea-Dyed Foam will appear for 3 seconds, accumulating the amount of HP recovered from healing (including overflow healing). At the end of the duration, the Sea-Dyed Foam will explode, dealing DMG to nearby opponents based on 90% of the accumulated healing. (This DMG is calculated similarly to Reactions such as Electro-Charged, and Superconduct, but is not affected by Elemental Mastery, Character Levels, or Reaction DMG Bonuses). Only one Sea-Dyed Foam can be produced every 3.5 seconds. Each Sea-Dyed Foam can accumulate up to 30,000 HP (including overflow healing). There can be no more than one Sea-Dyed Foam active at any given time. This effect can still be triggered even when the character who is using this artifact set is not on the field.",
+      "descriptionVI": "Khi nhân vật trang bị bộ Thánh Di Vật này thực hiện trị liệu cho nhân vật trong đội, sẽ tạo ra Bọt Biển kéo dài 3s, ghi lại lượng HP hồi phục của việc trị liệu (Bao gồm cả lượng vượt mức). Khi kết thúc thời gian duy trì, Bọt Biển sẽ nổ tung, gây cho kẻ địch xung quanh sát thương bằng 90% lượng hồi phục tích lũy (Cách tính sát thương này giống với các phản ứng nguyên tố như Điện Cảm, Siêu Dẫn...nhưng không bị ảnh hưởng bởi Tinh Thông Nguyên Tố, cấp hoặc buff sát thương phản ứng). Mỗi 3.5s tối đa tạo 1 Bọt Biển; Bọt Biển tối đa ghi lại 30,000 điểm hồi phục, bao gồm cả lượng trị liệu vượt mức; đội của bản thân cùng lúc chỉ được tồn tại tối đa 1 Bọt Biển. Khi nhân vật trang bị bộ Thánh Di Vật này ở trong đội chờ, vẫn có thể kích hoạt hiệu quả này.",
       "bonuses": []
     },
     "domain": "Slumbering Court, Seirai Island, Inazuma.",
@@ -655,6 +699,7 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Dendro DMG Bonus +15%.",
+      "descriptionVI": "Nhận 15% buff sát thương nguyên tố Thảo.",
       "bonuses": [
         {
           "stat": "Dendro DMG Bonus",
@@ -663,7 +708,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Sau khi Elemental Skill/Burst trúng địch, giảm 30% Dendro RES của mục tiêu trong 8s (hoạt động cả khi người mặc không ở trên sân).",
+      "description": "After Elemental Skills or Bursts hit opponents, the targets' Dendro RES will be decreased by 30% for 8s. This effect can be triggered even if the equipping character is not on the field.",
+      "descriptionVI": "Kỹ Năng Nguyên Tố hoặc Kỹ Năng Nộ sau khi đánh trúng kẻ địch, Kháng Nguyên Tố Thảo của mục tiêu sẽ giảm 30%, duy trì 8s. Nhân vật trang bị khi không ra trận cũng sẽ kích hoạt hiệu ứng.",
       "bonuses": [
         {
           "stat": "Enemy Dendro RES",
@@ -688,7 +734,8 @@
     "name": "Gilded Dreams",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Elemental Mastery +80.",
+      "description": "Increases Elemental Mastery by 80.",
+      "descriptionVI": "Tăng 80 điểm tinh thông nguyên tố.",
       "bonuses": [
         {
           "stat": "Elemental Mastery",
@@ -697,7 +744,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Trong 8s sau khi kích hoạt phản ứng nguyên tố, nhận buff theo nguyên tố đồng đội: ATK +14% cho mỗi thành viên cùng nguyên tố với người mặc, EM +50 cho mỗi thành viên khác nguyên tố (tối đa 3 người mỗi loại, 1 lần/8s). Hoạt động cả khi không ở trên sân.",
+      "description": "Within 8s of triggering an Elemental Reaction, the character equipping this will obtain buffs based on the Elemental Type of the other party members. ATK is increased by 14% for each party member whose Elemental Type is the same as the equipping character, and Elemental Mastery is increased by 50 for every party member with a different Elemental Type. Each of the aforementioned buffs will count up to 3 characters. This effect can be triggered once every 8s. The character who equips this can still trigger its effects when not on the field.",
+      "descriptionVI": "Trong 8s sau khi kích hoạt phản ứng nguyên tố, sẽ căn cứ theo loại nguyên tố của các nhân vật khác trong đội để kích hoạt hiệu ứng cho người mang trang bị: Mỗi một nhân vật trong đội có cùng loại nguyên tố với người mang trang bị, sẽ tăng 14% tấn công; mỗi một nhân vật trong đội khác loại nguyên tố với người mang trang bị, sẽ tăng 50 điểm tinh thông nguyên tố. Mỗi loại hiệu ứng bên trên tối đa tính 3 nhân vật. Hiệu quả này mỗi 8s tối đa kích hoạt 1 lần. Khi người trang bị không ra trận, thì vẫn sẽ kích hoạt hiệu ứng này.",
       "bonuses": []
     },
     "domain": "Spire of Solitary Enlightenment, Avidya Forest, Sumeru.",
@@ -715,7 +763,8 @@
     "name": "Desert Pavilion Chronicle",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Anemo DMG Bonus +15%.",
+      "description": "Anemo DMG Bonus +15%",
+      "descriptionVI": "Nhận 15% buff sát thương nguyên tố Phong.",
       "bonuses": [
         {
           "stat": "Anemo DMG Bonus",
@@ -724,7 +773,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Khi Charged Attack trúng địch, Normal Attack SPD +10%, Normal/Charged/Plunging Attack DMG +40% trong 15s.",
+      "description": "When Charged Attacks hit opponents, the equipping character's Normal Attack SPD will increase by 10% while Normal, Charged, and Plunging Attack DMG will increase by 40% for 15s.",
+      "descriptionVI": "Khi trọng kích trúng kẻ địch, tốc độ tấn công thường của nhân vật này tăng 10%; sát thương gây ra từ tấn công thường, trọng kích, tấn công khi đáp tăng 40%, duy trì 15s.",
       "bonuses": [
         {
           "stat": "Normal Attack SPD",
@@ -750,7 +800,8 @@
     "name": "Flower of Paradise Lost",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Elemental Mastery +80.",
+      "description": "Increases Elemental Mastery by 80.",
+      "descriptionVI": "Tăng 80 điểm Tinh Thông Nguyên Tố.",
       "bonuses": [
         {
           "stat": "Elemental Mastery",
@@ -759,7 +810,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Tăng 40% DMG của Bloom, Hyperbloom, Burgeon; tăng 10% DMG của Lunar-Bloom. Sau khi kích hoạt các phản ứng trên, nhận thêm 25% giá trị này mỗi lần, kéo dài 10s, tối đa 4 stack (1 lần/giây). Hoạt động cả khi không ở trên sân.",
+      "description": "The equipping character's Bloom, Hyperbloom, and Burgeon reaction DMG are increased by 40%, and their Lunar-Bloom reaction DMG is increased by 10%. Additionally, after the equipping character triggers Bloom, Hyperbloom, Lunar-Bloom, or Burgeon, they will gain another 25% bonus to the effects mentioned prior. Each stack of this lasts 10s. Max 4 stacks simultaneously. This effect can only be triggered once per second. The character who equips this can still trigger its effects when not on the field.",
+      "descriptionVI": "Người trang bị tăng 40% sát thương gây ra từ phản ứng Sum Suê, Nở Rộ, Bung Tỏa, tăng 10% sát thương gây ra từ phản ứng Nguyệt-Sum Suê. Ngoài ra, người trang bị sau khi kích hoạt phản ứng Sum Suê, Nở Rộ, Bung Tỏa, Nguyệt-Sum Suê sẽ tăng 25% hiệu ứng nêu trên, duy trì 10s, tối đa cộng dồn 4 lần, mỗi 1s tối đa kích hoạt một lần. Người trang bị khi không ra trận vẫn có thể kích hoạt hiệu quả này.",
       "bonuses": []
     },
     "domain": "City of Gold, Land of Lower Setekh, Sumeru.",
@@ -780,7 +832,8 @@
     "name": "Nymph's Dream",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Hydro DMG Bonus +15%.",
+      "description": "Hydro DMG Bonus +15%",
+      "descriptionVI": "Nhận 15% buff sát thương nguyên tố Thủy.",
       "bonuses": [
         {
           "stat": "Hydro DMG Bonus",
@@ -789,7 +842,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Sau khi Normal/Charged/Plunging Attack, Elemental Skill, Elemental Burst trúng địch, nhận 1 stack \"Mirrored Nymph\" (8s); ở 1/2/≥3 stack: ATK +7%/16%/25%, Hydro DMG Bonus +4%/9%/15%. Stack theo từng loại đòn tính độc lập.",
+      "description": "After Normal, Charged, and Plunging Attacks, Elemental Skills, and Elemental Bursts hit opponents, 1 stack of Mirrored Nymph will be triggered, lasting 8s. When under the effect of 1, 2, or 3 or more Mirrored Nymph stacks, ATK will be increased by 7%/16%/25%, and Hydro DMG Bonus will be increased by 4%/9%/15%. Mirrored Nymph stacks created by Normal, Charged, and Plunging Attacks, Elemental Skills, and Elemental Bursts exist independently.",
+      "descriptionVI": "Tấn Công Thường, Trọng Kích, Tấn Công Khi Đáp, Kỹ Năng Nguyên Tố hoặc Kỹ Năng Nộ sau khi trúng kẻ địch sẽ sản sinh 1 tầng \"Thủy Tiên Trong Kính\" duy trì 8s. Khi \"Thủy Tiên Trong Kính\" đạt 1/2/3 tầng và trở lên, tấn công tăng 7%/16%/25%, Sát Thương Nguyên Tố Thủy tăng 4%/9%/15%. Hiệu quả \"Thủy Tiên Trong Kính\" sản sinh từ Tấn Công Thường, Trọng Kích, Tấn Công Khi Đáp, Kỹ Năng Nguyên Tố hoặc Kỹ Năng Nộ sẽ tồn tại độc lập nhau.",
       "bonuses": []
     },
     "domain": "Molten Iron Fortress, Gavireh Lajavard, Sumeru.",
@@ -807,7 +861,8 @@
     "name": "Vourukasha's Glow",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "HP +20%.",
+      "description": "HP +20%",
+      "descriptionVI": "HP tăng 20%",
       "bonuses": [
         {
           "stat": "HP",
@@ -816,7 +871,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Elemental Skill và Burst DMG +10%. Sau khi người mặc nhận DMG, tăng thêm 80% giá trị đó trong 5s (tối đa 5 stack, mỗi stack tính thời gian riêng, hoạt động cả khi không ở trên sân).",
+      "description": "Elemental Skill and Elemental Burst DMG will be increased by 10%. After the equipping character takes DMG, the aforementioned DMG Bonus is increased by 80% for 5s. This effect increase can have 5 stacks. The duration of each stack is counted independently. These effects can be triggered even when the equipping character is not on the field.",
+      "descriptionVI": "Sát thương gây ra từ Kỹ Năng Nguyên Tố và Kỹ Năng Nộ tăng 10%. Trong 5s sau khi người trang bị chịu sát thương, hiệu quả tăng sát thương nêu trên tăng 80%, lượng tăng thêm này tối đa cộng dồn 5 tầng, mỗi tầng tính thời gian độc lập nhau. Nhân vật không ra trận cũng có thể kích hoạt hiệu quả này.",
       "bonuses": [
         {
           "stat": "Elemental Skill and Burst DMG",
@@ -840,7 +896,8 @@
     "name": "Marechaussee Hunter",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Normal/Charged Attack DMG +15%.",
+      "description": "Normal and Charged Attack DMG +15%",
+      "descriptionVI": "Tăng 15% sát thương tấn công thường và trọng kích.",
       "bonuses": [
         {
           "stat": "Normal/Charged Attack DMG",
@@ -849,7 +906,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Khi HP hiện tại tăng hoặc giảm, CRIT Rate +12% trong 5s, tối đa 3 stack.",
+      "description": "When current HP increases or decreases, CRIT Rate will be increased by 12% for 5s. Max 3 stacks.",
+      "descriptionVI": "Khi HP hiện tại có tăng hoặc giảm, tỉ lệ bạo kích tăng 12%. Hiệu quả này duy trì 5s, tối đa cộng dồn 3 lần.",
       "bonuses": []
     },
     "domain": "Denouement of Sin, Belleau Region, Fontaine.",
@@ -867,7 +925,8 @@
     "name": "Golden Troupe",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Elemental Skill DMG +20%.",
+      "description": "Increases Elemental Skill DMG by 20%.",
+      "descriptionVI": "Sát thương Kỹ Năng Nguyên Tố gây ra tăng 20%.",
       "bonuses": [
         {
           "stat": "Elemental Skill DMG",
@@ -876,7 +935,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Elemental Skill DMG +25%; khi không ở trên sân, Elemental Skill DMG tăng thêm 25% nữa (mất sau 2s kể từ khi ra sân).",
+      "description": "Increases Elemental Skill DMG by 25%. Additionally, when not on the field, Elemental Skill DMG will be further increased by 25%. This effect will be cleared 2s after taking the field.",
+      "descriptionVI": "Sát thương Kỹ Năng Nguyên Tố gây ra tăng 25%; Ngoài ra, khi không ra trận, sát thương Kỹ Năng Nguyên Tố gây ra tăng thêm 25%. Hiệu quả này sẽ xóa sau khi ra trận 2s.",
       "bonuses": [
         {
           "stat": "Elemental Skill DMG (on-field)",
@@ -906,6 +966,7 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Healing Bonus +15%.",
+      "descriptionVI": "Tăng Trị Liệu lên 15%.",
       "bonuses": [
         {
           "stat": "Healing Bonus",
@@ -914,7 +975,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Khi người mặc hồi máu, tạo hiệu ứng \"Yearning\" 6s ghi nhận tổng lượng hồi (kể cả dư); hết hạn chuyển thành \"Waves of Days Past\": đòn đánh của nhân vật đang chiến đấu (mọi loại) được cộng thêm DMG bằng 8% tổng lượng hồi đã ghi nhận, tối đa 5 lần kích hoạt hoặc 10s. Một hiệu ứng Yearning tối đa ghi 15.000 HP hồi, có thể cộng dồn lượng hồi từ nhiều người mặc set này; kích hoạt được cả khi không ở trên sân.",
+      "description": "When the equipping character heals a party member, the Yearning effect will be created for 6s, which records the total amount of healing provided (including overflow healing). When the duration expires, the Yearning effect will be transformed into the \"Waves of Days Past\" effect: When your active party member hits an opponent with a Normal Attack, Charged Attack, Plunging Attack, Elemental Skill, or Elemental Burst, the DMG dealt will be increased by 8% of the total healing amount recorded by the Yearning effect. The \"Waves of Days Past\" effect is removed after it has taken effect 5 times or after 10s. A single instance of the Yearning effect can record up to 15,000 healing, and only a single instance can exist at once, but it can record the healing from multiple equipping characters. Equipping characters on standby can still trigger this effect.",
+      "descriptionVI": "Người trang bị khi trị liệu cho nhân vật trong đội, sẽ sản sinh hiệu quả \"Mong Mỏi\" trong 6s, ghi nhận lượng HP hồi phục khi trị liệu (Bao gồm phần dư ra). Khi thời gian duy trì kết thúc, hiệu quả \"Mong Mỏi\" sẽ chuyển thành hiệu quả \"Làn Sóng Ngày Cũ\": Khi Tấn Công Thường, Trọng Kích, Tấn Công Khi Đáp, Kỹ Năng Nguyên Tố hoặc Kỹ Năng Nộ của nhân vật ra trận trong đội bản thân trúng kẻ địch, sát thương gây ra sẽ tăng dựa vào 8% lượng HP hồi phục được ghi nhận trong hiệu quả \"Mong Mỏi\". Hiệu quả \"Làn Sóng Ngày Cũ\" sẽ xóa khi hiệu lực 5 lần hoặc sau 10s. Một lần hiệu quả \"Mong Mỏi\" tối đa ghi nhớ 15000 điểm hồi phục, tối đa tồn tại một hiệu quả cùng lúc, nhưng có thể ghi nhận lượng hồi phục của nhiều người trang bị. Người trang bị không ra trận cũng có thể kích hoạt hiệu quả.",
       "bonuses": []
     },
     "domain": "Waterfall Wen, East Slopes of Mont Automnequi, Fontaine.",
@@ -934,6 +996,7 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "ATK +18%.",
+      "descriptionVI": "Tấn công tăng 18%",
       "bonuses": [
         {
           "stat": "ATK",
@@ -942,7 +1005,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Sau khi dùng Elemental Skill, Geo DMG Bonus +20% trong 10s. Khi đang được khiên từ Crystallize bảo vệ, hoặc có Moondrift (Lunar-Crystallize) gần đó, hiệu ứng trên tăng thêm 150% (mất dần sau 1s nếu không còn thỏa điều kiện).",
+      "description": "After using an Elemental Skill, gain a 20% Geo DMG Bonus for 10s. When under a shield granted by the Crystallize reaction, or when Moondrifts formed by Lunar-Crystallize reactions are nearby, the above effect is increased by 150%. When these conditions are no longer met, this additional increase disappears after 1s.",
+      "descriptionVI": "Trong 10s sau khi thi triển Kỹ Năng Nguyên Tố, nhận 20% buff Sát Thương Nguyên Tố Nham. Nếu được khiên sinh ra từ phản ứng Kết Tinh bảo vệ, hoặc xung quanh có Trăng Trôi sinh ra từ phản ứng Nguyệt-Kết Tinh, hiệu quả trên sẽ gia tăng 150%. Hiệu quả tăng thêm này sẽ xóa sau 1s khi không thỏa mãn điều kiện nêu trên.",
       "bonuses": []
     },
     "domain": "Waterfall Wen, East Slopes of Mont Automnequi, Fontaine.",
@@ -961,6 +1025,7 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "ATK +18%.",
+      "descriptionVI": "Tấn công tăng 18%",
       "bonuses": [
         {
           "stat": "ATK",
@@ -969,7 +1034,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Khi giá trị \"Bond of Life\" tăng hoặc giảm, DMG +18% trong 6s, tối đa 3 stack.",
+      "description": "When the value of a Bond of Life increases or decreases, this character deals 18% increased DMG for 6s. Max 3 stacks.",
+      "descriptionVI": "Khi giá trị Khế Ước Sinh Mệnh tăng hoặc giảm, sát thương nhân vật gây ra sẽ tăng 18% trong 6s. Tối đa cộng dồn 3 lần.",
       "bonuses": []
     },
     "domain": "Faded Theater, Petrichor Island, Nostoi (nam Fontaine).",
@@ -988,6 +1054,7 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "ATK +18%.",
+      "descriptionVI": "Tấn công tăng 18%",
       "bonuses": [
         {
           "stat": "ATK",
@@ -996,7 +1063,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Sau khi rời giao tranh 3s, DMG +50%. Trong combat, nếu không có địch dính Burning gần đó quá 6s, DMG Bonus giảm dần 10%/giây đến 0%; nếu có địch dính Burning, tăng dần 10%/giây đến tối đa 50%. Kích hoạt được cả khi không ở trên sân.",
+      "description": "After leaving combat for 3s, DMG dealt increased by 50%. In combat, if no Burning opponents are nearby for more than 6s, this DMG Bonus will decrease by 10% per second until it reaches 0%. When a Burning opponent exists, it will increase by 10% instead until it reaches 50%. This effect still triggers if the equipping character is off-field.",
+      "descriptionVI": "Sau khi rời khỏi chiến đấu 3s, sát thương gây ra tăng 50%. Khi trong trạng thái chiến đấu, nếu trên 6s mà xung quanh không có kẻ địch bị trạng thái Thiêu Đốt, thì hiệu quả tăng sát thương nêu trên sẽ giảm 10% mỗi giây cho đến khi giảm còn 0%; Nếu có kẻ địch bị trạng thái Thiêu Đốt thì mỗi giây sẽ tăng 10% cho đến khi tăng đến 50%. Nhân vật trang bị Thánh Di Vật này khi không ra trận vẫn có thể kích hoạt hiệu quả này.",
       "bonuses": []
     },
     "domain": "Faded Theater, Petrichor Island, Nostoi (nam Fontaine).",
@@ -1012,11 +1080,13 @@
     "name": "Scroll of the Hero of Cinder City",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Khi đồng đội gần đó kích hoạt Nightsoul Burst, người mặc hồi 6 Elemental Energy.",
+      "description": "When a nearby party member triggers a Nightsoul Burst, the equipping character regenerates 6 Elemental Energy.",
+      "descriptionVI": "Khi nhân vật trong đội gần đó kích hoạt Dạ Hồn Bùng Nổ, người trang bị sẽ hồi phục 6 điểm Năng Lượng Nguyên Tố.",
       "bonuses": []
     },
     "fourPiece": {
-      "description": "Sau khi người mặc kích hoạt phản ứng liên quan nguyên tố của mình, toàn đội gần đó nhận 12% Elemental DMG Bonus (theo (các) nguyên tố liên quan) trong 15s; nếu người mặc đang ở trạng thái Nightsoul's Blessing khi kích hoạt, cộng thêm 28% DMG Bonus trong 20s. Kích hoạt được khi không ở trên sân; DMG Bonus từ nhiều bộ cùng tên không cộng dồn.",
+      "description": "After the equipping character triggers a reaction related to their Elemental Type, all nearby party members gain a 12% Elemental DMG Bonus for the Elemental Types involved in the elemental reaction for 15s. If the equipping character is in the Nightsoul's Blessing state when triggering this effect, all nearby party members gain an additional 28% Elemental DMG Bonus for the Elemental Types involved in the elemental reaction for 20s. The equipping character can trigger this effect while off-field, and the DMG bonus from Artifact Sets with the same name do not stack.",
+      "descriptionVI": "Sau khi người trang bị kích hoạt phản ứng liên quan đến loại nguyên tố của họ, tất cả nhân vật trong đội ở gần tăng 12% buff Sát Thương Nguyên Tố của loại nguyên tố liên quan đến phản ứng đó, duy trì 15s. Nếu người trang bị đang trong trạng thái Dạ Hồn Chúc Phúc khi kích hoạt hiệu quả này, sẽ còn khiến tất cả nhân vật trong đội ở gần tăng thêm 28% buff Sát Thương Nguyên Tố của loại nguyên tố liên quan đến phản ứng đó, duy trì 20s. Người trang bị khi không ra trận cũng có thể kích hoạt hiệu quả nêu trên. Hiệu quả sát thương tăng thêm sản sinh từ bộ Thánh Di Vật cùng tên sẽ không thể cộng dồn.",
       "bonuses": []
     },
     "domain": "Sanctum of Rainbow Spirits, Tollan (Toyac Springs), Natlan.",
@@ -1034,7 +1104,8 @@
     "name": "Obsidian Codex",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Khi đang ở trạng thái Nightsoul's Blessing và trên sân, DMG +15%.",
+      "description": "While the equipping character is in Nightsoul's Blessing and is on the field, their DMG dealt is increased by 15%.",
+      "descriptionVI": "Khi người trang bị ở trạng thái Dạ Hồn Chúc Phúc và đang ra trận, sát thương gây ra tăng 15%.",
       "bonuses": [
         {
           "stat": "DMG (while Nightsoul's Blessing active, on-field)",
@@ -1043,7 +1114,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Sau khi tiêu 1 điểm Nightsoul trên sân, CRIT Rate +40% trong 6s (1 lần/giây).",
+      "description": "After the equipping character consumes 1 Nightsoul point while on the field, CRIT Rate increases by 40% for 6s. This effect can trigger once every second.",
+      "descriptionVI": "Người trang bị sau khi tiêu hao 1 điểm Dạ Hồn trong trận, Tỷ Lệ Bạo Kích tăng 40% trong 6s. Hiệu quả này mỗi 1s tối đa kích hoạt một lần.",
       "bonuses": [
         {
           "stat": "CRIT Rate",
@@ -1064,7 +1136,8 @@
     "name": "Long Night's Oath",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Plunging Attack DMG +25%.",
+      "description": "Plunging Attack DMG increased by 25%.",
+      "descriptionVI": "Tăng 25% sát thương Tấn Công Khi Đáp.",
       "bonuses": [
         {
           "stat": "Plunging Attack DMG",
@@ -1073,7 +1146,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Sau khi Plunging/Charged Attack hoặc Elemental Skill trúng địch, nhận 1/2/2 stack \"Radiance Everlasting\" (1 lần/giây/loại đòn); mỗi stack: Plunging Attack DMG +15% trong 6s, tối đa 5 stack tính thời gian riêng.",
+      "description": "After the equipping character's Plunging Attack/Charged Attack/Elemental Skill hits an opponent, they will gain 1/2/2 stack(s) of \"Radiance Everlasting.\" Plunging Attacks, Charged Attacks, or Elemental Skills can each trigger this effect once every 1s. Radiance Everlasting: Plunging Attacks deal 15% increased DMG for 6s. Max 5 stacks. Each stack's duration is counted independently.",
+      "descriptionVI": "Sau khi đòn Tấn Công Khi Đáp/Trọng Kích/Kỹ Năng Nguyên Tố của người trang bị đánh trúng kẻ địch, sẽ nhận được 1/2/2 tầng \"Rạng Rỡ Vĩnh Cửu\". Tấn Công Khi Đáp, Trọng Kích hoặc Kỹ Năng Nguyên Tố mỗi 1s tối đa kích hoạt riêng biệt hiệu quả này một lần. Rạng Rỡ Vĩnh Cửu: Tăng 15% sát thương Tấn Công Khi Đáp trong 6s, tối đa cộng dồn 5 tầng, mỗi tầng tính giờ riêng.",
       "bonuses": []
     },
     "domain": "Derelict Masonry Dock, Atocpan Region, Natlan.",
@@ -1090,7 +1164,8 @@
     "name": "Finale of the Deep Galleries",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Cryo DMG Bonus +15%.",
+      "description": "Cryo DMG Bonus +15%",
+      "descriptionVI": "Tăng sát thương nguyên tố Băng 15%",
       "bonuses": [
         {
           "stat": "Cryo DMG Bonus",
@@ -1099,7 +1174,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Khi người mặc có 0 Elemental Energy: Normal Attack DMG +60% và Elemental Burst DMG +60%. Sau khi gây DMG Normal Attack, tạm ngưng hiệu ứng Burst 6s; sau khi gây DMG Burst, tạm ngưng hiệu ứng Normal Attack 6s. Kích hoạt được cả khi không ở trên sân.",
+      "description": "When the equipping character has 0 Elemental Energy, Normal Attack DMG is increased by 60% and Elemental Burst DMG is increased by 60%. After the equipping character deals Normal Attack DMG, the aforementioned Elemental Burst effect will stop applying for 6s. After the equipping character deals Elemental Burst DMG, the aforementioned Normal Attack effect will stop applying for 6s. This effect can trigger even if the equipping character is off the field.",
+      "descriptionVI": "Khi Năng Lượng Nguyên Tố của người trang bị bằng 0, tăng 60% sát thương Tấn Công Thường, tăng 60% sát thương Kỹ Năng Nộ. Sau khi người trang bị gây sát thương Tấn Công Thường, hiệu quả tăng sát thương Kỹ Năng Nộ nêu trên sẽ mất hiệu lực trong 6s. Sau khi người trang bị gây sát thương Kỹ Năng Nộ, hiệu quả tăng sát thương Tấn Công Thường nêu trên sẽ mất hiệu lực trong 6s. Nhân vật đang dự bị cũng có thể kích hoạt hiệu quả này.",
       "bonuses": [
         {
           "stat": "Normal Attack DMG (at 0 Energy)",
@@ -1129,7 +1205,8 @@
     "name": "Night of the Sky's Unveiling",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Elemental Mastery +80.",
+      "description": "Increases Elemental Mastery by 80.",
+      "descriptionVI": "Tăng 80 điểm Tinh Thông Nguyên Tố.",
       "bonuses": [
         {
           "stat": "Elemental Mastery",
@@ -1138,7 +1215,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Khi đồng đội gần đó kích hoạt phản ứng Lunar và người mặc đang trên sân, nhận \"Gleaming Moon: Intent\" 4s: CRIT Rate +15%/+30% khi Moonsign của đội là Nascent Gleam/Ascendant Gleam. Toàn đội nhận thêm 10% DMG phản ứng Lunar cho mỗi hiệu ứng Gleaming Moon khác nhau đang có (không cộng dồn nếu trùng loại).",
+      "description": "When nearby party members trigger Lunar Reactions, if the equipping character is on the field, gain the Gleaming Moon: Intent effect for 4s: Increases CRIT Rate by 15%/30% when the party's Moonsign is Nascent Gleam/Ascendant Gleam. All party members' Lunar Reaction DMG is increased by 10% for each different Gleaming Moon effect that party members have. Effects from Gleaming Moon cannot stack.",
+      "descriptionVI": "Khi nhân vật trong đội ở gần kích hoạt phản ứng Nguyệt, nếu người trang bị trong trận, sẽ nhận được hiệu quả \"Trăng Sáng - Ý Niệm\" trong 4s: Khi Nguyệt Triệu của đội là Hé Sáng/Rực Sáng, sẽ tăng 15%/30% Tỷ Lệ Bạo Kích. Với mỗi hiệu quả \"Trăng Sáng\" khác nhau mà nhân vật trong đội sở hữu, tất cả nhân vật trong đội sẽ tăng 10% sát thương phản ứng Nguyệt. Hiệu quả sản sinh từ \"Trăng Sáng\" sẽ không thể cộng dồn.",
       "bonuses": []
     },
     "domain": "Frostladen Machinery, Kuuvahki Experimental Design Bureau, Nod-Krai (bản 6.0).",
@@ -1155,6 +1233,7 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "Energy Recharge +20%.",
+      "descriptionVI": "Hiệu Quả Nạp Nguyên Tố tăng 20%.",
       "bonuses": [
         {
           "stat": "Energy Recharge",
@@ -1163,7 +1242,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Khi gây Elemental DMG, nhận \"Gleaming Moon: Devotion\" 8s: toàn đội +60/+120 Elemental Mastery khi Moonsign là Nascent Gleam/Ascendant Gleam (kích hoạt được off-field). Toàn đội nhận thêm 10% DMG phản ứng Lunar cho mỗi hiệu ứng Gleaming Moon khác nhau đang có.",
+      "description": "When dealing Elemental DMG, gain the Gleaming Moon: Devotion effect for 8s: Increases all party members' Elemental Mastery by 60/120 when the party's Moonsign is Nascent Gleam/Ascendant Gleam. The equipping character can trigger this effect while off-field. All party members' Lunar Reaction DMG is increased by 10% for each different Gleaming Moon effect that party members have. Effects from Gleaming Moon cannot stack.",
+      "descriptionVI": "Khi gây sát thương nguyên tố, sẽ nhận hiệu quả \"Trăng Sáng - Tín Ngưỡng\" trong 8s: Khi Nguyệt Triệu của đội là Hé Sáng/Rực Sáng, tất cả nhân vật trong đội sẽ tăng 60/120 điểm Tinh Thông Nguyên Tố. Người trang bị không ra trận cũng có thể kích hoạt hiệu quả nêu trên. Với mỗi hiệu quả \"Trăng Sáng\" khác nhau mà nhân vật trong đội sở hữu, tất cả nhân vật trong đội sẽ tăng 10% sát thương phản ứng Nguyệt. Hiệu quả sản sinh từ \"Trăng Sáng\" sẽ không thể cộng dồn.",
       "bonuses": []
     },
     "domain": "Frostladen Machinery, Kuuvahki Experimental Design Bureau, Nod-Krai (bản 6.0).",
@@ -1180,7 +1260,8 @@
     "name": "Aubade of Morningstar and Moon",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Elemental Mastery +80.",
+      "description": "Increases Elemental Mastery by 80.",
+      "descriptionVI": "Tăng 80 điểm Tinh Thông Nguyên Tố.",
       "bonuses": [
         {
           "stat": "Elemental Mastery",
@@ -1189,7 +1270,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Khi người mặc không ở trên sân, DMG phản ứng Lunar +20%; nếu Moonsign của đội ở mức Ascendant Gleam trở lên, tăng thêm 40% nữa. Hiệu ứng biến mất nếu người mặc ở trên sân quá 3s.",
+      "description": "When the equipping character is off-field, Lunar Reaction DMG is increased by 20%. When the party's Moonsign Level is at least Ascendant Gleam, Lunar Reaction DMG will be further increased by 40%. This effect will disappear after the equipping character is active for 3s.",
+      "descriptionVI": "Khi người trang bị đang dự bị, sát thương phản ứng Nguyệt gây ra tăng 20%. Khi Nguyệt Triệu của đội tối thiểu là Rực Sáng, sát thương phản ứng Nguyệt tăng thêm 40%. Hiệu quả trên sẽ bị xóa sau 3s từ khi người trang bị ra trận.",
       "bonuses": []
     },
     "domain": "Moonchild's Treasures, Nod-Krai (bản 6.3).",
@@ -1208,6 +1290,7 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "ATK +18%.",
+      "descriptionVI": "Tấn công tăng 18%.",
       "bonuses": [
         {
           "stat": "ATK",
@@ -1216,7 +1299,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Sau khi Normal/Charged/Skill/Burst trúng địch, nhận \"Blessing of Pastoral Winds\" 6s: ATK +25%. Nếu người mặc đã hoàn thành nhiệm vụ \"Witch's Homework\", nâng cấp thành \"Resolve of Pastoral Winds\": cộng thêm CRIT Rate +20%. Kích hoạt được cả khi không ở trên sân.",
+      "description": "After a Normal Attack, Charged Attack, Elemental Skill, or Elemental Burst hits an opponent, gain the Blessing of Pastoral Winds effect for 6s: ATK is increased by 25%. If the equipping character has completed Witch's Homework, Blessing of Pastoral Winds will be upgraded to Resolve of Pastoral Winds, which additionally increases the CRIT Rate of the equipping character by 20%. This effect can be triggered even when the character is off-field.",
+      "descriptionVI": "Sau khi Tấn Công Thường, Trọng Kích, Kỹ Năng Nguyên Tố hoặc Kỹ Năng Nộ đánh trúng kẻ địch, sẽ nhận hiệu quả \"Thương Mến Của Gió Và Bài Ca Chăn Cừu\" trong 6s: Tấn Công tăng 25%. Nếu người trang bị đã hoàn thành Bài Tập Của Ma Nữ, \"Thương Mến Của Gió Và Bài Ca Chăn Cừu\" sẽ được nâng cấp thành \"Quyết Tâm Của Gió Và Bài Ca Chăn Cừu\", tăng thêm 20% Tỷ Lệ Bạo Kích cho người trang bị vượt qua thử thách. Người trang bị không ra trận cũng có thể kích hoạt hiệu quả nêu trên.",
       "bonuses": [
         {
           "stat": "ATK",
@@ -1244,6 +1328,7 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "ATK +18%.",
+      "descriptionVI": "Tấn Công tăng 18%.",
       "bonuses": [
         {
           "stat": "ATK",
@@ -1252,7 +1337,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Sau khi kích hoạt phản ứng Xoáy cuốn Sao (Stellar Swirl), CRIT Rate +16% và DMG Stellar Swirl +40% trong 10s.",
+      "description": "Increases the equipping character's CRIT Rate by 16%, and their Stellar Swirl reaction dealt by 40%, for 10s after they trigger a Stellar Swirl reaction.",
+      "descriptionVI": "Trong 10s sau khi người trang bị kích hoạt phản ứng Tinh-Khuếch Tán, Tỷ Lệ Bạo Kích tăng 16%, sát thương phản ứng Tinh-Khuếch Tán tăng 40%.",
       "bonuses": [
         {
           "stat": "CRIT Rate",
@@ -1278,6 +1364,7 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "ATK +18%.",
+      "descriptionVI": "Tấn Công tăng 18%.",
       "bonuses": [
         {
           "stat": "ATK",
@@ -1286,7 +1373,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Khi kích hoạt hoặc gây DMG phản ứng Stellar Glimmer, người mặc nhận ATK +12% trong 12s; đồng thời toàn đội gần đó nhận thêm 50% DMG Bonus cho phản ứng Stellar Glimmer. Kích hoạt được cả khi không ở trên sân (không cộng dồn giữa nhiều bộ cùng tên).",
+      "description": "Increases the equipping character's ATK by 12% for 12s when they trigger a Stellar Glimmer reaction or deal Stellar Glimmer reaction DMG. Also increases Stellar Glimmer reaction DMG dealt by all nearby party members by 50%. The above effects can trigger even when the equipping character is not on the field, and he DMG bonus from multiple Artifact Sets with the same name do not stack.",
+      "descriptionVI": "Trong 12s sau khi người trang bị kích hoạt phản ứng Tinh Tú Lấp Lánh hoặc gây sát thương Tinh Tú Lấp Lánh, Tấn Công tăng 12%, tất cả nhân vật trong đội ở gần tăng 50% sát thương phản ứng Tinh Tú Lấp Lánh. Người trang bị khi không ra trận cũng có thể kích hoạt hiệu quả nêu trên. Hiệu quả tăng sát thương sản sinh từ bộ Thánh Di Vật cùng tên sẽ không thể cộng dồn.",
       "bonuses": [
         {
           "stat": "Self ATK",
@@ -1315,6 +1403,7 @@
     "rarity": "4-5",
     "twoPiece": {
       "description": "ATK +18%.",
+      "descriptionVI": "Tấn công tăng 18%",
       "bonuses": [
         {
           "stat": "ATK",
@@ -1323,7 +1412,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Nếu người mặc dùng Kiếm, Đại kiếm hoặc Thương, Normal Attack DMG +35%.",
+      "description": "If the wielder of this artifact set uses a Sword, Claymore or Polearm, increases their Normal Attack DMG by 35%.",
+      "descriptionVI": "Khi nhân vật trang bị bộ Thánh Di Vật này dùng kiếm đơn, trọng kiếm, vũ khí cán dài, sát thương tấn công thường nhân vật tạo thành tăng 35%.",
       "bonuses": [
         {
           "stat": "Normal Attack DMG (Sword/Claymore/Polearm users)",
@@ -1346,7 +1436,8 @@
     "name": "Wanderer's Troupe",
     "rarity": "4-5",
     "twoPiece": {
-      "description": "Elemental Mastery +80.",
+      "description": "Increases Elemental Mastery by 80.",
+      "descriptionVI": "Tăng 80 điểm tinh thông nguyên tố.",
       "bonuses": [
         {
           "stat": "Elemental Mastery",
@@ -1355,7 +1446,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Nếu người mặc dùng Cung hoặc Pháp khí, Charged Attack DMG +35%.",
+      "description": "Increases Charged Attack DMG by 35% if the character uses a Catalyst or a Bow.",
+      "descriptionVI": "Khi nhân vật trang bị bộ Thánh Di Vật này dùng pháp khí, cung tên, sát thương trọng kích nhân vật tạo thành tăng 35%.",
       "bonuses": [
         {
           "stat": "Charged Attack DMG (Bow/Catalyst users)",
@@ -1379,11 +1471,13 @@
     "name": "Prayers for Illumination",
     "rarity": "3-4",
     "twoPiece": {
-      "description": "Chỉ có 1 mảnh duy nhất (Circlet of Logos), không có khái niệm 2 món/4 món riêng biệt. Hiệu ứng khi trang bị mảnh này: Thời gian bị dính hiệu ứng Pyro giảm 40%.",
+      "description": "Affected by Pyro for 40% less time.",
+      "descriptionVI": "Thời gian duy trì hiệu quả ấn nguyên tố Hỏa giảm 40%.",
       "bonuses": []
     },
     "fourPiece": {
-      "description": "Không áp dụng — xem twoPiece.description. Bộ \"Prayers\" chỉ có duy nhất 1 mảnh (Circlet of Logos), không phân biệt 2 món/4 món.",
+      "description": "",
+      "descriptionVI": "",
       "bonuses": []
     },
     "domain": "Rơi từ các Normal Boss theo nguyên tố tương ứng (Cryo/Electro/Hydro/Pyro Hypostasis, Regisvine, Perpetual Mechanical Array...), không phải từ Domain of Blessing.",
@@ -1399,11 +1493,13 @@
     "name": "Prayers for Destiny",
     "rarity": "3-4",
     "twoPiece": {
-      "description": "Chỉ có 1 mảnh duy nhất (Circlet of Logos), không có khái niệm 2 món/4 món riêng biệt. Hiệu ứng khi trang bị mảnh này: Thời gian bị dính hiệu ứng Hydro giảm 40%.",
+      "description": "Affected by Hydro for 40% less time.",
+      "descriptionVI": "Thời gian duy trì hiệu quả ấn nguyên tố Thủy giảm 40%.",
       "bonuses": []
     },
     "fourPiece": {
-      "description": "Không áp dụng — xem twoPiece.description. Bộ \"Prayers\" chỉ có duy nhất 1 mảnh (Circlet of Logos), không phân biệt 2 món/4 món.",
+      "description": "",
+      "descriptionVI": "",
       "bonuses": []
     },
     "domain": "Rơi từ các Normal Boss theo nguyên tố tương ứng (Cryo/Electro/Hydro/Pyro Hypostasis, Regisvine, Perpetual Mechanical Array...), không phải từ Domain of Blessing.",
@@ -1419,11 +1515,13 @@
     "name": "Prayers for Wisdom",
     "rarity": "3-4",
     "twoPiece": {
-      "description": "Chỉ có 1 mảnh duy nhất (Circlet of Logos), không có khái niệm 2 món/4 món riêng biệt. Hiệu ứng khi trang bị mảnh này: Thời gian bị dính hiệu ứng Electro giảm 40%.",
+      "description": "Affected by Electro for 40% less time.",
+      "descriptionVI": "Thời gian duy trì hiệu quả ấn nguyên tố Lôi giảm 40%.",
       "bonuses": []
     },
     "fourPiece": {
-      "description": "Không áp dụng — xem twoPiece.description. Bộ \"Prayers\" chỉ có duy nhất 1 mảnh (Circlet of Logos), không phân biệt 2 món/4 món.",
+      "description": "",
+      "descriptionVI": "",
       "bonuses": []
     },
     "domain": "Rơi từ các Normal Boss theo nguyên tố tương ứng (Cryo/Electro/Hydro/Pyro Hypostasis, Regisvine, Perpetual Mechanical Array...), không phải từ Domain of Blessing.",
@@ -1439,11 +1537,13 @@
     "name": "Prayers to Springtime",
     "rarity": "3-4",
     "twoPiece": {
-      "description": "Chỉ có 1 mảnh duy nhất (Circlet of Logos), không có khái niệm 2 món/4 món riêng biệt. Hiệu ứng khi trang bị mảnh này: Thời gian bị dính hiệu ứng Cryo giảm 40%.",
+      "description": "Affected by Cryo for 40% less time.",
+      "descriptionVI": "Thời gian duy trì hiệu quả ấn nguyên tố Băng giảm 40%.",
       "bonuses": []
     },
     "fourPiece": {
-      "description": "Không áp dụng — xem twoPiece.description. Bộ \"Prayers\" chỉ có duy nhất 1 mảnh (Circlet of Logos), không phân biệt 2 món/4 món.",
+      "description": "",
+      "descriptionVI": "",
       "bonuses": []
     },
     "domain": "Rơi từ các Normal Boss theo nguyên tố tương ứng (Cryo/Electro/Hydro/Pyro Hypostasis, Regisvine, Perpetual Mechanical Array...), không phải từ Domain of Blessing.",
@@ -1460,6 +1560,7 @@
     "rarity": "3-4",
     "twoPiece": {
       "description": "ATK +18%.",
+      "descriptionVI": "Tấn công tăng 18%",
       "bonuses": [
         {
           "stat": "ATK",
@@ -1468,7 +1569,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Charged Attack CRIT Rate +30%.",
+      "description": "Increases Charged Attack CRIT Rate by 30%.",
+      "descriptionVI": "Tỷ lệ bạo kích của trọng kích tăng 30%",
       "bonuses": [
         {
           "stat": "Charged Attack CRIT Rate",
@@ -1488,6 +1590,7 @@
     "rarity": "3-4",
     "twoPiece": {
       "description": "ATK +18%.",
+      "descriptionVI": "Tấn công tăng 18%",
       "bonuses": [
         {
           "stat": "ATK",
@@ -1496,7 +1599,8 @@
       ]
     },
     "fourPiece": {
-      "description": "DMG +30% lên đối phương còn >50% HP.",
+      "description": "Increases DMG by 30% against opponents with more than 50% HP.",
+      "descriptionVI": "Kẻ địch có HP cao hơn 50%, sát thương gây ra tăng 30%.",
       "bonuses": [
         {
           "stat": "DMG vs enemies above 50% HP",
@@ -1515,7 +1619,8 @@
     "name": "Defender's Will",
     "rarity": "3-4",
     "twoPiece": {
-      "description": "DEF +30%.",
+      "description": "DEF +30%",
+      "descriptionVI": "Phòng ngự tăng 30%.",
       "bonuses": [
         {
           "stat": "DEF",
@@ -1524,7 +1629,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Với mỗi nguyên tố khác nhau trong đội, kháng nguyên tố tương ứng của người mặc +30%.",
+      "description": "For each different element present in your own party, the wearer's Elemental RES to that corresponding element is increased by 30%.",
+      "descriptionVI": "Cứ mỗi nhân vật của bản thân có 1 nguyên tố khác trong đội thì bản thân sẽ được nhận 30% kháng Nguyên Tố tương ứng.",
       "bonuses": []
     },
     "domain": "Rơi ngẫu nhiên từ rương kho báu và quái vật khắp thế giới mở (không phải Domain of Blessing).",
@@ -1538,7 +1644,8 @@
     "name": "Tiny Miracle",
     "rarity": "3-4",
     "twoPiece": {
-      "description": "All Elemental RES +20%.",
+      "description": "All Elemental RES increased by 20%.",
+      "descriptionVI": "Tất cả kháng Nguyên Tố tăng 20%.",
       "bonuses": [
         {
           "stat": "All Elemental RES",
@@ -1547,7 +1654,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Trúng đòn nguyên tố tăng 30% kháng nguyên tố đó trong 10s (1 lần/10s).",
+      "description": "Incoming elemental DMG increases corresponding Elemental RES by 30% for 10s. Can only occur once every 10s.",
+      "descriptionVI": "Sau khi nhận sát thương Nguyên Tố, kháng tương ứng tăng 30%, kéo dài 10s. Mỗi 10s chỉ thi triển 1 lần.",
       "bonuses": []
     },
     "domain": "Rơi ngẫu nhiên từ rương kho báu và quái vật khắp thế giới mở (không phải Domain of Blessing).",
@@ -1561,7 +1669,8 @@
     "name": "Berserker",
     "rarity": "3-4",
     "twoPiece": {
-      "description": "CRIT Rate +12%.",
+      "description": "CRIT Rate +12%",
+      "descriptionVI": "Tỷ lệ bạo kích tăng 12%.",
       "bonuses": [
         {
           "stat": "CRIT Rate",
@@ -1570,7 +1679,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Khi HP <70%, CRIT Rate +24% (tổng +36%).",
+      "description": "When HP is below 70%, CRIT Rate increases by an additional 24%.",
+      "descriptionVI": "Khi HP dưới 70%, tỷ lệ bạo kích tăng thêm 24%.",
       "bonuses": [
         {
           "stat": "CRIT Rate (when HP below 70%)",
@@ -1589,7 +1699,8 @@
     "name": "Martial Artist",
     "rarity": "3-4",
     "twoPiece": {
-      "description": "Normal/Charged Attack DMG +15%.",
+      "description": "Normal and Charged Attack DMG +15%",
+      "descriptionVI": "Tăng 15% sát thương tấn công thường và trọng kích.",
       "bonuses": [
         {
           "stat": "Normal/Charged Attack DMG",
@@ -1598,7 +1709,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Sau Elemental Skill, Normal/Charged Attack DMG +25% trong 8s.",
+      "description": "After using Elemental Skill, increases Normal Attack and Charged Attack DMG by 25% for 8s.",
+      "descriptionVI": "Trong 8s sau khi sử dụng kỹ năng Nguyên Tố, tấn công thường và trọng kích tăng 25% sát thương.",
       "bonuses": [
         {
           "stat": "Normal/Charged Attack DMG",
@@ -1617,7 +1729,8 @@
     "name": "Instructor",
     "rarity": "3-4",
     "twoPiece": {
-      "description": "Elemental Mastery +80.",
+      "description": "Increases Elemental Mastery by 80.",
+      "descriptionVI": "Tăng 80 điểm tinh thông nguyên tố.",
       "bonuses": [
         {
           "stat": "Elemental Mastery",
@@ -1626,7 +1739,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Kích hoạt phản ứng nguyên tố tăng EM toàn đội +120 trong 8s.",
+      "description": "Upon triggering an Elemental Reaction, increases all party members' Elemental Mastery by 120 for 8s.",
+      "descriptionVI": "Sau khi kích hoạt phản ứng Nguyên Tố, tinh thông Nguyên Tố tất cả thành viên đội tăng 120 điểm, kéo dài 8s.",
       "bonuses": [
         {
           "stat": "Party Elemental Mastery",
@@ -1645,7 +1759,8 @@
     "name": "Gambler",
     "rarity": "3-4",
     "twoPiece": {
-      "description": "Elemental Skill DMG +20%.",
+      "description": "Increases Elemental Skill DMG by 20%.",
+      "descriptionVI": "Sát thương kỹ năng Nguyên Tố tạo thành tăng 20%.",
       "bonuses": [
         {
           "stat": "Elemental Skill DMG",
@@ -1654,7 +1769,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Hạ gục địch có 100% xóa CD Elemental Skill (1 lần/15s).",
+      "description": "Defeating an opponent has a 100% chance to remove Elemental Skill CD. Can only occur once every 15s.",
+      "descriptionVI": "Khi đánh bại kẻ địch, có tỷ lệ 100% xóa CD kỹ năng Nguyên Tố. Mỗi 15s mới có hiệu quả 1 lần.",
       "bonuses": []
     },
     "domain": "Rơi ngẫu nhiên từ rương kho báu và quái vật khắp thế giới mở (không phải Domain of Blessing).",
@@ -1668,7 +1784,8 @@
     "name": "The Exile",
     "rarity": "3-4",
     "twoPiece": {
-      "description": "Energy Recharge +20%.",
+      "description": "Energy Recharge +20%",
+      "descriptionVI": "Hiệu Quả Nạp Nguyên Tố tăng 20%",
       "bonuses": [
         {
           "stat": "Energy Recharge",
@@ -1677,7 +1794,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Dùng Elemental Burst hồi 2 Energy/2s trong 6s cho cả đội (trừ người mặc), không cộng dồn.",
+      "description": "Using an Elemental Burst regenerates 2 Energy for all party members (excluding the wearer) every 2s for 6s. This effect cannot stack.",
+      "descriptionVI": "Sau khi thi triển kỹ năng nộ, mỗi 2 giây sẽ hồi 2 điểm năng lượng nguyên tố cho tất cả nhân vật trong đội (không bao gồm bản thân). Hiệu quả trong 6 giây, không cộng dồn.",
       "bonuses": []
     },
     "domain": "Rơi ngẫu nhiên từ rương kho báu và quái vật khắp thế giới mở (không phải Domain of Blessing).",
@@ -1691,7 +1809,8 @@
     "name": "Adventurer",
     "rarity": "1-3",
     "twoPiece": {
-      "description": "Max HP +1000.",
+      "description": "Max HP increased by 1,000.",
+      "descriptionVI": "HP tối đa tăng 1000 điểm.",
       "bonuses": [
         {
           "stat": "Max HP",
@@ -1700,7 +1819,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Mở rương hồi 30% Max HP trong 5s.",
+      "description": "Opening a chest regenerates 30% Max HP over 5s.",
+      "descriptionVI": "5s sau khi mở các loại rương, duy trì hồi 30% HP.",
       "bonuses": [
         {
           "stat": "HP restored on opening chest",
@@ -1719,7 +1839,8 @@
     "name": "Lucky Dog",
     "rarity": "1-3",
     "twoPiece": {
-      "description": "DEF +100.",
+      "description": "DEF increased by 100.",
+      "descriptionVI": "Phòng ngự tăng 100 điểm.",
       "bonuses": [
         {
           "stat": "DEF",
@@ -1728,7 +1849,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Nhặt Mora hồi 300 HP.",
+      "description": "Picking up Mora restores 300 HP.",
+      "descriptionVI": "Khi nhặt Mora, hồi 300 điểm HP.",
       "bonuses": []
     },
     "domain": "Rơi ngẫu nhiên từ rương kho báu và quái vật khắp thế giới mở (không phải Domain of Blessing).",
@@ -1742,7 +1864,8 @@
     "name": "Scholar",
     "rarity": "3-4",
     "twoPiece": {
-      "description": "Energy Recharge +20%.",
+      "description": "Energy Recharge +20%",
+      "descriptionVI": "Hiệu Quả Nạp Nguyên Tố tăng 20%",
       "bonuses": [
         {
           "stat": "Energy Recharge",
@@ -1751,7 +1874,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Nhặt Elemental Particle/Orb cho 3 Energy cho đồng đội dùng Cung/Pháp khí (1 lần/3s).",
+      "description": "Gaining Elemental Particles or Orbs gives 3 Energy to all party members who have a bow or a catalyst equipped. Can only occur once every 3s.",
+      "descriptionVI": "Khi nhận Nguyên Tố Hạt Nhân hoặc Nguyên Tố Tinh Cầu, tất cả nhân vật dùng cung tên và Pháp Khí trong đội sẽ hồi thêm 3 Năng Lượng Nguyên Tố. Mỗi 3s mới thi triển 1 lần.",
       "bonuses": []
     },
     "domain": "Rơi ngẫu nhiên từ rương kho báu và quái vật khắp thế giới mở (không phải Domain of Blessing).",
@@ -1765,7 +1889,8 @@
     "name": "Traveling Doctor",
     "rarity": "1-3",
     "twoPiece": {
-      "description": "Incoming Healing Effectiveness +20%.",
+      "description": "Increases incoming healing by 20%.",
+      "descriptionVI": "Tăng 20% hiệu quả trị liệu nhân vật nhận được.",
       "bonuses": [
         {
           "stat": "Incoming Healing Effectiveness",
@@ -1774,7 +1899,8 @@
       ]
     },
     "fourPiece": {
-      "description": "Dùng Elemental Burst hồi 20% HP.",
+      "description": "Using Elemental Burst restores 20% HP.",
+      "descriptionVI": "Khi thi triển Kỹ Năng Nộ, hồi 20% HP.",
       "bonuses": [
         {
           "stat": "HP restored on Burst use",

@@ -10,9 +10,10 @@
     "rarity": { "type": "string", "description": "vd. '4-5', '1-4', '5'" },
     "twoPiece": {
       "type": "object",
-      "required": ["description", "bonuses"],
+      "required": ["description", "descriptionVI", "bonuses"],
       "properties": {
-        "description": { "type": "string" },
+        "description": { "type": "string", "description": "Văn bản tiếng Anh CHÍNH THỨC của game. Sinh bởi scripts/sync-abyss-artifact-text.py, đừng sửa tay." },
+        "descriptionVI": { "type": "string", "description": "Văn bản tiếng Việt CHÍNH THỨC của game (bản địa hoá của HoYoverse, lấy qua gi.yatta.moe/api/v2/vi). Không diễn đạt lại, không dịch máy: mô tả khác với trong game là một khẳng định người chơi không kiểm được." },
         "bonuses": {
           "type": "array",
           "description": "Best-effort tách số liệu; rỗng nếu hiệu ứng không phải buff % chỉ số đơn giản",
@@ -26,9 +27,10 @@
     },
     "fourPiece": {
       "type": "object",
-      "required": ["description", "bonuses"],
+      "required": ["description", "descriptionVI", "bonuses"],
       "properties": {
-        "description": { "type": "string" },
+        "description": { "type": "string", "description": "Văn bản tiếng Anh CHÍNH THỨC của game. Sinh bởi scripts/sync-abyss-artifact-text.py, đừng sửa tay." },
+        "descriptionVI": { "type": "string", "description": "Văn bản tiếng Việt CHÍNH THỨC của game (bản địa hoá của HoYoverse, lấy qua gi.yatta.moe/api/v2/vi). Không diễn đạt lại, không dịch máy: mô tả khác với trong game là một khẳng định người chơi không kiểm được." },
         "bonuses": {
           "type": "array",
           "items": {

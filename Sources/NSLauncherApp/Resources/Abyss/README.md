@@ -74,6 +74,24 @@ năng nhập theo UID lặng lẽ bỏ sót nhân vật. Script từ chối ghi 
 id so với bảng đã commit, và `AbyssShowcaseImportTests` ghim bảng theo đúng bộ
 dữ liệu này.
 
+Văn bản của thánh di vật — tên và mô tả hiệu ứng 2 món / 4 món, **cả tiếng Anh
+lẫn tiếng Việt** — cũng sinh tự động, từ bản địa hoá chính thức của game:
+
+```bash
+python3 scripts/sync-abyss-artifact-text.py
+```
+
+Đừng viết hay dịch các trường `name`, `nameVI`, `description`, `descriptionVI`
+bằng tay (hay bằng AI). Game có bản tiếng Việt chính thức; mô tả diễn đạt lại thì
+đọc khác cái người chơi thấy trong game, gọi cùng một cơ chế bằng tên khác
+("Xoáy cuốn" trong khi game gọi là "Khuếch Tán"), và lặng lẽ thêm bớt điều kiện.
+Trước 2026-09-14 cả 59 mô tả 4 món đều là văn tự diễn đạt như vậy, còn mô tả 2 món
+là tiếng Anh viết tắt — và vì một trường chứa hai thứ tiếng, giao diện tiếng Anh
+hiển thị văn tiếng Việt. Script khớp theo id số qua `game-ids.json` (nên chạy
+sau `generate-abyss-game-ids.py` khi thêm bộ mới) và từ chối ghi nếu có bộ nào
+không phân giải được ở cả hai ngôn ngữ. `bonuses` — số liệu model đọc — không bị
+đụng tới; không có gì parse phần văn xuôi.
+
 `icons/` cũng sinh tự động, cùng một kiểu:
 
 ```bash

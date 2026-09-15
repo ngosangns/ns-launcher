@@ -163,8 +163,17 @@ struct AbyssArtifactSet: Decodable, Sendable, Identifiable {
         let value: Double
     }
 
+    /// One piece bonus. The two descriptions are the game's own text in each
+    /// language, written by `scripts/sync-abyss-artifact-text.py` from the
+    /// official localisation — never paraphrased or translated here, because a
+    /// description that reads differently from the one in game is a claim about
+    /// the set the player cannot check. `bonuses` is the separate, structured
+    /// reading the damage model uses; nothing parses the prose.
     struct Effect: Decodable, Sendable {
         let description: String
+        /// Optional so a hand-supplied data file without it still decodes; the
+        /// popover then shows the English text rather than nothing.
+        let descriptionVI: String?
         let bonuses: [Bonus]
     }
 

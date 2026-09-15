@@ -51,6 +51,14 @@ enum AbyssSetPricing: Equatable {
     }
 }
 
+extension AbyssArtifactSet.Effect {
+    /// The game's own text for the viewer's language. Falls back to English
+    /// rather than to nothing when a data file carries no Vietnamese.
+    func description(in text: AppText) -> String {
+        text.pick(en: description, vi: descriptionVI ?? description)
+    }
+}
+
 extension AbyssArtifactSet.Bonus {
     /// `0.15` reads as a percentage and `80` as a flat number. That split holds
     /// for every bonus in `artifact-sets.json` — the flat ones are Elemental
@@ -172,7 +180,7 @@ private struct AbyssSetEffectCard: View {
             Text(label)
                 .font(.system(size: 9, weight: .bold, design: .rounded))
                 .foregroundStyle(LauncherPalette.gold.opacity(0.7))
-            Text(effect.description)
+            Text(effect.description(in: text))
                 .font(.system(size: 11, design: .rounded))
                 .foregroundStyle(LauncherPalette.parchment.opacity(0.85))
                 .fixedSize(horizontal: false, vertical: true)
