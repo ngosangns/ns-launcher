@@ -81,11 +81,13 @@ thường người đứng sân. Furina fanfare = `stacks`. Tất cả cùng m�
 ### 2.3. Kiểm chứng — thay "khớp hôm qua" bằng "khớp game"
 
 Golden fixture hiện tại (`abyss-golden.json`) chỉ chứng minh *engine hôm nay
-== engine hôm qua*, chưa bao giờ chứng minh *engine == game*. Dự định ban đầu
-là dựng benchmark ~20 đội theo số liệu cộng đồng (gcsim/gõ tay Akasha) — đã
-thử và **không khả thi ngay**: `akasha.cv` chặn bot (403, Cloudflare),
-không có API subdomain công khai. Không tạo số liệu benchmark bằng cách bịa;
-xem mục 4 (Pha 0) về hướng thay thế đã chọn.
+== engine hôm qua*, chưa bao giờ chứng minh *engine == game*. `akasha.cv` chặn
+bot (403, Cloudflare). **Đã có từ 2026-09-16:** cơ sở dữ liệu công khai của
+gcsim (`gcsim.app/api/db`) — 5,949 đội đã mô phỏng kèm DPS; `scripts/
+sync-abyss-benchmark.py` giữ đội tốt nhất của mỗi tổ hợp 4 nhân vật một mục tiêu
+(`Tests/.../Fixtures/gcsim-benchmark.json`, 4,078 đội), `AbyssBenchmarkTests`
+chấm lại bằng mô hình và đo **thứ tự** (Spearman) cùng độ lệch theo nhân vật.
+Chạy: `ABYSS_BENCHMARK=1 swift test --filter AbyssBenchmarkTests`. Xem mục 7.6.
 
 ## 3. Lộ trình
 
@@ -442,6 +444,21 @@ from Rising Winds (55), Blizzard Strayer (17, chỉ hệ Băng), Vermillion (13)
 Còn lại, đã biết: số chuỗi đòn thường cố định 6 mỗi rotation bất kể chuỗi dài
 3 hay 6 đòn (thứ hạng nhạy với con số này — cần frame data); CRIT Rate của A
 Day Carved chỉ dành cho Hexerei nhưng đang tính như điều kiện chung.
+
+### 7.6. Benchmark gcsim — lần đo đầu
+
+3,645 đội so được (nhân vật 5★ đều C0; 4★ giữ cung mệnh). **Spearman 0.19** —
+thứ tự của mô hình chỉ liên quan yếu tới simulator. Độ lệch theo nhân vật (log
+mô hình/gcsim, trừ trung vị) chỉ ra đúng hai lỗ cấu trúc:
+
+| Hướng | Nhân vật | Nguyên nhân |
+|---|---|---|
+| Đánh giá cao | Diluc +0.62, Amber +0.61, Eula +0.53, Tartaglia +0.47, Yoimiya +0.45, Wriothesley +0.38, Hu Tao +0.34, Rosaria +0.29, Bennett +0.26 | `normalCombosPerRotation = 6` cho mọi người, bất kể chuỗi dài bao lâu |
+| Đánh giá thấp | Neuvillette −0.43, Sethos −0.57, Tighnari −0.30, Varesa −0.50 | `chargedAttacksPerRotation = 2` — carry đòn nặng spam đòn nặng; đòn nhảy chưa có |
+| Đánh giá thấp | Lauma −0.59, Columbina −0.46, Ineffa −0.39, Aino, Nicole | Phản ứng Lunar — Pha 4 |
+
+Việc tiếp theo có bằng chứng: thay số đòn cố định bằng thời gian đứng sân và
+frame data (gcsim), đo lại Spearman.
 
 ## 8. Chưa xác minh, cần làm trước Pha 4
 
