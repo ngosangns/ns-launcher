@@ -73,7 +73,7 @@ struct AbyssScorer: Sendable {
             for bonus in bonuses {
                 let resolved = AbyssBuildAssembler.resolve(
                     named: bonus.stat, value: bonus.value,
-                    conditional: bonus.stat.contains("("), tuning: tuning)
+                    conditional: AbyssBuildAssembler.isConditional(bonus.stat), tuning: tuning)
                 for entry in resolved {
                     switch entry.field {
                     case .partyATKPercent: buff.atkPercent += entry.value
@@ -89,8 +89,11 @@ struct AbyssScorer: Sendable {
         var table: [String: (twoPiece: PartyBuff, fourPiece: PartyBuff)] = [:]
         for set in library.artifactSets {
             let two = contribution(set.twoPiece.bonuses)
+            let approximation = tuning.setEffectApprox.first(where: { $0.setId == set.id })
             var four = two
-            four += contribution(set.fourPiece.bonuses)
+            // Same rule as `AbyssBuildAssembler.applySets`: an approximation
+            // replaces the parsed four-piece bonuses.
+            if approximation == nil { four += contribution(set.fourPiece.bonuses) }
             // A hand-written approximation that reaches the party is a party
             // buff like any other and does not stack with itself. Only the
             // four-piece variant carries it: `applySets` applies an
@@ -100,8 +103,7 @@ struct AbyssScorer: Sendable {
             // approximation whose value depends on who is wearing it — which is
             // why a party approximation may not carry a `requirement`, pinned by
             // `AbyssBuildAssemblerTests`.
-            if let approximation = tuning.setEffectApprox.first(where: { $0.setId == set.id }),
-               approximation.party == true {
+            if let approximation, approximation.party == true {
                 four.dmg += approximation.damageBonus
             }
             guard !two.isZero || !four.isZero else { continue }

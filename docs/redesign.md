@@ -412,6 +412,37 @@ Engulfing Lightning), Xiao ×0.63, Raiden ×0.75; tăng: Beidou ×1.32, Candace
 - **Trung vị** cho 10 nhân vật: 7 Nhà Lữ Hành, Linnea (không ghi chú, không có
   trong gcsim), Lohen và Zibai (sự kiện không có nhịp để đếm).
 
+### 7.5. Kiểm tra sau Pha 3: golden chỉ nhìn 15 nhân vật
+
+Câu hỏi "vì sao Hu Tao đứng đầu mọi tầng" hoá ra sai tiền đề: golden fixture
+chạy trên `roster.example.json` (15 nhân vật), nơi Hu Tao là carry mạnh nhất.
+Chạy tầng 12 trên **toàn bộ** 125 nhân vật mới lộ lỗi thật — Scarlet Proof là
+bộ tốt nhất của 95/125 nhân vật và cả bốn thành viên đội đầu đều mặc nó. Không
+lỗi nào trong số này là đánh giá về bộ; tất cả là tên bonus bị đưa vào "+%
+sát thương mọi đòn":
+
+| Lỗi | Ví dụ | Sửa |
+|---|---|---|
+| Bonus có chữ DMG không khớp luật nào → `dmgAll` | "Stellar Swirl DMG +40%" (Scarlet Proof), "Party Stellar Glimmer DMG +50%" → `partyDMG`, "Lunar-Charged DMG Bonus" trên vũ khí | Tên phản ứng không định giá (`AbyssBuildAssembler.unpriced`); `dmgAll` chỉ còn cho các dạng "DMG", "DMG Bonus", "DMG (…)", "DMG vs …" |
+| Physical DMG → `dmgAll` | Bloodstained + Pale Flame 2+2 = +50% mọi đòn | Không định giá — không đòn nào là vật lý |
+| "Party Incoming Healing/Shield Strength" → `partyDMG` | Tenacity +30% sát thương cả đội | Không định giá |
+| Bonus 4 món đọc từ data **cộng thêm** ước lượng tay | Shimenawa 0.5 + 0.35; Obsidian Codex +40% CRIT cho người không phải Natlan | Ước lượng thay cho bonus 4 món đọc được |
+| Ước lượng tay định giá phản ứng / nguyên tố khác như đòn của người mặc | VV 0.15, Thundering Fury 0.24 cho mọi đòn; Crimson Witch cho người không hệ Hỏa; Fragment of Harmonic Whimsy (+28%) cho người không có Bond of Life | VV, TF về 0; `requirement` thêm `pyro/hydro/geo/cryo/bond-of-life` |
+
+Cùng lượt: Lohen (bảng E là chuỗi đòn của Masterstroke, bị đọc thành ~18.7×
+một lần E) có kit như Tartaglia. Test ghim từng lỗi: `AbyssSetBonusRoutingTests`.
+
+Sau khi sửa, trên toàn bộ nhân vật: bộ được chọn nhiều nhất là A Day Carved
+from Rising Winds (55), Blizzard Strayer (17, chỉ hệ Băng), Vermillion (13);
+đội đầu tầng 12 là Yoimiya/Bennett/Escoffier + support Anemo — khớp buff
+"+75% đòn thường Hỏa" của tầng. Golden (15 nhân vật) giữ đội đầu, điểm −15%
+đến −18%.
+
+**Bài học cho các pha sau:** đo trên toàn bộ nhân vật, không chỉ golden.
+Còn lại, đã biết: số chuỗi đòn thường cố định 6 mỗi rotation bất kể chuỗi dài
+3 hay 6 đòn (thứ hạng nhạy với con số này — cần frame data); CRIT Rate của A
+Day Carved chỉ dành cho Hexerei nhưng đang tính như điều kiện chung.
+
 ## 8. Chưa xác minh, cần làm trước Pha 4
 
 - ~~Yatta có ghi hạt năng lượng không~~ — không; dùng wiki + gcsim (mục 7.1).

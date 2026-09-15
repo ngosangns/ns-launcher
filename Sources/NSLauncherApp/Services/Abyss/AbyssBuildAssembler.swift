@@ -21,6 +21,7 @@ import Foundation
 struct AbyssBuildAssembler: Sendable {
     let tuning: AbyssTuning
     let moonsignIDs: Set<String>
+    let bondOfLifeIDs: Set<String>
     /// Buffs from each character's own talents — party-wide or their own —
     /// already resolved by `AbyssDataLibrary`. Empty is a valid state — a
     /// caller that only assembles gear does not need them.
@@ -57,9 +58,11 @@ struct AbyssBuildAssembler: Sendable {
 
     init(tuning: AbyssTuning, moonsignIDs: Set<String>, artifactSets: [AbyssArtifactSet] = [],
          talentBuffs: [String: [AbyssTalentBuff]] = [:],
-         conversions: [String: [AbyssStatConversion]] = [:]) {
+         conversions: [String: [AbyssStatConversion]] = [:],
+         bondOfLifeIDs: Set<String> = []) {
         self.tuning = tuning
         self.moonsignIDs = moonsignIDs
+        self.bondOfLifeIDs = bondOfLifeIDs
         self.talentBuffs = talentBuffs
         self.conversions = conversions
 
@@ -199,10 +202,18 @@ struct AbyssBuildAssembler: Sendable {
                    to stats: inout AbyssStats,
                    diagnostics: inout AbyssParseDiagnostics) {
         if sets.count == 1, let set = sets.first {
-            // Four pieces of one set: both bonuses apply.
+            // Four pieces of one set: both bonuses apply. A set with a
+            // hand-written approximation has that *instead of* its parsed
+            // four-piece bonuses — the approximation is the four-piece effect
+            // priced at a realistic uptime, and adding the parsed number on
+            // top counted Shimenawa's +50% Normal Attack DMG twice (0.5 + 0.35)
+            // and handed Obsidian Codex's +40% CRIT Rate to every non-Natlan
+            // wearer the approximation's own requirement turned away.
             let entry = resolved(set)
             applyArtifactBonuses(entry.twoPiece, to: &stats, diagnostics: &diagnostics)
-            applyArtifactBonuses(entry.fourPiece, to: &stats, diagnostics: &diagnostics)
+            if approximation(for: set) == nil {
+                applyArtifactBonuses(entry.fourPiece, to: &stats, diagnostics: &diagnostics)
+            }
             applySetApproximation(for: set, character: character, to: &stats)
         } else {
             // Two pieces each of two sets: only the 2-piece bonuses.
@@ -242,6 +253,11 @@ struct AbyssBuildAssembler: Sendable {
         if conditional { value *= tuning.conditionalUptime }
         let key = name.lowercased()
 
+        // Recognised, and deliberately worth nothing to a hit's damage — see
+        // `unpriced(named:)`. Checked first: "Party Stellar Glimmer DMG Bonus"
+        // says party and DMG, and used to reach every member's damage as +50%.
+        if unpriced(named: name) != nil { return [] }
+
         // Flat stats. The data writes "Max HP: 1000" and "DEF: 100" for flat
         // bonuses and fractions below 1 for percentages, so magnitude tells them
         // apart; every percentage in the data is < 3. Elemental Mastery is flat
@@ -265,9 +281,12 @@ struct AbyssBuildAssembler: Sendable {
                 return [(.partyATKPercent, value)]
             } else if key.contains("elemental mastery") || key.hasSuffix(" em") {
                 return [(.partyElementalMastery, value)]
-            } else {
+            } else if key.contains("dmg") {
                 return [(.partyDMG, value)]
             }
+            // "Party Incoming Healing", "Party Shield Strength" used to land
+            // here as +20% / +30% DMG for the whole party.
+            return []
         }
 
         for rule in Self.nameRules where key.contains(rule.needle) {
@@ -282,10 +301,44 @@ struct AbyssBuildAssembler: Sendable {
         default: break
         }
 
-        // Anything else that mentions damage counts as a general bonus.
-        if key.contains("dmg") { return [(.dmgAll, value)] }
+        // A bonus to every hit, however the data words the condition on it:
+        // "DMG", "DMG Bonus", "DMG (while Nightsoul's Blessing active)", "DMG
+        // vs Pyro-afflicted enemies". This used to be "anything that mentions
+        // damage", which is how "Stellar Swirl DMG" became +40% to every hit
+        // of every Scarlet Proof wearer and made it the best set for 95 of
+        // 125 characters. A name outside these shapes is reported instead.
+        if key == "dmg" || key == "dmg bonus" || key.hasPrefix("dmg (") || key.hasPrefix("dmg vs ") {
+            return [(.dmgAll, value)]
+        }
         return []
     }
+
+    /// Why a recognised bonus is priced at nothing, or nil when it is priced.
+    ///
+    /// Three kinds, each a real effect the damage model has no slot for:
+    /// reaction damage (priced per reaction by the scorer, not by adding it to
+    /// every hit), Physical DMG (no hit in any profile is physical — see
+    /// `tuning.notes.artifactMainStats`), and effects that are not damage at
+    /// all. Kept apart from "not understood" so the unmapped report stays a
+    /// list of gaps rather than a list of decisions.
+    static func unpriced(named name: String) -> String? {
+        let key = name.lowercased()
+        if reactionName.firstMatch(in: key, range: NSRange(key.startIndex..., in: key)) != nil {
+            return "reaction"
+        }
+        if key.contains("physical dmg") || key.contains("physical res") { return "physical" }
+        if key.contains("healing") && !key.contains("healing bonus") && !key.contains("healing effectiveness") {
+            return "not damage"
+        }
+        if key.contains("shield strength") { return "not damage" }
+        return nil
+    }
+
+    /// Reaction names as the data writes them, including the umbrella terms
+    /// ("Stellar Glimmer", "Lunar Reaction").
+    private static let reactionName = try! NSRegularExpression(
+        pattern: "\\b(swirl|superconduct|overloaded|electro-charged|bloom|hyperbloom|burgeon|burning|"
+            + "crystallize|vaporize|melt|quicken|aggravate|spread|shatter|stellar|lunar|reaction)\\b")
 
     /// `GenshinElement.allCases` names, lowercased once.
     private static let lowercasedElementNames = GenshinElement.allCases.map { $0.rawValue.lowercased() }
@@ -310,7 +363,6 @@ struct AbyssBuildAssembler: Sendable {
             ("elemental skill and burst dmg", [.dmgSkill]),
             ("elemental skill dmg", [.dmgSkill]),
             ("elemental burst dmg", [.dmgBurst]),
-            ("physical dmg", [.dmgAll]),
             ("max hp", [.hpPercent]),
             ("atk%", [.atkPercent]),
             ("hp%", [.hpPercent]),
@@ -322,12 +374,15 @@ struct AbyssBuildAssembler: Sendable {
     private static func resolveBonuses(_ bonuses: [AbyssArtifactSet.Bonus],
                                        tuning: AbyssTuning) -> [ResolvedBonus] {
         bonuses.flatMap { bonus -> [ResolvedBonus] in
-            // A qualifier in parentheses ("CRIT Rate (when HP below 70%)")
+            // A qualifier in parentheses ("CRIT Rate (when HP below 70%)") or
+            // against a kind of enemy ("DMG vs Electro-afflicted enemies")
             // means the bonus is conditional and rarely at full uptime.
-            let conditional = bonus.stat.contains("(")
+            let conditional = Self.isConditional(bonus.stat)
             let resolved = resolve(named: bonus.stat, value: bonus.value,
                                    conditional: conditional, tuning: tuning)
             guard !resolved.isEmpty else {
+                // Priced at nothing on purpose is not the same as not understood.
+                guard unpriced(named: bonus.stat) == nil else { return [] }
                 return [ResolvedBonus(field: nil, value: 0, name: bonus.stat,
                                       isConditional: conditional)]
             }
@@ -336,6 +391,16 @@ struct AbyssBuildAssembler: Sendable {
                               isConditional: conditional)
             }
         }
+    }
+
+    static func isConditional(_ name: String) -> Bool {
+        let key = name.lowercased()
+        return key.contains("(") || key.contains(" vs ")
+    }
+
+    /// The hand-written approximation for a set, if it has one.
+    func approximation(for set: AbyssArtifactSet) -> AbyssTuning.SetEffectApproximation? {
+        tuning.setEffectApprox.first(where: { $0.setId == set.id })
     }
 
     /// What these sets contribute that the game's own character screen already
@@ -360,7 +425,7 @@ struct AbyssBuildAssembler: Sendable {
         if sets.count == 1, let set = sets.first {
             let entry = resolved(set)
             collect(entry.twoPiece)
-            collect(entry.fourPiece)
+            if approximation(for: set) == nil { collect(entry.fourPiece) }
         } else {
             for set in sets { collect(resolved(set).twoPiece) }
         }
@@ -526,6 +591,10 @@ struct AbyssBuildAssembler: Sendable {
                 continue
             }
 
+            // A reaction's damage is not a hit's: "Lunar-Charged DMG Bonus"
+            // used to reach dmgAll through the rule for "dmg".
+            if Self.unpriced(named: name) != nil { continue }
+
             // Only lines that actually name a stat buff.
             guard Self.matches(Self.isStatBuff, name), !Self.matches(Self.notAStatBuff, name) else { continue }
             // A value above 3 is a hit's damage percentage, not a buff —
@@ -678,6 +747,11 @@ struct AbyssBuildAssembler: Sendable {
             return moonsignIDs.contains(character.id)
         case .stellar:
             return [.cryo, .electro, .anemo].contains(character.element)
+        case .pyro: return character.element == .pyro
+        case .hydro: return character.element == .hydro
+        case .geo: return character.element == .geo
+        case .cryo: return character.element == .cryo
+        case .bondOfLife: return bondOfLifeIDs.contains(character.id)
         }
     }
 }

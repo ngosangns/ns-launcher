@@ -45,6 +45,9 @@ struct AbyssCharacterKit: Decodable, Sendable, Identifiable {
         case hexerei
         /// Upgrades Swirl and Superconduct to their Stellar variants.
         case stellarJubilee = "stellar-jubilee"
+        /// Gains and spends Bond of Life on themself, which some set
+        /// effects trigger on.
+        case bondOfLife = "bond-of-life"
     }
 
     /// Labels that name a charged attack the reader's generic vocabulary cannot

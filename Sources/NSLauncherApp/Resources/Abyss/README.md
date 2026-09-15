@@ -270,7 +270,10 @@ Ba nhóm số, độ tin cậy **khác hẳn nhau**:
    hiệu ứng 4 món phức tạp), **không phải số liệu game**. `setEffectApprox` là
    phần chủ quan nhất: 36/63 bộ có hiệu ứng 4 món quá phức tạp để tách số máy
    móc, nên được gán tay một mức "%DMG hiệu dụng". Sửa bảng này là cách nhanh
-   nhất để đổi kết quả theo hiểu biết của bạn.
+   nhất để đổi kết quả theo hiểu biết của bạn. Bộ có entry ở đây thì entry
+   **thay** bonus 4 món đọc từ `artifact-sets.json` (không cộng thêm), và entry
+   chỉ định giá sát thương **đòn của người mặc** — sát thương phản ứng (Swirl,
+   Stellar, Lunar…) không thuộc bảng này.
 4. **`character-kits.json.buffs` — nửa data, nửa giả định** (trước ở
    `tuning.json.talentPartyBuff`). Buff đến từ chiêu nhân vật (Bennett, Kujou
    Sara, Faruzan cho đội; Xiao cho mình). Con số hệ số được **đọc từ

@@ -50,7 +50,8 @@ struct AbyssOptimizer: Sendable {
         assembler = AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs,
                                         artifactSets: library.artifactSets,
                                         talentBuffs: library.talentBuffsByCharacterID,
-                                        conversions: library.conversionsByCharacterID)
+                                        conversions: library.conversionsByCharacterID,
+                                        bondOfLifeIDs: library.bondOfLifeIDs)
         scorer = AbyssScorer(library: library, tuning: tuning)
     }
 

@@ -85,6 +85,8 @@ struct AbyssDataLibrary: Sendable {
     /// reactions they name, by character id then reaction.
     let reactionBaseDamageBonusByCharacterID: [String: [AbyssReaction: Double]]
     let moonsignIDs: Set<String>
+    /// Characters tagged `bond-of-life` in `character-kits.json`.
+    let bondOfLifeIDs: Set<String>
     let hexereiIDs: Set<String>
     let stellarJubileeIDs: Set<String>
     /// Numeric game ids -> slugs, for reading a player's showcase.
@@ -172,6 +174,7 @@ struct AbyssDataLibrary: Sendable {
         }
         kitsByCharacterID = kits
         moonsignIDs = Set(kits.values.filter { $0.has(.moonsign) }.map(\.characterId))
+        bondOfLifeIDs = Set(kits.values.filter { $0.has(.bondOfLife) }.map(\.characterId))
         hexereiIDs = Set(kits.values.filter { $0.has(.hexerei) }.map(\.characterId))
         stellarJubileeIDs = Set(kits.values.filter { $0.has(.stellarJubilee) }.map(\.characterId))
 

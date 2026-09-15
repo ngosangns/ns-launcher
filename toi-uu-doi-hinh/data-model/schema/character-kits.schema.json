@@ -59,7 +59,7 @@
           },
           "tags": {
             "type": "array",
-            "items": { "enum": ["moonsign", "hexerei", "stellar-jubilee"] },
+            "items": { "enum": ["moonsign", "hexerei", "stellar-jubilee", "bond-of-life"] },
             "description": "Nhân vật này ĐƯỢC TÍNH vào cơ chế nào. Luật của cơ chế ở team-bonus.json / damage-formula.json; ở đây chỉ là danh sách, vì danh sách đổi theo mỗi banner còn luật đổi theo phiên bản game."
           },
           "chargedAttackLabels": {

@@ -26,6 +26,12 @@ struct AbyssTuning: Decodable, Sendable {
             case moonsign
             /// Needs an element that takes part in Stellar Glimmer reactions.
             case stellar
+            /// Needs the wearer to be of this element: the effect raises that
+            /// element's DMG and nothing else (Crimson Witch's stacking Pyro
+            /// bonus, Nymph's Dream's Hydro stacks, Husk's Geo DMG).
+            case pyro, hydro, geo, cryo
+            /// Needs a character whose kit carries Bond of Life.
+            case bondOfLife = "bond-of-life"
         }
 
         let setId: String

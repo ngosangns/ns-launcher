@@ -93,8 +93,8 @@
           "scope": { "type": "string", "enum": ["all", "normal", "charged", "skill", "burst"] },
           "requirement": {
             "type": ["string", "null"],
-            "enum": ["natlan", "moonsign", "stellar", null],
-            "description": "Điều kiện nhân vật mới dùng được bộ; null = ai cũng dùng được"
+            "enum": ["natlan", "moonsign", "stellar", "pyro", "hydro", "geo", "cryo", "bond-of-life", null],
+            "description": "Điều kiện nhân vật mới dùng được bộ; null = ai cũng dùng được. pyro/hydro/geo/cryo = người mặc phải đúng hệ đó (bonus chỉ nâng sát thương hệ đó, hoặc với cryo: dùng người mặc hệ Băng làm đại diện cho điều kiện địch dính Băng). bond-of-life = nhân vật có tag bond-of-life ở character-kits.json."
           }
         }
       }

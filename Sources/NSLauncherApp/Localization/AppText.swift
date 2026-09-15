@@ -861,7 +861,17 @@ struct AppText {
         case .moonsign: return localized(en: "needs a Moonsign character", vi: "cần nhân vật Nguyệt Triệu")
         case .stellar: return localized(en: "needs a Stellar Glimmer element",
                                         vi: "cần nguyên tố phản ứng Stellar")
+        case .pyro: return needsElement(.pyro)
+        case .hydro: return needsElement(.hydro)
+        case .geo: return needsElement(.geo)
+        case .cryo: return needsElement(.cryo)
+        case .bondOfLife: return localized(en: "needs a Bond of Life character", vi: "cần nhân vật có Bond of Life")
         }
+    }
+
+    private func needsElement(_ element: GenshinElement) -> String {
+        localized(en: "needs a \(abyssElementLabel(element)) wearer",
+                  vi: "cần người mặc hệ \(abyssElementLabel(element))")
     }
 
     var abyssOnFieldLabel: String { localized(en: "on-field", vi: "đứng sân") }

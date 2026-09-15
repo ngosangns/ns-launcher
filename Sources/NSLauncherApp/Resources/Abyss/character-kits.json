@@ -3,7 +3,8 @@
   "tags": {
     "moonsign": "Tính vào Nguyệt Triệu (Moonsign). Bậc và hiệu ứng ở team-bonus.json.",
     "hexerei": "Tính vào Hexerei. Điều kiện và hiệu ứng ở team-bonus.json.",
-    "stellar-jubilee": "Nâng Swirl/Superconduct thành biến thể Stellar. Hệ số ở damage-formula.json.lunarStellar."
+    "stellar-jubilee": "Nâng Swirl/Superconduct thành biến thể Stellar. Hệ số ở damage-formula.json.lunarStellar.",
+    "bond-of-life": "Kit tự nhận và tiêu Bond of Life trên chính mình (chữ game của talent). Điều kiện của fragment-of-harmonic-whimsy ở tuning.json.setEffectApprox."
   },
   "kits": [
     {
@@ -205,7 +206,49 @@
       "characterId": "lohen",
       "tags": [
         "hexerei"
-      ]
+      ],
+      "hits": {
+        "skill": [
+          {
+            "label": "Etched Into Bone and Soul DMG"
+          }
+        ],
+        "combo": [
+          {
+            "talent": "elementalSkill",
+            "label": "1-Hit DMG",
+            "category": "normal"
+          },
+          {
+            "talent": "elementalSkill",
+            "label": "2-Hit DMG",
+            "category": "normal"
+          },
+          {
+            "talent": "elementalSkill",
+            "label": "3-Hit DMG",
+            "category": "normal"
+          },
+          {
+            "talent": "elementalSkill",
+            "label": "4-Hit DMG",
+            "category": "normal"
+          },
+          {
+            "talent": "elementalSkill",
+            "label": "5-Hit DMG",
+            "category": "normal"
+          }
+        ],
+        "charged": [
+          {
+            "talent": "elementalSkill",
+            "label": "Charged Attack DMG",
+            "category": "charged"
+          }
+        ],
+        "note": "Unforeseen Strike: 'Vào chế độ Masterstroke (13s, Đòn thường/nặng/nhảy hoá Cryo)' — bảng E liệt kê cả chuỗi đòn thường và đòn nặng của Masterstroke, reader chung đọc chúng thành sát thương một lần E (~18.7× ATK). Chuỗi đòn/đòn nặng lấy từ bảng E (vẫn là Normal/Charged Attack DMG về loại); E = một lần Etched Into Bone and Soul (dòng đã là ×4). Mô tả cho dùng Etched tối đa 3 lần mỗi Masterstroke khi đủ Joy; đếm 1 vì số Joy tích được mỗi rotation không có trong bảng. Bonus Will to Win (0.4%/điểm) chưa tính."
+      }
     },
     {
       "characterId": "mona",
@@ -463,6 +506,9 @@
     },
     {
       "characterId": "sigewinne",
+      "tags": [
+        "bond-of-life"
+      ],
       "chargedAttackLabels": {
         "labels": [
           "Mini-Stration Bubble"
@@ -1268,6 +1314,9 @@
     },
     {
       "characterId": "clorinde",
+      "tags": [
+        "bond-of-life"
+      ],
       "energy": {
         "eventsPerCast": 3.75,
         "skillCastsPerRotation": 1,
@@ -1523,6 +1572,12 @@
         "collectedBy": "field",
         "note": "Wiki: 0.5 mỗi lần bia đá gây sát thương. gcsim zhongli/stele.go:149 (50%, ICD 1.5s); bia cộng hưởng mỗi 120 frame = 2s (gcsim zhongli/stele.go:79; game chỉ ghi 'intermittently') trong 30s > rotation → 20 / 2 = 10 → 5 hạt."
       }
+    },
+    {
+      "characterId": "arlecchino",
+      "tags": [
+        "bond-of-life"
+      ]
     }
   ]
 }
