@@ -267,7 +267,8 @@ enum AbyssTalentReader {
                 continue
             }
             let ordered = totals.sorted { $0.key.rawValue < $1.key.rawValue }
-                .map { AbyssDamageProfile.Term(multiplier: $0.value, basis: $0.key, category: category) }
+                .map { AbyssDamageProfile.Term(multiplier: $0.value, basis: $0.key, category: category,
+                                               reaction: AbyssDamageProfile.Term.lunarReaction(inLabel: label)) }
             let total = totals.values.reduce(0, +)
 
             // Every row is keyed by its stem — the label with any variant
@@ -432,7 +433,8 @@ enum AbyssTalentReader {
             case .burst: action = .burst
             }
             for (basis, multiplier) in totals.sorted(by: { $0.key.rawValue < $1.key.rawValue }) {
-                terms.append(.init(multiplier: multiplier * scale, basis: basis, category: category, action: action))
+                terms.append(.init(multiplier: multiplier * scale, basis: basis, category: category, action: action,
+                                   reaction: reference.label.flatMap(AbyssDamageProfile.Term.lunarReaction(inLabel:))))
             }
         }
         return terms

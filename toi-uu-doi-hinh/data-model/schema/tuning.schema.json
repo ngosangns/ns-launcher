@@ -7,9 +7,8 @@
   "required": [
     "artifactMainStats", "substatRollValue", "substatRollBudget", "substatPriority",
     "scalingBasisSwap", "rotationSeconds", "swapSeconds", "energy",
-    "conditionalUptime", "assumedStacks", "amplifyingUptime", "noSustainPenalty",
+    "conditionalUptime", "assumedStacks", "noSustainPenalty",
     "shieldBreakBonus", "weaknessExploitBonus", "setEffectApprox",
-    "transformativeReactionsPerRotation",
     "stellarConductRamp", "enemyOwnElementResistance", "resistanceShred"
   ],
   "properties": {
@@ -52,11 +51,9 @@
     },
     "conditionalUptime": { "type": "number", "minimum": 0, "maximum": 1 },
     "assumedStacks": { "type": "number", "minimum": 0 },
-    "amplifyingUptime": { "type": "number", "minimum": 0, "maximum": 1 },
     "noSustainPenalty": { "type": "number", "exclusiveMinimum": 0 },
     "shieldBreakBonus": { "type": "number", "exclusiveMinimum": 0 },
     "weaknessExploitBonus": { "type": "number", "exclusiveMinimum": 0 },
-    "transformativeReactionsPerRotation": { "type": "number", "minimum": 0, "description": "Số lần phản ứng biến đổi nổ trong một rotation. Con số chủ quan nhất file: phản ứng biến đổi bỏ qua ATK/DMG bonus/CRIT/giáp địch, nên TẦN SUẤT mới là thứ quyết định đội phản ứng đứng ở đâu" },
     "stellarConductRamp": { "type": "number", "minimum": 0, "maximum": 1, "description": "Vị trí trên dải hệ số Stellar-Conduct: 0 = stellarConductMin, 1 = stellarConductMax. Giả định, vì hệ số thật leo theo số đòn Cryo/Electro trước đó mà model không đếm đòn" },
     "enemyOwnElementResistance": { "type": "number", "minimum": 0, "maximum": 1, "description": "Kháng của quái với CHÍNH nguyên tố nó dùng để đánh/khiên. Suy luận, không phải dữ liệu: đặt 0.10 để tắt" },
     "resistanceShred": {

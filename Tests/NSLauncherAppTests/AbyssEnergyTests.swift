@@ -271,13 +271,16 @@ final class AbyssEnergyTests: XCTestCase {
         let damage = scorer.teamDamage(context: context, stats: stats, setIDs: members.map { _ in [] },
                                        splits: &splits)
         var sum = damage.reactionDamage
+        let variant = context.variants[damage.onFieldIndex]
         for index in members.indices {
             let rotation = context.members[index].rotation
+            let split = splits[index].reacted(context.members[index].applications,
+                                              amplifying: variant.amplifying[index], catalyze: variant.catalyze[index])
             sum += index == damage.onFieldIndex
-                ? scorer.onFieldDamage(splits[index], rotation: rotation, energyRecharge: sheet.energyRecharge,
+                ? scorer.onFieldDamage(split, rotation: rotation, energyRecharge: sheet.energyRecharge,
                                        fieldSeconds: scorer.fieldSeconds(driver: index, members: context.members,
                                                                          stats: stats))
-                : scorer.offFieldDamage(splits[index], rotation: rotation, energyRecharge: sheet.energyRecharge)
+                : scorer.offFieldDamage(split, rotation: rotation, energyRecharge: sheet.energyRecharge)
         }
         XCTAssertEqual(sum, damage.total, accuracy: max(damage.total, 1) * 1e-9)
     }

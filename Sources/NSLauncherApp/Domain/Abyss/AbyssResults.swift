@@ -98,6 +98,9 @@ struct AbyssParseDiagnostics: Sendable, Equatable {
     /// Timings from `frames.json` that did not resolve and use the median of
     /// every character that did, as "id: field".
     var framesEstimated: Set<String> = []
+    /// Characters with no gauge rows (the Travelers): they apply no element
+    /// the reaction model can count.
+    var gaugeMissing: Set<String> = []
 
     mutating func merge(_ other: AbyssParseDiagnostics) {
         scalingParsed += other.scalingParsed
@@ -115,6 +118,7 @@ struct AbyssParseDiagnostics: Sendable, Equatable {
         talentParamsUnread.formUnion(other.talentParamsUnread)
         particlesEstimated.formUnion(other.particlesEstimated)
         framesEstimated.formUnion(other.framesEstimated)
+        gaugeMissing.formUnion(other.gaugeMissing)
     }
 }
 
@@ -190,12 +194,28 @@ struct AbyssDamageProfile: Sendable, Equatable {
         let basis: ScalingBasis
         let category: HitCategory
         let action: Action
+        /// A Lunar reaction the game says this hit *is* — "Lunar-Charged DMG"
+        /// on Flins's burst. Such a hit is priced by the Lunar direct formula
+        /// (the reaction's coefficient, its own EM curve, no DMG bonus, no
+        /// enemy DEF), not as an ordinary hit.
+        var reaction: AbyssReaction?
 
-        init(multiplier: Double, basis: ScalingBasis, category: HitCategory, action: Action? = nil) {
+        init(multiplier: Double, basis: ScalingBasis, category: HitCategory, action: Action? = nil,
+             reaction: AbyssReaction? = nil) {
             self.multiplier = multiplier
             self.basis = basis
             self.category = category
             self.action = action ?? Action(defaultFor: category)
+            self.reaction = reaction
+        }
+
+        /// The Lunar reaction a talent row's label names, if any.
+        static func lunarReaction(inLabel label: String) -> AbyssReaction? {
+            for reaction in [AbyssReaction.lunarCharged, .lunarBloom, .lunarCrystallize]
+            where label.contains(reaction.rawValue + " DMG") {
+                return reaction
+            }
+            return nil
         }
     }
 

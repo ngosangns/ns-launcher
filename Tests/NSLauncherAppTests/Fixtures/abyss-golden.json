@@ -2299,7 +2299,8 @@
           "action" : "skill",
           "basis" : "HP",
           "category" : "skill",
-          "multiplier" : 0.158832
+          "multiplier" : 0.158832,
+          "reaction" : "Lunar-Crystallize"
         },
         {
           "action" : "burst",
@@ -2338,7 +2339,7 @@
         "setIds" : [
           "nymphs-dream"
         ],
-        "soloScore" : 4970.7117325532536,
+        "soloScore" : 5409.2326394478223,
         "stats" : {
           "atk_pct" : 0,
           "base_atk" : 637.66999999999996,
@@ -3745,13 +3746,15 @@
           "action" : "burst",
           "basis" : "ATK",
           "category" : "burst",
-          "multiplier" : 0.29232000000000002
+          "multiplier" : 0.29232000000000002,
+          "reaction" : "Lunar-Charged"
         },
         {
           "action" : "burst",
           "basis" : "ATK",
           "category" : "burst",
-          "multiplier" : 2.1047039999999999
+          "multiplier" : 2.1047039999999999,
+          "reaction" : "Lunar-Charged"
         },
         {
           "action" : "burst",
@@ -3808,7 +3811,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 9739.0571389033339,
+        "soloScore" : 10323.76118167371,
         "stats" : {
           "atk_pct" : 1.4601999999999999,
           "base_atk" : 1025.5899999999999,
@@ -13571,212 +13574,66 @@
       {
         "memberIds" : [
           "hu-tao",
-          "fischl",
-          "bennett",
-          "diona"
+          "raiden-shogun",
+          "xingqiu",
+          "bennett"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 2574.6813856296094,
-          "diona" : 4501.9689224970771,
-          "fischl" : 1446.7728570299266,
-          "hu-tao" : 32078.75858345197
+          "bennett" : 12801.05408950026,
+          "hu-tao" : 24534.529558276881,
+          "raiden-shogun" : 2534.7839538427083,
+          "xingqiu" : 3390.3907232226143
         },
-        "score" : 43850.356288497271
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "xiangling",
-          "fischl",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "diona" : 4412.1632783581299,
-          "fischl" : 1233.3727606501002,
-          "hu-tao" : 30194.893309184532,
-          "xiangling" : 2782.2338285004416
-        },
-        "score" : 41712.476230828659
+        "score" : 46721.618990829869
       },
       {
         "memberIds" : [
           "hu-tao",
           "raiden-shogun",
-          "bennett",
-          "diona"
+          "yelan",
+          "bennett"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 5752.7303120715951,
-          "diona" : 585.46600328063357,
-          "hu-tao" : 29521.376889844552,
-          "raiden-shogun" : 2520.8211642916658
+          "bennett" : 9549.0951269339857,
+          "hu-tao" : 22852.523066383754,
+          "raiden-shogun" : 2756.5414970453921,
+          "yelan" : 6377.5675573443305
         },
-        "score" : 41450.825919047522
+        "score" : 44858.585427524056
       },
       {
         "memberIds" : [
           "hu-tao",
-          "fischl",
-          "sucrose",
-          "diona"
+          "raiden-shogun",
+          "furina",
+          "bennett"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "diona" : 4778.1484928231685,
-          "fischl" : 1342.8245164177965,
-          "hu-tao" : 31119.126333517313,
-          "sucrose" : 1038.9689343403857
+          "bennett" : 12338.56657298495,
+          "furina" : 1998.6889484871172,
+          "hu-tao" : 23498.771071525742,
+          "raiden-shogun" : 2683.7927672644669
         },
-        "score" : 41341.393739266568
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "sucrose",
-          "bennett",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 3496.9889334407153,
-          "diona" : 621.71701813890581,
-          "hu-tao" : 32647.291315737129,
-          "sucrose" : 1361.3266550812805
-        },
-        "score" : 41177.509836189871
+        "score" : 43761.404909083256
       },
       {
         "memberIds" : [
           "hu-tao",
           "yelan",
-          "bennett",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 2661.061465326894,
-          "diona" : 504.30465429059751,
-          "hu-tao" : 28615.112888939861,
-          "yelan" : 5929.922827346445
-        },
-        "score" : 40727.233982776102
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "yelan",
-          "fischl",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "diona" : 414.68504963698587,
-          "fischl" : 3992.3852469897361,
-          "hu-tao" : 27319.044091019001,
-          "yelan" : 5949.9846463907961
-        },
-        "score" : 40690.18695675944
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
           "kuki-shinobu",
-          "bennett",
-          "diona"
+          "bennett"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 6621.6507850872767,
-          "diona" : 505.5214681629339,
-          "hu-tao" : 29801.943430891977,
-          "kuki-shinobu" : 711.62943331111637
+          "bennett" : 8736.8492333156464,
+          "hu-tao" : 23234.279182153376,
+          "kuki-shinobu" : 803.67218038590363,
+          "yelan" : 6263.085527437217
         },
-        "score" : 40652.004726849569
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "yelan",
-          "sucrose",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "diona" : 1385.9331746922103,
-          "hu-tao" : 27775.864695445845,
-          "sucrose" : 1052.4174676775335,
-          "yelan" : 6940.9230035628498
-        },
-        "score" : 40127.549408688719
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "xiangling",
-          "bennett",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 2794.1692813084655,
-          "diona" : 536.95740857547275,
-          "hu-tao" : 30022.130096467561,
-          "xiangling" : 3790.2617845138097
-        },
-        "score" : 40115.000056534533
-      }
-    ],
-    "10" : [
-      {
-        "memberIds" : [
-          "hu-tao",
-          "yelan",
-          "sucrose",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "diona" : 1138.8609696272147,
-          "hu-tao" : 22122.062779443615,
-          "sucrose" : 1263.8268416831381,
-          "yelan" : 6791.6558421959053
-        },
-        "score" : 31316.406432949872
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "fischl",
-          "sucrose",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "diona" : 3899.6124816273336,
-          "fischl" : 1313.9465698281663,
-          "hu-tao" : 24784.800543198955,
-          "sucrose" : 1247.6767701243048
-        },
-        "score" : 31246.036364778767
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "sucrose",
-          "bennett",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 2797.5473501442975,
-          "diona" : 521.44007972940483,
-          "hu-tao" : 26001.906186702356,
-          "sucrose" : 1634.7896341811859
-        },
-        "score" : 30955.683250757244
+        "score" : 42160.917013155515
       },
       {
         "memberIds" : [
@@ -13787,416 +13644,434 @@
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 2488.2347112919797,
-          "hu-tao" : 19454.422472411105,
-          "sucrose" : 1703.0433499683684,
-          "yelan" : 6826.2753144611106
+          "bennett" : 3601.8214820346529,
+          "hu-tao" : 25532.824567459425,
+          "sucrose" : 1418.1630826354424,
+          "yelan" : 7364.5141031489475
         },
-        "score" : 30471.975848132559
+        "score" : 40950.709094100748
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "raiden-shogun",
+          "xiangling",
+          "furina"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "furina" : 10836.434567074863,
+          "hu-tao" : 22343.957063822869,
+          "raiden-shogun" : 2202.7382698779593,
+          "xiangling" : 2475.7363022001473
+        },
+        "score" : 40887.575499213905
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "yelan",
+          "fischl",
+          "bennett"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 2816.34489753757,
+          "fischl" : 3307.7176339465,
+          "hu-tao" : 25248.833480255838,
+          "yelan" : 6472.5146812211478
+        },
+        "score" : 40873.043548397945
       },
       {
         "memberIds" : [
           "hu-tao",
           "fischl",
-          "bennett",
-          "diona"
+          "xingqiu",
+          "bennett"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 1905.3619362344357,
-          "diona" : 3407.1420756283915,
-          "fischl" : 1415.6594622550897,
-          "hu-tao" : 23739.49876194738
+          "bennett" : 5691.647094203804,
+          "fischl" : 1448.3230899269026,
+          "hu-tao" : 26634.974757701169,
+          "xingqiu" : 3444.774393519041
         },
-        "score" : 30467.662236065295
+        "score" : 40197.296882178998
       },
       {
         "memberIds" : [
           "hu-tao",
           "yelan",
           "nahida",
-          "diona"
+          "bennett"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "diona" : 4182.7842447707426,
-          "hu-tao" : 18277.698446991199,
-          "nahida" : 1719.981546453025,
-          "yelan" : 5895.5277899839875
+          "bennett" : 6135.7917435549361,
+          "hu-tao" : 22792.429016005914,
+          "nahida" : 1981.6586261293919,
+          "yelan" : 6267.5072218643681
         },
-        "score" : 30075.992028198951
+        "score" : 40151.577536158984
       },
       {
         "memberIds" : [
           "hu-tao",
           "yelan",
-          "fischl",
-          "diona"
+          "xiangling",
+          "bennett"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "diona" : 315.59662678465941,
-          "fischl" : 3206.0574565851957,
-          "hu-tao" : 20217.129403220897,
-          "yelan" : 5822.0279873286272
+          "bennett" : 2960.5471933528925,
+          "hu-tao" : 23474.946405320814,
+          "xiangling" : 3505.3676617000469,
+          "yelan" : 7185.4828770161621
         },
-        "score" : 29560.811473919381
+        "score" : 40096.451668381109
+      }
+    ],
+    "10" : [
+      {
+        "memberIds" : [
+          "hu-tao",
+          "raiden-shogun",
+          "xingqiu",
+          "bennett"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 9631.2768641990187,
+          "hu-tao" : 18156.482974815906,
+          "raiden-shogun" : 2480.2724709643708,
+          "xingqiu" : 3317.4790947662141
+        },
+        "score" : 33585.511404745506
       },
       {
         "memberIds" : [
           "hu-tao",
           "raiden-shogun",
           "yelan",
-          "diona"
+          "bennett"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "diona" : 3344.2045026576498,
-          "hu-tao" : 18257.685818773425,
-          "raiden-shogun" : 1906.2499095229737,
-          "yelan" : 5953.0493746707916
+          "bennett" : 7173.8526897654247,
+          "hu-tao" : 16911.734337551545,
+          "raiden-shogun" : 2697.2610347433401,
+          "yelan" : 6240.4155668638068
         },
-        "score" : 29461.189605624841
+        "score" : 33023.263628924113
       },
       {
         "memberIds" : [
           "hu-tao",
           "yelan",
-          "bennett",
-          "diona"
+          "sucrose",
+          "bennett"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 1969.2864733918188,
-          "diona" : 383.8017500395585,
-          "hu-tao" : 21176.269500353974,
-          "yelan" : 5802.3976052529706
+          "bennett" : 2878.2914474188515,
+          "hu-tao" : 20335.595460704739,
+          "sucrose" : 1703.0433499683684,
+          "yelan" : 7206.137455769398
         },
-        "score" : 29331.755329038315
+        "score" : 32123.067713861354
+      },
+      {
+        "memberIds" : [
+          "raiden-shogun",
+          "yelan",
+          "xiangling",
+          "bennett"
+        ],
+        "onFieldId" : "raiden-shogun",
+        "perCharacter" : {
+          "bennett" : 8056.4246780173326,
+          "raiden-shogun" : 14519.496703203005,
+          "xiangling" : 2473.7471737867368,
+          "yelan" : 6420.1960803587735
+        },
+        "score" : 31469.864635365848
       },
       {
         "memberIds" : [
           "hu-tao",
-          "xiangling",
-          "sucrose",
-          "diona"
+          "raiden-shogun",
+          "furina",
+          "bennett"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "diona" : 427.1897451340883,
-          "hu-tao" : 24543.118827109196,
-          "sucrose" : 1353.9761858046154,
-          "xiangling" : 2875.0432848080627
+          "bennett" : 9280.5028474463579,
+          "furina" : 1955.7063904551364,
+          "hu-tao" : 17389.982386897613,
+          "raiden-shogun" : 2626.0767937749079
         },
-        "score" : 29199.328042855963
+        "score" : 31252.268418574015
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "yelan",
+          "nahida",
+          "bennett"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 5885.8525574030064,
+          "hu-tao" : 16867.262459662819,
+          "nahida" : 2248.0105920069991,
+          "yelan" : 6132.7221203188974
+        },
+        "score" : 31133.84772939172
+      },
+      {
+        "memberIds" : [
+          "raiden-shogun",
+          "xiangling",
+          "xingqiu",
+          "bennett"
+        ],
+        "onFieldId" : "raiden-shogun",
+        "perCharacter" : {
+          "bennett" : 10140.26480997042,
+          "raiden-shogun" : 15037.865461019988,
+          "xiangling" : 2302.5682321716367,
+          "xingqiu" : 3303.8479756000206
+        },
+        "score" : 30784.546478762066
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "xingqiu",
+          "nahida",
+          "bennett"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 7217.4095807660187,
+          "hu-tao" : 18051.340432806941,
+          "nahida" : 2178.308901979136,
+          "xingqiu" : 3247.508845412724
+        },
+        "score" : 30694.567760964819
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "yelan",
+          "kuki-shinobu",
+          "bennett"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 6560.0289374300392,
+          "hu-tao" : 17194.248351119197,
+          "kuki-shinobu" : 786.3889076894327,
+          "yelan" : 6128.3955160944806
+        },
+        "score" : 30669.061712333154
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "yelan",
+          "sucrose",
+          "kuki-shinobu"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "hu-tao" : 18152.846722190727,
+          "kuki-shinobu" : 4658.7017319487186,
+          "sucrose" : 1266.2738222223552,
+          "yelan" : 6261.9381486207149
+        },
+        "score" : 30339.760424982513
       }
     ],
     "11" : [
       {
         "memberIds" : [
           "hu-tao",
-          "sucrose",
-          "bennett",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 3403.5595757933729,
-          "diona" : 596.5809765484222,
-          "hu-tao" : 32251.975187295226,
-          "sucrose" : 1422.553786936611
-        },
-        "score" : 41442.136479230998
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "fischl",
-          "sucrose",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "diona" : 3781.609664442035,
-          "fischl" : 898.35745425845585,
-          "hu-tao" : 30742.314290408227,
-          "sucrose" : 1085.6976806695704
-        },
-        "score" : 40158.776998756126
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "xiangling",
-          "sucrose",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "diona" : 488.74891906241481,
-          "hu-tao" : 30442.539625636284,
-          "sucrose" : 1178.1968213317355,
-          "xiangling" : 3540.0684440428458
-        },
-        "score" : 39214.509191080622
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "yelan",
-          "sucrose",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "diona" : 1154.6217127520315,
-          "hu-tao" : 27439.535191434687,
-          "sucrose" : 1099.7510762716429,
-          "yelan" : 5065.6560868107808
-        },
-        "score" : 38235.520473996054
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
           "yelan",
           "sucrose",
           "bennett"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 3006.080121461463,
-          "hu-tao" : 24130.675126589082,
+          "bennett" : 3549.8532271634399,
+          "hu-tao" : 25223.655354657716,
           "sucrose" : 1481.9464940075627,
-          "yelan" : 5091.4775277785138
+          "yelan" : 5374.8032752806339
         },
-        "score" : 37081.197196820292
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "fischl",
-          "bennett",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 2285.2371756529769,
-          "diona" : 3107.2932973075331,
-          "fischl" : 821.24806231406365,
-          "hu-tao" : 27482.703443462571
-        },
-        "score" : 37066.130176610859
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "sucrose",
-          "kuki-shinobu",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "diona" : 438.67701122779465,
-          "hu-tao" : 29052.161385582131,
-          "kuki-shinobu" : 3024.2083377772942,
-          "sucrose" : 1076.3287502681887
-        },
-        "score" : 36950.513033340947
+        "score" : 39193.284186220291
       },
       {
         "memberIds" : [
           "hu-tao",
           "xingqiu",
           "sucrose",
-          "diona"
+          "bennett"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "diona" : 891.42969071068433,
-          "hu-tao" : 29529.075864744365,
-          "sucrose" : 1082.5138666587113,
-          "xingqiu" : 1805.6719974152925
+          "bennett" : 3710.8602578718314,
+          "hu-tao" : 26753.927482636151,
+          "sucrose" : 1407.6355622887791,
+          "xingqiu" : 2854.6733445483032
         },
-        "score" : 36639.560561481958
+        "score" : 38199.80631207957
       },
       {
         "memberIds" : [
           "hu-tao",
           "raiden-shogun",
-          "sucrose",
-          "diona"
+          "xingqiu",
+          "bennett"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "diona" : 2526.3509045764717,
-          "hu-tao" : 28127.943255396571,
-          "raiden-shogun" : 1455.8847219274792,
-          "sucrose" : 1116.2531695922582
+          "bennett" : 9223.5221922293222,
+          "hu-tao" : 21019.367012625582,
+          "raiden-shogun" : 1438.8481235068168,
+          "xingqiu" : 2165.0916197421602
         },
-        "score" : 36549.075256642056
+        "score" : 37231.511842914275
       },
       {
         "memberIds" : [
           "hu-tao",
-          "venti",
-          "bennett",
-          "diona"
+          "sucrose",
+          "furina",
+          "bennett"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 2879.6604080713623,
-          "diona" : 1283.0372698928986,
-          "hu-tao" : 25982.99004553552,
-          "venti" : 2966.0739184363783
+          "bennett" : 3837.9780350678875,
+          "furina" : 1665.8433867765464,
+          "hu-tao" : 26069.410426422142,
+          "sucrose" : 1444.9353131751341
         },
-        "score" : 36422.937806129768
+        "score" : 36319.983877585881
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "xingqiu",
+          "nahida",
+          "bennett"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 7613.859697050264,
+          "hu-tao" : 20897.645769464551,
+          "nahida" : 2132.4497672006278,
+          "xingqiu" : 2119.4268254272511
+        },
+        "score" : 36039.720265056974
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "xingqiu",
+          "sucrose",
+          "kuki-shinobu"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "hu-tao" : 24278.428578259547,
+          "kuki-shinobu" : 5422.2055432747129,
+          "sucrose" : 1084.6431690226616,
+          "xingqiu" : 1921.8107297087226
+        },
+        "score" : 35977.796822292221
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "yelan",
+          "sucrose",
+          "kuki-shinobu"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "hu-tao" : 22516.240073286684,
+          "kuki-shinobu" : 4208.6174559922156,
+          "sucrose" : 1101.8803786355934,
+          "yelan" : 4670.5583785201115
+        },
+        "score" : 35747.025915078062
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "raiden-shogun",
+          "yelan",
+          "bennett"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 7057.000091524329,
+          "hu-tao" : 19578.348480489385,
+          "raiden-shogun" : 1564.7268692780083,
+          "yelan" : 4072.692264690063
+        },
+        "score" : 35500.044476579962
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "xingqiu",
+          "venti",
+          "bennett"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 5006.0406344272405,
+          "hu-tao" : 21547.039064266355,
+          "venti" : 2922.8074413612198,
+          "xingqiu" : 2634.111219020956
+        },
+        "score" : 35320.998194983353
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "yelan",
+          "nahida",
+          "bennett"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 6317.822852228197,
+          "hu-tao" : 19526.864350860291,
+          "nahida" : 2200.6840532279039,
+          "yelan" : 4002.4081206291748
+        },
+        "score" : 35252.557314640129
       }
     ],
     "12" : [
       {
         "memberIds" : [
           "hu-tao",
-          "fischl",
-          "sucrose",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "diona" : 5549.0053213990059,
-          "fischl" : 1079.7970338204964,
-          "hu-tao" : 30260.572274611295,
-          "sucrose" : 531.65608074025351
-        },
-        "score" : 41163.133781628174
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "sucrose",
-          "bennett",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 2654.3701374053721,
-          "diona" : 522.15683585274428,
-          "hu-tao" : 31525.482107629436,
-          "sucrose" : 696.61139051019597
-        },
-        "score" : 38938.482518537523
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "fischl",
-          "bennett",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 1745.5996295536104,
-          "diona" : 4462.2603720663274,
-          "fischl" : 1055.6635852555132,
-          "hu-tao" : 28060.776578498153
-        },
-        "score" : 38856.730181910978
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "yelan",
-          "sucrose",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "diona" : 1139.3627867707455,
-          "hu-tao" : 26896.545643908154,
-          "sucrose" : 538.53789817425809,
-          "yelan" : 6511.5875600434974
-        },
-        "score" : 38594.637277786322
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "sucrose",
-          "kuki-shinobu",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "diona" : 383.95156592032612,
-          "hu-tao" : 28578.80238343163,
-          "kuki-shinobu" : 4479.4195104878136,
-          "sucrose" : 527.06820245091717
-        },
-        "score" : 37366.165828519755
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "yelan",
-          "fischl",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "diona" : 319.87275191929695,
-          "fischl" : 3820.740982068276,
-          "hu-tao" : 23960.545531510532,
-          "yelan" : 5581.944358985178
-        },
-        "score" : 37051.41398693162
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "xiangling",
-          "fischl",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "diona" : 4392.9876105964904,
-          "fischl" : 899.95240381914505,
-          "hu-tao" : 26370.547235721042,
-          "xiangling" : 1886.3174167759212
-        },
-        "score" : 36904.785133603866
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "xiangling",
-          "sucrose",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "diona" : 427.77694753289813,
-          "hu-tao" : 29707.274264848762,
-          "sucrose" : 576.9520516830662,
-          "xiangling" : 2723.1483394667689
-        },
-        "score" : 36778.666763884641
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
           "raiden-shogun",
-          "sucrose",
-          "diona"
+          "xingqiu",
+          "bennett"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "diona" : 3566.4623378247848,
-          "hu-tao" : 27431.010112137854,
-          "raiden-shogun" : 1749.9270439287643,
-          "sucrose" : 546.61882016115737
+          "bennett" : 9113.2298725289384,
+          "hu-tao" : 20228.387425738074,
+          "raiden-shogun" : 1849.5502618531561,
+          "xingqiu" : 3180.67583312637
         },
-        "score" : 36623.420145457821
+        "score" : 37809.027732571187
       },
       {
         "memberIds" : [
@@ -14207,12 +14082,140 @@
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 2374.4208634293445,
-          "hu-tao" : 23390.312864075,
+          "bennett" : 2733.6618920565165,
+          "hu-tao" : 23338.409296729438,
           "sucrose" : 725.69544809648687,
-          "yelan" : 6544.7794252049835
+          "yelan" : 6908.9771483149907
         },
-        "score" : 36338.729460886403
+        "score" : 37077.418163717186
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "raiden-shogun",
+          "yelan",
+          "bennett"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 6768.683115057891,
+          "hu-tao" : 18699.66610123065,
+          "raiden-shogun" : 2011.3596032278517,
+          "yelan" : 5983.078842457051
+        },
+        "score" : 36809.066428170794
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "xingqiu",
+          "sucrose",
+          "bennett"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 2938.0718751827726,
+          "hu-tao" : 24903.060746789906,
+          "sucrose" : 689.30607431667011,
+          "xingqiu" : 3669.5060066841907
+        },
+        "score" : 35419.939173270905
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "yelan",
+          "sucrose",
+          "kuki-shinobu"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "hu-tao" : 20980.634995054221,
+          "kuki-shinobu" : 4434.7590452940194,
+          "sucrose" : 539.5805977854709,
+          "yelan" : 6003.7138950693434
+        },
+        "score" : 35154.55738652336
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "yelan",
+          "kuki-shinobu",
+          "bennett"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 6183.0007668445378,
+          "hu-tao" : 19218.286257799547,
+          "kuki-shinobu" : 586.41372154160433,
+          "yelan" : 5875.6781752246043
+        },
+        "score" : 35049.71681355132
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "raiden-shogun",
+          "furina",
+          "bennett"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 8776.2644924208835,
+          "furina" : 1875.0587042508007,
+          "hu-tao" : 19215.336932117381,
+          "raiden-shogun" : 1958.2771967324916
+        },
+        "score" : 35007.431058073722
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "xingqiu",
+          "sucrose",
+          "kuki-shinobu"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "hu-tao" : 22739.766495884214,
+          "kuki-shinobu" : 5678.3152743967303,
+          "sucrose" : 531.13969617089094,
+          "xingqiu" : 2470.3688181500652
+        },
+        "score" : 34561.549313062089
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "yelan",
+          "fischl",
+          "bennett"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 1909.444266493028,
+          "fischl" : 2398.134554809807,
+          "hu-tao" : 20918.795641402918,
+          "yelan" : 6072.1529483621061
+        },
+        "score" : 34428.380152174657
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "yelan",
+          "xingqiu",
+          "bennett"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 2015.6314466167944,
+          "hu-tao" : 19256.887463888277,
+          "xingqiu" : 3140.6728486635643,
+          "yelan" : 6132.9515616761337
+        },
+        "score" : 33600.757652929249
       }
     ]
   }

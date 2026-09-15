@@ -46,9 +46,11 @@ final class AbyssGoldenDumpTests: XCTestCase {
             characters[character.id] = [
                 "scalingBasis": profile.basis.rawValue,
                 "role": best.role.rawValue,
-                "profile": profile.hits.map {
-                    ["multiplier": $0.multiplier, "basis": $0.basis.rawValue,
-                     "category": $0.category.rawValue, "action": $0.action.rawValue]
+                "profile": profile.hits.map { hit -> [String: Any] in
+                    var term: [String: Any] = ["multiplier": hit.multiplier, "basis": hit.basis.rawValue,
+                                               "category": hit.category.rawValue, "action": hit.action.rawValue]
+                    if let reaction = hit.reaction { term["reaction"] = reaction.rawValue }
+                    return term
                 },
                 "topGear": [
                     "weaponId": best.weaponID as Any,

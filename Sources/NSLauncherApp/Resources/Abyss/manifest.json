@@ -57,6 +57,14 @@
       "count": 118,
       "note": "Sinh 2026-09-15 bằng scripts/sync-abyss-particles.py từ template {{Talent Note|particles}} trên trang kỹ năng của genshin-impact.fandom.com (Pha 3 docs/redesign.md), đối chiếu gcsim@a086a05. 118 nhân vật có talent-params.json; 13 trang không có ghi chú (bổ sung ở character-kits.json → energy.particlesPerCast từ gcsim, trừ Linnea không có trong gcsim). Số liệu cộng đồng đo, không phải file game."
     },
+    "frames.json": {
+      "count": 109,
+      "note": "Sinh 2026-09-16 bằng scripts/sync-abyss-frames.py từ frame data gcsim@a086a05 (attack/charge/aimed/skill/burst.go). 40 trường không nhận ra mẫu → trung vị, báo ở diagnostics.framesEstimated. Thay normalCombosPerRotation/chargedAttacksPerRotation."
+    },
+    "gauge.json": {
+      "count": 118,
+      "note": "Sinh 2026-09-16 bằng scripts/sync-abyss-gauge.py từ gi.yatta.moe talent.advancedProps: gauge (U) và ICD từng hit. Pha 4 docs/redesign.md — thay amplifyingUptime và transformativeReactionsPerRotation."
+    },
     "artifact-sets.json": {
       "textSource": "name/nameVI/description/descriptionVI đồng bộ từ bản địa hoá chính thức qua gi.yatta.moe/api/v2/{en,vi}/reliquary bằng scripts/sync-abyss-artifact-text.py, ngày 2026-09-14",
       "count": 63

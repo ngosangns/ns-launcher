@@ -29,6 +29,11 @@ struct AbyssDamageConstants: Sendable {
     let amplifyingEM: AbyssDamageFormula.EMCurve
     let transformativeEM: AbyssDamageFormula.EMCurve
     let catalyzeEM: AbyssDamageFormula.EMCurve
+    /// Aggravate's and Spread's coefficients, `catalyze.coefficients`. Read
+    /// since Phase 4; before it the catalyze block was parsed for its EM curve
+    /// and never priced, which left every Dendro+Electro team under-rated.
+    var aggravateCoefficient: Double = 1.15
+    var spreadCoefficient: Double = 1.25
     let amplifyingCoefficients: [AbyssDamageMath.Pair: Double]
     let transformativeCoefficients: [AbyssReaction: Double]
     /// `transformative.levelMultiplier` at `AbyssDamageMath.characterLevel`.
@@ -109,6 +114,16 @@ struct AbyssDamageConstants: Sendable {
                                  fallback: Self.fallback.transformativeEM)
         catalyzeEM = curve(formula.catalyze.emBonusFormula, "catalyze.emBonusFormula",
                            fallback: Self.fallback.catalyzeEM)
+        if let value = formula.catalyze.coefficients["aggravate"] {
+            aggravateCoefficient = value
+        } else {
+            diagnostics.damageFormulaUnread.insert("catalyze.coefficients.aggravate")
+        }
+        if let value = formula.catalyze.coefficients["spread"] {
+            spreadCoefficient = value
+        } else {
+            diagnostics.damageFormulaUnread.insert("catalyze.coefficients.spread")
+        }
 
         var amplifying: [AbyssDamageMath.Pair: Double] = [:]
         for (name, value) in formula.amplifying.coefficients {

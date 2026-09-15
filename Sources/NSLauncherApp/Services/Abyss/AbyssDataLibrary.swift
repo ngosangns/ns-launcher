@@ -83,6 +83,11 @@ struct AbyssDataLibrary: Sendable {
     let medianParticlesPerCast: Double
     /// gcsim's frame counts — see `AbyssFrames`.
     let frames: AbyssFrames?
+    /// Yatta's per-hit gauge and ICD — see `AbyssGauge`.
+    let gauge: AbyssGauge?
+    /// How often each character applies their element — see
+    /// `AbyssApplicationProfile`.
+    let applicationsByCharacterID: [String: AbyssApplicationProfile]
     /// Median cast seconds of a skill and a burst, for solo stand-ins.
     let medianSkillSeconds: Double
     let medianBurstSeconds: Double
@@ -167,6 +172,9 @@ struct AbyssDataLibrary: Sendable {
         let frames: AbyssFrames? =
             Self.decode(from: root?.appendingPathComponent("frames.json"), hasher: &hasher)
         self.frames = frames
+        let gauge: AbyssGauge? =
+            Self.decode(from: root?.appendingPathComponent("gauge.json"), hasher: &hasher)
+        self.gauge = gauge
         dataDigest = hasher.finalize().map { String(format: "%02x", $0) }.joined()
         var kits: [String: AbyssCharacterKit] = [:]
         for entry in kitsFile?.kits ?? [] {
@@ -350,6 +358,9 @@ struct AbyssDataLibrary: Sendable {
         medianParticlesPerCast = energy.median
         medianSkillSeconds = energy.medianSkillSeconds
         medianBurstSeconds = energy.medianBurstSeconds
+        applicationsByCharacterID = Self.applicationProfiles(
+            characters: characters, gauge: gauge, talentParams: talentParams, kits: kits,
+            energy: energy.profiles, rotationSeconds: tuning?.rotationSeconds ?? 20, diagnostics: &diagnostics)
 
         self.diagnostics = diagnostics
     }
@@ -470,6 +481,114 @@ struct AbyssDataLibrary: Sendable {
                 isEstimated: own == nil)
         }
         return (profiles, median, medianSkill, medianBurst)
+    }
+
+    /// Element applications per action for every character.
+    ///
+    /// Normal and charged attacks count only when they deal the character's
+    /// element: a catalyst's, a bow's fully charged shot, or a kit marked
+    /// `attack.infused`. A skill or burst row that keeps hitting — a summon, a
+    /// field — is where one row stands for many hits: a summon takes its event
+    /// count from the kit's `energy.eventsPerCast` (a second apart), a field
+    /// with a time-based cooldown applies once per cooldown across the
+    /// talent's longest Duration row, capped at a rotation. Every other row is
+    /// one hit per cast.
+    static func applicationProfiles(characters: [AbyssCharacter],
+                                    gauge: AbyssGauge?,
+                                    talentParams: AbyssTalentParams?,
+                                    kits: [String: AbyssCharacterKit],
+                                    energy: [String: AbyssEnergyProfile],
+                                    rotationSeconds: Double,
+                                    diagnostics: inout AbyssParseDiagnostics) -> [String: AbyssApplicationProfile] {
+        typealias Counting = AbyssApplicationCounting
+        var profiles: [String: AbyssApplicationProfile] = [:]
+        for character in characters {
+            guard let rows = gauge?.characters[character.id] else {
+                diagnostics.gaugeMissing.insert(character.id)
+                continue
+            }
+            let kit = kits[character.id]
+            let timing = energy[character.id]
+            let infused = kit?.attack?.infused ?? false
+            let catalyst = character.weaponType == .catalyst
+            var profile = AbyssApplicationProfile()
+
+            if catalyst || infused {
+                let combo = rows.normalAttack.filter { $0.name.hasPrefix("Normal Attack") && Counting.isHit($0) }
+                profile.combo = Counting.action(combo, seconds: timing?.comboSeconds ?? 0)
+            }
+            let chargedRows = rows.normalAttack.filter { row in
+                guard Counting.isHit(row) else { return false }
+                if character.weaponType == .bow { return row.name.hasPrefix("Fully-Charged Aimed Shot") }
+                return row.name.contains("Charged Attack")
+            }
+            if catalyst || infused || character.weaponType == .bow {
+                profile.charged = Counting.action(chargedRows, seconds: 0)
+            }
+
+            func duration(_ key: AbyssTalentParams.Key) -> Double {
+                guard let talent = talentParams?.characters[character.id]?.talent(key),
+                      let params = talent.params(atLevel: 10) else { return 0 }
+                var longest = 0.0
+                let seconds = try? NSRegularExpression(pattern: #"^\{param(\d+):[A-Z0-9]+\}s$"#)
+                for line in talent.lines(atLevel: 10) {
+                    guard let (label, expression) = AbyssTalentReader.split(line),
+                          label.contains("Duration"),
+                          let match = seconds?.firstMatch(in: expression,
+                                                          range: NSRange(expression.startIndex..., in: expression)),
+                          let digits = Range(match.range(at: 1), in: expression),
+                          let index = Int(expression[digits]),
+                          index >= 1, index <= params.count else { continue }
+                    longest = max(longest, params[index - 1])
+                }
+                return min(longest, rotationSeconds)
+            }
+
+            func ability(_ talentRows: [AbyssGauge.Row], key: AbyssTalentParams.Key,
+                         events: Double?) -> AbyssApplicationProfile.Action {
+                // Press and hold are two ways to cast, not two casts: when the
+                // table has a Press row, the hold and charge-level rows are the
+                // other way (Bennett, Kazuha). Kits play press by default.
+                let pressed = talentRows.contains { $0.name.contains("Press") }
+                let hits = talentRows.filter(Counting.isHit).filter { row in
+                    !pressed || !(row.name.contains("Hold") || row.name.contains("Charge Level")
+                                  || row.name.contains("Explosion"))
+                }
+                guard !hits.isEmpty else { return .none }
+                // The row that keeps hitting: a cooldown-tagged row, last one wins.
+                let repeating = hits.lastIndex { $0.icdTag != nil } ?? (events != nil ? hits.count - 1 : nil)
+                var action = Counting.action(hits.enumerated().filter { $0.offset != repeating }.map(\.element),
+                                             seconds: 0)
+                guard let repeating else { return action }
+                let row = hits[repeating]
+                let field = duration(key)
+                let count: Double
+                let seconds: Double
+                if let events, events > 1 {
+                    count = events
+                    seconds = events
+                } else if let every = row.icdSeconds, field > 0 {
+                    // A field: as many hits as it can land, and at least one per
+                    // cooldown window across its duration.
+                    count = max(1, (field / every).rounded(.down) * Double(row.icdHits ?? 1) + 1)
+                    seconds = field
+                } else {
+                    count = 1
+                    seconds = 0
+                }
+                let applications = Counting.applications(hits: count, hitsPerApplication: row.icdHits,
+                                                         secondsPerApplication: row.icdSeconds, seconds: seconds)
+                action.hits += count
+                action.applications += applications
+                action.units += applications * row.units
+                return action
+            }
+            let events = kit?.energy?.collectedBy == .field ? kit?.energy?.eventsPerCast : nil
+            profile.skill = ability(rows.elementalSkill, key: .elementalSkill, events: events)
+            profile.burst = ability(rows.elementalBurst, key: .elementalBurst, events: nil)
+            profiles[character.id] = profile
+        }
+        return profiles
     }
 
     /// `"18s"` → 18. The transcription's cooldown column; nil for anything
@@ -631,17 +750,18 @@ struct AbyssDataLibrary: Sendable {
         // order is kept so the sum is reproducible run to run.
         struct Slot: Hashable {
             let basis: ScalingBasis; let category: HitCategory; let action: AbyssDamageProfile.Action
+            let reaction: AbyssReaction?
         }
         var totals: [Slot: Double] = [:]
         var order: [Slot] = []
         for hit in hits {
-            let key = Slot(basis: hit.basis, category: hit.category, action: hit.action)
+            let key = Slot(basis: hit.basis, category: hit.category, action: hit.action, reaction: hit.reaction)
             if totals[key] == nil { order.append(key) }
             totals[key, default: 0] += hit.multiplier
         }
         let aggregate = order.map {
             AbyssDamageProfile.Term(multiplier: totals[$0] ?? 0, basis: $0.basis, category: $0.category,
-                                    action: $0.action)
+                                    action: $0.action, reaction: $0.reaction)
         }
 
         return AbyssDamageProfile(

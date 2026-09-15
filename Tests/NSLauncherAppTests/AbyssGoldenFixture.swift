@@ -20,6 +20,8 @@ struct AbyssGoldenFixture: Decodable {
         let basis: String
         let category: String
         let action: String
+        /// The Lunar reaction a hit is priced as, when it is one.
+        let reaction: String?
     }
 
     struct Stats: Decodable {

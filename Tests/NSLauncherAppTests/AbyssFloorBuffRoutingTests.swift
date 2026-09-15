@@ -124,9 +124,11 @@ final class AbyssFloorBuffRoutingTests: XCTestCase {
         let buffed = scorer.damageContext(for: members[0],
                                           floor: floor([buff(0.5, reactions: [.vaporize])]),
                                           team: context)
+        // The multiplier travels on the split as a gain; how much of the split
+        // it reaches is decided per team in `teamDamage` (Phase 4).
         XCTAssertGreaterThan(
-            scorer.damageSplit(context: buffed, stats: stats, partyBuffs: .none).ability,
-            scorer.damageSplit(context: bare, stats: stats, partyBuffs: .none).ability,
+            scorer.damageSplit(context: buffed, stats: stats, partyBuffs: .none).amplifyingGain,
+            scorer.damageSplit(context: bare, stats: stats, partyBuffs: .none).amplifyingGain,
             "a Vaporize buff reached nothing")
     }
 

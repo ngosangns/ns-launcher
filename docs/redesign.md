@@ -97,7 +97,7 @@ Chạy: `ABYSS_BENCHMARK=1 swift test --filter AbyssBenchmarkTests`. Xem mục 7
 | 1 | Talent → `params` cấu trúc từ Yatta, thay 26 regex trong `AbyssTextParser` | — (gỡ nguồn lỗi lớn nhất) | **Xong cho 118/125 — xem mục 5** |
 | 2 | `character-kits.json` cho ~30 nhân vật hay dùng nhất; nhân vật chưa có kit rơi về mô hình cũ | — | **Khung xong + 21 kit — xem mục 6** |
 | 3 | Dựng rotation + năng lượng | `offFieldUptime`, hack ER | **Xong (năng lượng; thời gian đứng sân để sau) — xem mục 7** |
-| 4 | Gauge/ICD/phản ứng theo timeline | `amplifyingUptime`, `transformativeReactionsPerRotation` | Chưa bắt đầu |
+| 4 | Gauge/ICD/phản ứng theo timeline | `amplifyingUptime`, `transformativeReactionsPerRotation` | **Xong (đếm theo số lần áp, chưa phải timeline) — xem mục 8** |
 | 5 | Timeline buff + stack | `conditionalUptime`, `assumedStacks`, phần lớn `setEffectApprox` | Chưa bắt đầu |
 | 6 | Điểm = thời gian dọn — cần nhập HP quái từ Yatta (script Pha 0 cố tình **chưa** lấy HP: chưa có gì đọc nó, và một key không ai hỏi là đúng loại lỗ hổng im lặng đã dọn ở `physical_dmg`) | trung bình điều hoà giả định HP bằng nhau | Chưa bắt đầu |
 
@@ -487,7 +487,59 @@ bước ghép hai nửa quét 182 triệu cặp trước khi gặp cặp hợp l
 dưới chính xác theo từng id — quét bắt đầu sau đội nửa sau cuối cùng còn giữ
 một id của đội nửa đầu — còn 0.12s.
 
-## 8. Chưa xác minh, cần làm trước Pha 4
+## 8. Pha 4 — kết quả
+
+### 8.1. Benchmark trước khi làm: lệch theo loại phản ứng
+
+Nhóm độ lệch (log mô hình/gcsim, trừ trung vị) theo phản ứng của đội chỉ đúng
+chỗ hai hằng số sai: Melt +0.25, Vaporize +0.16 (`amplifyingUptime = 0.55` cho
+*mọi* đòn); Dendro+Electro −0.20…−0.28 (Aggravate/Spread **chưa từng được tính**
+— `damage-formula.json.catalyze` chỉ được đọc lấy đường EM); Lunar-Charged −0.31.
+
+### 8.2. Mô hình: số lần áp nguyên tố thay hằng số
+
+- **`gauge.json`** (`scripts/sync-abyss-gauge.py`, Yatta `talent.advancedProps`):
+  gauge (U) và nhóm ICD của từng hit, 118 nhân vật; 2 luật ICD lạ (Arlecchino,
+  Chevreuse) ghi lại chứ không đoán.
+- **`AbyssApplicationProfile`**: số lần áp mỗi chuỗi đòn / đòn nặng / lần E / lần
+  Q theo luật ICD của game (hit đầu, rồi mỗi N hit hoặc mỗi T giây). Đòn thường
+  chỉ áp nguyên tố nếu là catalyst, mũi sạc đầy của cung, hoặc kit
+  `attack.infused` — 19 nhân vật, mỗi người kèm câu game "converted to Pyro DMG"
+  / "infused with". Triệu hồi dùng `energy.eventsPerCast`; vùng/DoT có ICD theo
+  thời gian áp một lần mỗi chu kỳ ICD suốt dòng Duration dài nhất. Bảng có dòng
+  "Press" thì bỏ dòng Hold/Charge Level (Bennett: 1 hit mỗi lần E, không phải 6).
+- **Theo từng người đứng sân** (`TeamDamageContext.variants`): đứng sân đổi đòn
+  thường của ai có áp nguyên tố, nên mỗi ứng viên có biến thể riêng:
+  - Vaporize/Melt: phần hit **áp nguyên tố** của người kích hoạt được khuếch
+    đại, theo lượng aura (U) phía kia đặt ra so với lượng một lần kích hoạt tiêu
+    (×2 chiều mạnh, ×0.5 chiều yếu);
+  - Aggravate/Spread: mỗi lần áp của nhân vật Electro/Dendro cộng
+    `1.15/1.25 × level multiplier × (1 + 5·EM/(EM+1200))` vào base damage;
+  - phản ứng biến đổi: số lần = số lần áp của phía ít hơn trong cặp.
+- Dòng talent **là** sát thương Lunar ("Lunar-Charged DMG" của Flins, Columbina)
+  tính theo công thức Lunar trực tiếp: hệ số phản ứng, đường EM Lunar, không DMG
+  bonus, không DEF.
+
+### 8.3. Đo lại
+
+**Spearman 0.336 → 0.368** (3,645 đội). Theo nhóm: Melt +0.25 → +0.17, Vaporize
++0.16 → +0.10, Dendro+Electro −0.28 → +0.06, Hyperbloom −0.10 → +0.15, Burgeon
++0.24 (không đổi), Lunar-Charged −0.31 → −0.31. `teamDamage` giờ cộng cả đội cho
+từng ứng viên đứng sân (4×4 phép tính thay vì 4); lượt chạy mặc định ~16s → ~21s,
+sau khi bỏ dictionary theo nguyên tố trong vòng nóng.
+
+### 8.4. Còn lại
+
+- **Lunar gián tiếp** (phản ứng Lunar do cả đội kích hoạt, chia 0.6/0.3/0.05/0.05
+  theo người góp) chưa có — lý do chính đội Lunar-Charged vẫn −0.31 và Columbina
+  −0.37, Ineffa −0.31.
+- **Chưa phải timeline**: aura không phân rã theo thời gian, các phản ứng không
+  tranh aura của nhau (Vaporize và Overloaded cùng dùng một lần áp Pyro).
+- Quicken uptime là ước lượng thô (`2 × min(Dendro, Electro) / số lần áp`).
+- Hyperbloom/Burgeon/Superconduct đang +0.15…+0.24: ICD riêng của phản ứng
+  (tối đa 2 lần mỗi 0.5s trên một mục tiêu) và giới hạn lõi Bloom chưa có.
+
+## 9. Chưa xác minh, cần làm trước Pha 5
 
 - ~~Yatta có ghi hạt năng lượng không~~ — không; dùng wiki + gcsim (mục 7.1).
 - Gauge và ICD: Yatta `talent.advancedProps` có `elementalGaugeTheory` ("1U",

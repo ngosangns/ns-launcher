@@ -35,6 +35,8 @@ final class AbyssGoldenValueTests: XCTestCase {
                                "\(characterID) hit \(index): category differs")
                 XCTAssertEqual(term.action.rawValue, expectedTerm.action,
                                "\(characterID) hit \(index): action differs")
+                XCTAssertEqual(term.reaction?.rawValue, expectedTerm.reaction,
+                               "\(characterID) hit \(index): reaction differs")
             }
             compared += 1
         }

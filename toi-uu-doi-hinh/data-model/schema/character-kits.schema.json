@@ -172,6 +172,7 @@
             "description": "Nhân vật dùng thời gian đứng sân thế nào, khi frame data hoặc luật chung sai: chỉ đánh thường (combo), chỉ đòn nặng (charged — Neuvillette), hoặc thời lượng khác với frame của gcsim.",
             "properties": {
               "loop": { "enum": ["combo", "charged"] },
+              "infused": { "type": "boolean", "description": "Đòn thường/nặng của chính nhân vật gây sát thương nguyên tố (chữ game 'converted to X DMG' / 'infused with X'); catalyst và mũi sạc đầy của cung không cần ghi." },
               "comboSeconds": { "type": "number", "exclusiveMinimum": 0 },
               "chargedSeconds": { "type": "number", "exclusiveMinimum": 0 },
               "note": { "type": "string" }

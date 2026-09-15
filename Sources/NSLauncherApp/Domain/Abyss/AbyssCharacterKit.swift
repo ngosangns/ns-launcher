@@ -274,6 +274,11 @@ struct AbyssCharacterKit: Decodable, Sendable, Identifiable {
         }
 
         let loop: Loop?
+        /// The character's own normal and charged attacks deal their element
+        /// rather than Physical — the game text says "converted to Pyro DMG"
+        /// or "infused with Electro". A catalyst's attacks and a bow's fully
+        /// charged shot do without saying so.
+        let infused: Bool?
         /// Overrides gcsim's frames when they time a different action than
         /// the one the kit's hits describe (Xiao's plunges, Neuvillette's beam).
         let comboSeconds: Double?

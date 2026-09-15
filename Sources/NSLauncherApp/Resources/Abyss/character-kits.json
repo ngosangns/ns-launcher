@@ -51,6 +51,10 @@
         "eventsPerCast": 5,
         "skillCastsPerRotation": 1,
         "note": "Wiki: 1 mỗi đòn thường chuyển hoá. gcsim flins/skill.go:141 ICD 2s; bảng 'Manifest Flame Duration|10s' → 5. Một lần E mỗi rotation: Manifest Flame là một cửa sổ mỗi rotation; eventsPerCast đã đếm cả cửa sổ."
+      },
+      "attack": {
+        "infused": true,
+        "note": "Đòn thường/nặng áp nguyên tố của nhân vật (không phải Vật lý) — Ancient Rite: Arcane Light, chữ game: 'This form has the following characteristics: · Flins's Normal and Charged Attacks deal Electro DMG that cannot be overridden by other Elemental infusions, and he is unable to perform Plunging Attacks.' Dùng để đếm số lần áp nguyên tố (Pha 4)."
       }
     },
     {
@@ -162,7 +166,11 @@
           ],
           "value": 0.14
         }
-      ]
+      ],
+      "attack": {
+        "infused": true,
+        "note": "Đòn thường/nặng áp nguyên tố của nhân vật (không phải Vật lý) — Heaven and Earth Made Manifest, chữ game: 'In this mode, Zibai's Normal Attacks and Charged Attacks will deal Geo DMG that cannot be overridden by other infusions, and she can accrue special Phase Shift Radiance through different methods.' Dùng để đếm số lần áp nguyên tố (Pha 4)."
+      }
     },
     {
       "characterId": "albedo",
@@ -388,6 +396,10 @@
       "energy": {
         "eventsPerCast": 1,
         "note": "Wiki: 6 mỗi Skill DMG; gcsim varka/skill.go:215 — một lần mỗi lần dùng."
+      },
+      "attack": {
+        "infused": true,
+        "note": "Đòn thường/nặng áp nguyên tố của nhân vật (không phải Vật lý) — Windbound Execution, chữ game: 'Also, when performing Normal or Charged Attacks, Varka's dual-wielded claymores will deal corresponding Elemental DMG based on the Elemental Types of the characters in the party, respectively.' Dùng để đếm số lần áp nguyên tố (Pha 4)."
       }
     },
     {
@@ -577,6 +589,10 @@
         "eventsPerCast": 5,
         "skillCastsPerRotation": 1,
         "note": "Wiki: 1 mỗi đòn chuyển hoá. gcsim yoimiya/skill.go:52 ICD 2s; bảng 'Duration|10s' → 5. Một lần E mỗi rotation: Niwabi Enshou là một cửa sổ mỗi rotation; eventsPerCast đã đếm cả cửa sổ."
+      },
+      "attack": {
+        "infused": true,
+        "note": "Đòn thường/nặng áp nguyên tố của nhân vật (không phải Vật lý) — Niwabi Fire-Dance, chữ game: 'Niwabi Enshou During this time, arrows fired by Yoimiya's Normal Attack will be Blazing Arrows, and their DMG will be increased and converted to Pyro DMG.' Dùng để đếm số lần áp nguyên tố (Pha 4)."
       }
     },
     {
@@ -662,8 +678,14 @@
     {
       "characterId": "sethos",
       "chargedAttackLabels": {
-        "labels": ["Shadowpiercing Shot"],
+        "labels": [
+          "Shadowpiercing Shot"
+        ],
         "note": "Đòn nặng thật của Sethos là mũi tên sạc cấp 2 'Shadowpiercing Shot' (tiêu năng lượng), không phải Aimed Shot thường. Game ghi dòng này là 'Shadowpiercing Shot DMG' trong bảng đòn thường; không có nhãn này thì reader coi nó là dòng chưa phân loại và đòn nặng của anh rơi về Aimed Shot sạc đầy thường. Thêm 2026-09-15 khi đối chiếu bảng talent với file game (Pha 1)."
+      },
+      "attack": {
+        "infused": true,
+        "note": "Đòn thường/nặng áp nguyên tố của nhân vật (không phải Vật lý) — Secret Rite: Twilight Shadowpiercer, chữ game: 'Perform a secret rite, entering the \"Twilight Meditation\" state, during which Sethos's Normal Attacks will be converted into enemy-piercing Dusk Bolts: Deal Electro DMG to opponents in its path, with DMG increased based on Sethos's Elemental Mastery.' Dùng để đếm số lần áp nguyên tố (Pha 4)."
       }
     },
     {
@@ -689,6 +711,10 @@
         "eventsPerCast": 2,
         "skillCastsPerRotation": 1,
         "note": "Wiki: 2.5 mỗi đòn chuyển hoá. gcsim hutao/skill.go:97 ICD 5s (2 hạt, 50% ra 3); bảng 'Duration|9s' → lần ở 0s và 5s = 2 → 5 hạt. Một lần E mỗi rotation: Paramita Papilio là một cửa sổ mỗi rotation; eventsPerCast đã đếm cả cửa sổ."
+      },
+      "attack": {
+        "infused": true,
+        "note": "Đòn thường/nặng áp nguyên tố của nhân vật (không phải Vật lý) — Guide to Afterlife, chữ game: '·Converts attack DMG to Pyro DMG, which cannot be overridden by any other elemental infusion.' Dùng để đếm số lần áp nguyên tố (Pha 4)."
       }
     },
     {
@@ -700,7 +726,11 @@
           "uptime": 1.0,
           "note": "Sweeping Time, chữ game: 'Increased ATK that scales based on her DEF' — dòng 'ATK Bonus|{p} DEF' của bảng burst. Uptime 1: đòn thường/đòn nặng mô hình đếm cho Noelle là đòn trong 15s burst (CD 15s, 60 năng lượng)."
         }
-      ]
+      ],
+      "attack": {
+        "infused": true,
+        "note": "Đòn thường/nặng áp nguyên tố của nhân vật (không phải Vật lý) — Sweeping Time, chữ game: '·Converts attack DMG to Geo DMG that cannot be overridden by any other elemental infusion.' Dùng để đếm số lần áp nguyên tố (Pha 4)."
+      }
     },
     {
       "characterId": "lisa",
@@ -824,6 +854,10 @@
       "energy": {
         "skillCastsPerRotation": 1,
         "note": "Số hạt lấy nguyên từ wiki. Một lần E mỗi rotation: Blade Roller là một trạng thái mỗi rotation."
+      },
+      "attack": {
+        "infused": true,
+        "note": "Đòn thường/nặng áp nguyên tố của nhân vật (không phải Vật lý) — Ehecatl's Roar, chữ game: 'When her Normal and Plunging Attacks are used in this mode, they will switch to being based on her DEF, and Xilonen will deal Nightsoul-aligned Geo DMG that cannot be overridden.' Dùng để đếm số lần áp nguyên tố (Pha 4)."
       }
     },
     {
@@ -890,6 +924,10 @@
         "eventsPerCast": 3.3,
         "skillCastsPerRotation": 1,
         "note": "Wiki: 1 mỗi Riptide Slash. gcsim tartaglia/skill.go:177 ICD 3s; Tartaglia đứng sân tư thế cận chiến ~10s mỗi rotation → 10 / 3 ≈ 3.3. Một lần E mỗi rotation: Tư thế cận chiến một lần mỗi rotation (CD thật của tư thế tăng theo thời gian giữ, tới 45s — con số 6s trong bảng là CD tối thiểu)."
+      },
+      "attack": {
+        "infused": true,
+        "note": "Đòn thường/nặng áp nguyên tố của nhân vật (không phải Vật lý) — Foul Legacy: Raging Tide, chữ game: 'In this Stance, Tartaglia's Normal and Charged Attacks are converted to Hydro DMG that cannot be overridden by any other elemental infusion and change as follows: Normal Attack Performs up to 6 consecutive Hydro strikes.' Dùng để đếm số lần áp nguyên tố (Pha 4)."
       }
     },
     {
@@ -976,6 +1014,10 @@
       "stance": {
         "talent": "elementalBurst",
         "note": "Musou Isshin: chuỗi đòn trong kit là đòn của trạng thái burst, nên đòn thường/đòn nặng của Raiden chỉ có khi burst sẵn — nhân với số lần burst mỗi rotation. Ngoài Isshin đòn thường thường của Raiden không được đếm (thấp hơn thực tế)."
+      },
+      "attack": {
+        "infused": true,
+        "note": "Đòn thường/nặng áp nguyên tố của nhân vật (không phải Vật lý) — Secret Art: Musou Shinsetsu, chữ game: 'Musou Isshin While in this state, the Raiden Shogun will wield her tachi in battle, while her Normal, Charged, and Plunging Attacks will be infused with Electro DMG, which cannot be overridden.' Dùng để đếm số lần áp nguyên tố (Pha 4)."
       }
     },
     {
@@ -1030,6 +1072,10 @@
       "stance": {
         "talent": "elementalBurst",
         "note": "Pactsworn Pathclearer: đòn thường/đòn nặng trong kit lấy từ bảng burst, chỉ có khi burst sẵn."
+      },
+      "attack": {
+        "infused": true,
+        "note": "Đòn thường/nặng áp nguyên tố của nhân vật (không phải Vật lý) — Sacred Rite: Wolf's Swiftness, chữ game: 'Pactsworn Pathclearer Cyno's Normal, Charged, and Plunging Attacks will be converted to Electro DMG that cannot be overridden.' Dùng để đếm số lần áp nguyên tố (Pha 4)."
       }
     },
     {
@@ -1089,6 +1135,10 @@
         "eventsPerCast": 1,
         "skillCastsPerRotation": 1,
         "note": "Wiki: 5 mỗi Skill DMG; gcsim mavuika/skill.go:339 — một lần mỗi lần dùng. Một lần E mỗi rotation: All-Fire Armaments là một trạng thái mỗi rotation."
+      },
+      "attack": {
+        "infused": true,
+        "note": "Đòn thường/nặng áp nguyên tố của nhân vật (không phải Vật lý) — The Named Moment, chữ game: 'Mavuika's Normal, Charged, and Plunging Attacks will also be converted to deal Nightsoul-aligned Pyro DMG which cannot be overridden.' Dùng để đếm số lần áp nguyên tố (Pha 4)."
       }
     },
     {
@@ -1129,7 +1179,8 @@
       "attack": {
         "loop": "combo",
         "comboSeconds": 1.1,
-        "note": "'Chuỗi đòn' của Xiao trong kit là một đòn nhảy cao; gcsim xiao/plunge.go:56-57 highPlungeFramesX = 66 frame (61 tới đòn kế) → ~1.1s mỗi đòn, chưa tính cú nhảy dẫn vào (cận dưới của thời gian thật)."
+        "infused": true,
+        "note": "'Chuỗi đòn' của Xiao trong kit là một đòn nhảy cao; gcsim xiao/plunge.go:56-57 highPlungeFramesX = 66 frame (61 tới đòn kế) → ~1.1s mỗi đòn, chưa tính cú nhảy dẫn vào (cận dưới của thời gian thật). Đòn thường/nặng áp nguyên tố của nhân vật (không phải Vật lý) — Bane of All Evil, chữ game: '·Converts attack DMG into Anemo DMG, which cannot be overridden by any other elemental infusion.' Dùng để đếm số lần áp nguyên tố (Pha 4)."
       }
     },
     {
@@ -1287,6 +1338,10 @@
         "eventsPerCast": 12.5,
         "skillCastsPerRotation": 1,
         "note": "Wiki: 1 mỗi Projection Attack. Bảng: 'Projection Attack Interval|1.6s'; gcsim alhaitham/skill.go:208 ICD 1.5s. Alhaitham là người đứng sân và giữ gương cả rotation → 20s / 1.6s = 12.5 (cận trên — gương rơi khi đổi người). Một lần E mỗi rotation: Gương giữ suốt rotation; eventsPerCast đã đếm cả rotation."
+      },
+      "attack": {
+        "infused": true,
+        "note": "Đòn thường/nặng áp nguyên tố của nhân vật (không phải Vật lý) — Universality: An Elaboration on Form, chữ game: 'Chisel-Light Mirrors will have the following properties: ·When he possesses Chisel-Light Mirrors, Alhaitham's Normal, Charged, and Plunging Attacks will be converted to Dendro DMG.' Dùng để đếm số lần áp nguyên tố (Pha 4)."
       }
     },
     {
@@ -1334,6 +1389,10 @@
         "eventsPerCast": 3.75,
         "skillCastsPerRotation": 1,
         "note": "Wiki: 1 mỗi Swift Hunt/Impale the Night. gcsim clorinde/skill.go:201 ICD 2s; bảng 'Night Vigil Duration|7.5s' → 7.5 / 2 = 3.75. Một lần E mỗi rotation: Night Vigil là một cửa sổ mỗi rotation; eventsPerCast đã đếm cả cửa sổ."
+      },
+      "attack": {
+        "infused": true,
+        "note": "Đòn thường/nặng áp nguyên tố của nhân vật (không phải Vật lý) — Hunter's Vigil, chữ game: 'In this state, Clorinde's Normal Attacks will be transformed into \"Swift Hunt\" pistolet attacks, and the DMG dealt is converted into Electro DMG that cannot be overridden by infusions, and she will be unable to use Charged Attacks.' Dùng để đếm số lần áp nguyên tố (Pha 4)."
       }
     },
     {
@@ -1356,6 +1415,10 @@
       "energy": {
         "eventsPerCast": 3,
         "note": "Wiki '1.33' là mỗi nhát: gcsim@a086a05 internal/characters/diluc/skill.go:180 (1 hạt, 33% ra 2, ICD 0.3s). Searing Onslaught chém tối đa 3 nhát trước khi vào hồi chiêu → 4."
+      },
+      "attack": {
+        "infused": true,
+        "note": "Đòn thường/nặng áp nguyên tố của nhân vật (không phải Vật lý) — Dawn, chữ game: 'The searing flames that run down his blade cause it to be infused with Pyro.' Dùng để đếm số lần áp nguyên tố (Pha 4)."
       }
     },
     {
@@ -1481,6 +1544,10 @@
       "energy": {
         "eventsPerCast": 1,
         "note": "Wiki: 1.5 mỗi Skill DMG, cộng 1 mỗi đòn múa trong Pirouette. Chỉ đếm đòn mở đầu — số đòn múa tuỳ chế độ và chưa có kit Nilou."
+      },
+      "attack": {
+        "infused": true,
+        "note": "Đòn thường/nặng áp nguyên tố của nhân vật (không phải Vật lý) — Dance of Haftkarsvar, chữ game: 'While she is in the Pirouette state, Nilou's Normal Attacks and Elemental Skill will cause her to enter the Sword Dance and Whirling Steps stances respectively, causing DMG she deals to be converted to Hydro DMG that cannot be overridden and that is considered Elemental Skill DMG.' Dùng để đếm số lần áp nguyên tố (Pha 4)."
       }
     },
     {
@@ -1590,7 +1657,18 @@
       "characterId": "arlecchino",
       "tags": [
         "bond-of-life"
-      ]
+      ],
+      "attack": {
+        "infused": true,
+        "note": "Đòn thường/nặng áp nguyên tố của nhân vật (không phải Vật lý) — Invitation to a Beheading, chữ game: 'Masque of the Red Death When Arlecchino has a Bond of Life equal to or greater than 30% of her Max HP, she will enter the \"Masque of the Red Death\" state, where her Normal, Charged, and Plunging Attacks will be converted to deal Pyro DMG.' Dùng để đếm số lần áp nguyên tố (Pha 4)."
+      }
+    },
+    {
+      "characterId": "kamisato-ayaka",
+      "attack": {
+        "infused": true,
+        "note": "Đòn thường/nặng áp nguyên tố của nhân vật (không phải Vật lý) — Kamisato Art: Senho, chữ game: '·Coldness condenses around Ayaka's blade, infusing her attacks with Cryo for a brief period.' Dùng để đếm số lần áp nguyên tố (Pha 4)."
+      }
     }
   ]
 }

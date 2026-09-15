@@ -32,6 +32,7 @@ là **bản duy nhất**.
 | `talent-params.json` | Hệ số talent **đúng như file game**, mọi cấp 1–15, sinh tự động — nguồn thay thế cho bảng `scaling` văn xuôi (xem "Số liệu talent") |
 | `particles.json` | Số hạt nguyên tố Kỹ năng Nguyên tố tạo ra, theo Genshin Impact Wiki, sinh tự động (xem "Năng lượng") |
 | `frames.json` | Độ dài chuỗi đòn thường, đòn nặng, cast E/Q (frame), từ frame data gcsim, sinh tự động bằng `scripts/sync-abyss-frames.py` |
+| `gauge.json` | Gauge nguyên tố và ICD của từng hit, từ Yatta `advancedProps`, sinh tự động bằng `scripts/sync-abyss-gauge.py` — nền của mô hình phản ứng Pha 4 |
 | `tuning.json` | Tham số thuật toán (xem bên dưới) |
 | `game-ids.json` | Id số trong game → slug ở đây, để nhập Showcase theo UID |
 | `icons/characters/<id>.png`, `icons/weapons/<id>.png` | Ảnh chân dung, 256×256 |

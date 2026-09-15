@@ -59,6 +59,11 @@ final class AbyssBenchmarkTests: XCTestCase {
         let spearman: Double
         let overRated: [Bias]
         let underRated: [Bias]
+        /// The same log bias, averaged over teams grouped by the transformative
+        /// reaction they are priced on ("T:Hyperbloom") and by the amplifying
+        /// reaction their elements allow ("A:Melt") — where a reaction model is
+        /// over- or under-crediting a whole kind of team.
+        let byReaction: [Bias]
     }
 
     /// Spearman's rank correlation, ties given their average rank.
@@ -114,6 +119,7 @@ final class AbyssBenchmarkTests: XCTestCase {
         print(String(format: "BENCHMARK teams=%d spearman=%.3f", report.teams, report.spearman))
         for bias in report.overRated { print(String(format: "  OVER  %+.3f  %-22@ (%d teams)", bias.logBias, bias.character, bias.teams)) }
         for bias in report.underRated { print(String(format: "  UNDER %+.3f  %-22@ (%d teams)", bias.logBias, bias.character, bias.teams)) }
+        for bias in report.byReaction { print(String(format: "  GROUP %+.3f  %-22@ (%d teams)", bias.logBias, bias.character, bias.teams)) }
         if let path = ProcessInfo.processInfo.environment["ABYSS_BENCHMARK_REPORT"] {
             let encoder = JSONEncoder()
             encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
@@ -205,11 +211,27 @@ final class AbyssBenchmarkTests: XCTestCase {
                 sums[id, default: (0, 0)].count += 1
             }
         }
+        let scorer2 = scorer
+        var groups: [String: (total: Double, count: Int)] = [:]
+        for (index, ids) in members.enumerated() {
+            let characters = ids.compactMap { library.charactersByID[$0] }
+            let team = AbyssTeamContext.build(members: characters, library: library)
+            let transformative = scorer2.transformative(for: team, floor: .neutral)?.reaction.rawValue ?? "none"
+            let amplifying = team.enabledReactions.intersection([.vaporize, .melt]).map(\.rawValue).sorted()
+            for key in ["T:" + transformative, "A:" + (amplifying.isEmpty ? "none" : amplifying.joined(separator: "+"))] {
+                groups[key, default: (0, 0)].total += logRatios[index] - median
+                groups[key, default: (0, 0)].count += 1
+            }
+        }
+        let byReaction = groups.filter { $0.value.count >= 15 }
+            .map { Report.Bias(character: $0.key, teams: $0.value.count, logBias: $0.value.total / Double($0.value.count)) }
+            .sorted { $0.character < $1.character }
         let biases = sums.filter { $0.value.count >= 10 }
             .map { Report.Bias(character: $0.key, teams: $0.value.count, logBias: $0.value.total / Double($0.value.count)) }
             .sorted { $0.logBias > $1.logBias }
         return Report(teams: model.count, spearman: spearman(model, gcsim),
                       overRated: Array(biases.prefix(15)),
-                      underRated: Array(biases.suffix(15).reversed()))
+                      underRated: Array(biases.suffix(15).reversed()),
+                      byReaction: byReaction)
     }
 }

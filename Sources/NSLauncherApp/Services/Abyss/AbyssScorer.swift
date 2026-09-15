@@ -127,12 +127,36 @@ struct AbyssScorer: Sendable {
         let burst: Double
         let combo: Double
         let charged: Double
+        /// The amplifying multiplier minus one at this sheet's Elemental
+        /// Mastery, for the hits that land on the right aura. Zero when the
+        /// character's element amplifies nothing in this team.
+        var amplifyingGain: Double = 0
+        /// Damage one element application adds through Aggravate or Spread at
+        /// this sheet's Mastery, bonuses and crit. Zero without a Quicken aura.
+        var catalyzePerApplication: Double = 0
 
         /// One cast of each, for callers that compare damage rather than
         /// count it.
         var ability: Double { skill + burst }
 
         static let zero = DamageSplit(skill: 0, burst: 0, combo: 0, charged: 0)
+
+        /// The split with this member's reactions in it, at the uptimes one
+        /// on-field pick gives: each part's applying share amplifies, and each
+        /// application adds its catalyze damage.
+        func reacted(_ applications: AbyssApplicationProfile, amplifying: Double, catalyze: Double) -> DamageSplit {
+            let gain = amplifyingGain * amplifying
+            let perApplication = catalyzePerApplication * catalyze
+            return DamageSplit(
+                skill: skill * (1 + gain * applications.skill.applyingShare)
+                    + perApplication * applications.skill.applications,
+                burst: burst * (1 + gain * applications.burst.applyingShare)
+                    + perApplication * applications.burst.applications,
+                combo: combo * (1 + gain * applications.combo.applyingShare)
+                    + perApplication * applications.combo.applications,
+                charged: charged * (1 + gain * applications.charged.applyingShare)
+                    + perApplication * applications.charged.applications)
+        }
     }
 
     /// One member's rotation, minus anything their gear decides: how often
@@ -234,6 +258,24 @@ struct AbyssScorer: Sendable {
         let floorBonusOther: Double
         /// How often each part of the split happens — see `Rotation`.
         let rotation: Rotation
+        /// How often this character applies their element — see
+        /// `AbyssApplicationProfile`.
+        var applications: AbyssApplicationProfile = .none
+        /// The aura this character's element amplifies off, and how much of it
+        /// one application of theirs uses up: 2 for the strong direction
+        /// (Hydro on Pyro, Pyro on Cryo), 0.5 for the weak one — the game's
+        /// gauge consumption.
+        var amplifyingAura: GenshinElement?
+        var amplifyingConsumption: Double = 0
+        /// Aggravate's or Spread's coefficient when the team holds a Quicken
+        /// aura and this character is Electro or Dendro; zero otherwise.
+        var catalyzeCoefficient: Double = 0
+        /// The enemy's resistance multiplier alone, for hits that ignore DEF
+        /// (Lunar direct damage), and what the team and the floor add to each
+        /// Lunar reaction's base damage and bonus.
+        var resistanceMultiplier: Double = 1
+        var lunarBaseBonus: [AbyssReaction: Double] = [:]
+        var lunarFloorBonus: [AbyssReaction: Double] = [:]
 
         /// For a character with no parsed profile. An empty `aggregate` makes
         /// the damage loop produce zero, which is what the profile lookup used
@@ -340,22 +382,49 @@ struct AbyssScorer: Sendable {
         let resMultiplier = AbyssDamageMath.resMultiplier(
             team.resistance(floor.resistance(for: element), to: element))
 
-        return DamageContext(
+        let amplifyingCoefficient = AbyssDamageMath.amplifyingCoefficient(
+            for: element, teamElements: team.elementSet, constants: library.damageConstants)
+        var context = DamageContext(
             aggregate: profile.aggregate,
             element: element,
             defenceAndResistance: defMultiplier * resMultiplier,
-            // Reactions are gated by internal cooldown and by who applies which
-            // element first, so only a fraction of hits actually amplify — see
-            // `tuning.amplifyingUptime`, applied per sheet below.
-            amplifyingCoefficient: AbyssDamageMath.amplifyingCoefficient(
-                for: element, teamElements: team.elementSet,
-                constants: library.damageConstants),
+            // Only the hits that apply this element onto the right aura
+            // amplify; how many that is depends on the team and on who is on
+            // field, and is applied in `teamDamage` — see `ReactionVariant`.
+            amplifyingCoefficient: amplifyingCoefficient,
             amplifyingReactionBonus: amplifyingBonus,
             // The floor bonus only varies by whether the hit is a normal attack,
             // so it is resolved twice rather than per hit.
             floorBonusNormal: floorBonus(floor, element: element, isNormalAttack: true),
             floorBonusOther: floorBonus(floor, element: element, isNormalAttack: false),
             rotation: rotation)
+        context.applications = library.applicationsByCharacterID[character.id] ?? .none
+        context.resistanceMultiplier = resMultiplier
+        if profile.aggregate.contains(where: { $0.reaction != nil }) {
+            context.lunarBaseBonus = team.reactionBaseDamageBonus
+            for reaction in [AbyssReaction.lunarCharged, .lunarBloom, .lunarCrystallize] {
+                context.lunarFloorBonus[reaction] = floor.buffs
+                    .filter { $0.reactions.contains(reaction) }
+                    .reduce(0) { $0 + $1.bonus }
+            }
+        }
+        if amplifyingCoefficient > 1 {
+            var best: (pair: AbyssDamageMath.Pair, coefficient: Double)?
+            for (pair, coefficient) in library.damageConstants.amplifyingCoefficients
+            where pair.trigger == element && team.elementSet.contains(pair.existing) {
+                if coefficient > (best?.coefficient ?? 0) { best = (pair, coefficient) }
+            }
+            context.amplifyingAura = best?.pair.existing
+            context.amplifyingConsumption = (best?.coefficient ?? 0) >= 2 ? 2 : 0.5
+        }
+        if team.elementSet.isSuperset(of: [.dendro, .electro]) {
+            switch element {
+            case .electro: context.catalyzeCoefficient = library.damageConstants.aggravateCoefficient
+            case .dendro: context.catalyzeCoefficient = library.damageConstants.spreadCoefficient
+            default: break
+            }
+        }
+        return context
     }
 
     func damageSplit(context: DamageContext,
@@ -368,19 +437,16 @@ struct AbyssScorer: Sendable {
         effective.dmgAll += partyBuffs.dmg
         effective.elementalDMG += partyBuffs.elementalDMG
 
-        let amplifyingFactor: Double
+        var amplifyingGain = 0.0
         if context.amplifyingCoefficient > 1 {
-            let multiplier = AbyssDamageMath.amplifyingMultiplier(
+            amplifyingGain = AbyssDamageMath.amplifyingMultiplier(
                 coefficient: context.amplifyingCoefficient,
                 elementalMastery: effective.elementalMastery,
                 reactionBonus: context.amplifyingReactionBonus,
-                constants: library.damageConstants)
-            amplifyingFactor = 1 + tuning.amplifyingUptime * (multiplier - 1)
-        } else {
-            amplifyingFactor = 1
+                constants: library.damageConstants) - 1
         }
 
-        let common = context.defenceAndResistance * effective.critMultiplier * amplifyingFactor
+        let common = context.defenceAndResistance * effective.critMultiplier
         let elementalBonus = effective.dmgAll + effective.elementalBonus(context.element)
 
         var skill = 0.0
@@ -395,7 +461,19 @@ struct AbyssScorer: Sendable {
             let bonus = elementalBonus
                 + effective.categoryBonus(term.category)
                 + (isNormal ? context.floorBonusNormal : context.floorBonusOther)
-            let damage = term.multiplier * effective.stat(for: term.basis) * (1 + bonus) * common
+            var damage = term.multiplier * effective.stat(for: term.basis) * (1 + bonus) * common
+            if let reaction = term.reaction {
+                // Lunar direct damage: the reaction's coefficient on the talent
+                // multiplier, raised by the team's base-damage bonus and the
+                // Lunar EM curve; no DMG bonus and no enemy DEF, but CRIT.
+                let constants = library.damageConstants
+                damage = term.multiplier * effective.stat(for: term.basis)
+                    * (constants.lunarStellarCoefficients[reaction] ?? 1)
+                    * (1 + (context.lunarBaseBonus[reaction] ?? 0))
+                    * (1 + constants.lunarStellarEM.bonus(effective.elementalMastery)
+                        + (context.lunarFloorBonus[reaction] ?? 0))
+                    * context.resistanceMultiplier * effective.critMultiplier
+            }
             switch term.action {
             case .combo: combo += damage
             case .charged: charged += damage
@@ -404,7 +482,19 @@ struct AbyssScorer: Sendable {
             }
         }
 
-        return DamageSplit(skill: skill, burst: burst, combo: combo, charged: charged)
+        var split = DamageSplit(skill: skill, burst: burst, combo: combo, charged: charged)
+        split.amplifyingGain = amplifyingGain
+        if context.catalyzeCoefficient > 0 {
+            // Added to the base damage of the hit that applies, so it takes that
+            // hit's DMG bonus, crit, defence and resistance like the rest of it.
+            let constants = library.damageConstants
+            split.catalyzePerApplication = context.catalyzeCoefficient
+                * constants.transformativeLevelMultiplier
+                * (1 + constants.catalyzeEM.bonus(effective.elementalMastery))
+                * (1 + elementalBonus + context.floorBonusOther)
+                * common
+        }
+        return split
     }
 
     /// For callers that score one sheet once and have no context to reuse.
@@ -467,7 +557,7 @@ struct AbyssScorer: Sendable {
     /// of it, a gear option's solo score — is per second. Inside, damage is
     /// accumulated per rotation, because that is the unit the multipliers are
     /// written in: the attacks field time allows, the bursts energy allows, a reaction
-    /// `transformativeReactionsPerRotation` times.
+    /// as often as the team's element applications set it off.
     ///
     /// A rotation is assumed to take `tuning.rotationSeconds` for every team, so
     /// this does not reorder anything — it is the same ranking in units that
@@ -607,9 +697,14 @@ struct AbyssScorer: Sendable {
 
         var perCharacter: [String: Double] = [:]
         perCharacter.reserveCapacity(splits.count)
-        for (index, split) in splits.enumerated() {
-            let rotation = context.members[index].rotation
+        let variant = damage.onFieldIndex < context.variants.count ? context.variants[damage.onFieldIndex] : nil
+        for (index, raw) in splits.enumerated() {
+            let memberContext = context.members[index]
+            let rotation = memberContext.rotation
             let energyRecharge = stats[index].energyRecharge
+            let split = variant.map {
+                raw.reacted(memberContext.applications, amplifying: $0.amplifying[index], catalyze: $0.catalyze[index])
+            } ?? raw
             perCharacter[members[index].id] = perSecond(index == damage.onFieldIndex
                 ? onFieldDamage(split, rotation: rotation, energyRecharge: energyRecharge,
                                 fieldSeconds: fieldSeconds(driver: index, members: context.members, stats: stats))
@@ -661,8 +756,32 @@ struct AbyssScorer: Sendable {
         let members: [DamageContext]
         let resonance: PartyBuff
         /// The best transformative reaction this team can set off on this floor,
-        /// or nil when it can set off none.
+        /// by base damage, or nil when it can set off none.
         let transformative: Transformative?
+        /// What reactions come to with each member on field, in `members` order.
+        var variants: [ReactionVariant] = []
+    }
+
+    /// The reactions a team sets off in one rotation with one particular
+    /// member on field.
+    ///
+    /// Who stands on field changes whose attacks apply an element, and so how
+    /// much aura there is to amplify off, how often Quicken is up and how many
+    /// transformative reactions go off. All of it is counted from element
+    /// applications (`AbyssApplicationProfile`) at each member's rotation —
+    /// skills per cooldown, bursts at their cap, the on-field member's
+    /// attacks for the field time left — which is gear-independent on
+    /// purpose: counting at every sheet's own Energy Recharge would rebuild
+    /// this for every artifact the search tries, for a second-order effect.
+    struct ReactionVariant: Sendable {
+        /// Per member: share of their applying hits that find the aura.
+        var amplifying: [Double]
+        /// Per member: share of their applications that find Quicken.
+        var catalyze: [Double]
+        /// The transformative reaction worth most at these counts, and how
+        /// many times it goes off.
+        var transformative: Transformative?
+        var transformativeCount: Double = 0
     }
 
     /// A transformative reaction priced for one team on one floor.
@@ -698,7 +817,12 @@ struct AbyssScorer: Sendable {
     /// that triples Superconduct — so the team was chosen for a reaction the
     /// floor rewards and then paid for a different one.
     func transformative(for team: AbyssTeamContext, floor: AbyssFloorContext) -> Transformative? {
-        var best: Transformative?
+        transformativeCandidates(for: team, floor: floor).max { $0.base < $1.base }
+    }
+
+    /// Every transformative reaction the team can set off, priced per trigger.
+    func transformativeCandidates(for team: AbyssTeamContext, floor: AbyssFloorContext) -> [Transformative] {
+        var candidates: [Transformative] = []
         // Sorted, because Hyperbloom and Burgeon share a coefficient and a
         // resistance: the damage is the same either way, but the reaction that
         // gets named should not depend on how a Set happened to hash.
@@ -734,11 +858,111 @@ struct AbyssScorer: Sendable {
                 * AbyssDamageMath.resMultiplier(resistance)
                 * (1 + floorBonus)
                 * (1 + teamBonus)
-            if base > (best?.base ?? 0) {
-                best = Transformative(reaction: reaction, base: base, emCurve: emCurve)
-            }
+            candidates.append(Transformative(reaction: reaction, base: base, emCurve: emCurve))
         }
-        return best
+        return candidates
+    }
+
+    /// How many times a transformative reaction goes off, from the applications
+    /// of the elements it needs. Each reaction takes one application of each
+    /// side; Swirl takes Anemo against every element it can swirl; Hyperbloom
+    /// and Burgeon detonate the Bloom cores Dendro and Hydro make.
+    static func reactionCount(_ reaction: AbyssReaction, applications: [GenshinElement: Double]) -> Double {
+        var lanes = SIMD8<Double>(repeating: 0)
+        for (element, value) in applications { lanes[element.simdIndex] += value }
+        return reactionCount(reaction, lanes: lanes)
+    }
+
+    /// The same count over applications indexed by `GenshinElement.simdIndex` —
+    /// the form the scorer uses, since it runs once per team per on-field pick.
+    static func reactionCount(_ reaction: AbyssReaction, lanes: SIMD8<Double>) -> Double {
+        func a(_ element: GenshinElement) -> Double { lanes[element.simdIndex] }
+        switch reaction {
+        case .overloaded: return min(a(.pyro), a(.electro))
+        case .superconduct, .stellarConduct: return min(a(.cryo), a(.electro))
+        case .electroCharged, .lunarCharged: return min(a(.hydro), a(.electro))
+        case .burning: return min(a(.dendro), a(.pyro))
+        case .bloom, .lunarBloom: return min(a(.dendro), a(.hydro))
+        case .hyperbloom: return min(min(a(.dendro), a(.hydro)), a(.electro))
+        case .burgeon: return min(min(a(.dendro), a(.hydro)), a(.pyro))
+        case .swirl: return min(a(.anemo), a(.pyro) + a(.hydro) + a(.electro) + a(.cryo))
+        case .stellarSwirl: return min(a(.anemo), a(.cryo))
+        case .lunarCrystallize: return min(a(.geo), a(.hydro))
+        case .vaporize, .melt, .shatter: return 0
+        }
+    }
+
+    /// The reaction variants of a team, one per member on field.
+    func reactionVariants(members: [DamageContext], candidates: [Transformative]) -> [ReactionVariant] {
+        let count = members.count
+        // Each member's applications and gauge units with member `driver` on field.
+        func totals(driver: Int) -> (applications: [Double], units: [Double]) {
+            var castSeconds = 0.0
+            for (index, member) in members.enumerated() {
+                let rotation = member.rotation
+                castSeconds += rotation.castSeconds(bursts: rotation.burstCap, onField: index == driver)
+            }
+            var applications = [Double](repeating: 0, count: count)
+            var units = [Double](repeating: 0, count: count)
+            for (index, member) in members.enumerated() {
+                let rotation = member.rotation
+                let profile = member.applications
+                var a = rotation.skillCasts * profile.skill.applications + rotation.burstCap * profile.burst.applications
+                var u = rotation.skillCasts * profile.skill.units + rotation.burstCap * profile.burst.units
+                if index == driver {
+                    let field = max(0, tuning.rotationSeconds - castSeconds)
+                    var strings = 0.0, chargedAttacks = 0.0
+                    if rotation.loops.combo, !rotation.loops.mixed, !rotation.loops.charged, rotation.comboSeconds > 0 {
+                        strings = field / rotation.comboSeconds
+                    } else if rotation.loops.charged, !rotation.loops.combo, rotation.chargedSeconds > 0 {
+                        chargedAttacks = field / rotation.chargedSeconds
+                    } else if rotation.comboSeconds + rotation.chargedSeconds > 0 {
+                        strings = field / (rotation.comboSeconds + rotation.chargedSeconds)
+                        chargedAttacks = strings
+                    }
+                    a += strings * profile.combo.applications + chargedAttacks * profile.charged.applications
+                    u += strings * profile.combo.units + chargedAttacks * profile.charged.units
+                }
+                applications[index] = a
+                units[index] = u
+            }
+            return (applications, units)
+        }
+
+        return (0..<count).map { driver in
+            let (applications, units) = totals(driver: driver)
+            var byElement = SIMD8<Double>(repeating: 0)
+            var unitsByElement = SIMD8<Double>(repeating: 0)
+            for (index, member) in members.enumerated() {
+                byElement[member.element.simdIndex] += applications[index]
+                unitsByElement[member.element.simdIndex] += units[index]
+            }
+            var variant = ReactionVariant(amplifying: [Double](repeating: 0, count: count),
+                                          catalyze: [Double](repeating: 0, count: count))
+            let quicken = min(byElement[GenshinElement.dendro.simdIndex], byElement[GenshinElement.electro.simdIndex])
+            for (index, member) in members.enumerated() where applications[index] > 0 {
+                if let aura = member.amplifyingAura, member.amplifyingConsumption > 0 {
+                    // Aura units the other side lays down, against the units this
+                    // member's applications use up.
+                    let gauge = units[index] / applications[index]
+                    let supported = unitsByElement[aura.simdIndex] / (member.amplifyingConsumption * gauge)
+                    variant.amplifying[index] = min(1, supported / applications[index])
+                }
+                if member.catalyzeCoefficient > 0 {
+                    variant.catalyze[index] = min(1, 2 * quicken / applications[index])
+                }
+            }
+            var best: (Transformative, Double)?
+            for candidate in candidates {
+                let reactions = Self.reactionCount(candidate.reaction, lanes: byElement)
+                if reactions * candidate.base > (best.map { $0.0.base * $0.1 } ?? 0) {
+                    best = (candidate, reactions)
+                }
+            }
+            variant.transformative = best?.0
+            variant.transformativeCount = best?.1 ?? 0
+            return variant
+        }
     }
 
     func teamDamageContext(members: [AbyssCharacter],
@@ -746,13 +970,17 @@ struct AbyssScorer: Sendable {
                            team: AbyssTeamContext,
                            profiles: [String: AbyssDamageProfile] = [:]) -> TeamDamageContext {
         let rotations = rotations(for: members)
-        return TeamDamageContext(
-            members: members.indices.map {
-                damageContext(for: members[$0], profile: profiles[members[$0].id], floor: floor,
-                              team: team, rotation: rotations[$0])
-            },
+        let contexts = members.indices.map {
+            damageContext(for: members[$0], profile: profiles[members[$0].id], floor: floor,
+                          team: team, rotation: rotations[$0])
+        }
+        let candidates = transformativeCandidates(for: team, floor: floor)
+        var context = TeamDamageContext(
+            members: contexts,
             resonance: resonanceBuff(for: team),
-            transformative: transformative(for: team, floor: floor))
+            transformative: candidates.max { $0.base < $1.base })
+        context.variants = reactionVariants(members: contexts, candidates: candidates)
+        return context
     }
 
     /// What a team does in one rotation, and who should stand on field.
@@ -772,16 +1000,10 @@ struct AbyssScorer: Sendable {
         let party = partyBuffs(stats: stats, setIDs: setIDs, resonance: context.resonance,
                                members: context.members)
 
-        var offFieldTotal = 0.0
         for (index, memberContext) in context.members.enumerated() {
-            let split = damageSplit(context: memberContext, stats: stats[index], partyBuffs: party)
-            splits[index] = split
-            offFieldTotal += offFieldDamage(split, rotation: memberContext.rotation,
-                                            energyRecharge: stats[index].energyRecharge)
+            splits[index] = damageSplit(context: memberContext, stats: stats[index], partyBuffs: party)
         }
 
-        // What standing on field adds over not: the attack string, and the
-        // extra bursts full-value particles buy.
         // Every member's off-field cast time once, so each candidate's field
         // time is a subtraction rather than a loop.
         var offFieldCasts = 0.0
@@ -791,56 +1013,64 @@ struct AbyssScorer: Sendable {
                 bursts: rotation.burstCasts(energyRecharge: stats[index].energyRecharge, onField: false),
                 onField: false)
         }
-        func onFieldGain(_ index: Int) -> Double {
-            let rotation = context.members[index].rotation
-            let energyRecharge = stats[index].energyRecharge
-            let ownOff = rotation.castSeconds(
-                bursts: rotation.burstCasts(energyRecharge: energyRecharge, onField: false), onField: false)
-            let ownOn = rotation.castSeconds(
-                bursts: rotation.burstCasts(energyRecharge: energyRecharge, onField: true), onField: true)
-            let field = tuning.rotationSeconds - (offFieldCasts - ownOff) - ownOn
-            return onFieldDamage(splits[index], rotation: rotation, energyRecharge: energyRecharge,
-                                 fieldSeconds: field)
-                - offFieldDamage(splits[index], rotation: rotation, energyRecharge: energyRecharge)
-        }
-
-        // First maximum wins: strict `>` over members in order, so a tie
-        // resolves to the earlier member and the pick is the same every run.
-        var bestIndex = 0
-        var bestGain = onFieldGain(0)
-        for index in 1..<splits.count {
-            let gain = onFieldGain(index)
-            if gain > bestGain {
-                bestGain = gain
-                bestIndex = index
-            }
-        }
 
         // Transformative damage belongs to the team, not to a hit: it ignores
         // ATK, DMG bonus, CRIT and enemy DEF entirely and depends only on the
         // Elemental Mastery of whoever sets it off. The team always sets it off
         // with its best EM, which is why a support who deals no damage of their
         // own can be the largest contributor on a Bloom team.
-        var reactionDamage = 0.0
+        var bestEM = -Double.infinity
         var triggerIndex = -1
-        if let transformative = context.transformative {
-            var bestEM = -Double.infinity
-            for (index, sheet) in stats.enumerated() {
-                let elementalMastery = sheet.elementalMastery + party.elementalMastery
-                if elementalMastery > bestEM {
-                    bestEM = elementalMastery
-                    triggerIndex = index
-                }
+        for (index, sheet) in stats.enumerated() {
+            let elementalMastery = sheet.elementalMastery + party.elementalMastery
+            if elementalMastery > bestEM {
+                bestEM = elementalMastery
+                triggerIndex = index
             }
-            let bonus = transformative.emCurve.bonus(max(bestEM, 0))
-            reactionDamage = tuning.transformativeReactionsPerRotation
-                * transformative.base * (1 + bonus)
         }
 
-        return TeamDamage(total: offFieldTotal + bestGain + reactionDamage,
-                          onFieldIndex: bestIndex,
-                          reactionDamage: reactionDamage,
-                          reactionTriggerIndex: triggerIndex)
+        // Each candidate on field: every member's damage at the reactions that
+        // pick sets off, plus the transformative reactions it counts. The
+        // candidates differ in whose attacks apply an element, so the whole
+        // team is summed per candidate — still no damage recomputed, only
+        // arithmetic over the splits above.
+        var best: (total: Double, index: Int, reaction: Double)?
+        for driver in context.members.indices {
+            let variant = driver < context.variants.count ? context.variants[driver] : nil
+            var total = 0.0
+            for (index, memberContext) in context.members.enumerated() {
+                let rotation = memberContext.rotation
+                let energyRecharge = stats[index].energyRecharge
+                let split = variant.map {
+                    splits[index].reacted(memberContext.applications, amplifying: $0.amplifying[index],
+                                          catalyze: $0.catalyze[index])
+                } ?? splits[index]
+                if index == driver {
+                    let ownOff = rotation.castSeconds(
+                        bursts: rotation.burstCasts(energyRecharge: energyRecharge, onField: false), onField: false)
+                    let ownOn = rotation.castSeconds(
+                        bursts: rotation.burstCasts(energyRecharge: energyRecharge, onField: true), onField: true)
+                    total += onFieldDamage(split, rotation: rotation, energyRecharge: energyRecharge,
+                                           fieldSeconds: tuning.rotationSeconds - (offFieldCasts - ownOff) - ownOn)
+                } else {
+                    total += offFieldDamage(split, rotation: rotation, energyRecharge: energyRecharge)
+                }
+            }
+            var reaction = 0.0
+            if let variant, let transformative = variant.transformative, triggerIndex >= 0 {
+                reaction = variant.transformativeCount * transformative.base
+                    * (1 + transformative.emCurve.bonus(max(bestEM, 0)))
+            }
+            total += reaction
+            // First maximum wins: strict `>` over members in order, so a tie
+            // resolves to the earlier member and the pick is the same every run.
+            if best == nil || total > best!.total { best = (total, driver, reaction) }
+        }
+
+        return TeamDamage(total: best?.total ?? 0,
+                          onFieldIndex: best?.index ?? 0,
+                          reactionDamage: best?.reaction ?? 0,
+                          reactionTriggerIndex: (best?.reaction ?? 0) > 0 ? triggerIndex : -1)
     }
 
     /// For callers scoring one team once, with no context to reuse.

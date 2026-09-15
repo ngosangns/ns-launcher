@@ -475,12 +475,16 @@ ignore ATK, DMG bonus, CRIT and enemy DEF entirely and depend only on the
 triggering character's Elemental Mastery, so `AbyssScorer` prices the strongest
 reaction the team unlocks — one, not the sum, since a rotation's elemental
 applications compete for the same aura — and credits it to whoever has the most
-EM. Frequency is the modelling assumption, not the formula:
-`tuning.transformativeReactionsPerRotation` is the most subjective number in the
-file and is what decides where reaction teams rank. Catalyze (Aggravate, Spread)
-and the Lunar/Stellar block are **not** modelled: catalyze is an additive base
-DMG bonus that would need the damage loop restructured, and the Lunar block has
-its own four-way aggregation rule.
+EM. Since Phase 4 the frequency is counted rather than assumed: each member's
+element applications per rotation (`AbyssApplicationProfile`, from Yatta's
+per-hit gauge and ICD in `gauge.json`) decide how many times a transformative
+reaction goes off, what share of a Vaporize or Melt trigger's applying hits
+find the aura, and how often Aggravate or Spread adds its additive damage. All
+of it depends on who is on field, so `TeamDamageContext.variants` holds one
+reaction variant per member and `teamDamage` sums the team for each. Talent
+rows that *are* Lunar reaction damage ("Lunar-Charged DMG") are priced by the
+Lunar direct formula; the Lunar indirect branch (the four-way split between
+contributors) is still not modelled.
 
 Normal and charged attacks are separate categories in a damage profile and are
 counted with separate per-rotation constants; plunging attacks are deliberately

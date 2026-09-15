@@ -165,7 +165,11 @@ final class AbyssReactionTests: XCTestCase {
     func testReactionDamageScalesWithElementalMasteryAndIsCreditedToItsTrigger() throws {
         let tuning = try XCTUnwrap(library.tuning)
         let scorer = AbyssScorer(library: library, tuning: tuning)
-        let (team, members) = try context(["nahida", "xingqiu", "raiden-shogun", "diona"])
+        // No Electro and one Dendro: a Quicken team would add Aggravate damage per application,
+        // which an empty sheet still deals (it is additive base damage), and
+        // this test is about the transformative reaction alone (two Dendro members would
+        // also grant resonance EM, which Nahida's EM-scaled hits turn into damage).
+        let (team, members) = try context(["nahida", "xingqiu", "diona", "furina"])
         let context = scorer.teamDamageContext(members: members, floor: .neutral, team: team)
         XCTAssertNotNil(context.transformative)
 

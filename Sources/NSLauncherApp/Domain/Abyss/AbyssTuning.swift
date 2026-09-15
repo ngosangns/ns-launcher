@@ -93,12 +93,6 @@ struct AbyssTuning: Decodable, Sendable {
     let energy: Energy
     let conditionalUptime: Double
     let assumedStacks: Double
-    let amplifyingUptime: Double
-    /// Transformative reactions per rotation. The most subjective number in the
-    /// file: transformative damage ignores ATK, DMG bonus, CRIT and enemy DEF,
-    /// so the frequency — not the formula — is what decides where reaction teams
-    /// rank. See `notes.transformativeReactionsPerRotation`.
-    let transformativeReactionsPerRotation: Double
     /// One source of enemy elemental resistance reduction.
     ///
     /// The channel the model never had. `resMultiplier` has always had a
