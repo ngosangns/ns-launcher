@@ -165,6 +165,18 @@
               "note": { "type": "string" }
             }
           },
+          "attack": {
+            "type": "object",
+            "required": ["note"],
+            "additionalProperties": false,
+            "description": "Nhân vật dùng thời gian đứng sân thế nào, khi frame data hoặc luật chung sai: chỉ đánh thường (combo), chỉ đòn nặng (charged — Neuvillette), hoặc thời lượng khác với frame của gcsim.",
+            "properties": {
+              "loop": { "enum": ["combo", "charged"] },
+              "comboSeconds": { "type": "number", "exclusiveMinimum": 0 },
+              "chargedSeconds": { "type": "number", "exclusiveMinimum": 0 },
+              "note": { "type": "string" }
+            }
+          },
           "reactionBaseDamageBonus": {
             "type": "array",
             "description": "Cộng vào BASE DAMAGE của phản ứng Lunar/Stellar chỉ nhờ có mặt trong đội. `reactions` là mảng tên tường minh — đó chính là điểm cải tiến so với cột nó thay thế: cột cũ là chuỗi tự do ('Lunar-Charged/Bloom/Crystallize') mà engine không hề đọc, nên mọi nguồn cộng cho MỌI phản ứng Lunar/Stellar; Lauma chỉ nâng Lunar-Bloom mà đang trả tiền cho Stellar-Conduct của đội.",

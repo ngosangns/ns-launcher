@@ -201,6 +201,60 @@ final class AbyssEnergyTests: XCTestCase {
         XCTAssertEqual(rotation.attackWindow(burstCasts: 1), 1)
     }
 
+    // MARK: - Field time
+
+    /// Field time is spent on the best loop open to the character, and a loop
+    /// that takes longer fits fewer times — the replacement for six strings
+    /// and two charged attacks for everyone.
+    func testFieldTimeBuysAttacksAtTheirOwnLength() throws {
+        var rotation = AbyssScorer.Rotation.unconstrained
+        rotation.comboSeconds = 2
+        rotation.chargedSeconds = 1
+        let split = AbyssScorer.DamageSplit(skill: 0, burst: 0, combo: 1000, charged: 900)
+        // String plus charged, (1000 + 900) / 3, beats the string alone, 1000 / 2…
+        XCTAssertEqual(rotation.attackRate(split), 1900.0 / 3, accuracy: 1e-9)
+        // …and a bow's charged-only loop beats both.
+        rotation.loops.charged = true
+        XCTAssertEqual(rotation.attackRate(split), 900, accuracy: 1e-9)
+
+        var slower = rotation
+        slower.comboSeconds = 4
+        slower.loops = .init(combo: true, mixed: false, charged: false)
+        rotation.loops = .init(combo: true, mixed: false, charged: false)
+        XCTAssertEqual(slower.attackRate(split), rotation.attackRate(split) / 2, accuracy: 1e-9)
+    }
+
+    /// The data behind it: frames resolve for most characters, Neuvillette
+    /// spends his field time on Equitable Judgment, and every other member's
+    /// casts come out of the driver's time.
+    func testFieldTimeComesFromFramesAndCasts() throws {
+        // Every character gcsim implements has an entry; of those, only the
+        // fields the patterns did not recognise stand in with the median.
+        let covered = Set(library.frames?.characters.keys.map { $0 } ?? [])
+        XCTAssertGreaterThan(covered.count, 100)
+        let estimatedAmongCovered = library.diagnostics.framesEstimated.filter { entry in
+            covered.contains(String(entry.split(separator: ":")[0]))
+        }
+        XCTAssertLessThan(estimatedAmongCovered.count, 50,
+                          "most timings should come from gcsim, not the median")
+        let neuvillette = try XCTUnwrap(library.energyByCharacterID["neuvillette"])
+        XCTAssertEqual(neuvillette.attackLoops, .init(combo: false, mixed: false, charged: true))
+        let huTao = try XCTUnwrap(library.energyByCharacterID["hu-tao"])
+        XCTAssertEqual(huTao.comboSeconds, Double(14 + 12 + 26 + 29 + 37 + 72) / 60, accuracy: 1e-9)
+
+        let scorer = try scorer()
+        let members = try characters(["hu-tao", "bennett", "xingqiu", "diona"])
+        let team = AbyssTeamContext.build(members: members, library: library)
+        let context = scorer.teamDamageContext(members: members, floor: .neutral, team: team)
+        var sheet = AbyssStats()
+        sheet.energyRecharge = 1.5
+        let stats = Array(repeating: sheet, count: 4)
+        let field = scorer.fieldSeconds(driver: 0, members: context.members, stats: stats)
+        let tuning = try XCTUnwrap(library.tuning)
+        XCTAssertLessThan(field, tuning.rotationSeconds)
+        XCTAssertGreaterThan(field, tuning.rotationSeconds / 2, "the supports' casts ate most of the rotation")
+    }
+
     /// The per-character bars add up to the score, whoever ends up on field.
     func testPerCharacterDamageAddsUpToTheTeamTotal() throws {
         let scorer = try scorer()
@@ -220,7 +274,9 @@ final class AbyssEnergyTests: XCTestCase {
         for index in members.indices {
             let rotation = context.members[index].rotation
             sum += index == damage.onFieldIndex
-                ? scorer.onFieldDamage(splits[index], rotation: rotation, energyRecharge: sheet.energyRecharge)
+                ? scorer.onFieldDamage(splits[index], rotation: rotation, energyRecharge: sheet.energyRecharge,
+                                       fieldSeconds: scorer.fieldSeconds(driver: index, members: context.members,
+                                                                         stats: stats))
                 : scorer.offFieldDamage(splits[index], rotation: rotation, energyRecharge: sheet.energyRecharge)
         }
         XCTAssertEqual(sum, damage.total, accuracy: max(damage.total, 1) * 1e-9)

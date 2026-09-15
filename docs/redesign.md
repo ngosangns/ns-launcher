@@ -457,8 +457,35 @@ mô hình/gcsim, trừ trung vị) chỉ ra đúng hai lỗ cấu trúc:
 | Đánh giá thấp | Neuvillette −0.43, Sethos −0.57, Tighnari −0.30, Varesa −0.50 | `chargedAttacksPerRotation = 2` — carry đòn nặng spam đòn nặng; đòn nhảy chưa có |
 | Đánh giá thấp | Lauma −0.59, Columbina −0.46, Ineffa −0.39, Aino, Nicole | Phản ứng Lunar — Pha 4 |
 
-Việc tiếp theo có bằng chứng: thay số đòn cố định bằng thời gian đứng sân và
-frame data (gcsim), đo lại Spearman.
+### 7.7. Thời gian đứng sân từ frame data — Spearman 0.19 → 0.34
+
+`normalCombosPerRotation = 6` và `chargedAttacksPerRotation = 2` bị xoá. Người
+đứng sân tấn công trong **thời gian rotation còn lại** sau mọi lần cast của cả
+đội, bằng vòng tấn công tốt nhất mở cho nhân vật:
+
+- Độ dài chuỗi đòn thường, đòn nặng, cast E/Q: `frames.json`, sinh bằng
+  `scripts/sync-abyss-frames.py` từ frame data gcsim (`attackFrames[i]
+  [ActionAttack]`, `chargeFrames`, `aimedFrames[1]`, `skillFrames[ActionSwap]`…).
+  109 nhân vật; 40 trường không nhận ra mẫu → trung vị, báo ở
+  `diagnostics.framesEstimated`.
+- Thời gian đứng sân của X = `rotationSeconds − Σ(cast ngoài sân của người khác,
+  mỗi lần + swapSeconds) − cast của chính X`. `swapSeconds = 0.2` là giả định
+  theo `swap_delay` mặc định của gcsim.
+- Vòng tấn công: chuỗi đòn; chuỗi + đòn nặng; đòn nặng liên tục chỉ cho cung
+  (mũi ngắm không tốn thể lực) hoặc kit `attack.loop = charged`.
+- Kit: Neuvillette — Equitable Judgment 8 tick trong ~3.17s (gcsim
+  `charge.go`, đủ 3 giọt nước); Xiao — một đòn nhảy ~1.1s.
+
+Benchmark: **Spearman 0.336** (từ 0.192). Carry đánh thường chuỗi dài hết lệch
+lớn (Hu Tao ra khỏi danh sách, Eula +0.53 → +0.24, Yoimiya +0.45 → +0.27),
+Neuvillette từ −0.43 thành +0.25. Còn lệch: Sethos −0.49, Tighnari −0.30 (đòn
+nặng nhiều mũi), Varesa −0.36 (đòn nhảy chưa có), các đội Lunar −0.3…−0.4 (Pha
+4); Amber +0.57, Tartaglia +0.54.
+
+Tác dụng phụ đã xử lý: đội top của hai nửa giờ hay dùng chung vài support, và
+bước ghép hai nửa quét 182 triệu cặp trước khi gặp cặp hợp lệ (31s). Thêm cận
+dưới chính xác theo từng id — quét bắt đầu sau đội nửa sau cuối cùng còn giữ
+một id của đội nửa đầu — còn 0.12s.
 
 ## 8. Chưa xác minh, cần làm trước Pha 4
 

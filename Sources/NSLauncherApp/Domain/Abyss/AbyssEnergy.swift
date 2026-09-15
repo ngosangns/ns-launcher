@@ -48,6 +48,22 @@ struct AbyssParticles: Decodable, Sendable {
     let characters: [String: Character]
 }
 
+/// Decodable mirror of `Resources/Abyss/frames.json`: gcsim's frame counts.
+struct AbyssFrames: Decodable, Sendable {
+    struct Character: Decodable, Sendable {
+        let gcsim: String
+        /// Frames from each normal-attack hit to the next.
+        let comboFrames: [Int]?
+        /// Frames from a charged attack to the next normal attack.
+        let chargedFrames: Int?
+        /// Frames until the character can swap out after a skill or burst.
+        let skillFrames: Int?
+        let burstFrames: Int?
+    }
+
+    let characters: [String: Character]
+}
+
 /// One character's energy economy, resolved once at load: everything about it
 /// that does not depend on who else is in the team or on anybody's gear.
 struct AbyssEnergyProfile: Sendable, Equatable {
@@ -69,6 +85,16 @@ struct AbyssEnergyProfile: Sendable, Equatable {
         case none, burst, skill
     }
 
+    /// What a character does with their time on field. Combo strings and
+    /// string-plus-charged are open to everyone; charged attacks alone only to
+    /// a bow (aimed shots cost no stamina) or a character whose kit says so
+    /// (Neuvillette). A kit can also close the loops to one.
+    struct AttackLoops: Sendable, Equatable {
+        var combo: Bool
+        var mixed: Bool
+        var charged: Bool
+    }
+
     let element: GenshinElement
     /// Particles this character's skill generates in one rotation.
     let particlesPerRotation: Double
@@ -82,6 +108,15 @@ struct AbyssEnergyProfile: Sendable, Equatable {
     /// `min(1, rotationSeconds / cooldown)`.
     let burstCastsCap: Double
     let window: Window
+    /// Seconds one normal-attack string takes, one charged attack, and a skill
+    /// or burst cast until the character can swap out — gcsim's frames, or the
+    /// median of every character that has them (`framesEstimated`).
+    let comboSeconds: Double
+    let chargedSeconds: Double
+    let skillSeconds: Double
+    let burstSeconds: Double
+    /// Which attack loops this character's time on field can be spent on.
+    let attackLoops: AttackLoops
     /// True when the particle count is the median of every resolved character
     /// rather than this character's own — see
     /// `AbyssParseDiagnostics.particlesEstimated`.

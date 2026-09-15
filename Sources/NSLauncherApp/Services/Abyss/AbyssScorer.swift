@@ -118,8 +118,8 @@ struct AbyssScorer: Sendable {
     /// on field, and the two on-field-only parts.
     ///
     /// Normal and charged attacks are separate because they happen a different
-    /// number of times in a rotation — `normalCombosPerRotation` against
-    /// `chargedAttacksPerRotation` — so one multiplier could not cover both.
+    /// number of times in a rotation — decided by how long each takes — so one
+    /// multiplier could not cover both.
     struct DamageSplit: Sendable {
         /// One skill cast's damage.
         let skill: Double
@@ -152,11 +152,44 @@ struct AbyssScorer: Sendable {
         let window: AbyssEnergyProfile.Window
         let energyOffField: Double
         let energyOnField: Double
+        /// Seconds per cast until the character can swap out, and what a swap
+        /// adds to an off-field cast.
+        var skillSeconds: Double = 0
+        var burstSeconds: Double = 0
+        var swapSeconds: Double = 0
+        /// Seconds per normal-attack string and per charged attack, and which
+        /// loops field time can be spent on.
+        var comboSeconds: Double = 0
+        var chargedSeconds: Double = 0
+        var loops = AbyssEnergyProfile.AttackLoops(combo: true, mixed: true, charged: false)
+        /// Cast time the rest of the party takes out of this character's
+        /// field time when nobody real is there — gear selection's stand-in.
+        var standInOthersSeconds: Double = 0
 
-        /// For a character with no energy profile: one of each, as the model
-        /// used to assume for everybody.
+        /// For a character with no energy profile: one of each, and no time on
+        /// field to attack in.
         static let unconstrained = Rotation(skillCasts: 1, burstCost: 0, burstCap: 1, window: .none,
                                             energyOffField: 0, energyOnField: 0)
+
+        /// Seconds this member's casts take out of a rotation. Off field, each
+        /// cast also pays for the swap in.
+        func castSeconds(bursts: Double, onField: Bool) -> Double {
+            skillCasts * skillSeconds + bursts * burstSeconds
+                + (onField ? 0 : (skillCasts + bursts) * swapSeconds)
+        }
+
+        /// Damage per second of field time: the best loop open to the
+        /// character. A string and a string-plus-charged are open to everyone;
+        /// charged attacks alone to bows and to kits that say so.
+        func attackRate(_ split: DamageSplit) -> Double {
+            var best = 0.0
+            if loops.combo, comboSeconds > 0 { best = max(best, split.combo / comboSeconds) }
+            if loops.mixed, comboSeconds + chargedSeconds > 0 {
+                best = max(best, (split.combo + split.charged) / (comboSeconds + chargedSeconds))
+            }
+            if loops.charged, chargedSeconds > 0 { best = max(best, split.charged / chargedSeconds) }
+            return best
+        }
 
         /// Bursts one rotation holds: capped by the cooldown, and by energy.
         func burstCasts(energyRecharge: Double, onField: Bool) -> Double {
@@ -237,11 +270,22 @@ struct AbyssScorer: Sendable {
                 case .field: field += value
                 }
             }
-            return Rotation(skillCasts: own.skillCastsPerRotation, burstCost: own.burstCost,
-                            burstCap: own.burstCastsCap, window: own.window,
-                            energyOffField: caster + (field + enemy) * rules.offFieldShare,
-                            energyOnField: caster + field + enemy)
+            var rotation = Rotation(skillCasts: own.skillCastsPerRotation, burstCost: own.burstCost,
+                                    burstCap: own.burstCastsCap, window: own.window,
+                                    energyOffField: caster + (field + enemy) * rules.offFieldShare,
+                                    energyOnField: caster + field + enemy)
+            timing(&rotation, from: own)
+            return rotation
         }
+    }
+
+    private func timing(_ rotation: inout Rotation, from profile: AbyssEnergyProfile) {
+        rotation.skillSeconds = profile.skillSeconds
+        rotation.burstSeconds = profile.burstSeconds
+        rotation.swapSeconds = tuning.swapSeconds
+        rotation.comboSeconds = profile.comboSeconds
+        rotation.chargedSeconds = profile.chargedSeconds
+        rotation.loops = profile.attackLoops
     }
 
     /// A character's rotation with nobody around them, for gear selection.
@@ -257,9 +301,15 @@ struct AbyssScorer: Sendable {
         let energy = own.particlesPerRotation * rules.sameElementParticle
             + 3 * library.medianParticlesPerCast * rules.otherElementParticle * rules.offFieldShare
             + rules.enemyClearParticlesPerRotation * rules.clearParticle
-        return Rotation(skillCasts: own.skillCastsPerRotation, burstCost: own.burstCost,
-                        burstCap: own.burstCastsCap, window: own.window,
-                        energyOffField: energy, energyOnField: energy)
+        var rotation = Rotation(skillCasts: own.skillCastsPerRotation, burstCost: own.burstCost,
+                                burstCap: own.burstCastsCap, window: own.window,
+                                energyOffField: energy, energyOnField: energy)
+        timing(&rotation, from: own)
+        // The same three stand-ins take field time too: a skill and a burst
+        // each at the median cast length, each paying for a swap.
+        rotation.standInOthersSeconds = 3 * (library.medianSkillSeconds + library.medianBurstSeconds
+                                             + 2 * tuning.swapSeconds)
+        return rotation
     }
 
     func damageContext(for character: AbyssCharacter,
@@ -403,7 +453,12 @@ struct AbyssScorer: Sendable {
 
     func soloScore(context: DamageContext, stats: AbyssStats) -> Double {
         let split = damageSplit(context: context, stats: stats, partyBuffs: .none)
-        return perSecond(onFieldDamage(split, rotation: context.rotation, energyRecharge: stats.energyRecharge))
+        let rotation = context.rotation
+        let bursts = rotation.burstCasts(energyRecharge: stats.energyRecharge, onField: true)
+        let fieldSeconds = tuning.rotationSeconds - rotation.standInOthersSeconds
+            - rotation.castSeconds(bursts: bursts, onField: true)
+        return perSecond(onFieldDamage(split, rotation: rotation, energyRecharge: stats.energyRecharge,
+                                       fieldSeconds: fieldSeconds))
     }
 
     /// Damage per rotation into damage per second.
@@ -411,7 +466,7 @@ struct AbyssScorer: Sendable {
     /// Every number this type hands *out* — a team's score, a character's share
     /// of it, a gear option's solo score — is per second. Inside, damage is
     /// accumulated per rotation, because that is the unit the multipliers are
-    /// written in: `normalCombosPerRotation` attacks, a burst once, a reaction
+    /// written in: the attacks field time allows, the bursts energy allows, a reaction
     /// `transformativeReactionsPerRotation` times.
     ///
     /// A rotation is assumed to take `tuning.rotationSeconds` for every team, so
@@ -426,13 +481,32 @@ struct AbyssScorer: Sendable {
     }
 
     /// What a split is worth to a character who is standing on field: every
-    /// skill and burst the rotation holds for them, plus the attacks they only
-    /// get to make there — inside their stance window, if they have one.
-    func onFieldDamage(_ split: DamageSplit, rotation: Rotation, energyRecharge: Double) -> Double {
+    /// skill and burst the rotation holds for them, plus `fieldSeconds` of
+    /// their best attack loop — inside their stance window, if they have one.
+    ///
+    /// `fieldSeconds` is what the rotation leaves after everyone's casts. It
+    /// replaces six normal-attack strings and two charged attacks for every
+    /// character alike, which over-rated long strings and under-rated charged
+    /// carries against gcsim (docs/redesign.md §7.6).
+    func onFieldDamage(_ split: DamageSplit, rotation: Rotation, energyRecharge: Double,
+                       fieldSeconds: Double) -> Double {
         let bursts = rotation.burstCasts(energyRecharge: energyRecharge, onField: true)
         return rotation.skillCasts * split.skill + bursts * split.burst
-            + rotation.attackWindow(burstCasts: bursts)
-                * (split.combo * tuning.normalCombosPerRotation + split.charged * tuning.chargedAttacksPerRotation)
+            + rotation.attackWindow(burstCasts: bursts) * max(0, fieldSeconds) * rotation.attackRate(split)
+    }
+
+    /// Field time the driver at `index` gets: the rotation, less every other
+    /// member's off-field casts and the driver's own on-field ones.
+    func fieldSeconds(driver index: Int, members: [DamageContext], stats: [AbyssStats]) -> Double {
+        var seconds = tuning.rotationSeconds
+        for (other, context) in members.enumerated() {
+            let rotation = context.rotation
+            let energyRecharge = stats[other].energyRecharge
+            let onField = other == index
+            seconds -= rotation.castSeconds(
+                bursts: rotation.burstCasts(energyRecharge: energyRecharge, onField: onField), onField: onField)
+        }
+        return seconds
     }
 
     /// What a split is worth to a character who is not: their skills, and the
@@ -537,7 +611,8 @@ struct AbyssScorer: Sendable {
             let rotation = context.members[index].rotation
             let energyRecharge = stats[index].energyRecharge
             perCharacter[members[index].id] = perSecond(index == damage.onFieldIndex
-                ? onFieldDamage(split, rotation: rotation, energyRecharge: energyRecharge)
+                ? onFieldDamage(split, rotation: rotation, energyRecharge: energyRecharge,
+                                fieldSeconds: fieldSeconds(driver: index, members: context.members, stats: stats))
                 : offFieldDamage(split, rotation: rotation, energyRecharge: energyRecharge))
         }
         // Reaction damage is credited to whoever sets it off, so the per-member
@@ -707,10 +782,25 @@ struct AbyssScorer: Sendable {
 
         // What standing on field adds over not: the attack string, and the
         // extra bursts full-value particles buy.
+        // Every member's off-field cast time once, so each candidate's field
+        // time is a subtraction rather than a loop.
+        var offFieldCasts = 0.0
+        for (index, memberContext) in context.members.enumerated() {
+            let rotation = memberContext.rotation
+            offFieldCasts += rotation.castSeconds(
+                bursts: rotation.burstCasts(energyRecharge: stats[index].energyRecharge, onField: false),
+                onField: false)
+        }
         func onFieldGain(_ index: Int) -> Double {
             let rotation = context.members[index].rotation
             let energyRecharge = stats[index].energyRecharge
-            return onFieldDamage(splits[index], rotation: rotation, energyRecharge: energyRecharge)
+            let ownOff = rotation.castSeconds(
+                bursts: rotation.burstCasts(energyRecharge: energyRecharge, onField: false), onField: false)
+            let ownOn = rotation.castSeconds(
+                bursts: rotation.burstCasts(energyRecharge: energyRecharge, onField: true), onField: true)
+            let field = tuning.rotationSeconds - (offFieldCasts - ownOff) - ownOn
+            return onFieldDamage(splits[index], rotation: rotation, energyRecharge: energyRecharge,
+                                 fieldSeconds: field)
                 - offFieldDamage(splits[index], rotation: rotation, energyRecharge: energyRecharge)
         }
 

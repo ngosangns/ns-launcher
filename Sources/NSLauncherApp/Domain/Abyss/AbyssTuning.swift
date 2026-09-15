@@ -86,12 +86,9 @@ struct AbyssTuning: Decodable, Sendable {
     /// Scaling basis -> substat key to redirect -> substat key to redirect it to.
     let scalingBasisSwap: [String: [String: String]]
     let rotationSeconds: Double
-    let normalCombosPerRotation: Double
-    /// Charged attacks the on-field character makes in one rotation. Far fewer
-    /// than normal combos: a charged attack costs stamina and takes about a
-    /// second, and most characters use one only to break a shield or to trigger
-    /// an ability.
-    let chargedAttacksPerRotation: Double
+    /// Seconds a swap costs on top of the cast it is for. An assumption — see
+    /// `notes.swapSeconds`.
+    let swapSeconds: Double
     /// Energy rules and the one energy assumption — see `notes.energy`.
     let energy: Energy
     let conditionalUptime: Double

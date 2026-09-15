@@ -95,6 +95,9 @@ struct AbyssParseDiagnostics: Sendable, Equatable {
     /// character that could. Each is an energy economy the model is
     /// approximating; pinned by name in `AbyssEnergyTests`.
     var particlesEstimated: Set<String> = []
+    /// Timings from `frames.json` that did not resolve and use the median of
+    /// every character that did, as "id: field".
+    var framesEstimated: Set<String> = []
 
     mutating func merge(_ other: AbyssParseDiagnostics) {
         scalingParsed += other.scalingParsed
@@ -111,6 +114,7 @@ struct AbyssParseDiagnostics: Sendable, Equatable {
         normalAttackRowsUnclassified.formUnion(other.normalAttackRowsUnclassified)
         talentParamsUnread.formUnion(other.talentParamsUnread)
         particlesEstimated.formUnion(other.particlesEstimated)
+        framesEstimated.formUnion(other.framesEstimated)
     }
 }
 
@@ -161,9 +165,9 @@ struct AbyssDamageProfile: Sendable, Equatable {
     /// `category` — and since Phase 3 counts a skill and a burst differently,
     /// because energy decides one and not the other.
     enum Action: String, Sendable, Codable, CaseIterable {
-        /// One numbered hit of the attack string, made `normalCombosPerRotation` times.
+        /// One numbered hit of the attack string, made as often as field time allows.
         case combo
-        /// One charged attack, made `chargedAttacksPerRotation` times.
+        /// One charged attack, made as often as field time allows.
         case charged
         /// One skill cast, made `skillCastsPerRotation` times.
         case skill

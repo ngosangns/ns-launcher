@@ -474,15 +474,23 @@
     },
     {
       "characterId": "neuvillette",
-      "chargedAttackLabels": {
-        "labels": [
-          "Equitable Judgment"
-        ],
-        "note": "Chùm tia trọng kích scale theo Max HP — nguồn sát thương chính của Neuvillette."
-      },
       "energy": {
         "eventsPerCast": 1,
         "note": "Wiki: 4 mỗi Skill DMG; gcsim neuvillette/skill.go:25-26 — một lần mỗi lần dùng."
+      },
+      "hits": {
+        "charged": [
+          {
+            "label": "Charged Attack: Equitable Judgment",
+            "count": 8
+          }
+        ],
+        "note": "Charged Attack: Equitable Judgment là tia sáng gây sát thương nhiều lần, không phải một đòn: gcsim neuvillette/charge.go:111,208-216 — tia kéo dài 173 frame, tick ở frame 6, 28, rồi mỗi 25 frame, và tick cuối khi tia kết thúc → 8 tick. Reader chung chỉ đếm một tick. Thay cho nhãn chargedAttackLabels."
+      },
+      "attack": {
+        "loop": "charged",
+        "chargedSeconds": 3.17,
+        "note": "Neuvillette đứng sân bằng Equitable Judgment liên tục. gcsim neuvillette/charge.go:23-25,111: gồng 209 frame, mỗi giọt nước (tối đa 3) giảm 57/54/98 → với 3 giọt gần như không gồng; cộng 173 frame tia và ~17 frame khởi động (windup 14 + 3) → ~190 frame ≈ 3.17s. Giả định có đủ giọt (E và Q của anh tạo giọt); không đủ giọt thì mỗi đòn dài tới 6.4s."
       }
     },
     {
@@ -1092,7 +1100,7 @@
             "category": "normal"
           }
         ],
-        "note": "Bane of All Evil, chữ game: 'Greatly increases Xiao's jumping ability. Increases his attack AoE and attack DMG' — cách chơi Xiao là nhảy-đáp liên tục trong 15s burst; mô hình không có bucket plunge và cố ý bỏ đòn nhảy ở mọi nhân vật khác, nên với Xiao 'một chuỗi đòn thường' được định nghĩa là MỘT đòn nhảy cao (dòng Low/High Plunge, lấy High). Với normalCombosPerRotation = 6 điều này ≈ 6 đòn nhảy/rotation — thấp hơn thực tế (~10–12 trong 15s) nhưng thay cho 0."
+        "note": "Bane of All Evil, chữ game: 'Greatly increases Xiao's jumping ability. Increases his attack AoE and attack DMG' — cách chơi Xiao là nhảy-đáp liên tục trong 15s burst; mô hình không có bucket plunge và cố ý bỏ đòn nhảy ở mọi nhân vật khác, nên với Xiao 'một chuỗi đòn thường' được định nghĩa là MỘT đòn nhảy cao (dòng Low/High Plunge, lấy High). Số đòn nhảy mỗi rotation giờ do thời gian đứng sân và attack.comboSeconds quyết định."
       },
       "buffs": [
         {
@@ -1117,6 +1125,11 @@
       "stance": {
         "talent": "elementalBurst",
         "note": "Bane of All Evil: đòn nhảy trong kit chỉ có trong burst."
+      },
+      "attack": {
+        "loop": "combo",
+        "comboSeconds": 1.1,
+        "note": "'Chuỗi đòn' của Xiao trong kit là một đòn nhảy cao; gcsim xiao/plunge.go:56-57 highPlungeFramesX = 66 frame (61 tới đòn kế) → ~1.1s mỗi đòn, chưa tính cú nhảy dẫn vào (cận dưới của thời gian thật)."
       }
     },
     {

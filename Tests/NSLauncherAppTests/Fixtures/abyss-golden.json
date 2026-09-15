@@ -52,7 +52,7 @@
         "setIds" : [
           "nymphs-dream"
         ],
-        "soloScore" : 8306.4038427753931,
+        "soloScore" : 6017.5269483939146,
         "stats" : {
           "atk_pct" : 1.0958000000000001,
           "base_atk" : 983.13,
@@ -166,7 +166,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 11262.749357947296,
+        "soloScore" : 7844.0064834613495,
         "stats" : {
           "atk_pct" : 1.6057999999999999,
           "base_atk" : 859.13999999999999,
@@ -316,7 +316,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 14660.727459606142,
+        "soloScore" : 9669.1080806326845,
         "stats" : {
           "atk_pct" : 1.6057999999999999,
           "base_atk" : 921.31999999999994,
@@ -418,7 +418,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 7255.8887195284869,
+        "soloScore" : 4596.778975011347,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 775.91999999999996,
@@ -520,24 +520,24 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 8478.1249404541886,
+        "soloScore" : 5849.4757469987653,
         "stats" : {
-          "atk_pct" : 1.4601999999999999,
-          "base_atk" : 939.5,
+          "atk_pct" : 1.2458,
+          "base_atk" : 873.5,
           "base_def" : 703,
           "base_hp" : 11962.459999999999,
           "burst_party_elemental_dmg" : {
 
           },
           "burst_party_flat_atk" : 0,
-          "crit_dmg" : 1.7824499999999999,
-          "crit_rate" : 0.68274999999999997,
+          "crit_dmg" : 1.8224499999999999,
+          "crit_rate" : 0.77274999999999994,
           "def_pct" : 0,
           "derived" : {
-            "atk" : 2622.3579,
-            "critMultiplier" : 2.2169677375000001,
+            "atk" : 2540.595628,
+            "critMultiplier" : 2.4082982374999995,
             "def" : 703,
-            "hp" : 16742.459999999999
+            "hp" : 19134.951999999997
           },
           "dmg_all" : 0,
           "dmg_burst" : 0,
@@ -545,7 +545,7 @@
           "dmg_elemental" : {
             "Electro" : 0.46600000000000003
           },
-          "dmg_normal" : 0.12,
+          "dmg_normal" : 0,
           "dmg_skill" : 0,
           "em" : 0,
           "er" : 1.4610999999999998,
@@ -553,7 +553,7 @@
           "flat_def" : 0,
           "flat_hp" : 4780,
           "healing_bonus" : 0,
-          "hp_pct" : 0,
+          "hp_pct" : 0.20000000000000001,
           "party_atk_pct" : 0,
           "party_dmg" : 0,
           "party_elemental_dmg" : {
@@ -562,7 +562,7 @@
           "party_em" : 0,
           "party_flat_atk" : 0
         },
-        "weaponId" : "primordial-jade-winged-spear"
+        "weaponId" : "staff-of-homa"
       }
     },
     "amber" : {
@@ -628,7 +628,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 7668.0543093895158,
+        "soloScore" : 4912.7970322734673,
         "stats" : {
           "atk_pct" : 1.4858,
           "base_atk" : 765.01999999999998,
@@ -718,7 +718,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 14227.336770743748,
+        "soloScore" : 9452.3755202383036,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 835,
@@ -838,7 +838,7 @@
         "setIds" : [
           "shimenawas-reminiscence"
         ],
-        "soloScore" : 13659.365520363232,
+        "soloScore" : 7385.2267443346163,
         "stats" : {
           "atk_pct" : 1.2101999999999999,
           "base_atk" : 1016.03,
@@ -934,7 +934,7 @@
         "setIds" : [
           "vermillion-hereafter"
         ],
-        "soloScore" : 2566.5895718465249,
+        "soloScore" : 1730.1851723749278,
         "stats" : {
           "atk_pct" : 1.2769999999999999,
           "base_atk" : 933.53999999999996,
@@ -1024,7 +1024,7 @@
         "setIds" : [
           "nymphs-dream"
         ],
-        "soloScore" : 2064.5589892252451,
+        "soloScore" : 1687.7483681266051,
         "stats" : {
           "atk_pct" : 0.96199999999999997,
           "base_atk" : 767.29999999999995,
@@ -1138,22 +1138,22 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 9481.1856364447376,
+        "soloScore" : 5170.3355367156737,
         "stats" : {
-          "atk_pct" : 1.6419999999999999,
-          "base_atk" : 966.13999999999999,
+          "atk_pct" : 1.0960000000000001,
+          "base_atk" : 899.13999999999999,
           "base_def" : 648.39999999999998,
           "base_hp" : 13049.959999999999,
           "burst_party_elemental_dmg" : {
 
           },
           "burst_party_flat_atk" : 0,
-          "crit_dmg" : 0.69999999999999996,
-          "crit_rate" : 0.28000000000000003,
+          "crit_dmg" : 1.1219999999999999,
+          "crit_rate" : 0.39100000000000001,
           "def_pct" : 0.54675000000000007,
           "derived" : {
-            "atk" : 2863.5418799999998,
-            "critMultiplier" : 1.196,
+            "atk" : 2195.59744,
+            "critMultiplier" : 1.4387019999999999,
             "def" : 1002.9127,
             "hp" : 22394.836008000002
           },
@@ -1164,7 +1164,7 @@
             "Electro" : 0.70599999999999996
           },
           "dmg_normal" : 0,
-          "dmg_skill" : 0,
+          "dmg_skill" : 0.44999999999999996,
           "em" : 93.239999999999995,
           "er" : 1.486,
           "flat_atk" : 311,
@@ -1180,7 +1180,7 @@
           "party_em" : 0,
           "party_flat_atk" : 0
         },
-        "weaponId" : "a-thousand-blazing-suns"
+        "weaponId" : "verdict"
       }
     },
     "bennett" : {
@@ -1240,7 +1240,7 @@
         "setIds" : [
           "vermillion-hereafter"
         ],
-        "soloScore" : 4391.8814165493677,
+        "soloScore" : 2773.6061501835252,
         "stats" : {
           "atk_pct" : 1.006,
           "base_atk" : 799.15999999999997,
@@ -1348,7 +1348,7 @@
         "setIds" : [
           "nymphs-dream"
         ],
-        "soloScore" : 6146.5935462305506,
+        "soloScore" : 4469.8603724288096,
         "stats" : {
           "atk_pct" : 0.46600000000000003,
           "base_atk" : 820.39999999999998,
@@ -1462,7 +1462,7 @@
         "setIds" : [
           "blizzard-strayer"
         ],
-        "soloScore" : 2831.9096981485818,
+        "soloScore" : 2208.4208207391102,
         "stats" : {
           "atk_pct" : 1.0369999999999999,
           "base_atk" : 847,
@@ -1588,7 +1588,7 @@
         "setIds" : [
           "obsidian-codex"
         ],
-        "soloScore" : 10721.431109024485,
+        "soloScore" : 7773.3281488679404,
         "stats" : {
           "atk_pct" : 0.81580000000000008,
           "base_atk" : 888.80999999999995,
@@ -1702,7 +1702,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 9164.310673070755,
+        "soloScore" : 7366.785065125865,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 801,
@@ -1820,11 +1820,11 @@
       "scalingBasis" : "ATK",
       "topGear" : {
         "setIds" : [
-          "a-day-carved-from-rising-winds"
+          "vermillion-hereafter"
         ],
-        "soloScore" : 11195.175626217382,
+        "soloScore" : 8938.2572210868238,
         "stats" : {
-          "atk_pct" : 1.6057999999999999,
+          "atk_pct" : 1.3557999999999999,
           "base_atk" : 931,
           "base_def" : 953,
           "base_hp" : 11437,
@@ -1833,15 +1833,15 @@
           },
           "burst_party_flat_atk" : 0,
           "crit_dmg" : 1.94245,
-          "crit_rate" : 0.9847499999999999,
+          "crit_rate" : 0.86474999999999991,
           "def_pct" : 0,
           "derived" : {
-            "atk" : 2736.9998000000001,
-            "critMultiplier" : 2.9128276374999995,
+            "atk" : 2504.2498000000001,
+            "critMultiplier" : 2.6797336375,
             "def" : 953,
             "hp" : 16217
           },
-          "dmg_all" : 0,
+          "dmg_all" : 0.26000000000000001,
           "dmg_burst" : 0,
           "dmg_charged" : 0,
           "dmg_elemental" : {
@@ -1918,7 +1918,7 @@
         "setIds" : [
           "blizzard-strayer"
         ],
-        "soloScore" : 10499.047928054344,
+        "soloScore" : 5227.2783277559338,
         "stats" : {
           "atk_pct" : 1.3358000000000001,
           "base_atk" : 964.01999999999998,
@@ -2020,7 +2020,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 4087.6188692105197,
+        "soloScore" : 3699.9512849928324,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 734.75999999999999,
@@ -2134,7 +2134,7 @@
         "setIds" : [
           "fragment-of-harmonic-whimsy"
         ],
-        "soloScore" : 13668.002997411148,
+        "soloScore" : 8993.8241431760489,
         "stats" : {
           "atk_pct" : 1.3557999999999999,
           "base_atk" : 945,
@@ -2236,7 +2236,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 6487.0299384985783,
+        "soloScore" : 4030.7994066605524,
         "stats" : {
           "atk_pct" : 1.4858,
           "base_atk" : 741.64999999999998,
@@ -2338,7 +2338,7 @@
         "setIds" : [
           "nymphs-dream"
         ],
-        "soloScore" : 5538.58932838706,
+        "soloScore" : 4970.7117325532536,
         "stats" : {
           "atk_pct" : 0,
           "base_atk" : 637.66999999999996,
@@ -2434,7 +2434,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 8286.7609530407462,
+        "soloScore" : 6514.4487611728009,
         "stats" : {
           "atk_pct" : 0.77980000000000005,
           "base_atk" : 926.11000000000001,
@@ -2530,7 +2530,7 @@
         "setIds" : [
           "nymphs-dream"
         ],
-        "soloScore" : 4532.6375982065774,
+        "soloScore" : 3361.5154288668318,
         "stats" : {
           "atk_pct" : 1.292,
           "base_atk" : 797.02999999999997,
@@ -2662,7 +2662,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 9749.6888625897263,
+        "soloScore" : 5915.787662686259,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 873.49000000000001,
@@ -2782,7 +2782,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 18645.831639785723,
+        "soloScore" : 10339.782577888944,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 942.85000000000002,
@@ -2890,7 +2890,7 @@
         "setIds" : [
           "blizzard-strayer"
         ],
-        "soloScore" : 3205.9074470970945,
+        "soloScore" : 1879.4713650421218,
         "stats" : {
           "atk_pct" : 0.96199999999999997,
           "base_atk" : 820.39999999999998,
@@ -2986,7 +2986,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 9383.7692684853228,
+        "soloScore" : 5287.17104629391,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 831.01999999999998,
@@ -3106,7 +3106,7 @@
         "setIds" : [
           "vermillion-hereafter"
         ],
-        "soloScore" : 12196.990706750787,
+        "soloScore" : 9996.5866442915903,
         "stats" : {
           "atk_pct" : 1.3557999999999999,
           "base_atk" : 954.80999999999995,
@@ -3214,10 +3214,10 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 9747.0687902333411,
+        "soloScore" : 7187.01313637151,
         "stats" : {
-          "atk_pct" : 1.4601999999999999,
-          "base_atk" : 1009,
+          "atk_pct" : 1.6028,
+          "base_atk" : 1076,
           "base_def" : 730,
           "base_hp" : 13568,
           "burst_party_elemental_dmg" : {
@@ -3225,21 +3225,21 @@
           },
           "burst_party_flat_atk" : 0,
           "crit_dmg" : 1.5444500000000001,
-          "crit_rate" : 0.99375000000000002,
+          "crit_rate" : 0.77274999999999994,
           "def_pct" : 0,
           "derived" : {
-            "atk" : 2793.3418000000001,
-            "critMultiplier" : 2.5347971875000002,
+            "atk" : 3111.6128000000003,
+            "critMultiplier" : 2.1934737374999997,
             "def" : 730,
             "hp" : 18348
           },
-          "dmg_all" : 0,
+          "dmg_all" : 0.12,
           "dmg_burst" : 0,
           "dmg_charged" : 0,
           "dmg_elemental" : {
             "Dendro" : 0.46600000000000003
           },
-          "dmg_normal" : 0.12,
+          "dmg_normal" : 0,
           "dmg_skill" : 0,
           "em" : 0,
           "er" : 1.1943999999999999,
@@ -3256,7 +3256,7 @@
           "party_em" : 0,
           "party_flat_atk" : 0
         },
-        "weaponId" : "primordial-jade-winged-spear"
+        "weaponId" : "calamity-queller"
       }
     },
     "escoffier" : {
@@ -3316,7 +3316,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 4686.8421338531552,
+        "soloScore" : 4333.6466013861136,
         "stats" : {
           "atk_pct" : 0.89600000000000002,
           "base_atk" : 955,
@@ -3436,7 +3436,7 @@
         "setIds" : [
           "blizzard-strayer"
         ],
-        "soloScore" : 22012.392240154186,
+        "soloScore" : 10571.500712992676,
         "stats" : {
           "atk_pct" : 1.0958000000000001,
           "base_atk" : 1083.03,
@@ -3536,11 +3536,11 @@
       "scalingBasis" : "ATK",
       "topGear" : {
         "setIds" : [
-          "desert-pavilion-chronicle"
+          "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 7537.3188575238864,
+        "soloScore" : 4925.739033462788,
         "stats" : {
-          "atk_pct" : 1.0558000000000001,
+          "atk_pct" : 1.4858,
           "base_atk" : 738.47000000000003,
           "base_def" : 627.91999999999996,
           "base_hp" : 9569.9300000000003,
@@ -3549,21 +3549,21 @@
           },
           "burst_party_flat_atk" : 0,
           "crit_dmg" : 1.7824499999999999,
-          "crit_rate" : 0.78274999999999995,
+          "crit_rate" : 0.90274999999999994,
           "def_pct" : 0,
           "derived" : {
-            "atk" : 1829.1466260000002,
-            "critMultiplier" : 2.3952127374999996,
+            "atk" : 2146.6887260000003,
+            "critMultiplier" : 2.6091067374999999,
             "def" : 627.91999999999996,
             "hp" : 14349.93
           },
           "dmg_all" : 0,
           "dmg_burst" : 0,
-          "dmg_charged" : 0.40000000000000002,
+          "dmg_charged" : 0,
           "dmg_elemental" : {
-            "Anemo" : 0.61599999999999999
+            "Anemo" : 0.46600000000000003
           },
-          "dmg_normal" : 0.40000000000000002,
+          "dmg_normal" : 0,
           "dmg_skill" : 0,
           "em" : 0,
           "er" : 1.1943999999999999,
@@ -3644,11 +3644,11 @@
       "scalingBasis" : "ATK",
       "topGear" : {
         "setIds" : [
-          "a-day-carved-from-rising-winds"
+          "shimenawas-reminiscence"
         ],
-        "soloScore" : 8122.554132264966,
+        "soloScore" : 4895.5588869362446,
         "stats" : {
-          "atk_pct" : 1.4858,
+          "atk_pct" : 1.2358,
           "base_atk" : 786.25999999999999,
           "base_def" : 593.78999999999996,
           "base_hp" : 9189.2999999999993,
@@ -3657,11 +3657,11 @@
           },
           "burst_party_flat_atk" : 0,
           "crit_dmg" : 1.7824499999999999,
-          "crit_rate" : 0.90274999999999994,
+          "crit_rate" : 0.78274999999999995,
           "def_pct" : 0,
           "derived" : {
-            "atk" : 2265.4851079999999,
-            "critMultiplier" : 2.6091067374999999,
+            "atk" : 2068.9201080000003,
+            "critMultiplier" : 2.3952127374999996,
             "def" : 593.78999999999996,
             "hp" : 13969.299999999999
           },
@@ -3671,7 +3671,7 @@
           "dmg_elemental" : {
             "Electro" : 0.46600000000000003
           },
-          "dmg_normal" : 0,
+          "dmg_normal" : 0.34999999999999998,
           "dmg_skill" : 0,
           "em" : 0,
           "er" : 1.1943999999999999,
@@ -3808,7 +3808,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 13155.642442007887,
+        "soloScore" : 9739.0571389033339,
         "stats" : {
           "atk_pct" : 1.4601999999999999,
           "base_atk" : 1025.5899999999999,
@@ -3916,7 +3916,7 @@
         "setIds" : [
           "blizzard-strayer"
         ],
-        "soloScore" : 15354.423469690422,
+        "soloScore" : 8982.8169002010727,
         "stats" : {
           "atk_pct" : 1.3358000000000001,
           "base_atk" : 996,
@@ -4030,7 +4030,7 @@
         "setIds" : [
           "nymphs-dream"
         ],
-        "soloScore" : 4390.6222059566871,
+        "soloScore" : 3310.6772711078656,
         "stats" : {
           "atk_pct" : 0.82600000000000007,
           "base_atk" : 852,
@@ -4124,9 +4124,9 @@
       "scalingBasis" : "ATK",
       "topGear" : {
         "setIds" : [
-          "shimenawas-reminiscence"
+          "vermillion-hereafter"
         ],
-        "soloScore" : 14347.82700549684,
+        "soloScore" : 7087.3674242997731,
         "stats" : {
           "atk_pct" : 1.5158,
           "base_atk" : 1042.6100000000001,
@@ -4145,13 +4145,13 @@
             "def" : 703,
             "hp" : 16198.709999999999
           },
-          "dmg_all" : 0,
+          "dmg_all" : 0.26000000000000001,
           "dmg_burst" : 0,
           "dmg_charged" : 0,
           "dmg_elemental" : {
             "Pyro" : 0.46600000000000003
           },
-          "dmg_normal" : 0.34999999999999998,
+          "dmg_normal" : 0,
           "dmg_skill" : 0,
           "em" : 0,
           "er" : 1.1943999999999999,
@@ -4234,7 +4234,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 9743.259659464733,
+        "soloScore" : 7578.1681798220234,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 876.85000000000002,
@@ -4336,7 +4336,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 5086.1379275736244,
+        "soloScore" : 3337.5040357349194,
         "stats" : {
           "atk_pct" : 0.89600000000000002,
           "base_atk" : 725,
@@ -4442,9 +4442,9 @@
       "scalingBasis" : "ATK",
       "topGear" : {
         "setIds" : [
-          "retracing-bolide"
+          "crimson-witch-of-flames"
         ],
-        "soloScore" : 17992.215239338526,
+        "soloScore" : 10275.995057407377,
         "stats" : {
           "atk_pct" : 0.3498,
           "base_atk" : 714.43000000000006,
@@ -4463,13 +4463,13 @@
             "def" : 876.14999999999998,
             "hp" : 30690.19844
           },
-          "dmg_all" : 0,
+          "dmg_all" : 0.20000000000000001,
           "dmg_burst" : 0,
-          "dmg_charged" : 0.40000000000000002,
+          "dmg_charged" : 0,
           "dmg_elemental" : {
-            "Pyro" : 0.46600000000000003
+            "Pyro" : 0.61599999999999999
           },
-          "dmg_normal" : 0.40000000000000002,
+          "dmg_normal" : 0,
           "dmg_skill" : 0,
           "em" : 0,
           "er" : 1.1943999999999999,
@@ -4534,7 +4534,7 @@
         "setIds" : [
           "obsidian-codex"
         ],
-        "soloScore" : 6706.7327865501866,
+        "soloScore" : 5003.3202404967396,
         "stats" : {
           "atk_pct" : 1.0558000000000001,
           "base_atk" : 865,
@@ -4630,7 +4630,7 @@
         "setIds" : [
           "obsidian-codex"
         ],
-        "soloScore" : 3307.9085687673492,
+        "soloScore" : 2751.4367037067582,
         "stats" : {
           "atk_pct" : 0.96199999999999997,
           "base_atk" : 786.40999999999997,
@@ -4738,7 +4738,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 6469.0240359807485,
+        "soloScore" : 4374.2768022934442,
         "stats" : {
           "atk_pct" : 0.89600000000000002,
           "base_atk" : 799.15999999999997,
@@ -4840,7 +4840,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 4734.8818764961243,
+        "soloScore" : 4213.9736918785948,
         "stats" : {
           "atk_pct" : 0.89600000000000002,
           "base_atk" : 938.06999999999994,
@@ -4954,7 +4954,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 6583.2816238135101,
+        "soloScore" : 7145.9192249925645,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 765.01999999999998,
@@ -5060,11 +5060,11 @@
       "scalingBasis" : "ATK",
       "topGear" : {
         "setIds" : [
-          "desert-pavilion-chronicle"
+          "vermillion-hereafter"
         ],
-        "soloScore" : 5979.9042369999488,
+        "soloScore" : 3963.0363623025141,
         "stats" : {
-          "atk_pct" : 0.82600000000000007,
+          "atk_pct" : 1.006,
           "base_atk" : 847.18000000000006,
           "base_def" : 768.54999999999995,
           "base_hp" : 14695.09,
@@ -5076,18 +5076,18 @@
           "crit_rate" : 0.51715,
           "def_pct" : 0,
           "derived" : {
-            "atk" : 1857.9506800000001,
+            "atk" : 2010.4430800000002,
             "critMultiplier" : 1.3413189999999999,
             "def" : 768.54999999999995,
             "hp" : 27185.603723
           },
-          "dmg_all" : 0,
+          "dmg_all" : 0.26000000000000001,
           "dmg_burst" : 0,
-          "dmg_charged" : 0.40000000000000002,
+          "dmg_charged" : 0,
           "dmg_elemental" : {
-            "Anemo" : 0.61599999999999999
+            "Anemo" : 0.46600000000000003
           },
-          "dmg_normal" : 0.40000000000000002,
+          "dmg_normal" : 0,
           "dmg_skill" : 0,
           "em" : 93.239999999999995,
           "er" : 1.5508,
@@ -5164,7 +5164,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 7181.2660372018026,
+        "soloScore" : 4730.6839990882445,
         "stats" : {
           "atk_pct" : 0.89600000000000002,
           "base_atk" : 824.64999999999998,
@@ -5276,11 +5276,11 @@
       "scalingBasis" : "ATK",
       "topGear" : {
         "setIds" : [
-          "desert-pavilion-chronicle"
+          "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 11502.310581328342,
+        "soloScore" : 6841.4227438103171,
         "stats" : {
-          "atk_pct" : 1.1758,
+          "atk_pct" : 1.6057999999999999,
           "base_atk" : 904.57999999999993,
           "base_def" : 806.98000000000002,
           "base_hp" : 13348.07,
@@ -5289,21 +5289,21 @@
           },
           "burst_party_flat_atk" : 0,
           "crit_dmg" : 1.94245,
-          "crit_rate" : 0.67274999999999996,
+          "crit_rate" : 0.79274999999999995,
           "def_pct" : 0,
           "derived" : {
-            "atk" : 2279.1851639999995,
-            "critMultiplier" : 2.3067832374999999,
+            "atk" : 2668.1545639999999,
+            "critMultiplier" : 2.5398772374999998,
             "def" : 806.98000000000002,
             "hp" : 18128.07
           },
           "dmg_all" : 0,
           "dmg_burst" : 0,
-          "dmg_charged" : 0.40000000000000002,
+          "dmg_charged" : 0,
           "dmg_elemental" : {
-            "Anemo" : 0.61599999999999999
+            "Anemo" : 0.46600000000000003
           },
-          "dmg_normal" : 0.40000000000000002,
+          "dmg_normal" : 0,
           "dmg_skill" : 0,
           "em" : 115.2,
           "er" : 1.1943999999999999,
@@ -5380,7 +5380,7 @@
         "setIds" : [
           "blizzard-strayer"
         ],
-        "soloScore" : 10786.127370908454,
+        "soloScore" : 6303.0016689132462,
         "stats" : {
           "atk_pct" : 1.1758,
           "base_atk" : 831.01999999999998,
@@ -5488,7 +5488,7 @@
         "setIds" : [
           "blizzard-strayer"
         ],
-        "soloScore" : 14540.394964373307,
+        "soloScore" : 9648.2637087328221,
         "stats" : {
           "atk_pct" : 1.1758,
           "base_atk" : 950,
@@ -5608,7 +5608,7 @@
         "setIds" : [
           "nymphs-dream"
         ],
-        "soloScore" : 11418.278343326547,
+        "soloScore" : 8025.2222654790849,
         "stats" : {
           "atk_pct" : 1.1758,
           "base_atk" : 907,
@@ -5704,7 +5704,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 10403.530054412277,
+        "soloScore" : 6382.7490472390828,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 841.63999999999999,
@@ -5830,7 +5830,7 @@
         "setIds" : [
           "vermillion-hereafter"
         ],
-        "soloScore" : 14871.893954649568,
+        "soloScore" : 11900.894477638107,
         "stats" : {
           "atk_pct" : 1.3557999999999999,
           "base_atk" : 930.88999999999999,
@@ -5908,7 +5908,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 15638.355333225418,
+        "soloScore" : 12629.30978123147,
         "stats" : {
           "atk_pct" : 1.4458,
           "base_atk" : 1006.46,
@@ -6022,7 +6022,7 @@
         "setIds" : [
           "vermillion-hereafter"
         ],
-        "soloScore" : 5533.9311802730417,
+        "soloScore" : 4304.8299037434563,
         "stats" : {
           "atk_pct" : 1.472,
           "base_atk" : 831,
@@ -6118,7 +6118,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 7255.7005395655051,
+        "soloScore" : 5248.7860159786715,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 918.93000000000006,
@@ -6226,7 +6226,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 7212.872874026265,
+        "soloScore" : 4353.0067954006718,
         "stats" : {
           "atk_pct" : 1.4858,
           "base_atk" : 738,
@@ -6334,7 +6334,7 @@
         "setIds" : [
           "vermillion-hereafter"
         ],
-        "soloScore" : 3996.4474478027414,
+        "soloScore" : 3412.8052606878241,
         "stats" : {
           "atk_pct" : 1.006,
           "base_atk" : 821,
@@ -6430,7 +6430,7 @@
         "setIds" : [
           "desert-pavilion-chronicle"
         ],
-        "soloScore" : 3950.5820016073435,
+        "soloScore" : 2806.5089794345417,
         "stats" : {
           "atk_pct" : 1.337,
           "base_atk" : 991.63,
@@ -6520,7 +6520,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 3497.9858628992574,
+        "soloScore" : 3577.7401734329419,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 862.96000000000004,
@@ -6616,7 +6616,7 @@
         "setIds" : [
           "blizzard-strayer"
         ],
-        "soloScore" : 3038.8922928791894,
+        "soloScore" : 2486.4589047733953,
         "stats" : {
           "atk_pct" : 1.292,
           "base_atk" : 824.64999999999998,
@@ -6712,10 +6712,10 @@
         "setIds" : [
           "vermillion-hereafter"
         ],
-        "soloScore" : 2845.5679530461803,
+        "soloScore" : 2474.0547545229701,
         "stats" : {
-          "atk_pct" : 0.64600000000000002,
-          "base_atk" : 751.50999999999999,
+          "atk_pct" : 0.17999999999999999,
+          "base_atk" : 685.50999999999999,
           "base_def" : 906.88999999999999,
           "base_hp" : 9894.7000000000007,
           "burst_party_elemental_dmg" : {
@@ -6723,12 +6723,12 @@
           },
           "burst_party_flat_atk" : 0,
           "crit_dmg" : 0.69199999999999995,
-          "crit_rate" : 0.51715,
-          "def_pct" : 0,
+          "crit_rate" : 0.62714999999999999,
+          "def_pct" : 0.58299999999999996,
           "derived" : {
-            "atk" : 1547.9854599999999,
-            "critMultiplier" : 1.3578678,
-            "def" : 906.88999999999999,
+            "atk" : 1119.9018000000001,
+            "critMultiplier" : 1.4339877999999999,
+            "def" : 1435.6068699999998,
             "hp" : 19866.449090000002
           },
           "dmg_all" : 0.26000000000000001,
@@ -6754,7 +6754,7 @@
           "party_em" : 0,
           "party_flat_atk" : 0
         },
-        "weaponId" : "polar-star"
+        "weaponId" : "hunters-path"
       }
     },
     "lisa" : {
@@ -6814,7 +6814,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 7196.5372985470503,
+        "soloScore" : 6021.456075710099,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 839.50999999999999,
@@ -6916,7 +6916,7 @@
         "setIds" : [
           "blizzard-strayer"
         ],
-        "soloScore" : 20162.848085930473,
+        "soloScore" : 13277.413032750754,
         "stats" : {
           "atk_pct" : 1.0302,
           "base_atk" : 1018.4200000000001,
@@ -7030,7 +7030,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 9040.4914964524396,
+        "soloScore" : 7712.9452175470478,
         "stats" : {
           "atk_pct" : 1.6057999999999999,
           "base_atk" : 840,
@@ -7150,7 +7150,7 @@
         "setIds" : [
           "vermillion-hereafter"
         ],
-        "soloScore" : 12168.41629616287,
+        "soloScore" : 14207.551558192095,
         "stats" : {
           "atk_pct" : 0.99580000000000002,
           "base_atk" : 860,
@@ -7258,7 +7258,7 @@
         "setIds" : [
           "obsidian-codex"
         ],
-        "soloScore" : 15925.216126749598,
+        "soloScore" : 9798.2737102417268,
         "stats" : {
           "atk_pct" : 1.0958000000000001,
           "base_atk" : 1099.77,
@@ -7366,7 +7366,7 @@
         "setIds" : [
           "blizzard-strayer"
         ],
-        "soloScore" : 4106.0186412136927,
+        "soloScore" : 2506.715013944191,
         "stats" : {
           "atk_pct" : 0.82299999999999995,
           "base_atk" : 964.01999999999998,
@@ -7468,7 +7468,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 6195.9073596185299,
+        "soloScore" : 4184.1326099194293,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 895.00999999999999,
@@ -7558,7 +7558,7 @@
         "setIds" : [
           "obsidian-codex"
         ],
-        "soloScore" : 6659.8133882372204,
+        "soloScore" : 5895.9506940568017,
         "stats" : {
           "atk_pct" : 0,
           "base_atk" : 723.77999999999997,
@@ -7575,7 +7575,7 @@
             "atk" : 1034.78,
             "critMultiplier" : 2.7253596374999995,
             "def" : 570.26999999999998,
-            "hp" : 25276.618514000002
+            "hp" : 32352.795894000003
           },
           "dmg_all" : 0.43999999999999995,
           "dmg_burst" : 0,
@@ -7586,12 +7586,12 @@
           "dmg_normal" : 0,
           "dmg_skill" : 0,
           "em" : 0,
-          "er" : 1.7123999999999999,
+          "er" : 1.1943999999999999,
           "flat_atk" : 311,
           "flat_def" : 0,
           "flat_hp" : 4780,
           "healing_bonus" : 0,
-          "hp_pct" : 0.3498,
+          "hp_pct" : 0.81580000000000008,
           "party_atk_pct" : 0,
           "party_dmg" : 0,
           "party_elemental_dmg" : {
@@ -7660,7 +7660,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 6111.6775340553249,
+        "soloScore" : 4378.3595926903554,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 906.97000000000003,
@@ -7766,35 +7766,35 @@
       "scalingBasis" : "ATK",
       "topGear" : {
         "setIds" : [
-          "vermillion-hereafter"
+          "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 17691.001354828622,
+        "soloScore" : 10496.320874784116,
         "stats" : {
-          "atk_pct" : 1.2758,
-          "base_atk" : 1093,
+          "atk_pct" : 1.4458,
+          "base_atk" : 1026,
           "base_def" : 793,
           "base_hp" : 12650,
           "burst_party_elemental_dmg" : {
 
           },
           "burst_party_flat_atk" : 0,
-          "crit_dmg" : 1.7444500000000001,
-          "crit_rate" : 0.76275000000000004,
+          "crit_dmg" : 1.5444500000000001,
+          "crit_rate" : 0.99375000000000002,
           "def_pct" : 0,
           "derived" : {
-            "atk" : 2798.4494000000004,
-            "critMultiplier" : 2.3305792375000003,
+            "atk" : 2820.3908000000001,
+            "critMultiplier" : 2.5347971875000002,
             "def" : 793,
             "hp" : 17430
           },
-          "dmg_all" : 0.26000000000000001,
+          "dmg_all" : 0,
           "dmg_burst" : 0,
           "dmg_charged" : 0,
           "dmg_elemental" : {
             "Geo" : 0.46600000000000003
           },
           "dmg_normal" : 0,
-          "dmg_skill" : 0,
+          "dmg_skill" : 0.44999999999999996,
           "em" : 0,
           "er" : 1.1943999999999999,
           "flat_atk" : 311,
@@ -7810,7 +7810,7 @@
           "party_em" : 0,
           "party_flat_atk" : 0
         },
-        "weaponId" : "a-thousand-blazing-suns"
+        "weaponId" : "verdict"
       }
     },
     "nefer" : {
@@ -7930,7 +7930,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 6814.7755932396904,
+        "soloScore" : 5092.4644585796368,
         "stats" : {
           "atk_pct" : 0.89600000000000002,
           "base_atk" : 952.42000000000007,
@@ -8023,39 +8023,39 @@
           "action" : "charged",
           "basis" : "HP",
           "category" : "charged",
-          "multiplier" : 0.14466999999999999
+          "multiplier" : 1.1573599999999999
         }
       ],
       "role" : "main-dps",
       "scalingBasis" : "HP",
       "topGear" : {
         "setIds" : [
-          "nymphs-dream"
+          "bloodstained-chivalry"
         ],
-        "soloScore" : 5478.8797777082482,
+        "soloScore" : 15430.938645284787,
         "stats" : {
-          "atk_pct" : 0.46600000000000003,
-          "base_atk" : 816,
+          "atk_pct" : 0,
+          "base_atk" : 750,
           "base_def" : 576,
           "base_hp" : 14695,
           "burst_party_elemental_dmg" : {
 
           },
           "burst_party_flat_atk" : 0,
-          "crit_dmg" : 1.5444500000000001,
-          "crit_rate" : 0.9837499999999999,
+          "crit_dmg" : 2.42645,
+          "crit_rate" : 0.65274999999999994,
           "def_pct" : 0,
           "derived" : {
-            "atk" : 1507.2560000000001,
-            "critMultiplier" : 2.5193526874999996,
+            "atk" : 1061,
+            "critMultiplier" : 2.5838652374999995,
             "def" : 576,
-            "hp" : 24615.311000000002
+            "hp" : 31463.181
           },
-          "dmg_all" : 0.26000000000000001,
+          "dmg_all" : 0,
           "dmg_burst" : 0,
-          "dmg_charged" : 0,
+          "dmg_charged" : 0.5,
           "dmg_elemental" : {
-            "Hydro" : 0.61599999999999999
+            "Hydro" : 0.46600000000000003
           },
           "dmg_normal" : 0,
           "dmg_skill" : 0,
@@ -8065,7 +8065,7 @@
           "flat_def" : 0,
           "flat_hp" : 4780,
           "healing_bonus" : 0,
-          "hp_pct" : 0.3498,
+          "hp_pct" : 0.81580000000000008,
           "party_atk_pct" : 0,
           "party_dmg" : 0,
           "party_elemental_dmg" : {
@@ -8074,7 +8074,7 @@
           "party_em" : 0,
           "party_flat_atk" : 0
         },
-        "weaponId" : "lost-prayer-to-the-sacred-winds"
+        "weaponId" : "tome-of-the-eternal-flow"
       }
     },
     "nicole" : {
@@ -8122,7 +8122,7 @@
         "setIds" : [
           "vermillion-hereafter"
         ],
-        "soloScore" : 2768.3377665952225,
+        "soloScore" : 2470.3429648282608,
         "stats" : {
           "atk_pct" : 1.5649999999999999,
           "base_atk" : 1083.03,
@@ -8236,7 +8236,7 @@
         "setIds" : [
           "nymphs-dream"
         ],
-        "soloScore" : 5524.476957627453,
+        "soloScore" : 6010.7048095550535,
         "stats" : {
           "atk_pct" : 0.81580000000000008,
           "base_atk" : 771.61000000000001,
@@ -8314,7 +8314,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 1966.8969264736158,
+        "soloScore" : 1928.3112971590356,
         "stats" : {
           "atk_pct" : 1.5269999999999999,
           "base_atk" : 953.39999999999998,
@@ -8416,7 +8416,7 @@
         "setIds" : [
           "shimenawas-reminiscence"
         ],
-        "soloScore" : 6371.5147205085268,
+        "soloScore" : 2995.0074367493125,
         "stats" : {
           "atk_pct" : 0.64600000000000002,
           "base_atk" : 799.15999999999997,
@@ -8560,7 +8560,7 @@
         "setIds" : [
           "blizzard-strayer"
         ],
-        "soloScore" : 18739.674571279953,
+        "soloScore" : 12281.76139847933,
         "stats" : {
           "atk_pct" : 1.1758,
           "base_atk" : 942.85000000000002,
@@ -8656,7 +8656,7 @@
         "setIds" : [
           "obsidian-codex"
         ],
-        "soloScore" : 5898.3692320818591,
+        "soloScore" : 4755.1662963866866,
         "stats" : {
           "atk_pct" : 1.0558000000000001,
           "base_atk" : 786.25999999999999,
@@ -8758,7 +8758,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 6136.8044592682299,
+        "soloScore" : 4815.5726725446402,
         "stats" : {
           "atk_pct" : 1.4858,
           "base_atk" : 828.88999999999999,
@@ -8878,7 +8878,7 @@
         "setIds" : [
           "blizzard-strayer"
         ],
-        "soloScore" : 4150.6758514731355,
+        "soloScore" : 2867.3429067810143,
         "stats" : {
           "atk_pct" : 0.82600000000000007,
           "base_atk" : 895.00999999999999,
@@ -9004,7 +9004,7 @@
         "setIds" : [
           "emblem-of-severed-fate"
         ],
-        "soloScore" : 11970.301507879787,
+        "soloScore" : 8530.7008859277958,
         "stats" : {
           "atk_pct" : 0.81580000000000008,
           "base_atk" : 945,
@@ -9124,7 +9124,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 16229.074606985838,
+        "soloScore" : 7429.1371427942559,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 841.63999999999999,
@@ -9232,7 +9232,7 @@
         "setIds" : [
           "blizzard-strayer"
         ],
-        "soloScore" : 11731.834191565853,
+        "soloScore" : 6974.4215994445167,
         "stats" : {
           "atk_pct" : 1.0558000000000001,
           "base_atk" : 848.00999999999999,
@@ -9328,7 +9328,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 10115.712495836249,
+        "soloScore" : 6566.7716716140249,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 950.02999999999997,
@@ -9418,7 +9418,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 3394.0948148563757,
+        "soloScore" : 2939.5689538754309,
         "stats" : {
           "atk_pct" : 1.2270000000000001,
           "base_atk" : 908,
@@ -9544,22 +9544,22 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 6475.1854809706219,
+        "soloScore" : 4150.9570080462609,
         "stats" : {
-          "atk_pct" : 1.1759999999999999,
-          "base_atk" : 985,
+          "atk_pct" : 1.0960000000000001,
+          "base_atk" : 918,
           "base_def" : 745,
           "base_hp" : 11860,
           "burst_party_elemental_dmg" : {
 
           },
           "burst_party_flat_atk" : 0,
-          "crit_dmg" : 0.69999999999999996,
-          "crit_rate" : 0.41615000000000002,
+          "crit_dmg" : 0.5,
+          "crit_rate" : 0.52715000000000001,
           "def_pct" : 0,
           "derived" : {
-            "atk" : 2454.3600000000001,
-            "critMultiplier" : 1.2913049999999999,
+            "atk" : 2235.1280000000002,
+            "critMultiplier" : 1.2635749999999999,
             "def" : 745,
             "hp" : 22862.941999999999
           },
@@ -9570,7 +9570,7 @@
             "Anemo" : 0.46600000000000003
           },
           "dmg_normal" : 0,
-          "dmg_skill" : 0,
+          "dmg_skill" : 0.44999999999999996,
           "em" : 189.24000000000001,
           "er" : 1.5508,
           "flat_atk" : 311,
@@ -9586,7 +9586,7 @@
           "party_em" : 0,
           "party_flat_atk" : 0
         },
-        "weaponId" : "a-thousand-blazing-suns"
+        "weaponId" : "verdict"
       }
     },
     "sethos" : {
@@ -9634,7 +9634,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 5268.3088142493998,
+        "soloScore" : 4333.3693204656183,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 769.25999999999999,
@@ -9742,7 +9742,7 @@
         "setIds" : [
           "blizzard-strayer"
         ],
-        "soloScore" : 9916.7009935676851,
+        "soloScore" : 7441.1638483381948,
         "stats" : {
           "atk_pct" : 1.1037999999999999,
           "base_atk" : 911.75999999999999,
@@ -9850,7 +9850,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 7957.2114997286135,
+        "soloScore" : 5414.547395635549,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 833,
@@ -9946,7 +9946,7 @@
         "setIds" : [
           "shimenawas-reminiscence"
         ],
-        "soloScore" : 2153.2542192155461,
+        "soloScore" : 1674.3201516213035,
         "stats" : {
           "atk_pct" : 1.1419999999999999,
           "base_atk" : 801,
@@ -10084,7 +10084,7 @@
         "setIds" : [
           "blizzard-strayer"
         ],
-        "soloScore" : 25443.906404945948,
+        "soloScore" : 20708.476093837824,
         "stats" : {
           "atk_pct" : 1.1758,
           "base_atk" : 966.76999999999998,
@@ -10186,7 +10186,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 5049.9094007695212,
+        "soloScore" : 4197.4217771875874,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 777.91999999999996,
@@ -10306,7 +10306,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 11172.841544931529,
+        "soloScore" : 8442.7589176553756,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 843.37,
@@ -10408,7 +10408,7 @@
         "setIds" : [
           "vermillion-hereafter"
         ],
-        "soloScore" : 4068.6241481563366,
+        "soloScore" : 3058.4578498556953,
         "stats" : {
           "atk_pct" : 1.7089999999999999,
           "base_atk" : 943,
@@ -10510,7 +10510,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 7349.1630881668607,
+        "soloScore" : 4892.6016283209774,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 809.88,
@@ -10600,7 +10600,7 @@
         "setIds" : [
           "desert-pavilion-chronicle"
         ],
-        "soloScore" : 8867.8976068642096,
+        "soloScore" : 5494.8938573538162,
         "stats" : {
           "atk_pct" : 1.4157999999999999,
           "base_atk" : 820.39999999999998,
@@ -10708,7 +10708,7 @@
         "setIds" : [
           "blizzard-strayer"
         ],
-        "soloScore" : 9141.9229896606885,
+        "soloScore" : 5908.1335226226674,
         "stats" : {
           "atk_pct" : 1.4157999999999999,
           "base_atk" : 820.39999999999998,
@@ -10796,11 +10796,11 @@
       "scalingBasis" : "ATK",
       "topGear" : {
         "setIds" : [
-          "shimenawas-reminiscence"
+          "retracing-bolide"
         ],
-        "soloScore" : 8265.4312559727805,
+        "soloScore" : 4782.9541514285256,
         "stats" : {
-          "atk_pct" : 1.5957999999999999,
+          "atk_pct" : 1.4157999999999999,
           "base_atk" : 820.39999999999998,
           "base_def" : 682.51999999999998,
           "base_hp" : 10874.91,
@@ -10812,18 +10812,18 @@
           "crit_rate" : 0.67274999999999996,
           "def_pct" : 0,
           "derived" : {
-            "atk" : 2440.5943199999997,
+            "atk" : 2292.9223199999997,
             "critMultiplier" : 2.3067832374999999,
             "def" : 682.51999999999998,
             "hp" : 15654.91
           },
           "dmg_all" : 0,
           "dmg_burst" : 0,
-          "dmg_charged" : 0,
+          "dmg_charged" : 0.40000000000000002,
           "dmg_elemental" : {
             "Dendro" : 0.46600000000000003
           },
-          "dmg_normal" : 0.34999999999999998,
+          "dmg_normal" : 0.40000000000000002,
           "dmg_skill" : 0,
           "em" : 0,
           "er" : 1.1943999999999999,
@@ -10886,11 +10886,11 @@
       "scalingBasis" : "ATK",
       "topGear" : {
         "setIds" : [
-          "shimenawas-reminiscence"
+          "retracing-bolide"
         ],
-        "soloScore" : 8265.4312559727805,
+        "soloScore" : 4782.9541514285256,
         "stats" : {
-          "atk_pct" : 1.5957999999999999,
+          "atk_pct" : 1.4157999999999999,
           "base_atk" : 820.39999999999998,
           "base_def" : 682.51999999999998,
           "base_hp" : 10874.91,
@@ -10902,18 +10902,18 @@
           "crit_rate" : 0.67274999999999996,
           "def_pct" : 0,
           "derived" : {
-            "atk" : 2440.5943199999997,
+            "atk" : 2292.9223199999997,
             "critMultiplier" : 2.3067832374999999,
             "def" : 682.51999999999998,
             "hp" : 15654.91
           },
           "dmg_all" : 0,
           "dmg_burst" : 0,
-          "dmg_charged" : 0,
+          "dmg_charged" : 0.40000000000000002,
           "dmg_elemental" : {
             "Electro" : 0.46600000000000003
           },
-          "dmg_normal" : 0.34999999999999998,
+          "dmg_normal" : 0.40000000000000002,
           "dmg_skill" : 0,
           "em" : 0,
           "er" : 1.1943999999999999,
@@ -10976,11 +10976,11 @@
       "scalingBasis" : "ATK",
       "topGear" : {
         "setIds" : [
-          "shimenawas-reminiscence"
+          "retracing-bolide"
         ],
-        "soloScore" : 8265.4312559727805,
+        "soloScore" : 4782.9541514285256,
         "stats" : {
-          "atk_pct" : 1.5957999999999999,
+          "atk_pct" : 1.4157999999999999,
           "base_atk" : 820.39999999999998,
           "base_def" : 682.51999999999998,
           "base_hp" : 10874.91,
@@ -10992,18 +10992,18 @@
           "crit_rate" : 0.67274999999999996,
           "def_pct" : 0,
           "derived" : {
-            "atk" : 2440.5943199999997,
+            "atk" : 2292.9223199999997,
             "critMultiplier" : 2.3067832374999999,
             "def" : 682.51999999999998,
             "hp" : 15654.91
           },
           "dmg_all" : 0,
           "dmg_burst" : 0,
-          "dmg_charged" : 0,
+          "dmg_charged" : 0.40000000000000002,
           "dmg_elemental" : {
             "Geo" : 0.46600000000000003
           },
-          "dmg_normal" : 0.34999999999999998,
+          "dmg_normal" : 0.40000000000000002,
           "dmg_skill" : 0,
           "em" : 0,
           "er" : 1.1943999999999999,
@@ -11086,7 +11086,7 @@
         "setIds" : [
           "nymphs-dream"
         ],
-        "soloScore" : 10202.026556895991,
+        "soloScore" : 6818.6611541264747,
         "stats" : {
           "atk_pct" : 1.4157999999999999,
           "base_atk" : 820.39999999999998,
@@ -11200,7 +11200,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 9693.4464798771114,
+        "soloScore" : 6699.9340077303668,
         "stats" : {
           "atk_pct" : 1.8457999999999999,
           "base_atk" : 820.39999999999998,
@@ -11296,7 +11296,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 7392.8862609636999,
+        "soloScore" : 6734.6396487753518,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 964.38,
@@ -11404,7 +11404,7 @@
         "setIds" : [
           "desert-pavilion-chronicle"
         ],
-        "soloScore" : 21218.448036137583,
+        "soloScore" : 10478.812688394304,
         "stats" : {
           "atk_pct" : 1.0958000000000001,
           "base_atk" : 1093.79,
@@ -11516,11 +11516,11 @@
       "scalingBasis" : "ATK",
       "topGear" : {
         "setIds" : [
-          "desert-pavilion-chronicle"
+          "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 10049.875513630866,
+        "soloScore" : 4694.0060774488129,
         "stats" : {
-          "atk_pct" : 0.81580000000000008,
+          "atk_pct" : 1.2458,
           "base_atk" : 805.10000000000002,
           "base_def" : 668.63999999999999,
           "base_hp" : 10531.48,
@@ -11529,21 +11529,21 @@
           },
           "burst_party_flat_atk" : 0,
           "crit_dmg" : 1.7824499999999999,
-          "crit_rate" : 0.78274999999999995,
+          "crit_rate" : 0.90274999999999994,
           "def_pct" : 0,
           "derived" : {
-            "atk" : 1772.9005800000002,
-            "critMultiplier" : 2.3952127374999996,
+            "atk" : 2119.0935799999997,
+            "critMultiplier" : 2.6091067374999999,
             "def" : 668.63999999999999,
             "hp" : 15311.48
           },
           "dmg_all" : 0,
           "dmg_burst" : 0,
-          "dmg_charged" : 0.40000000000000002,
+          "dmg_charged" : 0,
           "dmg_elemental" : {
-            "Anemo" : 0.61599999999999999
+            "Anemo" : 0.46600000000000003
           },
-          "dmg_normal" : 0.40000000000000002,
+          "dmg_normal" : 0,
           "dmg_skill" : 0,
           "em" : 0,
           "er" : 1.5144,
@@ -11608,7 +11608,7 @@
         "setIds" : [
           "desert-pavilion-chronicle"
         ],
-        "soloScore" : 12491.208010996867,
+        "soloScore" : 8342.7755579088735,
         "stats" : {
           "atk_pct" : 0.81580000000000008,
           "base_atk" : 935.67000000000007,
@@ -11708,11 +11708,11 @@
       "scalingBasis" : "ATK",
       "topGear" : {
         "setIds" : [
-          "blizzard-strayer"
+          "shimenawas-reminiscence"
         ],
-        "soloScore" : 16843.427581356977,
+        "soloScore" : 12082.602235192197,
         "stats" : {
-          "atk_pct" : 0.81580000000000008,
+          "atk_pct" : 0.99580000000000002,
           "base_atk" : 919,
           "base_def" : 763,
           "base_hp" : 13592,
@@ -11724,18 +11724,18 @@
           "crit_rate" : 0.9837499999999999,
           "def_pct" : 0,
           "derived" : {
-            "atk" : 1979.7202,
+            "atk" : 2145.1401999999998,
             "critMultiplier" : 2.5193526874999996,
             "def" : 763,
             "hp" : 18372
           },
-          "dmg_all" : 0.29999999999999999,
+          "dmg_all" : 0,
           "dmg_burst" : 0,
           "dmg_charged" : 0,
           "dmg_elemental" : {
-            "Cryo" : 0.61599999999999999
+            "Cryo" : 0.46600000000000003
           },
-          "dmg_normal" : 0,
+          "dmg_normal" : 0.34999999999999998,
           "dmg_skill" : 0,
           "em" : 0,
           "er" : 1.1943999999999999,
@@ -11830,24 +11830,24 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 8005.8858302233875,
+        "soloScore" : 4965.9397678806645,
         "stats" : {
-          "atk_pct" : 1.4601999999999999,
-          "base_atk" : 899.13999999999999,
+          "atk_pct" : 1.2458,
+          "base_atk" : 833.13999999999999,
           "base_def" : 668.87,
           "base_hp" : 10874.969999999999,
           "burst_party_elemental_dmg" : {
 
           },
           "burst_party_flat_atk" : 0,
-          "crit_dmg" : 1.7824499999999999,
-          "crit_rate" : 0.68274999999999997,
+          "crit_dmg" : 1.8224499999999999,
+          "crit_rate" : 0.77274999999999994,
           "def_pct" : 0,
           "derived" : {
-            "atk" : 2523.0642279999997,
-            "critMultiplier" : 2.2169677375000001,
+            "atk" : 2431.6853079999996,
+            "critMultiplier" : 2.4082982374999995,
             "def" : 668.87,
-            "hp" : 15654.969999999999
+            "hp" : 17829.964
           },
           "dmg_all" : 0,
           "dmg_burst" : 0,
@@ -11855,7 +11855,7 @@
           "dmg_elemental" : {
             "Pyro" : 0.46600000000000003
           },
-          "dmg_normal" : 0.12,
+          "dmg_normal" : 0,
           "dmg_skill" : 0,
           "em" : 96,
           "er" : 1.1943999999999999,
@@ -11863,7 +11863,7 @@
           "flat_def" : 0,
           "flat_hp" : 4780,
           "healing_bonus" : 0,
-          "hp_pct" : 0,
+          "hp_pct" : 0.20000000000000001,
           "party_atk_pct" : 0,
           "party_dmg" : 0,
           "party_elemental_dmg" : {
@@ -11872,7 +11872,7 @@
           "party_em" : 0,
           "party_flat_atk" : 0
         },
-        "weaponId" : "primordial-jade-winged-spear"
+        "weaponId" : "staff-of-homa"
       }
     },
     "xianyun" : {
@@ -11938,7 +11938,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 7975.190994147677,
+        "soloScore" : 5784.4826946661587,
         "stats" : {
           "atk_pct" : 1.5337999999999998,
           "base_atk" : 942.85000000000002,
@@ -12010,7 +12010,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 7877.5134841503295,
+        "soloScore" : 9905.239802907945,
         "stats" : {
           "atk_pct" : 0.77980000000000005,
           "base_atk" : 957.20000000000005,
@@ -12020,14 +12020,14 @@
 
           },
           "burst_party_flat_atk" : 0,
-          "crit_dmg" : 1.7824499999999999,
-          "crit_rate" : 0.65374999999999994,
+          "crit_dmg" : 1.8224499999999999,
+          "crit_rate" : 0.96474999999999989,
           "def_pct" : 0,
           "derived" : {
-            "atk" : 2353.2359744,
-            "critMultiplier" : 2.1652766874999996,
+            "atk" : 2295.5056640000003,
+            "critMultiplier" : 2.7582086374999997,
             "def" : 799.29999999999995,
-            "hp" : 17515.779999999999
+            "hp" : 20062.936000000002
           },
           "dmg_all" : 0,
           "dmg_burst" : 0,
@@ -12038,12 +12038,12 @@
           "dmg_normal" : 0.95199999999999996,
           "dmg_skill" : 0,
           "em" : 0,
-          "er" : 2.2633999999999999,
+          "er" : 1.7123999999999999,
           "flat_atk" : 311,
           "flat_def" : 0,
           "flat_hp" : 4780,
           "healing_bonus" : 0,
-          "hp_pct" : 0,
+          "hp_pct" : 0.20000000000000001,
           "party_atk_pct" : 0,
           "party_dmg" : 0,
           "party_elemental_dmg" : {
@@ -12052,7 +12052,7 @@
           "party_em" : 0,
           "party_flat_atk" : 0
         },
-        "weaponId" : "engulfing-lightning"
+        "weaponId" : "staff-of-homa"
       }
     },
     "xilonen" : {
@@ -12106,7 +12106,7 @@
         "setIds" : [
           "obsidian-codex"
         ],
-        "soloScore" : 10296.847113267524,
+        "soloScore" : 9664.1823231280578,
         "stats" : {
           "atk_pct" : 0,
           "base_atk" : 817.05999999999995,
@@ -12208,7 +12208,7 @@
         "setIds" : [
           "nymphs-dream"
         ],
-        "soloScore" : 9513.3646749786931,
+        "soloScore" : 6351.8716983983413,
         "stats" : {
           "atk_pct" : 1.4157999999999999,
           "base_atk" : 809.77999999999997,
@@ -12314,9 +12314,9 @@
       "scalingBasis" : "ATK",
       "topGear" : {
         "setIds" : [
-          "shimenawas-reminiscence"
+          "vermillion-hereafter"
         ],
-        "soloScore" : 6924.8673005632108,
+        "soloScore" : 3436.2418730207164,
         "stats" : {
           "atk_pct" : 1.1659999999999999,
           "base_atk" : 989.50999999999999,
@@ -12335,13 +12335,13 @@
             "def" : 1235.1572125,
             "hp" : 19899.393258
           },
-          "dmg_all" : 0,
+          "dmg_all" : 0.26000000000000001,
           "dmg_burst" : 0,
           "dmg_charged" : 0,
           "dmg_elemental" : {
             "Pyro" : 0.46600000000000003
           },
-          "dmg_normal" : 0.34999999999999998,
+          "dmg_normal" : 0,
           "dmg_skill" : 0,
           "em" : 93.239999999999995,
           "er" : 1.486,
@@ -12412,7 +12412,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 6221.1133932332441,
+        "soloScore" : 5060.7265731064172,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 948,
@@ -12502,7 +12502,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 6671.5306558399607,
+        "soloScore" : 5263.688802947584,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 848.00999999999999,
@@ -12604,7 +12604,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 6740.9106493436238,
+        "soloScore" : 4915.8065863954671,
         "stats" : {
           "atk_pct" : 1.2458,
           "base_atk" : 820.39999999999998,
@@ -12706,7 +12706,7 @@
         "setIds" : [
           "nymphs-dream"
         ],
-        "soloScore" : 8010.6166908296846,
+        "soloScore" : 8296.0451903604917,
         "stats" : {
           "atk_pct" : 0,
           "base_atk" : 785.96000000000004,
@@ -12808,7 +12808,7 @@
         "setIds" : [
           "shimenawas-reminiscence"
         ],
-        "soloScore" : 17105.587689887197,
+        "soloScore" : 9660.063788061887,
         "stats" : {
           "atk_pct" : 0.99580000000000002,
           "base_atk" : 865,
@@ -12910,7 +12910,7 @@
         "setIds" : [
           "desert-pavilion-chronicle"
         ],
-        "soloScore" : 2497.3744852140808,
+        "soloScore" : 2038.1143829546286,
         "stats" : {
           "atk_pct" : 0.96199999999999997,
           "base_atk" : 823,
@@ -13018,26 +13018,26 @@
         "setIds" : [
           "vermillion-hereafter"
         ],
-        "soloScore" : 4968.4204880145762,
+        "soloScore" : 3306.9898304792137,
         "stats" : {
-          "atk_pct" : 1.4689999999999999,
-          "base_atk" : 932.15999999999997,
+          "atk_pct" : 0.17999999999999999,
+          "base_atk" : 799.15999999999997,
           "base_def" : 734.39999999999998,
           "base_hp" : 10657.469999999999,
           "burst_party_elemental_dmg" : {
 
           },
           "burst_party_flat_atk" : 0,
-          "crit_dmg" : 0.5,
-          "crit_rate" : 0.050000000000000003,
-          "def_pct" : 0.54675000000000007,
+          "crit_dmg" : 1.1619999999999999,
+          "crit_rate" : 0.36099999999999999,
+          "def_pct" : 1.12975,
           "derived" : {
-            "atk" : 2612.5030399999996,
-            "critMultiplier" : 1.0249999999999999,
-            "def" : 1135.9331999999999,
-            "hp" : 19165.453006
+            "atk" : 1552.166058084,
+            "critMultiplier" : 1.4194819999999999,
+            "def" : 1564.0883999999999,
+            "hp" : 21296.947005999999
           },
-          "dmg_all" : 0.38,
+          "dmg_all" : 0.26000000000000001,
           "dmg_burst" : 0,
           "dmg_charged" : 0,
           "dmg_elemental" : {
@@ -13051,7 +13051,7 @@
           "flat_def" : 0,
           "flat_hp" : 4780,
           "healing_bonus" : 0,
-          "hp_pct" : 0.3498,
+          "hp_pct" : 0.54980000000000007,
           "party_atk_pct" : 0,
           "party_dmg" : 0,
           "party_elemental_dmg" : {
@@ -13060,7 +13060,7 @@
           "party_em" : 0,
           "party_flat_atk" : 0
         },
-        "weaponId" : "calamity-queller"
+        "weaponId" : "staff-of-homa"
       }
     },
     "zhongli" : {
@@ -13132,7 +13132,7 @@
         "setIds" : [
           "a-day-carved-from-rising-winds"
         ],
-        "soloScore" : 6177.9409911504163,
+        "soloScore" : 4122.5810743227639,
         "stats" : {
           "atk_pct" : 0.89600000000000002,
           "base_atk" : 859.13999999999999,
@@ -13288,7 +13288,7 @@
         "setIds" : [
           "vermillion-hereafter"
         ],
-        "soloScore" : 9423.5742394491717,
+        "soloScore" : 7051.679631512714,
         "stats" : {
           "atk_pct" : 1.006,
           "base_atk" : 832.83000000000004,
@@ -13571,18 +13571,34 @@
       {
         "memberIds" : [
           "hu-tao",
-          "venti",
+          "fischl",
           "bennett",
           "diona"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 2813.6250638554275,
-          "diona" : 1519.7593280673609,
-          "hu-tao" : 49840.426501922782,
-          "venti" : 2838.4132278077063
+          "bennett" : 2574.6813856296094,
+          "diona" : 4501.9689224970771,
+          "fischl" : 1446.7728570299266,
+          "hu-tao" : 32078.75858345197
         },
-        "score" : 61573.202051385539
+        "score" : 43850.356288497271
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "xiangling",
+          "fischl",
+          "diona"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "diona" : 4412.1632783581299,
+          "fischl" : 1233.3727606501002,
+          "hu-tao" : 30194.893309184532,
+          "xiangling" : 2782.2338285004416
+        },
+        "score" : 41712.476230828659
       },
       {
         "memberIds" : [
@@ -13595,26 +13611,26 @@
         "perCharacter" : {
           "bennett" : 5752.7303120715951,
           "diona" : 585.46600328063357,
-          "hu-tao" : 47149.45615780988,
+          "hu-tao" : 29521.376889844552,
           "raiden-shogun" : 2520.8211642916658
         },
-        "score" : 60489.151528450078
+        "score" : 41450.825919047522
       },
       {
         "memberIds" : [
           "hu-tao",
-          "yelan",
-          "bennett",
+          "fischl",
+          "sucrose",
           "diona"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 2661.061465326894,
-          "diona" : 504.30465429059751,
-          "hu-tao" : 46278.771450044915,
-          "yelan" : 5929.922827346445
+          "diona" : 4778.1484928231685,
+          "fischl" : 1342.8245164177965,
+          "hu-tao" : 31119.126333517313,
+          "sucrose" : 1038.9689343403857
         },
-        "score" : 59803.985228769561
+        "score" : 41341.393739266568
       },
       {
         "memberIds" : [
@@ -13627,26 +13643,74 @@
         "perCharacter" : {
           "bennett" : 3496.9889334407153,
           "diona" : 621.71701813890581,
-          "hu-tao" : 49731.538971362512,
+          "hu-tao" : 32647.291315737129,
           "sucrose" : 1361.3266550812805
         },
-        "score" : 59628.497304265285
+        "score" : 41177.509836189871
       },
       {
         "memberIds" : [
           "hu-tao",
-          "fischl",
+          "yelan",
           "bennett",
           "diona"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 2574.6813856296094,
-          "diona" : 4501.9689224970771,
-          "fischl" : 1446.7728570299266,
-          "hu-tao" : 46071.652684071109
+          "bennett" : 2661.061465326894,
+          "diona" : 504.30465429059751,
+          "hu-tao" : 28615.112888939861,
+          "yelan" : 5929.922827346445
         },
-        "score" : 58962.681917165944
+        "score" : 40727.233982776102
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "yelan",
+          "fischl",
+          "diona"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "diona" : 414.68504963698587,
+          "fischl" : 3992.3852469897361,
+          "hu-tao" : 27319.044091019001,
+          "yelan" : 5949.9846463907961
+        },
+        "score" : 40690.18695675944
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "kuki-shinobu",
+          "bennett",
+          "diona"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 6621.6507850872767,
+          "diona" : 505.5214681629339,
+          "hu-tao" : 29801.943430891977,
+          "kuki-shinobu" : 711.62943331111637
+        },
+        "score" : 40652.004726849569
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "yelan",
+          "sucrose",
+          "diona"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "diona" : 1385.9331746922103,
+          "hu-tao" : 27775.864695445845,
+          "sucrose" : 1052.4174676775335,
+          "yelan" : 6940.9230035628498
+        },
+        "score" : 40127.549408688719
       },
       {
         "memberIds" : [
@@ -13659,108 +13723,44 @@
         "perCharacter" : {
           "bennett" : 2794.1692813084655,
           "diona" : 536.95740857547275,
-          "hu-tao" : 47319.577688152844,
+          "hu-tao" : 30022.130096467561,
           "xiangling" : 3790.2617845138097
         },
-        "score" : 58796.243455554635
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "venti",
-          "yelan",
-          "bennett"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 2421.2879174299442,
-          "hu-tao" : 41645.31519334788,
-          "venti" : 2897.6429719178332,
-          "yelan" : 6885.0489210933356
-        },
-        "score" : 58157.238604092112
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "bennett",
-          "kuki-shinobu",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 2517.7445400224269,
-          "diona" : 517.44358479890002,
-          "hu-tao" : 45743.667822996671,
-          "kuki-shinobu" : 4716.4212402283292
-        },
-        "score" : 57774.899363090037
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "raiden-shogun",
-          "yelan",
-          "bennett"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 5318.498305931309,
-          "hu-tao" : 39260.442561199467,
-          "raiden-shogun" : 2756.5414970453921,
-          "yelan" : 6114.2116301957158
-        },
-        "score" : 57725.669513921639
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "yelan",
-          "sucrose",
-          "bennett"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 3108.6243360245717,
-          "hu-tao" : 41555.100119359173,
-          "sucrose" : 1418.1630826354424,
-          "yelan" : 6976.3033433503688
-        },
-        "score" : 57302.84615187913
+        "score" : 40115.000056534533
       }
     ],
     "10" : [
       {
         "memberIds" : [
           "hu-tao",
-          "venti",
-          "bennett",
+          "yelan",
+          "sucrose",
           "diona"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 2240.9091843909814,
-          "diona" : 1251.1022595547602,
-          "hu-tao" : 39695.363443016759,
-          "venti" : 3408.5930111063217
+          "diona" : 1138.8609696272147,
+          "hu-tao" : 22122.062779443615,
+          "sucrose" : 1263.8268416831381,
+          "yelan" : 6791.6558421959053
         },
-        "score" : 46595.967898068819
+        "score" : 31316.406432949872
       },
       {
         "memberIds" : [
           "hu-tao",
-          "venti",
-          "yelan",
-          "bennett"
+          "fischl",
+          "sucrose",
+          "diona"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 1928.4326124066945,
-          "hu-tao" : 33168.374316282323,
-          "venti" : 3479.7208123177493,
-          "yelan" : 6614.2968625852836
+          "diona" : 3899.6124816273336,
+          "fischl" : 1313.9465698281663,
+          "hu-tao" : 24784.800543198955,
+          "sucrose" : 1247.6767701243048
         },
-        "score" : 45190.824603592053
+        "score" : 31246.036364778767
       },
       {
         "memberIds" : [
@@ -13773,10 +13773,10 @@
         "perCharacter" : {
           "bennett" : 2797.5473501442975,
           "diona" : 521.44007972940483,
-          "hu-tao" : 39608.640065963882,
+          "hu-tao" : 26001.906186702356,
           "sucrose" : 1634.7896341811859
         },
-        "score" : 44562.417130018774
+        "score" : 30955.683250757244
       },
       {
         "memberIds" : [
@@ -13788,75 +13788,75 @@
         "onFieldId" : "hu-tao",
         "perCharacter" : {
           "bennett" : 2488.2347112919797,
-          "hu-tao" : 33096.522600689917,
+          "hu-tao" : 19454.422472411105,
           "sucrose" : 1703.0433499683684,
           "yelan" : 6826.2753144611106
         },
-        "score" : 44114.075976411375
+        "score" : 30471.975848132559
       },
       {
         "memberIds" : [
           "hu-tao",
-          "venti",
-          "yelan",
+          "fischl",
+          "bennett",
           "diona"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "diona" : 408.99734261781566,
-          "hu-tao" : 33879.623331430266,
-          "venti" : 2649.1755990712177,
-          "yelan" : 6583.9093985913923
+          "bennett" : 1905.3619362344357,
+          "diona" : 3407.1420756283915,
+          "fischl" : 1415.6594622550897,
+          "hu-tao" : 23739.49876194738
         },
-        "score" : 43521.70567171069
+        "score" : 30467.662236065295
       },
       {
         "memberIds" : [
           "hu-tao",
           "yelan",
-          "sucrose",
+          "nahida",
           "diona"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "diona" : 1138.8609696272147,
-          "hu-tao" : 33853.124263833903,
-          "sucrose" : 1263.8268416831381,
-          "yelan" : 6791.6558421959053
+          "diona" : 4182.7842447707426,
+          "hu-tao" : 18277.698446991199,
+          "nahida" : 1719.981546453025,
+          "yelan" : 5895.5277899839875
         },
-        "score" : 43047.467917340167
+        "score" : 30075.992028198951
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "yelan",
+          "fischl",
+          "diona"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "diona" : 315.59662678465941,
+          "fischl" : 3206.0574565851957,
+          "hu-tao" : 20217.129403220897,
+          "yelan" : 5822.0279873286272
+        },
+        "score" : 29560.811473919381
       },
       {
         "memberIds" : [
           "hu-tao",
           "raiden-shogun",
-          "venti",
+          "yelan",
           "diona"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "diona" : 3928.7152417129901,
-          "hu-tao" : 34296.98364607284,
-          "raiden-shogun" : 2153.0331897770384,
-          "venti" : 2657.949549547046
+          "diona" : 3344.2045026576498,
+          "hu-tao" : 18257.685818773425,
+          "raiden-shogun" : 1906.2499095229737,
+          "yelan" : 5953.0493746707916
         },
-        "score" : 43036.681627109909
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "venti",
-          "xiangling",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "diona" : 1161.3215308811227,
-          "hu-tao" : 36049.401804185894,
-          "venti" : 2888.402127533469,
-          "xiangling" : 2424.3216514449209
-        },
-        "score" : 42523.447114045412
+        "score" : 29461.189605624841
       },
       {
         "memberIds" : [
@@ -13869,45 +13869,29 @@
         "perCharacter" : {
           "bennett" : 1969.2864733918188,
           "diona" : 383.8017500395585,
-          "hu-tao" : 34248.047183145194,
+          "hu-tao" : 21176.269500353974,
           "yelan" : 5802.3976052529706
         },
-        "score" : 42403.533011829546
+        "score" : 29331.755329038315
       },
       {
         "memberIds" : [
           "hu-tao",
-          "raiden-shogun",
-          "bennett",
+          "xiangling",
+          "sucrose",
           "diona"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 4305.8493948158075,
-          "diona" : 445.56970620043433,
-          "hu-tao" : 34892.386909954184,
-          "raiden-shogun" : 2466.6099564574356
+          "diona" : 427.1897451340883,
+          "hu-tao" : 24543.118827109196,
+          "sucrose" : 1353.9761858046154,
+          "xiangling" : 2875.0432848080627
         },
-        "score" : 42110.415967427864
+        "score" : 29199.328042855963
       }
     ],
     "11" : [
-      {
-        "memberIds" : [
-          "hu-tao",
-          "venti",
-          "bennett",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 2879.6604080713623,
-          "diona" : 1283.0372698928986,
-          "hu-tao" : 49208.073732675213,
-          "venti" : 2966.0739184363783
-        },
-        "score" : 61970.529861983436
-      },
       {
         "memberIds" : [
           "hu-tao",
@@ -13919,74 +13903,26 @@
         "perCharacter" : {
           "bennett" : 3403.5595757933729,
           "diona" : 596.5809765484222,
-          "hu-tao" : 49098.279820184784,
+          "hu-tao" : 32251.975187295226,
           "sucrose" : 1422.553786936611
         },
-        "score" : 59973.071575409514
+        "score" : 41442.136479230998
       },
       {
         "memberIds" : [
           "hu-tao",
-          "venti",
-          "yelan",
-          "bennett"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 2478.1151696204965,
-          "hu-tao" : 41130.645286846484,
-          "venti" : 3027.9675840519367,
-          "yelan" : 5058.7063860587486
-        },
-        "score" : 56864.97786923543
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "venti",
-          "xiangling",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "diona" : 1180.3189003821724,
-          "hu-tao" : 44708.517586548653,
-          "venti" : 2513.4165881694748,
-          "xiangling" : 3117.9298344196022
-        },
-        "score" : 56672.2012004719
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "yelan",
+          "fischl",
           "sucrose",
-          "bennett"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 3006.080121461463,
-          "hu-tao" : 41039.654610790974,
-          "sucrose" : 1481.9464940075627,
-          "yelan" : 5091.4775277785138
-        },
-        "score" : 55681.074629442373
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "raiden-shogun",
-          "venti",
           "diona"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "diona" : 3814.9062093512125,
-          "hu-tao" : 42530.771320347987,
-          "raiden-shogun" : 1472.0487573212436,
-          "venti" : 2312.882415044447
+          "diona" : 3781.609664442035,
+          "fischl" : 898.35745425845585,
+          "hu-tao" : 30742.314290408227,
+          "sucrose" : 1085.6976806695704
         },
-        "score" : 55143.669572271385
+        "score" : 40158.776998756126
       },
       {
         "memberIds" : [
@@ -13998,43 +13934,11 @@
         "onFieldId" : "hu-tao",
         "perCharacter" : {
           "diona" : 488.74891906241481,
-          "hu-tao" : 44671.984632953754,
+          "hu-tao" : 30442.539625636284,
           "sucrose" : 1178.1968213317355,
           "xiangling" : 3540.0684440428458
         },
-        "score" : 54866.89869912983
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "venti",
-          "yelan",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "diona" : 467.93494315064345,
-          "hu-tao" : 41982.396453201989,
-          "venti" : 2305.2475388409193,
-          "yelan" : 5036.0414505084173
-        },
-        "score" : 54770.782424272169
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "venti",
-          "bennett",
-          "furina"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 2478.1151696204965,
-          "furina" : 2393.6294243954371,
-          "hu-tao" : 41400.081463851653,
-          "venti" : 3027.9675840519367
-        },
-        "score" : 54229.773006111485
+        "score" : 39214.509191080622
       },
       {
         "memberIds" : [
@@ -14046,14 +13950,92 @@
         "onFieldId" : "hu-tao",
         "perCharacter" : {
           "diona" : 1154.6217127520315,
-          "hu-tao" : 41947.579001319697,
+          "hu-tao" : 27439.535191434687,
           "sucrose" : 1099.7510762716429,
           "yelan" : 5065.6560868107808
         },
-        "score" : 54194.368664869573
-      }
-    ],
-    "12" : [
+        "score" : 38235.520473996054
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "yelan",
+          "sucrose",
+          "bennett"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 3006.080121461463,
+          "hu-tao" : 24130.675126589082,
+          "sucrose" : 1481.9464940075627,
+          "yelan" : 5091.4775277785138
+        },
+        "score" : 37081.197196820292
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "fischl",
+          "bennett",
+          "diona"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 2285.2371756529769,
+          "diona" : 3107.2932973075331,
+          "fischl" : 821.24806231406365,
+          "hu-tao" : 27482.703443462571
+        },
+        "score" : 37066.130176610859
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "sucrose",
+          "kuki-shinobu",
+          "diona"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "diona" : 438.67701122779465,
+          "hu-tao" : 29052.161385582131,
+          "kuki-shinobu" : 3024.2083377772942,
+          "sucrose" : 1076.3287502681887
+        },
+        "score" : 36950.513033340947
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "xingqiu",
+          "sucrose",
+          "diona"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "diona" : 891.42969071068433,
+          "hu-tao" : 29529.075864744365,
+          "sucrose" : 1082.5138666587113,
+          "xingqiu" : 1805.6719974152925
+        },
+        "score" : 36639.560561481958
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "raiden-shogun",
+          "sucrose",
+          "diona"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "diona" : 2526.3509045764717,
+          "hu-tao" : 28127.943255396571,
+          "raiden-shogun" : 1455.8847219274792,
+          "sucrose" : 1116.2531695922582
+        },
+        "score" : 36549.075256642056
+      },
       {
         "memberIds" : [
           "hu-tao",
@@ -14063,12 +14045,30 @@
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 2107.5767380737566,
-          "diona" : 1237.0195222067364,
-          "hu-tao" : 49493.467150202283,
-          "venti" : 1452.4588775848242
+          "bennett" : 2879.6604080713623,
+          "diona" : 1283.0372698928986,
+          "hu-tao" : 25982.99004553552,
+          "venti" : 2966.0739184363783
         },
-        "score" : 59719.574516874352
+        "score" : 36422.937806129768
+      }
+    ],
+    "12" : [
+      {
+        "memberIds" : [
+          "hu-tao",
+          "fischl",
+          "sucrose",
+          "diona"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "diona" : 5549.0053213990059,
+          "fischl" : 1079.7970338204964,
+          "hu-tao" : 30260.572274611295,
+          "sucrose" : 531.65608074025351
+        },
+        "score" : 41163.133781628174
       },
       {
         "memberIds" : [
@@ -14081,58 +14081,26 @@
         "perCharacter" : {
           "bennett" : 2654.3701374053721,
           "diona" : 522.15683585274428,
-          "hu-tao" : 49394.774286277076,
+          "hu-tao" : 31525.482107629436,
           "sucrose" : 696.61139051019597
         },
-        "score" : 58594.703915049926
+        "score" : 38938.482518537523
       },
       {
         "memberIds" : [
           "hu-tao",
-          "raiden-shogun",
-          "venti",
+          "fischl",
+          "bennett",
           "diona"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "diona" : 5578.1480852785935,
-          "hu-tao" : 42701.710770870231,
-          "raiden-shogun" : 1769.3556994043997,
-          "venti" : 1132.5970589135179
+          "bennett" : 1745.5996295536104,
+          "diona" : 4462.2603720663274,
+          "fischl" : 1055.6635852555132,
+          "hu-tao" : 28060.776578498153
         },
-        "score" : 56299.992775913423
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "venti",
-          "yelan",
-          "bennett"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 1813.6922920219658,
-          "hu-tao" : 41298.869466098491,
-          "venti" : 1482.7676313656389,
-          "yelan" : 6366.5694280216931
-        },
-        "score" : 56058.088699258573
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "yelan",
-          "sucrose",
-          "bennett"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 2374.4208634293445,
-          "hu-tao" : 41217.202509170027,
-          "sucrose" : 725.69544809648687,
-          "yelan" : 6544.7794252049835
-        },
-        "score" : 55948.30807049093
+        "score" : 38856.730181910978
       },
       {
         "memberIds" : [
@@ -14144,75 +14112,107 @@
         "onFieldId" : "hu-tao",
         "perCharacter" : {
           "diona" : 1139.3627867707455,
-          "hu-tao" : 42284.260695026664,
+          "hu-tao" : 26896.545643908154,
           "sucrose" : 538.53789817425809,
           "yelan" : 6511.5875600434974
         },
-        "score" : 55521.123834016689
+        "score" : 38594.637277786322
       },
       {
         "memberIds" : [
           "hu-tao",
-          "venti",
-          "yelan",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "diona" : 409.55953827777148,
-          "hu-tao" : 42309.183087614343,
-          "venti" : 1128.8583308757079,
-          "yelan" : 6337.4350553265185
-        },
-        "score" : 55203.539613303772
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "venti",
-          "xiangling",
-          "diona"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "diona" : 1147.1153835967777,
-          "hu-tao" : 44864.518594671419,
-          "venti" : 1230.7967828664953,
-          "xiangling" : 2280.0762983987138
-        },
-        "score" : 54474.757765486756
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "venti",
+          "sucrose",
           "kuki-shinobu",
           "diona"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "diona" : 5544.0319465017601,
-          "hu-tao" : 42234.415909851312,
-          "kuki-shinobu" : 600.79567545143618,
-          "venti" : 1123.5517491446228
+          "diona" : 383.95156592032612,
+          "hu-tao" : 28578.80238343163,
+          "kuki-shinobu" : 4479.4195104878136,
+          "sucrose" : 527.06820245091717
         },
-        "score" : 54453.074809044054
+        "score" : 37366.165828519755
       },
       {
         "memberIds" : [
           "hu-tao",
+          "yelan",
           "fischl",
+          "diona"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "diona" : 319.87275191929695,
+          "fischl" : 3820.740982068276,
+          "hu-tao" : 23960.545531510532,
+          "yelan" : 5581.944358985178
+        },
+        "score" : 37051.41398693162
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "xiangling",
+          "fischl",
+          "diona"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "diona" : 4392.9876105964904,
+          "fischl" : 899.95240381914505,
+          "hu-tao" : 26370.547235721042,
+          "xiangling" : 1886.3174167759212
+        },
+        "score" : 36904.785133603866
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "xiangling",
           "sucrose",
           "diona"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "diona" : 5549.0053213990059,
-          "fischl" : 1079.7970338204964,
-          "hu-tao" : 42319.152044649411,
-          "sucrose" : 531.65608074025351
+          "diona" : 427.77694753289813,
+          "hu-tao" : 29707.274264848762,
+          "sucrose" : 576.9520516830662,
+          "xiangling" : 2723.1483394667689
         },
-        "score" : 54427.571528670087
+        "score" : 36778.666763884641
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "raiden-shogun",
+          "sucrose",
+          "diona"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "diona" : 3566.4623378247848,
+          "hu-tao" : 27431.010112137854,
+          "raiden-shogun" : 1749.9270439287643,
+          "sucrose" : 546.61882016115737
+        },
+        "score" : 36623.420145457821
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "yelan",
+          "sucrose",
+          "bennett"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 2374.4208634293445,
+          "hu-tao" : 23390.312864075,
+          "sucrose" : 725.69544809648687,
+          "yelan" : 6544.7794252049835
+        },
+        "score" : 36338.729460886403
       }
     ]
   }

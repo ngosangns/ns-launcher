@@ -1,0 +1,1351 @@
+{
+ "_doc": "Độ dài chuỗi đòn thường, đòn nặng, kỹ năng và nộ của từng nhân vật, tính bằng frame (60/giây), đọc từ frame data của gcsim (github.com/genshinsim/gcsim, MIT — số frame do cộng đồng đếm, ghi công ở config.yml của từng nhân vật). SINH TỰ ĐỘNG bằng scripts/sync-abyss-frames.py — đừng sửa tay. comboFrames[i] = frame từ đòn i tới đòn thường kế tiếp; chargedFrames = từ đòn nặng tới đòn thường kế tiếp (cung: mũi sạc đầy); skillFrames/burstFrames = tới lúc đổi người được. null = mẫu code không nhận ra; Swift dùng trung vị và báo ở diagnostics.framesEstimated.",
+ "source": "gcsim@a086a05 internal/characters/*/{attack,charge,aimed,skill,burst}.go",
+ "fetchedOn": "2026-09-15",
+ "unresolved": [
+  "aino: chargedFrames",
+  "arataki-itto: chargedFrames",
+  "arataki-itto: comboFrames",
+  "beidou: chargedFrames",
+  "chasca: burstFrames",
+  "chasca: skillFrames",
+  "chongyun: chargedFrames",
+  "dehya: burstFrames",
+  "dehya: chargedFrames",
+  "diluc: chargedFrames",
+  "dori: chargedFrames",
+  "eula: chargedFrames",
+  "freminet: chargedFrames",
+  "freminet: skillFrames",
+  "furina: skillFrames",
+  "gaming: chargedFrames",
+  "ifa: burstFrames",
+  "ifa: skillFrames",
+  "jahoda: chargedFrames",
+  "jahoda: skillFrames",
+  "kaveh: chargedFrames",
+  "lan-yan: skillFrames",
+  "navia: chargedFrames",
+  "navia: skillFrames",
+  "ningguang: chargedFrames",
+  "ningguang: comboFrames",
+  "razor: chargedFrames",
+  "sayu: chargedFrames",
+  "sethos: comboFrames",
+  "shikanoin-heizou: skillFrames",
+  "sigewinne: burstFrames",
+  "skirk: comboFrames",
+  "tartaglia: burstFrames",
+  "tartaglia: skillFrames",
+  "wanderer: burstFrames",
+  "wanderer: chargedFrames",
+  "wanderer: comboFrames",
+  "wanderer: skillFrames",
+  "xianyun: skillFrames",
+  "xinyan: chargedFrames"
+ ],
+ "characters": {
+  "aino": {
+   "gcsim": "internal/characters/aino",
+   "comboFrames": [
+    32,
+    43,
+    62
+   ],
+   "chargedFrames": null,
+   "skillFrames": 49,
+   "burstFrames": 54
+  },
+  "albedo": {
+   "gcsim": "internal/characters/albedo",
+   "comboFrames": [
+    14,
+    22,
+    32,
+    34,
+    62
+   ],
+   "chargedFrames": 56,
+   "skillFrames": 31,
+   "burstFrames": 93
+  },
+  "alhaitham": {
+   "gcsim": "internal/characters/alhaitham",
+   "comboFrames": [
+    15,
+    22,
+    44,
+    30,
+    67
+   ],
+   "chargedFrames": 50,
+   "skillFrames": 36,
+   "burstFrames": 87
+  },
+  "aloy": {
+   "gcsim": "internal/characters/aloy",
+   "comboFrames": [
+    31,
+    28,
+    38,
+    61
+   ],
+   "chargedFrames": 96,
+   "skillFrames": 66,
+   "burstFrames": 117
+  },
+  "amber": {
+   "gcsim": "internal/characters/amber",
+   "comboFrames": [
+    26,
+    22,
+    37,
+    34,
+    60
+   ],
+   "chargedFrames": 96,
+   "skillFrames": 23,
+   "burstFrames": 60
+  },
+  "arataki-itto": {
+   "gcsim": "internal/characters/itto",
+   "comboFrames": null,
+   "chargedFrames": null,
+   "skillFrames": 41,
+   "burstFrames": 90
+  },
+  "arlecchino": {
+   "gcsim": "internal/characters/arlecchino",
+   "comboFrames": [
+    11,
+    21,
+    31,
+    49,
+    30,
+    58
+   ],
+   "chargedFrames": 42,
+   "skillFrames": 60,
+   "burstFrames": 145
+  },
+  "baizhu": {
+   "gcsim": "internal/characters/baizhu",
+   "comboFrames": [
+    22,
+    33,
+    40,
+    67
+   ],
+   "chargedFrames": 70,
+   "skillFrames": 28,
+   "burstFrames": 102
+  },
+  "barbara": {
+   "gcsim": "internal/characters/barbara",
+   "comboFrames": [
+    15,
+    21,
+    22,
+    60
+   ],
+   "chargedFrames": 89,
+   "skillFrames": 53,
+   "burstFrames": 195
+  },
+  "beidou": {
+   "gcsim": "internal/characters/beidou",
+   "comboFrames": [
+    31,
+    36,
+    54,
+    36,
+    96
+   ],
+   "chargedFrames": null,
+   "skillFrames": 44,
+   "burstFrames": 46
+  },
+  "bennett": {
+   "gcsim": "internal/characters/bennett",
+   "comboFrames": [
+    20,
+    17,
+    37,
+    44,
+    60
+   ],
+   "chargedFrames": 55,
+   "skillFrames": 41,
+   "burstFrames": 51
+  },
+  "candace": {
+   "gcsim": "internal/characters/candace",
+   "comboFrames": [
+    20,
+    33,
+    48,
+    69
+   ],
+   "chargedFrames": 53,
+   "skillFrames": 25,
+   "burstFrames": 49
+  },
+  "charlotte": {
+   "gcsim": "internal/characters/charlotte",
+   "comboFrames": [
+    23,
+    35,
+    74
+   ],
+   "chargedFrames": 79,
+   "skillFrames": 41,
+   "burstFrames": 68
+  },
+  "chasca": {
+   "gcsim": "internal/characters/chasca",
+   "comboFrames": [
+    17,
+    19,
+    36,
+    73
+   ],
+   "chargedFrames": 96,
+   "skillFrames": null,
+   "burstFrames": null
+  },
+  "chevreuse": {
+   "gcsim": "internal/characters/chevreuse",
+   "comboFrames": [
+    23,
+    26,
+    33,
+    64
+   ],
+   "chargedFrames": 58,
+   "skillFrames": 24,
+   "burstFrames": 56
+  },
+  "chiori": {
+   "gcsim": "internal/characters/chiori",
+   "comboFrames": [
+    19,
+    22,
+    41,
+    59
+   ],
+   "chargedFrames": 39,
+   "skillFrames": 49,
+   "burstFrames": 99
+  },
+  "chongyun": {
+   "gcsim": "internal/characters/chongyun",
+   "comboFrames": [
+    30,
+    36,
+    57,
+    101
+   ],
+   "chargedFrames": null,
+   "skillFrames": 49,
+   "burstFrames": 79
+  },
+  "citlali": {
+   "gcsim": "internal/characters/citlali",
+   "comboFrames": [
+    34,
+    37,
+    49
+   ],
+   "chargedFrames": 49,
+   "skillFrames": 41,
+   "burstFrames": 110
+  },
+  "clorinde": {
+   "gcsim": "internal/characters/clorinde",
+   "comboFrames": [
+    19,
+    12,
+    40,
+    32,
+    60
+   ],
+   "chargedFrames": 66,
+   "skillFrames": 25,
+   "burstFrames": 127
+  },
+  "collei": {
+   "gcsim": "internal/characters/collei",
+   "comboFrames": [
+    24,
+    25,
+    43,
+    65
+   ],
+   "chargedFrames": 96,
+   "skillFrames": 66,
+   "burstFrames": 66
+  },
+  "columbina": {
+   "gcsim": "internal/characters/columbina",
+   "comboFrames": [
+    24,
+    20,
+    74
+   ],
+   "chargedFrames": 94,
+   "skillFrames": 26,
+   "burstFrames": 122
+  },
+  "cyno": {
+   "gcsim": "internal/characters/cyno",
+   "comboFrames": [
+    15,
+    22,
+    27,
+    58
+   ],
+   "chargedFrames": 63,
+   "skillFrames": 42,
+   "burstFrames": 83
+  },
+  "dahlia": {
+   "gcsim": "internal/characters/dahlia",
+   "comboFrames": [
+    21,
+    21,
+    39,
+    71
+   ],
+   "chargedFrames": 67,
+   "skillFrames": 31,
+   "burstFrames": 52
+  },
+  "dehya": {
+   "gcsim": "internal/characters/dehya",
+   "comboFrames": [
+    31,
+    34,
+    43,
+    85
+   ],
+   "chargedFrames": null,
+   "skillFrames": 25,
+   "burstFrames": null
+  },
+  "diluc": {
+   "gcsim": "internal/characters/diluc",
+   "comboFrames": [
+    32,
+    46,
+    34,
+    99
+   ],
+   "chargedFrames": null,
+   "skillFrames": 30,
+   "burstFrames": 138
+  },
+  "diona": {
+   "gcsim": "internal/characters/diona",
+   "comboFrames": [
+    30,
+    21,
+    44,
+    21,
+    73
+   ],
+   "chargedFrames": 94,
+   "skillFrames": 16,
+   "burstFrames": 41
+  },
+  "dori": {
+   "gcsim": "internal/characters/dori",
+   "comboFrames": [
+    44,
+    46,
+    108
+   ],
+   "chargedFrames": null,
+   "skillFrames": 43,
+   "burstFrames": 56
+  },
+  "durin": {
+   "gcsim": "internal/characters/durin",
+   "comboFrames": [
+    19,
+    14,
+    48,
+    66
+   ],
+   "chargedFrames": 53,
+   "skillFrames": 13,
+   "burstFrames": 102
+  },
+  "emilie": {
+   "gcsim": "internal/characters/emilie",
+   "comboFrames": [
+    20,
+    19,
+    40,
+    70
+   ],
+   "chargedFrames": 39,
+   "skillFrames": 34,
+   "burstFrames": 105
+  },
+  "escoffier": {
+   "gcsim": "internal/characters/escoffier",
+   "comboFrames": [
+    17,
+    29,
+    62
+   ],
+   "chargedFrames": 53,
+   "skillFrames": 31,
+   "burstFrames": 108
+  },
+  "eula": {
+   "gcsim": "internal/characters/eula",
+   "comboFrames": [
+    34,
+    36,
+    56,
+    44,
+    105
+   ],
+   "chargedFrames": null,
+   "skillFrames": 29,
+   "burstFrames": 120
+  },
+  "faruzan": {
+   "gcsim": "internal/characters/faruzan",
+   "comboFrames": [
+    26,
+    21,
+    39,
+    86
+   ],
+   "chargedFrames": 96,
+   "skillFrames": 33,
+   "burstFrames": 60
+  },
+  "fischl": {
+   "gcsim": "internal/characters/fischl",
+   "comboFrames": [
+    25,
+    22,
+    38,
+    32,
+    67
+   ],
+   "chargedFrames": 96,
+   "skillFrames": 42,
+   "burstFrames": 24
+  },
+  "flins": {
+   "gcsim": "internal/characters/flins",
+   "comboFrames": [
+    14,
+    16,
+    23,
+    40,
+    68
+   ],
+   "chargedFrames": 60,
+   "skillFrames": 17,
+   "burstFrames": 91
+  },
+  "freminet": {
+   "gcsim": "internal/characters/freminet",
+   "comboFrames": [
+    32,
+    33,
+    59,
+    86
+   ],
+   "chargedFrames": null,
+   "skillFrames": null,
+   "burstFrames": 51
+  },
+  "furina": {
+   "gcsim": "internal/characters/furina",
+   "comboFrames": [
+    31,
+    23,
+    36,
+    53
+   ],
+   "chargedFrames": 37,
+   "skillFrames": null,
+   "burstFrames": 111
+  },
+  "gaming": {
+   "gcsim": "internal/characters/gaming",
+   "comboFrames": [
+    30,
+    32,
+    79,
+    87
+   ],
+   "chargedFrames": null,
+   "skillFrames": 63,
+   "burstFrames": 77
+  },
+  "ganyu": {
+   "gcsim": "internal/characters/ganyu",
+   "comboFrames": [
+    19,
+    27,
+    38,
+    37,
+    28,
+    59
+   ],
+   "chargedFrames": 85,
+   "skillFrames": 27,
+   "burstFrames": 122
+  },
+  "gorou": {
+   "gcsim": "internal/characters/gorou",
+   "comboFrames": [
+    21,
+    26,
+    43,
+    55
+   ],
+   "chargedFrames": 94,
+   "skillFrames": 46,
+   "burstFrames": 55
+  },
+  "hu-tao": {
+   "gcsim": "internal/characters/hutao",
+   "comboFrames": [
+    14,
+    12,
+    26,
+    29,
+    37,
+    72
+   ],
+   "chargedFrames": 57,
+   "skillFrames": 52,
+   "burstFrames": 95
+  },
+  "ifa": {
+   "gcsim": "internal/characters/ifa",
+   "comboFrames": [
+    15,
+    20,
+    90
+   ],
+   "chargedFrames": 64,
+   "skillFrames": null,
+   "burstFrames": null
+  },
+  "ineffa": {
+   "gcsim": "internal/characters/ineffa",
+   "comboFrames": [
+    12,
+    19,
+    33,
+    52
+   ],
+   "chargedFrames": 45,
+   "skillFrames": 31,
+   "burstFrames": 126
+  },
+  "jahoda": {
+   "gcsim": "internal/characters/jahoda",
+   "comboFrames": [
+    30,
+    48,
+    88
+   ],
+   "chargedFrames": null,
+   "skillFrames": null,
+   "burstFrames": 36
+  },
+  "jean": {
+   "gcsim": "internal/characters/jean",
+   "comboFrames": [
+    22,
+    14,
+    28,
+    44,
+    68
+   ],
+   "chargedFrames": 57,
+   "skillFrames": 45,
+   "burstFrames": 88
+  },
+  "kaedehara-kazuha": {
+   "gcsim": "internal/characters/kazuha",
+   "comboFrames": [
+    21,
+    20,
+    33,
+    38,
+    72
+   ],
+   "chargedFrames": 55,
+   "skillFrames": 77,
+   "burstFrames": 90
+  },
+  "kaeya": {
+   "gcsim": "internal/characters/kaeya",
+   "comboFrames": [
+    21,
+    21,
+    39,
+    38,
+    64
+   ],
+   "chargedFrames": 55,
+   "skillFrames": 49,
+   "burstFrames": 77
+  },
+  "kamisato-ayaka": {
+   "gcsim": "internal/characters/ayaka",
+   "comboFrames": [
+    9,
+    19,
+    32,
+    22,
+    66
+   ],
+   "chargedFrames": 71,
+   "skillFrames": 48,
+   "burstFrames": 123
+  },
+  "kamisato-ayato": {
+   "gcsim": "internal/characters/ayato",
+   "comboFrames": [
+    15,
+    27,
+    30,
+    27,
+    63
+   ],
+   "chargedFrames": 55,
+   "skillFrames": 21,
+   "burstFrames": 120
+  },
+  "kaveh": {
+   "gcsim": "internal/characters/kaveh",
+   "comboFrames": [
+    35,
+    35,
+    42,
+    67
+   ],
+   "chargedFrames": null,
+   "skillFrames": 44,
+   "burstFrames": 42
+  },
+  "keqing": {
+   "gcsim": "internal/characters/keqing",
+   "comboFrames": [
+    15,
+    16,
+    27,
+    31,
+    66
+   ],
+   "chargedFrames": 36,
+   "skillFrames": 28,
+   "burstFrames": 122
+  },
+  "kinich": {
+   "gcsim": "internal/characters/kinich",
+   "comboFrames": [
+    30,
+    41,
+    75
+   ],
+   "chargedFrames": 87,
+   "skillFrames": 42,
+   "burstFrames": 126
+  },
+  "kirara": {
+   "gcsim": "internal/characters/kirara",
+   "comboFrames": [
+    20,
+    28,
+    54,
+    60
+   ],
+   "chargedFrames": 43,
+   "skillFrames": 33,
+   "burstFrames": 57
+  },
+  "klee": {
+   "gcsim": "internal/characters/klee",
+   "comboFrames": [
+    31,
+    38,
+    77
+   ],
+   "chargedFrames": 59,
+   "skillFrames": 74,
+   "burstFrames": 101
+  },
+  "kujou-sara": {
+   "gcsim": "internal/characters/sara",
+   "comboFrames": [
+    25,
+    28,
+    37,
+    38,
+    45
+   ],
+   "chargedFrames": 96,
+   "skillFrames": 50,
+   "burstFrames": 56
+  },
+  "kuki-shinobu": {
+   "gcsim": "internal/characters/kuki",
+   "comboFrames": [
+    19,
+    17,
+    42,
+    57
+   ],
+   "chargedFrames": 35,
+   "skillFrames": 50,
+   "burstFrames": 62
+  },
+  "lan-yan": {
+   "gcsim": "internal/characters/lanyan",
+   "comboFrames": [
+    20,
+    46,
+    53,
+    63
+   ],
+   "chargedFrames": 41,
+   "skillFrames": null,
+   "burstFrames": 75
+  },
+  "lauma": {
+   "gcsim": "internal/characters/lauma",
+   "comboFrames": [
+    29,
+    33,
+    38
+   ],
+   "chargedFrames": 67,
+   "skillFrames": 36,
+   "burstFrames": 109
+  },
+  "layla": {
+   "gcsim": "internal/characters/layla",
+   "comboFrames": [
+    19,
+    36,
+    65
+   ],
+   "chargedFrames": 49,
+   "skillFrames": 41,
+   "burstFrames": 65
+  },
+  "lisa": {
+   "gcsim": "internal/characters/lisa",
+   "comboFrames": [
+    30,
+    20,
+    40,
+    57
+   ],
+   "chargedFrames": 91,
+   "skillFrames": 20,
+   "burstFrames": 56
+  },
+  "lynette": {
+   "gcsim": "internal/characters/lynette",
+   "comboFrames": [
+    24,
+    16,
+    35,
+    60
+   ],
+   "chargedFrames": 42,
+   "skillFrames": 42,
+   "burstFrames": 43
+  },
+  "lyney": {
+   "gcsim": "internal/characters/lyney",
+   "comboFrames": [
+    22,
+    24,
+    39,
+    59
+   ],
+   "chargedFrames": 80,
+   "skillFrames": 41,
+   "burstFrames": 283
+  },
+  "mavuika": {
+   "gcsim": "internal/characters/mavuika",
+   "comboFrames": [
+    31,
+    42,
+    46,
+    60
+   ],
+   "chargedFrames": 98,
+   "skillFrames": 24,
+   "burstFrames": 116
+  },
+  "mika": {
+   "gcsim": "internal/characters/mika",
+   "comboFrames": [
+    23,
+    19,
+    34,
+    32,
+    71
+   ],
+   "chargedFrames": 63,
+   "skillFrames": 37,
+   "burstFrames": 59
+  },
+  "mona": {
+   "gcsim": "internal/characters/mona",
+   "comboFrames": [
+    18,
+    23,
+    39,
+    67
+   ],
+   "chargedFrames": 113,
+   "skillFrames": 43,
+   "burstFrames": 127
+  },
+  "mualani": {
+   "gcsim": "internal/characters/mualani",
+   "comboFrames": [
+    23,
+    22,
+    54
+   ],
+   "chargedFrames": 73,
+   "skillFrames": 65,
+   "burstFrames": 108
+  },
+  "nahida": {
+   "gcsim": "internal/characters/nahida",
+   "comboFrames": [
+    30,
+    22,
+    38,
+    71
+   ],
+   "chargedFrames": 65,
+   "skillFrames": 25,
+   "burstFrames": 111
+  },
+  "navia": {
+   "gcsim": "internal/characters/navia",
+   "comboFrames": [
+    28,
+    42,
+    48,
+    93
+   ],
+   "chargedFrames": null,
+   "skillFrames": null,
+   "burstFrames": 93
+  },
+  "neuvillette": {
+   "gcsim": "internal/characters/neuvillette",
+   "comboFrames": [
+    29,
+    31,
+    62
+   ],
+   "chargedFrames": 87,
+   "skillFrames": 29,
+   "burstFrames": 120
+  },
+  "nicole": {
+   "gcsim": "internal/characters/nicole",
+   "comboFrames": [
+    18,
+    22,
+    52
+   ],
+   "chargedFrames": 99,
+   "skillFrames": 31,
+   "burstFrames": 113
+  },
+  "nilou": {
+   "gcsim": "internal/characters/nilou",
+   "comboFrames": [
+    20,
+    21,
+    58
+   ],
+   "chargedFrames": 42,
+   "skillFrames": 21,
+   "burstFrames": 107
+  },
+  "ningguang": {
+   "gcsim": "internal/characters/ningguang",
+   "comboFrames": null,
+   "chargedFrames": null,
+   "skillFrames": 60,
+   "burstFrames": 98
+  },
+  "noelle": {
+   "gcsim": "internal/characters/noelle",
+   "comboFrames": [
+    38,
+    46,
+    31,
+    106
+   ],
+   "chargedFrames": 106,
+   "skillFrames": 78,
+   "burstFrames": 121
+  },
+  "odette": {
+   "gcsim": "internal/characters/odette",
+   "comboFrames": [
+    17,
+    19,
+    54,
+    53,
+    62
+   ],
+   "chargedFrames": 83,
+   "skillFrames": 40,
+   "burstFrames": 106
+  },
+  "ororon": {
+   "gcsim": "internal/characters/ororon",
+   "comboFrames": [
+    24,
+    27,
+    70
+   ],
+   "chargedFrames": 85,
+   "skillFrames": 29,
+   "burstFrames": 61
+  },
+  "prune": {
+   "gcsim": "internal/characters/prune",
+   "comboFrames": [
+    23,
+    49,
+    63
+   ],
+   "chargedFrames": 96,
+   "skillFrames": 27,
+   "burstFrames": 71
+  },
+  "qiqi": {
+   "gcsim": "internal/characters/qiqi",
+   "comboFrames": [
+    14,
+    21,
+    33,
+    28,
+    53
+   ],
+   "chargedFrames": 76,
+   "skillFrames": 57,
+   "burstFrames": 112
+  },
+  "raiden-shogun": {
+   "gcsim": "internal/characters/raiden",
+   "comboFrames": [
+    18,
+    13,
+    26,
+    41,
+    50
+   ],
+   "chargedFrames": 37,
+   "skillFrames": 36,
+   "burstFrames": 110
+  },
+  "razor": {
+   "gcsim": "internal/characters/razor",
+   "comboFrames": [
+    45,
+    33,
+    47,
+    116
+   ],
+   "chargedFrames": null,
+   "skillFrames": 74,
+   "burstFrames": 63
+  },
+  "rosaria": {
+   "gcsim": "internal/characters/rosaria",
+   "comboFrames": [
+    19,
+    23,
+    31,
+    44,
+    66
+   ],
+   "chargedFrames": 69,
+   "skillFrames": 50,
+   "burstFrames": 69
+  },
+  "sangonomiya-kokomi": {
+   "gcsim": "internal/characters/kokomi",
+   "comboFrames": [
+    14,
+    30,
+    65
+   ],
+   "chargedFrames": 62,
+   "skillFrames": 61,
+   "burstFrames": 76
+  },
+  "sayu": {
+   "gcsim": "internal/characters/sayu",
+   "comboFrames": [
+    36,
+    48,
+    52,
+    71
+   ],
+   "chargedFrames": null,
+   "skillFrames": 42,
+   "burstFrames": 64
+  },
+  "sethos": {
+   "gcsim": "internal/characters/sethos",
+   "comboFrames": null,
+   "chargedFrames": 83,
+   "skillFrames": 30,
+   "burstFrames": 50
+  },
+  "shenhe": {
+   "gcsim": "internal/characters/shenhe",
+   "comboFrames": [
+    23,
+    17,
+    32,
+    25,
+    49
+   ],
+   "chargedFrames": 48,
+   "skillFrames": 27,
+   "burstFrames": 98
+  },
+  "shikanoin-heizou": {
+   "gcsim": "internal/characters/heizou",
+   "comboFrames": [
+    20,
+    17,
+    45,
+    36,
+    66
+   ],
+   "chargedFrames": 38,
+   "skillFrames": null,
+   "burstFrames": 69
+  },
+  "sigewinne": {
+   "gcsim": "internal/characters/sigewinne",
+   "comboFrames": [
+    20,
+    36,
+    82
+   ],
+   "chargedFrames": 94,
+   "skillFrames": 41,
+   "burstFrames": null
+  },
+  "skirk": {
+   "gcsim": "internal/characters/skirk",
+   "comboFrames": null,
+   "chargedFrames": 43,
+   "skillFrames": 29,
+   "burstFrames": 101
+  },
+  "sucrose": {
+   "gcsim": "internal/characters/sucrose",
+   "comboFrames": [
+    17,
+    26,
+    33,
+    51
+   ],
+   "chargedFrames": 69,
+   "skillFrames": 56,
+   "burstFrames": 47
+  },
+  "tartaglia": {
+   "gcsim": "internal/characters/tartaglia",
+   "comboFrames": [
+    26,
+    27,
+    33,
+    32,
+    33,
+    66
+   ],
+   "chargedFrames": 55,
+   "skillFrames": null,
+   "burstFrames": null
+  },
+  "thoma": {
+   "gcsim": "internal/characters/thoma",
+   "comboFrames": [
+    20,
+    27,
+    31,
+    58
+   ],
+   "chargedFrames": 64,
+   "skillFrames": 44,
+   "burstFrames": 56
+  },
+  "tighnari": {
+   "gcsim": "internal/characters/tighnari",
+   "comboFrames": [
+    26,
+    23,
+    37,
+    68
+   ],
+   "chargedFrames": 94,
+   "skillFrames": 21,
+   "burstFrames": 115
+  },
+  "varesa": {
+   "gcsim": "internal/characters/varesa",
+   "comboFrames": [
+    33,
+    30,
+    45
+   ],
+   "chargedFrames": 142,
+   "skillFrames": 21,
+   "burstFrames": 90
+  },
+  "varka": {
+   "gcsim": "internal/characters/varka",
+   "comboFrames": [
+    23,
+    29,
+    55,
+    40,
+    73
+   ],
+   "chargedFrames": 58,
+   "skillFrames": 49,
+   "burstFrames": 136
+  },
+  "venti": {
+   "gcsim": "internal/characters/venti",
+   "comboFrames": [
+    30,
+    38,
+    33,
+    31,
+    22,
+    98
+   ],
+   "chargedFrames": 94,
+   "skillFrames": 98,
+   "burstFrames": 93
+  },
+  "wanderer": {
+   "gcsim": "internal/characters/wanderer",
+   "comboFrames": null,
+   "chargedFrames": null,
+   "skillFrames": null,
+   "burstFrames": null
+  },
+  "wriothesley": {
+   "gcsim": "internal/characters/wriothesley",
+   "comboFrames": [
+    14,
+    13,
+    24,
+    41,
+    59
+   ],
+   "chargedFrames": 52,
+   "skillFrames": 19,
+   "burstFrames": 94
+  },
+  "xiangling": {
+   "gcsim": "internal/characters/xiangling",
+   "comboFrames": [
+    20,
+    17,
+    28,
+    37,
+    70
+   ],
+   "chargedFrames": 67,
+   "skillFrames": 38,
+   "burstFrames": 79
+  },
+  "xianyun": {
+   "gcsim": "internal/characters/xianyun",
+   "comboFrames": [
+    17,
+    24,
+    40,
+    91
+   ],
+   "chargedFrames": 62,
+   "skillFrames": null,
+   "burstFrames": 99
+  },
+  "xiao": {
+   "gcsim": "internal/characters/xiao",
+   "comboFrames": [
+    25,
+    22,
+    26,
+    39,
+    24,
+    79
+   ],
+   "chargedFrames": 45,
+   "skillFrames": 35,
+   "burstFrames": 66
+  },
+  "xilonen": {
+   "gcsim": "internal/characters/xilonen",
+   "comboFrames": [
+    20,
+    46,
+    57
+   ],
+   "chargedFrames": 42,
+   "skillFrames": 19,
+   "burstFrames": 92
+  },
+  "xingqiu": {
+   "gcsim": "internal/characters/xingqiu",
+   "comboFrames": [
+    18,
+    24,
+    26,
+    28,
+    66
+   ],
+   "chargedFrames": 58,
+   "skillFrames": 67,
+   "burstFrames": 40
+  },
+  "xinyan": {
+   "gcsim": "internal/characters/xinyan",
+   "comboFrames": [
+    33,
+    39,
+    64,
+    94
+   ],
+   "chargedFrames": null,
+   "skillFrames": 62,
+   "burstFrames": 86
+  },
+  "yae-miko": {
+   "gcsim": "internal/characters/yaemiko",
+   "comboFrames": [
+    16,
+    36,
+    79
+   ],
+   "chargedFrames": 96,
+   "skillFrames": 20,
+   "burstFrames": 101
+  },
+  "yanfei": {
+   "gcsim": "internal/characters/yanfei",
+   "comboFrames": [
+    26,
+    28,
+    73
+   ],
+   "chargedFrames": 79,
+   "skillFrames": 44,
+   "burstFrames": 46
+  },
+  "yaoyao": {
+   "gcsim": "internal/characters/yaoyao",
+   "comboFrames": [
+    22,
+    22,
+    41,
+    59
+   ],
+   "chargedFrames": 49,
+   "skillFrames": 50,
+   "burstFrames": 56
+  },
+  "yelan": {
+   "gcsim": "internal/characters/yelan",
+   "comboFrames": [
+    15,
+    21,
+    38,
+    67
+   ],
+   "chargedFrames": 96,
+   "skillFrames": 40,
+   "burstFrames": 90
+  },
+  "yoimiya": {
+   "gcsim": "internal/characters/yoimiya",
+   "comboFrames": [
+    35,
+    26,
+    39,
+    44,
+    52
+   ],
+   "chargedFrames": 97,
+   "skillFrames": 31,
+   "burstFrames": 109
+  },
+  "yumemizuki-mizuki": {
+   "gcsim": "internal/characters/mizuki",
+   "comboFrames": [
+    18,
+    37,
+    73
+   ],
+   "chargedFrames": 62,
+   "skillFrames": 30,
+   "burstFrames": 94
+  },
+  "yun-jin": {
+   "gcsim": "internal/characters/yunjin",
+   "comboFrames": [
+    20,
+    22,
+    31,
+    45,
+    67
+   ],
+   "chargedFrames": 59,
+   "skillFrames": 59,
+   "burstFrames": 55
+  },
+  "zhongli": {
+   "gcsim": "internal/characters/zhongli",
+   "comboFrames": [
+    18,
+    13,
+    19,
+    34,
+    27,
+    54
+   ],
+   "chargedFrames": 47,
+   "skillFrames": 37,
+   "burstFrames": 138
+  }
+ }
+}

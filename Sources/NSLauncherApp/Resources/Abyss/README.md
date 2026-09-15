@@ -31,6 +31,7 @@ là **bản duy nhất**.
 | `character-kits.json` | Mọi thứ chỉ đúng với **một** nhân vật và không file game nào ghi: một lần dùng chiêu gồm những dòng nào (`hits`), kit đổi HP/DEF ra ATK (`conversions`), talent buff gì cho đội/cho mình (`buffs`), tag cơ chế, nhãn đòn nặng, giảm kháng, base damage phản ứng (xem "Kit nhân vật") |
 | `talent-params.json` | Hệ số talent **đúng như file game**, mọi cấp 1–15, sinh tự động — nguồn thay thế cho bảng `scaling` văn xuôi (xem "Số liệu talent") |
 | `particles.json` | Số hạt nguyên tố Kỹ năng Nguyên tố tạo ra, theo Genshin Impact Wiki, sinh tự động (xem "Năng lượng") |
+| `frames.json` | Độ dài chuỗi đòn thường, đòn nặng, cast E/Q (frame), từ frame data gcsim, sinh tự động bằng `scripts/sync-abyss-frames.py` |
 | `tuning.json` | Tham số thuật toán (xem bên dưới) |
 | `game-ids.json` | Id số trong game → slug ở đây, để nhập Showcase theo UID |
 | `icons/characters/<id>.png`, `icons/weapons/<id>.png` | Ảnh chân dung, 256×256 |
@@ -136,7 +137,7 @@ duy nhất nó được viết xuống (Pha 2 của `docs/redesign.md`):
 - `hits.{skill,burst,combo,charged}` — danh sách tham chiếu `{label | param,
   count, category, factor}` vào `talent-params.json`. Slot có mặt **thay
   toàn bộ** suy luận của `AbyssTalentReader` cho slot đó; mảng rỗng = không
-  có gì. Slot quyết định *tần suất* (combo × `normalCombosPerRotation`, ability
+  có gì. Slot quyết định *tần suất* (combo theo thời gian đứng sân, ability
   × 1), `category` quyết định *bucket buff* — hai thứ này trùng nhau ở mọi
   dòng reader tự suy, và chỉ kit mới tách được (Isshin của Raiden: chuỗi đòn
   thường, tính là Elemental Burst DMG).

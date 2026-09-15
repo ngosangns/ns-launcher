@@ -81,6 +81,11 @@ struct AbyssDataLibrary: Sendable {
     let energyByCharacterID: [String: AbyssEnergyProfile]
     /// The particle count characters without their own stand in with.
     let medianParticlesPerCast: Double
+    /// gcsim's frame counts — see `AbyssFrames`.
+    let frames: AbyssFrames?
+    /// Median cast seconds of a skill and a burst, for solo stand-ins.
+    let medianSkillSeconds: Double
+    let medianBurstSeconds: Double
     /// How much each character adds to the base damage of the Lunar/Stellar
     /// reactions they name, by character id then reaction.
     let reactionBaseDamageBonusByCharacterID: [String: [AbyssReaction: Double]]
@@ -159,6 +164,9 @@ struct AbyssDataLibrary: Sendable {
         let particles: AbyssParticles? =
             Self.decode(from: root?.appendingPathComponent("particles.json"), hasher: &hasher)
         self.particles = particles
+        let frames: AbyssFrames? =
+            Self.decode(from: root?.appendingPathComponent("frames.json"), hasher: &hasher)
+        self.frames = frames
         dataDigest = hasher.finalize().map { String(format: "%02x", $0) }.joined()
         var kits: [String: AbyssCharacterKit] = [:]
         for entry in kitsFile?.kits ?? [] {
@@ -334,12 +342,14 @@ struct AbyssDataLibrary: Sendable {
         resistanceShredByCharacterID = shreds
 
         let energy = Self.energyProfiles(characters: characters, talentParams: talentParams,
-                                         particles: particles, kits: kits,
+                                         particles: particles, frames: frames, kits: kits,
                                          rotationSeconds: tuning?.rotationSeconds ?? 20,
                                          maxSkillCasts: tuning?.energy.maxSkillCastsPerRotation ?? 1,
                                          diagnostics: &diagnostics)
         energyByCharacterID = energy.profiles
         medianParticlesPerCast = energy.median
+        medianSkillSeconds = energy.medianSkillSeconds
+        medianBurstSeconds = energy.medianBurstSeconds
 
         self.diagnostics = diagnostics
     }
@@ -357,11 +367,13 @@ struct AbyssDataLibrary: Sendable {
     static func energyProfiles(characters: [AbyssCharacter],
                                talentParams: AbyssTalentParams?,
                                particles: AbyssParticles?,
+                               frames: AbyssFrames? = nil,
                                kits: [String: AbyssCharacterKit],
                                rotationSeconds: Double,
                                maxSkillCasts: Double = 1,
                                diagnostics: inout AbyssParseDiagnostics)
-        -> (profiles: [String: AbyssEnergyProfile], median: Double) {
+        -> (profiles: [String: AbyssEnergyProfile], median: Double,
+            medianSkillSeconds: Double, medianBurstSeconds: Double) {
         func perCast(_ id: String) -> Double? {
             let kit = kits[id]?.energy
             if let literal = kit?.particlesPerCast { return literal }
@@ -382,6 +394,18 @@ struct AbyssDataLibrary: Sendable {
         let median = sorted.isEmpty ? 0
             : sorted.count % 2 == 1 ? sorted[sorted.count / 2]
             : (sorted[sorted.count / 2 - 1] + sorted[sorted.count / 2]) / 2
+
+        func medianOf(_ values: [Double]) -> Double {
+            let sorted = values.sorted()
+            guard !sorted.isEmpty else { return 0 }
+            return sorted.count % 2 == 1 ? sorted[sorted.count / 2]
+                : (sorted[sorted.count / 2 - 1] + sorted[sorted.count / 2]) / 2
+        }
+        let timings = frames?.characters.values ?? [:].values
+        let medianCombo = medianOf(timings.compactMap { $0.comboFrames.map { Double($0.reduce(0, +)) / 60 } })
+        let medianCharged = medianOf(timings.compactMap { $0.chargedFrames.map { Double($0) / 60 } })
+        let medianSkill = medianOf(timings.compactMap { $0.skillFrames.map { Double($0) / 60 } })
+        let medianBurst = medianOf(timings.compactMap { $0.burstFrames.map { Double($0) / 60 } })
 
         func share(_ cooldown: Double, cap: Double = 1) -> Double {
             cooldown > 0 ? min(cap, rotationSeconds / cooldown) : 1
@@ -407,6 +431,26 @@ struct AbyssDataLibrary: Sendable {
             case .elementalSkill?: window = .skill
             default: window = .none
             }
+            let timing = frames?.characters[character.id]
+            func seconds(_ frames: Int?, _ field: String, _ median: Double) -> Double {
+                guard let frames else {
+                    diagnostics.framesEstimated.insert("\(character.id): \(field)")
+                    return median
+                }
+                return Double(frames) / 60
+            }
+            let attack = kit?.attack
+            let comboSeconds = attack?.comboSeconds
+                ?? seconds(timing?.comboFrames.map { $0.reduce(0, +) }, "combo", medianCombo)
+            let chargedSeconds = attack?.chargedSeconds
+                ?? seconds(timing?.chargedFrames, "charged", medianCharged)
+            var loops = AbyssEnergyProfile.AttackLoops(combo: true, mixed: true,
+                                                       charged: character.weaponType == .bow)
+            switch attack?.loop {
+            case .combo?: loops = .init(combo: true, mixed: false, charged: false)
+            case .charged?: loops = .init(combo: false, mixed: false, charged: true)
+            case nil: break
+            }
             profiles[character.id] = AbyssEnergyProfile(
                 element: character.element,
                 // A summon's events were counted over the whole rotation in the
@@ -418,9 +462,14 @@ struct AbyssDataLibrary: Sendable {
                 burstCost: burstCost,
                 burstCastsCap: share(burstCooldown),
                 window: window,
+                comboSeconds: comboSeconds,
+                chargedSeconds: chargedSeconds,
+                skillSeconds: seconds(timing?.skillFrames, "skill", medianSkill),
+                burstSeconds: seconds(timing?.burstFrames, "burst", medianBurst),
+                attackLoops: loops,
                 isEstimated: own == nil)
         }
-        return (profiles, median)
+        return (profiles, median, medianSkill, medianBurst)
     }
 
     /// `"18s"` → 18. The transcription's cooldown column; nil for anything

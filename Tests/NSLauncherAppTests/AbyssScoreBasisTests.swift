@@ -35,9 +35,13 @@ final class AbyssScoreBasisTests: XCTestCase {
         stats.critRate = 0.6
         stats.critDMG = 1.4
 
+        let rotation = context.rotation
+        let bursts = rotation.burstCasts(energyRecharge: stats.energyRecharge, onField: true)
         let perRotation = scorer.onFieldDamage(
             scorer.damageSplit(context: context, stats: stats, partyBuffs: .none),
-            rotation: context.rotation, energyRecharge: stats.energyRecharge)
+            rotation: rotation, energyRecharge: stats.energyRecharge,
+            fieldSeconds: tuning.rotationSeconds - rotation.standInOthersSeconds
+                - rotation.castSeconds(bursts: bursts, onField: true))
         let score = scorer.soloScore(context: context, stats: stats)
 
         XCTAssertGreaterThan(score, 0)

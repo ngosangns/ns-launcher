@@ -233,9 +233,9 @@ final class AbyssBuildAssemblerTests: XCTestCase {
         XCTAssertGreaterThan(withCharged.count, 80,
                              "charged attacks are not reaching the profile for most characters")
 
-        // And the bonus fields that feed it are no longer inert.
-        let tuning = try XCTUnwrap(library.tuning)
-        XCTAssertGreaterThan(tuning.chargedAttacksPerRotation, 0)
+        // And the time to make them is not zero: a charged attack takes field
+        // time the frame data measures, for everyone who has one.
+        XCTAssertGreaterThan(library.energyByCharacterID["hu-tao"]?.chargedSeconds ?? 0, 0)
     }
 
     /// A bow's "Aimed Shot" and "Aimed Shot sạc đầy" are two ways to fire the

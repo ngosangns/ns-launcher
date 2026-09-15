@@ -263,6 +263,24 @@ struct AbyssCharacterKit: Decodable, Sendable, Identifiable {
         let note: String
     }
 
+    /// How the character spends time on field, where the frame data or the
+    /// general rule gets it wrong.
+    struct Attack: Decodable, Sendable {
+        enum Loop: String, Decodable, Sendable {
+            /// Normal-attack strings only.
+            case combo
+            /// Charged attacks only (Neuvillette's Equitable Judgment).
+            case charged
+        }
+
+        let loop: Loop?
+        /// Overrides gcsim's frames when they time a different action than
+        /// the one the kit's hits describe (Xiao's plunges, Neuvillette's beam).
+        let comboSeconds: Double?
+        let chargedSeconds: Double?
+        let note: String
+    }
+
     /// The talent whose window a character's attack string lives in.
     struct Stance: Decodable, Sendable {
         let talent: AbyssTalentParams.Key
@@ -281,6 +299,7 @@ struct AbyssCharacterKit: Decodable, Sendable, Identifiable {
     let reactionBaseDamageBonus: [ReactionBaseDamageBonus]?
     let energy: Energy?
     let stance: Stance?
+    let attack: Attack?
 
     func has(_ tag: Tag) -> Bool { tags?.contains(tag) ?? false }
 
@@ -291,7 +310,7 @@ struct AbyssCharacterKit: Decodable, Sendable, Identifiable {
         (tags ?? []).isEmpty && chargedAttackLabels == nil && hits == nil
             && (conversions ?? []).isEmpty && (buffs ?? []).isEmpty
             && (resistanceShred ?? []).isEmpty && (reactionBaseDamageBonus ?? []).isEmpty
-            && energy == nil && stance == nil
+            && energy == nil && stance == nil && attack == nil
     }
 }
 
