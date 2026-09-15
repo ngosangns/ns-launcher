@@ -80,8 +80,6 @@
     "enemyClearParticlesPerRotation": 0,
     "maxSkillCastsPerRotation": 2
   },
-  "conditionalUptime": 0.6,
-  "assumedStacks": 2.5,
   "resistanceShred": [
     {
       "id": "viridescent-venerer",
@@ -101,7 +99,7 @@
       ],
       "value": 0.3,
       "uptime": 0.7,
-      "note": "4pc Deepwood Memories: giảm 30% kháng Dendro của địch, buff cả đội. Cùng lối suy luận với VV. Phần %DMG xấp xỉ của bộ này trong setEffectApprox đã hạ xuống tương ứng để không tính hai lần."
+      "note": "4pc Deepwood Memories: giảm 30% kháng Dendro của địch, buff cả đội. Cùng lối suy luận với VV. Hiệu ứng 4 món của bộ này trong passives.json không định giá phần hạ kháng, nên không tính hai lần."
     }
   ],
   "stellarConductRamp": 0.5,
@@ -109,248 +107,6 @@
   "noSustainPenalty": 0.8,
   "shieldBreakBonus": 1.1,
   "weaknessExploitBonus": 1.08,
-  "setEffectApprox": [
-    {
-      "setId": "emblem-of-severed-fate",
-      "note": "+ST Nộ theo Nạp Nguyên Tố (~25-30% ER→DMG)",
-      "damageBonus": 0.3,
-      "scope": "burst",
-      "requirement": null
-    },
-    {
-      "setId": "crimson-witch-of-flames",
-      "note": "Bốc cháy/Bốc hơi/Tan chảy +15%, Pyro +7.5%×3 stack [2026-09-16] Chỉ còn vế cộng dồn: mỗi lần dùng E tăng 50% bonus Hỏa của 2 món, tối đa 3 lớp (+22.5% Hỏa ở đầy lớp) → 0.2 sau uptime; vế phản ứng thuộc Pha 4. requirement pyro: bonus Hỏa không làm gì cho người mặc hệ khác.",
-      "damageBonus": 0.2,
-      "scope": "all",
-      "requirement": "pyro"
-    },
-    {
-      "setId": "gilded-dreams",
-      "note": "EM +80 + ATK theo đồng đội cùng/khác hệ",
-      "damageBonus": 0.18,
-      "scope": "all",
-      "requirement": null
-    },
-    {
-      "setId": "deepwood-memories",
-      "note": "Giảm 30% kháng Dendro của địch. Toàn bộ giá trị của bộ này là phần hạ kháng, và phần đó nay được mô hình hoá thật ở resistanceShred — nên %DMG xấp xỉ ở đây về 0 để không tính hai lần.",
-      "damageBonus": 0.0,
-      "scope": "all",
-      "requirement": null
-    },
-    {
-      "setId": "shimenawas-reminiscence",
-      "note": "đổi 15 Nộ lấy +50% ST đòn thường/trọng kích",
-      "damageBonus": 0.35,
-      "scope": "normal",
-      "requirement": null
-    },
-    {
-      "setId": "echoes-of-an-offering",
-      "note": "đòn thường có xác suất +70% ATK",
-      "damageBonus": 0.22,
-      "scope": "normal",
-      "requirement": null
-    },
-    {
-      "setId": "marechaussee-hunter",
-      "note": "CRIT Rate +36% khi HP đổi",
-      "damageBonus": 0.25,
-      "scope": "normal",
-      "requirement": null
-    },
-    {
-      "setId": "nymphs-dream",
-      "note": "stack Hydro: ATK% + Hydro DMG [2026-09-16] requirement hydro: vế Hydro DMG chỉ có ích cho người mặc hệ Thủy.",
-      "damageBonus": 0.26,
-      "scope": "all",
-      "requirement": "hydro"
-    },
-    {
-      "setId": "vourukashas-glow",
-      "note": "HP +20%, Kỹ năng/Nộ +40% khi bị đánh",
-      "damageBonus": 0.2,
-      "scope": "all",
-      "requirement": null
-    },
-    {
-      "setId": "golden-troupe",
-      "note": "Kỹ năng +20%, off-field +25% nữa",
-      "damageBonus": 0.32,
-      "scope": "skill",
-      "requirement": null
-    },
-    {
-      "setId": "song-of-days-past",
-      "note": "hồi máu tích luỹ -> tăng ST cả đội",
-      "damageBonus": 0.18,
-      "scope": "all",
-      "requirement": null
-    },
-    {
-      "setId": "nighttime-whispers-in-the-echoing-woods",
-      "note": "ATK +20%, Geo DMG +20% sau Kỹ năng [2026-09-16] requirement geo: toàn bộ 4 món là Geo DMG.",
-      "damageBonus": 0.22,
-      "scope": "all",
-      "requirement": "geo"
-    },
-    {
-      "setId": "fragment-of-harmonic-whimsy",
-      "note": "Bond of Life đổi -> +18% ST ×3 [2026-09-16] requirement bond-of-life: hiệu ứng chỉ kích khi Bond of Life của người mặc tăng/giảm — 0.28 cũ cộng cho mọi người mặc, là bộ tốt nhất của 27 nhân vật không hề có Bond of Life.",
-      "damageBonus": 0.28,
-      "scope": "all",
-      "requirement": "bond-of-life"
-    },
-    {
-      "setId": "unfinished-reverie",
-      "note": "+50% ST khi địch bị Bốc cháy",
-      "damageBonus": 0.24,
-      "scope": "all",
-      "requirement": null
-    },
-    {
-      "setId": "obsidian-codex",
-      "note": "Nightsoul: +40% ST, +40% CRIT DMG",
-      "damageBonus": 0.35,
-      "scope": "all",
-      "requirement": "natlan"
-    },
-    {
-      "setId": "scroll-of-the-hero-of-cinder-city",
-      "note": "buff cả đội theo nguyên tố Nightsoul",
-      "damageBonus": 0.24,
-      "scope": "all",
-      "requirement": "natlan"
-    },
-    {
-      "setId": "long-nights-oath",
-      "note": "trọng kích/nhảy stack tới +100%",
-      "damageBonus": 0.26,
-      "scope": "charged",
-      "requirement": null
-    },
-    {
-      "setId": "finale-of-the-deep-galleries",
-      "note": "đòn thường/Nộ +60% khi hết Nộ",
-      "damageBonus": 0.2,
-      "scope": "all",
-      "requirement": null
-    },
-    {
-      "setId": "viridescent-venerer",
-      "note": "Swirl +60%, Stellar Swirl +20%, và giảm 40% kháng nguyên tố bị cuốn. Phần hạ kháng đã chuyển sang resistanceShred; con số còn lại ở đây chỉ đại diện cho vế tăng sát thương Swirl. [2026-09-16] Về 0: tăng sát thương Swirl là sát thương PHẢN ỨNG, không phải sát thương đòn của người mặc — 0.15 cũ cộng vào mọi đòn của bất kỳ ai mặc VV. Giữ entry (giá trị 0) để đánh dấu bộ này không có vế 4 món tính vào đòn.",
-      "damageBonus": 0,
-      "scope": "all",
-      "requirement": null
-    },
-    {
-      "setId": "blizzard-strayer",
-      "note": "CRIT Rate +40% khi địch đóng băng [2026-09-16] requirement cryo: CRIT Rate chỉ có khi địch dính Băng/đóng băng; người mặc hệ Băng là đại diện cho điều kiện đó (mô hình chưa biết aura theo đội).",
-      "damageBonus": 0.3,
-      "scope": "all",
-      "requirement": "cryo"
-    },
-    {
-      "setId": "thundering-fury",
-      "note": "+40% ST phản ứng Electro, giảm CD Kỹ năng [2026-09-16] Về 0: toàn bộ 4 món là sát thương phản ứng và giảm CD kỹ năng, không có vế nào chạm vào sát thương đòn — 0.24 cũ cộng vào mọi đòn của người mặc.",
-      "damageBonus": 0,
-      "scope": "all",
-      "requirement": null
-    },
-    {
-      "setId": "heart-of-depth",
-      "note": "đòn thường/trọng kích +30% sau Kỹ năng",
-      "damageBonus": 0.22,
-      "scope": "normal",
-      "requirement": null
-    },
-    {
-      "setId": "lavawalker",
-      "note": "+35% ST lên địch dính Pyro",
-      "damageBonus": 0.2,
-      "scope": "all",
-      "requirement": null
-    },
-    {
-      "setId": "pale-flame",
-      "note": "ATK +18%×2 stack, Physical +25%",
-      "damageBonus": 0.24,
-      "scope": "all",
-      "requirement": null
-    },
-    {
-      "setId": "husk-of-opulent-dreams",
-      "note": "DEF/Geo DMG +24% (4 stack) [2026-09-16] requirement geo: lớp chỉ cộng khi đánh bằng đòn Nham, và vế DMG là Geo DMG.",
-      "damageBonus": 0.22,
-      "scope": "all",
-      "requirement": "geo"
-    },
-    {
-      "setId": "ocean-hued-clam",
-      "note": "nổ bong bóng theo lượng hồi máu",
-      "damageBonus": 0.12,
-      "scope": "all",
-      "requirement": null
-    },
-    {
-      "setId": "scarlet-proof",
-      "note": "CRIT Rate +16%, Stellar Swirl +40% [2026-09-16] Hạ 0.3 → 0.1: cả hai vế chỉ có sau khi người mặc kích hoạt Stellar Swirl; +40% Stellar Swirl là sát thương phản ứng (Pha 4), chỉ còn +16% CRIT Rate quy đổi — cùng cách với disenchantment-in-deep-shadow.",
-      "damageBonus": 0.1,
-      "scope": "all",
-      "requirement": "stellar"
-    },
-    {
-      "setId": "heart-of-the-furnace",
-      "note": "ATK +12%, cả đội +50% ST Stellar Glimmer [2026-09-16] Hạ 0.28 → 0.08: +50% Stellar Glimmer cho cả đội là sát thương phản ứng (Pha 4); chỉ còn +12% ATK của người mặc khi kích hoạt Stellar Glimmer, quy đổi sau uptime.",
-      "damageBonus": 0.08,
-      "scope": "all",
-      "requirement": "stellar"
-    },
-    {
-      "setId": "night-of-the-skys-unveiling",
-      "note": "buff Lunar Reaction cả đội",
-      "damageBonus": 0.24,
-      "scope": "all",
-      "requirement": "moonsign"
-    },
-    {
-      "setId": "silken-moons-serenade",
-      "note": "buff Lunar Reaction/Moonsign",
-      "damageBonus": 0.24,
-      "scope": "all",
-      "requirement": "moonsign"
-    },
-    {
-      "setId": "archaic-petra",
-      "note": "4pc: nhặt mảnh Crystallize (hoặc Lunar-Crystallize) cho CẢ ĐỘI 35% DMG Bonus theo nguyên tố mảnh, 10s. Hạ xuống 0.12 vì hai lẽ: phải nhặt mảnh nên uptime không đầy, và mô hình chỉ có kênh partyDMG áp cho MỌI nguyên tố trong khi game chỉ nâng đúng một.",
-      "damageBonus": 0.12,
-      "scope": "all",
-      "requirement": null,
-      "party": true
-    },
-    {
-      "setId": "celestial-gift",
-      "note": "4pc: sau Elemental Skill, cả đội nhận 20% DMG Bonus theo nguyên tố người mặc (40% khi đội có Hexerei: Secret Rite). Lấy nhánh 20%, nhân uptime, và hạ thêm vì partyDMG áp cho mọi nguyên tố chứ không riêng nguyên tố người mặc.",
-      "damageBonus": 0.12,
-      "scope": "all",
-      "requirement": null,
-      "party": true
-    },
-    {
-      "setId": "vermillion-hereafter",
-      "note": "4pc: sau Elemental Burst nhận ATK +8%, mỗi lần mất HP thêm 10% (tối đa 4 lớp = +48%). Quy đổi thành %DMG hiệu dụng ở mức trung bình ~3 lớp, đã trừ hao phần loãng vì build đã có sẵn ATK% từ nguồn khác.",
-      "damageBonus": 0.26,
-      "scope": "all",
-      "requirement": null
-    },
-    {
-      "setId": "disenchantment-in-deep-shadow",
-      "note": "4pc: +80% DMG Superconduct và +40% DMG Stellar-Conduct (phần sát thương phản ứng mô hình CHƯA tính), cộng +16% CRIT Rate khi đánh địch đang dính hai phản ứng đó. Con số ở đây CHỈ quy đổi vế CRIT Rate — phần thực sự chạm vào sát thương trực tiếp.",
-      "damageBonus": 0.12,
-      "scope": "all",
-      "requirement": "stellar"
-    }
-  ],
   "notes": {
     "artifactMainStats": "Main stat của từng vị trí ở thánh di vật 5★ cấp 20. Hằng số game chuẩn, ổn định qua các bản, nhưng CHƯA đối chiếu API trong repo này. Bỏ physical_dmg (0.583) ngày 2026-09-12: không hit nào trong profile được phân loại là sát thương vật lý, nên ly vật lý đáng giá đúng 0 và AbyssBuildAssembler.mainStatCandidates chưa bao giờ chào nó. Giữ lại thì có một key không ai hỏi tới, mà đó chính là kiểu lỗ hổng im lặng test từ vựng stat sinh ra để bắt.",
     "substatRollValue": "Giá trị trung bình 1 lần roll substat ở 5★ (mốc roll cao nhất trong 4 mốc). Cùng nhóm độ tin cậy với artifactMainStats.",
@@ -360,8 +116,6 @@
     "rotationSeconds": "Độ dài 1 vòng rotation giả định (giây) để quy damage về cùng mẫu số.",
     "swapSeconds": "Thay normalCombosPerRotation = 6 và chargedAttacksPerRotation = 2 ngày 2026-09-16: người đứng sân tấn công trong thời gian rotation còn lại sau mọi lần cast E/Q của cả đội, với độ dài chuỗi đòn/đòn nặng/cast lấy từ frame data gcsim (frames.json). swapSeconds là GIẢ ĐỊNH: mỗi lần một người ngoài sân vào cast phải đổi người — 0.2s theo mặc định swap_delay = 12 frame trong cấu hình mẫu của gcsim. Hằng số cũ cho mọi nhân vật 6 chuỗi dù chuỗi dài 2s hay 4.6s; benchmark gcsim (docs/redesign.md §7.6) cho thấy nó đánh giá quá cao carry đánh thường chuỗi dài và quá thấp carry đòn nặng.",
     "energy": "Pha 3 (docs/redesign.md) thay offFieldUptime = 0.85 bằng mô hình năng lượng. Ba số đầu và offFieldShare là LUẬT GAME: hạt cùng nguyên tố cho 3 năng lượng, khác nguyên tố 1, hạt không màu 2; nhân vật đứng ngoài sân nhận 60%. enemyClearParticlesPerRotation là GIẢ ĐỊNH: quái trong La Hoàn rơi hạt theo ngưỡng HP, nhưng số lần rơi mỗi rotation phụ thuộc thời gian dọn (Pha 6) — để 0 là chọn thận trọng, nghĩa là mô hình đòi ER hơi cao hơn thực tế. Số lần Q mỗi rotation = min(1, rotationSeconds/CD, năng lượng × ER / năng lượng Q); số lần E = min(maxSkillCastsPerRotation, rotationSeconds/CD) trừ khi kit ghi khác — maxSkillCastsPerRotation = 2 là GIẢ ĐỊNH: một support hồi chiêu ngắn (Bennett 5s, Kazuha 6s) không dùng E 4 lần trong 20s vì còn phải nhường thời gian đứng sân, nhưng dùng nhiều hơn 1 lần; E kiểu vào trạng thái (Wanderer, Hu Tao, Raiden…) ghi skillCastsPerRotation = 1 trong kit. Hạt của triệu hồi (collectedBy field) đã đếm theo cả rotation ở eventsPerCast nên không nhân thêm; số hạt từ particles.json + character-kits.json → energy.",
-    "conditionalUptime": "Buff có điều kiện (ghi trong ngoặc ở tên stat) hiếm khi đạt 100% uptime.",
-    "assumedStacks": "Số lớp trung bình giả định cho hiệu ứng vũ khí ghi 'per stack'. Đa số cho tối đa 4-5 lớp nhưng ít khi giữ đầy.",
     "reactions": "[2026-09-16, Pha 4 docs/redesign.md] amplifyingUptime = 0.55 và transformativeReactionsPerRotation = 6 đã bị xoá. Phản ứng giờ đếm từ số lần áp nguyên tố của từng thành viên mỗi rotation (gauge.json: gauge và ICD từng hit từ Yatta; frames.json; kit: số đòn của triệu hồi, đòn nào có nguyên tố): Vaporize/Melt khuếch đại phần hit ÁP nguyên tố của người kích hoạt, theo lượng aura (U) phía kia đặt ra so với lượng một lần kích hoạt tiêu (×2 chiều mạnh, ×0.5 chiều yếu); Aggravate/Spread cộng sát thương cho mỗi lần áp khi đội có cả Dendro và Electro; phản ứng biến đổi đếm = số lần áp của nguyên tố ít hơn trong cặp. Benchmark gcsim: Spearman 0.336 → 0.368; nhóm Melt +0.25 → +0.17, Vaporize +0.16 → +0.10, Dendro+Electro −0.28 → +0.06.",
     "resistanceShred": "Giảm kháng nguyên tố của địch — thứ mô hình TRƯỚC ĐÂY hoàn toàn không có, dù resMultiplier đã sẵn nhánh RES âm (RES < 0 chỉ bị chia đôi nên hạ kháng mạnh hơn hẳn cộng %DMG). Không có bảng này thì Kaedehara Kazuha, Venti, Sucrose, Faruzan và Shenhe gần như vô hình: phần lớn giá trị của họ nằm ở chỗ hạ kháng chứ không phải tự gây sát thương. `elements` nhận tên nguyên tố, hoặc token 'swirled' nghĩa là mọi nguyên tố đội có thể cuốn (không tính Anemo/Geo). `requiresElement` = đội phải có nguyên tố đó; `characterId` = đội phải có nhân vật đó. Giá trị của faruzan/shenhe đọc khớp với dòng scaling trong data nhân vật của họ; giá trị của hai bộ thánh di vật là con số ghi trong mô tả bộ. `uptime` là phần chủ quan — xem note từng mục. CHUYỂN 2026-09-12: hai nguồn gắn với nhân vật (Faruzan, Shenhe) đã dời sang character-traits.json. Ở lại đây là hai nguồn gắn với BỘ THÁNH DI VẬT, vốn không phải sự thật về nhân vật mà là giả định của thuật toán — 'đội có Anemo thì support Anemo mặc Viridescent Venerer'. Hai loại khẳng định khác nhau, nên hai file khác nhau.",
     "stellarConductRamp": "Hệ số Stellar-Conduct chạy từ stellarConductMin tới stellarConductMax trong damage-formula.json, cộng dần theo số đòn Cryo/Electro ghi nhận trước đó (tối đa 12 đòn). Mô hình không đếm từng đòn nên lấy một điểm cố định trên dải đó: 0 = luôn ở mức thấp nhất, 1 = luôn ở mức cao nhất, 0.5 = giữa dải. Đây là giả định, không phải số liệu game.",
@@ -371,7 +125,6 @@
     "shieldBreakBonus": "Nhân vào tổng điểm khi đội có đúng nguyên tố phá khiên quái trong tầng.",
     "weaknessExploitBonus": "Nhân vào tổng điểm khi đội có nguyên tố mà quái bị âm kháng.",
     "stellarJubileeCharacterIds": "Nhân vật có passive Stellar Jubilee — biến Swirl/Superconduct thường thành Stellar Swirl/Stellar-Conduct.",
-    "setEffectApprox": "36/63 bộ có fourPiece.bonuses rỗng trong data model vì hiệu ứng quá phức tạp để tách số máy móc (stack, điều kiện, scale theo chỉ số khác). Bỏ trống thì thuật toán đánh giá thấp một cách hệ thống các bộ meta, nên bảng này ƯỚC LƯỢNG THỦ CÔNG phần %DMG hiệu dụng trung bình trong 1 rotation — KHÔNG phải số liệu game, sửa tự do. Đây là phần chủ quan nhất của cả thuật toán. Bộ không có trong bảng chỉ dùng `bonuses` đã tách được. `requirement`: null = ai cũng dùng được; 'natlan' = nhân vật Natlan (cần Nightsoul's Blessing); 'moonsign' = nhân vật Nguyệt Triệu; 'stellar' = nguyên tố tham gia phản ứng Stellar Glimmer (Cryo/Electro/Anemo). THỨ TỰ MẢNG này không ảnh hưởng kết quả, nhưng giữ nguyên để diff dễ đọc. Cờ `party: true` nghĩa là hiệu ứng chạm cả đội: giá trị đi vào partyDMG và được khử trùng lặp như mọi buff phe khác (mấy người cùng mặc vẫn chỉ tính một lần). Mục có `party` KHÔNG được mang `requirement`, vì bảng khử trùng lặp khoá theo bộ chứ không theo người mặc — có test chốt điều này. CỐ Ý để trống (4pc đóng góp đúng 0): flower-of-paradise-lost và aubade-of-morningstar-and-moon. Cả hai chỉ nâng sát thương phản ứng Bloom/Hyperbloom/Burgeon/Lunar, thứ mà mô hình chưa tính một chút nào; gán cho chúng một mức %DMG trực tiếp sẽ là ghi số vào nhầm chỗ chứ không phải xấp xỉ. [2026-09-16] Một bộ có entry ở đây thì entry THAY cho các bonus 4 món đọc từ artifact-sets.json (trước đây cộng cả hai: Shimenawa +0.5 +0.35 đòn thường). Vế sát thương phản ứng (Swirl, Stellar, Lunar, Overloaded…) KHÔNG thuộc bảng này — nó không phải sát thương đòn của người mặc; VV và Thundering Fury về 0 vì lẽ đó, noblesse-oblige bị bỏ vì chỉ trùng vế 2 món.",
     "talentPartyBuff": "Buff CẢ ĐỘI đến từ chiêu của nhân vật. Con số được ĐỌC TỪ data nhân vật theo (talent, label) chứ không chép tay, nên khi hệ số chiêu được cập nhật thì mô hình cập nhật theo; chỉ phần 'dòng này nghĩa là gì' mới nằm ở đây, vì không luật nào trên nhãn phân biệt được — 'ATK Bonus 100.8% Base ATK' (buff phẳng cho cả đội) và 'ATK Bonus (%DEF) 103.7%' (tự quy đổi cho bản thân) là cùng ba chữ. Nếu label đổi, AbyssParseDiagnostics.talentBuffUnresolved báo lên và test fail, thay vì buff biến mất im lặng. CHƯA mô hình hoá được, cố ý để ngoài bảng: (1) shenhe/faruzan giảm kháng nguyên tố địch — resMultiplier có nhánh RES<0 nhưng không nguồn nào đẩy xuống âm; (2) gorou 'Geo DMG Bonus (nếu đủ 3 Geo)' — cần điều kiện theo đội hình mà tầng dựng build chưa thấy; (3) mona 'DMG Bonus (Omen)' — là debuff lên địch, cơ chế khác; (4) các dòng tự buff theo lớp (heizou, lyney, aloy, skirk, raiden...) và các dòng buff sát thương phản ứng (lauma, columbina, illuga) — phần phản ứng transformative chưa có trong mô hình. [ĐÃ CHUYỂN 2026-09-12 sang character-traits.json — key này không còn trong tuning.json; ghi chú giữ lại vì lý do đằng sau vẫn đúng.]",
     "characterTraits": "chargedAttackLabels, talentPartyBuff và stellarJubileeCharacterIds đã chuyển sang character-traits.json ngày 2026-09-12, cùng moonsign/hexerei của team-bonus.json và reactionBaseDmgBonusSources của damage-formula.json. File này giờ chỉ giữ hằng số áp dụng cho MỌI nhân vật; thứ chỉ đúng với một nhân vật thì thuộc về character-traits.json. [2026-09-15] character-traits.json đổi tên thành character-kits.json và mở rộng (hits/conversions/buffs — Pha 2 docs/redesign.md); talentPartyBuff giờ là character-kits.json.buffs với scope party|self, số đọc từ talent-params.json."
   }

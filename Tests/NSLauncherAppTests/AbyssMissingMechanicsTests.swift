@@ -58,16 +58,13 @@ final class AbyssMissingMechanicsTests: XCTestCase {
                        accuracy: 1e-9, "two Anemo characters stacked the same shred twice")
     }
 
-    /// The shred moved out of `setEffectApprox` when it became real, so the two
-    /// do not both pay for it.
-    func testTheShredIsNotAlsoCountedAsADamageBonus() throws {
-        let approximations = Dictionary(
-            try tuning().setEffectApprox.map { ($0.setId, $0.damageBonus) },
-            uniquingKeysWith: { first, _ in first })
-        XCTAssertEqual(approximations["deepwood-memories"], 0,
-                       "Deepwood is nothing but its shred; the %DMG stand-in should be gone")
-        XCTAssertLessThan(approximations["viridescent-venerer"] ?? 1, 0.25,
-                          "Viridescent Venerer's %DMG should have dropped by the shred's share")
+    /// The shred is priced by `tuning.resistanceShred`, so the set's buffs in
+    /// `passives.json` leave it out and the two do not both pay for it.
+    func testTheShredIsNotAlsoCountedAsADamageBonus() {
+        for id in ["deepwood-memories", "viridescent-venerer"] {
+            XCTAssertEqual(library.setBuffsByID[id]?.fourPiece.count, 0,
+                           "\(id): the four-piece is nothing but its shred and reaction damage")
+        }
     }
 
     // MARK: - Lunar and Stellar reactions

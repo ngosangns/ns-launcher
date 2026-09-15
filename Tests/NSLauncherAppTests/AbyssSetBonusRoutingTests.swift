@@ -17,7 +17,8 @@ final class AbyssSetBonusRoutingTests: XCTestCase {
     private func assembler() throws -> AbyssBuildAssembler {
         let tuning = try XCTUnwrap(library.tuning)
         return AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs,
-                                   artifactSets: library.artifactSets, bondOfLifeIDs: library.bondOfLifeIDs)
+                                   bondOfLifeIDs: library.bondOfLifeIDs,
+                                   weaponBuffs: library.weaponBuffsByID, setBuffs: library.setBuffsByID)
     }
 
     private func tuning() throws -> AbyssTuning { try XCTUnwrap(library.tuning) }
@@ -37,11 +38,13 @@ final class AbyssSetBonusRoutingTests: XCTestCase {
 
     /// "Stellar Swirl DMG +40%" is reaction damage. It used to fall through to
     /// the catch-all for anything mentioning DMG and become +40% to every hit.
+    /// Set bonuses are structured buffs now and leave reaction damage out; the
+    /// name routing still reads the character data, and still refuses.
     func testReactionDamageIsNotAHitBonus() throws {
         let tuning = try tuning()
         for name in ["Stellar Swirl DMG", "Party Stellar Glimmer DMG Bonus", "Lunar-Charged DMG Bonus",
                      "Overloaded DMG", "Swirl DMG"] {
-            XCTAssertEqual(AbyssBuildAssembler.resolve(named: name, value: 0.4, conditional: false, tuning: tuning).count, 0,
+            XCTAssertEqual(AbyssBuildAssembler.resolve(named: name, value: 0.4, tuning: tuning).count, 0,
                            "\"\(name)\" reached a hit's damage")
             XCTAssertEqual(AbyssBuildAssembler.unpriced(named: name), "reaction")
         }
@@ -54,6 +57,9 @@ final class AbyssSetBonusRoutingTests: XCTestCase {
         let stats = try wearing(["bloodstained-chivalry", "pale-flame"], on: "bennett")
         XCTAssertEqual(stats.dmgAll, 0, accuracy: 1e-12)
         XCTAssertEqual(AbyssBuildAssembler.unpriced(named: "Physical DMG"), "physical")
+        // Four pieces of Bloodstained wait on a defeated opponent, which a
+        // single-target rotation never has.
+        XCTAssertEqual(try wearing(["bloodstained-chivalry"], on: "diluc").dmgCharged, 0, accuracy: 1e-12)
     }
 
     /// "Party Incoming Healing" and "Party Shield Strength" say party and are
@@ -61,7 +67,7 @@ final class AbyssSetBonusRoutingTests: XCTestCase {
     func testPartyHealingAndShieldAreNotPartyDamage() throws {
         let tuning = try tuning()
         for name in ["Party Incoming Healing", "Party Shield Strength"] {
-            XCTAssertTrue(AbyssBuildAssembler.resolve(named: name, value: 0.3, conditional: false, tuning: tuning).isEmpty,
+            XCTAssertTrue(AbyssBuildAssembler.resolve(named: name, value: 0.3, tuning: tuning).isEmpty,
                           "\"\(name)\" was priced")
         }
         XCTAssertEqual(try wearing(["tenacity-of-the-millelith"], on: "zhongli").partyDMG, 0, accuracy: 1e-12)
@@ -70,52 +76,50 @@ final class AbyssSetBonusRoutingTests: XCTestCase {
         XCTAssertGreaterThan(try wearing(["tenacity-of-the-millelith"], on: "zhongli").partyATKPercent, 0)
     }
 
-    /// The catch-all is gone; the bonuses to every hit are named shapes, and a
-    /// condition in the name makes them conditional.
-    func testAnAllDamageBonusIsANamedShape() throws {
-        let tuning = try tuning()
-        let plain = AbyssBuildAssembler.resolve(named: "DMG Bonus", value: 0.2, conditional: false, tuning: tuning)
-        XCTAssertEqual(plain.first?.field, .dmgAll)
-        XCTAssertTrue(AbyssBuildAssembler.isConditional("DMG vs Electro-afflicted enemies"))
-        XCTAssertTrue(AbyssBuildAssembler.isConditional("DMG (while Nightsoul's Blessing active, on-field)"))
+    /// A bonus against afflicted enemies is not on the sheet until the team
+    /// says the aura is there: it waits in a gate instead of arriving at a
+    /// guessed 60%.
+    func testABonusAgainstAnAuraWaitsOnTheTeam() throws {
         let thundersoother = try wearing(["thundersoother"], on: "bennett")
-        XCTAssertEqual(thundersoother.dmgAll, 0.35 * tuning.conditionalUptime, accuracy: 1e-12,
-                       "a bonus against afflicted enemies is conditional")
-        XCTAssertTrue(AbyssBuildAssembler.resolve(named: "Normal Attack SPD", value: 0.1, conditional: false,
-                                                  tuning: tuning).isEmpty)
+        XCTAssertEqual(thundersoother.dmgAll, 0, accuracy: 1e-12)
+        XCTAssertEqual(thundersoother.gates.count, 1)
+        XCTAssertEqual(thundersoother.gates[0].value, 0.35, accuracy: 1e-12)
+        var electro = AbyssTeamConditions.zero
+        electro[AbyssTeamCondition.auraFirst.rawValue + GenshinElement.electro.simdIndex] = 1
+        XCTAssertEqual(thundersoother.gates[0].factor(electro), 1)
+        XCTAssertEqual(thundersoother.gates[0].factor(.zero), 0)
     }
 
-    // MARK: - Approximations
+    // MARK: - Timelines
 
-    /// A set with a hand-written approximation has it instead of its parsed
-    /// four-piece bonuses. Shimenawa's Normal Attack DMG used to be 0.5 + 0.35.
-    func testAnApproximationReplacesTheParsedFourPiece() throws {
-        let tuning = try tuning()
-        let shimenawa = try XCTUnwrap(tuning.setEffectApprox.first { $0.setId == "shimenawas-reminiscence" })
+    /// Shimenawa's +50% lasts 10s after a skill: worth what that window covers
+    /// of the attacks, and never counted twice.
+    func testShimenawaIsWorthItsWindow() throws {
         let stats = try wearing(["shimenawas-reminiscence"], on: "hu-tao")
-        XCTAssertEqual(stats.dmgNormal, shimenawa.damageBonus, accuracy: 1e-12)
-        XCTAssertEqual(stats.dmgCharged, 0, accuracy: 1e-12)
+        XCTAssertGreaterThan(stats.dmgNormal, 0)
+        XCTAssertLessThanOrEqual(stats.dmgNormal, 0.5 + 1e-12)
+        XCTAssertEqual(stats.dmgNormal, stats.dmgCharged, accuracy: 1e-12)
+        XCTAssertEqual(stats.dmgSkill, 0, accuracy: 1e-12)
         // The two-piece still applies in full.
         XCTAssertEqual(stats.atkPercent, 0.18, accuracy: 1e-12)
     }
 
-    /// Obsidian Codex's +40% CRIT Rate reached every wearer, although the
-    /// approximation that stands for it requires a Natlan character.
-    func testARequirementGatesTheWholeFourPiece() throws {
+    /// Obsidian Codex's +40% CRIT Rate reached every wearer; it needs
+    /// Nightsoul's Blessing, which only Natlan characters have.
+    func testNightsoulSetsNeedNightsoul() throws {
         let bennett = try wearing(["obsidian-codex"], on: "bennett")
         XCTAssertEqual(bennett.critRate, AbyssStats().critRate, accuracy: 1e-12,
                        "a non-Natlan wearer got Obsidian Codex's CRIT Rate")
-        let tuning = try tuning()
-        XCTAssertEqual(bennett.dmgAll, 0.15 * tuning.conditionalUptime, accuracy: 1e-12,
-                       "the four-piece added something beyond the two-piece for a non-Natlan wearer")
-        XCTAssertGreaterThan(try wearing(["obsidian-codex"], on: "mavuika").dmgAll,
-                             try wearing(["obsidian-codex"], on: "bennett").dmgAll)
+        XCTAssertEqual(bennett.dmgNormal, 0, accuracy: 1e-12)
+        XCTAssertGreaterThan(try wearing(["obsidian-codex"], on: "mavuika").dmgNormal, 0)
     }
 
-    /// An effect that raises one element's DMG requires a wearer of it.
-    func testAnElementBonusRequiresThatElement() throws {
-        XCTAssertGreaterThan(try wearing(["crimson-witch-of-flames"], on: "bennett").dmgAll, 0)
-        XCTAssertEqual(try wearing(["crimson-witch-of-flames"], on: "xingqiu").dmgAll, 0, accuracy: 1e-12)
+    /// An effect that raises one element's DMG lands in that element's lane,
+    /// where only that element's hits read it.
+    func testAnElementBonusLandsInItsLane() throws {
+        let bennett = try wearing(["crimson-witch-of-flames"], on: "bennett")
+        XCTAssertGreaterThan(bennett.elementalDMG[GenshinElement.pyro.simdIndex], 0.15)
+        XCTAssertEqual(bennett.dmgAll, 0, accuracy: 1e-12)
         XCTAssertEqual(try wearing(["husk-of-opulent-dreams"], on: "xingqiu").dmgAll, 0, accuracy: 1e-12)
     }
 
@@ -126,34 +130,34 @@ final class AbyssSetBonusRoutingTests: XCTestCase {
         XCTAssertEqual(library.bondOfLifeIDs, ["arlecchino", "clorinde", "sigewinne"])
         XCTAssertEqual(try wearing(["fragment-of-harmonic-whimsy"], on: "bennett").dmgAll, 0, accuracy: 1e-12)
         XCTAssertGreaterThan(try wearing(["fragment-of-harmonic-whimsy"], on: "arlecchino").dmgAll, 0)
-        XCTAssertEqual(try wearing(["blizzard-strayer"], on: "bennett").dmgAll, 0, accuracy: 1e-12)
-        XCTAssertGreaterThan(try wearing(["blizzard-strayer"], on: "ganyu").dmgAll, 0)
+        // Blizzard Strayer's CRIT Rate waits on a Cryo aura rather than on the
+        // wearer being Cryo.
+        XCTAssertEqual(try wearing(["blizzard-strayer"], on: "ganyu").critRate, AbyssStats().critRate,
+                       accuracy: 1e-12)
+        XCTAssertEqual(try wearing(["blizzard-strayer"], on: "ganyu").gates.count, 1)
     }
 
-    /// No approximation prices reaction damage as a hit's: VV and Thundering
-    /// Fury are reaction sets and add nothing to their wearer's hits.
+    /// VV and Thundering Fury are reaction sets and add nothing to their
+    /// wearer's hits.
     func testReactionSetsAddNothingToAHit() throws {
         for id in ["viridescent-venerer", "thundering-fury"] {
             let stats = try wearing([id], on: "xingqiu")
             XCTAssertEqual(stats.dmgAll, 0, accuracy: 1e-12, "\(id) raised its wearer's hits")
+            XCTAssertEqual(stats.gates.count, 0)
         }
     }
 
     // MARK: - The whole data
 
-    /// The guard against the whole class: no set, worn four-piece by a
-    /// character it does not specially favour, adds more than +40% to every
-    /// hit. Before these fixes Scarlet Proof added +70% and Bloodstained +
-    /// Pale Flame +50%.
+    /// The guard against the whole class: no set, worn by a character it does
+    /// not specially favour, adds more than +40% to every hit. Before these
+    /// fixes Scarlet Proof added +70% and Bloodstained + Pale Flame +50%.
     func testNoSetAddsAnImplausibleAllDamageBonus() throws {
-        let tuning = try tuning()
         for set in library.artifactSets {
             let four = try wearing([set.id], on: "bennett")
             let pair = try wearing([set.id, set.id], on: "bennett")
             XCTAssertLessThanOrEqual(four.dmgAll + four.partyDMG, 0.4, "\(set.id): four pieces add too much")
             XCTAssertLessThanOrEqual(pair.dmgAll + pair.partyDMG, 0.25, "\(set.id): two pieces add too much")
         }
-        XCTAssertNil(tuning.setEffectApprox.first { $0.setId == "noblesse-oblige" },
-                     "Noblesse's approximation only repeated its two-piece Burst DMG")
     }
 }

@@ -85,6 +85,11 @@ struct AbyssDataLibrary: Sendable {
     let frames: AbyssFrames?
     /// Yatta's per-hit gauge and ICD — see `AbyssGauge`.
     let gauge: AbyssGauge?
+    /// Each weapon's passive as structured buffs, by weapon id — see
+    /// `AbyssPassives.swift`. A weapon with no entry has no priced passive.
+    let weaponBuffsByID: [String: [AbyssBuff]]
+    /// Each artifact set's bonuses as structured buffs, by set id.
+    let setBuffsByID: [String: (twoPiece: [AbyssBuff], fourPiece: [AbyssBuff])]
     /// How often each character applies their element — see
     /// `AbyssApplicationProfile`.
     let applicationsByCharacterID: [String: AbyssApplicationProfile]
@@ -175,6 +180,10 @@ struct AbyssDataLibrary: Sendable {
         let gauge: AbyssGauge? =
             Self.decode(from: root?.appendingPathComponent("gauge.json"), hasher: &hasher)
         self.gauge = gauge
+        let passiveText: AbyssPassiveText? =
+            Self.decode(from: root?.appendingPathComponent("passive-text.json"), hasher: &hasher)
+        let passiveKnowledge: AbyssPassiveKnowledge? =
+            Self.decode(from: root?.appendingPathComponent("passives.json"), hasher: &hasher)
         dataDigest = hasher.finalize().map { String(format: "%02x", $0) }.joined()
         var kits: [String: AbyssCharacterKit] = [:]
         for entry in kitsFile?.kits ?? [] {
@@ -361,6 +370,17 @@ struct AbyssDataLibrary: Sendable {
         applicationsByCharacterID = Self.applicationProfiles(
             characters: characters, gauge: gauge, talentParams: talentParams, kits: kits,
             energy: energy.profiles, rotationSeconds: tuning?.rotationSeconds ?? 20, diagnostics: &diagnostics)
+
+        if let passiveText, let passiveKnowledge {
+            let passives = AbyssPassiveResolver.resolve(knowledge: passiveKnowledge, text: passiveText)
+            weaponBuffsByID = passives.weapons
+            setBuffsByID = passives.sets
+            diagnostics.passiveReferencesUnresolved = passives.unresolved
+        } else {
+            weaponBuffsByID = [:]
+            setBuffsByID = [:]
+            diagnostics.passiveReferencesUnresolved = ["passive-text.json or passives.json could not be read"]
+        }
 
         self.diagnostics = diagnostics
     }

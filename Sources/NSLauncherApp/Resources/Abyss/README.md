@@ -33,6 +33,8 @@ là **bản duy nhất**.
 | `particles.json` | Số hạt nguyên tố Kỹ năng Nguyên tố tạo ra, theo Genshin Impact Wiki, sinh tự động (xem "Năng lượng") |
 | `frames.json` | Độ dài chuỗi đòn thường, đòn nặng, cast E/Q (frame), từ frame data gcsim, sinh tự động bằng `scripts/sync-abyss-frames.py` |
 | `gauge.json` | Gauge nguyên tố và ICD của từng hit, từ Yatta `advancedProps`, sinh tự động bằng `scripts/sync-abyss-gauge.py` — nền của mô hình phản ứng Pha 4 |
+| `passive-text.json` | Chữ game (tiếng Anh) của passive vũ khí R1–R5 và hiệu ứng bộ thánh di vật, kèm các số game đánh dấu theo tinh luyện; sinh tự động bằng `scripts/sync-abyss-passives.py` |
+| `passives.json` | **Viết tay**: ý nghĩa có cấu trúc của từng passive/hiệu ứng set (chỉ số, trigger, thời lượng, stack, phạm vi). Mọi giá trị là số R1 tham chiếu vào `passive-text.json`; `AbyssPassiveTests` ghim mọi tham chiếu giải được — nền của timeline buff Pha 5 |
 | `tuning.json` | Tham số thuật toán (xem bên dưới) |
 | `game-ids.json` | Id số trong game → slug ở đây, để nhập Showcase theo UID |
 | `icons/characters/<id>.png`, `icons/weapons/<id>.png` | Ảnh chân dung, 256×256 |
@@ -62,8 +64,9 @@ rỗng, nên id sai làm **đỏ test** thay vì làm sai lặng lẽ.
 
 Ranh giới với `tuning.json`: **câu đó có gọi tên một nhân vật không?** Uptime
 burst của Faruzan là sự thật về Faruzan → `character-kits.json`. `rotationSeconds`,
-`conditionalUptime`, `setEffectApprox` là giả định của thuật toán áp cho mọi
-người → ở lại `tuning.json`. Hai dòng `resistanceShred` còn lại trong `tuning.json`
+`swapSeconds` là giả định của thuật toán áp cho mọi người → ở lại `tuning.json`.
+(`conditionalUptime` và `setEffectApprox` từng ở đây; Pha 5 thay chúng bằng
+`passives.json` + `AbyssBuffTimeline`.) Hai dòng `resistanceShred` còn lại trong `tuning.json`
 là ví dụ rõ nhất: chúng gate theo *nguyên tố của đội* để đại diện cho "support
 Anemo thì chắc mặc Viridescent Venerer" — một giả định, không phải sự thật về ai.
 
@@ -268,14 +271,12 @@ Ba nhóm số, độ tin cậy **khác hẳn nhau**:
 2. **Hằng số game chuẩn** — `artifactMainStats`, `substatRollValue`. Ổn định
    qua các bản cập nhật nhưng **chưa được đối chiếu API trong repo này**.
 3. **Ước lượng heuristic của thuật toán** — tất cả phần còn lại. Đây là các
-   giả định mô hình (độ dài rotation, uptime buff có điều kiện, hệ số quy đổi
-   hiệu ứng 4 món phức tạp), **không phải số liệu game**. `setEffectApprox` là
-   phần chủ quan nhất: 36/63 bộ có hiệu ứng 4 món quá phức tạp để tách số máy
-   móc, nên được gán tay một mức "%DMG hiệu dụng". Sửa bảng này là cách nhanh
-   nhất để đổi kết quả theo hiểu biết của bạn. Bộ có entry ở đây thì entry
-   **thay** bonus 4 món đọc từ `artifact-sets.json` (không cộng thêm), và entry
-   chỉ định giá sát thương **đòn của người mặc** — sát thương phản ứng (Swirl,
-   Stellar, Lunar…) không thuộc bảng này.
+   giả định mô hình (độ dài rotation, ngân sách substat, luật năng lượng),
+   **không phải số liệu game**. Trước Pha 5 phần chủ quan nhất là
+   `setEffectApprox` (một mức %DMG gán tay cho 34 bộ) và `conditionalUptime`
+   (mọi buff có điều kiện ở 60%); giờ hiệu ứng set và passive vũ khí đọc từ chữ
+   game (`passives.json`), và uptime tính từ rotation của người mang
+   (`AbyssBuffTimeline`) — xem docs/redesign.md mục 10.
 4. **`character-kits.json.buffs` — nửa data, nửa giả định** (trước ở
    `tuning.json.talentPartyBuff`). Buff đến từ chiêu nhân vật (Bennett, Kujou
    Sara, Faruzan cho đội; Xiao cho mình). Con số hệ số được **đọc từ

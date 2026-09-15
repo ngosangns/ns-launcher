@@ -134,7 +134,7 @@ final class AbyssShowcaseImportTests: XCTestCase {
     func testTakingASetBackOutOfAMeasuredSheetIsExactlyReversible() throws {
         let tuning = try XCTUnwrap(library.tuning)
         let assembler = AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs,
-                                            artifactSets: library.artifactSets)
+                                            weaponBuffs: library.weaponBuffsByID, setBuffs: library.setBuffsByID)
         let build = try XCTUnwrap(showcase().builds.first { $0.characterID == "hu-tao" })
         let character = try XCTUnwrap(library.charactersByID["hu-tao"])
         let worn = build.activeSetIDs.compactMap { library.artifactSetsByID[$0] }
@@ -159,7 +159,7 @@ final class AbyssShowcaseImportTests: XCTestCase {
     func testImportedBuildsAreScoredAtLevelNinety() throws {
         let tuning = try XCTUnwrap(library.tuning)
         let assembler = AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs,
-                                            artifactSets: library.artifactSets)
+                                            weaponBuffs: library.weaponBuffsByID, setBuffs: library.setBuffsByID)
         let character = try XCTUnwrap(library.charactersByID["hu-tao"])
         let build = try XCTUnwrap(showcase().builds.first { $0.characterID == "hu-tao" })
         let homa = try XCTUnwrap(library.weaponsByID["staff-of-homa"])
@@ -198,8 +198,8 @@ final class AbyssShowcaseImportTests: XCTestCase {
     func testStrippingSetsFromAMeasuredSheetLeavesNoNegativePartyBuff() throws {
         let tuning = try XCTUnwrap(library.tuning)
         let assembler = AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs,
-                                            artifactSets: library.artifactSets,
-                                            talentBuffs: library.talentBuffsByCharacterID)
+                                            talentBuffs: library.talentBuffsByCharacterID,
+                                            weaponBuffs: library.weaponBuffsByID, setBuffs: library.setBuffsByID)
         let character = try XCTUnwrap(library.charactersByID["hu-tao"])
         let noblesse = try XCTUnwrap(library.artifactSetsByID["noblesse-oblige"])
 

@@ -90,8 +90,8 @@ final class AbyssArtifactAdvisorTests: XCTestCase {
         let team = try XCTUnwrap(output.reports.first?.wholeFloorTeams?.first)
         let tuning = try XCTUnwrap(library.tuning)
         let assembler = AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs,
-                                            artifactSets: library.artifactSets,
-                                            talentBuffs: library.talentBuffsByCharacterID)
+                                            talentBuffs: library.talentBuffsByCharacterID,
+                                            weaponBuffs: library.weaponBuffsByID, setBuffs: library.setBuffsByID)
 
         for memberID in team.memberIDs {
             let option = try XCTUnwrap(team.assignment[memberID])
@@ -219,14 +219,13 @@ final class AbyssArtifactAdvisorTests: XCTestCase {
         let tuning = try XCTUnwrap(library.tuning)
         let scorer = AbyssScorer(library: library, tuning: tuning)
         let assembler = AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs,
-                                            artifactSets: library.artifactSets)
+                                            weaponBuffs: library.weaponBuffsByID, setBuffs: library.setBuffsByID)
 
         // Any set whose 4-piece bonus reaches the party will do.
         let partySet = try XCTUnwrap(library.fiveStarArtifactSets.first { set in
-            (set.twoPiece.bonuses + set.fourPiece.bonuses).contains { bonus in
-                AbyssBuildAssembler.resolve(named: bonus.stat, value: bonus.value,
-                                            conditional: false, tuning: tuning)
-                    .contains { $0.field == .partyATKPercent }
+            (library.setBuffsByID[set.id]?.fourPiece ?? []).contains { buff in
+                buff.scope == .party && buff.stat == .atkPercent
+                    && buff.conditions.allSatisfy { if case .cast = $0 { return true } else { return false } }
             }
         }, "the data has no set granting party ATK; this test needs updating")
 
@@ -285,7 +284,7 @@ final class AbyssArtifactAdvisorTests: XCTestCase {
     func testRefinementConsidersEverySetAndEveryPair() throws {
         let tuning = try XCTUnwrap(library.tuning)
         let assembler = AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs,
-                                            artifactSets: library.artifactSets)
+                                            weaponBuffs: library.weaponBuffsByID, setBuffs: library.setBuffsByID)
         let advisor = AbyssArtifactAdvisor(library: library, assembler: assembler,
                                            scorer: AbyssScorer(library: library, tuning: tuning))
         let optimizer = try makeOptimizer()

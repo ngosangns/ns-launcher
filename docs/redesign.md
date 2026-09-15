@@ -98,7 +98,7 @@ Chạy: `ABYSS_BENCHMARK=1 swift test --filter AbyssBenchmarkTests`. Xem mục 7
 | 2 | `character-kits.json` cho ~30 nhân vật hay dùng nhất; nhân vật chưa có kit rơi về mô hình cũ | — | **Khung xong + 21 kit — xem mục 6** |
 | 3 | Dựng rotation + năng lượng | `offFieldUptime`, hack ER | **Xong (năng lượng; thời gian đứng sân để sau) — xem mục 7** |
 | 4 | Gauge/ICD/phản ứng theo timeline | `amplifyingUptime`, `transformativeReactionsPerRotation` | **Xong (đếm theo số lần áp, chưa phải timeline) — xem mục 8** |
-| 5 | Timeline buff + stack | `conditionalUptime`, `assumedStacks`, phần lớn `setEffectApprox` | Chưa bắt đầu |
+| 5 | Timeline buff + stack | `conditionalUptime`, `assumedStacks`, phần lớn `setEffectApprox` | **Xong (cả ba; uptime tính từ rotation, chưa phải mô phỏng khung giờ) — xem mục 10** |
 | 6 | Điểm = thời gian dọn — cần nhập HP quái từ Yatta (script Pha 0 cố tình **chưa** lấy HP: chưa có gì đọc nó, và một key không ai hỏi là đúng loại lỗ hổng im lặng đã dọn ở `physical_dmg`) | trung bình điều hoà giả định HP bằng nhau | Chưa bắt đầu |
 
 Quy mô thật: làm đủ 125 nhân vật là việc nhiều tháng, Pha 2 là nút thắt.
@@ -539,7 +539,7 @@ sau khi bỏ dictionary theo nguyên tố trong vòng nóng.
 - Hyperbloom/Burgeon/Superconduct đang +0.15…+0.24: ICD riêng của phản ứng
   (tối đa 2 lần mỗi 0.5s trên một mục tiêu) và giới hạn lõi Bloom chưa có.
 
-## 9. Chưa xác minh, cần làm trước Pha 5
+## 9. Chưa xác minh, cần làm trước Pha 4–5
 
 - ~~Yatta có ghi hạt năng lượng không~~ — không; dùng wiki + gcsim (mục 7.1).
 - Gauge và ICD: Yatta `talent.advancedProps` có `elementalGaugeTheory` ("1U",
@@ -547,3 +547,86 @@ sau khi bỏ dictionary theo nguyên tố trong vòng nóng.
   từng đòn — đủ cho Pha 4 nếu tên đòn ở đó khớp được với dòng của
   `talent-params.json` (tên không trùng hẳn: "Normal Attack 1-Hit" vs
   "1-Hit DMG").
+
+## 10. Pha 5 — kết quả
+
+### 10.1. Benchmark trước khi làm: nhóm theo vũ khí và bộ thánh di vật
+
+Benchmark có thêm hai loại nhóm: `W:` theo vũ khí của đội (gcsim chọn) và `S:`
+theo bộ mô hình chọn. Soát lại dữ liệu vũ khí đang đọc thì lỗi không nằm ở
+uptime mà ở chính các dòng stat: `weapons/*.json` là bản tóm tắt văn xuôi —
+The Catch 12% ST Nộ (game ghi 16%) và "Elemental Burst CRIT Rate" chảy vào crit
+của *mọi* đòn; Kitain Cross Spear mang dòng của vũ khí khác; The Widsith, The
+Stringless, Wandering Evenstar không có dòng nào. Bộ thánh di vật thì 34 mức
+%DMG gán tay.
+
+### 10.2. Dữ liệu: chữ game ở một file, ý nghĩa ở file kia
+
+- **`passive-text.json`** (`scripts/sync-abyss-passives.py`, Yatta weapon
+  `affix` R1–R5 và reliquary `affixList`): chữ game tiếng Anh của 236 vũ khí và
+  63 bộ. Số nào đổi theo tinh luyện thì game bọc thẻ màu — mỗi thẻ thành một cột
+  R1–R5.
+- **`passives.json`** (viết tay, như `character-kits.json`): mỗi hiệu ứng là
+  `stat`, `on` (loại đòn), `scope` (bản thân / cả đội / trừ người mang / người
+  đứng sân), `trigger` (một hoặc nhiều điều kiện), `duration`, `stacks`,
+  `cooldown`, `from` (tỉ lệ theo EM/HP/DEF/ER). `value` là **số R1** — engine
+  tìm cột có R1 đó và đọc R2–R5; thời lượng, stack, hồi chiêu phải có trong chữ
+  game. Không giải được → `diagnostics.passiveReferencesUnresolved`, ghim rỗng.
+- Thử viết parser cho văn xuôi trước: nó sai nghĩa theo kiểu im lặng ("Taking DMG
+  disables this effect for 5s" thành buff 5s; Elegy for the End gán nhầm thời
+  lượng). Bản nháp 299 entry do 6 agent soạn theo cùng một brief, qua validator
+  tự động với chữ game, rồi soát tay các vũ khí/bộ dùng nhiều nhất.
+
+### 10.3. Engine: đồng hồ của người mang, cổng theo đội
+
+- **`AbyssBuffTimeline`** tính số stack trung bình *trong lúc sát thương mà buff
+  tăng xảy ra*, theo từng loại đòn, từ rotation solo của người mang (số lần E/Q,
+  số hit mỗi lần cast, tỉ trọng sát thương đòn thường/nặng/E/Q): buff sau E phủ
+  thời gian đánh thường theo sau nó; buff cộng stack theo hit leo dần qua các hit
+  của một lần cast (vô nghĩa với E một hit, gần đầy với Q sáu hit); buff có thời
+  lượng và hồi chiêu mà không tự tính thời gian thì bị chặn ở `duration/cooldown`
+  (lá Sapwood 12s mỗi 20s). Buff cả đội tính theo phần rotation nó được duy trì.
+- Điều kiện theo **người mang** quyết định ngay (Nightsoul, Bond of Life, loại
+  vũ khí). Quy ước một mục tiêu, đầy máu như benchmark: không hạ quái, không dưới
+  ngưỡng HP, không "≥2 kẻ địch".
+- Điều kiện theo **đội** (aura nguyên tố, khiên, hồi máu, phản ứng, số thành viên
+  cùng/khác nguyên tố, Moonsign Ascendant, Hexerei) không quyết được lúc dựng
+  sheet — sheet dựng một lần cho mỗi nhân vật rồi chấm trong hàng trăm đội. Chúng
+  đi theo sheet dưới dạng `AbyssGates` (8 ô cố định) và scorer mở cổng theo
+  `AbyssTeamConditions` của từng thành viên. Cộng hưởng Nham (DMG khi có khiên)
+  giờ theo đội có khiên thật, không phải 60%.
+- Crit theo loại đòn (`critRateFor`/`critDMGFor`), tỉ lệ theo chỉ số khác gộp khi
+  sheet hoàn chỉnh (`AbyssConversions`), buff cả đội của bộ 4 món khử trùng lặp
+  theo đúng lượng người mặc thứ hai đã cộng.
+- Hiệu năng: kiểu SIMD generic mới làm lượt chạy mặc định 21s → 65s trong build
+  debug (mỗi subscript là một lần tra metadata); đóng gói điều kiện đội vào hai
+  `UInt64`, lưu cổng bằng struct cố định, và tính sẵn phần đóng góp của mỗi bộ
+  cho mỗi nhân vật → **19s**.
+- Popover bộ thánh di vật liệt kê buff mô hình tính ("+7.5% Pyro DMG ×3 (có điều
+  kiện)") thay cho "≈ +20% ST (ước lượng thủ công)".
+
+### 10.4. Đo lại
+
+**Spearman 0.368 → 0.394** (3,645 đội): 0.379 khi thay dữ liệu và timeline;
+0.389 khi áp `duration/cooldown` cho buff không tự tính thời gian và sửa trigger
+The Widsith (vào sân, 10s mỗi 30s — bản nháp ghi "đứng sân": +60% ATK suốt thời
+gian đứng sân); 0.394 khi Finale of the Deep/Flowing Purity tự cấp Bond of Life
+(vế "khi Bond of Life bị xoá" cần đội có hồi máu, không cần kit có Bond of Life).
+Theo nhóm: Wriothesley +0.40 → +0.28 sau khi sửa The Widsith; Lunar-Charged
+−0.31 → −0.28; Melt/Vaporize, Hyperbloom, Burgeon gần như không đổi (thuộc Pha 4).
+
+### 10.5. Còn lại
+
+- **Đòn sát thương thêm** của vũ khí/bộ chưa được tính: Sequence of Solitude
+  (−0.39), Crescent Pike, The Viridescent Hunt, Cinnabar Spindle (cộng ST theo
+  DEF), Echoes of an Offering, Ocean-Hued Clam, Song of Days Past.
+- Kênh cả đội không mang CRIT, ER, HP hay bonus chỉ cho vài loại đòn (Xiphos
+  30% ER cho đồng đội, Freedom-Sworn +16% đòn thường/nặng) — những vế đó bỏ qua.
+- Cổng đội còn thô: "aura Pyro" mở khi đội có thành viên Pyro, chưa theo tỉ lệ
+  thời gian aura tồn tại; "được hồi máu" mở khi đội có healer; hai điều kiện đội
+  trên một hiệu ứng nhân với nhau. Buff cả đội có điều kiện đội vẫn bị khử trùng
+  lặp theo bộ chỉ khi không có cổng.
+- Uptime vẫn là **tỉ lệ**, chưa phải mô phỏng khung giờ: không biết thứ tự E–Q–đánh
+  thường, stack giảm dần (The Daybreak Chronicles, Alley Hunter) lấy mức giữ đều.
+- `character-kits.json.buffs[].uptime` (Bennett, Kujou Sara, Faruzan…) vẫn gán
+  tay — timeline chưa đọc buff từ kit.

@@ -128,7 +128,7 @@ final class AbyssStatVocabularyTests: XCTestCase {
     /// compiler from synthesising it. This is what says nothing was left out.
     func testAllCasesCoversTheWholeSheet() {
         XCTAssertEqual(AbyssStatField.allCases.count,
-                       AbyssStatField.scalarCases.count + 2 * GenshinElement.allCases.count)
+                       AbyssStatField.scalarCases.count + 2 * GenshinElement.allCases.count + 2 * HitCategory.allCases.count)
         XCTAssertEqual(Set(AbyssStatField.allCases).count, AbyssStatField.allCases.count,
                        "allCases lists a slot twice")
         XCTAssertEqual(AbyssStatField.allCases.filter(\.isPartyScoped).count,

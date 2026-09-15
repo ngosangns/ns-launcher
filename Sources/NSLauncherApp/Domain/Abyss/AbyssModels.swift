@@ -208,6 +208,11 @@ enum AbyssStatField: Sendable, Hashable, CaseIterable {
     case partyATKPercent, partyElementalMastery, partyDMG, partyFlatATK
     case elemental(GenshinElement)
     case partyElementalDMG(GenshinElement)
+    /// CRIT that reaches only one kind of hit: The Catch's "Elemental Burst
+    /// CRIT Rate", Festering Desire's for skills. The weapon data used to route
+    /// these into `critRate`, raising every hit the character made.
+    case critRateFor(HitCategory)
+    case critDMGFor(HitCategory)
 
     /// Every case, with the two element-carrying ones expanded over the seven
     /// elements. Hand-written because the associated values stop the compiler
@@ -217,6 +222,8 @@ enum AbyssStatField: Sendable, Hashable, CaseIterable {
         scalarCases
             + GenshinElement.allCases.map { .elemental($0) }
             + GenshinElement.allCases.map { .partyElementalDMG($0) }
+            + HitCategory.allCases.map { .critRateFor($0) }
+            + HitCategory.allCases.map { .critDMGFor($0) }
     }
 
     /// The cases that name one slot rather than one slot per element. This is
@@ -281,6 +288,8 @@ enum AbyssStatField: Sendable, Hashable, CaseIterable {
         case .partyFlatATK: return "party_flat_atk"
         case .elemental: return "elemental_dmg"
         case .partyElementalDMG: return "party_elemental_dmg"
+        case .critRateFor(let category): return "crit_rate_\(category.rawValue)"
+        case .critDMGFor(let category): return "crit_dmg_\(category.rawValue)"
         }
     }
 

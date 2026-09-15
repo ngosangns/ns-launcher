@@ -138,6 +138,9 @@ struct AbyssWeapon: Decodable, Sendable, Identifiable {
     struct Passive: Decodable, Sendable {
         let name: String?
         let description: String
+        /// A prose summary's stat lines. Not read for scoring since Phase 5:
+        /// weapon passives are structured buffs from the game text, in
+        /// `passives.json` — see `AbyssPassives.swift`.
         let effects: [PassiveEffect]
     }
 

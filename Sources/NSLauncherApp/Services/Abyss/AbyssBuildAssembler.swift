@@ -28,52 +28,56 @@ struct AbyssBuildAssembler: Sendable {
     let talentBuffs: [String: [AbyssTalentBuff]]
     /// Stats each character's kit turns into ATK, resolved by the library.
     let conversions: [String: [AbyssStatConversion]]
+    /// Weapon passives and set bonuses as structured buffs — see
+    /// `AbyssPassives.swift`. Empty prices no passive at all.
+    let weaponBuffs: [String: [AbyssBuff]]
+    let setBuffs: [String: (twoPiece: [AbyssBuff], fourPiece: [AbyssBuff])]
+    /// Each character's rotation as the buff timeline reads it, built by
+    /// `AbyssOptimizer` from the scorer's solo rotation. A character with none
+    /// is read with `AbyssBuffWearer.standIn`'s timing and their own facts.
+    let wearers: [String: AbyssBuffWearer]
+    /// Each set's two- and four-piece bonuses already read against each
+    /// character with a known rotation: the timeline is the same every time a
+    /// set is tried on the same character, and gear search tries sets on a
+    /// character thousands of times.
+    private let setDeltas: [String: [String: (twoPiece: AbyssSheetDelta, fourPiece: AbyssSheetDelta)]]
 
-    /// Where each artifact set's bonuses land, resolved once per set id.
-    ///
-    /// `resolve(named:)` lowercases and substring-matches its way through
-    /// nineteen rules, which is cheap once and ruinous when the artifact advisor
-    /// dresses the same character in the same sixty sets a few thousand times.
-    /// This is a memo of a pure function, not a second implementation: a set
-    /// that is not in the table is resolved by exactly the same code.
-    private let resolvedSets: [String: ResolvedSet]
-
-    private struct ResolvedSet: Sendable {
-        let twoPiece: [ResolvedBonus]
-        let fourPiece: [ResolvedBonus]
-    }
-
-    /// One artifact bonus after name resolution. `field` is nil when the name
-    /// was not understood, which the diagnostics report rather than swallow.
-    private struct ResolvedBonus: Sendable {
-        let field: AbyssStatField?
-        let value: Double
-        let name: String
-        /// The bonus is qualified ("CRIT Rate (when HP below 70%)") and so is
-        /// only active some of the time. Recorded because the game's own
-        /// character screen shows the unconditional bonuses and not these, which
-        /// is what lets a measured stat sheet be taken back apart.
-        let isConditional: Bool
-    }
-
-    init(tuning: AbyssTuning, moonsignIDs: Set<String>, artifactSets: [AbyssArtifactSet] = [],
+    init(tuning: AbyssTuning, moonsignIDs: Set<String>,
          talentBuffs: [String: [AbyssTalentBuff]] = [:],
          conversions: [String: [AbyssStatConversion]] = [:],
-         bondOfLifeIDs: Set<String> = []) {
+         bondOfLifeIDs: Set<String> = [],
+         weaponBuffs: [String: [AbyssBuff]] = [:],
+         setBuffs: [String: (twoPiece: [AbyssBuff], fourPiece: [AbyssBuff])] = [:],
+         wearers: [String: AbyssBuffWearer] = [:]) {
         self.tuning = tuning
         self.moonsignIDs = moonsignIDs
         self.bondOfLifeIDs = bondOfLifeIDs
         self.talentBuffs = talentBuffs
         self.conversions = conversions
+        self.weaponBuffs = weaponBuffs
+        self.setBuffs = setBuffs
+        self.wearers = wearers
 
-        var resolved: [String: ResolvedSet] = [:]
-        resolved.reserveCapacity(artifactSets.count)
-        for set in artifactSets {
-            resolved[set.id] = ResolvedSet(
-                twoPiece: Self.resolveBonuses(set.twoPiece.bonuses, tuning: tuning),
-                fourPiece: Self.resolveBonuses(set.fourPiece.bonuses, tuning: tuning))
+        var deltas: [String: [String: (twoPiece: AbyssSheetDelta, fourPiece: AbyssSheetDelta)]] = [:]
+        for (id, wearer) in wearers {
+            var perSet: [String: (twoPiece: AbyssSheetDelta, fourPiece: AbyssSheetDelta)] = [:]
+            for (setID, buffs) in setBuffs {
+                perSet[setID] = (
+                    AbyssSheetDelta.of { Self.apply(buffs.twoPiece, refinement: 1, wearer: wearer, to: &$0) },
+                    AbyssSheetDelta.of {
+                        Self.apply(buffs.fourPiece, refinement: 1, wearer: wearer, to: &$0, recordsSetParty: true)
+                    })
+            }
+            deltas[id] = perSet
         }
-        resolvedSets = resolved
+        setDeltas = deltas
+    }
+
+    /// The same assembler reading buffs against these rotations.
+    func with(wearers: [String: AbyssBuffWearer]) -> AbyssBuildAssembler {
+        AbyssBuildAssembler(tuning: tuning, moonsignIDs: moonsignIDs, talentBuffs: talentBuffs,
+                            conversions: conversions, bondOfLifeIDs: bondOfLifeIDs, weaponBuffs: weaponBuffs,
+                            setBuffs: setBuffs, wearers: wearers)
     }
 
     /// Builds the level-90 stat sheet for one character/weapon/artifact combination.
@@ -119,7 +123,7 @@ struct AbyssBuildAssembler: Sendable {
             if let subStatType = weapon.subStat.type, let subStatValue = weapon.subStat.valueLv90 {
                 _ = apply(named: subStatType, value: subStatValue, to: &stats)
             }
-            applyWeaponPassive(weapon, refinement: refinement, to: &stats)
+            applyWeaponPassive(weapon, refinement: refinement, character: character, to: &stats)
         }
 
         // Flower and Plume are fixed HP and ATK; there is nothing to decide
@@ -196,31 +200,36 @@ struct AbyssBuildAssembler: Sendable {
         }
     }
 
-    /// Adds the set bonuses on top of a sheet from `statsWithoutSets`.
+    /// Adds the set bonuses on top of a sheet from `statsWithoutSets`, then
+    /// folds the rate buffs in: this is the last step of every sheet, so the
+    /// stats a rate reads are final here.
     func applySets(_ sets: [AbyssArtifactSet],
                    character: AbyssCharacter,
                    to stats: inout AbyssStats,
                    diagnostics: inout AbyssParseDiagnostics) {
-        if sets.count == 1, let set = sets.first {
-            // Four pieces of one set: both bonuses apply. A set with a
-            // hand-written approximation has that *instead of* its parsed
-            // four-piece bonuses — the approximation is the four-piece effect
-            // priced at a realistic uptime, and adding the parsed number on
-            // top counted Shimenawa's +50% Normal Attack DMG twice (0.5 + 0.35)
-            // and handed Obsidian Codex's +40% CRIT Rate to every non-Natlan
-            // wearer the approximation's own requirement turned away.
-            let entry = resolved(set)
-            applyArtifactBonuses(entry.twoPiece, to: &stats, diagnostics: &diagnostics)
-            if approximation(for: set) == nil {
-                applyArtifactBonuses(entry.fourPiece, to: &stats, diagnostics: &diagnostics)
+        if let known = setDeltas[character.id] {
+            if sets.count == 1, let set = sets.first {
+                known[set.id]?.twoPiece.apply(to: &stats)
+                known[set.id]?.fourPiece.apply(to: &stats)
+            } else {
+                for set in sets { known[set.id]?.twoPiece.apply(to: &stats) }
             }
-            applySetApproximation(for: set, character: character, to: &stats)
+            stats.foldConversions()
+            return
+        }
+        let wearer = wearer(for: character)
+        if sets.count == 1, let set = sets.first {
+            // Four pieces of one set: both bonuses apply.
+            let buffs = setBuffs[set.id]
+            apply(buffs?.twoPiece ?? [], refinement: 1, wearer: wearer, to: &stats)
+            apply(buffs?.fourPiece ?? [], refinement: 1, wearer: wearer, to: &stats, recordsSetParty: true)
         } else {
             // Two pieces each of two sets: only the 2-piece bonuses.
             for set in sets {
-                applyArtifactBonuses(resolved(set).twoPiece, to: &stats, diagnostics: &diagnostics)
+                apply(setBuffs[set.id]?.twoPiece ?? [], refinement: 1, wearer: wearer, to: &stats)
             }
         }
+        stats.foldConversions()
     }
 
     // MARK: - Stat name mapping
@@ -229,10 +238,8 @@ struct AbyssBuildAssembler: Sendable {
     /// Returns false when the name is not understood, so the caller can report
     /// it rather than silently dropping the bonus.
     @discardableResult
-    func apply(named name: String, value rawValue: Double, to stats: inout AbyssStats,
-               conditional: Bool = false) -> Bool {
-        let resolved = Self.resolve(named: name, value: rawValue, conditional: conditional,
-                                    tuning: tuning)
+    func apply(named name: String, value rawValue: Double, to stats: inout AbyssStats) -> Bool {
+        let resolved = Self.resolve(named: name, value: rawValue, tuning: tuning)
         guard !resolved.isEmpty else { return false }
         for entry in resolved { stats.add(entry.value, to: entry.field) }
         return true
@@ -245,12 +252,11 @@ struct AbyssBuildAssembler: Sendable {
     /// and a charged attack as different actions. Returning one field meant the
     /// charged half of five artifact sets was quietly dropped.
     ///
-    /// Split from `apply` so the result can be cached: the routing depends only
-    /// on the name, and the same names are resolved over and over.
-    static func resolve(named name: String, value rawValue: Double, conditional: Bool,
+    /// Split from `apply` so the routing can be tested on its own. Since Phase 5
+    /// it reads only the character data's own names — ascension stats and
+    /// weapon substats; weapon passives and set bonuses are structured buffs.
+    static func resolve(named name: String, value: Double,
                         tuning: AbyssTuning) -> [(field: AbyssStatField, value: Double)] {
-        var value = rawValue
-        if conditional { value *= tuning.conditionalUptime }
         let key = name.lowercased()
 
         // Recognised, and deliberately worth nothing to a hit's damage — see
@@ -369,40 +375,6 @@ struct AbyssBuildAssembler: Sendable {
             ("def%", [.defPercent]),
     ]
 
-    /// Resolves a set's bonuses once, keeping the names of the ones that did not
-    /// map so the diagnostics can still report them on every use.
-    private static func resolveBonuses(_ bonuses: [AbyssArtifactSet.Bonus],
-                                       tuning: AbyssTuning) -> [ResolvedBonus] {
-        bonuses.flatMap { bonus -> [ResolvedBonus] in
-            // A qualifier in parentheses ("CRIT Rate (when HP below 70%)") or
-            // against a kind of enemy ("DMG vs Electro-afflicted enemies")
-            // means the bonus is conditional and rarely at full uptime.
-            let conditional = Self.isConditional(bonus.stat)
-            let resolved = resolve(named: bonus.stat, value: bonus.value,
-                                   conditional: conditional, tuning: tuning)
-            guard !resolved.isEmpty else {
-                // Priced at nothing on purpose is not the same as not understood.
-                guard unpriced(named: bonus.stat) == nil else { return [] }
-                return [ResolvedBonus(field: nil, value: 0, name: bonus.stat,
-                                      isConditional: conditional)]
-            }
-            return resolved.map {
-                ResolvedBonus(field: $0.field, value: $0.value, name: bonus.stat,
-                              isConditional: conditional)
-            }
-        }
-    }
-
-    static func isConditional(_ name: String) -> Bool {
-        let key = name.lowercased()
-        return key.contains("(") || key.contains(" vs ")
-    }
-
-    /// The hand-written approximation for a set, if it has one.
-    func approximation(for set: AbyssArtifactSet) -> AbyssTuning.SetEffectApproximation? {
-        tuning.setEffectApprox.first(where: { $0.setId == set.id })
-    }
-
     /// What these sets contribute that the game's own character screen already
     /// shows: the bonuses that are always on.
     ///
@@ -415,19 +387,20 @@ struct AbyssBuildAssembler: Sendable {
     func unconditionalSetContribution(_ sets: [AbyssArtifactSet]) -> [(field: AbyssStatField, value: Double)] {
         var contribution: [(field: AbyssStatField, value: Double)] = []
 
-        func collect(_ bonuses: [ResolvedBonus]) {
-            for bonus in bonuses where !bonus.isConditional {
-                guard let field = bonus.field else { continue }
-                contribution.append((field, bonus.value))
+        func collect(_ buffs: [AbyssBuff]) {
+            // Always on, the wearer's own, and not a rate of another stat: the
+            // rest is either not on the screen or not a fixed number.
+            for buff in buffs where buff.isAlwaysOn && buff.scope == .wearer && buff.source == nil {
+                let value = buff.value(refinement: 1) * Double(buff.stacks)
+                for field in Self.ownFields(buff, element: nil) { contribution.append((field, value)) }
             }
         }
 
         if sets.count == 1, let set = sets.first {
-            let entry = resolved(set)
-            collect(entry.twoPiece)
-            if approximation(for: set) == nil { collect(entry.fourPiece) }
+            collect(setBuffs[set.id]?.twoPiece ?? [])
+            collect(setBuffs[set.id]?.fourPiece ?? [])
         } else {
-            for set in sets { collect(resolved(set).twoPiece) }
+            for set in sets { collect(setBuffs[set.id]?.twoPiece ?? []) }
         }
         return contribution
     }
@@ -489,7 +462,7 @@ struct AbyssBuildAssembler: Sendable {
             stats.add(-entry.value, to: entry.field)
         }
         if let weapon {
-            applyWeaponPassive(weapon, refinement: build.weaponRefinement, to: &stats,
+            applyWeaponPassive(weapon, refinement: build.weaponRefinement, character: character, to: &stats,
                                conditionalOnly: true)
         }
         // Party buffs are never in the measured numbers: the game's character
@@ -499,134 +472,208 @@ struct AbyssBuildAssembler: Sendable {
         return stats
     }
 
-    private func applyArtifactBonuses(_ bonuses: [ResolvedBonus],
-                                      to stats: inout AbyssStats,
-                                      diagnostics: inout AbyssParseDiagnostics) {
-        for bonus in bonuses {
-            guard let field = bonus.field else {
-                diagnostics.artifactBonusUnmapped.insert(bonus.name)
-                continue
-            }
-            stats.add(bonus.value, to: field)
-            diagnostics.artifactBonusMapped += 1
+    // MARK: - Weapon passives and set bonuses
+
+    /// - Parameter conditionalOnly: skip what the game's character screen
+    ///   already shows, for use on top of a measured stat sheet: the wearer's
+    ///   own always-on buffs. Triggered and party buffs are not on that screen.
+    private func applyWeaponPassive(_ weapon: AbyssWeapon, refinement: Int, character: AbyssCharacter?,
+                                    to stats: inout AbyssStats, conditionalOnly: Bool = false) {
+        var buffs = weaponBuffs[weapon.id] ?? []
+        if conditionalOnly { buffs.removeAll { $0.isAlwaysOn && $0.scope == .wearer } }
+        let wearer = character.map(wearer(for:)) ?? .standIn
+        apply(buffs, refinement: refinement, wearer: wearer, to: &stats)
+    }
+
+    /// The rotation the timeline reads for a character: the optimizer's, or
+    /// the stand-in's timing with the character's own facts.
+    func wearer(for character: AbyssCharacter) -> AbyssBuffWearer {
+        if let known = wearers[character.id] { return known }
+        var wearer = AbyssBuffWearer.standIn
+        wearer.element = character.element
+        wearer.weaponType = character.weaponType.rawValue
+        wearer.nation = character.nationInGame
+        wearer.nightsoul = character.nationInGame == "Natlan"
+        wearer.bondOfLife = bondOfLifeIDs.contains(character.id)
+        wearer.moonsign = moonsignIDs.contains(character.id)
+        return wearer
+    }
+
+    /// Adds buffs to a sheet at their standing on this wearer.
+    ///
+    /// Effects sharing a `group` are one effect at a time (The Widsith plays
+    /// one of three songs), so each counts for its share of the group.
+    ///
+    /// - Parameter recordsSetParty: these are a four-piece set's, whose party
+    ///   buffs do not stack with a second wearer of the same set — recorded on
+    ///   the sheet for `AbyssScorer.partyBuffs` to take back out.
+    func apply(_ buffs: [AbyssBuff], refinement: Int, wearer: AbyssBuffWearer, to stats: inout AbyssStats,
+               recordsSetParty: Bool = false) {
+        Self.apply(buffs, refinement: refinement, wearer: wearer, to: &stats, recordsSetParty: recordsSetParty)
+    }
+
+    static func apply(_ buffs: [AbyssBuff], refinement: Int, wearer: AbyssBuffWearer, to stats: inout AbyssStats,
+                      recordsSetParty: Bool = false) {
+        var groups: [String: Int] = [:]
+        for buff in buffs { if let group = buff.group { groups[group, default: 0] += 1 } }
+        for buff in buffs {
+            let share = buff.group.map { 1 / Double(groups[$0] ?? 1) } ?? 1
+            apply(buff, refinement: refinement, wearer: wearer, share: share, to: &stats,
+                  recordsSetParty: recordsSetParty)
         }
     }
 
-    /// The table entry for a set, resolving it on the spot if the assembler was
-    /// built without the set list.
-    private func resolved(_ set: AbyssArtifactSet) -> ResolvedSet {
-        resolvedSets[set.id] ?? ResolvedSet(
-            twoPiece: Self.resolveBonuses(set.twoPiece.bonuses, tuning: tuning),
-            fourPiece: Self.resolveBonuses(set.fourPiece.bonuses, tuning: tuning))
-    }
+    private static func apply(_ buff: AbyssBuff, refinement: Int, wearer: AbyssBuffWearer, share: Double,
+                              to stats: inout AbyssStats, recordsSetParty: Bool) {
+        let reading = AbyssBuffTimeline.read(buff, wearer: wearer)
+        guard !reading.isOff else { return }
+        let gated = reading.any != 0 || reading.all != 0
+        let perMember = reading.limit < 0
 
-    // MARK: - Weapon passives
+        /// The buff's value at an average stack count.
+        func amount(_ stacks: Double) -> Double {
+            let tiers = buff.tiers(refinement: refinement)
+            guard !tiers.isEmpty else { return buff.value(refinement: refinement) * stacks * share }
+            // Counted per member, a tier table is read as its slope.
+            if perMember { return (tiers.last ?? 0) / Double(tiers.count) * stacks * share }
+            let clamped = min(max(stacks, 0), Double(tiers.count))
+            let lower = Int(clamped.rounded(.down))
+            let low = lower == 0 ? 0 : tiers[lower - 1]
+            let high = lower >= tiers.count ? low : tiers[lower]
+            return (low + (high - low) * (clamped - Double(lower))) * share
+        }
 
-    /// Effect names that describe an extra hit rather than a stat buff, e.g.
-    /// "AoE DMG (% ATK)". Counting those as a damage bonus would be wrong twice
-    /// over — they are damage instances, and they are far larger than any buff.
-    private static let notAStatBuff = try? NSRegularExpression(
-        pattern: "\\(\\s*%|cooldown|chance|restore|\\bspd\\b|particle|energy|reset|duration",
-        options: [.caseInsensitive])
-    private static let isStatBuff = try? NSRegularExpression(pattern: "buff|bonus", options: [.caseInsensitive])
-    /// A weapon line that turns one stat into ATK rather than adding a number:
-    /// Staff of Homa and Primordial Jade Cutter ("ATK from HP (% Max HP)"),
-    /// Engulfing Lightning ("ATK from Energy Recharge over 100% (%)"). These
-    /// say neither buff nor bonus, so the stat-buff rule below never saw them
-    /// and every refinement of Homa was worth exactly its HP%. The rate lands
-    /// on the sheet the same way a kit's conversion does. Homa's "Additional …
-    /// below 50% HP" line is the conditional half and gets the conditional
-    /// uptime; its "Total …" line is the sum of the other two and is skipped
-    /// rather than counted a second time.
-    private static let weaponConversionRules: [(pattern: NSRegularExpression?, conditional: Bool,
-                                                apply: @Sendable (inout AbyssStats, Double) -> Void)] = [
-        (try? NSRegularExpression(pattern: "^Total ATK from HP", options: [.caseInsensitive]), false, { _, _ in }),
-        (try? NSRegularExpression(pattern: "^Additional ATK from HP below 50% HP", options: [.caseInsensitive]),
-         true, { $0.atkFromHPRate += $1 }),
-        (try? NSRegularExpression(pattern: "^ATK from HP \\(% Max HP\\)$", options: [.caseInsensitive]),
-         false, { $0.atkFromHPRate += $1 }),
-        (try? NSRegularExpression(pattern: "^ATK from Energy Recharge over 100%", options: [.caseInsensitive]),
-         false, { $0.atkPercentPerExcessER += $1 }),
-    ]
-    /// Elemental Mastery, however it is spelled. Named because two places have
-    /// to agree on it: the magnitude guard below and the routing rules.
-    private static let elementalMasteryEffect = try? NSRegularExpression(
-        pattern: "elemental\\s*mastery|^em\\b", options: [.caseInsensitive])
-    private static let perStack = try? NSRegularExpression(pattern: "per stack|per seal|per .*stack",
-                                                           options: [.caseInsensitive])
-    private static let partyScoped = try? NSRegularExpression(pattern: "team|party|toàn đội",
-                                                              options: [.caseInsensitive])
-
-    /// The first pattern that matches wins, so the order is part of the rule.
-    private static let weaponEffectRules: [(pattern: NSRegularExpression?, field: AbyssStatField)] = [
-        (try? NSRegularExpression(pattern: "crit\\s*rate", options: [.caseInsensitive]), .critRate),
-        (try? NSRegularExpression(pattern: "crit\\s*dmg", options: [.caseInsensitive]), .critDMG),
-        (elementalMasteryEffect, .elementalMastery),
-        (try? NSRegularExpression(pattern: "energy\\s*recharge", options: [.caseInsensitive]), .energyRecharge),
-        (try? NSRegularExpression(pattern: "normal", options: [.caseInsensitive]), .dmgNormal),
-        (try? NSRegularExpression(pattern: "charged", options: [.caseInsensitive]), .dmgCharged),
-        (try? NSRegularExpression(pattern: "skill", options: [.caseInsensitive]), .dmgSkill),
-        (try? NSRegularExpression(pattern: "burst", options: [.caseInsensitive]), .dmgBurst),
-        (try? NSRegularExpression(pattern: "\\batk\\b", options: [.caseInsensitive]), .atkPercent),
-        (try? NSRegularExpression(pattern: "\\bhp\\b", options: [.caseInsensitive]), .hpPercent),
-        (try? NSRegularExpression(pattern: "\\bdef\\b", options: [.caseInsensitive]), .defPercent),
-        (try? NSRegularExpression(pattern: "dmg", options: [.caseInsensitive]), .dmgAll),
-    ]
-
-    /// - Parameter conditionalOnly: skip passives the game's character screen
-    ///   already shows, for use on top of a measured stat sheet. A passive
-    ///   counts as hidden when it is qualified or stacks — at rest, neither is
-    ///   in the numbers the game displays.
-    private func applyWeaponPassive(_ weapon: AbyssWeapon, refinement: Int, to stats: inout AbyssStats,
-                                    conditionalOnly: Bool = false) {
-        guard let passive = weapon.passive else { return }
-
-        for effect in passive.effects {
-            guard var value = effect.value(refinement: refinement) else { continue }
-            let name = effect.stat
-
-            if let rule = Self.weaponConversionRules.first(where: { Self.matches($0.pattern, name) }) {
-                if conditionalOnly, !rule.conditional { continue }
-                rule.apply(&stats, rule.conditional ? value * tuning.conditionalUptime : value)
-                continue
+        func add(_ value: Double, _ field: AbyssStatField) {
+            if gated {
+                stats.gates.append(value: value, field: field, any: reading.any, all: reading.all,
+                                   limit: reading.limit)
+            } else {
+                stats.add(value, to: field)
             }
+        }
 
-            // A reaction's damage is not a hit's: "Lunar-Charged DMG Bonus"
-            // used to reach dmgAll through the rule for "dmg".
-            if Self.unpriced(named: name) != nil { continue }
+        let categories = AbyssBuffTimeline.categories
+        let reached = buff.on.isEmpty ? categories : categories.filter { buff.on.reaches($0) }
+        let total = reached.reduce(0) { $0 + wearer.weights[AbyssStats.categoryIndex($1)] }
+        /// Stacks averaged over the wearer's own damage of the kinds it reaches.
+        let ownStacks: Double = {
+            guard total > 0 else {
+                return reached.map { reading.stacks[AbyssStats.categoryIndex($0)] }.max() ?? 0
+            }
+            return reached.reduce(0) {
+                $0 + wearer.weights[AbyssStats.categoryIndex($1)] * reading.stacks[AbyssStats.categoryIndex($1)]
+            } / total
+        }()
 
-            // Only lines that actually name a stat buff.
-            guard Self.matches(Self.isStatBuff, name), !Self.matches(Self.notAStatBuff, name) else { continue }
-            // A value above 3 is a hit's damage percentage, not a buff —
-            // except Elemental Mastery, which is a flat quantity in the tens or
-            // hundreds and so is *always* above 3. `resolve(named:)` has carried
-            // this exception for artifact bonuses since the port; the weapon
-            // path did not, and silently dropped every EM passive in the data
-            // (Sapwood Blade, Forest Regalia, Master Key, Kitain Cross Spear and
-            // seven others).
-            guard abs(value) <= 3 || Self.matches(Self.elementalMasteryEffect, name) else { continue }
-
-            let stacks = Self.matches(Self.perStack, name)
-            if conditionalOnly, !stacks, !name.contains("(") { continue }
-
-            if stacks { value *= tuning.assumedStacks }
-            if name.contains("(") { value *= tuning.conditionalUptime }
-
-            let isParty = Self.matches(Self.partyScoped, name)
-            for rule in Self.weaponEffectRules where Self.matches(rule.pattern, name) {
-                if isParty, rule.field == .atkPercent {
-                    stats.partyATKPercent += value
+        switch buff.scope {
+        case .wearer:
+            if let source = buff.source {
+                guard let field = ownFields(buff, element: wearer.element).first else { return }
+                let rate = amount(ownStacks) / buff.per
+                stats.conversions.append(rate: rate, cap: buff.cap(refinement: refinement),
+                                         source: AbyssConversions.Source(source), field: field,
+                                         any: reading.any, all: reading.all, limit: reading.limit)
+                return
+            }
+            switch buff.stat {
+            case .dmg where buff.on.isEmpty && !gated:
+                // Per kind of hit: a triggered bonus is worth different stacks
+                // to a skill than to the attacks after it.
+                let stacks = reading.stacks
+                if stacks[0] == stacks[1], stacks[1] == stacks[2], stacks[2] == stacks[3] {
+                    add(amount(stacks[0]), .dmgAll)
                 } else {
-                    stats.add(value, to: rule.field)
+                    for category in categories {
+                        add(amount(stacks[AbyssStats.categoryIndex(category)]), .dmg(for: category))
+                    }
                 }
-                break
+            case .dmg, .critRate, .critDMG:
+                if buff.on.isEmpty {
+                    guard let field = ownFields(buff, element: wearer.element).first else { return }
+                    add(amount(ownStacks), field)
+                } else {
+                    for category in reached {
+                        let stacks = reading.stacks[AbyssStats.categoryIndex(category)]
+                        switch buff.stat {
+                        case .critRate: add(amount(stacks), .critRateFor(category))
+                        case .critDMG: add(amount(stacks), .critDMGFor(category))
+                        default: add(amount(stacks), .dmg(for: category))
+                        }
+                    }
+                }
+            default:
+                for field in ownFields(buff, element: wearer.element) { add(amount(ownStacks), field) }
+            }
+
+        case .party, .active, .others:
+            guard let field = partyField(buff, element: wearer.element) else { return }
+            let value = amount(reading.rotation)
+            if let source = buff.source {
+                stats.conversions.append(rate: value / buff.per, cap: buff.cap(refinement: refinement),
+                                         source: AbyssConversions.Source(source), field: field,
+                                         any: reading.any, all: reading.all, limit: reading.limit)
+            } else {
+                add(value, field)
+                if recordsSetParty, !gated { recordSetParty(value, field, on: &stats) }
+            }
+            // "Party members other than the wearer": the wearer's copy of the
+            // party buff is taken back out of their own sheet.
+            if buff.scope == .others, let own = ownFields(buff, element: wearer.element).first {
+                if let source = buff.source {
+                    stats.conversions.append(rate: -value / buff.per, cap: nil,
+                                             source: AbyssConversions.Source(source), field: own,
+                                             any: reading.any, all: reading.all, limit: reading.limit)
+                } else {
+                    add(-value, own)
+                }
             }
         }
     }
 
-    private static func matches(_ regex: NSRegularExpression?, _ text: String) -> Bool {
-        guard let regex else { return false }
-        return regex.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)) != nil
+    /// Where a buff lands on the wearer's own sheet. Empty for a bonus to
+    /// plunging attacks only, which no damage profile has.
+    static func ownFields(_ buff: AbyssBuff, element: GenshinElement?) -> [AbyssStatField] {
+        switch buff.stat {
+        case .atkPercent: return [.atkPercent]
+        case .hpPercent: return [.hpPercent]
+        case .defPercent: return [.defPercent]
+        case .flatATK: return [.flatATK]
+        case .elementalMastery: return [.elementalMastery]
+        case .energyRecharge: return [.energyRecharge]
+        case .critRate: return [.critRate]
+        case .critDMG: return [.critDMG]
+        case .dmg:
+            if buff.on.isEmpty { return [.dmgAll] }
+            return AbyssBuffTimeline.categories.filter { buff.on.reaches($0) }.map { AbyssStatField.dmg(for: $0) }
+        case .ownElementDMG: return element.map { [.elemental($0)] } ?? []
+        case .elementDMG(let element): return [.elemental(element)]
+        }
+    }
+
+    /// Where a buff lands when it reaches the party, or nil for a stat the
+    /// party channels do not carry (CRIT, Energy Recharge, HP, and a bonus to
+    /// only some kinds of hit).
+    private static func partyField(_ buff: AbyssBuff, element: GenshinElement) -> AbyssStatField? {
+        switch buff.stat {
+        case .atkPercent: return .partyATKPercent
+        case .flatATK: return .partyFlatATK
+        case .elementalMastery: return .partyElementalMastery
+        case .dmg where buff.on.isEmpty: return .partyDMG
+        case .ownElementDMG: return .partyElementalDMG(element)
+        case .elementDMG(let other): return .partyElementalDMG(other)
+        default: return nil
+        }
+    }
+
+    private static func recordSetParty(_ value: Double, _ field: AbyssStatField, on stats: inout AbyssStats) {
+        switch field {
+        case .partyATKPercent: stats.setPartyATKPercent += value
+        case .partyFlatATK: stats.setPartyFlatATK += value
+        case .partyElementalMastery: stats.setPartyElementalMastery += value
+        case .partyDMG: stats.setPartyDMG += value
+        case .partyElementalDMG(let element): stats.setPartyElementalDMG[element.simdIndex] += value
+        default: break
+        }
     }
 
     // MARK: - Artifacts
@@ -711,47 +758,47 @@ struct AbyssBuildAssembler: Sendable {
     private static func substatField(_ key: String) -> AbyssStatField? {
         AbyssStatField(tuningKey: key)
     }
+}
 
-    /// Credits the hand-estimated effect of a 4-piece set whose real behaviour
-    /// was too conditional to read off the data. See `tuning.json`.
-    private func applySetApproximation(for set: AbyssArtifactSet,
-                                       character: AbyssCharacter,
-                                       to stats: inout AbyssStats) {
-        guard let approximation = tuning.setEffectApprox.first(where: { $0.setId == set.id }),
-              meetsRequirement(approximation.requirement, character: character) else { return }
-        stats.add(approximation.damageBonus,
-                  to: approximation.party == true ? .partyDMG : approximation.scope.statField)
+/// What a group of buffs adds to a sheet, recorded once so it can be added
+/// again without reading the timeline again. Every buff only ever adds to a
+/// field, appends a gate or appends a conversion, so the difference from an
+/// empty sheet is the whole effect.
+struct AbyssSheetDelta: Sendable {
+    private var fields: [(field: AbyssStatField, value: Double)] = []
+    private var gates: [AbyssGate] = []
+    private var conversions: [AbyssConversion] = []
+    private var setParty: (atk: Double, flatATK: Double, em: Double, dmg: Double, elemental: SIMD8<Double>)?
+
+    static func of(_ build: (inout AbyssStats) -> Void) -> AbyssSheetDelta {
+        let empty = AbyssStats()
+        var sheet = empty
+        build(&sheet)
+        var delta = AbyssSheetDelta()
+        for field in AbyssStatField.indexed {
+            let value = sheet.value(of: field) - empty.value(of: field)
+            if value != 0 { delta.fields.append((field, value)) }
+        }
+        for index in 0..<sheet.gates.count { delta.gates.append(sheet.gates[index]) }
+        for index in 0..<sheet.conversions.count { delta.conversions.append(sheet.conversions[index]) }
+        if sheet.setPartyATKPercent != 0 || sheet.setPartyFlatATK != 0 || sheet.setPartyElementalMastery != 0
+            || sheet.setPartyDMG != 0 || sheet.setPartyElementalDMG != .zero {
+            delta.setParty = (sheet.setPartyATKPercent, sheet.setPartyFlatATK, sheet.setPartyElementalMastery,
+                              sheet.setPartyDMG, sheet.setPartyElementalDMG)
+        }
+        return delta
     }
 
-    /// What a set's hand-written approximation grants the *party*, for a
-    /// character who meets its requirement. Zero for the wearer-only ones.
-    ///
-    /// `AbyssScorer` needs this separately: a party buff from a set is counted
-    /// once however many members wear it, and its de-duplication table is built
-    /// from the sets rather than from anyone's stat sheet.
-    func partyApproximation(for set: AbyssArtifactSet, character: AbyssCharacter) -> Double {
-        guard let approximation = tuning.setEffectApprox.first(where: { $0.setId == set.id }),
-              approximation.party == true,
-              meetsRequirement(approximation.requirement, character: character) else { return 0 }
-        return approximation.damageBonus
-    }
-
-    private func meetsRequirement(_ requirement: AbyssTuning.SetEffectApproximation.Requirement?,
-                                  character: AbyssCharacter) -> Bool {
-        switch requirement {
-        case nil:
-            return true
-        case .natlan:
-            return character.nationInGame == "Natlan"
-        case .moonsign:
-            return moonsignIDs.contains(character.id)
-        case .stellar:
-            return [.cryo, .electro, .anemo].contains(character.element)
-        case .pyro: return character.element == .pyro
-        case .hydro: return character.element == .hydro
-        case .geo: return character.element == .geo
-        case .cryo: return character.element == .cryo
-        case .bondOfLife: return bondOfLifeIDs.contains(character.id)
+    func apply(to stats: inout AbyssStats) {
+        for entry in fields { stats.add(entry.value, to: entry.field) }
+        for gate in gates { stats.gates.append(gate) }
+        for conversion in conversions { stats.conversions.append(conversion) }
+        if let setParty {
+            stats.setPartyATKPercent += setParty.atk
+            stats.setPartyFlatATK += setParty.flatATK
+            stats.setPartyElementalMastery += setParty.em
+            stats.setPartyDMG += setParty.dmg
+            stats.setPartyElementalDMG += setParty.elemental
         }
     }
 }

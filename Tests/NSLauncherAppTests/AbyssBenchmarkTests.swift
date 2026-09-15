@@ -20,6 +20,8 @@ import XCTest
 ///     ABYSS_BENCHMARK=1 swift test --filter AbyssBenchmarkTests
 ///
 /// `ABYSS_BENCHMARK_REPORT=<path>` also writes the report as JSON.
+/// `ABYSS_BENCHMARK_PROBE=<character id>` prints that character's modelled gear
+/// and sheet in every team they appear in — where to look when a group is off.
 final class AbyssBenchmarkTests: XCTestCase {
 
     struct Fixture: Decodable {
@@ -61,8 +63,9 @@ final class AbyssBenchmarkTests: XCTestCase {
         let underRated: [Bias]
         /// The same log bias, averaged over teams grouped by the transformative
         /// reaction they are priced on ("T:Hyperbloom") and by the amplifying
-        /// reaction their elements allow ("A:Melt") — where a reaction model is
-        /// over- or under-crediting a whole kind of team.
+        /// reaction their elements allow ("A:Melt"), by a member's weapon
+        /// ("W:…", the team's own) and by the sets the model chose ("S:…") —
+        /// where the model over- or under-credits a whole kind of team.
         let byReaction: [Bias]
     }
 
@@ -182,6 +185,7 @@ final class AbyssBenchmarkTests: XCTestCase {
         var model: [Double] = []
         var gcsim: [Double] = []
         var members: [[String]] = []
+        var scored: [(members: [Fixture.Member], sets: [String])] = []
         for team in teams {
             let teamBuilds = team.members.map {
                 Build(id: $0.id, constellation: $0.constellation, weapon: $0.weapon, refinement: $0.refinement)
@@ -197,9 +201,21 @@ final class AbyssBenchmarkTests: XCTestCase {
                   let result = scorer.score(members: characters, options: teamOptions, floor: .neutral,
                                             profiles: teamProfiles),
                   result.score > 0 else { continue }
+            if let probe = ProcessInfo.processInfo.environment["ABYSS_BENCHMARK_PROBE"],
+               let option = result.assignment[probe] {
+                let sheet = option.stats
+                print("PROBE \(team.members.map { "\($0.id)/\($0.weapon)" }) sets=\(option.setIDs) "
+                      + "atk%=\(sheet.atkPercent) cr=\(sheet.critRate) cd=\(sheet.critDMG) crc=\(sheet.critRateByCategory) "
+                      + "dmg=\(sheet.dmgAll),\(sheet.dmgNormal),\(sheet.dmgCharged),\(sheet.dmgSkill),\(sheet.dmgBurst) "
+                      + "el=\(sheet.elementalDMG) em=\(sheet.elementalMastery) er=\(sheet.energyRecharge) gates=\(sheet.gates.count) "
+                      + "score=\(result.score) gcsim=\(team.dps) share=\(result.perCharacterDamage[probe] ?? 0)")
+            }
             model.append(result.score)
             gcsim.append(team.dps)
             members.append(characters.map(\.id))
+            scored.append((team.members, characters.map {
+                (result.assignment[$0.id]?.setIDs ?? []).joined(separator: "+")
+            }))
         }
 
         let logRatios = zip(model, gcsim).map { log($0 / $1) }
@@ -221,6 +237,19 @@ final class AbyssBenchmarkTests: XCTestCase {
             for key in ["T:" + transformative, "A:" + (amplifying.isEmpty ? "none" : amplifying.joined(separator: "+"))] {
                 groups[key, default: (0, 0)].total += logRatios[index] - median
                 groups[key, default: (0, 0)].count += 1
+            }
+        }
+        // Weapons are the team's own, so a weapon whose teams all sit high is a
+        // passive the model over-reads; sets are the model's choice, so a set
+        // that sits high is one the model over-values.
+        for (index, team) in scored.enumerated() {
+            for member in team.members {
+                groups["W:" + member.weapon, default: (0, 0)].total += logRatios[index] - median
+                groups["W:" + member.weapon, default: (0, 0)].count += 1
+            }
+            for setKey in team.sets {
+                groups["S:" + setKey, default: (0, 0)].total += logRatios[index] - median
+                groups["S:" + setKey, default: (0, 0)].count += 1
             }
         }
         let byReaction = groups.filter { $0.value.count >= 15 }

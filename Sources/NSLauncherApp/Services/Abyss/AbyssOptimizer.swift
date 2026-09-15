@@ -47,12 +47,20 @@ struct AbyssOptimizer: Sendable {
         guard let tuning = library.tuning else { return nil }
         self.library = library
         self.tuning = tuning
+        let scorer = AbyssScorer(library: library, tuning: tuning)
+        self.scorer = scorer
+        // The buff timeline reads each character's solo rotation, which only
+        // the scorer can build — so the assembler gets it here, once.
         assembler = AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs,
-                                        artifactSets: library.artifactSets,
                                         talentBuffs: library.talentBuffsByCharacterID,
                                         conversions: library.conversionsByCharacterID,
-                                        bondOfLifeIDs: library.bondOfLifeIDs)
-        scorer = AbyssScorer(library: library, tuning: tuning)
+                                        bondOfLifeIDs: library.bondOfLifeIDs,
+                                        weaponBuffs: library.weaponBuffsByID,
+                                        setBuffs: library.setBuffsByID,
+                                        wearers: library.characters.reduce(into: [:]) { wearers, character in
+                                            wearers[character.id] = wearers[character.id]
+                                                ?? scorer.buffWearer(for: character)
+                                        })
     }
 
     // MARK: - Entry point

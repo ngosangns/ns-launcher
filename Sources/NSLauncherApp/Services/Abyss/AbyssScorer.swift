@@ -25,11 +25,6 @@ struct AbyssScorer: Sendable {
     let library: AbyssDataLibrary
     let tuning: AbyssTuning
 
-    /// Party-wide buffs each artifact set grants, worn as two pieces and as
-    /// four. Needed because these do not stack with themselves — see
-    /// `partyBuffs`.
-    private let setPartyBuffs: [String: (twoPiece: PartyBuff, fourPiece: PartyBuff)]
-
     /// The party-wide stats the model tracks.
     struct PartyBuff: Sendable {
         var atkPercent = 0.0
@@ -67,49 +62,6 @@ struct AbyssScorer: Sendable {
     init(library: AbyssDataLibrary, tuning: AbyssTuning) {
         self.library = library
         self.tuning = tuning
-
-        func contribution(_ bonuses: [AbyssArtifactSet.Bonus]) -> PartyBuff {
-            var buff = PartyBuff()
-            for bonus in bonuses {
-                let resolved = AbyssBuildAssembler.resolve(
-                    named: bonus.stat, value: bonus.value,
-                    conditional: AbyssBuildAssembler.isConditional(bonus.stat), tuning: tuning)
-                for entry in resolved {
-                    switch entry.field {
-                    case .partyATKPercent: buff.atkPercent += entry.value
-                    case .partyElementalMastery: buff.elementalMastery += entry.value
-                    case .partyDMG: buff.dmg += entry.value
-                    default: continue
-                    }
-                }
-            }
-            return buff
-        }
-
-        var table: [String: (twoPiece: PartyBuff, fourPiece: PartyBuff)] = [:]
-        for set in library.artifactSets {
-            let two = contribution(set.twoPiece.bonuses)
-            let approximation = tuning.setEffectApprox.first(where: { $0.setId == set.id })
-            var four = two
-            // Same rule as `AbyssBuildAssembler.applySets`: an approximation
-            // replaces the parsed four-piece bonuses.
-            if approximation == nil { four += contribution(set.fourPiece.bonuses) }
-            // A hand-written approximation that reaches the party is a party
-            // buff like any other and does not stack with itself. Only the
-            // four-piece variant carries it: `applySets` applies an
-            // approximation only when all four pieces are the same set.
-            //
-            // This table is keyed by set alone, so it cannot express an
-            // approximation whose value depends on who is wearing it — which is
-            // why a party approximation may not carry a `requirement`, pinned by
-            // `AbyssBuildAssemblerTests`.
-            if let approximation, approximation.party == true {
-                four.dmg += approximation.damageBonus
-            }
-            guard !two.isZero || !four.isZero else { continue }
-            table[set.id] = (two, four)
-        }
-        setPartyBuffs = table
     }
 
     // MARK: - Per-character damage
@@ -215,6 +167,25 @@ struct AbyssScorer: Sendable {
             return best
         }
 
+        /// Damage per second of field time from normal and from charged
+        /// attacks, on the loop `attackRate` picks.
+        func attackShares(_ split: DamageSplit) -> (combo: Double, charged: Double) {
+            var best = (rate: 0.0, combo: 0.0, charged: 0.0)
+            if loops.combo, comboSeconds > 0, split.combo / comboSeconds > best.rate {
+                best = (split.combo / comboSeconds, split.combo / comboSeconds, 0)
+            }
+            if loops.mixed, comboSeconds + chargedSeconds > 0 {
+                let seconds = comboSeconds + chargedSeconds
+                if (split.combo + split.charged) / seconds > best.rate {
+                    best = ((split.combo + split.charged) / seconds, split.combo / seconds, split.charged / seconds)
+                }
+            }
+            if loops.charged, chargedSeconds > 0, split.charged / chargedSeconds > best.rate {
+                best = (split.charged / chargedSeconds, 0, split.charged / chargedSeconds)
+            }
+            return (best.combo, best.charged)
+        }
+
         /// Bursts one rotation holds: capped by the cooldown, and by energy.
         func burstCasts(energyRecharge: Double, onField: Bool) -> Double {
             guard burstCost > 0 else { return burstCap }
@@ -276,6 +247,9 @@ struct AbyssScorer: Sendable {
         var resistanceMultiplier: Double = 1
         var lunarBaseBonus: [AbyssReaction: Double] = [:]
         var lunarFloorBonus: [AbyssReaction: Double] = [:]
+        /// What the team holds that a gated weapon or set buff waits on — see
+        /// `AbyssGates`.
+        var conditions: AbyssTeamConditions = .zero
 
         /// For a character with no parsed profile. An empty `aggregate` makes
         /// the damage loop produce zero, which is what the profile lookup used
@@ -400,6 +374,7 @@ struct AbyssScorer: Sendable {
             rotation: rotation)
         context.applications = library.applicationsByCharacterID[character.id] ?? .none
         context.resistanceMultiplier = resMultiplier
+        context.conditions = team.conditions(for: character)
         if profile.aggregate.contains(where: { $0.reaction != nil }) {
             context.lunarBaseBonus = team.reactionBaseDamageBonus
             for reaction in [AbyssReaction.lunarCharged, .lunarBloom, .lunarCrystallize] {
@@ -436,6 +411,17 @@ struct AbyssScorer: Sendable {
         effective.elementalMastery += partyBuffs.elementalMastery
         effective.dmgAll += partyBuffs.dmg
         effective.elementalDMG += partyBuffs.elementalDMG
+        // The wearer's own buffs that wait on the team; party ones were opened
+        // in `partyBuffs`.
+        if stats.gates.count > 0 {
+            for index in 0..<stats.gates.count {
+                let gate = stats.gates[index]
+                let field = AbyssStatField.indexed[Int(gate.field)]
+                guard !field.isPartyScoped else { continue }
+                effective.add(gate.value * gate.factor(context.conditions), to: field)
+            }
+        }
+        let categoryCrit = effective.hasCategoryCrit
 
         var amplifyingGain = 0.0
         if context.amplifyingCoefficient > 1 {
@@ -461,7 +447,9 @@ struct AbyssScorer: Sendable {
             let bonus = elementalBonus
                 + effective.categoryBonus(term.category)
                 + (isNormal ? context.floorBonusNormal : context.floorBonusOther)
-            var damage = term.multiplier * effective.stat(for: term.basis) * (1 + bonus) * common
+            let crit = categoryCrit
+                ? context.defenceAndResistance * effective.critMultiplier(term.category) : common
+            var damage = term.multiplier * effective.stat(for: term.basis) * (1 + bonus) * crit
             if let reaction = term.reaction {
                 // Lunar direct damage: the reaction's coefficient on the talent
                 // multiplier, raised by the team's base-damage bonus and the
@@ -472,7 +460,8 @@ struct AbyssScorer: Sendable {
                     * (1 + (context.lunarBaseBonus[reaction] ?? 0))
                     * (1 + constants.lunarStellarEM.bonus(effective.elementalMastery)
                         + (context.lunarFloorBonus[reaction] ?? 0))
-                    * context.resistanceMultiplier * effective.critMultiplier
+                    * context.resistanceMultiplier * (categoryCrit ? effective.critMultiplier(term.category)
+                        : effective.critMultiplier)
             }
             switch term.action {
             case .combo: combo += damage
@@ -539,6 +528,45 @@ struct AbyssScorer: Sendable {
             elements: [character.element], resonances: [], moonsignLevel: 0,
             hexerei: false, hasHeal: false, hasShield: false, stellarJubilee: false),
             rotation: soloRotation(for: character))
+    }
+
+    /// A character's rotation as the buff timeline reads it: casts and hits
+    /// from their solo rotation, and where their damage comes from on a bare
+    /// sheet — which is what decides whether a buff to attacks or to skills is
+    /// the one that matters to them.
+    func buffWearer(for character: AbyssCharacter) -> AbyssBuffWearer {
+        var wearer = AbyssBuffWearer()
+        wearer.element = character.element
+        wearer.weaponType = character.weaponType.rawValue
+        wearer.nation = character.nationInGame
+        wearer.nightsoul = character.nationInGame == "Natlan"
+        wearer.bondOfLife = library.bondOfLifeIDs.contains(character.id)
+        wearer.moonsign = library.moonsignIDs.contains(character.id)
+        wearer.heals = library.sustainByCharacterID[character.id]?.canHeal ?? false
+        wearer.rotationSeconds = tuning.rotationSeconds
+
+        let context = soloContext(for: character)
+        let rotation = context.rotation
+        wearer.skillCasts = rotation.skillCasts
+        wearer.burstCasts = rotation.burstCap
+        let applications = library.applicationsByCharacterID[character.id] ?? .none
+        wearer.hitsPerSkill = max(1, applications.skill.hits)
+        wearer.hitsPerBurst = max(1, applications.burst.hits)
+        wearer.elementalAttacks = applications.combo.hits > 0 || applications.charged.hits > 0
+
+        let base = character.baseStats.lv90
+        var sheet = AbyssStats(baseATK: base.atk ?? 0, baseHP: base.hp ?? 0, baseDEF: base.def ?? 0)
+        sheet.elementalMastery = 100
+        let split = damageSplit(context: context, stats: sheet, partyBuffs: .none)
+        let fieldSeconds = max(0, tuning.rotationSeconds - rotation.standInOthersSeconds
+            - rotation.castSeconds(bursts: rotation.burstCap, onField: true))
+        let attackSeconds = rotation.attackWindow(burstCasts: rotation.burstCap) * fieldSeconds
+        let attacks = rotation.attackShares(split)
+        let raw = SIMD4<Double>(attacks.combo * attackSeconds, attacks.charged * attackSeconds,
+                                rotation.skillCasts * split.skill, rotation.burstCap * split.burst)
+        let total = raw.sum()
+        if total > 0 { wearer.weights = raw / total }
+        return wearer
     }
 
     func soloScore(context: DamageContext, stats: AbyssStats) -> Double {
@@ -1106,7 +1134,7 @@ struct AbyssScorer: Sendable {
     /// hot path because `resonanceStats` lowercases a string per bonus, which is
     /// not something to do a million times a run.
     func resonanceBuff(for team: AbyssTeamContext) -> PartyBuff {
-        let resonance = team.resonanceStats(conditionalUptime: tuning.conditionalUptime)
+        let resonance = team.resonanceStats()
         return PartyBuff(atkPercent: resonance.atkPercent,
                          elementalMastery: resonance.elementalMastery,
                          dmg: resonance.dmg)
@@ -1136,13 +1164,32 @@ struct AbyssScorer: Sendable {
             party.dmg += sheet.partyDMG
             party.elementalDMG += sheet.partyElementalDMG + sheet.burstPartyElementalDMG * burstShare
 
-            // Everything the sheet got from its sets is already in the totals
-            // above; take back the copies beyond the first.
+            // Party buffs that wait on the team open against the wearer's
+            // conditions; without the team, they stay shut.
+            if let members, index < members.count, sheet.gates.count > 0 {
+                for slot in 0..<sheet.gates.count {
+                    let gate = sheet.gates[slot]
+                    let value = gate.value * gate.factor(members[index].conditions)
+                    switch AbyssStatField.indexed[Int(gate.field)] {
+                    case .partyATKPercent: party.atkPercent += value
+                    case .partyFlatATK: party.flatATK += value
+                    case .partyElementalMastery: party.elementalMastery += value
+                    case .partyDMG: party.dmg += value
+                    case .partyElementalDMG(let element): party.elementalDMG[element.simdIndex] += value
+                    default: break
+                    }
+                }
+            }
+
+            // A four-piece set's party buff is in the totals above once per
+            // wearer; take back every copy beyond the first.
             let worn = index < setIDs.count ? setIDs[index] : []
-            for setID in worn {
-                guard let entry = setPartyBuffs[setID] else { continue }
-                let granted = worn.count == 1 ? entry.fourPiece : entry.twoPiece
-                if !countedSets.insert(setID).inserted { party -= granted }
+            if worn.count == 1, let setID = worn.first, !countedSets.insert(setID).inserted {
+                party.atkPercent -= sheet.setPartyATKPercent
+                party.flatATK -= sheet.setPartyFlatATK
+                party.elementalMastery -= sheet.setPartyElementalMastery
+                party.dmg -= sheet.setPartyDMG
+                party.elementalDMG -= sheet.setPartyElementalDMG
             }
         }
         return party

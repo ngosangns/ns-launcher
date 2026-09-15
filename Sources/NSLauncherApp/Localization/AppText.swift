@@ -825,53 +825,63 @@ struct AppText {
         localized(en: "Model applies \(value)", vi: "Mô hình tính \(value)")
     }
 
-    func abyssSetApproximateBonus(_ bonus: Double, scope: String) -> String {
-        let percent = Int((bonus * 100).rounded())
-        return localized(en: "≈ +\(percent)% \(scope) DMG", vi: "≈ +\(percent)% ST \(scope)")
-    }
-
-    /// A 4-piece the model does not price at all. Better said than left to look
+    /// An effect the model does not price at all. Better said than left to look
     /// like the set was judged on its full strength.
     var abyssSetNotModelled: String {
-        localized(en: "Not priced by the model — this set was ranked on its 2-piece alone",
-                  vi: "Mô hình chưa tính hiệu ứng này — bộ được xếp hạng chỉ nhờ hiệu ứng 2 món")
+        localized(en: "Not priced by the model", vi: "Mô hình chưa tính hiệu ứng này")
     }
 
-    var abyssSetEstimated: String {
-        localized(en: "Hand-estimated:", vi: "Ước lượng thủ công:")
+    /// Under a triggered effect: the number shown is its full strength, and what
+    /// the model credits is the share the wearer's rotation keeps up.
+    var abyssSetTimed: String {
+        localized(en: "Triggered effects count for the share of the rotation they are up",
+                  vi: "Hiệu ứng có điều kiện chỉ được tính theo phần thời gian duy trì trong rotation")
+    }
+
+    /// One buff at R1 and full stacks: "+25% ATK", "+80 Elemental Mastery ×3",
+    /// "+20% party ATK (conditional)".
+    func abyssBuffLine(_ buff: AbyssBuff) -> String {
+        let value = buff.tiers.first?.last ?? buff.value(refinement: 1)
+        let stacks = buff.tiers.isEmpty && buff.stacks > 1 ? " ×\(buff.stacks)" : ""
+        let isPercent = buff.source != nil || !(buff.stat == .elementalMastery || buff.stat == .flatATK)
+        let amount = isPercent ? "+\(abyssPercent(value))%" : "+\(Int(value.rounded()))"
+        var line = "\(amount) \(abyssBuffStat(buff))\(stacks)"
+        if buff.scope != .wearer { line += " · " + abyssSetPartyWide }
+        if !buff.isAlwaysOn { line += " " + localized(en: "(conditional)", vi: "(có điều kiện)") }
+        return line
+    }
+
+    private func abyssPercent(_ value: Double) -> String {
+        let percent = value * 100
+        return percent.rounded() == percent ? "\(Int(percent))" : String(format: "%.1f", percent)
+    }
+
+    private func abyssBuffStat(_ buff: AbyssBuff) -> String {
+        let hits = [(AbyssBuff.Actions.normal, localized(en: "Normal Attack", vi: "đòn thường")),
+                    (.charged, localized(en: "Charged Attack", vi: "trọng kích")),
+                    (.plunge, localized(en: "Plunging Attack", vi: "đòn đáp")),
+                    (.skill, localized(en: "Elemental Skill", vi: "kỹ năng")),
+                    (.burst, localized(en: "Elemental Burst", vi: "nộ"))]
+            .filter { buff.on.contains($0.0) }.map(\.1).joined(separator: "/")
+        let prefix = hits.isEmpty ? "" : hits + " "
+        switch buff.stat {
+        case .atkPercent: return localized(en: "ATK", vi: "ATK")
+        case .hpPercent: return localized(en: "Max HP", vi: "HP")
+        case .defPercent: return localized(en: "DEF", vi: "DEF")
+        case .flatATK: return localized(en: "ATK", vi: "ATK")
+        case .elementalMastery: return localized(en: "Elemental Mastery", vi: "Tinh Thông Nguyên Tố")
+        case .energyRecharge: return localized(en: "Energy Recharge", vi: "Hiệu Quả Nạp")
+        case .critRate: return prefix + localized(en: "CRIT Rate", vi: "Tỷ Lệ Bạo Kích")
+        case .critDMG: return prefix + localized(en: "CRIT DMG", vi: "ST Bạo Kích")
+        case .dmg: return localized(en: "\(prefix)DMG", vi: "ST \(prefix)".trimmingCharacters(in: .whitespaces))
+        case .ownElementDMG: return localized(en: "own Elemental DMG", vi: "ST nguyên tố bản thân")
+        case .elementDMG(let element):
+            return localized(en: "\(abyssElementLabel(element)) DMG", vi: "ST \(abyssElementLabel(element))")
+        }
     }
 
     var abyssSetPartyWide: String {
         localized(en: "whole party", vi: "cả đội")
-    }
-
-    func abyssSetScope(_ scope: AbyssTuning.HitCategoryScope) -> String {
-        switch scope {
-        case .all: return localized(en: "all", vi: "mọi loại")
-        case .normal: return localized(en: "normal attack", vi: "đòn thường")
-        case .charged: return localized(en: "charged attack", vi: "đòn nặng")
-        case .skill: return localized(en: "elemental skill", vi: "kỹ năng")
-        case .burst: return localized(en: "elemental burst", vi: "nộ")
-        }
-    }
-
-    func abyssSetRequirement(_ requirement: AbyssTuning.SetEffectApproximation.Requirement) -> String {
-        switch requirement {
-        case .natlan: return localized(en: "needs a Natlan character", vi: "cần nhân vật Natlan")
-        case .moonsign: return localized(en: "needs a Moonsign character", vi: "cần nhân vật Nguyệt Triệu")
-        case .stellar: return localized(en: "needs a Stellar Glimmer element",
-                                        vi: "cần nguyên tố phản ứng Stellar")
-        case .pyro: return needsElement(.pyro)
-        case .hydro: return needsElement(.hydro)
-        case .geo: return needsElement(.geo)
-        case .cryo: return needsElement(.cryo)
-        case .bondOfLife: return localized(en: "needs a Bond of Life character", vi: "cần nhân vật có Bond of Life")
-        }
-    }
-
-    private func needsElement(_ element: GenshinElement) -> String {
-        localized(en: "needs a \(abyssElementLabel(element)) wearer",
-                  vi: "cần người mặc hệ \(abyssElementLabel(element))")
     }
 
     var abyssOnFieldLabel: String { localized(en: "on-field", vi: "đứng sân") }

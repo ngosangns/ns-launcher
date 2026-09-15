@@ -71,6 +71,32 @@ struct AbyssStats: Sendable, Equatable, Codable {
     var atkFromDEFRate: Double = 0
     var atkPercentPerExcessER: Double = 0
 
+    /// CRIT that reaches one kind of hit only, indexed by
+    /// `AbyssStats.categoryIndex`: normal, charged, skill, burst.
+    var critRateByCategory: SIMD4<Double> = .zero
+    var critDMGByCategory: SIMD4<Double> = .zero
+    /// Either of the two is non-zero, kept so the scorer's hot loop can skip
+    /// them without reading them.
+    var hasCategoryCrit = false
+
+    /// Weapon and set buffs that wait on the team — see `AbyssGates`.
+    var gates = AbyssGates()
+
+    /// Buffs that are a rate of another stat ("24% of Elemental Mastery as
+    /// ATK"), held until the sheet is complete and folded in by
+    /// `foldConversions()`. Kept apart from `atkFromHPRate` and its siblings,
+    /// which stay lazy for the kits that use them.
+    var conversions = AbyssConversions()
+
+    /// What this sheet's four-piece set hands the party, so that a second
+    /// wearer of the same set can take theirs back out — see
+    /// `AbyssScorer.partyBuffs`.
+    var setPartyATKPercent: Double = 0
+    var setPartyFlatATK: Double = 0
+    var setPartyElementalMastery: Double = 0
+    var setPartyDMG: Double = 0
+    var setPartyElementalDMG: SIMD8<Double> = .zero
+
     /// Branches rather than multiplies by zero: this is read per hit in the
     /// scorer's innermost loop, and almost every sheet converts nothing.
     var atk: Double {
@@ -98,6 +124,22 @@ struct AbyssStats: Sendable, Equatable, Codable {
     /// with crit rate clamped to 100%.
     var critMultiplier: Double {
         1 + Swift.min(Swift.max(critRate, 0), 1) * critDMG
+    }
+
+    /// The same, for one kind of hit.
+    func critMultiplier(_ category: HitCategory) -> Double {
+        let index = Self.categoryIndex(category)
+        return 1 + Swift.min(Swift.max(critRate + critRateByCategory[index], 0), 1)
+            * (critDMG + critDMGByCategory[index])
+    }
+
+    static func categoryIndex(_ category: HitCategory) -> Int {
+        switch category {
+        case .normal: return 0
+        case .charged: return 1
+        case .skill: return 2
+        case .burst: return 3
+        }
     }
 
     func elementalBonus(_ element: GenshinElement) -> Double {
@@ -137,6 +179,12 @@ struct AbyssStats: Sendable, Equatable, Codable {
         case .partyFlatATK: partyFlatATK += value
         case .elemental(let element): elementalDMG[element.simdIndex] += value
         case .partyElementalDMG(let element): partyElementalDMG[element.simdIndex] += value
+        case .critRateFor(let category):
+            critRateByCategory[Self.categoryIndex(category)] += value
+            hasCategoryCrit = true
+        case .critDMGFor(let category):
+            critDMGByCategory[Self.categoryIndex(category)] += value
+            hasCategoryCrit = true
         }
     }
 
@@ -168,6 +216,112 @@ struct AbyssStats: Sendable, Equatable, Codable {
         case .partyFlatATK: return partyFlatATK
         case .elemental(let element): return elementalDMG[element.simdIndex]
         case .partyElementalDMG(let element): return partyElementalDMG[element.simdIndex]
+        case .critRateFor(let category): return critRateByCategory[Self.categoryIndex(category)]
+        case .critDMGFor(let category): return critDMGByCategory[Self.categoryIndex(category)]
+        }
+    }
+
+    /// Folds `conversions` into the sheet at its current stats. Called once
+    /// the sheet is complete — after main stats and sets — and idempotent: the
+    /// slots are emptied as they are applied.
+    mutating func foldConversions() {
+        guard conversions.count > 0 else { return }
+        for index in 0..<conversions.count {
+            let conversion = conversions[index]
+            let base: Double
+            switch AbyssConversions.Source(rawValue: conversion.source) ?? .em {
+            case .em: base = elementalMastery
+            case .hp: base = hp
+            case .def: base = def
+            case .atk: base = atk
+            case .er: base = energyRecharge
+            case .erOver100: base = Swift.max(0, energyRecharge - 1)
+            }
+            var value = base * conversion.rate
+            if conversion.cap > 0 { value = Swift.min(value, conversion.cap) }
+            if conversion.any != 0 || conversion.all != 0 {
+                gates.append(AbyssGate(value: value, field: conversion.field, limit: conversion.limit,
+                                       any: conversion.any, all: conversion.all))
+            } else {
+                add(value, to: AbyssStatField.indexed[Int(conversion.field)])
+            }
+        }
+        conversions = AbyssConversions()
+    }
+}
+
+/// One rate buff waiting for a complete sheet — see `AbyssStats.conversions`.
+struct AbyssConversion: Sendable, Equatable, Codable {
+    /// Already divided by the effect's `per` and multiplied by its uptime.
+    var rate = 0.0
+    /// Zero for no cap.
+    var cap = 0.0
+    var source: UInt8 = 0
+    var field: UInt8 = 0
+    var limit: Int8 = 0
+    var any: UInt32 = 0
+    var all: UInt32 = 0
+}
+
+/// Rate buffs waiting for a complete sheet, four fixed slots — see
+/// `AbyssGates` for why not an array or SIMD storage.
+struct AbyssConversions: Sendable, Equatable, Codable {
+    enum Source: UInt8 {
+        case em, hp, def, atk, er, erOver100
+    }
+
+    static let capacity = 4
+
+    private var slot0 = AbyssConversion(), slot1 = AbyssConversion()
+    private var slot2 = AbyssConversion(), slot3 = AbyssConversion()
+    private(set) var count = 0
+    private(set) var overflow = 0
+
+    subscript(index: Int) -> AbyssConversion {
+        get {
+            switch index {
+            case 0: return slot0
+            case 1: return slot1
+            case 2: return slot2
+            default: return slot3
+            }
+        }
+        set {
+            switch index {
+            case 0: slot0 = newValue
+            case 1: slot1 = newValue
+            case 2: slot2 = newValue
+            default: slot3 = newValue
+            }
+        }
+    }
+
+    mutating func append(_ conversion: AbyssConversion) {
+        guard conversion.rate != 0 else { return }
+        guard count < Self.capacity else {
+            overflow += 1
+            return
+        }
+        self[count] = conversion
+        count += 1
+    }
+
+    mutating func append(rate: Double, cap: Double?, source: Source, field: AbyssStatField,
+                         any: UInt32, all: UInt32, limit: Int8) {
+        append(AbyssConversion(rate: rate, cap: cap ?? 0, source: source.rawValue,
+                               field: UInt8(AbyssStatField.index(of: field)), limit: limit, any: any, all: all))
+    }
+}
+
+extension AbyssConversions.Source {
+    init(_ source: AbyssBuff.Source) {
+        switch source {
+        case .em: self = .em
+        case .hp: self = .hp
+        case .def: self = .def
+        case .atk: self = .atk
+        case .er: self = .er
+        case .erOver100: self = .erOver100
         }
     }
 }

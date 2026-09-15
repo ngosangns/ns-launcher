@@ -25,9 +25,9 @@
 // rather than a character quietly losing half their damage.
 //
 // What is deliberately *not* here: assumptions that apply to every character.
-// `rotationSeconds`, `conditionalUptime` and the artifact set estimates are
-// claims about how the planner models a rotation, not claims about anybody,
-// and they stay in `tuning.json`. The dividing line is whether the sentence
+// `rotationSeconds` and `swapSeconds` are claims about how the planner models a
+// rotation, not claims about anybody, and they stay in `tuning.json`; weapon
+// and set effects are claims about the gear, in `passives.json`. The dividing line is whether the sentence
 // names a character.
 
 import Foundation

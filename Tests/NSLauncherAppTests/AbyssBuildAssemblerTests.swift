@@ -14,9 +14,9 @@ final class AbyssBuildAssemblerTests: XCTestCase {
     private func makeAssembler() throws -> AbyssBuildAssembler {
         let tuning = try XCTUnwrap(library.tuning)
         return AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs,
-                                   artifactSets: library.artifactSets,
                                    talentBuffs: library.talentBuffsByCharacterID,
-                                   conversions: library.conversionsByCharacterID)
+                                   conversions: library.conversionsByCharacterID,
+                                   weaponBuffs: library.weaponBuffsByID, setBuffs: library.setBuffsByID)
     }
 
     private func sheet(_ characterID: String, weapon weaponID: String?, refinement: Int = 1) throws -> AbyssStats {
@@ -59,30 +59,40 @@ final class AbyssBuildAssemblerTests: XCTestCase {
         XCTAssertEqual(sheet.atkFromHPRate, 0)
     }
 
-    /// Staff of Homa's second line is the same kind of thing and used to be
-    /// dropped: it says neither "buff" nor "bonus", so the stat-buff rule
-    /// never matched it, and a Homa refinement was worth exactly its HP%.
+    /// Staff of Homa's HP-to-ATK line used to be dropped: it says neither
+    /// "buff" nor "bonus", so the stat-buff rule never matched it, and a Homa
+    /// refinement was worth exactly its HP%. It is a rate now, folded in once
+    /// the sheet is complete, so the HP it reads includes the artifacts'.
     func testHomaConvertsHPToATKAndRefinementRaisesIt() throws {
-        let r1 = try sheet("hu-tao", weapon: "staff-of-homa", refinement: 1)
-        let r5 = try sheet("hu-tao", weapon: "staff-of-homa", refinement: 5)
-        let kit = try XCTUnwrap(library.conversionsByCharacterID["hu-tao"]?.first?.rate)
-        XCTAssertGreaterThan(r1.atkFromHPRate, kit, "Homa added nothing on top of the kit's own conversion")
-        XCTAssertGreaterThan(r5.atkFromHPRate, r1.atkFromHPRate)
+        var r1 = try sheet("hu-tao", weapon: "staff-of-homa", refinement: 1)
+        var r5 = try sheet("hu-tao", weapon: "staff-of-homa", refinement: 5)
+        var bare = try sheet("hu-tao", weapon: nil)
+        XCTAssertGreaterThan(r1.conversions.count, 0, "Homa's conversion did not reach the sheet")
+        r1.foldConversions()
+        r5.foldConversions()
+        bare.foldConversions()
+        XCTAssertEqual(r1.conversions.count, 0, "folding must empty the slots")
         XCTAssertGreaterThan(r5.atk, r1.atk)
+        // Worth its rate of the finished sheet's HP.
+        XCTAssertEqual(r1.flatATK - bare.flatATK, r1.hp * 0.008, accuracy: 1e-6)
     }
 
     /// Engulfing Lightning's is the Energy Recharge above 100%, as ATK%.
     func testEngulfingLightningPaysForEnergyRechargeAboveBaseline() throws {
-        let sheet = try sheet("raiden-shogun", weapon: "engulfing-lightning")
-        XCTAssertGreaterThan(sheet.atkPercentPerExcessER, 0)
+        var sheet = try sheet("raiden-shogun", weapon: "engulfing-lightning")
         var moreER = sheet
         moreER.energyRecharge += 0.5
-        XCTAssertEqual(moreER.atk - sheet.atk, sheet.baseATK * 0.5 * sheet.atkPercentPerExcessER, accuracy: 1e-6)
-        var atBaseline = sheet
+        sheet.foldConversions()
+        moreER.foldConversions()
+        XCTAssertEqual(moreER.atkPercent - sheet.atkPercent, 0.5 * 0.28, accuracy: 1e-6)
+        var atBaseline = try self.sheet("raiden-shogun", weapon: "engulfing-lightning")
         atBaseline.energyRecharge = 1
-        var below = sheet
+        var below = atBaseline
         below.energyRecharge = 0.8
-        XCTAssertEqual(atBaseline.atk, below.atk, accuracy: 1e-9, "below 100% there is nothing to convert")
+        atBaseline.foldConversions()
+        below.foldConversions()
+        XCTAssertEqual(atBaseline.atkPercent, below.atkPercent, accuracy: 1e-9,
+                       "below 100% there is nothing to convert")
     }
 
     // MARK: - Own buffs
@@ -99,22 +109,17 @@ final class AbyssBuildAssemblerTests: XCTestCase {
 
     // MARK: - Weapon passives
 
-    /// Elemental Mastery is a flat quantity in the tens or hundreds, so the
-    /// "a value above 3 is a hit's damage percentage, not a buff" guard threw
-    /// away *every* EM weapon passive in the data. The artifact path has always
-    /// carried an exception for it; the weapon path did not.
-    func testWeaponElementalMasteryPassiveIsNotMistakenForADamagePercentage() throws {
-        // Sapwood Blade's substat is Energy Recharge, so its whole EM
-        // contribution is the passive — nothing else can account for it.
-        let sapwood = try XCTUnwrap(library.weaponsByID["sapwood-blade"])
-        let passive = try XCTUnwrap(sapwood.passive?.effects.first)
-        let atR1 = try XCTUnwrap(passive.value(refinement: 1))
-        XCTAssertGreaterThan(atR1, 3, "this test only means anything while the value trips the guard")
-
+    /// Elemental Mastery is a flat quantity in the tens or hundreds, and the
+    /// old "a value above 3 is a hit's damage percentage" guard threw away every
+    /// EM weapon passive. Sapwood Blade's EM comes from a leaf after a
+    /// reaction, 12s per 20s: it waits on a team that reacts, at that share.
+    func testWeaponElementalMasteryPassiveWaitsOnAReaction() throws {
         let bare = try sheet("kamisato-ayaka", weapon: nil)
         let armed = try sheet("kamisato-ayaka", weapon: "sapwood-blade")
-        XCTAssertEqual(armed.elementalMastery - bare.elementalMastery, atR1, accuracy: 1e-9,
-                       "the EM passive did not reach the stat sheet")
+        XCTAssertEqual(armed.elementalMastery, bare.elementalMastery, accuracy: 1e-9)
+        XCTAssertEqual(armed.gates.count, 1)
+        XCTAssertEqual(armed.gates[0].value, 60 * 12 / 20, accuracy: 1e-9)
+        XCTAssertEqual(AbyssStatField.indexed[Int(armed.gates[0].field)], .elementalMastery)
     }
 
     /// The guard still has to do its job. Lines like "AoE DMG (% ATK)" carry a
@@ -258,79 +263,64 @@ final class AbyssBuildAssemblerTests: XCTestCase {
     /// of five artifact sets.
     func testABonusNamingBothNormalAndChargedReachesBoth() throws {
         let tuning = try XCTUnwrap(library.tuning)
-        let resolved = AbyssBuildAssembler.resolve(named: "Normal/Charged Attack DMG", value: 0.3,
-                                                   conditional: false, tuning: tuning)
+        let resolved = AbyssBuildAssembler.resolve(named: "Normal/Charged Attack DMG", value: 0.3, tuning: tuning)
         XCTAssertEqual(Set(resolved.map(\.field)), [.dmgNormal, .dmgCharged])
         for entry in resolved { XCTAssertEqual(entry.value, 0.3, accuracy: 1e-9) }
 
         // A bonus naming only one still lands in only one.
-        XCTAssertEqual(AbyssBuildAssembler.resolve(named: "Charged Attack DMG", value: 0.5,
-                                                   conditional: false, tuning: tuning).map(\.field),
+        XCTAssertEqual(AbyssBuildAssembler.resolve(named: "Charged Attack DMG", value: 0.5, tuning: tuning).map(\.field),
                        [.dmgCharged])
-        XCTAssertEqual(AbyssBuildAssembler.resolve(named: "Normal Attack DMG", value: 0.5,
-                                                   conditional: false, tuning: tuning).map(\.field),
+        XCTAssertEqual(AbyssBuildAssembler.resolve(named: "Normal Attack DMG", value: 0.5, tuning: tuning).map(\.field),
                        [.dmgNormal])
     }
 
-    // MARK: - Set approximations
+    // MARK: - Set bonuses
 
-    /// The de-duplication table is keyed by set alone, so it cannot express an
-    /// approximation whose value depends on who is wearing it. A party
-    /// approximation with a requirement would be counted for a member who does
-    /// not meet it.
-    func testPartySetApproximationsCarryNoRequirement() throws {
-        let tuning = try XCTUnwrap(library.tuning)
-        let party = tuning.setEffectApprox.filter { $0.party == true }
-        XCTAssertFalse(party.isEmpty, "no party approximations; this test needs updating")
-        for entry in party {
-            XCTAssertNil(entry.requirement,
-                         "\(entry.setId): a party approximation cannot depend on the wearer")
+    /// Every 5★ set's four-piece is priced from `passives.json`, except the
+    /// ones whose whole effect the damage model deliberately leaves out.
+    /// Before Phase 5 these sets were a hand-estimated %DMG each; a set joining
+    /// this list is a set that stopped contributing.
+    func testFourPiecesWithNothingPricedAreTheDeliberateOnes() throws {
+        let silent = library.fiveStarArtifactSets.filter { set in
+            (library.setBuffsByID[set.id]?.fourPiece ?? []).allSatisfy { buff in
+                buff.conditions.contains(.unmodelled) || buff.conditions.contains(.defeat)
+            }
         }
+        XCTAssertEqual(Set(silent.map(\.id)), [
+            // Reaction damage only.
+            "flower-of-paradise-lost", "aubade-of-morningstar-and-moon", "thundering-fury",
+            // Resistance shred, priced by `tuning.resistanceShred`.
+            "viridescent-venerer", "deepwood-memories",
+            // Healing, shields, flat damage additions, Physical DMG.
+            "maiden-beloved", "ocean-hued-clam", "song-of-days-past", "echoes-of-an-offering",
+            // Conditions a single-target rotation never meets.
+            "bloodstained-chivalry", "unfinished-reverie", "celestial-gift", "disenchantment-in-deep-shadow",
+        ], "the set of four-pieces priced at nothing changed")
     }
 
-    /// Six 5★ sets used to contribute exactly nothing: no `bonuses` on their
-    /// 4-piece and no entry in the approximation table. Four of them are now
-    /// modelled; the two that only raise reaction damage are left out on
-    /// purpose, because the model computes no reaction damage to raise.
-    func testSetsThatUsedToContributeNothingNowDo() throws {
-        let tuning = try XCTUnwrap(library.tuning)
-        let approximated = Set(tuning.setEffectApprox.map(\.setId))
-        let silent = library.fiveStarArtifactSets.filter {
-            $0.fourPiece.bonuses.isEmpty && !approximated.contains($0.id)
-        }
-        XCTAssertEqual(Set(silent.map(\.id)),
-                       ["flower-of-paradise-lost", "aubade-of-morningstar-and-moon"],
-                       "the set of deliberately unmodelled 4-piece effects changed")
-
-        for setID in ["archaic-petra", "celestial-gift", "vermillion-hereafter",
-                      "disenchantment-in-deep-shadow"] {
-            XCTAssertTrue(approximated.contains(setID), "\(setID) is contributing nothing again")
-        }
-    }
-
-    /// A party-wide approximation has to reach the other members, and has to be
+    /// A party-wide set buff has to reach the other members, and has to be
     /// counted once however many of them wear it.
-    func testAPartySetApproximationIsSharedButNotStacked() throws {
+    func testAPartySetBuffIsSharedButNotStacked() throws {
         let tuning = try XCTUnwrap(library.tuning)
         let assembler = try makeAssembler()
         let scorer = AbyssScorer(library: library, tuning: tuning)
-        let petra = try XCTUnwrap(library.artifactSetsByID["archaic-petra"])
+        let noblesse = try XCTUnwrap(library.artifactSetsByID["noblesse-oblige"])
         let members = Array(library.characters.prefix(4))
         let context = AbyssTeamContext.build(members: members, library: library)
 
         var diagnostics = AbyssParseDiagnostics()
         let sheets = members.map { member -> AbyssStats in
             guard let profile = library.profilesByCharacterID[member.id] else { return AbyssStats() }
-            return assembler.stats(character: member, profile: profile, weapon: nil, sets: [petra],
+            return assembler.stats(character: member, profile: profile, weapon: nil, sets: [noblesse],
                                    role: .mainDPS, mainStats: .damage(for: member),
                                    diagnostics: &diagnostics)
         }
 
-        let one = scorer.partyBuffs(stats: [sheets[0]], setIDs: [[petra.id]], team: context)
-        let all = scorer.partyBuffs(stats: sheets, setIDs: members.map { _ in [petra.id] },
+        let one = scorer.partyBuffs(stats: [sheets[0]], setIDs: [[noblesse.id]], team: context)
+        let all = scorer.partyBuffs(stats: sheets, setIDs: members.map { _ in [noblesse.id] },
                                     team: context)
-        XCTAssertGreaterThan(one.dmg, 0, "the party approximation did not reach the party")
-        XCTAssertEqual(all.dmg, one.dmg, accuracy: 1e-9,
+        XCTAssertGreaterThan(one.atkPercent, 0, "the party buff did not reach the party")
+        XCTAssertEqual(all.atkPercent, one.atkPercent, accuracy: 1e-9,
                        "four members wearing the same set granted it four times")
     }
 }

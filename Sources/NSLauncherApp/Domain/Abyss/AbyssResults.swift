@@ -101,6 +101,11 @@ struct AbyssParseDiagnostics: Sendable, Equatable {
     /// Characters with no gauge rows (the Travelers): they apply no element
     /// the reaction model can count.
     var gaugeMissing: Set<String> = []
+    /// References in `passives.json` that name a number, a stat or a trigger
+    /// the game text does not have, and weapons or sets with text but no entry.
+    /// Each is a passive priced at less than it is worth. Pinned empty by
+    /// `AbyssPassiveTests`.
+    var passiveReferencesUnresolved: Set<String> = []
 
     mutating func merge(_ other: AbyssParseDiagnostics) {
         scalingParsed += other.scalingParsed
@@ -119,6 +124,7 @@ struct AbyssParseDiagnostics: Sendable, Equatable {
         particlesEstimated.formUnion(other.particlesEstimated)
         framesEstimated.formUnion(other.framesEstimated)
         gaugeMissing.formUnion(other.gaugeMissing)
+        passiveReferencesUnresolved.formUnion(other.passiveReferencesUnresolved)
     }
 }
 

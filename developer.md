@@ -385,7 +385,8 @@ wears what, and in practice the Anemo support wears VV), Faruzan's burst and
 Shenhe's burst (numbers that match their own scaling rows). The strongest source
 per element, not the sum — two shreds on one element do not stack. Deepwood's
 `setEffectApprox` %DMG went to zero and Viridescent Venerer's dropped, because
-that stand-in was the shred and it is now real. Turning it on put an Anemo
+that stand-in was the shred and it is now real (the table itself is gone since
+Phase 5; `passives.json` leaves the shred out of both sets' buffs). Turning it on put an Anemo
 character in every plan and Kazuha at 22% of a team's damage.
 
 **Lunar and Stellar reactions** (`damage-formula.json`'s `lunarStellar`). A whole
@@ -494,9 +495,12 @@ not say which rows are alternatives (a bow's plain and fully-charged aimed shot)
 and which are sequential (a claymore's spin and finisher).
 
 Two classes of buff reach the model through hand-written interpretation rather
-than a parser rule, because the prose does not distinguish them. `setEffectApprox`
-in `tuning.json` credits an effective %DMG to the 4-piece set effects that are
-too conditional to read mechanically. `character-kits.json`'s `buffs` name the
+than a parser rule, because the prose does not distinguish them.
+`passives.json` writes every weapon passive and set bonus as structured buffs —
+stat, trigger, duration, stacks, who receives it — whose numbers are references
+into the game text (`passive-text.json`), timed over the wearer's rotation by
+`AbyssBuffTimeline` (Phase 5; it replaced `setEffectApprox`, `conditionalUptime`
+and `assumedStacks`). `character-kits.json`'s `buffs` name the
 talent rows that buff the party — Bennett's ATK share, Kujou Sara's, Faruzan's
 Anemo bonus — or the caster alone (Xiao's burst), which the damage filter drops
 because they are not damage instances. In both cases the numbers still come

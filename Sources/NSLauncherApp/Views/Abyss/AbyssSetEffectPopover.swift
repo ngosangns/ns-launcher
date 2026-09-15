@@ -6,11 +6,10 @@
 // useful thing about it: "Obsidian Codex" says nothing about why it won, and a
 // player who has not farmed it has no way to judge whether it is worth the
 // resin. The popover carries the game's own effect text — and, next to it, what
-// the model did with that text, which is not always the same thing. A third of
-// the 4-piece effects are too conditional to read mechanically and are priced by
-// a hand-written estimate in `tuning.json`; some are not priced at all. Saying so
-// here is the honest place to say it, because this is where the recommendation
-// is being made.
+// the model did with that text, which is not always the same thing. Each effect
+// is a structured buff read from the game text (`passives.json`), timed over the
+// wearer's rotation; some are not priced at all. Saying so here is the honest
+// place to say it, because this is where the recommendation is being made.
 //
 // Only the effects actually in force are shown: one set is a 4-piece and gets
 // both its bonuses, two sets are 2+2 and get one each. Printing a 4-piece effect
@@ -18,36 +17,29 @@
 
 import SwiftUI
 
-/// How the model came by the number it credited a 4-piece set with.
+/// What the model credits a set's bonus with.
 ///
 /// Pulled out of the view because it is the one claim in the popover that can be
-/// quietly wrong: `unpriced` says the recommendation was made without the set's
-/// headline effect, and printing "the model applies …" over a set the model
-/// applies nothing for would be worse than printing nothing.
+/// quietly wrong: `unpriced` says the recommendation was made without the
+/// effect, and printing "the model applies …" over a set the model applies
+/// nothing for would be worse than printing nothing.
 enum AbyssSetPricing: Equatable {
-    /// The data's own parsed numbers went into the stat sheet.
-    case fromData
-    /// Too conditional to read mechanically; `tuning.json` credits this much
-    /// effective %DMG by hand.
-    case estimated(AbyssTuning.SetEffectApproximation)
-    /// Neither. The set was ranked on its 2-piece alone.
+    /// These buffs went into the stat sheet, each at its standing on the
+    /// wearer's rotation.
+    case modelled([AbyssBuff])
+    /// None of the effect is priced.
     case unpriced
 
-    static func == (lhs: AbyssSetPricing, rhs: AbyssSetPricing) -> Bool {
-        switch (lhs, rhs) {
-        case (.fromData, .fromData), (.unpriced, .unpriced): return true
-        case (.estimated(let a), .estimated(let b)): return a.setId == b.setId
-        default: return false
+    static func of(_ buffs: [AbyssBuff]) -> AbyssSetPricing {
+        let priced = buffs.filter { buff in
+            !buff.conditions.contains { condition in
+                switch condition {
+                case .unmodelled, .defeat, .energyFull, .energyEmpty, .hpBelow, .enemiesAtLeast: return true
+                default: return false
+                }
+            }
         }
-    }
-
-    static func of(_ fourPiece: AbyssArtifactSet.Effect,
-                   approximation: AbyssTuning.SetEffectApproximation?) -> AbyssSetPricing {
-        // The estimate wins when there is one: `AbyssBuildAssembler` applies the
-        // table's figure, and the parsed bonuses of such a set are usually the
-        // uninteresting half of the effect.
-        if let approximation { return .estimated(approximation) }
-        return fourPiece.bonuses.isEmpty ? .unpriced : .fromData
+        return priced.isEmpty ? .unpriced : .modelled(priced)
     }
 }
 
@@ -56,20 +48,6 @@ extension AbyssArtifactSet.Effect {
     /// rather than to nothing when a data file carries no Vietnamese.
     func description(in text: AppText) -> String {
         text.pick(en: description, vi: descriptionVI ?? description)
-    }
-}
-
-extension AbyssArtifactSet.Bonus {
-    /// `0.15` reads as a percentage and `80` as a flat number. That split holds
-    /// for every bonus in `artifact-sets.json` — the flat ones are Elemental
-    /// Mastery, DEF and Max HP, and none of them is below 1.
-    var displayText: String {
-        let sign = value < 0 ? "-" : "+"
-        let magnitude = abs(value)
-        let amount = magnitude < 1
-            ? "\(sign)\(Int((magnitude * 100).rounded()))%"
-            : "\(sign)\(Int(magnitude.rounded()))"
-        return "\(amount) \(stat)"
     }
 }
 
@@ -125,7 +103,7 @@ struct AbyssArtifactSetLabel: View {
             return AbyssSetEffectCard.Entry(
                 artifactSet: set,
                 pieces: setIDs.count == 1 ? 4 : 2,
-                approximation: viewModel.setEffectApproximation(id))
+                buffs: viewModel.setBuffs(id))
         }
     }
 }
@@ -138,8 +116,8 @@ private struct AbyssSetEffectCard: View {
         let artifactSet: AbyssArtifactSet
         /// 4 or 2. Decides whether the 4-piece effect is in force.
         let pieces: Int
-        /// Present when the model prices this set's 4-piece by hand.
-        let approximation: AbyssTuning.SetEffectApproximation?
+        /// What the model read from each piece.
+        let buffs: (twoPiece: [AbyssBuff], fourPiece: [AbyssBuff])
     }
 
     let entries: [Entry]
@@ -158,10 +136,11 @@ private struct AbyssSetEffectCard: View {
                             .foregroundStyle(LauncherPalette.mist.opacity(0.6))
                     }
 
-                    effect(text.abyssSetPieces(2), entry.artifactSet.twoPiece, modelNote: nil)
+                    effect(text.abyssSetPieces(2), entry.artifactSet.twoPiece,
+                           modelNote: note(entry.buffs.twoPiece))
                     if entry.pieces == 4 {
                         effect(text.abyssSetPieces(4), entry.artifactSet.fourPiece,
-                               modelNote: fourPieceNote(entry))
+                               modelNote: note(entry.buffs.fourPiece))
                     }
                 }
             }
@@ -175,7 +154,7 @@ private struct AbyssSetEffectCard: View {
     @ViewBuilder
     private func effect(_ label: String,
                         _ effect: AbyssArtifactSet.Effect,
-                        modelNote: ModelNote?) -> some View {
+                        modelNote: ModelNote) -> some View {
         VStack(alignment: .leading, spacing: 3) {
             Text(label)
                 .font(.system(size: 9, weight: .bold, design: .rounded))
@@ -185,28 +164,19 @@ private struct AbyssSetEffectCard: View {
                 .foregroundStyle(LauncherPalette.parchment.opacity(0.85))
                 .fixedSize(horizontal: false, vertical: true)
 
-            // What the engine actually added to the stat sheet. For most sets
-            // that is the parsed bonuses; where those are empty the model either
-            // has a hand-written estimate or nothing at all, and both are worth
-            // saying out loud next to a recommendation.
-            if let modelNote {
-                Text(modelNote.line)
-                    .font(.system(size: 10, weight: .semibold, design: .rounded))
-                    .foregroundStyle(modelNote.isMissing
-                        ? LauncherPalette.mist.opacity(0.5)
-                        : LauncherPalette.success.opacity(0.85))
-                    .fixedSize(horizontal: false, vertical: true)
-                if let detail = modelNote.detail {
-                    Text(detail)
-                        .font(.system(size: 9, design: .rounded))
-                        .foregroundStyle(LauncherPalette.mist.opacity(0.5))
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            } else if !effect.bonuses.isEmpty {
-                Text(text.abyssSetModelled(
-                    effect.bonuses.map(\.displayText).joined(separator: ", ")))
-                    .font(.system(size: 10, weight: .semibold, design: .rounded))
-                    .foregroundStyle(LauncherPalette.success.opacity(0.85))
+            // What the engine actually added to the stat sheet, and — for a
+            // triggered effect — that it is worth what the rotation keeps up
+            // rather than its full number.
+            Text(modelNote.line)
+                .font(.system(size: 10, weight: .semibold, design: .rounded))
+                .foregroundStyle(modelNote.isMissing
+                    ? LauncherPalette.mist.opacity(0.5)
+                    : LauncherPalette.success.opacity(0.85))
+                .fixedSize(horizontal: false, vertical: true)
+            if let detail = modelNote.detail {
+                Text(detail)
+                    .font(.system(size: 9, design: .rounded))
+                    .foregroundStyle(LauncherPalette.mist.opacity(0.5))
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
@@ -218,21 +188,12 @@ private struct AbyssSetEffectCard: View {
         var isMissing = false
     }
 
-    private func fourPieceNote(_ entry: Entry) -> ModelNote {
-        switch AbyssSetPricing.of(entry.artifactSet.fourPiece,
-                                  approximation: entry.approximation) {
-        case .estimated(let approximation):
-            var line = text.abyssSetModelled(
-                text.abyssSetApproximateBonus(approximation.damageBonus,
-                                              scope: text.abyssSetScope(approximation.scope)))
-            if approximation.party == true { line += " · " + text.abyssSetPartyWide }
-            if let requirement = approximation.requirement {
-                line += " · " + text.abyssSetRequirement(requirement)
-            }
-            return ModelNote(line: line, detail: text.abyssSetEstimated + " " + approximation.note)
-        case .fromData:
-            return ModelNote(line: text.abyssSetModelled(
-                entry.artifactSet.fourPiece.bonuses.map(\.displayText).joined(separator: ", ")))
+    private func note(_ buffs: [AbyssBuff]) -> ModelNote {
+        switch AbyssSetPricing.of(buffs) {
+        case .modelled(let priced):
+            let line = text.abyssSetModelled(priced.map(text.abyssBuffLine).joined(separator: ", "))
+            let timed = priced.contains { !$0.isAlwaysOn }
+            return ModelNote(line: line, detail: timed ? text.abyssSetTimed : nil)
         case .unpriced:
             return ModelNote(line: text.abyssSetNotModelled, isMissing: true)
         }

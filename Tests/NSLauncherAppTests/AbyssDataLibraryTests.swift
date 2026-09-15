@@ -45,16 +45,6 @@ final class AbyssDataLibraryTests: XCTestCase {
         }
     }
 
-    /// A typo in `tuning.json` would silently zero out that set's bonus, which
-    /// looks like "this set is bad" rather than "this line is broken".
-    func testEverySetApproximationResolvesToARealSet() throws {
-        let tuning = try XCTUnwrap(library.tuning)
-        for approximation in tuning.setEffectApprox {
-            XCTAssertNotNil(library.artifactSetsByID[approximation.setId],
-                            "tuning.json references unknown artifact set \"\(approximation.setId)\"")
-        }
-    }
-
     /// The three rosters now come from one file that validates itself; this is
     /// the belt to `AbyssCharacterKitTests`' braces, checking the tables the
     /// engine actually holds rather than the file they were read from.

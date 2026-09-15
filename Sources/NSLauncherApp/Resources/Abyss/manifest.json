@@ -65,6 +65,14 @@
       "count": 118,
       "note": "Sinh 2026-09-16 bằng scripts/sync-abyss-gauge.py từ gi.yatta.moe talent.advancedProps: gauge (U) và ICD từng hit. Pha 4 docs/redesign.md — thay amplifyingUptime và transformativeReactionsPerRotation."
     },
+    "passive-text.json": {
+      "count": 299,
+      "note": "Sinh 2026-09-15 bằng scripts/sync-abyss-passives.py từ gi.yatta.moe (weapon affix R1–R5, reliquary affixList): chữ game tiếng Anh của 236 passive vũ khí và 63 bộ thánh di vật, kèm các số game đánh dấu theo tinh luyện."
+    },
+    "passives.json": {
+      "count": 299,
+      "note": "Viết tay 2026-09-15 (Pha 5 docs/redesign.md): ý nghĩa có cấu trúc của từng passive/hiệu ứng set; mọi giá trị tham chiếu vào passive-text.json, ghim bởi AbyssPassiveTests. Thay tuning.json setEffectApprox, conditionalUptime, assumedStacks và các dòng effects tóm tắt trong weapons/*.json (không còn được đọc để chấm điểm)."
+    },
     "artifact-sets.json": {
       "textSource": "name/nameVI/description/descriptionVI đồng bộ từ bản địa hoá chính thức qua gi.yatta.moe/api/v2/{en,vi}/reliquary bằng scripts/sync-abyss-artifact-text.py, ngày 2026-09-14",
       "count": 63

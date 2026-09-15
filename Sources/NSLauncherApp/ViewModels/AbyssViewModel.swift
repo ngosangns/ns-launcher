@@ -786,12 +786,10 @@ final class AbyssViewModel: ObservableObject {
     func weapon(_ id: String) -> AbyssWeapon? { library?.weaponsByID[id] }
     func artifactSet(_ id: String) -> AbyssArtifactSet? { library?.artifactSetsByID[id] }
 
-    /// How the model prices a set whose 4-piece effect was too conditional to
-    /// read off the data, or nil when it reads the data's own numbers. Surfaced
-    /// so the tab can say which of the two it did — the estimate is the most
-    /// subjective input in the whole model.
-    func setEffectApproximation(_ id: String) -> AbyssTuning.SetEffectApproximation? {
-        library?.tuning?.setEffectApprox.first { $0.setId == id }
+    /// What the model read from a set's bonuses, so the tab can say what it
+    /// priced next to the game's own text.
+    func setBuffs(_ id: String) -> (twoPiece: [AbyssBuff], fourPiece: [AbyssBuff]) {
+        library?.setBuffsByID[id] ?? ([], [])
     }
     func characterIconURL(_ id: String) -> URL? { library?.icons.characterIconURL(id) }
     func weaponIconURL(_ id: String) -> URL? { library?.icons.weaponIconURL(id) }

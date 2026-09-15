@@ -2,9 +2,11 @@
 //
 // Decodable mirror of `Resources/Abyss/tuning.json`.
 //
-// These are the planner's assumptions, not game data — rotation length, buff
-// uptimes, and a hand-written approximation of the artifact set effects that
-// were too conditional to extract mechanically. Every number that decides a
+// These are the planner's assumptions, not game data — rotation length, the
+// substat budget, energy rules. Buff uptimes and artifact set effects used to
+// be here too, as a flat 60% and a hand-estimated %DMG per set; since Phase 5
+// they are read from the game text (`passives.json`) and timed by
+// `AbyssBuffTimeline`. Every number that decides a
 // recommendation lives in that file rather than in this code, so changing an
 // assumption is a data edit with the reasoning next to it.
 //
@@ -15,52 +17,6 @@
 import Foundation
 
 struct AbyssTuning: Decodable, Sendable {
-    /// Effective %DMG credited to a 4-piece set whose real effect is too
-    /// conditional to read off the data (stacking, HP thresholds, scaling from
-    /// another stat). Hand-estimated — the most subjective input in the model.
-    struct SetEffectApproximation: Decodable, Sendable {
-        enum Requirement: String, Decodable, Sendable {
-            /// Needs a Natlan character (Nightsoul's Blessing).
-            case natlan
-            /// Needs a Moonsign character.
-            case moonsign
-            /// Needs an element that takes part in Stellar Glimmer reactions.
-            case stellar
-            /// Needs the wearer to be of this element: the effect raises that
-            /// element's DMG and nothing else (Crimson Witch's stacking Pyro
-            /// bonus, Nymph's Dream's Hydro stacks, Husk's Geo DMG).
-            case pyro, hydro, geo, cryo
-            /// Needs a character whose kit carries Bond of Life.
-            case bondOfLife = "bond-of-life"
-        }
-
-        let setId: String
-        let note: String
-        let damageBonus: Double
-        let scope: HitCategoryScope
-        let requirement: Requirement?
-        /// The effect reaches the whole party, not just the wearer. Routed to
-        /// `partyDMG` and, like every other party buff from a set, counted once
-        /// however many members wear it.
-        let party: Bool?
-    }
-
-    /// Which damage bucket a set approximation applies to. `all` is a separate
-    /// case rather than a `HitCategory`, because it means "every category".
-    enum HitCategoryScope: String, Decodable, Sendable {
-        case all, normal, charged, skill, burst
-
-        var statField: AbyssStatField {
-            switch self {
-            case .all: return .dmgAll
-            case .normal: return .dmgNormal
-            case .charged: return .dmgCharged
-            case .skill: return .dmgSkill
-            case .burst: return .dmgBurst
-            }
-        }
-    }
-
     struct Energy: Decodable, Sendable {
         /// Energy one particle of the receiver's own element restores. A rule.
         let sameElementParticle: Double
@@ -91,8 +47,6 @@ struct AbyssTuning: Decodable, Sendable {
     let swapSeconds: Double
     /// Energy rules and the one energy assumption — see `notes.energy`.
     let energy: Energy
-    let conditionalUptime: Double
-    let assumedStacks: Double
     /// One source of enemy elemental resistance reduction.
     ///
     /// The channel the model never had. `resMultiplier` has always had a
@@ -134,7 +88,6 @@ struct AbyssTuning: Decodable, Sendable {
     let noSustainPenalty: Double
     let shieldBreakBonus: Double
     let weaknessExploitBonus: Double
-    let setEffectApprox: [SetEffectApproximation]
 
     func mainStat(_ key: String) -> Double { artifactMainStats[key] ?? 0 }
     func rollValue(_ key: String) -> Double { substatRollValue[key] ?? 0 }

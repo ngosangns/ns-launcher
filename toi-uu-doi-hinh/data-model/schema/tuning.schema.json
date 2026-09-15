@@ -7,8 +7,8 @@
   "required": [
     "artifactMainStats", "substatRollValue", "substatRollBudget", "substatPriority",
     "scalingBasisSwap", "rotationSeconds", "swapSeconds", "energy",
-    "conditionalUptime", "assumedStacks", "noSustainPenalty",
-    "shieldBreakBonus", "weaknessExploitBonus", "setEffectApprox",
+    "noSustainPenalty",
+    "shieldBreakBonus", "weaknessExploitBonus",
     "stellarConductRamp", "enemyOwnElementResistance", "resistanceShred"
   ],
   "properties": {
@@ -49,8 +49,6 @@
       },
       "additionalProperties": false
     },
-    "conditionalUptime": { "type": "number", "minimum": 0, "maximum": 1 },
-    "assumedStacks": { "type": "number", "minimum": 0 },
     "noSustainPenalty": { "type": "number", "exclusiveMinimum": 0 },
     "shieldBreakBonus": { "type": "number", "exclusiveMinimum": 0 },
     "weaknessExploitBonus": { "type": "number", "exclusiveMinimum": 0 },
@@ -69,29 +67,6 @@
           "value": { "type": "number", "minimum": 0, "maximum": 1 },
           "uptime": { "type": "number", "minimum": 0, "maximum": 1 },
           "note": { "type": "string" }
-        }
-      }
-    },
-    "setEffectApprox": {
-      "type": "array",
-      "description": "Mảng có thứ tự (không phải object) để phía Swift đọc được thứ tự ổn định và để test đối chiếu setId dễ viết",
-      "items": {
-        "type": "object",
-        "required": ["setId", "note", "damageBonus", "scope", "requirement"],
-        "properties": {
-          "setId": {
-            "type": "string",
-            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
-            "description": "PHẢI khớp một id trong artifact-sets.json — sai id thì bộ đó âm thầm mất bonus"
-          },
-          "note": { "type": "string" },
-          "damageBonus": { "type": "number", "minimum": 0 },
-          "scope": { "type": "string", "enum": ["all", "normal", "charged", "skill", "burst"] },
-          "requirement": {
-            "type": ["string", "null"],
-            "enum": ["natlan", "moonsign", "stellar", "pyro", "hydro", "geo", "cryo", "bond-of-life", null],
-            "description": "Điều kiện nhân vật mới dùng được bộ; null = ai cũng dùng được. pyro/hydro/geo/cryo = người mặc phải đúng hệ đó (bonus chỉ nâng sát thương hệ đó, hoặc với cryo: dùng người mặc hệ Băng làm đại diện cho điều kiện địch dính Băng). bond-of-life = nhân vật có tag bond-of-life ở character-kits.json."
-          }
         }
       }
     },

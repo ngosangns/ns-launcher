@@ -40,6 +40,9 @@ struct AbyssTeamContext: Sendable {
         base - (resistanceShred[element] ?? 0)
     }
 
+    /// Each member's nation, in `elements` order.
+    var nations: [String] = []
+
     var elementSet: Set<GenshinElement> { Set(elements) }
 
     static func build(members: [AbyssCharacter], library: AbyssDataLibrary) -> AbyssTeamContext {
@@ -85,7 +88,8 @@ struct AbyssTeamContext: Sendable {
                     found[reaction] = max(found[reaction] ?? 0, bonus)
                 }
             },
-            resistanceShred: shred(elements: Set(elements), ids: ids, library: library))
+            resistanceShred: shred(elements: Set(elements), ids: ids, library: library),
+            nations: members.map(\.nationInGame))
     }
 
     // MARK: - Sustain
@@ -243,7 +247,7 @@ struct AbyssTeamContext: Sendable {
     ///
     /// Only the resonance bonuses that map onto a modelled stat are counted;
     /// the rest (stamina, movement speed, cooldown) do not affect damage.
-    func resonanceStats(conditionalUptime: Double) -> (atkPercent: Double, elementalMastery: Double, dmg: Double) {
+    func resonanceStats() -> (atkPercent: Double, elementalMastery: Double, dmg: Double) {
         var atkPercent = 0.0
         var elementalMastery = 0.0
         var dmg = 0.0
@@ -256,12 +260,73 @@ struct AbyssTeamContext: Sendable {
                 } else if stat.contains("elemental mastery") {
                     elementalMastery += bonus.value
                 } else if stat.contains("dmg bonus") && stat.contains("khi có khiên") {
-                    // Enduring Rock's damage bonus only applies while shielded.
-                    dmg += bonus.value * conditionalUptime
+                    // Enduring Rock's damage bonus holds while shielded: a
+                    // team with a shielder keeps it up, one without never has it.
+                    dmg += hasShield ? bonus.value : 0
                 }
             }
         }
         return (atkPercent, elementalMastery, dmg)
+    }
+
+    /// What this team holds for a member's gated buffs — see `AbyssGates`.
+    ///
+    /// Counts are of the *other* members: "for every party member of a
+    /// different Elemental Type" does not count the wearer.
+    func conditions(for character: AbyssCharacter) -> AbyssTeamConditions {
+        var conditions = AbyssTeamConditions.zero
+        let own = character.element
+        for element in elementSet {
+            conditions[AbyssTeamCondition.auraFirst.rawValue + element.simdIndex] = 1
+        }
+        conditions[AbyssTeamCondition.shield.rawValue] = hasShield ? 1 : 0
+        conditions[AbyssTeamCondition.healed.rawValue] = hasHeal ? 1 : 0
+        conditions[AbyssTeamCondition.hpChange.rawValue] = hasHeal ? 1 : 0
+        conditions[AbyssTeamCondition.moonsignAscendant.rawValue] = moonsignLevel >= 2 ? 1 : 0
+        conditions[AbyssTeamCondition.hexerei.rawValue] = hexerei ? 1 : 0
+        conditions[AbyssTeamCondition.crystallize.rawValue] = elementSet.contains(.geo)
+            && !elementSet.isDisjoint(with: [.pyro, .hydro, .electro, .cryo]) ? 1 : 0
+        conditions[AbyssTeamCondition.distinctElements.rawValue] = Double(elementSet.count)
+
+        // The other members: this team without one copy of the character.
+        var skippedSelf = false
+        var reacts = false
+        var liyue = 0.0
+        for (index, element) in elements.enumerated() {
+            let nation = index < nations.count ? nations[index] : ""
+            if !skippedSelf, element == own, nations.isEmpty || nation == character.nationInGame {
+                skippedSelf = true
+                continue
+            }
+            if element == own {
+                conditions[AbyssTeamCondition.sameElement.rawValue] += 1
+            } else {
+                conditions[AbyssTeamCondition.otherElement.rawValue] += 1
+                reacts = reacts || Self.react(own, element)
+            }
+            if element != own || nation == "Natlan" {
+                conditions[AbyssTeamCondition.natlanOrOtherElement.rawValue] += 1
+            }
+            if nation == "Liyue" { liyue += 1 }
+            conditions[AbyssTeamCondition.members(element)] += 1
+        }
+        conditions[AbyssTeamCondition.liyue.rawValue] = liyue
+        conditions[AbyssTeamCondition.liyueWithWearer.rawValue] = liyue + (character.nationInGame == "Liyue" ? 1 : 0)
+        conditions[AbyssTeamCondition.reaction.rawValue] = reacts ? 1 : 0
+        return conditions
+    }
+
+    /// Whether two elements react when they meet.
+    static func react(_ first: GenshinElement, _ second: GenshinElement) -> Bool {
+        guard first != second else { return false }
+        let auras: Set<GenshinElement> = [.pyro, .hydro, .electro, .cryo]
+        switch (first, second) {
+        case (.anemo, .geo), (.geo, .anemo): return false
+        case (.anemo, _), (.geo, _): return auras.contains(second)
+        case (_, .anemo), (_, .geo): return auras.contains(first)
+        case (.cryo, .dendro), (.dendro, .cryo): return false
+        default: return true
+        }
     }
 }
 
