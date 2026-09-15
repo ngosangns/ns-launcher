@@ -237,10 +237,10 @@ struct AbyssScorer: Sendable {
                 + effective.categoryBonus(term.category)
                 + (isNormal ? context.floorBonusNormal : context.floorBonusOther)
             let damage = term.multiplier * effective.stat(for: term.basis) * (1 + bonus) * common
-            switch term.category {
-            case .normal: combo += damage
+            switch term.action {
+            case .combo: combo += damage
             case .charged: charged += damage
-            default: ability += damage
+            case .ability: ability += damage
             }
         }
 

@@ -158,7 +158,7 @@ final class AbyssMissingMechanicsTests: XCTestCase {
     /// character is actually read from: the game's own lines when
     /// `talent-params.json` has them, the transcription otherwise.
     func testEveryChargedLabelStillMatchesARow() throws {
-        for entry in library.traitsByCharacterID.values {
+        for entry in library.kitsByCharacterID.values {
             guard let charged = entry.chargedAttackLabels else { continue }
             let character = try XCTUnwrap(library.charactersByID[entry.characterId],
                                           "\(entry.characterId) is no longer in the data")
@@ -177,24 +177,18 @@ final class AbyssMissingMechanicsTests: XCTestCase {
 
     /// What is still falling through, kept visible rather than silent — and
     /// named, now that the rows come from the game's own tables and the names
-    /// are stable. Three kinds: a stance's own combo that replaces the normal
-    /// one (Varesa's Fiery Passion, Xilonen's Blade Roller, Kinich's mid-air),
-    /// an extra hit riding on a normal attack (the Fontaine arkhe
-    /// "Spiritbreath Thorn", Tartaglia's Riptide, Lyney's hat), and a
-    /// conditional replacement (Sandrone's Power Overdrive). Every one is a
-    /// kit fact — which of two combos a rotation uses — and lands in the kit
-    /// file of Phase 2, not in a wider regex.
+    /// are stable. Phase 2 moved the stance combos (Varesa, Xilonen, Kinich,
+    /// Tartaglia), Iansan's stomp and Lyney's hat into `character-kits.json`,
+    /// where a kit that names its attack string has classified the rest of the
+    /// table by doing so. What remains is the Fontaine arkhe "Spiritbreath
+    /// Thorn" (an interval hit, Phase 3), a conditional replacement (Sandrone's
+    /// Power Overdrive, Lauma's Spiritcall Prayer) and a team-dependent one
+    /// (Columbina's Moondew Cleanse needs a Lunar-Bloom team, Phase 4).
     func testTheRowsStillUnclassifiedAreKnownOnes() throws {
         let known: Set<String> = [
             "charlotte: Spiritbreath Thorn DMG", "columbina: Moondew Cleanse DMG",
-            "furina: Spiritbreath Thorn/Surging Blade DMG", "iansan: Swift Stormflight DMG",
-            "kinich: Mid-Air Normal Attack DMG", "lauma: Spiritcall Prayer DMG",
-            "lyney: Pyrotechnic Strike DMG", "lyney: Spiritbreath Thorn DMG",
+            "furina: Spiritbreath Thorn/Surging Blade DMG", "lauma: Spiritcall Prayer DMG",
             "sandrone: DMG When in Power Overdrive",
-            "tartaglia: Riptide Burst DMG", "tartaglia: Riptide Flash DMG",
-            "varesa: Fiery Passion 1-Hit DMG", "varesa: Fiery Passion 2-Hit DMG", "varesa: Fiery Passion 3-Hit DMG",
-            "xilonen: Blade Roller 1-Hit DMG", "xilonen: Blade Roller 2-Hit DMG",
-            "xilonen: Blade Roller 3-Hit DMG", "xilonen: Blade Roller 4-Hit DMG",
         ]
         let unclassified = library.diagnostics.normalAttackRowsUnclassified
         XCTAssertEqual(unclassified, known,

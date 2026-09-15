@@ -234,27 +234,25 @@ final class AbyssOptimizerTests: XCTestCase {
     /// are candidates is not the same as forgetting what is already known
     /// about the ones that are owned.
     ///
-    /// The candidate lists are pinned to one weapon and one set rather than
-    /// the library's full lists: `gearOptions` ranks against whichever set is
-    /// first in an arbitrary `sets` list, and an unrelated first set would make
-    /// the weapon look weak for reasons that have nothing to do with
-    /// refinement.
+    /// The candidate lists are pinned to Hu Tao's actual best-in-slot weapon
+    /// and set rather than the library's full lists: `gearOptions` ranks
+    /// against whichever set is first in an arbitrary `sets` list, and an
+    /// unrelated first set would make Homa look weak for reasons that have
+    /// nothing to do with refinement.
     ///
-    /// Vortex Vanquisher rather than Homa, and the reason is a model gap worth
-    /// knowing: Homa's refinement scales HP% and an HP→ATK conversion, and Hu
-    /// Tao's hits scale on ATK — the game's table says so, and the HP-basis
-    /// "hit" the prose path read for her was her skill's ATK *buff* copied
-    /// into the wrong column. The conversion is real and unmodelled (see
-    /// `docs/redesign.md`, Phase 2), so on Hu Tao a Homa refinement currently
-    /// changes nothing, which is a fact about the model, not about refinement
-    /// being credited. Vortex Vanquisher's refinement is a plain ATK buff.
+    /// Homa on Hu Tao is also the pair that shows the conversions of Phase 2
+    /// doing their job: her hits scale on ATK, Homa's refinement moves HP% and
+    /// an HP→ATK share, and the only road from one to the other is the
+    /// conversion her skill and his passive carry. Without it a Homa
+    /// refinement was worth exactly nothing to her (this test ran on Vortex
+    /// Vanquisher for one commit because of that).
     func testFullPoolStillCreditsOwnedRefinement() async throws {
         let optimizer = try makeOptimizer()
         let character = try XCTUnwrap(library.charactersByID["hu-tao"])
-        let weapon = try XCTUnwrap(library.weaponsByID["vortex-vanquisher"])
+        let weapon = try XCTUnwrap(library.weaponsByID["staff-of-homa"])
         let crimsonWitch = try XCTUnwrap(library.artifactSetsByID["crimson-witch-of-flames"])
 
-        var r5Roster = AbyssRoster(characters: [.init(id: "hu-tao")], weapons: [.init(id: "vortex-vanquisher")])
+        var r5Roster = AbyssRoster(characters: [.init(id: "hu-tao")], weapons: [.init(id: "staff-of-homa")])
         r5Roster.weapons[0].refinement = 5
         var r1Roster = r5Roster
         r1Roster.weapons[0].refinement = 1

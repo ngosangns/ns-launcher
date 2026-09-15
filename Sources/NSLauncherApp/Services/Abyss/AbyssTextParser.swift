@@ -8,7 +8,7 @@
 // every character with an entry in `talent-params.json` reads their hits from
 // the game's own tables through `AbyssTalentReader`; this parser's scaling
 // code still serves the seven Travelers (no structured entry) and the labelled
-// numbers in `character-traits.json`. A transcription fix in `characters/*.json`
+// numbers in `character-kits.json`. A transcription fix in `characters/*.json`
 // therefore changes nothing for the other 118 — see `AbyssDataLibrary.hits`.
 //
 // `NSRegularExpression` rather than Swift `Regex`: it is ICU, these patterns

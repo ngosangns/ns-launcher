@@ -198,7 +198,7 @@ enum AbyssTalentReader {
     /// Charged attacks as the game names them — anywhere in the label, since a
     /// stance puts its name first ("Fiery Passion Charged Attack DMG"), and
     /// every claymore's spin and finisher both say it. A per-character label
-    /// from `character-traits.json` extends this, exactly as it extends the
+    /// from `character-kits.json` extends this, exactly as it extends the
     /// prose.
     private static let charged = try? NSRegularExpression(
         pattern: "\\b(Charged Attack|Aimed Shot)\\b")
@@ -214,7 +214,8 @@ enum AbyssTalentReader {
     /// DMG" against "Charge Level 2 DMG" — because telling those apart is
     /// knowledge of the kit, not of the words. Those rows add, which
     /// over-counts a cast by one alternative; it is the same reading the prose
-    /// path gave them, and the kit file of Phase 2 is where it gets fixed.
+    /// path gave them, and a `hits` entry in `character-kits.json` is where a
+    /// character says which rows one cast really deals.
     private static let variantMarker = try? NSRegularExpression(
         pattern: "\\b(Low HP|High HP|Press|Hold|Tap|Max|Min|Level \\d+|\\d+[- ]?Stacks?|Stacks? \\d+|"
             + "Stellar-Conduct|Stellar Swirl|Lunar-[A-Za-z]+)\\b\\)?",
@@ -315,7 +316,7 @@ enum AbyssTalentReader {
     /// "Best" is by raw multiplier, which only means something between rows
     /// on the same basis — 246% of ATK against 14.5% of Max HP is not a
     /// comparison, and for Neuvillette the second is four times the damage.
-    /// So a row a `character-traits.json` label names wins outright over the
+    /// So a row a `character-kits.json` label names wins outright over the
     /// generic vocabulary: that label exists precisely to say which row *is*
     /// this character's charged attack. The multiplier decides only among
     /// rows of the same standing.
@@ -337,6 +338,103 @@ enum AbyssTalentReader {
             }
         }
         return best?.terms ?? []
+    }
+
+    // MARK: - Reading what a kit names
+
+    /// The row of a talent whose label is exactly `label`, at one level, as
+    /// the grammar reads it: per-basis multipliers, strongest alternative.
+    /// Nil when no row has that label or the row is not a percentage of a stat.
+    static func row(labelled label: String,
+                    in talent: AbyssTalentParams.Talent,
+                    level: Int) -> [ScalingBasis: Double]? {
+        guard let params = talent.params(atLevel: level) else { return nil }
+        for line in talent.lines(atLevel: level) {
+            guard let (found, expression) = split(line), found == label else { continue }
+            return hit(in: expression, params: params)
+        }
+        return nil
+    }
+
+    /// One placeholder's value at one level, provided the talent prints it as
+    /// a percentage somewhere in its lines — a count or a duration is not a
+    /// multiplier, whatever a kit says about it.
+    static func percentage(param index: Int,
+                           in talent: AbyssTalentParams.Talent,
+                           level: Int) -> Double? {
+        guard let params = talent.params(atLevel: level), index >= 1, index <= params.count,
+              let placeholder else { return nil }
+        let printedAsPercent = talent.lines(atLevel: level).contains { line in
+            placeholder.matches(in: line, range: NSRange(line.startIndex..., in: line)).contains { match in
+                let ns = line as NSString
+                return Int(ns.substring(with: match.range(at: 1))) == index
+                    && ns.substring(with: match.range(at: 2)).hasSuffix("P")
+            }
+        }
+        return printedAsPercent ? params[index - 1] : nil
+    }
+
+    /// The hits a kit lists for one slot, in order. Each reference is one row
+    /// or one param of a talent, read at that talent's level, times `count`,
+    /// times `factor` — and a reference that resolves to nothing is reported,
+    /// not skipped, because a kit that names a row is claiming that row is
+    /// the character's damage.
+    static func kitTerms(_ references: [AbyssCharacterKit.HitReference],
+                         slot: AbyssCharacterKit.HitSlot,
+                         structured: AbyssTalentParams.Character,
+                         level: (AbyssTalentParams.Key) -> Int,
+                         characterID: String,
+                         diagnostics: inout AbyssParseDiagnostics) -> [AbyssDamageProfile.Term] {
+        var terms: [AbyssDamageProfile.Term] = []
+        for reference in references {
+            let key = reference.talent ?? slot.defaultTalent
+            let talent = structured.talent(key)
+            let category = reference.category ?? slot.defaultCategory
+            let count = reference.count ?? 1
+            let name = "\(characterID): \(slot.rawValue) \(reference.label ?? "param \(reference.param ?? 0)")"
+
+            var totals: [ScalingBasis: Double]
+            switch (reference.label, reference.param) {
+            case (let label?, nil):
+                guard let found = row(labelled: label, in: talent, level: level(key)) else {
+                    diagnostics.kitReferencesUnresolved.insert("\(name) — no such row in \(key.rawValue)")
+                    continue
+                }
+                totals = found
+            case (nil, let index?):
+                guard let value = percentage(param: index, in: talent, level: level(key)) else {
+                    diagnostics.kitReferencesUnresolved.insert("\(name) — not a percentage in \(key.rawValue)")
+                    continue
+                }
+                totals = [reference.basis ?? .atk: value]
+            default:
+                diagnostics.kitReferencesUnresolved.insert("\(name) — a reference is a label or a param, not both or neither")
+                continue
+            }
+
+            var scale = count
+            if let factor = reference.factor {
+                guard let value = percentage(param: factor.param, in: structured.talent(factor.talent),
+                                             level: level(factor.talent)) else {
+                    diagnostics.kitReferencesUnresolved.insert(
+                        "\(name) — factor param \(factor.param) is not a percentage in \(factor.talent.rawValue)")
+                    continue
+                }
+                scale *= value
+            }
+            // The slot says how often the row happens; the category says which
+            // bonus it takes. A kit is the one place the two can differ.
+            let action: AbyssDamageProfile.Action
+            switch slot {
+            case .combo: action = .combo
+            case .charged: action = .charged
+            case .skill, .burst: action = .ability
+            }
+            for (basis, multiplier) in totals.sorted(by: { $0.key.rawValue < $1.key.rawValue }) {
+                terms.append(.init(multiplier: multiplier * scale, basis: basis, category: category, action: action))
+            }
+        }
+        return terms
     }
 
     /// Normal-attack rows that are hits and landed in no bucket — the

@@ -93,7 +93,7 @@ xem mục 4 (Pha 0) về hướng thay thế đã chọn.
 |---|---|---|---|
 | **0** | Nhập kháng quái thật từ Yatta; đặt nền benchmark | `enemyOwnElementResistance` làm fallback thay vì luật chính | **Xong — xem mục 4** |
 | 1 | Talent → `params` cấu trúc từ Yatta, thay 26 regex trong `AbyssTextParser` | — (gỡ nguồn lỗi lớn nhất) | **Xong cho 118/125 — xem mục 5** |
-| 2 | `character-kits.json` cho ~30 nhân vật hay dùng nhất; nhân vật chưa có kit rơi về mô hình cũ | — | Chưa bắt đầu |
+| 2 | `character-kits.json` cho ~30 nhân vật hay dùng nhất; nhân vật chưa có kit rơi về mô hình cũ | — | **Khung xong + 21 kit — xem mục 6** |
 | 3 | Dựng rotation + năng lượng | `offFieldUptime`, hack ER | Chưa bắt đầu |
 | 4 | Gauge/ICD/phản ứng theo timeline | `amplifyingUptime`, `transformativeReactionsPerRotation` | Chưa bắt đầu |
 | 5 | Timeline buff + stack | `conditionalUptime`, `assumedStacks`, phần lớn `setEffectApprox` | Chưa bắt đầu |
@@ -251,15 +251,16 @@ Golden fixture tái tạo: 118/125 profile đổi; tầng 12 đội đầu **gi�
 
 - **Biến thể mà chữ không nói lên**: Varesa "Rush DMG" / "Fiery Passion Rush
   DMG" (một chế độ), Bennett "Press DMG" / "Charge Level 2 DMG" (một lần bấm)
-  vẫn cộng — đây là tri thức kit, thuộc `character-kits.json` (Pha 2). 18 dòng
-  đòn thường chưa phân loại (chuỗi đòn của chế độ, đòn phụ arkhe, Riptide)
-  được ghim đích danh trong `AbyssMissingMechanicsTests`.
+  vẫn cộng — đây là tri thức kit, thuộc `character-kits.json` (Pha 2 — đã
+  làm cho 21 nhân vật, mục 6). 18 dòng đòn thường chưa phân loại (chuỗi đòn
+  của chế độ, đòn phụ arkhe, Riptide) được ghim đích danh trong
+  `AbyssMissingMechanicsTests` (còn 5 sau Pha 2).
 - **7 dòng DMG cố ý không đọc** (Razor/Wanderer/Wriothesley/Yoimiya "% Normal
   Attack DMG" là *phần* của đòn khác; Lauma "per Verdant Dew"; Nicole "ATK của
   nhân vật khác") — ghim trong `AbyssTalentReaderTests`.
 - **Đòn nặng khác cơ sở**: so hệ số thô giữa 246% ATK và 14.5% Max HP là vô
   nghĩa (Neuvillette: dòng HP mạnh gấp bốn). Giải quyết bằng luật: nhãn trong
-  `character-traits.json` chỉ đích danh dòng nào là đòn nặng thì dòng đó thắng;
+  `character-kits.json` chỉ đích danh dòng nào là đòn nặng thì dòng đó thắng;
   hệ số chỉ quyết định giữa các dòng cùng hạng. Sethos được thêm nhãn
   "Shadowpiercing Shot" vì lý do này.
 - **Chuyển đổi chỉ số (HP→ATK) chưa có chỗ đứng**: Hu Tao E ("ATK cộng thêm
@@ -267,16 +268,88 @@ Golden fixture tái tạo: 118/125 profile đổi; tầng 12 đội đầu **gi�
   tính vì prose đọc dòng buff của Hu Tao thành một đòn scale HP; nay đòn đó
   đúng là buff nên HP của Hu Tao không còn được tính gì — cả hai đều đúng về
   số liệu và đều thiếu cùng một cơ chế. Thuộc `character-kits.json` (Pha 2:
-  `conversions: [{from: hp, to: atk, rate}]`), và weapon passive cần cùng
-  khung đó thay vì regex "buff|bonus" hiện tại.
+  `conversions`), và weapon passive cần cùng khung đó thay vì regex
+  "buff|bonus" hiện tại. **Đã làm ở Pha 2 — mục 6.**
 - **Basis chủ đạo đếm số dòng**, không cân theo hệ số: Chiori (ATK+DEF mỗi
   đòn) và Kokomi/Nilou/Dehya/Layla rơi về ATK vì hoà. Chỉ ảnh hưởng phân bổ
   substat; sửa bằng cân theo `hệ số × chỉ số điển hình` là việc riêng.
-- `AbyssTextParser` **chưa xoá**: còn phục vụ 7 Nhà Lữ Hành và
-  `character-traits.json.partyBuffs` (đọc số theo nhãn tiếng Việt). Xoá được
-  khi hai chỗ đó chuyển sang `talent-params.json`.
+- `AbyssTextParser` **chưa xoá**: còn phục vụ 7 Nhà Lữ Hành (Pha 2 đã chuyển
+  `buffs` sang đọc `talent-params.json`, nên đây là chỗ cuối).
 
-## 6. Chưa xác minh, cần làm trước Pha 2–3
+## 6. Pha 2 — kết quả
+
+### 6.1. Một hình dạng cho tri thức kit
+
+`character-traits.json` đổi tên thành **`character-kits.json`** và mang thêm
+ba thứ mà bảng talent của game *không nói được*, mỗi thứ là **tham chiếu** vào
+`talent-params.json` (nhãn dòng đúng chữ game, hoặc chỉ số param) đọc ở đúng
+cấp talent của nhân vật, kèm `note` trích chữ game và nêu rõ giả định:
+
+| Khoá | Câu hỏi nó trả lời | Ví dụ |
+|---|---|---|
+| `hits.{skill,burst,combo,charged}` | Một lần dùng chiêu / một chuỗi đòn thường thật sự gồm những dòng nào, mỗi dòng mấy lần | Bennett E = `Press DMG` ×1; Raiden combo = 5 dòng Isshin của bảng burst + 300 × param3 (60 stack × 5 đòn) |
+| `conversions` | Kit đổi chỉ số nào ra ATK | Hu Tao `ATK Increase\|{p} Max HP`, Noelle `ATK Bonus\|{p} DEF` — đổi *từ* gì là hậu tố game viết, file không được nói khác |
+| `buffs` (`scope: party\|self`) | Talent cộng gì, cho ai | Bennett `ATK Bonus Ratio` (đội, phần ATK cơ bản), Xiao `Normal/Charged/Plunging Attack DMG Bonus` (mình) |
+
+Hai quyết định thiết kế đáng ghi:
+
+- **Slot ≠ category.** Reader tự suy thì "dòng đòn thường" vừa là *chuỗi đòn*
+  (× `normalCombosPerRotation`) vừa là *bucket Normal Attack DMG*. Kit tách
+  hai thứ: `AbyssDamageProfile.Term` có thêm `action` (combo/charged/ability
+  — tần suất) bên cạnh `category` (buff). Isshin của Raiden: `action: combo`,
+  `category: burst`. Không có cái này, kit đầu tiên chạy đã hạ Raiden 47% vì
+  chuỗi đòn của cô bị đếm *một lần* như một chiêu.
+- **Chuyển đổi là tỉ lệ, không phải số.** `AbyssStats.atkFromHPRate` nhân với
+  HP *cuối cùng* của sheet, nên sands HP% / substat HP tự thành chỉ số damage
+  của Hu Tao trong tìm kiếm — không cần luật "Hu Tao thì build HP". Vũ khí
+  cùng loại (Hộ Ma "ATK from HP", Ngọc Cắt "ATK from HP", Engulfing "ATK from
+  Energy Recharge over 100%") đi cùng khung (`weaponConversionRules`) — trước
+  đây ba dòng đó không chứa chữ "buff|bonus" nên bị bỏ, và một lần tinh luyện
+  Hộ Ma chỉ đáng đúng phần HP%.
+
+Fallback nguyên vẹn: nhân vật không có entry, hoặc slot không ghi đè, đi theo
+luật chung của `AbyssTalentReader`; slot ghi đè thì reader *không* báo "dòng
+chưa phân loại" cho bảng đó nữa — kit đã phân loại bằng cách nói chuỗi đòn là
+gì.
+
+### 6.2. 21 kit đầu — chọn theo lỗi Pha 1 chỉ ra, không theo độ nổi tiếng
+
+Mỗi kit viết từ chữ game (Yatta `talent.description`), trích trong `note`.
+
+| Nhóm | Nhân vật | Kit nói gì |
+|---|---|---|
+| Biến thể một lần bấm | Bennett, Lisa, Beidou, Freminet | Press ×1; 3 Press + Hold stack 3; Base + 2 × "DMG Bonus on Hit Taken" (dòng "Bonus" mà là hệ số đòn); Upward Thrust + 4 Frost + Level 4 |
+| Chế độ thay đòn thường | Raiden, Cyno, Tartaglia, Mavuika, Varka, Varesa, Xilonen, Kinich | Chuỗi đòn/đòn nặng lấy từ bảng E/Q của chế độ; Xilonen/Kinich `charged: []`; Cyno `burst: []` |
+| Dòng là *phần* của đòn khác | Wanderer, Yoimiya, Wriothesley, Razor | `factor` × param (Blazing Arrow = 161.7% đòn thường); Razor: 4 đòn + 4 đòn sói (category burst) |
+| Chuyển đổi | Hu Tao, Noelle | HP→ATK, DEF→ATK, uptime 1 (chế độ là cửa sổ sát thương) |
+| Đòn nhảy là kit | Xiao | "Một chuỗi đòn thường" = một High Plunge + self-buff burst; thấp hơn thực (~6 vs 10–12 đòn nhảy/rotation) nhưng thay cho 0 |
+| Chỉnh nhỏ | Iansan, Lauma, Lyney | Swift Stormflight là đòn nặng; Hold + Sanctuary; Prop Arrow + Pyrotechnic Strike, E với 5 stack |
+
+Đo trên golden fixture (roster mẫu): **21/125 profile đổi**, đúng danh sách kit,
+không nhân vật nào đổi basis. Điểm solo: Hu Tao ×1.86, Xilonen ×1.74, Yoimiya
+×1.58, Wriothesley ×1.49, Raiden ×1.47, Cyno ×1.37; giảm: Tartaglia ×0.79
+(burst Melee+Ranged không còn cộng đôi, Riptide Flash/Burst của tư thế cung bỏ),
+Mavuika ×0.81, Xiao ×0.84, Bennett ×0.88. Đội đầu tầng 12 giữ nguyên
+(Bennett/Diona/Hu Tao/Venti), điểm +72% — gần hết là ATK của Hu Tao gấp đôi
+nhờ chuyển đổi, đúng với game (E cộng ~2k ATK ở 33k HP).
+
+### 6.3. Cố ý chưa có kit, và vì sao
+
+- **Furina**: Salon Members đánh theo chu kỳ, bảng game không ghi interval →
+  số lần/lượt là tri thức Pha 3 (rotation). Reader chung đếm mỗi dòng một lần
+  — thấp, nhưng không bịa số.
+- **Columbina, Sandrone**: dòng biến thể theo phản ứng Lunar/Stellar — Pha 4.
+- **Charlotte, Neuvillette, Furina, Lyney** (arkhe Spiritbreath Thorn): đòn
+  theo chu kỳ 6–9s — Pha 3.
+- **Navia**: bonus Crystal Shrapnel chỉ có trong chữ mô tả, không có trong
+  bảng — cần `value` literal, để sau.
+- **Mavuika** bonus Fighting Spirit cho đòn thường/nặng trong 7s Crucible,
+  **Hu Tao** A4 (+33% Pyro dưới 50% HP), **Xiao** A1 (+5%/3s): buff có thời hạn
+  hoặc điều kiện — Pha 5.
+- Còn lại của mục 5.3 (basis chủ đạo đếm dòng, `AbyssTextParser` cho Nhà Lữ
+  Hành) chưa đụng.
+
+## 7. Chưa xác minh, cần làm trước Pha 3
 
 - Yatta có ghi **hạt năng lượng/kỹ năng** không (particle count mỗi hit) —
   cộng đồng có bảng riêng nếu Yatta không có; Pha 3 (năng lượng) cần số này.

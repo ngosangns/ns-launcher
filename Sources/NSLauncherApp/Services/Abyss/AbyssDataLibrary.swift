@@ -57,10 +57,15 @@ struct AbyssDataLibrary: Sendable {
     /// here instead.
     let sustainByCharacterID: [String: AbyssSustain]
     /// Party-wide buffs each character's talents grant, resolved from
-    /// `character-traits.json`'s `partyBuffs` against the character data.
-    let talentPartyBuffsByCharacterID: [String: [AbyssTalentPartyBuff]]
-    /// Everything `character-traits.json` says about each character, by id.
-    let traitsByCharacterID: [String: AbyssCharacterTraits]
+    /// `character-kits.json`'s `buffs` against the character data.
+    let talentBuffsByCharacterID: [String: [AbyssTalentBuff]]
+    /// Stats each character's kit turns into ATK, by id — see `AbyssStatConversion`.
+    let conversionsByCharacterID: [String: [AbyssStatConversion]]
+    /// Enemy resistance each character strips, by id, with a talent-table
+    /// value already read where the kit named a row.
+    let resistanceShredByCharacterID: [String: [(elements: [String], value: Double, uptime: Double)]]
+    /// Everything `character-kits.json` says about each character, by id.
+    let kitsByCharacterID: [String: AbyssCharacterKit]
     /// `talent-params.json`: every talent's multipliers as the game's files
     /// state them. A character present here has their damage profile read by
     /// `AbyssTalentReader` from these; one absent (the seven Travelers) keeps
@@ -136,35 +141,35 @@ struct AbyssDataLibrary: Sendable {
         // asking whether the id existed, so a typo removed a mechanic in silence
         // — a character missing from a list and a character the list does not
         // apply to are indistinguishable once the list has been read.
-        let traitsFile: AbyssCharacterTraitsFile? =
-            Self.decode(from: root?.appendingPathComponent("character-traits.json"), hasher: &hasher)
+        let kitsFile: AbyssCharacterKitsFile? =
+            Self.decode(from: root?.appendingPathComponent("character-kits.json"), hasher: &hasher)
         let talentParams: AbyssTalentParams? =
             Self.decode(from: root?.appendingPathComponent("talent-params.json"), hasher: &hasher)
         self.talentParams = talentParams
         dataDigest = hasher.finalize().map { String(format: "%02x", $0) }.joined()
-        var traits: [String: AbyssCharacterTraits] = [:]
-        for entry in traitsFile?.traits ?? [] {
+        var kits: [String: AbyssCharacterKit] = [:]
+        for entry in kitsFile?.kits ?? [] {
             guard charactersByID[entry.characterId] != nil else {
-                diagnostics.unknownTraitCharacterIDs.insert(entry.characterId)
+                diagnostics.unknownKitCharacterIDs.insert(entry.characterId)
                 continue
             }
-            guard traits[entry.characterId] == nil else {
-                diagnostics.unknownTraitCharacterIDs.insert("\(entry.characterId): listed twice")
+            guard kits[entry.characterId] == nil else {
+                diagnostics.unknownKitCharacterIDs.insert("\(entry.characterId): listed twice")
                 continue
             }
-            traits[entry.characterId] = entry
+            kits[entry.characterId] = entry
         }
-        traitsByCharacterID = traits
-        moonsignIDs = Set(traits.values.filter { $0.has(.moonsign) }.map(\.characterId))
-        hexereiIDs = Set(traits.values.filter { $0.has(.hexerei) }.map(\.characterId))
-        stellarJubileeIDs = Set(traits.values.filter { $0.has(.stellarJubilee) }.map(\.characterId))
+        kitsByCharacterID = kits
+        moonsignIDs = Set(kits.values.filter { $0.has(.moonsign) }.map(\.characterId))
+        hexereiIDs = Set(kits.values.filter { $0.has(.hexerei) }.map(\.characterId))
+        stellarJubileeIDs = Set(kits.values.filter { $0.has(.stellarJubilee) }.map(\.characterId))
 
         var reactionBonuses: [String: [AbyssReaction: Double]] = [:]
-        for entry in traits.values {
+        for entry in kits.values {
             for bonus in entry.reactionBaseDamageBonus ?? [] {
                 for name in bonus.reactions {
                     guard let reaction = AbyssReaction(rawValue: name) else {
-                        diagnostics.unknownTraitCharacterIDs.insert(
+                        diagnostics.unknownKitCharacterIDs.insert(
                             "\(entry.characterId): \"\(name)\" is no reaction")
                         continue
                     }
@@ -184,13 +189,14 @@ struct AbyssDataLibrary: Sendable {
         sustain.reserveCapacity(characters.count)
         // Per character, the labels their data uses for a charged attack that
         // the generic vocabulary cannot see.
-        let chargedLabels = traits.mapValues { $0.chargedAttackLabels?.labels ?? [] }
+        let chargedLabels = kits.mapValues { $0.chargedAttackLabels?.labels ?? [] }
 
         for character in characters {
             let charged = chargedLabels[character.id] ?? []
             let structured = talentParams?.characters[character.id]
+            let kit = kits[character.id]
             let base = Self.buildProfile(for: character, levels: .base, structured: structured,
-                                         chargedLabels: charged, diagnostics: &diagnostics)
+                                         chargedLabels: charged, kit: kit, diagnostics: &diagnostics)
             profiles[character.id] = base
             sustain[character.id] = AbyssTeamContext.capabilities(of: character)
 
@@ -212,7 +218,7 @@ struct AbyssDataLibrary: Sendable {
                 guard table[levels] == nil else { continue }
                 var throwaway = AbyssParseDiagnostics()
                 table[levels] = Self.buildProfile(for: character, levels: levels, structured: structured,
-                                                  chargedLabels: charged,
+                                                  chargedLabels: charged, kit: kit,
                                                   diagnostics: &throwaway)
             }
             variants[character.id] = table
@@ -222,29 +228,94 @@ struct AbyssDataLibrary: Sendable {
         talentBoostsByCharacterID = boosts
         sustainByCharacterID = sustain
 
-        // The party-buff table names a character and one of their scaling rows
-        // by label. Resolving it here rather than at scoring time means the
-        // label matching happens once, and a row that has been renamed shows up
-        // in `diagnostics` — and fails a test — instead of quietly contributing
-        // nothing.
-        var talentBuffs: [String: [AbyssTalentPartyBuff]] = [:]
-        for (id, entry) in traits {
+        // A kit names rows of the talent tables by label. Resolving them here
+        // rather than at scoring time means the label matching happens once,
+        // and a row that has been renamed shows up in `diagnostics` — and
+        // fails a test — instead of quietly contributing nothing. Everything
+        // is read at the base talent level: a C3/C5 boost moves these by a
+        // few percent, and carrying every variant is not worth the table.
+        var talentBuffs: [String: [AbyssTalentBuff]] = [:]
+        var conversions: [String: [AbyssStatConversion]] = [:]
+        var shreds: [String: [(elements: [String], value: Double, uptime: Double)]] = [:]
+        let baseLevel = Self.talentLevel(AbyssTalentLevels.base.skill)
+        for (id, kit) in kits {
             guard let character = charactersByID[id] else { continue }
-            for buff in entry.partyBuffs ?? [] {
-                let talent = buff.talent == .skill ? character.elementalSkill : character.elementalBurst
-                guard let value = AbyssTextParser.talentPercentage(in: talent, label: buff.label,
-                                                                   index: buff.valueIndex ?? 0) else {
-                    diagnostics.talentPartyBuffUnresolved.insert("\(id): \(buff.label)")
+            let structured = talentParams?.characters[id]
+
+            /// One labelled row, summed over its bases — a buff or a shred is
+            /// one number, and its suffix (" ATK", " DEF") is the game saying
+            /// what it is a share of, not a second term.
+            func rowValue(_ key: AbyssTalentParams.Key?, _ label: String, what: String) -> Double? {
+                guard let key, let structured,
+                      let totals = AbyssTalentReader.row(labelled: label, in: structured.talent(key),
+                                                         level: baseLevel) else {
+                    diagnostics.kitReferencesUnresolved.insert(
+                        "\(id): \(what) \"\(label)\" — no such row in \(key?.rawValue ?? "an unnamed talent")")
+                    return nil
+                }
+                return totals.values.reduce(0, +)
+            }
+
+            for buff in kit.buffs ?? [] {
+                let value: Double?
+                switch (buff.label, buff.value) {
+                case (let label?, nil): value = rowValue(buff.talent, label, what: "buff")
+                case (nil, let literal?): value = literal
+                default:
+                    diagnostics.talentBuffUnresolved.insert("\(id): a buff is a label or a value, not both or neither")
                     continue
                 }
-                let kind: AbyssTalentPartyBuff.Kind = buff.kind == .flatATKFromBaseATK
-                    ? .flatATKFromBaseATK
-                    : .elementalDMG
-                talentBuffs[id, default: []].append(
-                    AbyssTalentPartyBuff(kind: kind, value: value * buff.uptime))
+                guard let value else { diagnostics.talentBuffUnresolved.insert("\(id): \(buff.label ?? "")"); continue }
+                let kind: AbyssTalentBuff.Kind
+                switch (buff.scope, buff.kind) {
+                case (.party, .flatATKFromBaseATK): kind = .flatATKFromBaseATK
+                case (.party, .elementalDMG): kind = .elementalDMG
+                case (.self, .stat):
+                    if buff.stat == "elemental_dmg" {
+                        kind = .ownStat(.elemental(character.element))
+                    } else if let field = buff.stat.flatMap(AbyssStatField.init(tuningKey:)), !field.isPartyScoped {
+                        kind = .ownStat(field)
+                    } else {
+                        diagnostics.talentBuffUnresolved.insert("\(id): \"\(buff.stat ?? "")\" is no stat of the caster's own sheet")
+                        continue
+                    }
+                default:
+                    diagnostics.talentBuffUnresolved.insert(
+                        "\(id): \(buff.kind.rawValue) is not a \(buff.scope.rawValue) buff kind")
+                    continue
+                }
+                talentBuffs[id, default: []].append(AbyssTalentBuff(kind: kind, value: value * buff.uptime))
+            }
+
+            for conversion in kit.conversions ?? [] {
+                guard let structured,
+                      let totals = AbyssTalentReader.row(labelled: conversion.label,
+                                                         in: structured.talent(conversion.talent),
+                                                         level: baseLevel),
+                      totals.count == 1, let (basis, rate) = totals.first, basis == .hp || basis == .def else {
+                    diagnostics.kitReferencesUnresolved.insert(
+                        "\(id): conversion \"\(conversion.label)\" is not one share of HP or DEF in \(conversion.talent.rawValue)")
+                    continue
+                }
+                conversions[id, default: []].append(AbyssStatConversion(from: basis, rate: rate * conversion.uptime))
+            }
+
+            for shred in kit.resistanceShred ?? [] {
+                let value: Double?
+                switch (shred.label, shred.value) {
+                case (let label?, nil): value = rowValue(shred.talent, label, what: "shred")
+                case (nil, let literal?): value = literal
+                default:
+                    diagnostics.kitReferencesUnresolved.insert("\(id): a shred is a label or a value, not both or neither")
+                    continue
+                }
+                guard let value else { continue }
+                shreds[id, default: []].append((shred.elements, value, shred.uptime))
             }
         }
-        talentPartyBuffsByCharacterID = talentBuffs
+        talentBuffsByCharacterID = talentBuffs
+        conversionsByCharacterID = conversions
+        resistanceShredByCharacterID = shreds
 
         self.diagnostics = diagnostics
     }
@@ -277,28 +348,63 @@ struct AbyssDataLibrary: Sendable {
     /// two are read by the same rules — see `AbyssTalentReader`'s header — so
     /// a character can move from one to the other without the meaning of a
     /// profile changing, only its accuracy.
+    ///
+    /// A kit's `hits` replace the reader's inference slot by slot — the kit
+    /// says which rows one cast really deals, the reader still says what each
+    /// row is worth. Kit hits need the structured tables; a kit on a
+    /// prose-only character is reported, not silently ignored.
     static func hits(for character: AbyssCharacter,
                      levels: AbyssTalentLevels,
                      structured: AbyssTalentParams.Character?,
                      chargedLabels: [String],
+                     kit: AbyssCharacterKit? = nil,
                      diagnostics: inout AbyssParseDiagnostics) -> [AbyssDamageProfile.Term] {
         if let structured {
             let skillLevel = Self.talentLevel(levels.skill), burstLevel = Self.talentLevel(levels.burst)
-            var hits = AbyssTalentReader.abilityTerms(structured.elementalSkill, level: skillLevel,
-                                                      category: .skill, characterID: character.id,
-                                                      diagnostics: &diagnostics)
-            hits += AbyssTalentReader.abilityTerms(structured.elementalBurst, level: burstLevel,
-                                                   category: .burst, characterID: character.id,
-                                                   diagnostics: &diagnostics)
             // Normal attacks are read at their base level on both paths: no
             // constellation in the data raises the rows the model uses.
-            hits += AbyssTalentReader.comboTerms(structured.normalAttack, level: Self.talentLevel(AbyssTalentLevels.base.skill))
-            hits += AbyssTalentReader.chargedTerms(structured.normalAttack, level: Self.talentLevel(AbyssTalentLevels.base.skill),
-                                                   extraLabels: chargedLabels)
-            diagnostics.normalAttackRowsUnclassified.formUnion(
-                AbyssTalentReader.unclassifiedRows(structured.normalAttack, level: Self.talentLevel(AbyssTalentLevels.base.skill),
-                                                   characterID: character.id, extraLabels: chargedLabels))
+            let normalLevel = Self.talentLevel(AbyssTalentLevels.base.skill)
+            let level: (AbyssTalentParams.Key) -> Int = { key in
+                switch key {
+                case .normalAttack: return normalLevel
+                case .elementalSkill: return skillLevel
+                case .elementalBurst: return burstLevel
+                }
+            }
+            func fromKit(_ slot: AbyssCharacterKit.HitSlot,
+                         diagnostics: inout AbyssParseDiagnostics) -> [AbyssDamageProfile.Term]? {
+                guard let references = kit?.hits?[slot] else { return nil }
+                return AbyssTalentReader.kitTerms(references, slot: slot, structured: structured, level: level,
+                                                  characterID: character.id, diagnostics: &diagnostics)
+            }
+
+            var hits = fromKit(.skill, diagnostics: &diagnostics)
+                ?? AbyssTalentReader.abilityTerms(structured.elementalSkill, level: skillLevel,
+                                                  category: .skill, characterID: character.id,
+                                                  diagnostics: &diagnostics)
+            hits += fromKit(.burst, diagnostics: &diagnostics)
+                ?? AbyssTalentReader.abilityTerms(structured.elementalBurst, level: burstLevel,
+                                                  category: .burst, characterID: character.id,
+                                                  diagnostics: &diagnostics)
+            hits += fromKit(.combo, diagnostics: &diagnostics)
+                ?? AbyssTalentReader.comboTerms(structured.normalAttack, level: normalLevel)
+            hits += fromKit(.charged, diagnostics: &diagnostics)
+                ?? AbyssTalentReader.chargedTerms(structured.normalAttack, level: normalLevel,
+                                                  extraLabels: chargedLabels)
+            // A kit that says what the attack string is has, by saying so,
+            // classified the rest of the table as not part of it.
+            if kit?.hits?.combo == nil, kit?.hits?.charged == nil {
+                diagnostics.normalAttackRowsUnclassified.formUnion(
+                    AbyssTalentReader.unclassifiedRows(structured.normalAttack, level: normalLevel,
+                                                       characterID: character.id, extraLabels: chargedLabels))
+            }
             return hits
+        }
+        if let hits = kit?.hits {
+            for slot in AbyssCharacterKit.HitSlot.allCases where hits[slot] != nil {
+                diagnostics.kitReferencesUnresolved.insert(
+                    "\(character.id): \(slot.rawValue) hits need talent-params.json, which has no entry for them")
+            }
         }
 
         var hits: [AbyssDamageProfile.Term] = []
@@ -352,24 +458,29 @@ struct AbyssDataLibrary: Sendable {
                                      levels: AbyssTalentLevels,
                                      structured: AbyssTalentParams.Character? = nil,
                                      chargedLabels: [String] = [],
+                                     kit: AbyssCharacterKit? = nil,
                                      diagnostics: inout AbyssParseDiagnostics) -> AbyssDamageProfile {
         let hits = Self.hits(for: character, levels: levels, structured: structured,
-                             chargedLabels: chargedLabels, diagnostics: &diagnostics)
+                             chargedLabels: chargedLabels, kit: kit, diagnostics: &diagnostics)
 
-        // Collapse to one term per (basis, category). Every hit in a pair shares
-        // the same stat and the same bonus, so factoring the multipliers out is
-        // exact — it just turns 10-20 multiplies per character per team into 3-5.
-        // First-appearance order is kept so the sum is reproducible run to run.
-        struct Slot: Hashable { let basis: ScalingBasis; let category: HitCategory }
+        // Collapse to one term per (basis, category, action). Every hit in a
+        // group shares the same stat, the same bonus and the same count per
+        // rotation, so factoring the multipliers out is exact — it just turns
+        // 10-20 multiplies per character per team into 3-5. First-appearance
+        // order is kept so the sum is reproducible run to run.
+        struct Slot: Hashable {
+            let basis: ScalingBasis; let category: HitCategory; let action: AbyssDamageProfile.Action
+        }
         var totals: [Slot: Double] = [:]
         var order: [Slot] = []
         for hit in hits {
-            let key = Slot(basis: hit.basis, category: hit.category)
+            let key = Slot(basis: hit.basis, category: hit.category, action: hit.action)
             if totals[key] == nil { order.append(key) }
             totals[key, default: 0] += hit.multiplier
         }
         let aggregate = order.map {
-            AbyssDamageProfile.Term(multiplier: totals[$0] ?? 0, basis: $0.basis, category: $0.category)
+            AbyssDamageProfile.Term(multiplier: totals[$0] ?? 0, basis: $0.basis, category: $0.category,
+                                    action: $0.action)
         }
 
         return AbyssDamageProfile(

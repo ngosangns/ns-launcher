@@ -53,11 +53,25 @@ struct AbyssTalentParams: Decodable, Sendable {
         }
     }
 
+    /// The three tables a character has, by the key the file uses for them.
+    /// `character-kits.json` names talents with the same spelling.
+    enum Key: String, Decodable, Sendable, CaseIterable {
+        case normalAttack, elementalSkill, elementalBurst
+    }
+
     struct Character: Decodable, Sendable {
         let gameId: Int
         let normalAttack: Talent
         let elementalSkill: Talent
         let elementalBurst: Talent
+
+        func talent(_ key: Key) -> Talent {
+            switch key {
+            case .normalAttack: return normalAttack
+            case .elementalSkill: return elementalSkill
+            case .elementalBurst: return elementalBurst
+            }
+        }
     }
 
     /// Keyed by character slug. The seven Traveler variants are absent — see

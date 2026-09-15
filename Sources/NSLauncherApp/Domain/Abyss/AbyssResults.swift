@@ -47,12 +47,12 @@ struct AbyssParseDiagnostics: Sendable, Equatable {
     var artifactBonusUnmapped: Set<String> = []
     var resistanceNotesUnparsed: Set<String> = []
     var leyLineUnparsed: Set<String> = []
-    /// Entries in `character-traits.json`'s `partyBuffs` whose scaling label no
+    /// Entries in `character-kits.json`'s `buffs` whose scaling label no
     /// longer exists. That table points at rows in the character data by name;
     /// without this, a renamed row would make a buff quietly vanish instead of
     /// failing loudly.
-    var talentPartyBuffUnresolved: Set<String> = []
-    /// Entries in `character-traits.json` that name a character the data does
+    var talentBuffUnresolved: Set<String> = []
+    /// Entries in `character-kits.json` that name a character the data does
     /// not have — or a reaction it does not have, or the same character twice.
     ///
     /// The gap this closes is the whole reason that file exists. The seven
@@ -60,13 +60,17 @@ struct AbyssParseDiagnostics: Sendable, Equatable {
     /// read with no check at all: a mistyped id in `stellarJubileeCharacterIds`
     /// removed the mechanic for everybody and looked exactly like a rotation
     /// where nobody had it.
-    var unknownTraitCharacterIDs: Set<String> = []
+    var unknownKitCharacterIDs: Set<String> = []
+    /// References in `character-kits.json` that named a row, a param or a stat
+    /// the data does not have — a hit, a conversion or a shred that is now
+    /// contributing nothing. Pinned empty by `AbyssCharacterKitTests`.
+    var kitReferencesUnresolved: Set<String> = []
     /// Parts of `damage-formula.json` the loader could not read, so the planner
     /// fell back to the values the port was written with.
     var damageFormulaUnread: Set<String> = []
     /// Rows in a character's normal-attack table that look like damage and were
     /// classified as nothing: not a numbered combo hit, not a charged attack the
-    /// vocabulary or `character-traits.json`'s `chargedAttackLabels`
+    /// vocabulary or `character-kits.json`'s `chargedAttackLabels`
     /// recognises, not a plunge.
     ///
     /// They are dropped, and dropping them is how Ganyu lost every point of
@@ -94,8 +98,9 @@ struct AbyssParseDiagnostics: Sendable, Equatable {
         artifactBonusUnmapped.formUnion(other.artifactBonusUnmapped)
         resistanceNotesUnparsed.formUnion(other.resistanceNotesUnparsed)
         leyLineUnparsed.formUnion(other.leyLineUnparsed)
-        talentPartyBuffUnresolved.formUnion(other.talentPartyBuffUnresolved)
-        unknownTraitCharacterIDs.formUnion(other.unknownTraitCharacterIDs)
+        talentBuffUnresolved.formUnion(other.talentBuffUnresolved)
+        unknownKitCharacterIDs.formUnion(other.unknownKitCharacterIDs)
+        kitReferencesUnresolved.formUnion(other.kitReferencesUnresolved)
         damageFormulaUnread.formUnion(other.damageFormulaUnread)
         floorBuffsNotPriced.formUnion(other.floorBuffsNotPriced)
         normalAttackRowsUnclassified.formUnion(other.normalAttackRowsUnclassified)
@@ -109,12 +114,15 @@ struct AbyssParseDiagnostics: Sendable, Equatable {
 /// Resolved once at load, like `AbyssDamageProfile`, so the label matching that
 /// links `tuning.json` to the character data happens in one place and reports
 /// itself when it fails.
-struct AbyssTalentPartyBuff: Sendable, Equatable {
+struct AbyssTalentBuff: Sendable, Equatable {
     enum Kind: Sendable, Equatable {
         /// Multiply by the caster's Base ATK to get flat ATK for the party.
         case flatATKFromBaseATK
         /// A DMG bonus for the caster's own element, party-wide.
         case elementalDMG
+        /// One slot of the caster's own sheet: Xiao's burst raising his own
+        /// normal-attack damage, Hu Tao's passive raising her own Pyro bonus.
+        case ownStat(AbyssStatField)
     }
 
     let kind: Kind
@@ -122,19 +130,63 @@ struct AbyssTalentPartyBuff: Sendable, Equatable {
     let value: Double
 }
 
+/// A stat a character's kit turns into ATK, resolved from `character-kits.json`
+/// at load. Lands on the sheet as a rate (`AbyssStats.atkFromHPRate`), not a
+/// number, so the search sees the conversion move when the stat moves.
+struct AbyssStatConversion: Sendable, Equatable {
+    let from: ScalingBasis
+    /// Already multiplied by the entry's uptime.
+    let rate: Double
+}
+
 /// A character's damage-relevant multipliers, parsed once at load.
 struct AbyssDamageProfile: Sendable, Equatable {
+    /// How often a hit happens in a rotation — the thing `category` used to
+    /// stand in for. They are the same for every row the reader infers: a
+    /// normal-attack row is part of the combo string, a charged row is one
+    /// charged attack, a skill or burst row is once per cast. A kit can pull
+    /// them apart, because the game does: Raiden's Musou Isshin strikes are
+    /// her attack string (`combo`) and are priced as Elemental Burst DMG
+    /// (`category: .burst`), and Kinich's Loop Shots are his attack string
+    /// and Elemental Skill DMG. The scorer counts by `action` and buffs by
+    /// `category`.
+    enum Action: String, Sendable, Codable, CaseIterable {
+        /// One numbered hit of the attack string, made `normalCombosPerRotation` times.
+        case combo
+        /// One charged attack, made `chargedAttacksPerRotation` times.
+        case charged
+        /// One cast of a skill or burst, made once.
+        case ability
+
+        /// What a row of that category is, absent a kit saying otherwise.
+        init(defaultFor category: HitCategory) {
+            switch category {
+            case .normal: self = .combo
+            case .charged: self = .charged
+            case .skill, .burst: self = .ability
+            }
+        }
+    }
+
     struct Term: Sendable, Equatable, Hashable {
         let multiplier: Double
         let basis: ScalingBasis
         let category: HitCategory
+        let action: Action
+
+        init(multiplier: Double, basis: ScalingBasis, category: HitCategory, action: Action? = nil) {
+            self.multiplier = multiplier
+            self.basis = basis
+            self.category = category
+            self.action = action ?? Action(defaultFor: category)
+        }
     }
 
     /// Every parsed hit, in source order. Compared against the golden fixture.
     let hits: [Term]
-    /// `hits` collapsed to one term per (basis, category) pair. The scorer runs
-    /// over this instead: it is the same number, in 3-5 terms instead of 10-20,
-    /// and the scorer evaluates it a million times per run.
+    /// `hits` collapsed to one term per (basis, category, action) triple. The
+    /// scorer runs over this instead: it is the same number, in 3-5 terms
+    /// instead of 10-20, and the scorer evaluates it a million times per run.
     let aggregate: [Term]
     /// The stat this character mostly scales off, deciding their substat spread.
     let basis: ScalingBasis

@@ -142,25 +142,128 @@ final class AbyssTalentReaderTests: XCTestCase {
                        "without the trait label, the row is reported rather than dropped")
     }
 
+    // MARK: - What a kit names
+
+    private func character(normal: AbyssTalentParams.Talent,
+                           skill: AbyssTalentParams.Talent,
+                           burst: AbyssTalentParams.Talent) -> AbyssTalentParams.Character {
+        AbyssTalentParams.Character(gameId: 0, normalAttack: normal, elementalSkill: skill, elementalBurst: burst)
+    }
+
+    private func reference(talent: AbyssTalentParams.Key? = nil, label: String? = nil, param: Int? = nil,
+                           basis: ScalingBasis? = nil, count: Double? = nil, category: HitCategory? = nil,
+                           factor: AbyssCharacterKit.HitReference.Factor? = nil) -> AbyssCharacterKit.HitReference {
+        .init(talent: talent, label: label, param: param, basis: basis, count: count, category: category, factor: factor)
+    }
+
+    private func kitTerms(_ references: [AbyssCharacterKit.HitReference],
+                          slot: AbyssCharacterKit.HitSlot,
+                          in structured: AbyssTalentParams.Character,
+                          diagnostics: inout AbyssParseDiagnostics) -> [AbyssDamageProfile.Term] {
+        AbyssTalentReader.kitTerms(references, slot: slot, structured: structured, level: { _ in 10 },
+                                   characterID: "x", diagnostics: &diagnostics)
+    }
+
+    /// A label reads the row through the same grammar as everything else —
+    /// `{a}+{b}` adds, a suffix names the basis — times its count, in the
+    /// slot's bucket and at the slot's cadence unless the reference says
+    /// otherwise.
+    func testAKitReferenceReadsARowByLabelTimesItsCount() {
+        let skill = talent(["Press DMG|{param1:P}", "Charge Level 2 DMG|{param2:P}+{param3:P}",
+                            "Tick DMG|{param4:F2P} Max HP"], params: [1.0, 2.0, 3.0, 0.05])
+        let none = talent([], params: [])
+        let structured = character(normal: none, skill: skill, burst: none)
+        var diagnostics = AbyssParseDiagnostics()
+        let terms = kitTerms([reference(label: "Press DMG"), reference(label: "Tick DMG", count: 2)],
+                             slot: .skill, in: structured, diagnostics: &diagnostics)
+        XCTAssertEqual(terms, [.init(multiplier: 1.0, basis: .atk, category: .skill, action: .ability),
+                               .init(multiplier: 0.1, basis: .hp, category: .skill, action: .ability)])
+        XCTAssertEqual(diagnostics.kitReferencesUnresolved, [])
+    }
+
+    /// Raiden's stance: rows of the burst table that are her attack string —
+    /// counted like a combo, priced like a burst.
+    func testASlotAndACategoryCanDiffer() {
+        let burst = talent(["Musou no Hitotachi Base DMG|{param1:P}", "1-Hit DMG|{param2:F1P}"], params: [7.2, 0.8])
+        let none = talent([], params: [])
+        let structured = character(normal: none, skill: none, burst: burst)
+        var diagnostics = AbyssParseDiagnostics()
+        let terms = kitTerms([reference(talent: .elementalBurst, label: "1-Hit DMG", category: .burst)],
+                             slot: .combo, in: structured, diagnostics: &diagnostics)
+        XCTAssertEqual(terms, [.init(multiplier: 0.8, basis: .atk, category: .burst, action: .combo)])
+    }
+
+    /// A bare param is for rows the grammar refuses on purpose — a per-stack
+    /// rate — and needs the kit to say how many. It must be printed as a
+    /// percentage somewhere, or it is a count or a duration and no multiplier.
+    func testABareParamNeedsToBeAPercentage() {
+        let burst = talent(["Resolve Bonus|{param1:F2P} Initial/{param2:F2P} Per Stack", "Duration|{param3:F1}s"],
+                           params: [0.07, 0.013, 7])
+        let none = talent([], params: [])
+        let structured = character(normal: none, skill: none, burst: burst)
+        var diagnostics = AbyssParseDiagnostics()
+        let terms = kitTerms([reference(param: 1, count: 60), reference(param: 3, count: 2)],
+                             slot: .burst, in: structured, diagnostics: &diagnostics)
+        XCTAssertEqual(terms.map(\.multiplier), [4.2])
+        XCTAssertEqual(diagnostics.kitReferencesUnresolved.count, 1, "the duration was read as a multiplier")
+    }
+
+    /// A share of another hit: Yoimiya's Blazing Arrow is `{p} Normal Attack
+    /// DMG`, so the combo rows are read times that param of the skill.
+    func testAFactorMultipliesByAnotherTalentsParam() {
+        let normal = talent(["1-Hit DMG|{param1:F1P}"], params: [0.5])
+        let skill = talent(["Blazing Arrow DMG|{param4:F1P} Normal Attack DMG"], params: [10, 18, 3, 1.6])
+        let none = talent([], params: [])
+        let structured = character(normal: normal, skill: skill, burst: none)
+        var diagnostics = AbyssParseDiagnostics()
+        let terms = kitTerms([reference(label: "1-Hit DMG", factor: .init(talent: .elementalSkill, param: 4))],
+                             slot: .combo, in: structured, diagnostics: &diagnostics)
+        XCTAssertEqual(terms.count, 1)
+        XCTAssertEqual(terms.first?.multiplier ?? 0, 0.8, accuracy: 1e-12)
+        XCTAssertEqual(terms.first?.action, .combo)
+    }
+
+    /// A reference that resolves to nothing is reported, not skipped: a kit
+    /// that names a row is claiming that row is the character's damage.
+    func testAnUnresolvedReferenceIsReported() {
+        let skill = talent(["Skill DMG|{param1:P}"], params: [1.0])
+        let none = talent([], params: [])
+        let structured = character(normal: none, skill: skill, burst: none)
+        var diagnostics = AbyssParseDiagnostics()
+        let terms = kitTerms([reference(label: "Skill DMG"), reference(label: "Renamed Row DMG"),
+                              reference(label: "Skill DMG", param: 1)],
+                             slot: .skill, in: structured, diagnostics: &diagnostics)
+        XCTAssertEqual(terms.count, 1)
+        XCTAssertEqual(diagnostics.kitReferencesUnresolved.count, 2)
+    }
+
+    /// An empty list is a claim too: nothing in this slot.
+    func testAnEmptySlotMeansNoHits() throws {
+        let params = try XCTUnwrap(library.talentParams?.characters["xilonen"])
+        var diagnostics = AbyssParseDiagnostics()
+        let terms = kitTerms([], slot: .charged, in: params, diagnostics: &diagnostics)
+        XCTAssertEqual(terms, [])
+        let xilonen = try XCTUnwrap(library.profilesByCharacterID["xilonen"])
+        XCTAssertFalse(xilonen.hits.contains { $0.category == .charged },
+                       "Blade Roller cannot charge; the kit says so and the profile should agree")
+    }
+
     // MARK: - Against the data
 
     /// The DMG lines in the real data the reader deliberately does not count
-    /// as hits, named exactly. Each is one of three things the grammar knows
-    /// and refuses: a share of *another* hit ("{p} Normal Attack DMG" —
-    /// Razor's wolf, Wanderer's Kuugo, Wriothesley's fist, Yoimiya's arrows,
-    /// which the model prices through the hit they copy), a per-stack rate
-    /// ("per Verdant Dew"), or another character's stat ("Corresponding
-    /// Character's ATK"). A new entry here is a shape the grammar has not
-    /// seen; one vanishing means the data changed under it. Either way, look.
+    /// as hits, named exactly. The grammar refuses three shapes: a share of
+    /// *another* hit ("{p} Normal Attack DMG"), a per-stack rate ("per
+    /// Verdant Dew"), and another character's stat ("Corresponding
+    /// Character's ATK"). The first two kinds now have kits that say what the
+    /// share multiplies (Razor, Wanderer, Wriothesley, Yoimiya) or that the
+    /// rate is a Phase 4 reaction (Lauma), and a kit that overrides a slot
+    /// takes the talent out of this reader's hands — so what is left is
+    /// Nicole's, which scales on somebody else's ATK and has no home yet. A
+    /// new entry here is a shape the grammar has not seen; one vanishing means
+    /// the data changed under it. Either way, look.
     func testTheDamageLinesNotReadAsHitsAreKnownOnes() {
         let known: Set<String> = [
-            "lauma: 2-Hit Hold DMG|{param3:F1P} Elemental Mastery Per Verdant Dew",
             "nicole: Arcane Projection DMG|{param2:F1P} Corresponding Character's ATK",
-            "razor: Soul Companion DMG|{param2:F1P} Normal Attack DMG",
-            "wanderer: Kuugo: Fushoudan DMG|{param2:F1P} Normal Attack DMG",
-            "wanderer: Kuugo: Toufukai DMG|{param3:F1P} Charged Attack DMG",
-            "wriothesley: Enhanced Repelling Fist DMG|{param1:F1P} Normal Attack DMG",
-            "yoimiya: Blazing Arrow DMG|{param4:F1P} Normal Attack DMG",
         ]
         XCTAssertEqual(library.diagnostics.talentParamsUnread, known,
                        "new: \(library.diagnostics.talentParamsUnread.subtracting(known).sorted()) "

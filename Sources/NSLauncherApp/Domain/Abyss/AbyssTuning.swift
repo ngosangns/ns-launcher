@@ -94,7 +94,7 @@ struct AbyssTuning: Decodable, Sendable {
         /// is built, and in practice an Anemo support wears Viridescent Venerer.
         /// That makes them assumptions rather than facts, which is why they stay
         /// in this file while Faruzan's and Shenhe's live in
-        /// `character-traits.json`.
+        /// `character-kits.json`.
         let requiresElement: GenshinElement?
         /// `GenshinElement` raw values, or `AbyssResistanceShredScope.swirled`.
         let elements: [String]
@@ -105,7 +105,7 @@ struct AbyssTuning: Decodable, Sendable {
 
     /// Resistance reduction the model credits to an artifact set the planner
     /// assumes somebody is wearing. The character-borne sources are in
-    /// `character-traits.json`.
+    /// `character-kits.json`.
     let resistanceShred: [ResistanceShred]
     /// Where on the Stellar-Conduct coefficient ramp to sit, 0 for its minimum
     /// and 1 for its maximum. An assumption: the real coefficient climbs with

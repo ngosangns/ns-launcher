@@ -56,7 +56,27 @@ struct AbyssStats: Sendable, Equatable, Codable {
     /// lifts Anemo must not lift the Pyro member's damage too.
     var partyElementalDMG: SIMD8<Double> = .zero
 
-    var atk: Double { baseATK * (1 + atkPercent) + flatATK }
+    /// Stats the character's kit or weapon turns into ATK, as rates: Hu Tao's
+    /// Paramita Papilio and Staff of Homa hand over a share of Max HP, Noelle's
+    /// Sweeping Time a share of DEF, Engulfing Lightning a share of the Energy
+    /// Recharge above 100%. Kept as rates rather than folded into `flatATK` at
+    /// assembly so that a substat or main stat that raises HP raises ATK too —
+    /// which is what makes HP% worth searching for on Hu Tao.
+    var atkFromHPRate: Double = 0
+    var atkFromDEFRate: Double = 0
+    var atkPercentPerExcessER: Double = 0
+
+    /// Branches rather than multiplies by zero: this is read per hit in the
+    /// scorer's innermost loop, and almost every sheet converts nothing.
+    var atk: Double {
+        var atk = baseATK * (1 + atkPercent) + flatATK
+        if atkFromHPRate != 0 { atk += hp * atkFromHPRate }
+        if atkFromDEFRate != 0 { atk += def * atkFromDEFRate }
+        if atkPercentPerExcessER != 0, energyRecharge > 1 {
+            atk += baseATK * atkPercentPerExcessER * (energyRecharge - 1)
+        }
+        return atk
+    }
     var hp: Double { baseHP * (1 + hpPercent) + flatHP }
     var def: Double { baseDEF * (1 + defPercent) + flatDEF }
 

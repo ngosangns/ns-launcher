@@ -19,6 +19,7 @@ struct AbyssGoldenFixture: Decodable {
         let multiplier: Double
         let basis: String
         let category: String
+        let action: String
     }
 
     struct Stats: Decodable {

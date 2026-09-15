@@ -15,17 +15,86 @@ final class AbyssBuildAssemblerTests: XCTestCase {
         let tuning = try XCTUnwrap(library.tuning)
         return AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs,
                                    artifactSets: library.artifactSets,
-                                   talentPartyBuffs: library.talentPartyBuffsByCharacterID)
+                                   talentBuffs: library.talentBuffsByCharacterID,
+                                   conversions: library.conversionsByCharacterID)
     }
 
-    private func sheet(_ characterID: String, weapon weaponID: String?) throws -> AbyssStats {
+    private func sheet(_ characterID: String, weapon weaponID: String?, refinement: Int = 1) throws -> AbyssStats {
         let assembler = try makeAssembler()
         let character = try XCTUnwrap(library.charactersByID[characterID])
         let profile = try XCTUnwrap(library.profilesByCharacterID[characterID])
         return assembler.statsWithoutSets(
             character: character, profile: profile,
             weapon: weaponID.flatMap { library.weaponsByID[$0] },
-            role: .mainDPS, mainStats: .damage(for: character))
+            role: .mainDPS, refinement: refinement, mainStats: .damage(for: character))
+    }
+
+    // MARK: - Stat conversions
+
+    /// Hu Tao's Paramita Papilio turns Max HP into ATK. It reaches the sheet as
+    /// a *rate*, so anything that raises her HP afterwards — a substat, a
+    /// sands, a Homa refinement — raises her ATK through it, which is the only
+    /// way a search can learn that HP% is a damage stat on her.
+    func testAKitConversionMakesHPWorthATK() throws {
+        let rate = try XCTUnwrap(library.conversionsByCharacterID["hu-tao"]?.first)
+        XCTAssertEqual(rate.from, .hp)
+        let sheet = try sheet("hu-tao", weapon: nil)
+        XCTAssertEqual(sheet.atkFromHPRate, rate.rate, accuracy: 1e-12)
+
+        var moreHP = sheet
+        moreHP.hpPercent += 0.4
+        XCTAssertEqual(moreHP.atk - sheet.atk, sheet.baseHP * 0.4 * rate.rate, accuracy: 1e-6,
+                       "40% more HP should be worth exactly its share as ATK")
+
+        // Nobody else's HP became ATK.
+        let yelan = try self.sheet("yelan", weapon: nil)
+        XCTAssertEqual(yelan.atkFromHPRate, 0)
+    }
+
+    /// Noelle's is DEF, and the file cannot say otherwise: the stat converted
+    /// from is the suffix the game wrote on the row.
+    func testNoelleConvertsDEFNotHP() throws {
+        let sheet = try sheet("noelle", weapon: nil)
+        XCTAssertGreaterThan(sheet.atkFromDEFRate, 0)
+        XCTAssertEqual(sheet.atkFromHPRate, 0)
+    }
+
+    /// Staff of Homa's second line is the same kind of thing and used to be
+    /// dropped: it says neither "buff" nor "bonus", so the stat-buff rule
+    /// never matched it, and a Homa refinement was worth exactly its HP%.
+    func testHomaConvertsHPToATKAndRefinementRaisesIt() throws {
+        let r1 = try sheet("hu-tao", weapon: "staff-of-homa", refinement: 1)
+        let r5 = try sheet("hu-tao", weapon: "staff-of-homa", refinement: 5)
+        let kit = try XCTUnwrap(library.conversionsByCharacterID["hu-tao"]?.first?.rate)
+        XCTAssertGreaterThan(r1.atkFromHPRate, kit, "Homa added nothing on top of the kit's own conversion")
+        XCTAssertGreaterThan(r5.atkFromHPRate, r1.atkFromHPRate)
+        XCTAssertGreaterThan(r5.atk, r1.atk)
+    }
+
+    /// Engulfing Lightning's is the Energy Recharge above 100%, as ATK%.
+    func testEngulfingLightningPaysForEnergyRechargeAboveBaseline() throws {
+        let sheet = try sheet("raiden-shogun", weapon: "engulfing-lightning")
+        XCTAssertGreaterThan(sheet.atkPercentPerExcessER, 0)
+        var moreER = sheet
+        moreER.energyRecharge += 0.5
+        XCTAssertEqual(moreER.atk - sheet.atk, sheet.baseATK * 0.5 * sheet.atkPercentPerExcessER, accuracy: 1e-6)
+        var atBaseline = sheet
+        atBaseline.energyRecharge = 1
+        var below = sheet
+        below.energyRecharge = 0.8
+        XCTAssertEqual(atBaseline.atk, below.atk, accuracy: 1e-9, "below 100% there is nothing to convert")
+    }
+
+    // MARK: - Own buffs
+
+    /// Xiao's burst raises his *own* normal-attack damage and nobody else's;
+    /// it must land on his sheet and stay out of the party channels.
+    func testAnOwnStatBuffStaysOnTheCastersSheet() throws {
+        let sheet = try sheet("xiao", weapon: nil)
+        XCTAssertGreaterThan(sheet.dmgNormal, 0.9, "Bane of All Evil's bonus did not reach Xiao's own sheet")
+        XCTAssertEqual(sheet.partyDMG, 0, accuracy: 1e-9)
+        XCTAssertEqual(sheet.partyATKPercent, 0, accuracy: 1e-9)
+        XCTAssertEqual(sheet.partyFlatATK, 0, accuracy: 1e-9)
     }
 
     // MARK: - Weapon passives
@@ -77,18 +146,18 @@ final class AbyssBuildAssemblerTests: XCTestCase {
 
     // MARK: - Talent party buffs
 
-    /// `character-traits.json`'s `partyBuffs` point at rows in the character
-    /// data by exact label. A rename would make a buff vanish silently, so every
-    /// entry has to resolve at load.
-    func testEveryTalentPartyBuffEntryResolvesAgainstTheCharacterData() throws {
-        let entries = library.traitsByCharacterID.values.filter { !($0.partyBuffs ?? []).isEmpty }
+    /// `character-kits.json`'s `buffs` point at rows in the talent tables by
+    /// exact label. A rename would make a buff vanish silently, so every entry
+    /// has to resolve at load.
+    func testEveryTalentBuffEntryResolvesAgainstTheTalentTables() throws {
+        let entries = library.kitsByCharacterID.values.filter { !($0.buffs ?? []).isEmpty }
         XCTAssertFalse(entries.isEmpty, "the table is empty; nothing is being modelled")
-        XCTAssertEqual(library.diagnostics.talentPartyBuffUnresolved, [],
+        XCTAssertEqual(library.diagnostics.talentBuffUnresolved, [],
                        "a partyBuffs entry no longer matches the character data")
 
         for entry in entries {
-            let resolved = library.talentPartyBuffsByCharacterID[entry.characterId] ?? []
-            XCTAssertEqual(resolved.count, entry.partyBuffs?.count,
+            let resolved = library.talentBuffsByCharacterID[entry.characterId] ?? []
+            XCTAssertEqual(resolved.count, entry.buffs?.count,
                            "\(entry.characterId): not every buff resolved")
             for buff in resolved {
                 XCTAssertGreaterThan(buff.value, 0, "\(entry.characterId): buff resolved to zero")
@@ -100,10 +169,10 @@ final class AbyssBuildAssemblerTests: XCTestCase {
     /// party as flat ATK. It is the single largest buff in the game and the
     /// model credited him with none of it.
     func testBennettGrantsFlatATKScaledByHisOwnBaseATK() throws {
-        let entry = try XCTUnwrap(library.traitsByCharacterID["bennett"]?.partyBuffs?.first)
-        let bennett = try XCTUnwrap(library.charactersByID["bennett"])
-        let ratio = try XCTUnwrap(AbyssTextParser.talentPercentage(
-            in: bennett.elementalBurst, label: entry.label, index: entry.valueIndex ?? 0))
+        let entry = try XCTUnwrap(library.kitsByCharacterID["bennett"]?.buffs?.first)
+        let table = try XCTUnwrap(library.talentParams?.characters["bennett"]?.elementalBurst)
+        let ratio = try XCTUnwrap(AbyssTalentReader.row(labelled: try XCTUnwrap(entry.label), in: table, level: 10))
+            .values.reduce(0, +)
 
         let bare = try sheet("bennett", weapon: nil)
         XCTAssertEqual(bare.partyFlatATK, ratio * entry.uptime * bare.baseATK, accuracy: 1e-9)

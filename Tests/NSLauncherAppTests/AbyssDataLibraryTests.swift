@@ -56,7 +56,7 @@ final class AbyssDataLibraryTests: XCTestCase {
     }
 
     /// The three rosters now come from one file that validates itself; this is
-    /// the belt to `AbyssCharacterTraitsTests`' braces, checking the tables the
+    /// the belt to `AbyssCharacterKitTests`' braces, checking the tables the
     /// engine actually holds rather than the file they were read from.
     func testEveryTaggedCharacterResolves() {
         for id in library.moonsignIDs.union(library.hexereiIDs).union(library.stellarJubileeIDs) {

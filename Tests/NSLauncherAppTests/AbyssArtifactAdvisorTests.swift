@@ -89,7 +89,7 @@ final class AbyssArtifactAdvisorTests: XCTestCase {
         let tuning = try XCTUnwrap(library.tuning)
         let assembler = AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs,
                                             artifactSets: library.artifactSets,
-                                            talentPartyBuffs: library.talentPartyBuffsByCharacterID)
+                                            talentBuffs: library.talentBuffsByCharacterID)
 
         for memberID in team.memberIDs {
             let option = try XCTUnwrap(team.assignment[memberID])

@@ -79,10 +79,19 @@ final class AbyssMainStatSearchTests: XCTestCase {
 
     /// A search, not a new rule: different characters come back with different
     /// answers in every slot.
+    ///
+    /// On a fixed roster that scales on three different stats, rather than
+    /// the default pool: what the top five teams of a given cycle's floor 12
+    /// happen to be is not this test's subject, and on the 2026-09 cycle they
+    /// are five ATK-scaling teams whose sands are, correctly, all the same.
     func testDifferentCharactersGetDifferentMainStats() async throws {
         let optimizer = try makeOptimizer()
-        let output = await optimizer.run(AbyssOptimizerRequest(floors: [12], topN: 5, poolSize: 40,
-                                                               refinesArtifacts: false,
+        let roster = AbyssRoster(
+            characters: ["hu-tao", "nahida", "neuvillette", "bennett", "xingqiu", "kuki-shinobu", "diona", "furina"]
+                .map { .init(id: $0) },
+            weapons: [])
+        let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 5,
+                                                               poolSize: 40, refinesArtifacts: false,
                                                                splitsHalves: false))
         let plans = try XCTUnwrap(output.reports.first?.wholeFloorTeams).flatMap { team in
             team.memberIDs.compactMap { team.assignment[$0]?.mainStats }

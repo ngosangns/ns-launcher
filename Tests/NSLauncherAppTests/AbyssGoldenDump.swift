@@ -48,7 +48,7 @@ final class AbyssGoldenDumpTests: XCTestCase {
                 "role": best.role.rawValue,
                 "profile": profile.hits.map {
                     ["multiplier": $0.multiplier, "basis": $0.basis.rawValue,
-                     "category": $0.category.rawValue]
+                     "category": $0.category.rawValue, "action": $0.action.rawValue]
                 },
                 "topGear": [
                     "weaponId": best.weaponID as Any,

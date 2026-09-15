@@ -45,9 +45,9 @@
       },
       "total": 246
     },
-    "character-traits.json": {
-      "count": 37,
-      "note": "Gộp 2026-09-12 từ 7 bảng nằm rải ở tuning.json, team-bonus.json và damage-formula.json. Tags: moonsign 10, hexerei 12, stellar-jubilee 3. chargedAttackLabels 8, partyBuffs 3, resistanceShred 2, reactionBaseDamageBonus 10."
+    "character-kits.json": {
+      "count": 54,
+      "note": "Tên cũ character-traits.json: gộp 2026-09-12 từ 7 bảng nằm rải ở tuning.json, team-bonus.json và damage-formula.json; đổi tên và mở rộng thành kit 2026-09-15 (Pha 2 docs/redesign.md). Tags: moonsign 10, hexerei 12, stellar-jubilee 3. chargedAttackLabels 8, hits 21 (Bennett, Beidou, Cyno, Freminet, Hu Tao, Iansan, Kinich, Lauma, Lisa, Lyney, Mavuika, Raiden, Razor, Tartaglia, Varesa, Varka, Wanderer, Wriothesley, Xiao, Xilonen, Yoimiya), conversions 2 (Hu Tao HP→ATK, Noelle DEF→ATK), buffs 4 (Bennett, Kujou Sara, Faruzan cho đội; Xiao cho mình), resistanceShred 2, reactionBaseDamageBonus 10. Mọi số là tham chiếu vào talent-params.json. Chưa có kit (cố ý, cần Pha 3–4): Furina (số lần đánh của Salon Members), Columbina/Sandrone (biến thể theo phản ứng Lunar/Stellar), Charlotte/Neuvillette (đòn arkhe theo chu kỳ), Navia (shrapnel không có trong bảng)."
     },
     "talent-params.json": {
       "count": 118,

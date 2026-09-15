@@ -242,11 +242,12 @@ worth remembering, because it is the one that went wrong:
 |---|---|---|
 | `characters/`, `weapons/`, `artifact-sets.json`, `abyss-monsters/` | Transcribed game data | Someone could read it off the wiki |
 | `damage-formula.json`, `team-bonus.json` | Game **rules** | Changes with a game version |
-| `character-traits.json` | Everything true of **one named character** | The sentence names a character |
+| `character-kits.json` | Everything true of **one named character** that no game file states: how the kit is played | The sentence names a character |
 | `tuning.json` | The planner's **assumptions** about every character | Changes because we changed our minds |
 
-`character-traits.json` was added on 2026-09-12 and is the reason this table
-exists. Forty-eight facts about individual characters had accumulated across the
+`character-kits.json` (as `character-traits.json`, until Phase 2 of
+`docs/redesign.md` renamed and widened it on 2026-09-15) was added on
+2026-09-12 and is the reason this table exists. Forty-eight facts about individual characters had accumulated across the
 other three files in seven shapes — `tuning.json` held four tables,
 `team-bonus.json` two flat id lists, `damage-formula.json` one more — so each new
 character meant editing three files in three different ways. The split had been
@@ -491,13 +492,26 @@ and which are sequential (a claymore's spin and finisher).
 Two classes of buff reach the model through hand-written interpretation rather
 than a parser rule, because the prose does not distinguish them. `setEffectApprox`
 in `tuning.json` credits an effective %DMG to the 4-piece set effects that are
-too conditional to read mechanically. `talentPartyBuff` names the talent rows
-that buff the *whole party* — Bennett's ATK share, Kujou Sara's, Faruzan's Anemo
-bonus — which the damage filter drops because they are not damage instances. In
-both cases the numbers still come from the data (the party-buff table reads the
-value out of the character's own scaling row by label) and only the reading is
-written down; a label that drifts is reported in `AbyssParseDiagnostics` and
-fails a test rather than quietly contributing nothing.
+too conditional to read mechanically. `character-kits.json`'s `buffs` name the
+talent rows that buff the party — Bennett's ATK share, Kujou Sara's, Faruzan's
+Anemo bonus — or the caster alone (Xiao's burst), which the damage filter drops
+because they are not damage instances. In both cases the numbers still come
+from the data (a buff reads its value out of `talent-params.json` by label) and
+only the reading is written down; a label that drifts is reported in
+`AbyssParseDiagnostics` and fails a test rather than quietly contributing
+nothing.
+
+The same file carries the two other things a talent table cannot say. `hits`
+lists, per slot, which rows one cast actually deals — Bennett's press is one
+row of a table that holds four, Raiden's Musou Isshin strikes are her attack
+string and are priced as burst damage, Xilonen cannot charge in Blade Roller —
+and a slot a kit names replaces the reader's inference for that slot outright.
+`conversions` name the row that turns HP or DEF into ATK (Hu Tao, Noelle); the
+rate lands on `AbyssStats` as a rate, not a number, so the substat search sees
+for itself that HP% is a damage stat on Hu Tao. Every reference is checked at
+load (`diagnostics.kitReferencesUnresolved`, pinned empty by
+`AbyssCharacterKitTests`); a character without an entry reads by the general
+rules, so the file can grow one character at a time.
 
 The golden fixture runs with `refinesArtifacts: false`. Do not "fix" that flag
 to make the fixture cover more: this pass re-picks gear per floor and per team,

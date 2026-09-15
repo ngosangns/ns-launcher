@@ -57,7 +57,7 @@ final class AbyssStatVocabularyTests: XCTestCase {
     func testMainStatValuesAndMainStatsCoverEachOther() throws {
         let tuning = try tuning()
         let assembler = AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs,
-                                            talentPartyBuffs: library.talentPartyBuffsByCharacterID)
+                                            talentBuffs: library.talentBuffsByCharacterID)
 
         var asked = Set(AbyssMainStatPlan.fixedSlots.map(\.tuningKey))
         for key in asked {

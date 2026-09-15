@@ -287,7 +287,7 @@ struct AbyssTeamBonus: Decodable, Sendable {
     }
 
     /// The rules, not the roster. Which characters count towards Moonsign and
-    /// Hexerei is in `character-traits.json` — a roster changes with every
+    /// Hexerei is in `character-kits.json` — a roster changes with every
     /// banner and a rule changes with a game version, so they are edited at
     /// different times by different evidence.
     struct Moonsign: Decodable, Sendable {
@@ -407,7 +407,7 @@ struct AbyssDamageFormula: Decodable, Sendable {
     /// curve, and coefficients that depend on whether the reaction is dealt
     /// directly or aggregated across everyone who applied an element. The
     /// base-damage bonus a handful of characters bring is in
-    /// `character-traits.json`, with the reactions each one raises written out.
+    /// `character-kits.json`, with the reactions each one raises written out.
     struct LunarStellar: Decodable, Sendable {
         struct Branch: Decodable, Sendable {
             let coefficients: [String: Double]

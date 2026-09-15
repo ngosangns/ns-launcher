@@ -134,7 +134,7 @@ struct AbyssTeamContext: Sendable {
 
         // Two lists, because there are two kinds of claim. `tuning.json` holds
         // the artifact sets, gated on an element the team has, which is an
-        // assumption about who wears what; `character-traits.json` holds the
+        // assumption about who wears what; `character-kits.json` holds the
         // talents, gated on the character being present, which is a fact.
         func credit(_ names: [String], _ value: Double, _ uptime: Double) {
             let scaled = value * uptime
@@ -153,7 +153,7 @@ struct AbyssTeamContext: Sendable {
             credit(source.elements, source.value, source.uptime)
         }
         for id in ids {
-            for source in library.traitsByCharacterID[id]?.resistanceShred ?? [] {
+            for source in library.resistanceShredByCharacterID[id] ?? [] {
                 credit(source.elements, source.value, source.uptime)
             }
         }

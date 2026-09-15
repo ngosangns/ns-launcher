@@ -26,7 +26,7 @@ final class AbyssTalentSourceComparisonTests: XCTestCase {
         var out: [(String, [Slot: Double], [Slot: Double])] = []
         for character in library.characters {
             guard let structured = params.characters[character.id] else { continue }
-            let charged = library.traitsByCharacterID[character.id]?.chargedAttackLabels?.labels ?? []
+            let charged = library.kitsByCharacterID[character.id]?.chargedAttackLabels?.labels ?? []
             var scratch = AbyssParseDiagnostics()
             let prose = AbyssDataLibrary.hits(for: character, levels: .base, structured: nil,
                                               chargedLabels: charged, diagnostics: &scratch)

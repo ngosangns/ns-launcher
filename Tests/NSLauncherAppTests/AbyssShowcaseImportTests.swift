@@ -199,7 +199,7 @@ final class AbyssShowcaseImportTests: XCTestCase {
         let tuning = try XCTUnwrap(library.tuning)
         let assembler = AbyssBuildAssembler(tuning: tuning, moonsignIDs: library.moonsignIDs,
                                             artifactSets: library.artifactSets,
-                                            talentPartyBuffs: library.talentPartyBuffsByCharacterID)
+                                            talentBuffs: library.talentBuffsByCharacterID)
         let character = try XCTUnwrap(library.charactersByID["hu-tao"])
         let noblesse = try XCTUnwrap(library.artifactSetsByID["noblesse-oblige"])
 

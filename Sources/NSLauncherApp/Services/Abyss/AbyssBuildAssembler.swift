@@ -21,10 +21,12 @@ import Foundation
 struct AbyssBuildAssembler: Sendable {
     let tuning: AbyssTuning
     let moonsignIDs: Set<String>
-    /// Party-wide buffs from each character's own talents, already resolved by
-    /// `AbyssDataLibrary`. Empty is a valid state — a caller that only assembles
-    /// gear does not need them.
-    let talentPartyBuffs: [String: [AbyssTalentPartyBuff]]
+    /// Buffs from each character's own talents — party-wide or their own —
+    /// already resolved by `AbyssDataLibrary`. Empty is a valid state — a
+    /// caller that only assembles gear does not need them.
+    let talentBuffs: [String: [AbyssTalentBuff]]
+    /// Stats each character's kit turns into ATK, resolved by the library.
+    let conversions: [String: [AbyssStatConversion]]
 
     /// Where each artifact set's bonuses land, resolved once per set id.
     ///
@@ -54,10 +56,12 @@ struct AbyssBuildAssembler: Sendable {
     }
 
     init(tuning: AbyssTuning, moonsignIDs: Set<String>, artifactSets: [AbyssArtifactSet] = [],
-         talentPartyBuffs: [String: [AbyssTalentPartyBuff]] = [:]) {
+         talentBuffs: [String: [AbyssTalentBuff]] = [:],
+         conversions: [String: [AbyssStatConversion]] = [:]) {
         self.tuning = tuning
         self.moonsignIDs = moonsignIDs
-        self.talentPartyBuffs = talentPartyBuffs
+        self.talentBuffs = talentBuffs
+        self.conversions = conversions
 
         var resolved: [String: ResolvedSet] = [:]
         resolved.reserveCapacity(artifactSets.count)
@@ -121,7 +125,8 @@ struct AbyssBuildAssembler: Sendable {
             stats.add(tuning.mainStat(slot.tuningKey), to: slot)
         }
         applySubstats(role: role, basis: profile.basis, to: &stats)
-        applyTalentPartyBuffs(for: character, to: &stats)
+        applyTalentBuffs(for: character, to: &stats)
+        applyConversions(for: character, to: &stats)
 
         return stats
     }
@@ -147,23 +152,39 @@ struct AbyssBuildAssembler: Sendable {
             refinement: refinement))
     }
 
-    /// Party-wide buffs this character's own talents grant.
+    /// Buffs this character's own talents grant.
     ///
     /// Applied after the weapon, because `flatATKFromBaseATK` is a share of the
     /// caster's Base ATK and Base ATK is character plus weapon — Bennett with a
     /// stronger polearm really does buff the party harder.
     ///
-    /// These land in the `party*` fields, which the scorer hands to all four
-    /// members. Nothing here changes the caster's own sheet directly; that is
-    /// what stops the buff being counted once for the caster and again for the
-    /// party.
-    func applyTalentPartyBuffs(for character: AbyssCharacter, to stats: inout AbyssStats) {
-        for buff in talentPartyBuffs[character.id] ?? [] {
+    /// Party buffs land in the `party*` fields, which the scorer hands to all
+    /// four members, and change nothing on the caster's own sheet directly;
+    /// that is what stops the buff being counted once for the caster and again
+    /// for the party. An `ownStat` buff is the other way round: the caster's
+    /// sheet and nobody else's.
+    func applyTalentBuffs(for character: AbyssCharacter, to stats: inout AbyssStats) {
+        for buff in talentBuffs[character.id] ?? [] {
             switch buff.kind {
             case .flatATKFromBaseATK:
                 stats.partyFlatATK += buff.value * stats.baseATK
             case .elementalDMG:
                 stats.partyElementalDMG[character.element.simdIndex] += buff.value
+            case .ownStat(let field):
+                stats.add(buff.value, to: field)
+            }
+        }
+    }
+
+    /// The stat conversions this character's kit carries, as rates on the
+    /// sheet — see `AbyssStats.atkFromHPRate`. Order does not matter: a rate
+    /// adds, and `atk` multiplies it out from whatever HP the sheet ends with.
+    func applyConversions(for character: AbyssCharacter, to stats: inout AbyssStats) {
+        for conversion in conversions[character.id] ?? [] {
+            switch conversion.from {
+            case .hp: stats.atkFromHPRate += conversion.rate
+            case .def: stats.atkFromDEFRate += conversion.rate
+            case .atk, .em: break
             }
         }
     }
@@ -405,7 +426,7 @@ struct AbyssBuildAssembler: Sendable {
         // Party buffs are never in the measured numbers: the game's character
         // screen shows what the character has, not what they hand the other
         // three.
-        if let character { applyTalentPartyBuffs(for: character, to: &stats) }
+        if let character { applyTalentBuffs(for: character, to: &stats) }
         return stats
     }
 
@@ -439,6 +460,25 @@ struct AbyssBuildAssembler: Sendable {
         pattern: "\\(\\s*%|cooldown|chance|restore|\\bspd\\b|particle|energy|reset|duration",
         options: [.caseInsensitive])
     private static let isStatBuff = try? NSRegularExpression(pattern: "buff|bonus", options: [.caseInsensitive])
+    /// A weapon line that turns one stat into ATK rather than adding a number:
+    /// Staff of Homa and Primordial Jade Cutter ("ATK from HP (% Max HP)"),
+    /// Engulfing Lightning ("ATK from Energy Recharge over 100% (%)"). These
+    /// say neither buff nor bonus, so the stat-buff rule below never saw them
+    /// and every refinement of Homa was worth exactly its HP%. The rate lands
+    /// on the sheet the same way a kit's conversion does. Homa's "Additional …
+    /// below 50% HP" line is the conditional half and gets the conditional
+    /// uptime; its "Total …" line is the sum of the other two and is skipped
+    /// rather than counted a second time.
+    private static let weaponConversionRules: [(pattern: NSRegularExpression?, conditional: Bool,
+                                                apply: @Sendable (inout AbyssStats, Double) -> Void)] = [
+        (try? NSRegularExpression(pattern: "^Total ATK from HP", options: [.caseInsensitive]), false, { _, _ in }),
+        (try? NSRegularExpression(pattern: "^Additional ATK from HP below 50% HP", options: [.caseInsensitive]),
+         true, { $0.atkFromHPRate += $1 }),
+        (try? NSRegularExpression(pattern: "^ATK from HP \\(% Max HP\\)$", options: [.caseInsensitive]),
+         false, { $0.atkFromHPRate += $1 }),
+        (try? NSRegularExpression(pattern: "^ATK from Energy Recharge over 100%", options: [.caseInsensitive]),
+         false, { $0.atkPercentPerExcessER += $1 }),
+    ]
     /// Elemental Mastery, however it is spelled. Named because two places have
     /// to agree on it: the magnitude guard below and the routing rules.
     private static let elementalMasteryEffect = try? NSRegularExpression(
@@ -475,6 +515,12 @@ struct AbyssBuildAssembler: Sendable {
         for effect in passive.effects {
             guard var value = effect.value(refinement: refinement) else { continue }
             let name = effect.stat
+
+            if let rule = Self.weaponConversionRules.first(where: { Self.matches($0.pattern, name) }) {
+                if conditionalOnly, !rule.conditional { continue }
+                rule.apply(&stats, rule.conditional ? value * tuning.conditionalUptime : value)
+                continue
+            }
 
             // Only lines that actually name a stat buff.
             guard Self.matches(Self.isStatBuff, name), !Self.matches(Self.notAStatBuff, name) else { continue }

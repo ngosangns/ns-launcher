@@ -28,7 +28,7 @@ là **bản duy nhất**.
 | `abyss-monsters/<khoảng-ngày>.json` | Quái + Ley Line Disorder + Uyên Nguyệt Chúc Phúc của một chu kỳ |
 | `damage-formula.json` | Hằng số công thức sát thương + ví dụ mẫu để test |
 | `team-bonus.json` | Cộng hưởng nguyên tố, Nguyệt Triệu, Hexerei, Nightsoul Burst — **luật**, không phải danh sách nhân vật |
-| `character-traits.json` | Mọi thứ chỉ đúng với **một** nhân vật: tag cơ chế, nhãn đòn nặng, buff toàn đội theo talent, giảm kháng, base damage phản ứng |
+| `character-kits.json` | Mọi thứ chỉ đúng với **một** nhân vật và không file game nào ghi: một lần dùng chiêu gồm những dòng nào (`hits`), kit đổi HP/DEF ra ATK (`conversions`), talent buff gì cho đội/cho mình (`buffs`), tag cơ chế, nhãn đòn nặng, giảm kháng, base damage phản ứng (xem "Kit nhân vật") |
 | `talent-params.json` | Hệ số talent **đúng như file game**, mọi cấp 1–15, sinh tự động — nguồn thay thế cho bảng `scaling` văn xuôi (xem "Số liệu talent") |
 | `tuning.json` | Tham số thuật toán (xem bên dưới) |
 | `game-ids.json` | Id số trong game → slug ở đây, để nhập Showcase theo UID |
@@ -37,8 +37,8 @@ là **bản duy nhất**.
 
 ## Thêm nhân vật mới thì sửa ở đâu
 
-`character-traits.json` là chỗ duy nhất cần sửa cho phần "nhân vật này đặc biệt
-ở chỗ nào". Trước 2026-09-12 thì không: 48 sự thật kiểu đó nằm rải ở bảy bảng
+`character-kits.json` (tên cũ `character-traits.json`, đến 2026-09-15) là chỗ duy
+nhất cần sửa cho phần "nhân vật này đặc biệt ở chỗ nào". Trước 2026-09-12 thì không: 48 sự thật kiểu đó nằm rải ở bảy bảng
 thuộc ba file khác nhau —
 
 | Nằm ở | Bảng |
@@ -54,11 +54,11 @@ Stellar Jubilee vì gõ sai trông y hệt một đội vốn không có ai Stel
 
 Giờ: một entry mỗi nhân vật, `characterId` luôn là slug trùng `characters/*.json`,
 và `AbyssDataLibrary` ghi mọi id/tên phản ứng không phân giải được vào
-`diagnostics.unknownTraitCharacterIDs` — `AbyssCharacterTraitsTests` ghim nó
+`diagnostics.unknownKitCharacterIDs` — `AbyssCharacterKitTests` ghim nó
 rỗng, nên id sai làm **đỏ test** thay vì làm sai lặng lẽ.
 
 Ranh giới với `tuning.json`: **câu đó có gọi tên một nhân vật không?** Uptime
-burst của Faruzan là sự thật về Faruzan → `character-traits.json`. `rotationSeconds`,
+burst của Faruzan là sự thật về Faruzan → `character-kits.json`. `rotationSeconds`,
 `conditionalUptime`, `setEffectApprox` là giả định của thuật toán áp cho mọi
 người → ở lại `tuning.json`. Hai dòng `resistanceShred` còn lại trong `tuning.json`
 là ví dụ rõ nhất: chúng gate theo *nguyên tố của đội* để đại diện cho "support
@@ -118,9 +118,41 @@ DMG" / "Low HP Skill DMG"), `+` cộng và `×3` nhân ra sao, đều do
 
 `AbyssDataLibrary` ưu tiên file này; nhân vật không có ở đây (7 Nhà Lữ Hành —
 Yatta gộp chung một avatar) vẫn đi đường văn xuôi. Bảng `scaling` trong
-`characters/*.json` vì thế chỉ còn là nguồn dự phòng cho Nhà Lữ Hành và cho
-`character-traits.json.partyBuffs` (đọc số theo nhãn tiếng Việt) — chưa xoá,
-nhưng đừng sửa nó để "chỉnh" damage của ai nữa: sửa ở đây không có tác dụng.
+`characters/*.json` vì thế chỉ còn là nguồn dự phòng cho Nhà Lữ Hành — chưa
+xoá, nhưng đừng sửa nó để "chỉnh" damage của ai nữa: sửa ở đây không có tác
+dụng.
+
+## Kit nhân vật: điều bảng talent không nói được
+
+Bảng talent của game liệt kê **mọi** dòng của một chiêu, không nói một lần
+dùng thật sự gồm dòng nào. Bảng E của Bennett có "Press DMG", "Charge Level 1
+DMG", "Charge Level 2 DMG", "Explosion DMG" — một lần bấm là *một* trong số
+đó; bảng burst của Raiden liệt kê cả chuỗi 5 đòn Musou Isshin thay cho đòn
+thường; "ATK Increase|{p} Max HP" của Hu Tao không phải đòn mà là HP đổi ra
+ATK. Đó là tri thức về cách kit được *chơi*, và `character-kits.json` là chỗ
+duy nhất nó được viết xuống (Pha 2 của `docs/redesign.md`):
+
+- `hits.{skill,burst,combo,charged}` — danh sách tham chiếu `{label | param,
+  count, category, factor}` vào `talent-params.json`. Slot có mặt **thay
+  toàn bộ** suy luận của `AbyssTalentReader` cho slot đó; mảng rỗng = không
+  có gì. Slot quyết định *tần suất* (combo × `normalCombosPerRotation`, ability
+  × 1), `category` quyết định *bucket buff* — hai thứ này trùng nhau ở mọi
+  dòng reader tự suy, và chỉ kit mới tách được (Isshin của Raiden: chuỗi đòn
+  thường, tính là Elemental Burst DMG).
+- `conversions` — dòng talent đổi HP/DEF ra ATK; lên sheet dưới dạng *tỉ lệ*
+  (`AbyssStats.atkFromHPRate`) nên HP% tự thành chỉ số damage của Hu Tao
+  trong tìm kiếm substat. Vũ khí cùng loại (Trượng Hộ Ma "ATK from HP",
+  Engulfing "ATK from Energy Recharge over 100%") đi cùng khung, ở
+  `AbyssBuildAssembler.weaponConversionRules`.
+- `buffs` — `scope: party | self`; số đọc từ `talent-params.json` theo `label`
+  (thiên phú không có bảng thì `value` literal kèm trích dẫn).
+
+Mọi số ở đây là **tham chiếu** vào file game, đọc ở đúng cấp talent của nhân
+vật; mọi lựa chọn chủ quan (chế độ nào, bao nhiêu stack, uptime) nằm trong
+`note` kèm chữ game trích nguyên văn. Tham chiếu không giải được → `diagnostics.kitReferencesUnresolved`,
+`AbyssCharacterKitTests` ghim rỗng. Nhân vật không có entry (hoặc slot không
+ghi đè) đi theo luật chung của reader — app chạy trọn vẹn ở mọi mức phủ.
+Đến 2026-09-15: 21 nhân vật có `hits`, 2 có `conversions`, 4 có `buffs`.
 
 `icons/` cũng sinh tự động, cùng một kiểu:
 
@@ -203,16 +235,19 @@ Ba nhóm số, độ tin cậy **khác hẳn nhau**:
    phần chủ quan nhất: 36/63 bộ có hiệu ứng 4 món quá phức tạp để tách số máy
    móc, nên được gán tay một mức "%DMG hiệu dụng". Sửa bảng này là cách nhanh
    nhất để đổi kết quả theo hiểu biết của bạn.
-4. **`talentPartyBuff` — nửa data, nửa giả định.** Bảng này khai buff CẢ ĐỘI
-   đến từ chiêu nhân vật (Bennett, Kujou Sara, Faruzan). Con số hệ số được
-   **đọc từ data nhân vật** theo `(talent, label)` nên tự cập nhật khi hệ số
-   chiêu đổi; chỉ `kind` (dòng đó nghĩa là gì) và `uptime` là viết tay. Cần
-   bảng này vì nhãn không tự phân biệt được: "ATK Bonus 100.8% Base ATK" (buff
-   phẳng cho cả đội) và "ATK Bonus (%DEF) 103.7%" (tự quy đổi cho bản thân) là
-   cùng ba chữ, và bộ lọc sát thương bỏ cả hai vì cả hai đều không phải một
-   đòn đánh. Nếu `label` trôi, `AbyssParseDiagnostics.talentPartyBuffUnresolved`
-   báo lên và `AbyssBuildAssemblerTests` fail — buff không biến mất im lặng.
-   Khoá `notes.talentPartyBuff` liệt kê những buff **cố ý chưa mô hình hoá**.
+4. **`character-kits.json.buffs` — nửa data, nửa giả định** (trước ở
+   `tuning.json.talentPartyBuff`). Buff đến từ chiêu nhân vật (Bennett, Kujou
+   Sara, Faruzan cho đội; Xiao cho mình). Con số hệ số được **đọc từ
+   `talent-params.json`** theo `(talent, label)` nên tự cập nhật khi hệ số
+   chiêu đổi; chỉ `scope`/`kind` (dòng đó nghĩa là gì) và `uptime` là viết
+   tay. Cần bảng này vì nhãn không tự phân biệt được: "ATK Bonus Ratio" của
+   Bennett (phần ATK cơ bản, cộng phẳng cho cả đội) và "ATK Bonus|{p} DEF"
+   của Noelle (tự quy đổi cho bản thân — một `conversion`) đều không phải một
+   đòn đánh và bộ lọc sát thương bỏ cả hai. Nếu `label` trôi,
+   `AbyssParseDiagnostics.talentBuffUnresolved` báo lên và
+   `AbyssBuildAssemblerTests` fail — buff không biến mất im lặng. Khoá
+   `notes.talentPartyBuff` của `tuning.json` liệt kê những buff **cố ý chưa
+   mô hình hoá**.
 
 Giải thích từng nhóm nằm ở khoá `notes` trong chính `tuning.json` (JSON không
 có comment).

@@ -1,0 +1,1070 @@
+{
+  "_doc": "Mọi thứ engine cần biết về MỘT nhân vật cụ thể mà không file game nào ghi — cách kit được CHƠI — gom về một bản ghi. Tiền thân là character-traits.json (2026-09-12, gộp 7 bảng rải ở tuning/team-bonus/damage-formula). Pha 2 của docs/redesign.md mở rộng nó thành kit: `hits` nói một lần dùng chiêu thật sự gồm những dòng nào của talent-params.json (Bennett nhấn E = một dòng Press DMG, không cộng cả Hold cấp 2; chuỗi đòn của Raiden trong Musou Isshin thay đòn thường; Xiao đánh bằng đòn nhảy), `conversions` nói kit đổi HP/DEF ra ATK (Hu Tao, Noelle), `buffs` nói talent cộng gì cho đội hay cho chính mình. MỌI con số ở đây là THAM CHIẾU vào talent-params.json (nhãn dòng đúng chữ game, hoặc chỉ số param) đọc ở đúng cấp talent của nhân vật — trừ số của thiên phú (passive) không có bảng, phải ghi literal kèm trích dẫn. Tham chiếu không giải được → diagnostics.kitReferencesUnresolved, AbyssCharacterKitTests ghim rỗng. Nhân vật không có entry (hoặc slot không ghi đè) đi theo luật chung của AbyssTalentReader. KHÔNG để giả định của thuật toán ở đây — uptime của một buff cụ thể, số stack Raiden thường có thì có; hằng số chung (rotationSeconds, conditionalUptime, setEffectApprox) vẫn thuộc tuning.json.",
+  "tags": {
+    "moonsign": "Tính vào Nguyệt Triệu (Moonsign). Bậc và hiệu ứng ở team-bonus.json.",
+    "hexerei": "Tính vào Hexerei. Điều kiện và hiệu ứng ở team-bonus.json.",
+    "stellar-jubilee": "Nâng Swirl/Superconduct thành biến thể Stellar. Hệ số ở damage-formula.json.lunarStellar."
+  },
+  "kits": [
+    {
+      "characterId": "aino",
+      "tags": [
+        "moonsign"
+      ]
+    },
+    {
+      "characterId": "columbina",
+      "tags": [
+        "moonsign"
+      ],
+      "reactionBaseDamageBonus": [
+        {
+          "reactions": [
+            "Lunar-Charged",
+            "Lunar-Bloom",
+            "Lunar-Crystallize"
+          ],
+          "value": 0.07
+        }
+      ]
+    },
+    {
+      "characterId": "flins",
+      "tags": [
+        "moonsign"
+      ],
+      "reactionBaseDamageBonus": [
+        {
+          "reactions": [
+            "Lunar-Charged"
+          ],
+          "value": 0.14
+        }
+      ]
+    },
+    {
+      "characterId": "illuga",
+      "tags": [
+        "moonsign"
+      ]
+    },
+    {
+      "characterId": "ineffa",
+      "tags": [
+        "moonsign"
+      ],
+      "reactionBaseDamageBonus": [
+        {
+          "reactions": [
+            "Lunar-Charged"
+          ],
+          "value": 0.14
+        }
+      ]
+    },
+    {
+      "characterId": "jahoda",
+      "tags": [
+        "moonsign"
+      ]
+    },
+    {
+      "characterId": "lauma",
+      "tags": [
+        "moonsign"
+      ],
+      "reactionBaseDamageBonus": [
+        {
+          "reactions": [
+            "Lunar-Bloom"
+          ],
+          "value": 0.14
+        }
+      ],
+      "hits": {
+        "skill": [
+          {
+            "label": "1-Hit Hold DMG"
+          },
+          {
+            "label": "Frostgrove Sanctuary Attack DMG"
+          }
+        ],
+        "note": "Runo: Dawnless Rest of Karsikko, chữ game: Hold 'dealing one regular instance of AoE Dendro DMG and another instance of AoE Dendro DMG that is considered Lunar-Bloom DMG'. Lauma dùng Hold (tiêu Verdant Dew, lấy Moon Song cho burst); Press là lựa chọn thay thế. Đòn thứ hai ('2-Hit Hold DMG… Elemental Mastery Per Verdant Dew') là sát thương Lunar-Bloom theo số Dew — thuộc Pha 4 (phản ứng), chưa đếm. Frostgrove Sanctuary đánh theo chu kỳ, đếm 1 lần; Đếm theo một lần dùng; số lần thật trong một rotation là việc của Pha 3 (docs/redesign.md)."
+      }
+    },
+    {
+      "characterId": "linnea",
+      "tags": [
+        "moonsign"
+      ],
+      "reactionBaseDamageBonus": [
+        {
+          "reactions": [
+            "Lunar-Crystallize"
+          ],
+          "value": 0.14
+        }
+      ]
+    },
+    {
+      "characterId": "nefer",
+      "tags": [
+        "moonsign"
+      ],
+      "reactionBaseDamageBonus": [
+        {
+          "reactions": [
+            "Lunar-Bloom"
+          ],
+          "value": 0.14
+        }
+      ]
+    },
+    {
+      "characterId": "zibai",
+      "tags": [
+        "moonsign"
+      ],
+      "reactionBaseDamageBonus": [
+        {
+          "reactions": [
+            "Lunar-Crystallize"
+          ],
+          "value": 0.14
+        }
+      ]
+    },
+    {
+      "characterId": "albedo",
+      "tags": [
+        "hexerei"
+      ]
+    },
+    {
+      "characterId": "durin",
+      "tags": [
+        "hexerei"
+      ]
+    },
+    {
+      "characterId": "fischl",
+      "tags": [
+        "hexerei"
+      ]
+    },
+    {
+      "characterId": "klee",
+      "tags": [
+        "hexerei"
+      ]
+    },
+    {
+      "characterId": "lohen",
+      "tags": [
+        "hexerei"
+      ]
+    },
+    {
+      "characterId": "mona",
+      "tags": [
+        "hexerei"
+      ]
+    },
+    {
+      "characterId": "nicole",
+      "tags": [
+        "hexerei"
+      ]
+    },
+    {
+      "characterId": "prune",
+      "tags": [
+        "hexerei"
+      ]
+    },
+    {
+      "characterId": "razor",
+      "tags": [
+        "hexerei"
+      ],
+      "hits": {
+        "burst": [
+          {
+            "label": "Burst DMG"
+          }
+        ],
+        "combo": [
+          {
+            "label": "1-Hit DMG"
+          },
+          {
+            "label": "2-Hit DMG"
+          },
+          {
+            "label": "3-Hit DMG"
+          },
+          {
+            "label": "4-Hit DMG"
+          },
+          {
+            "label": "1-Hit DMG",
+            "category": "burst",
+            "factor": {
+              "talent": "elementalBurst",
+              "param": 2
+            }
+          },
+          {
+            "label": "2-Hit DMG",
+            "category": "burst",
+            "factor": {
+              "talent": "elementalBurst",
+              "param": 2
+            }
+          },
+          {
+            "label": "3-Hit DMG",
+            "category": "burst",
+            "factor": {
+              "talent": "elementalBurst",
+              "param": 2
+            }
+          },
+          {
+            "label": "4-Hit DMG",
+            "category": "burst",
+            "factor": {
+              "talent": "elementalBurst",
+              "param": 2
+            }
+          }
+        ],
+        "note": "Lightning Fang, chữ game: 'The Wolf Within: Strikes alongside Razor's normal attacks, dealing Electro DMG' — dòng 'Soul Companion DMG|{param2} Normal Attack DMG' là một đòn PHỤ bằng param2 × đòn thường vừa đánh, tính là Elemental Burst DMG, nên chuỗi đòn thường = 4 đòn + 4 đòn sói (category burst). Đòn nặng bị vô hiệu trong burst ('Disables Razor's Charged Attacks') nhưng vẫn để reader chung đọc: Razor có đứng sân ngoài burst."
+      }
+    },
+    {
+      "characterId": "sucrose",
+      "tags": [
+        "hexerei"
+      ]
+    },
+    {
+      "characterId": "varka",
+      "tags": [
+        "hexerei"
+      ],
+      "hits": {
+        "skill": [
+          {
+            "label": "Skill DMG"
+          }
+        ],
+        "combo": [
+          {
+            "talent": "elementalSkill",
+            "label": "Sturm und Drang 1-Hit DMG",
+            "category": "normal"
+          },
+          {
+            "talent": "elementalSkill",
+            "label": "Sturm und Drang 2-Hit DMG",
+            "category": "normal"
+          },
+          {
+            "talent": "elementalSkill",
+            "label": "Sturm und Drang 3-Hit DMG",
+            "category": "normal"
+          },
+          {
+            "talent": "elementalSkill",
+            "label": "Sturm und Drang 4-Hit DMG",
+            "category": "normal"
+          },
+          {
+            "talent": "elementalSkill",
+            "label": "Sturm und Drang 5-Hit DMG",
+            "category": "normal"
+          }
+        ],
+        "charged": [
+          {
+            "talent": "elementalSkill",
+            "label": "Sturm und Drang Charged Attack DMG",
+            "category": "charged"
+          }
+        ],
+        "note": "Windbound Execution, chữ game: Tap 'dealing AoE Anemo DMG and switching to Sturm und Drang mode. While in Sturm und Drang, Varka's Normal Attack and Charged Attack DMG is increased' — chuỗi đòn thường/nặng lấy dòng Sturm und Drang. Four Winds' Ascension và Azure Devour chỉ có 'if there are Pyro, Hydro, Electro or Cryo characters in the party' — phụ thuộc đội, chưa đếm (reader chung trước đây cộng cả hai vô điều kiện)."
+      }
+    },
+    {
+      "characterId": "venti",
+      "tags": [
+        "hexerei"
+      ]
+    },
+    {
+      "characterId": "odette",
+      "tags": [
+        "stellar-jubilee"
+      ],
+      "reactionBaseDamageBonus": [
+        {
+          "reactions": [
+            "Stellar-Conduct",
+            "Stellar Swirl"
+          ],
+          "value": 0.14
+        }
+      ]
+    },
+    {
+      "characterId": "sandrone",
+      "tags": [
+        "stellar-jubilee"
+      ],
+      "reactionBaseDamageBonus": [
+        {
+          "reactions": [
+            "Stellar-Conduct",
+            "Stellar Swirl"
+          ],
+          "value": 0.14
+        }
+      ]
+    },
+    {
+      "characterId": "traveler-cryo",
+      "tags": [
+        "stellar-jubilee"
+      ],
+      "reactionBaseDamageBonus": [
+        {
+          "reactions": [
+            "Stellar-Conduct",
+            "Stellar Swirl"
+          ],
+          "value": 0.07
+        }
+      ]
+    },
+    {
+      "characterId": "ganyu",
+      "chargedAttackLabels": {
+        "labels": ["Frostflake Arrow"],
+        "note": "Mũi tên sạc đầy của Ganyu và vụ nổ của nó. Cả bộ damage của cô nằm ở đây; không có dòng này thì trọng kích của Ganyu bằng 0. [2026-09-15] Một nhãn thay vì hai: game gọi hai dòng là 'Frostflake Arrow DMG' và 'Frostflake Arrow Bloom DMG', nên 'Frostflake Arrow' khớp cả hai và đòn nặng lấy dòng mạnh hơn (Bloom). 'Frostflake Bloom' là chữ của bản transcription, không có trong file game."
+      }
+    },
+    {
+      "characterId": "tighnari",
+      "chargedAttackLabels": {
+        "labels": [
+          "Wreath Arrow",
+          "Clusterbloom Arrow"
+        ],
+        "note": "Wreath Arrow là mũi sạc đầy, Clusterbloom là các mũi con nó sinh ra."
+      }
+    },
+    {
+      "characterId": "neuvillette",
+      "chargedAttackLabels": {
+        "labels": [
+          "Equitable Judgment"
+        ],
+        "note": "Chùm tia trọng kích scale theo Max HP — nguồn sát thương chính của Neuvillette."
+      }
+    },
+    {
+      "characterId": "yelan",
+      "chargedAttackLabels": {
+        "labels": [
+          "Breakthrough Barb"
+        ],
+        "note": "Trọng kích được cường hoá sau khi tích đủ Breakthrough."
+      }
+    },
+    {
+      "characterId": "arataki-itto",
+      "chargedAttackLabels": {
+        "labels": [
+          "Kesagiri",
+          "Saichimonji Slash"
+        ],
+        "note": "Chuỗi trọng kích của Itto: Kesagiri liên hoàn, Kesagiri đòn cuối và Saichimonji Slash."
+      }
+    },
+    {
+      "characterId": "sigewinne",
+      "chargedAttackLabels": {
+        "labels": [
+          "Mini-Stration Bubble"
+        ],
+        "note": "Bong bóng trọng kích scale theo Max HP."
+      }
+    },
+    {
+      "characterId": "yoimiya",
+      "chargedAttackLabels": {
+        "labels": [
+          "Kindling Arrow"
+        ],
+        "note": "Mũi ngắm bắn của Yoimiya."
+      },
+      "hits": {
+        "skill": [],
+        "combo": [
+          {
+            "label": "1-Hit DMG",
+            "factor": {
+              "talent": "elementalSkill",
+              "param": 4
+            }
+          },
+          {
+            "label": "2-Hit DMG",
+            "factor": {
+              "talent": "elementalSkill",
+              "param": 4
+            }
+          },
+          {
+            "label": "3-Hit DMG",
+            "factor": {
+              "talent": "elementalSkill",
+              "param": 4
+            }
+          },
+          {
+            "label": "4-Hit DMG",
+            "factor": {
+              "talent": "elementalSkill",
+              "param": 4
+            }
+          },
+          {
+            "label": "5-Hit DMG",
+            "factor": {
+              "talent": "elementalSkill",
+              "param": 4
+            }
+          }
+        ],
+        "note": "Niwabi Fire-Dance, chữ game: 'arrows fired by Yoimiya's Normal Attack will be Blazing Arrows, and their DMG will be increased and converted to Pyro DMG' — dòng 'Blazing Arrow DMG|{param4} Normal Attack DMG' là hệ số nhân chuỗi đòn thường trong 10s E; E không có đòn riêng (skill: []). Kindling Arrow (đòn nặng) giữ nguyên nhãn ở chargedAttackLabels."
+      }
+    },
+    {
+      "characterId": "bennett",
+      "hits": {
+        "skill": [
+          {
+            "label": "Press DMG"
+          }
+        ],
+        "note": "Passion Overload, chữ game: Press = 'A single, swift flame strike that deals Pyro DMG'; Hold cấp 1/cấp 2 là 'different effects when unleashed based on the Charge Level' — tức ba dòng Press/Charge Level 1/Charge Level 2 là ba LỰA CHỌN của cùng một lần bấm, không cộng dồn. Bennett được chơi bằng nhấn (CD 5s, tạo hạt, không tự hất bay), nên một lần dùng E = một dòng Press DMG. Trước kit này reader cộng cả ba (+Explosion) → E của Bennett bị đếm gấp ~4."
+      },
+      "buffs": [
+        {
+          "scope": "party",
+          "kind": "flat-atk-from-base-atk",
+          "talent": "elementalBurst",
+          "label": "ATK Bonus Ratio",
+          "uptime": 0.6,
+          "note": "Fantastic Voyage, chữ game: 'they gain an ATK Bonus that is based on Bennett's Base ATK' — dòng 'ATK Bonus Ratio' của bảng burst, nhân với ATK CƠ BẢN của Bennett (nhân vật + vũ khí), cộng phẳng cho mọi người đứng trong vùng. Uptime 0.6 = 12s hiệu lực / CD 15s, đã trừ hao thời gian ra khỏi vùng."
+        }
+      ]
+    },
+    {
+      "characterId": "kujou-sara",
+      "buffs": [
+        {
+          "scope": "party",
+          "kind": "flat-atk-from-base-atk",
+          "talent": "elementalSkill",
+          "label": "ATK Bonus Ratio",
+          "uptime": 0.4,
+          "note": "Tengu Stormcall / Crowfeather Cover: dòng 'ATK Bonus Ratio' của bảng E, cộng ATK phẳng theo ATK cơ bản của Sara cho nhân vật nhận quạ. Uptime 0.4 = 6s hiệu lực / CD 10s, và chỉ phủ được 1 người mỗi lần nên đây là ước lượng rộng rãi."
+        }
+      ]
+    },
+    {
+      "characterId": "faruzan",
+      "buffs": [
+        {
+          "scope": "party",
+          "kind": "elemental-dmg",
+          "talent": "elementalBurst",
+          "label": "Anemo DMG Bonus",
+          "uptime": 0.8,
+          "note": "The Wind's Secret Ways / Prayerful Wind's Benefit: dòng 'Anemo DMG Bonus' của bảng burst (file game tách riêng khỏi dòng giảm kháng; bản transcription cũ gộp hai số vào một dòng và phải dùng valueIndex). Uptime 0.8 = Burst 18s / CD 20s."
+        }
+      ],
+      "resistanceShred": [
+        {
+          "elements": [
+            "Anemo"
+          ],
+          "talent": "elementalBurst",
+          "label": "Anemo RES Decrease",
+          "uptime": 0.8,
+          "note": "Perfidious Wind's Bale: dòng 'Anemo RES Decrease' của bảng burst. uptime 0.8 = Burst 18s / CD 20s."
+        }
+      ]
+    },
+    {
+      "characterId": "shenhe",
+      "resistanceShred": [
+        {
+          "elements": [
+            "Cryo"
+          ],
+          "talent": "elementalBurst",
+          "label": "RES Decrease",
+          "uptime": 0.6,
+          "note": "Divine Maiden's Deliverance, chữ game: 'a field that decreases the Cryo RES and Physical RES of opponents within it' — dòng 'RES Decrease' của bảng burst; vật lý không được mô hình hoá. uptime 0.6 ước theo 12s hiệu lực trên CD 20s."
+        }
+      ]
+    },
+    {
+      "characterId": "sethos",
+      "chargedAttackLabels": {
+        "labels": ["Shadowpiercing Shot"],
+        "note": "Đòn nặng thật của Sethos là mũi tên sạc cấp 2 'Shadowpiercing Shot' (tiêu năng lượng), không phải Aimed Shot thường. Game ghi dòng này là 'Shadowpiercing Shot DMG' trong bảng đòn thường; không có nhãn này thì reader coi nó là dòng chưa phân loại và đòn nặng của anh rơi về Aimed Shot sạc đầy thường. Thêm 2026-09-15 khi đối chiếu bảng talent với file game (Pha 1)."
+      }
+    },
+    {
+      "characterId": "hu-tao",
+      "hits": {
+        "skill": [
+          {
+            "label": "Blood Blossom DMG",
+            "count": 2
+          }
+        ],
+        "note": "Guide to Afterlife, chữ game: 'Enemies affected by Blood Blossom will take Pyro DMG every 4s… This DMG is considered Elemental Skill DMG', Blood Blossom Duration 8s → 2 tick mỗi lần áp; đòn nặng áp lại (làm mới, không chồng) nên trong 9s Paramita ≈ 2 tick. Dòng 'ATK Increase' của bảng E KHÔNG phải đòn (xem conversions) — bản transcription cũ đọc nó thành một đòn scale HP."
+      },
+      "conversions": [
+        {
+          "talent": "elementalSkill",
+          "label": "ATK Increase",
+          "uptime": 1.0,
+          "note": "Paramita Papilio, chữ game: 'Increases Hu Tao's ATK based on her Max HP at the time of entering this state. ATK Bonus gained this way cannot exceed 400% of Hu Tao's Base ATK.' Dòng 'ATK Increase|{p} Max HP' → tỉ lệ HP→ATK. Uptime 1: mọi đòn mô hình đếm cho Hu Tao (đòn nặng, Blood Blossom, burst) đều nằm trong 9s Paramita; 9s/16s CD là câu hỏi thời gian đứng sân của Pha 3. Trần 400% ATK cơ bản không chạm ở mọi mức HP thực tế (~30k HP × 6.3% ≈ 1.9k, trần ≈ 5k)."
+        }
+      ]
+    },
+    {
+      "characterId": "noelle",
+      "conversions": [
+        {
+          "talent": "elementalBurst",
+          "label": "ATK Bonus",
+          "uptime": 1.0,
+          "note": "Sweeping Time, chữ game: 'Increased ATK that scales based on her DEF' — dòng 'ATK Bonus|{p} DEF' của bảng burst. Uptime 1: đòn thường/đòn nặng mô hình đếm cho Noelle là đòn trong 15s burst (CD 15s, 60 năng lượng)."
+        }
+      ]
+    },
+    {
+      "characterId": "lisa",
+      "hits": {
+        "skill": [
+          {
+            "label": "Press DMG",
+            "count": 3
+          },
+          {
+            "label": "Stack 3 Conductive Hold DMG"
+          }
+        ],
+        "note": "Violet Arc, chữ game: Press 'applies a stack of the Conductive status (max 3 stacks)', Hold 'Deals great amounts of extra damage… based on the number of Conductive stacks applied'. Một chu kỳ E = 3 lần nhấn (CD 1s) rồi một lần giữ ở 3 stack; các dòng Non-Conductive/Stack 1/2 là lựa chọn thay thế của cùng lần giữ. Reader chung cộng Press + Non-Conductive + Stack 3 → đếm trùng."
+      }
+    },
+    {
+      "characterId": "beidou",
+      "hits": {
+        "skill": [
+          {
+            "label": "Base DMG"
+          },
+          {
+            "label": "DMG Bonus on Hit Taken",
+            "count": 2
+          }
+        ],
+        "note": "Tidecaller, chữ game: 'DMG dealt scales with the number of times Beidou is attacked in the skill's duration. The greatest DMG Bonus will be attained once this effect is triggered twice.' Phản đòn đủ = Base DMG + 2 × DMG Bonus on Hit Taken (dòng này là hệ số đòn dù chữ 'Bonus', nên reader chung bỏ qua và Beidou mất 2/3 sát thương E). Giả định: hứng đủ 2 đòn — cách chơi chuẩn của Beidou."
+      }
+    },
+    {
+      "characterId": "freminet",
+      "hits": {
+        "skill": [
+          {
+            "label": "Upward Thrust DMG"
+          },
+          {
+            "label": "Frost DMG",
+            "count": 4
+          },
+          {
+            "label": "Level 4 Shattering Pressure DMG"
+          }
+        ],
+        "note": "Pressurized Floe, chữ game: 'When Freminet uses Normal Attacks, he will also unleash waves of frost that deal Cryo DMG and increase Pers's Pressure Level' — một chuỗi 4 đòn thường = 4 Frost DMG và đủ 4 cấp áp suất, rồi Shattering Pressure cấp 4 kết thúc. Level 0–3 là lựa chọn thay thế của cùng lần kết thúc. Spiritbreath Thorn (arkhe, mỗi 9s) bỏ. Cấp 4 là vật lý — mô hình chưa tách nguyên tố, tính như Cryo (reader chung cũng vậy)."
+      }
+    },
+    {
+      "characterId": "varesa",
+      "hits": {
+        "combo": [
+          {
+            "label": "Fiery Passion 1-Hit DMG"
+          },
+          {
+            "label": "Fiery Passion 2-Hit DMG"
+          },
+          {
+            "label": "Fiery Passion 3-Hit DMG"
+          }
+        ],
+        "charged": [
+          {
+            "label": "Fiery Passion Charged Attack DMG"
+          }
+        ],
+        "skill": [
+          {
+            "label": "Fiery Passion Rush DMG"
+          }
+        ],
+        "burst": [
+          {
+            "label": "Fiery Passion Flying Kick DMG"
+          },
+          {
+            "label": "Volcano Kablam DMG"
+          }
+        ],
+        "note": "By the Horns / Guardian Vent!, chữ game: 'After using this Skill [burst], Varesa's Nightsoul points will be restored to maximum and she will enter the Fiery Passion state… In the Fiery Passion state, Varesa's Elemental Burst will deal a greater amount'. Varesa đứng sân trong Fiery Passion, nên mọi slot lấy dòng Fiery Passion; các dòng không có tiền tố là lựa chọn thay thế ngoài trạng thái. Burst = Flying Kick (vào trạng thái) + Volcano Kablam ('use her special Elemental Burst… the especially powerful Plunging Attack') mỗi rotation một lần mỗi loại; Kablam là đòn nhảy về loại nhưng mô hình không có bucket plunge nên xếp vào burst. Đòn nhảy Fiery Passion thường (nguồn sát thương chính giữa các Kablam) chưa đếm — mô hình cố ý bỏ plunge; xem 5.3 redesign.md."
+      }
+    },
+    {
+      "characterId": "xilonen",
+      "hits": {
+        "combo": [
+          {
+            "label": "Blade Roller 1-Hit DMG"
+          },
+          {
+            "label": "Blade Roller 2-Hit DMG"
+          },
+          {
+            "label": "Blade Roller 3-Hit DMG"
+          },
+          {
+            "label": "Blade Roller 4-Hit DMG"
+          }
+        ],
+        "charged": [],
+        "note": "Ehecatl's Roar, chữ game: 'While in this mode, Xilonen's Normal Attacks will allow her to perform up to 4 kicks using her roller blades, and she will be unable to use Charged Attacks… they will switch to being based on her DEF'. Đứng sân = Blade Roller (vào bằng E), nên chuỗi đòn thường là 4 dòng Blade Roller (DEF) và đòn nặng = không có."
+      }
+    },
+    {
+      "characterId": "tartaglia",
+      "hits": {
+        "skill": [
+          {
+            "label": "Stance Change DMG"
+          },
+          {
+            "label": "Riptide Slash"
+          }
+        ],
+        "combo": [
+          {
+            "talent": "elementalSkill",
+            "label": "1-Hit DMG",
+            "category": "normal"
+          },
+          {
+            "talent": "elementalSkill",
+            "label": "2-Hit DMG",
+            "category": "normal"
+          },
+          {
+            "talent": "elementalSkill",
+            "label": "3-Hit DMG",
+            "category": "normal"
+          },
+          {
+            "talent": "elementalSkill",
+            "label": "4-Hit DMG",
+            "category": "normal"
+          },
+          {
+            "talent": "elementalSkill",
+            "label": "5-Hit DMG",
+            "category": "normal"
+          },
+          {
+            "talent": "elementalSkill",
+            "label": "6-Hit DMG",
+            "category": "normal"
+          }
+        ],
+        "charged": [
+          {
+            "talent": "elementalSkill",
+            "label": "Charged Attack DMG",
+            "category": "charged"
+          }
+        ],
+        "burst": [
+          {
+            "label": "Skill DMG: Melee"
+          },
+          {
+            "label": "Riptide Blast DMG"
+          }
+        ],
+        "note": "Foul Legacy: Raging Tide, chữ game: 'entering Melee Stance. In this Stance, Tartaglia's Normal and Charged Attacks are converted to Hydro DMG' — chuỗi đòn thường và đòn nặng lấy từ bảng E (vẫn là Normal/Charged Attack DMG về loại). 'Riptide Slash… is considered Elemental Skill DMG, and can only occur once every 1.5s' — đếm 1 lần; Đếm theo một lần dùng; số lần thật trong một rotation là việc của Pha 3 (docs/redesign.md). Burst: 'Skill DMG: Melee' và ': Ranged' là hai lựa chọn theo tư thế (reader chung cộng cả hai), dùng Melee + Riptide Blast ('considered Elemental Burst DMG'). Riptide Flash/Burst của bảng đòn thường thuộc tư thế cung, không dùng."
+      }
+    },
+    {
+      "characterId": "iansan",
+      "hits": {
+        "charged": [
+          {
+            "label": "Swift Stormflight DMG"
+          }
+        ],
+        "note": "Weighted Spike, chữ game: 'While in the Nightsoul's Blessing state: Iansan's Charged Attack will be transformed into the formidable Swift Stormflight' và Thunderbolt Rush: 'using a Normal Attack will trigger 1 quick Swift Stormflight stomp… that will not consume Stamina'. Đòn nặng của Iansan = Swift Stormflight."
+      }
+    },
+    {
+      "characterId": "raiden-shogun",
+      "hits": {
+        "burst": [
+          {
+            "label": "Musou no Hitotachi Base DMG"
+          },
+          {
+            "param": 2,
+            "count": 60
+          }
+        ],
+        "combo": [
+          {
+            "talent": "elementalBurst",
+            "label": "1-Hit DMG",
+            "category": "burst"
+          },
+          {
+            "talent": "elementalBurst",
+            "label": "2-Hit DMG",
+            "category": "burst"
+          },
+          {
+            "talent": "elementalBurst",
+            "label": "3-Hit DMG",
+            "category": "burst"
+          },
+          {
+            "talent": "elementalBurst",
+            "label": "4-Hit DMG",
+            "category": "burst"
+          },
+          {
+            "talent": "elementalBurst",
+            "label": "5-Hit DMG",
+            "category": "burst"
+          },
+          {
+            "talent": "elementalBurst",
+            "param": 3,
+            "count": 300,
+            "category": "burst"
+          }
+        ],
+        "charged": [
+          {
+            "talent": "elementalBurst",
+            "label": "Charged Attack DMG",
+            "category": "burst"
+          },
+          {
+            "talent": "elementalBurst",
+            "param": 3,
+            "count": 60,
+            "category": "burst"
+          }
+        ],
+        "note": "Secret Art: Musou Shinsetsu, chữ game: 'The DMG dealt by Musou no Hitotachi and Musou Isshin's attacks will be increased based on the number of Chakra Desiderata's Resolve stacks consumed' và Musou Isshin: đòn thường/nặng 'will be infused with Electro DMG' (trong game tính là Elemental Burst DMG → category burst). Dòng 'Resolve Bonus|{param2} Initial/{param3} ATK DMG Per Stack': param2 cộng vào Musou no Hitotachi mỗi stack, param3 cộng vào MỖI đòn Isshin mỗi stack. Giả định 60 stack Resolve khi dùng burst (trần 60; đội bình thường tích ~50–60 sau một chu kỳ burst của cả đội) → burst: +60×param2; chuỗi 5 đòn: +5×60×param3 = count 300; đòn nặng: +60×param3. Chuỗi đòn thường ngoài Isshin (bảng đòn thường) không dùng — Raiden chỉ đứng sân trong Isshin. Số chuỗi trong 7s Isshin là việc của Pha 3."
+      }
+    },
+    {
+      "characterId": "cyno",
+      "hits": {
+        "skill": [
+          {
+            "label": "Mortuary Rite DMG"
+          }
+        ],
+        "burst": [],
+        "combo": [
+          {
+            "talent": "elementalBurst",
+            "label": "1-Hit DMG",
+            "category": "normal"
+          },
+          {
+            "talent": "elementalBurst",
+            "label": "2-Hit DMG",
+            "category": "normal"
+          },
+          {
+            "talent": "elementalBurst",
+            "label": "3-Hit DMG",
+            "category": "normal"
+          },
+          {
+            "talent": "elementalBurst",
+            "label": "4-Hit DMG",
+            "category": "normal"
+          },
+          {
+            "talent": "elementalBurst",
+            "label": "5-Hit DMG",
+            "category": "normal"
+          }
+        ],
+        "charged": [
+          {
+            "talent": "elementalBurst",
+            "label": "Charged Attack DMG",
+            "category": "charged"
+          }
+        ],
+        "note": "Sacred Rite: Wolf's Swiftness, chữ game: 'Cyno's Normal, Charged, and Plunging Attacks will be converted to Electro DMG… lasts a maximum of 18s' — burst không có đòn riêng (burst: []), chuỗi đòn thường/nặng lấy từ bảng burst (vẫn là Normal/Charged Attack DMG). Secret Rite: 'When Cyno is under the Pactsworn Pathclearer state… he will instead unleash a Mortuary Rite' — E trong trạng thái = Mortuary Rite, Skill DMG thường là lựa chọn ngoài trạng thái."
+      }
+    },
+    {
+      "characterId": "mavuika",
+      "hits": {
+        "skill": [
+          {
+            "label": "Skill DMG"
+          }
+        ],
+        "combo": [
+          {
+            "talent": "elementalSkill",
+            "label": "Flamestrider Normal Attack 1-Hit DMG",
+            "category": "normal"
+          },
+          {
+            "talent": "elementalSkill",
+            "label": "Flamestrider Normal Attack 2-Hit DMG",
+            "category": "normal"
+          },
+          {
+            "talent": "elementalSkill",
+            "label": "Flamestrider Normal Attack 3-Hit DMG",
+            "category": "normal"
+          },
+          {
+            "talent": "elementalSkill",
+            "label": "Flamestrider Normal Attack 4-Hit DMG",
+            "category": "normal"
+          },
+          {
+            "talent": "elementalSkill",
+            "label": "Flamestrider Normal Attack 5-Hit DMG",
+            "category": "normal"
+          }
+        ],
+        "charged": [
+          {
+            "talent": "elementalSkill",
+            "label": "Flamestrider Charged Attack Final DMG",
+            "category": "charged"
+          }
+        ],
+        "burst": [
+          {
+            "label": "Skill DMG"
+          },
+          {
+            "param": 3,
+            "count": 200
+          }
+        ],
+        "note": "The Named Moment, chữ game: Hold 'The All-Fire Armaments manifest as a Flamestrider… Mavuika's Normal, Charged, and Plunging Attacks will also be converted' — Mavuika đứng sân trên Flamestrider, chuỗi đòn thường/nặng lấy dòng Flamestrider của bảng E; Ring of Searing Radiance là lựa chọn Tap, không dùng. Hour of Burning Skies: 'When Mavuika has at least 50% Fighting Spirit, she can consume it all' và dòng 'Sunfell Slice DMG Bonus|{param3} ATK per Fighting Spirit', trần 200 → giả định dùng ở 200 Fighting Spirit: +200×param3. Bonus đòn thường/nặng Flamestrider theo Fighting Spirit trong 7s Crucible (param4/param5) là buff có thời hạn — Pha 5, chưa đếm."
+      }
+    },
+    {
+      "characterId": "xiao",
+      "hits": {
+        "combo": [
+          {
+            "label": "Low/High Plunge DMG",
+            "category": "normal"
+          }
+        ],
+        "note": "Bane of All Evil, chữ game: 'Greatly increases Xiao's jumping ability. Increases his attack AoE and attack DMG' — cách chơi Xiao là nhảy-đáp liên tục trong 15s burst; mô hình không có bucket plunge và cố ý bỏ đòn nhảy ở mọi nhân vật khác, nên với Xiao 'một chuỗi đòn thường' được định nghĩa là MỘT đòn nhảy cao (dòng Low/High Plunge, lấy High). Với normalCombosPerRotation = 6 điều này ≈ 6 đòn nhảy/rotation — thấp hơn thực tế (~10–12 trong 15s) nhưng thay cho 0."
+      },
+      "buffs": [
+        {
+          "scope": "self",
+          "kind": "stat",
+          "stat": "dmg_normal",
+          "talent": "elementalBurst",
+          "label": "Normal/Charged/Plunging Attack DMG Bonus",
+          "uptime": 1.0,
+          "note": "Bane of All Evil: dòng 'Normal/Charged/Plunging Attack DMG Bonus' của bảng burst, áp cho chính Xiao. Uptime 1: đòn nhảy mô hình đếm đều nằm trong 15s burst (CD 18s, 70 năng lượng)."
+        },
+        {
+          "scope": "self",
+          "kind": "stat",
+          "stat": "dmg_charged",
+          "talent": "elementalBurst",
+          "label": "Normal/Charged/Plunging Attack DMG Bonus",
+          "uptime": 1.0,
+          "note": "Cùng dòng trên, vế đòn nặng."
+        }
+      ]
+    },
+    {
+      "characterId": "wanderer",
+      "hits": {
+        "skill": [
+          {
+            "label": "Skill DMG"
+          }
+        ],
+        "combo": [
+          {
+            "label": "1-Hit DMG",
+            "factor": {
+              "talent": "elementalSkill",
+              "param": 2
+            }
+          },
+          {
+            "label": "2-Hit DMG",
+            "factor": {
+              "talent": "elementalSkill",
+              "param": 2
+            }
+          },
+          {
+            "label": "3-Hit DMG",
+            "factor": {
+              "talent": "elementalSkill",
+              "param": 2
+            }
+          }
+        ],
+        "charged": [
+          {
+            "label": "Charged Attack DMG",
+            "factor": {
+              "talent": "elementalSkill",
+              "param": 3
+            }
+          }
+        ],
+        "note": "Hanega: Song of the Wind, chữ game: 'When he uses Normal and Charged Attacks, they will be converted into Kuugo: Fushoudan and Kuugo: Toufukai respectively; the DMG they deal… will be increased' — dòng 'Kuugo: Fushoudan DMG|{param2} Normal Attack DMG' là HỆ SỐ nhân lên đòn thường, không phải đòn riêng (reader chung đúng khi từ chối đọc nó thành đòn). Wanderer đứng sân trong Windfavored nên chuỗi đòn thường × param2, đòn nặng × param3."
+      }
+    },
+    {
+      "characterId": "wriothesley",
+      "hits": {
+        "skill": [],
+        "combo": [
+          {
+            "label": "1-Hit DMG",
+            "factor": {
+              "talent": "elementalSkill",
+              "param": 1
+            }
+          },
+          {
+            "label": "2-Hit DMG",
+            "factor": {
+              "talent": "elementalSkill",
+              "param": 1
+            }
+          },
+          {
+            "label": "3-Hit DMG",
+            "factor": {
+              "talent": "elementalSkill",
+              "param": 1
+            }
+          },
+          {
+            "label": "4-Hit DMG",
+            "factor": {
+              "talent": "elementalSkill",
+              "param": 1
+            }
+          },
+          {
+            "label": "5-Hit DMG",
+            "factor": {
+              "talent": "elementalSkill",
+              "param": 1
+            }
+          }
+        ],
+        "note": "Icefang Rush, chữ game: 'When his HP is above 50%, it will enhance the Repelling Fists of Normal Attack: Forceful Fists of Frost and increase its DMG' — dòng 'Enhanced Repelling Fist DMG|{param1} Normal Attack DMG' là hệ số nhân chuỗi đòn thường trong Chilling Penalty; E không có đòn riêng (skill: []). Giả định trên 50% HP suốt (cách chơi chuẩn, HP tiêu mỗi đòn được bù bằng hồi)."
+      }
+    },
+    {
+      "characterId": "kinich",
+      "hits": {
+        "skill": [
+          {
+            "label": "Scalespiker Cannon DMG"
+          }
+        ],
+        "combo": [
+          {
+            "talent": "elementalSkill",
+            "label": "Loop Shot DMG",
+            "count": 3,
+            "category": "skill"
+          }
+        ],
+        "charged": [],
+        "note": "Canopy Hunter: Riding High, chữ game: 'When using a Normal Attack, Kinich will fire Loop Shots… Loop Shot DMG is considered Elemental Skill DMG' và 'When Nightsoul points are at max, he can use the Elemental Skill Scalespiker Cannon'. Đứng sân = Nightsoul's Blessing: một chuỗi 3 đòn thường = 3 Loop Shot (mỗi dòng đã là ×2), category skill; đòn nặng không dùng trong trạng thái (charged: []); E = Scalespiker Cannon. 'Mid-Air Normal Attack DMG' là đòn ngoài trạng thái, không dùng."
+      }
+    },
+    {
+      "characterId": "lyney",
+      "hits": {
+        "skill": [
+          {
+            "label": "Skill DMG"
+          },
+          {
+            "param": 2,
+            "count": 5
+          },
+          {
+            "talent": "normalAttack",
+            "label": "Pyrotechnic Strike DMG",
+            "category": "charged"
+          }
+        ],
+        "charged": [
+          {
+            "label": "Prop Arrow DMG"
+          },
+          {
+            "label": "Pyrotechnic Strike DMG"
+          }
+        ],
+        "note": "Card Force Translocation, chữ game: Charge Level 2 'Fires off a Prop Arrow… upon hit, it will summon a Grin-Malkin Hat… If destroyed, or if its duration expires, it will fire off a Pyrotechnic Strike' — một đòn nặng = Prop Arrow + Pyrotechnic Strike của cái mũ nó tạo. Bewildering Lights: 'DMG will be increased according to the stacks cleared' (dòng 'Skill DMG Bonus|{param2} ATK/Stack', giả định đủ 5 Prop Surplus) và 'When a Grin-Malkin Hat… is on the field, the fireworks will cause it to explode, dealing AoE Pyro DMG equal to that of a Pyrotechnic Strike… considered Charged Attack DMG'. Spiritbreath Thorn (arkhe, mỗi 6s) bỏ. Thay cho nhãn chargedAttackLabels 'Prop Arrow' trước đây."
+      }
+    }
+  ]
+}
