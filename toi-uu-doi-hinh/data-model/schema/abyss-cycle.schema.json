@@ -58,7 +58,19 @@
                             "resistanceNotes": { "type": ["string", "null"] },
                             "weakpoint": { "type": ["boolean", "null"] },
                             "mechanics": { "type": ["string", "null"] },
-                            "hpRatio": { "type": ["string", "null"] }
+                            "hpRatio": { "type": ["string", "null"] },
+                            "gameId": { "type": "integer", "description": "Id số của game cho quái này, do scripts/sync-abyss-monster-resistance.py ghi từ gi.yatta.moe. Vắng mặt = script chưa khớp được tên quái này (xem README của thư mục abyss-monsters)." },
+                            "resistances": {
+                              "type": "object",
+                              "description": "Kháng nguyên tố THẬT của quái, lấy thẳng từ file game qua gi.yatta.moe — không phải suy đoán. Có đủ 7 nguyên tố khi có mặt, kể cả những nguyên tố ở baseline 10% (đó cũng là thông tin thật: quái KHÔNG kháng thêm nguyên tố đó). resistanceNotes (transcribed từ wiki) vẫn thắng field này nếu cả hai cùng nói về một nguyên tố — resistanceNotes có thể ghi trạng thái động trong trận (vd. 'kháng Pyro -220% khi Rooted') mà bảng tĩnh của game không thấy được.",
+                              "properties": {
+                                "Anemo": { "type": "number" }, "Geo": { "type": "number" },
+                                "Electro": { "type": "number" }, "Dendro": { "type": "number" },
+                                "Hydro": { "type": "number" }, "Pyro": { "type": "number" },
+                                "Cryo": { "type": "number" }
+                              }
+                            },
+                            "physicalResistance": { "type": "number", "description": "Kháng Vật Lý thật của quái, cùng nguồn. Ghi lại nhưng CHƯA được engine dùng: không nhân vật nào có damage được mô hình hoá là Vật Lý." }
                           }
                         }
                       }

@@ -565,6 +565,18 @@ Substats are still a rule (`tuning.json`'s `substatPriority`, by role). They are
 a budget split rather than a discrete choice, so the same argument does not
 carry over unchanged.
 
+### Redesign in progress
+
+`docs/redesign.md` tracks a larger, multi-phase rewrite of the damage model:
+the search and the per-hit formula are sound, but the model has no notion of
+*time* — every rotation-dependent quantity (uptime, reaction frequency, ER,
+stack count) is a flat constant in `tuning.json` shared by every character,
+rather than something computed from an actual timeline. Phase 0 (real
+per-monster resistance from the game's own files, replacing the flat "an
+enemy resists its own element" guess) is done; read that file before
+touching `AbyssScorer`, `AbyssFloorContext`, or `tuning.json`'s uptime-shaped
+constants, so a change lands as part of the plan rather than beside it.
+
 ### Search result cache
 
 `AbyssSearchCacheStore` persists the last `AbyssOptimizerOutput` to

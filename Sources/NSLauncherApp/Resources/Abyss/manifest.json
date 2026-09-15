@@ -62,7 +62,8 @@
           11,
           12
         ],
-        "blessingOfTheAbyssalMoon": "Luster-Piercing"
+        "blessingOfTheAbyssalMoon": "Luster-Piercing",
+        "monsterResistanceSync": "39/41 tên quái khớp gameId qua scripts/sync-abyss-monster-resistance.py ngày 2026-09-15 (gi.yatta.moe). 2 chưa khớp: Battle-Hardened Chimeric Volkodlak Archer, Veteran Tainted Water-Splitting Phantasm — dùng suy đoán phẳng như cũ."
       }
     },
     "damage-formula.json": {

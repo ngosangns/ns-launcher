@@ -127,6 +127,35 @@ thêm file đè đặt ở:
 File đè cùng định dạng, trùng `periodStart` thì thắng bản đóng gói — cập nhật
 được dữ liệu mùa mới mà không cần phát hành lại app.
 
+Sau khi thêm/sửa một file chu kỳ, chạy script đồng bộ — không tham số thì
+nó quét các file đóng gói trong repo; file đè nằm ngoài repo thì đưa đường
+dẫn vào:
+
+```bash
+python3 scripts/sync-abyss-monster-resistance.py
+python3 scripts/sync-abyss-monster-resistance.py ~/Library/Application\ Support/NSLauncher/abyss-cycles/*.json
+```
+
+Script khớp từng quái với id số của game qua `gi.yatta.moe`, ghi kháng
+**thật** (7 nguyên tố + Vật Lý) vào đúng dòng quái đó — `gameId`,
+`resistances`, `physicalResistance`. Đây là sửa **văn bản theo dòng**, không
+phải parse-rồi-ghi-lại: mỗi quái nằm gọn một dòng trong file, và
+`json.dump` sẽ làm nổ nó thành hàng chục dòng mỗi quái. Quái nào script
+không khớp được (tên trong chu kỳ khác tên trong file game, do dịch/đặt tên
+elite riêng) thì bị bỏ qua và in ra stderr — không đoán; xem
+`MONSTER_ALIASES` trong script để thêm alias đã xác nhận, hoặc để nguyên nếu
+chưa chắc (xem lý do "Battle-Hardened Chimeric Volkodlak Archer" bị bỏ qua
+trong chính script, làm ví dụ cho việc không nên đoán khi không có gì xác
+nhận lại được).
+
+`resistances`/`physicalResistance` **thắng** suy đoán phẳng
+(`tuning.enemyOwnElementResistance`) cho quái đã khớp, nhưng
+`resistanceNotes` dịch tay từ wiki vẫn thắng cả hai — ghi chú có thể nói về
+một trạng thái *động* trong trận (khiên, "Rooted"...) mà bảng kháng tĩnh của
+game không thấy được. Xem `AbyssFloorContext.build` và
+`docs/redesign.md` mục 4.1 để biết vì sao suy đoán phẳng từng sai — cả theo
+hướng bịa ra bonus không có, lẫn hướng hiểu thấp một con số thật.
+
 ## `tuning.json` — đọc kỹ trước khi tin con số
 
 Ba nhóm số, độ tin cậy **khác hẳn nhau**:

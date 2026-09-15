@@ -24,14 +24,14 @@
             {
               "wave": 1,
               "monsters": [
-                { "name": "Winged Halberd-Knight", "count": "1→5 (hồi thêm)", "size": "Vừa", "elements": ["Anemo"], "resistanceNotes": "kháng Anemo +20%", "weakpoint": false, "mechanics": null, "hpRatio": null },
-                { "name": "Winged Soarer Knight", "count": "2→10 (hồi thêm)", "size": "Vừa", "elements": ["Anemo"], "resistanceNotes": "kháng Anemo +20%", "weakpoint": false, "mechanics": null, "hpRatio": null }
+                { "name": "Winged Halberd-Knight", "count": "1→5 (hồi thêm)", "size": "Vừa", "elements": ["Anemo"], "resistanceNotes": "kháng Anemo +20%", "weakpoint": false, "mechanics": null, "hpRatio": null, "gameId": 25130101, "resistances": {"Anemo": 0.2, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 },
+                { "name": "Winged Soarer Knight", "count": "2→10 (hồi thêm)", "size": "Vừa", "elements": ["Anemo"], "resistanceNotes": "kháng Anemo +20%", "weakpoint": false, "mechanics": null, "hpRatio": null, "gameId": 25130201, "resistances": {"Anemo": 0.2, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 }
               ]
             },
             {
               "wave": 2,
               "monsters": [
-                { "name": "Cutting Edge All-Purpose Storm Landcruiser", "count": "1 (boss)", "size": "Lớn (máy Fatui)", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "Có thể làm tê liệt 2s nếu kích 4 lần Electro-Charged/Lunar-Charged trong lúc dùng chiêu lớn", "hpRatio": "hp_ratio 7, atk_ratio 6 — rất trâu" }
+                { "name": "Cutting Edge All-Purpose Storm Landcruiser", "count": "1 (boss)", "size": "Lớn (máy Fatui)", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "Có thể làm tê liệt 2s nếu kích 4 lần Electro-Charged/Lunar-Charged trong lúc dùng chiêu lớn", "hpRatio": "hp_ratio 7, atk_ratio 6 — rất trâu", "gameId": 23085101, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 }
               ]
             }
           ]
@@ -43,14 +43,14 @@
             {
               "wave": 1,
               "monsters": [
-                { "name": "Winged Halberd-Knight", "count": "1→4", "size": "Vừa", "elements": ["Anemo"], "resistanceNotes": null, "weakpoint": false, "mechanics": null, "hpRatio": null },
-                { "name": "Volkodlak Basher", "count": "2→8", "size": "Vừa/Lớn (Elite)", "elements": ["Cryo", "Geo", "Pyro"], "resistanceNotes": "nguyên tố tuỳ màu dấu (xanh/nâu/cam)", "weakpoint": null, "mechanics": "Choáng khi trúng Stellar Glimmer Reaction lúc gầm hoặc sau combo", "hpRatio": "hp_ratio 1.5, atk_ratio 2 — khá mỏng máu so với Elite khác" }
+                { "name": "Winged Halberd-Knight", "count": "1→4", "size": "Vừa", "elements": ["Anemo"], "resistanceNotes": null, "weakpoint": false, "mechanics": null, "hpRatio": null, "gameId": 25130101, "resistances": {"Anemo": 0.2, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 },
+                { "name": "Volkodlak Basher", "count": "2→8", "size": "Vừa/Lớn (Elite)", "elements": ["Cryo", "Geo", "Pyro"], "resistanceNotes": "nguyên tố tuỳ màu dấu (xanh/nâu/cam)", "weakpoint": null, "mechanics": "Choáng khi trúng Stellar Glimmer Reaction lúc gầm hoặc sau combo", "hpRatio": "hp_ratio 1.5, atk_ratio 2 — khá mỏng máu so với Elite khác", "gameId": 25131201, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 }
               ]
             },
             {
               "wave": 2,
               "monsters": [
-                { "name": "Cutting Edge Fire Support Ground Effect Landcruiser", "count": "2 (nối tiếp)", "size": "Lớn (máy Fatui)", "elements": ["Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "Tê liệt 5s nếu kích 4 lần Electro-Charged/Lunar-Charged", "hpRatio": "hp_ratio 6, atk_ratio 6" }
+                { "name": "Cutting Edge Fire Support Ground Effect Landcruiser", "count": "2 (nối tiếp)", "size": "Lớn (máy Fatui)", "elements": ["Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "Tê liệt 5s nếu kích 4 lần Electro-Charged/Lunar-Charged", "hpRatio": "hp_ratio 6, atk_ratio 6", "gameId": 23085301, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 }
               ]
             }
           ]
@@ -62,15 +62,15 @@
             {
               "wave": 1,
               "monsters": [
-                { "name": "Juvenile Tree Segment", "count": "2 rồi 2", "size": "Vừa (Elite)", "elements": ["Geo"], "resistanceNotes": "rất yếu Pyro (pyro_res -20%); kháng Dendro/Geo +20~30%", "weakpoint": null, "mechanics": null, "hpRatio": "hp_ratio 2" },
-                { "name": "Rugged Elder Leshy", "count": "1 (đợt nhỏ 2)", "size": "Lớn (Elite)", "elements": ["Geo"], "resistanceNotes": "rất yếu Pyro (pyro_res -220% khi 'Rooted'); kháng Dendro/Geo +20~30%", "weakpoint": null, "mechanics": null, "hpRatio": "hp_ratio 8" }
+                { "name": "Juvenile Tree Segment", "count": "2 rồi 2", "size": "Vừa (Elite)", "elements": ["Geo"], "resistanceNotes": "rất yếu Pyro (pyro_res -20%); kháng Dendro/Geo +20~30%", "weakpoint": null, "mechanics": null, "hpRatio": "hp_ratio 2", "gameId": 25138001, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.2, "Electro": 0.1, "Geo": 0.2, "Hydro": 0.1, "Pyro": -0.2}, "physicalResistance": 0.1 },
+                { "name": "Rugged Elder Leshy", "count": "1 (đợt nhỏ 2)", "size": "Lớn (Elite)", "elements": ["Geo"], "resistanceNotes": "rất yếu Pyro (pyro_res -220% khi 'Rooted'); kháng Dendro/Geo +20~30%", "weakpoint": null, "mechanics": null, "hpRatio": "hp_ratio 8", "gameId": 25137001, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.3, "Electro": 0.1, "Geo": 0.3, "Hydro": 0.1, "Pyro": -0.2}, "physicalResistance": 0.1 }
               ]
             },
             {
               "wave": 2,
               "monsters": [
-                { "name": "Cutting Edge Fire Support Ground Effect Landcruiser", "count": "1 (cùng lúc)", "size": "Lớn", "elements": ["Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": "hp_ratio 6-7" },
-                { "name": "Cutting Edge All-Purpose Storm Landcruiser", "count": "1 (cùng lúc)", "size": "Lớn", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": "hp_ratio 6-7" }
+                { "name": "Cutting Edge Fire Support Ground Effect Landcruiser", "count": "1 (cùng lúc)", "size": "Lớn", "elements": ["Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": "hp_ratio 6-7", "gameId": 23085301, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 },
+                { "name": "Cutting Edge All-Purpose Storm Landcruiser", "count": "1 (cùng lúc)", "size": "Lớn", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": "hp_ratio 6-7", "gameId": 23085101, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 }
               ]
             }
           ]
@@ -89,14 +89,14 @@
             {
               "wave": 1,
               "monsters": [
-                { "name": "Volkodlak Lobber", "count": "1→5", "size": "Vừa/Lớn (Elite)", "elements": ["Physical", "Dendro", "Pyro", "Geo"], "resistanceNotes": "đa dạng theo biến thể", "weakpoint": null, "mechanics": "chưa xác nhận điểm yếu cụ thể", "hpRatio": null },
-                { "name": "Volkodlak Raider", "count": "2→10", "size": "Vừa/Lớn (Elite)", "elements": ["Physical", "Dendro", "Electro", "Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null }
+                { "name": "Volkodlak Lobber", "count": "1→5", "size": "Vừa/Lớn (Elite)", "elements": ["Physical", "Dendro", "Pyro", "Geo"], "resistanceNotes": "đa dạng theo biến thể", "weakpoint": null, "mechanics": "chưa xác nhận điểm yếu cụ thể", "hpRatio": null, "gameId": 25131001, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 },
+                { "name": "Volkodlak Raider", "count": "2→10", "size": "Vừa/Lớn (Elite)", "elements": ["Physical", "Dendro", "Electro", "Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null, "gameId": 25131401, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 }
               ]
             },
             {
               "wave": 2,
               "monsters": [
-                { "name": "Oprichniki Fireblade Shock Trooper", "count": "2", "size": "Vừa (Common, lính Fatui)", "elements": ["Electro", "Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null }
+                { "name": "Oprichniki Fireblade Shock Trooper", "count": "2", "size": "Vừa (Common, lính Fatui)", "elements": ["Electro", "Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null, "gameId": 23079101, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": -0.2 }
               ]
             }
           ]
@@ -108,14 +108,14 @@
             {
               "wave": 1,
               "monsters": [
-                { "name": "Leomastiff Guard", "count": "1→4", "size": "Vừa/Lớn (Elite)", "elements": ["Physical", "Hydro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null },
-                { "name": "Channel Contact", "count": "1→4", "size": "Vừa/Lớn (Elite)", "elements": ["Physical", "Dendro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null }
+                { "name": "Leomastiff Guard", "count": "1→4", "size": "Vừa/Lớn (Elite)", "elements": ["Physical", "Hydro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null, "gameId": 25132601, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 },
+                { "name": "Channel Contact", "count": "1→4", "size": "Vừa/Lớn (Elite)", "elements": ["Physical", "Dendro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null, "gameId": 25132801, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 }
               ]
             },
             {
               "wave": 2,
               "monsters": [
-                { "name": "Oprichniki Thunderblitz Gvardiya", "count": "2", "size": "Vừa (Common, lính Fatui)", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null }
+                { "name": "Oprichniki Thunderblitz Gvardiya", "count": "2", "size": "Vừa (Common, lính Fatui)", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null, "gameId": 23079301, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": -0.2 }
               ]
             }
           ]
@@ -127,16 +127,16 @@
             {
               "wave": 1,
               "monsters": [
-                { "name": "Glaciomancer", "count": "2→ (2+1 boss)", "size": "Vừa (Common, tiên linh Snowland Fae)", "elements": ["Cryo"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null },
-                { "name": "Glacial Warden", "count": "1 (đợt nhỏ 2)", "size": "Vừa (Common, tiên linh Snowland Fae)", "elements": ["Cryo"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null }
+                { "name": "Glaciomancer", "count": "2→ (2+1 boss)", "size": "Vừa (Common, tiên linh Snowland Fae)", "elements": ["Cryo"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null, "gameId": 25135001, "resistances": {"Anemo": 0.1, "Cryo": 0.3, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 },
+                { "name": "Glacial Warden", "count": "1 (đợt nhỏ 2)", "size": "Vừa (Common, tiên linh Snowland Fae)", "elements": ["Cryo"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null, "gameId": 25135101, "resistances": {"Anemo": 0.1, "Cryo": 0.3, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 }
               ]
             },
             {
               "wave": 2,
               "monsters": [
-                { "name": "Oprichniki Thunderblitz Gvardiya", "count": "1 rồi 1", "size": "Vừa (Common, lính Fatui)", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null },
-                { "name": "Oprichniki Medic", "count": "2 (đợt đầu)", "size": "Vừa (Common, lính Fatui)", "elements": ["Physical", "Hydro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "support/hồi máu — ưu tiên diệt trước", "hpRatio": null },
-                { "name": "Oprichniki Fireblade Shock Trooper", "count": "1 (đợt sau)", "size": "Vừa (Common, lính Fatui)", "elements": ["Electro", "Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null }
+                { "name": "Oprichniki Thunderblitz Gvardiya", "count": "1 rồi 1", "size": "Vừa (Common, lính Fatui)", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 23079301, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": -0.2 },
+                { "name": "Oprichniki Medic", "count": "2 (đợt đầu)", "size": "Vừa (Common, lính Fatui)", "elements": ["Physical", "Hydro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "support/hồi máu — ưu tiên diệt trước", "hpRatio": null, "gameId": 23076101, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": -0.2 },
+                { "name": "Oprichniki Fireblade Shock Trooper", "count": "1 (đợt sau)", "size": "Vừa (Common, lính Fatui)", "elements": ["Electro", "Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 23079101, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": -0.2 }
               ]
             }
           ]
@@ -155,10 +155,10 @@
             {
               "wave": 1,
               "monsters": [
-                { "name": "Chimeric Armored Beast", "count": "~ (đợt nhỏ 1)", "size": "Vừa/Lớn", "elements": ["Geo"], "resistanceNotes": null, "weakpoint": null, "mechanics": "số lượng chưa chắc chắn theo ghi chú wiki", "hpRatio": null },
-                { "name": "Chimeric Burrowbeast", "count": "~ (đợt nhỏ 1)", "size": "Vừa/Lớn", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null },
-                { "name": "Chimeric Winged Elephant", "count": "~ (đợt nhỏ 1)", "size": "Vừa/Lớn", "elements": ["Anemo"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null },
-                { "name": "Mirror Maiden", "count": "1 rồi 1 (≈8 tổng cả đợt)", "size": "Vừa/Lớn", "elements": ["Hydro"], "resistanceNotes": "có khiên", "weakpoint": true, "mechanics": "kháng ngắt chiêu cao, hay dịch chuyển (Teleport)", "hpRatio": null }
+                { "name": "Chimeric Armored Beast", "count": "~ (đợt nhỏ 1)", "size": "Vừa/Lớn", "elements": ["Geo"], "resistanceNotes": null, "weakpoint": null, "mechanics": "số lượng chưa chắc chắn theo ghi chú wiki", "hpRatio": null, "gameId": 26310101, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.2, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 },
+                { "name": "Chimeric Burrowbeast", "count": "~ (đợt nhỏ 1)", "size": "Vừa/Lớn", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 26310201, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.2, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 },
+                { "name": "Chimeric Winged Elephant", "count": "~ (đợt nhỏ 1)", "size": "Vừa/Lớn", "elements": ["Anemo"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 26310301, "resistances": {"Anemo": 0.2, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 },
+                { "name": "Mirror Maiden", "count": "1 rồi 1 (≈8 tổng cả đợt)", "size": "Vừa/Lớn", "elements": ["Hydro"], "resistanceNotes": "có khiên", "weakpoint": true, "mechanics": "kháng ngắt chiêu cao, hay dịch chuyển (Teleport)", "hpRatio": null, "gameId": 23050101, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.5, "Pyro": 0.1}, "physicalResistance": -0.2 }
               ]
             },
             {
@@ -176,17 +176,17 @@
             {
               "wave": 1,
               "monsters": [
-                { "name": "Voywolf Hunter", "count": "2 (nối tiếp, xen kẽ)", "size": "Vừa/Lớn", "elements": ["Cryo"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null },
-                { "name": "Fanged Zealot", "count": "2 (nối tiếp, xen kẽ)", "size": "Vừa/Lớn", "elements": ["Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null },
-                { "name": "Suppression Specialist Mek", "count": "1 (cuối chuỗi)", "size": "Vừa/Lớn", "elements": ["Physical", "Dendro", "Pyro"], "resistanceNotes": null, "weakpoint": false, "mechanics": "máy móc", "hpRatio": null }
+                { "name": "Voywolf Hunter", "count": "2 (nối tiếp, xen kẽ)", "size": "Vừa/Lớn", "elements": ["Cryo"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 25133701, "resistances": {"Anemo": 0.1, "Cryo": 0.3, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 },
+                { "name": "Fanged Zealot", "count": "2 (nối tiếp, xen kẽ)", "size": "Vừa/Lớn", "elements": ["Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 25133601, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.3}, "physicalResistance": 0.1 },
+                { "name": "Suppression Specialist Mek", "count": "1 (cuối chuỗi)", "size": "Vừa/Lớn", "elements": ["Physical", "Dendro", "Pyro"], "resistanceNotes": null, "weakpoint": false, "mechanics": "máy móc", "hpRatio": null, "gameId": 24068901, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 }
               ]
             },
             {
               "wave": 2,
               "monsters": [
-                { "name": "Frostarm Lawachurl", "count": "1 (nối tiếp)", "size": "Lớn (Elite, Hilichurl khổng lồ)", "elements": ["Physical", "Cryo"], "resistanceNotes": null, "weakpoint": true, "mechanics": "khiên Băng ở tay vũ khí — phá bằng Pyro", "hpRatio": null },
-                { "name": "Thunderhelm Lawachurl", "count": "1 (nối tiếp)", "size": "Lớn (Elite, Hilichurl khổng lồ)", "elements": ["Physical", "Electro"], "resistanceNotes": null, "weakpoint": true, "mechanics": "khiên Điện ở tay vũ khí — phá bằng Hydro/Cryo", "hpRatio": null },
-                { "name": "Stonehide Lawachurl", "count": "1 (nối tiếp)", "size": "Lớn (Elite, Hilichurl khổng lồ)", "elements": ["Physical", "Geo"], "resistanceNotes": null, "weakpoint": true, "mechanics": "khiên Nham ở tay vũ khí — phá bằng Dendro/nguyên tố khác", "hpRatio": null }
+                { "name": "Frostarm Lawachurl", "count": "1 (nối tiếp)", "size": "Lớn (Elite, Hilichurl khổng lồ)", "elements": ["Physical", "Cryo"], "resistanceNotes": null, "weakpoint": true, "mechanics": "khiên Băng ở tay vũ khí — phá bằng Pyro", "hpRatio": null, "gameId": 21020401, "resistances": {"Anemo": 0.1, "Cryo": 0.7, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.5 },
+                { "name": "Thunderhelm Lawachurl", "count": "1 (nối tiếp)", "size": "Lớn (Elite, Hilichurl khổng lồ)", "elements": ["Physical", "Electro"], "resistanceNotes": null, "weakpoint": true, "mechanics": "khiên Điện ở tay vũ khí — phá bằng Hydro/Cryo", "hpRatio": null, "gameId": 21020801, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.7, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.5 },
+                { "name": "Stonehide Lawachurl", "count": "1 (nối tiếp)", "size": "Lớn (Elite, Hilichurl khổng lồ)", "elements": ["Physical", "Geo"], "resistanceNotes": null, "weakpoint": true, "mechanics": "khiên Nham ở tay vũ khí — phá bằng Dendro/nguyên tố khác", "hpRatio": null, "gameId": 21020501, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.7, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.5 }
               ]
             }
           ]
@@ -198,15 +198,15 @@
             {
               "wave": 1,
               "monsters": [
-                { "name": "Chimeric Horned Bear", "count": "1 (nối tiếp)", "size": "Vừa/Lớn", "elements": ["Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null },
-                { "name": "Thundering Wayob Manifestation", "count": "1 (nối tiếp)", "size": "Vừa/Lớn", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "hút năng lượng (Energy Drain) — ưu tiên diệt nhanh nếu đội phụ thuộc nộ", "hpRatio": null }
+                { "name": "Chimeric Horned Bear", "count": "1 (nối tiếp)", "size": "Vừa/Lớn", "elements": ["Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 26310401, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.3}, "physicalResistance": 0.1 },
+                { "name": "Thundering Wayob Manifestation", "count": "1 (nối tiếp)", "size": "Vừa/Lớn", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "hút năng lượng (Energy Drain) — ưu tiên diệt nhanh nếu đội phụ thuộc nộ", "hpRatio": null, "gameId": 26261101, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.5, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 }
               ]
             },
             {
               "wave": 2,
               "monsters": [
-                { "name": "Construction Specialist Mek", "count": "1 (nối tiếp)", "size": "Vừa/Lớn", "elements": ["Physical", "Cryo", "Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null },
-                { "name": "Biting-Cold Wayob Manifestation", "count": "1 (nối tiếp)", "size": "Vừa/Lớn", "elements": ["Cryo"], "resistanceNotes": null, "weakpoint": null, "mechanics": "hút năng lượng", "hpRatio": null }
+                { "name": "Construction Specialist Mek", "count": "1 (nối tiếp)", "size": "Vừa/Lớn", "elements": ["Physical", "Cryo", "Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 24069201, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 },
+                { "name": "Biting-Cold Wayob Manifestation", "count": "1 (nối tiếp)", "size": "Vừa/Lớn", "elements": ["Cryo"], "resistanceNotes": null, "weakpoint": null, "mechanics": "hút năng lượng", "hpRatio": null, "gameId": 26260801, "resistances": {"Anemo": 0.1, "Cryo": 0.5, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 }
               ]
             }
           ]
@@ -225,16 +225,16 @@
             {
               "wave": 1,
               "monsters": [
-                { "name": "Ruin Cruiser", "count": "4", "size": "Vừa/Lớn (Automaton)", "elements": [], "resistanceNotes": "chưa xác nhận", "weakpoint": true, "mechanics": "có khung hình bất tử (Invincibility Frames) theo chiêu", "hpRatio": null },
-                { "name": "Ruin Scout", "count": "8 (hồi thêm)", "size": "Vừa/Lớn (Automaton)", "elements": [], "resistanceNotes": "chưa xác nhận", "weakpoint": true, "mechanics": "có khung hình bất tử theo chiêu", "hpRatio": null },
-                { "name": "Perpetual Mechanical Array", "count": "1 (boss)", "size": "Lớn (Trùm)", "elements": [], "resistanceNotes": "chưa xác nhận", "weakpoint": false, "mechanics": "không điểm yếu khai thác, có Invincibility Frames — né chiêu lớn thay vì cố ngắt", "hpRatio": null }
+                { "name": "Ruin Cruiser", "count": "4", "size": "Vừa/Lớn (Automaton)", "elements": [], "resistanceNotes": "chưa xác nhận", "weakpoint": true, "mechanics": "có khung hình bất tử (Invincibility Frames) theo chiêu", "hpRatio": null, "gameId": 24020101, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.3 },
+                { "name": "Ruin Scout", "count": "8 (hồi thêm)", "size": "Vừa/Lớn (Automaton)", "elements": [], "resistanceNotes": "chưa xác nhận", "weakpoint": true, "mechanics": "có khung hình bất tử theo chiêu", "hpRatio": null, "gameId": 24020401, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.5 },
+                { "name": "Perpetual Mechanical Array", "count": "1 (boss)", "size": "Lớn (Trùm)", "elements": [], "resistanceNotes": "chưa xác nhận", "weakpoint": false, "mechanics": "không điểm yếu khai thác, có Invincibility Frames — né chiêu lớn thay vì cố ngắt", "hpRatio": null, "gameId": 24021101, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.7 }
               ]
             },
             {
               "wave": 2,
               "monsters": [
-                { "name": "Construction Specialist Mek", "count": "2 (biến thể)", "size": "Vừa", "elements": ["Physical", "Cryo", "Pyro"], "resistanceNotes": null, "weakpoint": false, "mechanics": "máy móc thuần, không có điểm bắn chí mạng", "hpRatio": null },
-                { "name": "Icewind Suite: Nemesis of Coppelius", "count": "1 (boss)", "size": "Lớn (Trùm máy)", "elements": ["Anemo", "Cryo"], "resistanceNotes": null, "weakpoint": false, "mechanics": "máy móc thuần, không có điểm bắn chí mạng", "hpRatio": null }
+                { "name": "Construction Specialist Mek", "count": "2 (biến thể)", "size": "Vừa", "elements": ["Physical", "Cryo", "Pyro"], "resistanceNotes": null, "weakpoint": false, "mechanics": "máy móc thuần, không có điểm bắn chí mạng", "hpRatio": null, "gameId": 24069201, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 },
+                { "name": "Icewind Suite: Nemesis of Coppelius", "count": "1 (boss)", "size": "Lớn (Trùm máy)", "elements": ["Anemo", "Cryo"], "resistanceNotes": null, "weakpoint": false, "mechanics": "máy móc thuần, không có điểm bắn chí mạng", "hpRatio": null, "gameId": 24070301, "resistances": {"Anemo": 0.7, "Cryo": 0.7, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 }
               ]
             }
           ]
@@ -246,15 +246,15 @@
             {
               "wave": 1,
               "monsters": [
-                { "name": "Chimeric Horned Bear", "count": "1 (nối tiếp)", "size": "Vừa", "elements": ["Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận điểm yếu cụ thể", "hpRatio": null },
-                { "name": "Chimeric Winged Lion", "count": "1 (boss 'Solo Accompanist')", "size": "Lớn (Trùm)", "elements": ["Anemo", "Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "có kỹ năng Ward (khiên/che chắn)", "hpRatio": null }
+                { "name": "Chimeric Horned Bear", "count": "1 (nối tiếp)", "size": "Vừa", "elements": ["Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận điểm yếu cụ thể", "hpRatio": null, "gameId": 26310401, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.3}, "physicalResistance": 0.1 },
+                { "name": "Chimeric Winged Lion", "count": "1 (boss 'Solo Accompanist')", "size": "Lớn (Trùm)", "elements": ["Anemo", "Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "có kỹ năng Ward (khiên/che chắn)", "hpRatio": null, "gameId": 26310501, "resistances": {"Anemo": 0.5, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.5, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 }
               ]
             },
             {
               "wave": 2,
               "monsters": [
-                { "name": "Iniquitous Baptist", "count": "1 (nối tiếp, trùm đa nguyên tố)", "size": "Lớn (Trùm)", "elements": ["Cryo", "Electro", "Hydro", "Pyro"], "resistanceNotes": null, "weakpoint": true, "mechanics": "có khiên nguyên tố, đổi khiên theo pha — cần đội đa nguyên tố linh hoạt để phá nhanh", "hpRatio": null },
-                { "name": "Cryo Abyss Mage", "count": "1 (nối tiếp)", "size": "Vừa (Elite)", "elements": ["Cryo"], "resistanceNotes": null, "weakpoint": true, "mechanics": "có khiên nguyên tố; phá khiên Băng bằng Pyro", "hpRatio": null }
+                { "name": "Iniquitous Baptist", "count": "1 (nối tiếp, trùm đa nguyên tố)", "size": "Lớn (Trùm)", "elements": ["Cryo", "Electro", "Hydro", "Pyro"], "resistanceNotes": null, "weakpoint": true, "mechanics": "có khiên nguyên tố, đổi khiên theo pha — cần đội đa nguyên tố linh hoạt để phá nhanh", "hpRatio": null, "gameId": 22100501, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 },
+                { "name": "Cryo Abyss Mage", "count": "1 (nối tiếp)", "size": "Vừa (Elite)", "elements": ["Cryo"], "resistanceNotes": null, "weakpoint": true, "mechanics": "có khiên nguyên tố; phá khiên Băng bằng Pyro", "hpRatio": null, "gameId": 22010201, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 }
               ]
             }
           ]
@@ -272,8 +272,8 @@
             {
               "wave": 2,
               "monsters": [
-                { "name": "Secret Source Automaton: Hunter-Seeker", "count": "1 (Elite)", "size": "Vừa", "elements": ["Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "có kỹ năng Fury (tự buff khi giận dữ) — hạ nhanh trước khi lên nộ", "hpRatio": null },
-                { "name": "Gluttonous Yumkasaur Mountain King", "count": "1 (boss 'Kongamato')", "size": "Lớn (Trùm, khủng long Natlan)", "elements": ["Dendro", "Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận điểm yếu cụ thể", "hpRatio": null }
+                { "name": "Secret Source Automaton: Hunter-Seeker", "count": "1 (Elite)", "size": "Vừa", "elements": ["Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "có kỹ năng Fury (tự buff khi giận dữ) — hạ nhanh trước khi lên nộ", "hpRatio": null, "gameId": 24090101, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 },
+                { "name": "Gluttonous Yumkasaur Mountain King", "count": "1 (boss 'Kongamato')", "size": "Lớn (Trùm, khủng long Natlan)", "elements": ["Dendro", "Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận điểm yếu cụ thể", "hpRatio": null, "gameId": 26220301, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.7, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1 }
               ]
             }
           ]

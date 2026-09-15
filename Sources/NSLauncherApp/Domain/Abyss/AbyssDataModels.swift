@@ -214,6 +214,30 @@ struct AbyssCycle: Decodable, Sendable {
         let weakpoint: Bool?
         let mechanics: String?
         let hpRatio: String?
+        /// The game's own numeric id for this monster, written by
+        /// `scripts/sync-abyss-monster-resistance.py`. Present only for a
+        /// monster the script could resolve; absent is not an error; see
+        /// `resistances`.
+        let gameId: Int?
+        /// This monster's real elemental resistance, straight from the game's
+        /// files (`gi.yatta.moe`'s `resistance` block) rather than inferred.
+        /// `GenshinElement` raw values -> fraction, e.g. `0.7` = 70%.
+        ///
+        /// Complete when present: every one of the seven elements the monster
+        /// does *not* specially resist is still in here at the 10% baseline,
+        /// because that is itself real information the old inference could not
+        /// state — see `AbyssFloorContext.build`'s resistance precedence.
+        let resistances: [String: Double]?
+        /// The monster's real resistance to Physical damage, same source as
+        /// `resistances`. Decoded and reported so a real number is not thrown
+        /// away, but **not consumed anywhere yet**: no playable character's
+        /// damage profile is modelled as Physical (normal attacks are read as
+        /// the character's own element), so there is nothing in the engine to
+        /// apply it to. A monster like the Ruin-series machines can carry a
+        /// large Physical resistance (Ruin Cruiser 30%, Perpetual Mechanical
+        /// Array 70%) that this data captures but the damage model still
+        /// cannot see — a gap worth stating plainly rather than leaving silent.
+        let physicalResistance: Double?
     }
 
     struct Wave: Decodable, Sendable {

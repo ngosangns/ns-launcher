@@ -97,6 +97,39 @@ struct AbyssFloorContext: Sendable {
             if let level = chamber.monsterLevel { levels.append(level) }
             for wave in waves(of: chamber, half: half) {
                 for monster in wave.monsters {
+                    // Three sources, in this order, and a monster's own
+                    // resistance is settled the moment the first of them
+                    // speaks for a given element:
+                    //
+                    //   1. `resistanceNotes`, transcribed from the wiki. Can
+                    //      state a resistance the game's static files cannot
+                    //      — "rất yếu Pyro (pyro_res -220% khi 'Rooted')" is a
+                    //      combat *state*, not the monster's base stat, and
+                    //      only a person watching the fight could write it
+                    //      down.
+                    //   2. `resistances`, this monster's real base resistance
+                    //      table, written by
+                    //      `scripts/sync-abyss-monster-resistance.py` straight
+                    //      from the game's own files.
+                    //   3. The flat inference: assume `ownElementResistance`
+                    //      more, for a monster (2) has not been matched for
+                    //      yet. Used to be the *only* source, and checking it
+                    //      against (2) for this rotation's floor 12 is what
+                    //      showed it wrong in both directions at once: a flat
+                    //      +30pp invented a bonus the Cryo Abyss Mage does not
+                    //      have, and understated the Icewind Suite's real
+                    //      +60pp by half.
+                    //
+                    // (2) and (3) both still only speak for an element the
+                    // monster's own `elements` names — the set of elements
+                    // this floor's resistance is even asked about does not
+                    // change, only how well each answer is informed. A
+                    // matched monster's real table is complete (every one of
+                    // the seven elements is in it, including the ones sitting
+                    // at the 10% baseline — "this monster does not specially
+                    // resist Dendro" is itself real information), but only
+                    // the elements it is already on record as attacking or
+                    // shielding with draw on that completeness here.
                     var spokenFor: Set<GenshinElement> = []
                     for (target, delta) in AbyssTextParser.resistanceNotes(monster.resistanceNotes,
                                                                           diagnostics: &diagnostics) {
@@ -109,19 +142,11 @@ struct AbyssFloorContext: Sendable {
                         }
                     }
 
-                    // An enemy resists what it throws. The data does not say so
-                    // — `elements` is documented as the elements a monster
-                    // attacks or shields *with* — and it does not say anything
-                    // else either: on floor 12 this rotation not one monster
-                    // carries a resistance note, so without this every element
-                    // sat at the 10% baseline and bringing Cryo against a Cryo
-                    // Abyss Mage cost a team nothing. Only for elements this
-                    // monster's own note did not already price, so a note and
-                    // the inference never count twice.
                     for raw in monster.elements {
                         guard let element = GenshinElement(rawValue: raw),
                               !spokenFor.contains(element) else { continue }
-                        resistanceSamples[element, default: []].append(ownElementResistance)
+                        resistanceSamples[element, default: []].append(
+                            monster.resistances?[raw] ?? ownElementResistance)
                     }
                     shields.formUnion(shieldElements(in: monster))
                 }
