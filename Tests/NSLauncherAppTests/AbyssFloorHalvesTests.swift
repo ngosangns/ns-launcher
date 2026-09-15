@@ -208,6 +208,50 @@ final class AbyssFloorHalvesTests: XCTestCase {
         XCTAssertGreaterThan(best.score, AbyssFloorPlan.combine(100, 50))
     }
 
+    /// The pairing skips, for each first-half team, every second-half team that
+    /// holds one of its ids — the skip that took the pairing from 31 s to
+    /// 0.1 s when both halves' best teams hold the same supports. It must be an
+    /// exact skip, not a heuristic: checked here against a brute-force pairing
+    /// on rankings built to be dominated by one shared character.
+    func testThePairingSkipMatchesBruteForce() throws {
+        var generator = SystemRandomNumberGenerator()
+        let names = (0..<14).map { "c\($0)" }
+        func team(_ ids: [String], _ score: Double) -> AbyssTeamResult {
+            AbyssTeamResult(memberIDs: ids, onFieldID: ids[0], score: score,
+                            perCharacterDamage: [:], assignment: [:], notes: [])
+        }
+        func ranking(_ count: Int) -> [AbyssTeamResult] {
+            (0..<count).map { index -> AbyssTeamResult in
+                // The best third all hold c0, like a support every top team runs.
+                var ids = Set<String>(index < count / 3 ? ["c0"] : [])
+                while ids.count < 4 { ids.insert(names.randomElement(using: &generator)!) }
+                return team(ids.sorted(), Double(count - index) + Double.random(in: 0..<0.5, using: &generator))
+            }.sorted { $0.score > $1.score }
+        }
+        for _ in 0..<30 {
+            let first = ranking(60), second = ranking(60)
+            let plans = AbyssOptimizer.pair(first: first, second: second, count: 4)
+
+            // Brute force, same greedy order: best legal unused pair, repeatedly.
+            var usedFirst = Set<Int>(), usedSecond = Set<Int>()
+            var expected: [Double] = []
+            while expected.count < 4 {
+                var best: (Int, Int, Double)?
+                for i in first.indices where !usedFirst.contains(i) {
+                    for j in second.indices where !usedSecond.contains(j) {
+                        guard Set(first[i].memberIDs).isDisjoint(with: second[j].memberIDs) else { continue }
+                        let score = AbyssFloorPlan.combine(first[i].score, second[j].score)
+                        if best == nil || score > best!.2 { best = (i, j, score) }
+                    }
+                }
+                guard let best else { break }
+                usedFirst.insert(best.0); usedSecond.insert(best.1)
+                expected.append(best.2)
+            }
+            XCTAssertEqual(plans.map(\.score), expected)
+        }
+    }
+
     /// A roster that cannot field eight distinct characters has no plan, and
     /// saying so beats inventing one that reuses people.
     func testARosterTooSmallForTwoTeamsYieldsNoPlan() throws {

@@ -455,41 +455,89 @@ struct AbyssOptimizer: Sendable {
                 .union(team.memberIDs.compactMap { team.assignment[$0]?.weaponID }.map { "w:" + $0 })
         }
         let held = first.map(held) + second.map(held)
-        let ids = Array(held.reduce(into: Set<String>()) { $0.formUnion($1) })
-        let bits = ids.count <= UInt64.bitWidth
-            ? Dictionary(uniqueKeysWithValues: ids.enumerated().map { ($1, UInt64(1) << UInt64($0)) })
-            : [:]
+        // Sorted, so the bit an id gets is the same every run.
+        let ids = Array(held.reduce(into: Set<String>()) { $0.formUnion($1) }).sorted()
+        // Four words, not one: the ids are characters *and* weapons, and 8,000
+        // candidate teams over a 40-character pool easily hold more than 64
+        // distinct ones. Past a single word this used to fall back to
+        // comparing string sets for every pair — the whole pairing then took
+        // most of a run. 256 ids is more than any pool reaches; beyond it the
+        // set comparison is still there.
+        let wordBits = UInt64.bitWidth
+        let fits = ids.count <= 4 * wordBits
+        let position = Dictionary(uniqueKeysWithValues: ids.enumerated().map { ($1, $0) })
         let firstHeld = Array(held[..<first.count])
         let secondHeld = Array(held[first.count...])
-        func mask(_ ids: Set<String>) -> UInt64 {
-            bits.isEmpty ? 0 : ids.reduce(0) { $0 | (bits[$1] ?? 0) }
+        func mask(_ ids: Set<String>) -> SIMD4<UInt64> {
+            var mask = SIMD4<UInt64>(repeating: 0)
+            guard fits else { return mask }
+            for id in ids {
+                guard let index = position[id] else { continue }
+                mask[index / wordBits] |= UInt64(1) << UInt64(index % wordBits)
+            }
+            return mask
         }
         let firstMasks = firstHeld.map(mask)
         let secondMasks = secondHeld.map(mask)
+        let zero = SIMD4<UInt64>(repeating: 0)
+        // For each id, the first second-half team that does not hold it. A
+        // first-half team can share nothing only with a partner past the
+        // latest of these over its own ids, so the scan starts there. It
+        // matters because the best teams of both halves hold the same few
+        // supports: without it the pairing walked every second-half team for
+        // each of ~1,300 first-half teams before finding a legal plan — 182
+        // million pair checks, most of a run.
+        var firstWithout = [Int](repeating: second.count, count: fits ? ids.count : 0)
+        for index in firstWithout.indices {
+            let word = index / wordBits, bit = UInt64(1) << UInt64(index % wordBits)
+            firstWithout[index] = secondMasks.firstIndex { $0[word] & bit == 0 } ?? second.count
+        }
+        let firstStart: [Int] = first.indices.map { candidate in
+            guard fits else { return 0 }
+            var start = 0
+            for word in 0..<4 {
+                var bits = firstMasks[candidate][word]
+                while bits != 0 {
+                    let offset = bits.trailingZeroBitCount
+                    start = max(start, firstWithout[word * wordBits + offset])
+                    bits &= bits - 1
+                }
+            }
+            return start
+        }
         func shareNothing(_ candidate: Int, _ partner: Int) -> Bool {
-            bits.isEmpty
-                ? firstHeld[candidate].isDisjoint(with: secondHeld[partner])
-                : firstMasks[candidate] & secondMasks[partner] == 0
+            fits
+                ? (firstMasks[candidate] & secondMasks[partner]) == zero
+                : firstHeld[candidate].isDisjoint(with: secondHeld[partner])
         }
 
-        var usedFirst = Set<Int>()
-        var usedSecond = Set<Int>()
+        // Flags rather than `Set<Int>`: the inner loop below visits up to
+        // first × second pairs per plan when the best teams of both halves
+        // share their strongest characters and weapons, and a hashed lookup on
+        // every visit cost 43 s of a 56 s run. The scores are copied out for
+        // the same reason — no `AbyssTeamResult` is touched in the loop.
+        var usedFirst = [Bool](repeating: false, count: first.count)
+        var usedSecond = [Bool](repeating: false, count: second.count)
+        let firstScores = first.map(\.score)
+        let secondScores = second.map(\.score)
         var plans: [AbyssFloorPlan] = []
 
         while plans.count < count {
             // The best score still available in the second half, which bounds
             // what any first-half team can reach.
-            guard let ceiling = second.indices.first(where: { !usedSecond.contains($0) })
-                .map({ second[$0].score }) else { break }
+            guard let top = usedSecond.firstIndex(of: false) else { break }
+            let ceiling = secondScores[top]
 
             var best: (first: Int, second: Int, score: Double)?
-            for candidate in first.indices where !usedFirst.contains(candidate) {
-                if let best, AbyssFloorPlan.combine(first[candidate].score, ceiling) <= best.score {
+            for candidate in first.indices where !usedFirst[candidate] {
+                let candidateScore = firstScores[candidate]
+                if let best, AbyssFloorPlan.combine(candidateScore, ceiling) <= best.score {
                     break
                 }
-                for partner in second.indices where !usedSecond.contains(partner) {
-                    let score = AbyssFloorPlan.combine(first[candidate].score, second[partner].score)
-                    if let best, score <= best.score { break }
+                let bound = best?.score ?? -Double.infinity
+                for partner in max(top, firstStart[candidate])..<second.count where !usedSecond[partner] {
+                    let score = AbyssFloorPlan.combine(candidateScore, secondScores[partner])
+                    if score <= bound { break }
                     guard shareNothing(candidate, partner) else { continue }
                     best = (candidate, partner, score)
                     break
@@ -499,8 +547,8 @@ struct AbyssOptimizer: Sendable {
             // Nothing left that can field two teams at once — a roster of seven
             // has no answer here, and saying so beats inventing one.
             guard let best else { break }
-            usedFirst.insert(best.first)
-            usedSecond.insert(best.second)
+            usedFirst[best.first] = true
+            usedSecond[best.second] = true
             plans.append(AbyssFloorPlan(firstHalf: first[best.first],
                                         secondHalf: second[best.second],
                                         score: best.score))
