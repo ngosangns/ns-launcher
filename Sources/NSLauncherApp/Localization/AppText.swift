@@ -794,10 +794,29 @@ struct AppText {
     var abyssPlanScoreHint: String {
         localized(en: "Both halves have to be cleared in one timer, so a plan is ranked on how "
                       + "long it takes, not on how much damage it does — the half you are slow "
-                      + "at is the half that costs the star.",
+                      + "at is the half that costs the star. The score is the damage per second "
+                      + "that clears both halves' enemy HP in that time.",
                   vi: "Phải qua cả hai nửa trong cùng một lượt đếm giờ, nên phương án được xếp "
                       + "theo thời gian chứ không theo sát thương — nửa nào đánh chậm mới là "
-                      + "nửa làm mất sao.")
+                      + "nửa làm mất sao. Điểm là sát thương mỗi giây dọn hết HP quái của cả hai "
+                      + "nửa trong đúng thời gian đó.")
+    }
+
+    /// Modelled time to clear, as "1:32". Same units as the score: a ranking
+    /// figure, not the in-game timer.
+    func abyssClearTime(_ seconds: Double) -> String {
+        let total = Int(seconds.rounded())
+        let clock = String(format: "%d:%02d", total / 60, total % 60)
+        return localized(en: "≈ \(clock) to clear", vi: "≈ \(clock) để dọn")
+    }
+
+    var abyssClearTimeHint: String {
+        localized(en: "Enemy HP over this team's modelled damage per second, on one target. "
+                      + "The model's damage is approximate and ignores AoE, so read this as a "
+                      + "comparison between teams, not as the in-game timer.",
+                  vi: "HP quái chia cho sát thương mỗi giây theo mô hình, trên một mục tiêu. "
+                      + "Sát thương mô hình là ước lượng và chưa tính đánh lan, nên đây là thước "
+                      + "so sánh giữa các đội, không phải đồng hồ trong game.")
     }
 
     /// The score, with its unit. Damage per second under the model's

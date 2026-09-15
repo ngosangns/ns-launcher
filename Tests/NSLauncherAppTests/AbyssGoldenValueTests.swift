@@ -186,6 +186,7 @@ final class AbyssGoldenValueTests: XCTestCase {
                 AbyssFloorContext.build(
                     cycle: cycle, floor: floorNumber,
                     ownElementResistance: try XCTUnwrap(library.tuning).enemyOwnElementResistance,
+                    enemyHP: library.enemyHP,
                     diagnostics: &diagnostics),
                 "no context for floor \(floorNumber)")
 

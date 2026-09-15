@@ -159,15 +159,18 @@ struct AbyssOptimizer: Sendable {
                let first = AbyssFloorContext.build(
                    cycle: cycle, floor: floorNumber, half: 1,
                    ownElementResistance: tuning.enemyOwnElementResistance,
+                   enemyHP: library.enemyHP,
                    diagnostics: &diagnostics),
                let second = AbyssFloorContext.build(
                    cycle: cycle, floor: floorNumber, half: 2,
                    ownElementResistance: tuning.enemyOwnElementResistance,
+                   enemyHP: library.enemyHP,
                    diagnostics: &diagnostics) {
                 fights.append(.halves(first, second))
             } else if let floor = AbyssFloorContext.build(
                 cycle: cycle, floor: floorNumber,
                 ownElementResistance: tuning.enemyOwnElementResistance,
+                enemyHP: library.enemyHP,
                 diagnostics: &diagnostics) {
                 fights.append(.whole(floor))
             }
@@ -238,6 +241,7 @@ struct AbyssOptimizer: Sendable {
                 buffs: floor.buffs,
                 shieldElements: floor.shieldElements,
                 weakElements: floor.weakElements,
+                enemyHP: floor.enemyHP,
                 outcome: .whole(teams)))
             progress?(Double(index + 1) / Double(max(fights.count, 1)))
         }
@@ -369,7 +373,8 @@ struct AbyssOptimizer: Sendable {
         let secondTeams = await bestTeams(in: pool, options: options, profiles: profiles,
                                           floor: second, topN: Self.pairingCandidates)
 
-        var plans = Self.pair(first: firstTeams, second: secondTeams, count: candidates)
+        var plans = Self.pair(first: firstTeams, second: secondTeams, count: candidates,
+                              firstHP: first.enemyHP, secondHP: second.enemyHP)
 
         // One task per team rather than per plan: a plan's two halves are
         // independent sweeps, and every team in the list is distinct, so there
@@ -392,7 +397,9 @@ struct AbyssOptimizer: Sendable {
             guard let entry = refined[index], let one = entry.first, let two = entry.second
             else { return plan }
             return AbyssFloorPlan(firstHalf: one, secondHalf: two,
-                                  score: AbyssFloorPlan.combine(one.score, two.score))
+                                  score: AbyssFloorPlan.combine(one.score, two.score,
+                                                                firstHP: first.enemyHP, secondHP: second.enemyHP),
+                                  firstHalfHP: first.enemyHP, secondHalfHP: second.enemyHP)
         }
         // Re-picked artifacts move scores, and a plan that was fourth on the
         // neutral pick can win on its own gear. Ties break on the plan id so the
@@ -409,7 +416,8 @@ struct AbyssOptimizer: Sendable {
             AbyssHalfReport(half: index,
                             buffs: context.buffs.filter { !shared.contains($0) },
                             shieldElements: context.shieldElements,
-                            weakElements: context.weakElements)
+                            weakElements: context.weakElements,
+                            enemyHP: context.enemyHP)
         }
 
         return AbyssFloorReport(
@@ -447,9 +455,14 @@ struct AbyssOptimizer: Sendable {
     /// dodge a clash: the alternative was re-picking the second half's weapons
     /// after the pair was chosen, which would rank pairs on scores that then
     /// change underneath the ranking.
+    ///
+    /// `firstHP`/`secondHP` weigh the halves by the HP they hold; `combine`
+    /// still rises with both scores, so the bound holds.
     static func pair(first: [AbyssTeamResult],
                      second: [AbyssTeamResult],
-                     count: Int) -> [AbyssFloorPlan] {
+                     count: Int,
+                     firstHP: Double? = nil,
+                     secondHP: Double? = nil) -> [AbyssFloorPlan] {
         // "Do these two teams share anything" is asked millions of times, so
         // each id — character or weapon — becomes a bit in a word and the
         // question becomes one AND. A pool too large to fit in a word falls back
@@ -539,12 +552,14 @@ struct AbyssOptimizer: Sendable {
             var best: (first: Int, second: Int, score: Double)?
             for candidate in first.indices where !usedFirst[candidate] {
                 let candidateScore = firstScores[candidate]
-                if let best, AbyssFloorPlan.combine(candidateScore, ceiling) <= best.score {
+                if let best, AbyssFloorPlan.combine(candidateScore, ceiling, firstHP: firstHP,
+                                                    secondHP: secondHP) <= best.score {
                     break
                 }
                 let bound = best?.score ?? -Double.infinity
                 for partner in max(top, firstStart[candidate])..<second.count where !usedSecond[partner] {
-                    let score = AbyssFloorPlan.combine(candidateScore, secondScores[partner])
+                    let score = AbyssFloorPlan.combine(candidateScore, secondScores[partner],
+                                                       firstHP: firstHP, secondHP: secondHP)
                     if score <= bound { break }
                     guard shareNothing(candidate, partner) else { continue }
                     best = (candidate, partner, score)
@@ -559,7 +574,7 @@ struct AbyssOptimizer: Sendable {
             usedSecond[best.second] = true
             plans.append(AbyssFloorPlan(firstHalf: first[best.first],
                                         secondHalf: second[best.second],
-                                        score: best.score))
+                                        score: best.score, firstHalfHP: firstHP, secondHalfHP: secondHP))
         }
         return plans
     }

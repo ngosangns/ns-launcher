@@ -70,9 +70,11 @@ final class AbyssGoldenDumpTests: XCTestCase {
             guard let context = AbyssFloorContext.build(
                 cycle: cycle, floor: number,
                 ownElementResistance: try XCTUnwrap(library.tuning).enemyOwnElementResistance,
+                enemyHP: library.enemyHP,
                 diagnostics: &diagnostics) else { continue }
             floors[String(number)] = [
                 "monsterLevel": context.monsterLevel,
+                "enemyHP": context.enemyHP ?? NSNull(),
                 "res": Dictionary(uniqueKeysWithValues:
                     context.resistances.map { ($0.key.rawValue, $0.value) }),
                 "shieldElements": context.shieldElements.map(\.rawValue).sorted(),

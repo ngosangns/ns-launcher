@@ -29,6 +29,7 @@
         "required": ["floor", "leyLineDisorder", "chambers", "recommendation"],
         "properties": {
           "floor": { "type": "integer" },
+          "enemyHPMultiplier": { "type": "number", "description": "HP quái ở tầng này so với thế giới mở (tầng 12 = 2.5), do scripts/sync-abyss-monster-hp.py ghi từ mục 'Enemy HP' trang Spiral Abyss của wiki. Vắng = script từ chối tầng này (xem output script); engine giữ giả định HP bằng nhau." },
           "leyLineDisorder": { "type": "string" },
           "chambers": {
             "type": "array",
@@ -70,7 +71,19 @@
                                 "Cryo": { "type": "number" }
                               }
                             },
-                            "physicalResistance": { "type": "number", "description": "Kháng Vật Lý thật của quái, cùng nguồn. Ghi lại nhưng CHƯA được engine dùng: không nhân vật nào có damage được mô hình hoá là Vật Lý." }
+                            "physicalResistance": { "type": "number", "description": "Kháng Vật Lý thật của quái, cùng nguồn. Ghi lại nhưng CHƯA được engine dùng: không nhân vật nào có damage được mô hình hoá là Vật Lý." },
+                            "spawns": { "type": "integer", "minimum": 1, "description": "Tổng số con của quái này trong nửa đó, từ template Domain Enemies của trang chu kỳ trên wiki (Tên*số). Do scripts/sync-abyss-monster-hp.py ghi; `count` là văn xuôi và không được đọc." },
+                            "hp": {
+                              "type": "object",
+                              "description": "HP của quái = ratio × enemy-hp.json[type][cấp] × enemyHPMultiplier của tầng × spawns. Đọc từ template Enemy Stats trên trang wiki của quái, đúng biến thể (Normal/Battle-Hardened).",
+                              "required": ["page", "variant", "ratio", "type"],
+                              "properties": {
+                                "page": { "type": "string" },
+                                "variant": { "type": "string" },
+                                "ratio": { "type": "number" },
+                                "type": { "type": "string" }
+                              }
+                            }
                           }
                         }
                       }

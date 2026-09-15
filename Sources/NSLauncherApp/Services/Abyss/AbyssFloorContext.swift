@@ -16,8 +16,9 @@ struct AbyssFloorContext: Sendable {
     /// not the same fight — different enemies, and this rotation different Ley
     /// Line Disorders.
     var half: Int?
-    /// Mean level across the floor's chambers. All three must be cleared, so
-    /// the average is a fairer basis for the DEF multiplier than either extreme.
+    /// Mean level across the floor's chambers, weighted by the HP each holds
+    /// when the data gives it: time is spent where the HP is, and that is where
+    /// the DEF multiplier applies.
     let monsterLevel: Int
     /// Only elements the data actually mentions; everything else falls back to
     /// the 10% baseline from `damage-formula.json`.
@@ -25,6 +26,9 @@ struct AbyssFloorContext: Sendable {
     let buffs: [AbyssFloorBuff]
     /// Elemental shields present on the floor, sorted for stable output.
     let shieldElements: [GenshinElement]
+    /// All the HP this fight holds — see `AbyssEnemyHP.swift` — or nil when
+    /// any monster in it has none in the data.
+    var enemyHP: Double?
 
     /// Enemies default to 10% resistance to everything unless the data says
     /// otherwise — see `damage-formula.json`, `resMultiplier`.
@@ -86,17 +90,50 @@ struct AbyssFloorContext: Sendable {
                       floor floorNumber: Int,
                       half: Int? = nil,
                       ownElementResistance: Double,
+                      enemyHP table: AbyssEnemyHPTable? = nil,
                       diagnostics: inout AbyssParseDiagnostics) -> AbyssFloorContext? {
         guard let floor = cycle.floors.first(where: { $0.floor == floorNumber }) else { return nil }
 
-        var levels: [Int] = []
-        var resistanceSamples: [GenshinElement: [Double]] = [:]
+        // HP first: when every monster in the fight has it, resistances and
+        // level are weighted by it, because time is spent in proportion to HP
+        // — a 3.8M-HP wave of Ruin Scouts is most of that half's fight, not one
+        // line in six. When any monster lacks it, every monster weighs the same,
+        // as before.
+        var totalHP: Double? = 0
+        for chamber in floor.chambers {
+            for wave in waves(of: chamber, half: half) {
+                for monster in wave.monsters {
+                    guard let hp = monster.totalHP(level: chamber.monsterLevel,
+                                                   multiplier: floor.enemyHPMultiplier, table: table) else {
+                        totalHP = nil
+                        continue
+                    }
+                    totalHP = totalHP.map { $0 + hp }
+                }
+            }
+        }
+        if totalHP == nil {
+            diagnostics.fightHPUnknown.insert("floor \(floorNumber)" + (half.map { " half \($0)" } ?? ""))
+        }
+
+        var levels: [(level: Int, weight: Double)] = []
+        var resistanceSamples: [GenshinElement: [(value: Double, weight: Double)]] = [:]
         var shields: Set<GenshinElement> = []
 
         for chamber in floor.chambers {
-            if let level = chamber.monsterLevel { levels.append(level) }
+            var chamberHP = 0.0
             for wave in waves(of: chamber, half: half) {
                 for monster in wave.monsters {
+                    chamberHP += monster.totalHP(level: chamber.monsterLevel, multiplier: floor.enemyHPMultiplier,
+                                                 table: table) ?? 0
+                }
+            }
+            if let level = chamber.monsterLevel { levels.append((level, totalHP == nil ? 1 : chamberHP)) }
+            for wave in waves(of: chamber, half: half) {
+                for monster in wave.monsters {
+                    let weight = totalHP == nil ? 1
+                        : monster.totalHP(level: chamber.monsterLevel, multiplier: floor.enemyHPMultiplier,
+                                          table: table) ?? 0
                     // Three sources, in this order, and a monster's own
                     // resistance is settled the moment the first of them
                     // speaks for a given element:
@@ -137,7 +174,7 @@ struct AbyssFloorContext: Sendable {
                         // character has Physical as their element, so it never
                         // reaches the damage calculation.
                         if case .element(let element) = target {
-                            resistanceSamples[element, default: []].append(defaultResistance + delta)
+                            resistanceSamples[element, default: []].append((defaultResistance + delta, weight))
                             spokenFor.insert(element)
                         }
                     }
@@ -146,7 +183,7 @@ struct AbyssFloorContext: Sendable {
                         guard let element = GenshinElement(rawValue: raw),
                               !spokenFor.contains(element) else { continue }
                         resistanceSamples[element, default: []].append(
-                            monster.resistances?[raw] ?? ownElementResistance)
+                            (monster.resistances?[raw] ?? ownElementResistance, weight))
                     }
                     shields.formUnion(shieldElements(in: monster))
                 }
@@ -154,7 +191,8 @@ struct AbyssFloorContext: Sendable {
         }
 
         let resistances = resistanceSamples.compactMapValues { samples -> Double? in
-            samples.isEmpty ? nil : samples.reduce(0, +) / Double(samples.count)
+            let weight = samples.reduce(0) { $0 + $1.weight }
+            return weight > 0 ? samples.reduce(0) { $0 + $1.value * $1.weight } / weight : nil
         }
 
         // Ley Line Disorder is per-floor; the Blessing of the Abyssal Moon
@@ -204,9 +242,11 @@ struct AbyssFloorContext: Sendable {
         // zero, which would differ on a floor whose chamber levels average to
         // exactly .5 — no such floor exists today, so the difference would first
         // appear on a future rotation with nothing to point at it.
-        let meanLevel = levels.isEmpty
+        let levelWeight = levels.reduce(0) { $0 + $1.weight }
+        let meanLevel = levels.isEmpty || levelWeight <= 0
             ? 90
-            : Int((Double(levels.reduce(0, +)) / Double(levels.count)).rounded(.toNearestOrEven))
+            : Int((levels.reduce(0) { $0 + Double($1.level) * $1.weight } / levelWeight)
+                .rounded(.toNearestOrEven))
 
         // Monster level is a property of the chamber, so both halves of a floor
         // are fought at the same level.
@@ -216,7 +256,8 @@ struct AbyssFloorContext: Sendable {
             monsterLevel: meanLevel,
             resistances: resistances,
             buffs: buffs,
-            shieldElements: shields.sorted { $0.rawValue < $1.rawValue })
+            shieldElements: shields.sorted { $0.rawValue < $1.rawValue },
+            enemyHP: totalHP)
     }
 
     /// Elemental shields named in a monster's mechanics or resistance notes.

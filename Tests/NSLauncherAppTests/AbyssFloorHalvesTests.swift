@@ -138,8 +138,10 @@ final class AbyssFloorHalvesTests: XCTestCase {
         for (rank, plan) in plans.enumerated() {
             XCTAssertTrue(Set(plan.firstHalf.memberIDs).isDisjoint(with: Set(plan.secondHalf.memberIDs)),
                           "plan \(rank + 1) puts the same character in both halves")
+            XCTAssertNotNil(plan.clearSeconds, "floor 12's halves have HP in the data")
             XCTAssertEqual(plan.score,
-                           AbyssFloorPlan.combine(plan.firstHalf.score, plan.secondHalf.score),
+                           AbyssFloorPlan.combine(plan.firstHalf.score, plan.secondHalf.score,
+                                                  firstHP: plan.firstHalfHP, secondHP: plan.secondHalfHP),
                            accuracy: max(plan.score, 1) * 1e-9)
         }
 

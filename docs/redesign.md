@@ -99,7 +99,7 @@ Chạy: `ABYSS_BENCHMARK=1 swift test --filter AbyssBenchmarkTests`. Xem mục 7
 | 3 | Dựng rotation + năng lượng | `offFieldUptime`, hack ER | **Xong (năng lượng; thời gian đứng sân để sau) — xem mục 7** |
 | 4 | Gauge/ICD/phản ứng theo timeline | `amplifyingUptime`, `transformativeReactionsPerRotation` | **Xong (đếm theo số lần áp, chưa phải timeline) — xem mục 8** |
 | 5 | Timeline buff + stack | `conditionalUptime`, `assumedStacks`, phần lớn `setEffectApprox` | **Xong (cả ba; uptime tính từ rotation, chưa phải mô phỏng khung giờ) — xem mục 10** |
-| 6 | Điểm = thời gian dọn — cần nhập HP quái từ Yatta (script Pha 0 cố tình **chưa** lấy HP: chưa có gì đọc nó, và một key không ai hỏi là đúng loại lỗ hổng im lặng đã dọn ở `physical_dmg`) | trung bình điều hoà giả định HP bằng nhau | Chưa bắt đầu |
+| 6 | Điểm = thời gian dọn — HP quái từ wiki, đối chiếu đường cong game trên Yatta | trung bình điều hoà giả định HP bằng nhau | **Xong cho tầng 9, 10, 12 (tầng 11 bị từ chối: wiki không chắc số lượng) — xem mục 11** |
 
 Quy mô thật: làm đủ 125 nhân vật là việc nhiều tháng, Pha 2 là nút thắt.
 ~80% giá trị nằm ở Pha 0–3 trên ~30 nhân vật hay dùng, và nhờ cơ chế rơi về
@@ -630,3 +630,62 @@ Theo nhóm: Wriothesley +0.40 → +0.28 sau khi sửa The Widsith; Lunar-Charged
   thường, stack giảm dần (The Daybreak Chronicles, Alley Hunter) lấy mức giữ đều.
 - `character-kits.json.buffs[].uptime` (Bennett, Kujou Sara, Faruzan…) vẫn gán
   tay — timeline chưa đọc buff từ kit.
+
+## 11. Pha 6 — kết quả
+
+### 11.1. Nguồn HP: wiki, đối chiếu file game
+
+Kế hoạch ghi "HP quái từ Yatta". Yatta có HP gốc và đường cong theo cấp của từng
+quái (`monster/{id}`, `static/monsterCurve`), nhưng thiếu hai thứ La Hoàn cần:
+**biến thể** — Battle-Hardened Chimeric Volkodlak Archer của tầng 12 là Voywolf
+Hunter với hệ số HP 25.652, gấp 7 lần bản thường 3.6, và Yatta không có entry
+Battle-Hardened nào — và **lịch tầng hiện tại** (dữ liệu `tower` của Yatta dừng
+ở 2025). `scripts/sync-abyss-monster-hp.py` vì vậy đọc wiki:
+
+- **Số lượng**: template `Domain Enemies` của trang chu kỳ (`Tên*số`, `//` tách
+  đợt con). Trường `count` trong file chu kỳ là văn xuôi ("1 rồi 1 (≈8 tổng cả
+  đợt)", "2 (biến thể)" cho một Construction Specialist Mek mà wiki ghi 1) nên
+  không đọc.
+- **HP**: template `Enemy Stats` trên trang quái, đúng biến thể; `HP = hp_ratio ×
+  Module:Enemy Stats/HP[type][cấp]`. Bảng đó là đường cong HP của game × 13.584 —
+  script tính lại HP của 27 quái có `gameId` từ file game (Yatta), lệch < 1% cả 27.
+- **Hệ số tầng**: mục "Enemy HP" trang Spiral Abyss (tầng 8–11 ×2, tầng 12 ×2.5),
+  khớp mã ẩn `LevelEntity_Monster_HpUp_Lv3/Lv5` trong dữ liệu `tower` của Yatta.
+
+Từ chối (không đoán): tên không khớp, biến thể không rõ, trang chu kỳ nhắc HP
+ngoài danh sách quái, HP lệch file game > 1%, và số lượng mà wiki ghi chú
+"unsure" — **tầng 11** bị từ chối vì lẽ này, và giữ giả định HP bằng nhau
+(`diagnostics.fightHPUnknown`).
+
+### 11.2. Mô hình
+
+- **Điểm phương án** = sát thương mỗi giây dọn hết HP cả hai nửa trong đúng tổng
+  thời gian hai đội cần: `(H₁ + H₂) / (H₁/s₁ + H₂/s₂)`. Lớn nhất đúng khi
+  `t₁ + t₂` nhỏ nhất; không có HP thì về lại trung bình điều hoà. Vẫn tăng theo cả
+  hai điểm nên chặn nhánh của phép ghép đội giữ nguyên (test so với vét cạn).
+- Tầng 12 mùa này: **nửa trước 14.4M HP, nửa sau 8.7M** — giả định cũ lệch hơn
+  một nửa. 3.8M của nửa trước là 8 Ruin Scout.
+- Kháng và cấp quái của một trận giờ **có trọng số theo HP** (thời gian dồn vào
+  chỗ nhiều HP): tầng 12 cả tầng Cryo 26% → 33%, Electro 30% → 37%, cấp 98 → 97.
+  Thiếu HP ở bất kỳ quái nào thì mọi quái nặng như nhau như trước.
+- UI hiện **thời gian dọn** ("≈ 15:07 để dọn") cạnh điểm, cho phương án và từng
+  nửa; chú thích nói rõ đây là thước so sánh (sát thương mô hình, một mục tiêu),
+  không phải đồng hồ trong game.
+
+### 11.3. Đo lại
+
+Benchmark gcsim chấm đội trên tầng trung tính nên không đổi. Trên tầng 12 với
+roster ví dụ, xếp lại cùng 5 phương án đầu bằng trung bình điều hoà thì #3 (Yelan
++ Xiangling | Raiden + Xingqiu) tụt xuống #5: nửa sau của nó mạnh (27.9k) nhưng
+nửa sau chỉ có 8.7M HP, còn nửa trước 14.4M mới là chỗ tốn thời gian. Phương án
+#1 cần ≈ 648s + 259s theo mô hình. Golden đổi 148
+dòng (kháng/cấp tầng và điểm đội).
+
+### 11.4. Còn lại
+
+- **Một mục tiêu**: 8 Ruin Scout được tính như 8 lần một con; đội đánh lan không
+  được lợi. Đây là giới hạn lớn nhất của thời gian dọn hiện tại.
+- Khiên nguyên tố, pha bất tử, quái hồi thêm theo thời gian chưa vào thời gian.
+- Kháng vẫn trung bình theo giá trị (có trọng số); chính xác hơn là trung bình
+  hệ số kháng `ΣH / Σ(Hᵢ/mᵢ)` — cần đổi cấu trúc `resistances` sang hệ số.
+- Tầng 11 chờ wiki chốt số lượng; chạy lại script là đủ.

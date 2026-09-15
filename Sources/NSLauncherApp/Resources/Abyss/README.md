@@ -26,6 +26,7 @@ là **bản duy nhất**.
 | `weapons/*.json` | 246 vũ khí, nhóm theo loại |
 | `artifact-sets.json` | 63 bộ thánh di vật |
 | `abyss-monsters/<khoảng-ngày>.json` | Quái + Ley Line Disorder + Uyên Nguyệt Chúc Phúc của một chu kỳ |
+| `enemy-hp.json` | HP quái theo cấp cho từng loại scaling, từ `Module:Enemy Stats/HP` của wiki (đường cong game × 13.584), sinh tự động bằng `scripts/sync-abyss-monster-hp.py` — nền của điểm theo thời gian dọn Pha 6 |
 | `damage-formula.json` | Hằng số công thức sát thương + ví dụ mẫu để test |
 | `team-bonus.json` | Cộng hưởng nguyên tố, Nguyệt Triệu, Hexerei, Nightsoul Burst — **luật**, không phải danh sách nhân vật |
 | `character-kits.json` | Mọi thứ chỉ đúng với **một** nhân vật và không file game nào ghi: một lần dùng chiêu gồm những dòng nào (`hits`), kit đổi HP/DEF ra ATK (`conversions`), talent buff gì cho đội/cho mình (`buffs`), tag cơ chế, nhãn đòn nặng, giảm kháng, base damage phản ứng (xem "Kit nhân vật") |
@@ -237,7 +238,16 @@ dẫn vào:
 ```bash
 python3 scripts/sync-abyss-monster-resistance.py
 python3 scripts/sync-abyss-monster-resistance.py ~/Library/Application\ Support/NSLauncher/abyss-cycles/*.json
+python3 scripts/sync-abyss-monster-hp.py
+python3 scripts/sync-abyss-monster-hp.py ~/Library/Application\ Support/NSLauncher/abyss-cycles/*.json
 ```
+
+Script thứ hai ghi HP (Pha 6): `spawns` (tổng số con mỗi nửa, từ template
+`Domain Enemies` của trang chu kỳ trên wiki — trường `count` là văn xuôi, không
+được đọc), `hp` (tỉ lệ HP và loại scaling từ trang wiki của quái, **đúng biến
+thể**: Battle-Hardened khác Normal), và `enemyHPMultiplier` của tầng. Nó từ chối
+cả tầng khi tên không khớp, biến thể không rõ, wiki ghi chú số lượng không chắc,
+hoặc HP lệch đường cong game (Yatta) quá 1% — tầng đó giữ giả định HP bằng nhau.
 
 Script khớp từng quái với id số của game qua `gi.yatta.moe`, ghi kháng
 **thật** (7 nguyên tố + Vật Lý) vào đúng dòng quái đó — `gameId`,

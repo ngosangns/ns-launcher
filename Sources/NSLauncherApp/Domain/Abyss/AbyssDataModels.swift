@@ -241,6 +241,23 @@ struct AbyssCycle: Decodable, Sendable {
         /// Array 70%) that this data captures but the damage model still
         /// cannot see — a gap worth stating plainly rather than leaving silent.
         let physicalResistance: Double?
+        /// How many of this monster the half spawns in all, from the cycle's
+        /// wiki page, written by `scripts/sync-abyss-monster-hp.py`. `count`
+        /// above is prose and is not read.
+        let spawns: Int?
+        /// Which wiki stat block this monster's HP scales by — see
+        /// `AbyssEnemyHPTable`. Absent for a monster the script could not
+        /// resolve.
+        let hp: HPScaling?
+
+        struct HPScaling: Decodable, Sendable {
+            /// The wiki page and variant ("Normal", "Battle-Hardened") the
+            /// ratio was read from, for audit.
+            let page: String
+            let variant: String
+            let ratio: Double
+            let type: String
+        }
     }
 
     struct Wave: Decodable, Sendable {
@@ -259,6 +276,10 @@ struct AbyssCycle: Decodable, Sendable {
         let leyLineDisorder: String
         let chambers: [Chamber]
         let recommendation: String
+        /// Enemy HP on this floor against the open world (2.5 on floor 12),
+        /// from the wiki's Spiral Abyss page. Absent when the script refused
+        /// the floor.
+        let enemyHPMultiplier: Double?
     }
 
     let sourceFile: String?

@@ -87,8 +87,12 @@
           12
         ],
         "blessingOfTheAbyssalMoon": "Luster-Piercing",
-        "monsterResistanceSync": "39/41 tên quái khớp gameId qua scripts/sync-abyss-monster-resistance.py ngày 2026-09-15 (gi.yatta.moe). 2 chưa khớp: Battle-Hardened Chimeric Volkodlak Archer, Veteran Tainted Water-Splitting Phantasm — dùng suy đoán phẳng như cũ."
+        "monsterResistanceSync": "39/41 tên quái khớp gameId qua scripts/sync-abyss-monster-resistance.py ngày 2026-09-15 (gi.yatta.moe). 2 chưa khớp: Battle-Hardened Chimeric Volkodlak Archer, Veteran Tainted Water-Splitting Phantasm — dùng suy đoán phẳng như cũ.",
+        "monsterHPSync": "Tầng 9, 10, 12 có spawns + hp + enemyHPMultiplier qua scripts/sync-abyss-monster-hp.py ngày 2026-09-15 (wiki Spiral Abyss/Floors/2026-08-16 revid 2152154); HP đối chiếu với đường cong game trên gi.yatta.moe cho 27 quái, lệch < 1%. Tầng 11 bị từ chối: wiki ghi chú số lượng quái 'unsure'."
       }
+    },
+    "enemy-hp.json": {
+      "note": "Sinh 2026-09-15 bằng scripts/sync-abyss-monster-hp.py từ Module:Enemy Stats/HP của wiki (đường cong HP quái của game × 13.584). Pha 6 docs/redesign.md — điểm phương án theo thời gian dọn."
     },
     "damage-formula.json": {
       "sections": [

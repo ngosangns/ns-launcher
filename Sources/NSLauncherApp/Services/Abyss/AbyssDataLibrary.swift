@@ -90,6 +90,9 @@ struct AbyssDataLibrary: Sendable {
     let weaponBuffsByID: [String: [AbyssBuff]]
     /// Each artifact set's bonuses as structured buffs, by set id.
     let setBuffsByID: [String: (twoPiece: [AbyssBuff], fourPiece: [AbyssBuff])]
+    /// Monster HP by level — see `AbyssEnemyHP.swift`. Nil when the file is
+    /// missing, which leaves every fight without HP.
+    let enemyHP: AbyssEnemyHPTable?
     /// How often each character applies their element — see
     /// `AbyssApplicationProfile`.
     let applicationsByCharacterID: [String: AbyssApplicationProfile]
@@ -180,6 +183,7 @@ struct AbyssDataLibrary: Sendable {
         let gauge: AbyssGauge? =
             Self.decode(from: root?.appendingPathComponent("gauge.json"), hasher: &hasher)
         self.gauge = gauge
+        enemyHP = Self.decode(from: root?.appendingPathComponent("enemy-hp.json"), hasher: &hasher)
         let passiveText: AbyssPassiveText? =
             Self.decode(from: root?.appendingPathComponent("passive-text.json"), hasher: &hasher)
         let passiveKnowledge: AbyssPassiveKnowledge? =

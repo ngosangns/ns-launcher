@@ -106,6 +106,9 @@ struct AbyssParseDiagnostics: Sendable, Equatable {
     /// Each is a passive priced at less than it is worth. Pinned empty by
     /// `AbyssPassiveTests`.
     var passiveReferencesUnresolved: Set<String> = []
+    /// Fights ("floor 11 half 2") with a monster whose HP the data does not
+    /// give. Such a fight keeps the equal-HP assumption.
+    var fightHPUnknown: Set<String> = []
 
     mutating func merge(_ other: AbyssParseDiagnostics) {
         scalingParsed += other.scalingParsed
@@ -125,6 +128,7 @@ struct AbyssParseDiagnostics: Sendable, Equatable {
         framesEstimated.formUnion(other.framesEstimated)
         gaugeMissing.formUnion(other.gaugeMissing)
         passiveReferencesUnresolved.formUnion(other.passiveReferencesUnresolved)
+        fightHPUnknown.formUnion(other.fightHPUnknown)
     }
 }
 
@@ -414,6 +418,9 @@ struct AbyssHalfReport: Sendable, Identifiable, Codable {
     let buffs: [AbyssFloorBuff]
     let shieldElements: [GenshinElement]
     let weakElements: [GenshinElement]
+    /// All the HP this half's three chambers hold, or nil when the data does
+    /// not give it.
+    var enemyHP: Double?
 }
 
 /// A whole floor: one team for each half, with nobody in both.
@@ -427,32 +434,55 @@ struct AbyssFloorPlan: Sendable, Identifiable, Codable {
 
     let firstHalf: AbyssTeamResult
     let secondHalf: AbyssTeamResult
-    /// `AbyssFloorPlan.combine(firstHalf.score, secondHalf.score)`.
+    /// `AbyssFloorPlan.combine` of the two half scores and HPs.
     let score: Double
+    /// Each half's HP, when the data gives both.
+    var firstHalfHP: Double?
+    var secondHalfHP: Double?
+
+    init(firstHalf: AbyssTeamResult, secondHalf: AbyssTeamResult, score: Double,
+         firstHalfHP: Double? = nil, secondHalfHP: Double? = nil) {
+        self.firstHalf = firstHalf
+        self.secondHalf = secondHalf
+        self.score = score
+        self.firstHalfHP = firstHalfHP
+        self.secondHalfHP = secondHalfHP
+    }
+
+    /// Seconds each team takes to clear its half at its score — a ranking
+    /// figure in the model's units, like the score, not a prediction of the
+    /// in-game timer.
+    var clearSeconds: (first: Double, second: Double)? {
+        guard let firstHalfHP, let secondHalfHP, firstHalf.score > 0, secondHalf.score > 0 else { return nil }
+        return (firstHalfHP / firstHalf.score, secondHalfHP / secondHalf.score)
+    }
 
     var byHalf: [(half: Int, team: AbyssTeamResult)] {
         [(1, firstHalf), (2, secondHalf)]
     }
 
-    /// How two half scores make one plan score.
+    /// How two half scores make one plan score: the damage per second that
+    /// clears both halves' HP in the time the two teams take, `(H₁ + H₂) /
+    /// (H₁/s₁ + H₂/s₂)`.
     ///
     /// Both halves have to be cleared inside one timer, so a plan is ranked on
-    /// how long it takes rather than on how much damage it does. Time is
-    /// proportional to 1/damage, so the plan that minimises t₁ + t₂ is the one
-    /// that maximises the harmonic mean of the two scores. Adding the scores
-    /// instead would let a crushing first half pay for a second half that
-    /// cannot clear at all, which is backwards: the half you are slow at is the
-    /// half that costs the star.
+    /// how long it takes rather than on how much damage it does, and this is
+    /// largest exactly when t₁ + t₂ is smallest. Adding the scores instead
+    /// would let a crushing first half pay for a second half that cannot clear
+    /// at all, which is backwards: the half you are slow at is the half that
+    /// costs the star.
     ///
-    /// This treats the two halves as holding a similar amount of enemy HP,
-    /// which the data does not record. That assumption is what makes two very
-    /// different score scales comparable at all — this rotation's first half
-    /// carries a +200% Superconduct bonus the second half has no equivalent of,
-    /// and its scores run several times higher for reasons that have nothing to
-    /// do with how good the team is.
-    static func combine(_ firstHalf: Double, _ secondHalf: Double) -> Double {
+    /// Without both HPs the halves are taken to hold the same, which makes this
+    /// the harmonic mean — the plan score before Phase 6. That assumption was
+    /// off by more than half on the rotation that retired it: floor 12's first
+    /// half holds 14.4M HP, its second 8.7M.
+    static func combine(_ firstHalf: Double, _ secondHalf: Double,
+                        firstHP: Double? = nil, secondHP: Double? = nil) -> Double {
         guard firstHalf > 0, secondHalf > 0 else { return 0 }
-        return 2 * firstHalf * secondHalf / (firstHalf + secondHalf)
+        guard let firstHP, let secondHP, firstHP > 0, secondHP > 0 else {
+            return 2 * firstHalf * secondHalf / (firstHalf + secondHalf)
+        }
+        return (firstHP + secondHP) / (firstHP / firstHalf + secondHP / secondHalf)
     }
 }
 
@@ -484,6 +514,9 @@ struct AbyssFloorReport: Sendable, Identifiable, Codable {
     let shieldElements: [GenshinElement]
     /// Elements the floor's enemies resist less than the 10% baseline.
     let weakElements: [GenshinElement]
+    /// All the HP the floor holds when fought whole, or nil when the data does
+    /// not give it or the floor was planned as halves (see `AbyssHalfReport`).
+    var enemyHP: Double?
     let outcome: Outcome
 
     /// Every team this report puts forward, however the floor was planned. For

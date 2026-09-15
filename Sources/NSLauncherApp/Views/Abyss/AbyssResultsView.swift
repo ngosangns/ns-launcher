@@ -74,7 +74,7 @@ struct AbyssResultsView: View {
             switch report.outcome {
             case .whole(let teams):
                 ForEach(Array(teams.enumerated()), id: \.element.id) { index, team in
-                    teamPanel(title: "#\(index + 1)", team: team)
+                    teamPanel(title: "#\(index + 1)", team: team, enemyHP: report.enemyHP)
                 }
             case .split(let halves, let plans):
                 ForEach(halves) { half in
@@ -119,6 +119,12 @@ struct AbyssResultsView: View {
                     .font(.system(.headline, design: .rounded, weight: .bold))
                     .foregroundStyle(LauncherPalette.goldHighlight)
                 Spacer()
+                if let clear = plan.clearSeconds {
+                    Text(text.abyssClearTime(clear.first + clear.second))
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundStyle(LauncherPalette.parchment.opacity(0.8))
+                        .help(text.abyssClearTimeHint)
+                }
                 Text(text.abyssScorePerSecond(
                     Self.scoreFormatter.string(from: NSNumber(value: plan.score)) ?? ""))
                     .font(.system(.caption, design: .monospaced))
@@ -127,12 +133,13 @@ struct AbyssResultsView: View {
             }
 
             ForEach(plan.byHalf, id: \.half) { entry in
-                teamPanel(title: text.abyssHalfTitle(entry.half), team: entry.team)
+                teamPanel(title: text.abyssHalfTitle(entry.half), team: entry.team,
+                          enemyHP: entry.half == 1 ? plan.firstHalfHP : plan.secondHalfHP)
             }
         }
     }
 
-    private func teamPanel(title: String, team: AbyssTeamResult) -> some View {
+    private func teamPanel(title: String, team: AbyssTeamResult, enemyHP: Double? = nil) -> some View {
         OrnamentalPanel(padding: 16, showsMark: false) {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 8) {
@@ -148,6 +155,12 @@ struct AbyssResultsView: View {
                     }
 
                     Spacer()
+                    if let enemyHP, team.score > 0 {
+                        Text(text.abyssClearTime(enemyHP / team.score))
+                            .font(.system(.caption, design: .monospaced))
+                            .foregroundStyle(LauncherPalette.parchment.opacity(0.8))
+                            .help(text.abyssClearTimeHint)
+                    }
                     Text(text.abyssScorePerSecond(
                         Self.scoreFormatter.string(from: NSNumber(value: team.score)) ?? ""))
                         .font(.system(.caption, design: .monospaced))
