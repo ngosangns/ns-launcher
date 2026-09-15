@@ -70,9 +70,11 @@ final class AbyssArtifactAdvisorTests: XCTestCase {
             let healer = assembler.mainStatCandidates(role: .healer, element: character.element)
             XCTAssertEqual(healer.circlet, [.healingBonus],
                            "the model cannot value healing, so it must not trade it away")
+            // A shielder's sands used to be pinned to Energy Recharge because
+            // the model could not value energy; since Phase 3 it can.
             let shield = assembler.mainStatCandidates(role: .shield, element: character.element)
-            XCTAssertEqual(shield.sands, [.energyRecharge],
-                           "the model cannot value energy, so it must not trade it away")
+            XCTAssertTrue(shield.sands.contains(.energyRecharge) && shield.sands.count > 1,
+                          "a shielder's sands should be searched, Energy Recharge among the options")
         }
     }
 

@@ -167,7 +167,8 @@ final class AbyssBuildAssemblerTests: XCTestCase {
 
     /// Bennett's Fantastic Voyage is a share of *his own* Base ATK handed to the
     /// party as flat ATK. It is the single largest buff in the game and the
-    /// model credited him with none of it.
+    /// model credited him with none of it. It is a *burst* buff, so it lands in
+    /// the burst channel the scorer scales by how often his burst is up.
     func testBennettGrantsFlatATKScaledByHisOwnBaseATK() throws {
         let entry = try XCTUnwrap(library.kitsByCharacterID["bennett"]?.buffs?.first)
         let table = try XCTUnwrap(library.talentParams?.characters["bennett"]?.elementalBurst)
@@ -175,11 +176,12 @@ final class AbyssBuildAssemblerTests: XCTestCase {
             .values.reduce(0, +)
 
         let bare = try sheet("bennett", weapon: nil)
-        XCTAssertEqual(bare.partyFlatATK, ratio * entry.uptime * bare.baseATK, accuracy: 1e-9)
+        XCTAssertEqual(bare.burstPartyFlatATK, ratio * entry.uptime * bare.baseATK, accuracy: 1e-9)
+        XCTAssertEqual(bare.partyFlatATK, 0, accuracy: 1e-9, "a burst buff reached the always-on channel")
 
         // A better weapon raises his Base ATK, so it raises the buff too.
         let armed = try sheet("bennett", weapon: "the-alley-flash")
-        XCTAssertGreaterThan(armed.partyFlatATK, bare.partyFlatATK)
+        XCTAssertGreaterThan(armed.burstPartyFlatATK, bare.burstPartyFlatATK)
 
         // It is a party channel, not his own sheet: crediting it twice would
         // make him a damage dealer.
@@ -191,11 +193,11 @@ final class AbyssBuildAssemblerTests: XCTestCase {
     /// `partyDMG` would have lifted every member's damage whatever they cast.
     func testFaruzanBuffsOnlyHerOwnElement() throws {
         let sheet = try sheet("faruzan", weapon: nil)
-        XCTAssertGreaterThan(sheet.partyElementalDMG[GenshinElement.anemo.simdIndex], 0)
+        XCTAssertGreaterThan(sheet.burstPartyElementalDMG[GenshinElement.anemo.simdIndex], 0)
         XCTAssertEqual(sheet.partyDMG, 0, accuracy: 1e-9,
                        "an element-scoped buff reached the all-element channel")
         for element in GenshinElement.allCases where element != .anemo {
-            XCTAssertEqual(sheet.partyElementalDMG[element.simdIndex], 0, accuracy: 1e-9,
+            XCTAssertEqual(sheet.burstPartyElementalDMG[element.simdIndex], 0, accuracy: 1e-9,
                            "\(element.rawValue) was buffed by an Anemo-only effect")
         }
     }

@@ -176,8 +176,8 @@ final class AbyssTalentReaderTests: XCTestCase {
         var diagnostics = AbyssParseDiagnostics()
         let terms = kitTerms([reference(label: "Press DMG"), reference(label: "Tick DMG", count: 2)],
                              slot: .skill, in: structured, diagnostics: &diagnostics)
-        XCTAssertEqual(terms, [.init(multiplier: 1.0, basis: .atk, category: .skill, action: .ability),
-                               .init(multiplier: 0.1, basis: .hp, category: .skill, action: .ability)])
+        XCTAssertEqual(terms, [.init(multiplier: 1.0, basis: .atk, category: .skill, action: .skill),
+                               .init(multiplier: 0.1, basis: .hp, category: .skill, action: .skill)])
         XCTAssertEqual(diagnostics.kitReferencesUnresolved, [])
     }
 

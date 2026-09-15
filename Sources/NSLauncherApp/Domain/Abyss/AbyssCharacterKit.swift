@@ -237,6 +237,35 @@ struct AbyssCharacterKit: Decodable, Sendable, Identifiable {
         let value: Double
     }
 
+    // MARK: - Energy
+
+    /// What a particle count needs to become energy per rotation, beyond the
+    /// wiki note in `particles.json`.
+    struct Energy: Decodable, Sendable {
+        enum Variant: String, Decodable, Sendable { case press, hold }
+
+        /// Which of the note's two numbers the kit plays. Defaults to press.
+        let variant: Variant?
+        /// For a per-event note ("each of Oz's attacks"), how many such events
+        /// one cast produces within a rotation. Also multiplies a numeric note
+        /// whose number turns out to be per hit (Yae Miko's turrets).
+        let eventsPerCast: Double?
+        /// A literal count, for a page with no note. Replaces the note.
+        let particlesPerCast: Double?
+        /// Overrides `min(maxSkillCastsPerRotation, rotationSeconds / cooldown)`
+        /// — for a skill that opens a window used once per rotation.
+        let skillCastsPerRotation: Double?
+        /// Defaults to `caster`.
+        let collectedBy: AbyssEnergyProfile.Collector?
+        let note: String
+    }
+
+    /// The talent whose window a character's attack string lives in.
+    struct Stance: Decodable, Sendable {
+        let talent: AbyssTalentParams.Key
+        let note: String
+    }
+
     var id: String { characterId }
 
     let characterId: String
@@ -247,6 +276,8 @@ struct AbyssCharacterKit: Decodable, Sendable, Identifiable {
     let buffs: [Buff]?
     let resistanceShred: [ResistanceShred]?
     let reactionBaseDamageBonus: [ReactionBaseDamageBonus]?
+    let energy: Energy?
+    let stance: Stance?
 
     func has(_ tag: Tag) -> Bool { tags?.contains(tag) ?? false }
 
@@ -257,6 +288,7 @@ struct AbyssCharacterKit: Decodable, Sendable, Identifiable {
         (tags ?? []).isEmpty && chargedAttackLabels == nil && hits == nil
             && (conversions ?? []).isEmpty && (buffs ?? []).isEmpty
             && (resistanceShred ?? []).isEmpty && (reactionBaseDamageBonus ?? []).isEmpty
+            && energy == nil && stance == nil
     }
 }
 

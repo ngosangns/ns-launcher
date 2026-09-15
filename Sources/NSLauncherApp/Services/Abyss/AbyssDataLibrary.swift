@@ -73,6 +73,14 @@ struct AbyssDataLibrary: Sendable {
     /// in which case everyone keeps the prose path — the same degradation the
     /// rest of the data has.
     let talentParams: AbyssTalentParams?
+    /// The wiki's particle notes — see `AbyssParticles`.
+    let particles: AbyssParticles?
+    /// Each character's energy economy, by id — see `AbyssEnergyProfile`.
+    /// Every character has one; `diagnostics.particlesEstimated` names those
+    /// whose particle count is the median stand-in.
+    let energyByCharacterID: [String: AbyssEnergyProfile]
+    /// The particle count characters without their own stand in with.
+    let medianParticlesPerCast: Double
     /// How much each character adds to the base damage of the Lunar/Stellar
     /// reactions they name, by character id then reaction.
     let reactionBaseDamageBonusByCharacterID: [String: [AbyssReaction: Double]]
@@ -146,6 +154,9 @@ struct AbyssDataLibrary: Sendable {
         let talentParams: AbyssTalentParams? =
             Self.decode(from: root?.appendingPathComponent("talent-params.json"), hasher: &hasher)
         self.talentParams = talentParams
+        let particles: AbyssParticles? =
+            Self.decode(from: root?.appendingPathComponent("particles.json"), hasher: &hasher)
+        self.particles = particles
         dataDigest = hasher.finalize().map { String(format: "%02x", $0) }.joined()
         var kits: [String: AbyssCharacterKit] = [:]
         for entry in kitsFile?.kits ?? [] {
@@ -266,6 +277,7 @@ struct AbyssDataLibrary: Sendable {
                     continue
                 }
                 guard let value else { diagnostics.talentBuffUnresolved.insert("\(id): \(buff.label ?? "")"); continue }
+                let fromBurst = buff.talent == .elementalBurst
                 let kind: AbyssTalentBuff.Kind
                 switch (buff.scope, buff.kind) {
                 case (.party, .flatATKFromBaseATK): kind = .flatATKFromBaseATK
@@ -284,7 +296,8 @@ struct AbyssDataLibrary: Sendable {
                         "\(id): \(buff.kind.rawValue) is not a \(buff.scope.rawValue) buff kind")
                     continue
                 }
-                talentBuffs[id, default: []].append(AbyssTalentBuff(kind: kind, value: value * buff.uptime))
+                talentBuffs[id, default: []].append(
+                    AbyssTalentBuff(kind: kind, value: value * buff.uptime, fromBurst: fromBurst))
             }
 
             for conversion in kit.conversions ?? [] {
@@ -317,7 +330,103 @@ struct AbyssDataLibrary: Sendable {
         conversionsByCharacterID = conversions
         resistanceShredByCharacterID = shreds
 
+        let energy = Self.energyProfiles(characters: characters, talentParams: talentParams,
+                                         particles: particles, kits: kits,
+                                         rotationSeconds: tuning?.rotationSeconds ?? 20,
+                                         maxSkillCasts: tuning?.energy.maxSkillCastsPerRotation ?? 1,
+                                         diagnostics: &diagnostics)
+        energyByCharacterID = energy.profiles
+        medianParticlesPerCast = energy.median
+
         self.diagnostics = diagnostics
+    }
+
+    /// Every character's energy economy.
+    ///
+    /// Particles per cast come from the wiki note, read through the kit: a
+    /// numeric note is per press (or per hold, if the kit plays hold), a
+    /// per-event note needs the kit's `eventsPerCast`, and a page with no note
+    /// needs the kit's `particlesPerCast`. Anything that does not resolve is
+    /// named in `particlesEstimated` and given the median of everything that
+    /// did — a stand-in computed from the data, never a number written down
+    /// for the purpose. Cooldowns and costs come from the game's tables, or
+    /// for the Travelers (no structured talents) from the transcription.
+    static func energyProfiles(characters: [AbyssCharacter],
+                               talentParams: AbyssTalentParams?,
+                               particles: AbyssParticles?,
+                               kits: [String: AbyssCharacterKit],
+                               rotationSeconds: Double,
+                               maxSkillCasts: Double = 1,
+                               diagnostics: inout AbyssParseDiagnostics)
+        -> (profiles: [String: AbyssEnergyProfile], median: Double) {
+        func perCast(_ id: String) -> Double? {
+            let kit = kits[id]?.energy
+            if let literal = kit?.particlesPerCast { return literal }
+            guard let reading = particles?.characters[id]?.readings.first else { return nil }
+            if let event = reading.perEvent {
+                guard let events = kit?.eventsPerCast else { return nil }
+                return event.count * events
+            }
+            let count = kit?.variant == .hold ? reading.hold : reading.press
+            return count.map { $0 * (kit?.eventsPerCast ?? 1) }
+        }
+
+        var resolved: [String: Double] = [:]
+        for character in characters {
+            if let value = perCast(character.id) { resolved[character.id] = value }
+        }
+        let sorted = resolved.values.sorted()
+        let median = sorted.isEmpty ? 0
+            : sorted.count % 2 == 1 ? sorted[sorted.count / 2]
+            : (sorted[sorted.count / 2 - 1] + sorted[sorted.count / 2]) / 2
+
+        func share(_ cooldown: Double, cap: Double = 1) -> Double {
+            cooldown > 0 ? min(cap, rotationSeconds / cooldown) : 1
+        }
+
+        var profiles: [String: AbyssEnergyProfile] = [:]
+        for character in characters {
+            let kit = kits[character.id]
+            let structured = talentParams?.characters[character.id]
+            let skillCooldown = structured?.elementalSkill.cooldown
+                ?? Self.seconds(character.elementalSkill.cooldown) ?? 0
+            let burstCooldown = structured?.elementalBurst.cooldown
+                ?? Self.seconds(character.elementalBurst.cooldown) ?? 0
+            let burstCost = structured?.elementalBurst.energyCost ?? character.elementalBurst.energyCost ?? 0
+
+            let own = resolved[character.id]
+            if own == nil { diagnostics.particlesEstimated.insert(character.id) }
+            let skillCasts = kit?.energy?.skillCastsPerRotation ?? share(skillCooldown, cap: maxSkillCasts)
+            let collector = kit?.energy?.collectedBy ?? .caster
+            let window: AbyssEnergyProfile.Window
+            switch kit?.stance?.talent {
+            case .elementalBurst?: window = .burst
+            case .elementalSkill?: window = .skill
+            default: window = .none
+            }
+            profiles[character.id] = AbyssEnergyProfile(
+                element: character.element,
+                // A summon's events were counted over the whole rotation in the
+                // kit, so recasting it does not add particles; an instant skill's
+                // particles come with every cast.
+                particlesPerRotation: (own ?? median) * (collector == .field ? min(1, skillCasts) : skillCasts),
+                collector: collector,
+                skillCastsPerRotation: skillCasts,
+                burstCost: burstCost,
+                burstCastsCap: share(burstCooldown),
+                window: window,
+                isEstimated: own == nil)
+        }
+        return (profiles, median)
+    }
+
+    /// `"18s"` → 18. The transcription's cooldown column; nil for anything
+    /// that is not one plain number of seconds.
+    static func seconds(_ text: String?) -> Double? {
+        guard let text else { return nil }
+        let trimmed = text.trimmingCharacters(in: .whitespaces)
+        guard trimmed.hasSuffix("s") else { return nil }
+        return Double(trimmed.dropLast())
     }
 
     /// The talent levels a character reads at, given how many constellations

@@ -55,6 +55,23 @@ struct AbyssTuning: Decodable, Sendable {
         }
     }
 
+    struct Energy: Decodable, Sendable {
+        /// Energy one particle of the receiver's own element restores. A rule.
+        let sameElementParticle: Double
+        /// Energy one particle of another element restores. A rule.
+        let otherElementParticle: Double
+        /// Energy one clear (elementless) particle restores. A rule.
+        let clearParticle: Double
+        /// Share of a particle's energy an off-field character receives. A rule.
+        let offFieldShare: Double
+        /// Clear particles enemies drop per rotation. An assumption, and zero
+        /// on purpose until Phase 6 knows how long a chamber takes.
+        let enemyClearParticlesPerRotation: Double
+        /// The most skill casts a rotation holds, whatever the cooldown. An
+        /// assumption standing in for field time — see `notes.energy`.
+        let maxSkillCastsPerRotation: Double
+    }
+
     let artifactMainStats: [String: Double]
     let substatRollValue: [String: Double]
     let substatRollBudget: Double
@@ -69,7 +86,8 @@ struct AbyssTuning: Decodable, Sendable {
     /// second, and most characters use one only to break a shield or to trigger
     /// an ability.
     let chargedAttacksPerRotation: Double
-    let offFieldUptime: Double
+    /// Energy rules and the one energy assumption — see `notes.energy`.
+    let energy: Energy
     let conditionalUptime: Double
     let assumedStacks: Double
     let amplifyingUptime: Double

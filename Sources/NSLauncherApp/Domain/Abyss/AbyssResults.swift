@@ -90,6 +90,11 @@ struct AbyssParseDiagnostics: Sendable, Equatable {
     /// an entry here is new data, not a known gap — and it is a row the model
     /// is scoring as zero until somebody looks.
     var talentParamsUnread: Set<String> = []
+    /// Characters whose skill particles could not be read from
+    /// `particles.json` and the kit together, and so use the median of every
+    /// character that could. Each is an energy economy the model is
+    /// approximating; pinned by name in `AbyssEnergyTests`.
+    var particlesEstimated: Set<String> = []
 
     mutating func merge(_ other: AbyssParseDiagnostics) {
         scalingParsed += other.scalingParsed
@@ -105,6 +110,7 @@ struct AbyssParseDiagnostics: Sendable, Equatable {
         floorBuffsNotPriced.formUnion(other.floorBuffsNotPriced)
         normalAttackRowsUnclassified.formUnion(other.normalAttackRowsUnclassified)
         talentParamsUnread.formUnion(other.talentParamsUnread)
+        particlesEstimated.formUnion(other.particlesEstimated)
     }
 }
 
@@ -128,6 +134,9 @@ struct AbyssTalentBuff: Sendable, Equatable {
     let kind: Kind
     /// Already multiplied by the entry's uptime.
     let value: Double
+    /// Granted by the burst, so up only as often as the burst is — the scorer
+    /// scales a party buff by the caster's burst casts per rotation.
+    var fromBurst: Bool = false
 }
 
 /// A stat a character's kit turns into ATK, resolved from `character-kits.json`
@@ -149,21 +158,25 @@ struct AbyssDamageProfile: Sendable, Equatable {
     /// her attack string (`combo`) and are priced as Elemental Burst DMG
     /// (`category: .burst`), and Kinich's Loop Shots are his attack string
     /// and Elemental Skill DMG. The scorer counts by `action` and buffs by
-    /// `category`.
+    /// `category` — and since Phase 3 counts a skill and a burst differently,
+    /// because energy decides one and not the other.
     enum Action: String, Sendable, Codable, CaseIterable {
         /// One numbered hit of the attack string, made `normalCombosPerRotation` times.
         case combo
         /// One charged attack, made `chargedAttacksPerRotation` times.
         case charged
-        /// One cast of a skill or burst, made once.
-        case ability
+        /// One skill cast, made `skillCastsPerRotation` times.
+        case skill
+        /// One burst cast, made as often as energy and cooldown allow.
+        case burst
 
         /// What a row of that category is, absent a kit saying otherwise.
         init(defaultFor category: HitCategory) {
             switch category {
             case .normal: self = .combo
             case .charged: self = .charged
-            case .skill, .burst: self = .ability
+            case .skill: self = .skill
+            case .burst: self = .burst
             }
         }
     }

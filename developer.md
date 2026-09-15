@@ -586,10 +586,12 @@ the search and the per-hit formula are sound, but the model has no notion of
 *time* — every rotation-dependent quantity (uptime, reaction frequency, ER,
 stack count) is a flat constant in `tuning.json` shared by every character,
 rather than something computed from an actual timeline. Phase 0 (real
-per-monster resistance from the game's own files) and Phase 1 (talent
+per-monster resistance from the game's own files), Phase 1 (talent
 multipliers from the game's own tables, `talent-params.json` read by
 `AbyssTalentReader`, replacing the regex parse of transcribed prose for
-118 of 125 characters) are done; read that file before touching
+118 of 125 characters), Phase 2 (`character-kits.json`) and Phase 3
+(energy: bursts cast as often as particles, Energy Recharge and cooldown
+allow — `AbyssScorer.Rotation`) are done; read that file before touching
 `AbyssScorer`, `AbyssFloorContext`, `AbyssTextParser`, or `tuning.json`'s
 uptime-shaped constants, so a change lands as part of the plan rather than
 beside it.
@@ -600,6 +602,16 @@ Correcting a multiplier there changes nothing for the other 118 — the number
 comes from `talent-params.json`, which is regenerated from the game and must
 not be hand-edited. If the game's own number looks wrong, the reader's
 reading of it is what to look at (`AbyssTalentReaderTests`).
+
+Energy since Phase 3: a `DamageSplit` is skill, burst, combo and charged, and
+each happens as often as its member's `Rotation` says — skills by cooldown
+(capped by `tuning.energy.maxSkillCastsPerRotation`), bursts by cooldown and by
+the energy the team's particles deliver times the member's Energy Recharge.
+Particle counts are community data (`particles.json`, from the wiki's
+`{{Talent Note|particles}}`), and the per-character facts the wiki leaves out —
+how many Oz attacks one cast is, whether particles land on the caster or on
+whoever is on field — are kit entries with their source quoted. `offFieldUptime`
+is gone, and so is the pin that kept supports in Energy Recharge sands.
 
 ### Search result cache
 

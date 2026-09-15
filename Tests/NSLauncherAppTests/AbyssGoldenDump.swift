@@ -145,6 +145,8 @@ final class AbyssGoldenDumpTests: XCTestCase {
             "base_def": stats.baseDEF,
             "dmg_elemental": elemental(stats.elementalDMG),
             "party_elemental_dmg": elemental(stats.partyElementalDMG),
+            "burst_party_flat_atk": stats.burstPartyFlatATK,
+            "burst_party_elemental_dmg": elemental(stats.burstPartyElementalDMG),
             "derived": [
                 "atk": stats.atk,
                 "hp": stats.hp,

@@ -6,7 +6,7 @@
   "type": "object",
   "required": [
     "artifactMainStats", "substatRollValue", "substatRollBudget", "substatPriority",
-    "scalingBasisSwap", "rotationSeconds", "normalCombosPerRotation", "offFieldUptime",
+    "scalingBasisSwap", "rotationSeconds", "normalCombosPerRotation", "energy",
     "conditionalUptime", "assumedStacks", "amplifyingUptime", "noSustainPenalty",
     "shieldBreakBonus", "weaknessExploitBonus", "setEffectApprox",
     "chargedAttacksPerRotation", "transformativeReactionsPerRotation",
@@ -36,7 +36,20 @@
     },
     "rotationSeconds": { "type": "number", "exclusiveMinimum": 0 },
     "normalCombosPerRotation": { "type": "number", "minimum": 0 },
-    "offFieldUptime": { "type": "number", "minimum": 0, "maximum": 1 },
+    "energy": {
+      "type": "object",
+      "description": "Pha 3: luật game về năng lượng (sameElementParticle, otherElementParticle, clearParticle, offFieldShare) và một giả định (enemyClearParticlesPerRotation). Thay cho offFieldUptime.",
+      "required": ["sameElementParticle", "otherElementParticle", "clearParticle", "offFieldShare", "enemyClearParticlesPerRotation", "maxSkillCastsPerRotation"],
+      "properties": {
+        "sameElementParticle": { "type": "number", "minimum": 0 },
+        "otherElementParticle": { "type": "number", "minimum": 0 },
+        "clearParticle": { "type": "number", "minimum": 0 },
+        "offFieldShare": { "type": "number", "minimum": 0, "maximum": 1 },
+        "enemyClearParticlesPerRotation": { "type": "number", "minimum": 0 },
+        "maxSkillCastsPerRotation": { "type": "number", "exclusiveMinimum": 0 }
+      },
+      "additionalProperties": false
+    },
     "conditionalUptime": { "type": "number", "minimum": 0, "maximum": 1 },
     "assumedStacks": { "type": "number", "minimum": 0 },
     "amplifyingUptime": { "type": "number", "minimum": 0, "maximum": 1 },

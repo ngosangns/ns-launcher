@@ -1,0 +1,1818 @@
+{
+ "_doc": "Số hạt nguyên tố Kỹ năng Nguyên tố của từng nhân vật tạo ra, đúng như Genshin Impact Wiki ghi ({{Talent Note|particles|...}} trên trang kỹ năng). SINH TỰ ĐỘNG bằng scripts/sync-abyss-particles.py — đừng sửa tay. `notes` là tham số template nguyên văn; `readings` là cách đọc: press/hold = hạt mỗi lần dùng, perEvent = hạt mỗi SỰ KIỆN (mỗi đòn của Oz, mỗi hơi của Guoba) — số sự kiện mỗi lần dùng là tri thức kit, nằm ở character-kits.json → energy.eventsPerCast. `notes` rỗng = trang không có ghi chú, số hạt phải bổ sung ở character-kits.json → energy.particlesPerCast kèm nguồn. Số liệu do cộng đồng đo, không phải file game; gcsim (github.com/genshinsim/gcsim) dùng để đối chiếu.",
+ "source": "genshin-impact.fandom.com/api.php?action=parse — trang Elemental Skill theo tên trong talent-params.json",
+ "fetchedOn": "2026-09-15",
+ "characters": {
+  "aino": {
+   "page": "Musecatcher",
+   "revid": 2127100,
+   "notes": [
+    [
+     "3"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 3.0
+    }
+   ]
+  },
+  "albedo": {
+   "page": "Abiogenesis: Solar Isotoma",
+   "revid": 1740599,
+   "notes": [
+    [
+     "a Transient Blossom",
+     "0.67"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "a Transient Blossom",
+      "count": 0.67
+     }
+    }
+   ]
+  },
+  "alhaitham": {
+   "page": "Universality: An Elaboration on Form",
+   "revid": 1764228,
+   "notes": [
+    [
+     "a Projection Attack",
+     "1"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "a Projection Attack",
+      "count": 1.0
+     }
+    }
+   ]
+  },
+  "aloy": {
+   "page": "Frozen Wilds",
+   "revid": 1759469,
+   "notes": [
+    [
+     "5"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 5.0
+    }
+   ]
+  },
+  "alyosha": {
+   "page": "Thunderbolt Strike",
+   "revid": 2172334,
+   "notes": [
+    [
+     "5"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 5.0
+    }
+   ]
+  },
+  "amber": {
+   "page": "Explosive Puppet",
+   "revid": 1676903,
+   "notes": [
+    [
+     "the explosion",
+     "4"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "the explosion",
+      "count": 4.0
+     }
+    }
+   ]
+  },
+  "arataki-itto": {
+   "page": "Masatsu Zetsugi: Akaushi Burst!",
+   "revid": 1683193,
+   "notes": [
+    [
+     "3.5"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 3.5
+    }
+   ]
+  },
+  "arlecchino": {
+   "page": "All Is Ash",
+   "revid": 2064918,
+   "notes": [
+    [
+     "5"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 5.0
+    }
+   ]
+  },
+  "baizhu": {
+   "page": "Universal Diagnosis",
+   "revid": 1764576,
+   "notes": [
+    [
+     "3.5"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 3.5
+    }
+   ]
+  },
+  "barbara": {
+   "page": "Let the Show Begin♪",
+   "revid": 1864476,
+   "notes": [
+    [
+     "0"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 0.0
+    }
+   ]
+  },
+  "beidou": {
+   "page": "Tidecaller",
+   "revid": 1859051,
+   "notes": [],
+   "readings": []
+  },
+  "bennett": {
+   "page": "Passion Overload",
+   "revid": 1677166,
+   "notes": [
+    [
+     "2.25",
+     "3"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 2.25,
+     "hold": 3.0
+    }
+   ]
+  },
+  "candace": {
+   "page": "Sacred Rite: Heron's Sanctum",
+   "revid": 2051034,
+   "notes": [
+    [
+     "2",
+     "3"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 2.0,
+     "hold": 3.0
+    }
+   ]
+  },
+  "charlotte": {
+   "page": "Framing: Freezing Point Composition",
+   "revid": 1771073,
+   "notes": [],
+   "readings": []
+  },
+  "chasca": {
+   "page": "Spirit Reins, Shadow Hunt",
+   "revid": 2136125,
+   "notes": [
+    [
+     "a Converted Charged Attack",
+     "5"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "a Converted Charged Attack",
+      "count": 5.0
+     }
+    }
+   ]
+  },
+  "chevreuse": {
+   "page": "Short-Range Rapid Interdiction Fire",
+   "revid": 2094147,
+   "notes": [
+    [
+     "4"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 4.0
+    }
+   ]
+  },
+  "chiori": {
+   "page": "Fluttering Hasode",
+   "revid": 1777327,
+   "notes": [
+    [
+     "Tamoto DMG",
+     "1.2"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Tamoto DMG",
+      "count": 1.2
+     }
+    }
+   ]
+  },
+  "chongyun": {
+   "page": "Spirit Blade: Chonghua's Layered Frost",
+   "revid": 1677071,
+   "notes": [
+    [
+     "4"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 4.0
+    }
+   ]
+  },
+  "citlali": {
+   "page": "Dawnfrost Darkstar",
+   "revid": 2115692,
+   "notes": [
+    [
+     "Obsidian Tzitzimitl DMG",
+     "5"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Obsidian Tzitzimitl DMG",
+      "count": 5.0
+     }
+    }
+   ]
+  },
+  "clorinde": {
+   "page": "Hunter's Vigil",
+   "revid": 1892122,
+   "notes": [
+    [
+     "Swift Hunt or Impale the Night",
+     "1"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Swift Hunt or Impale the Night",
+      "count": 1.0
+     }
+    }
+   ]
+  },
+  "collei": {
+   "page": "Floral Brush",
+   "revid": 1759165,
+   "notes": [
+    [
+     "2.5"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 2.5
+    }
+   ]
+  },
+  "columbina": {
+   "page": "Eternal Tides",
+   "revid": 2049988,
+   "notes": [
+    [
+     "1.3333333"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 1.3333333
+    }
+   ]
+  },
+  "cyno": {
+   "page": "Secret Rite: Chasmic Soulfarer",
+   "revid": 2124119,
+   "notes": [
+    [
+     "Skill DMG",
+     "3"
+    ],
+    [
+     "Mortuary Rite DMG",
+     "1.333"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Skill DMG",
+      "count": 3.0
+     }
+    },
+    {
+     "perEvent": {
+      "event": "Mortuary Rite DMG",
+      "count": 1.333
+     }
+    }
+   ]
+  },
+  "dahlia": {
+   "page": "Immersive Ordinance",
+   "revid": 1834102,
+   "notes": [
+    [
+     "Skill DMG",
+     "3"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Skill DMG",
+      "count": 3.0
+     }
+    }
+   ]
+  },
+  "dehya": {
+   "page": "Molten Inferno",
+   "revid": 1865452,
+   "notes": [
+    [
+     "a coordinated attack",
+     "1"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "a coordinated attack",
+      "count": 1.0
+     }
+    }
+   ]
+  },
+  "diluc": {
+   "page": "Searing Onslaught",
+   "revid": 1677050,
+   "notes": [
+    [
+     "1.33"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 1.33
+    }
+   ]
+  },
+  "diona": {
+   "page": "Icy Paws",
+   "revid": 1887297,
+   "notes": [
+    [
+     "an Icy Paw",
+     "~0.8"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "an Icy Paw",
+      "count": 0.8
+     }
+    }
+   ]
+  },
+  "dori": {
+   "page": "Spirit-Warding Lamp: Troubleshooter Cannon",
+   "revid": 1684549,
+   "notes": [
+    [
+     "2"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 2.0
+    }
+   ]
+  },
+  "durin": {
+   "page": "Binary Form: Convergence and Division",
+   "revid": 2155356,
+   "notes": [
+    [
+     "4"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 4.0
+    }
+   ]
+  },
+  "emilie": {
+   "page": "Fragrance Extraction",
+   "revid": 1778962,
+   "notes": [
+    [
+     "Level 1/2 Lumidouce Case Attack DMG",
+     "1"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Level 1/2 Lumidouce Case Attack DMG",
+      "count": 1.0
+     }
+    }
+   ]
+  },
+  "escoffier": {
+   "page": "Low-Temperature Cooking",
+   "revid": 1763702,
+   "notes": [
+    [
+     "Skill DMG",
+     "4"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Skill DMG",
+      "count": 4.0
+     }
+    }
+   ]
+  },
+  "eula": {
+   "page": "Icetide Vortex",
+   "revid": 1681958,
+   "notes": [
+    [
+     "1.5",
+     "2.5"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 1.5,
+     "hold": 2.5
+    }
+   ]
+  },
+  "faruzan": {
+   "page": "Wind Realm of Nasamjnin",
+   "revid": 1765023,
+   "notes": [
+    [
+     "Pressurized Collapse",
+     "2"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Pressurized Collapse",
+      "count": 2.0
+     }
+    }
+   ]
+  },
+  "fischl": {
+   "page": "Nightrider",
+   "revid": 1887327,
+   "notes": [
+    [
+     "each of Oz's attacks",
+     "0.67"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "each of Oz's attacks",
+      "count": 0.67
+     }
+    }
+   ]
+  },
+  "flins": {
+   "page": "Ancient Rite: Arcane Light",
+   "revid": 2055541,
+   "notes": [
+    [
+     "a converted Normal Attack",
+     "1"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "a converted Normal Attack",
+      "count": 1.0
+     }
+    }
+   ]
+  },
+  "freminet": {
+   "page": "Pressurized Floe",
+   "revid": 1764143,
+   "notes": [],
+   "readings": []
+  },
+  "furina": {
+   "page": "Salon Solitaire",
+   "revid": 2136445,
+   "notes": [
+    [
+     "a Salon Member's attack",
+     "1"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "a Salon Member's attack",
+      "count": 1.0
+     }
+    }
+   ]
+  },
+  "gaming": {
+   "page": "Bestial Ascent",
+   "revid": 2163058,
+   "notes": [
+    [
+     "Plunging Attack: Charmed Cloudstrider",
+     "2"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Plunging Attack: Charmed Cloudstrider",
+      "count": 2.0
+     }
+    }
+   ]
+  },
+  "ganyu": {
+   "page": "Trail of the Qilin",
+   "revid": 1741894,
+   "notes": [],
+   "readings": []
+  },
+  "gorou": {
+   "page": "Inuzaka All-Round Defense",
+   "revid": 1854307,
+   "notes": [
+    [
+     "2"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 2.0
+    }
+   ]
+  },
+  "hu-tao": {
+   "page": "Guide to Afterlife",
+   "revid": 1681859,
+   "notes": [
+    [
+     "a converted attack",
+     "2.5"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "a converted attack",
+      "count": 2.5
+     }
+    }
+   ]
+  },
+  "iansan": {
+   "page": "Thunderbolt Rush",
+   "revid": 2136127,
+   "notes": [
+    [
+     "Skill DMG",
+     "4"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Skill DMG",
+      "count": 4.0
+     }
+    }
+   ]
+  },
+  "ifa": {
+   "page": "Airborne Disease Prevention",
+   "revid": 2136128,
+   "notes": [
+    [
+     "Tonicshot",
+     "~4.3"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Tonicshot",
+      "count": 4.3
+     }
+    }
+   ]
+  },
+  "illuga": {
+   "page": "Dawnbearing Songbird",
+   "revid": 2151712,
+   "notes": [
+    [
+     "4.5"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 4.5
+    }
+   ]
+  },
+  "ineffa": {
+   "page": "Cleaning Mode: Carrier Frequency",
+   "revid": 1834118,
+   "notes": [],
+   "readings": []
+  },
+  "jahoda": {
+   "page": "Savvy Strategy: Splitting the Spoils",
+   "revid": 2114202,
+   "notes": [
+    [
+     "the filled or unfilled Purr-loined Treasure Flask",
+     "4"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "the filled or unfilled Purr-loined Treasure Flask",
+      "count": 4.0
+     }
+    }
+   ]
+  },
+  "jean": {
+   "page": "Gale Blade",
+   "revid": 1677094,
+   "notes": [
+    [
+     "2.67"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 2.67
+    }
+   ]
+  },
+  "kachina": {
+   "page": "Go, Go Turbo Twirly!",
+   "revid": 2136124,
+   "notes": [
+    [
+     "0.667"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 0.667
+    }
+   ]
+  },
+  "kaedehara-kazuha": {
+   "page": "Chihayaburu",
+   "revid": 1678577,
+   "notes": [
+    [
+     "3",
+     "4"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 3.0,
+     "hold": 4.0
+    }
+   ]
+  },
+  "kaeya": {
+   "page": "Frostgnaw",
+   "revid": 1864286,
+   "notes": [
+    [
+     "2.67"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 2.67
+    }
+   ]
+  },
+  "kamisato-ayaka": {
+   "page": "Kamisato Art: Hyouka",
+   "revid": 1567609,
+   "notes": [
+    [
+     "4.5"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 4.5
+    }
+   ]
+  },
+  "kamisato-ayato": {
+   "page": "Kamisato Art: Kyouka",
+   "revid": 2089140,
+   "notes": [
+    [
+     "a converted attack",
+     "1.5"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "a converted attack",
+      "count": 1.5
+     }
+    }
+   ]
+  },
+  "kaveh": {
+   "page": "Artistic Ingenuity",
+   "revid": 1879984,
+   "notes": [
+    [
+     "2"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 2.0
+    }
+   ]
+  },
+  "keqing": {
+   "page": "Stellar Restoration",
+   "revid": 1739715,
+   "notes": [
+    [
+     "Slashing DMG or Thunderclap Slash DMG",
+     "2.5"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Slashing DMG or Thunderclap Slash DMG",
+      "count": 2.5
+     }
+    }
+   ]
+  },
+  "kinich": {
+   "page": "Canopy Hunter: Riding High",
+   "revid": 1757953,
+   "notes": [
+    [
+     "Scalespiker Cannon",
+     "5"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Scalespiker Cannon",
+      "count": 5.0
+     }
+    }
+   ]
+  },
+  "kirara": {
+   "page": "Meow-teor Kick",
+   "revid": 1892049,
+   "notes": [],
+   "readings": []
+  },
+  "klee": {
+   "page": "Jumpy Dumpty",
+   "revid": 1676954,
+   "notes": [
+    [
+     "at least one bounce",
+     "4"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "at least one bounce",
+      "count": 4.0
+     }
+    }
+   ]
+  },
+  "kujou-sara": {
+   "page": "Tengu Stormcall",
+   "revid": 1740531,
+   "notes": [
+    [
+     "Tengu Juurai: Ambush",
+     "3"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Tengu Juurai: Ambush",
+      "count": 3.0
+     }
+    }
+   ]
+  },
+  "kuki-shinobu": {
+   "page": "Sanctifying Ring",
+   "revid": 1684162,
+   "notes": [
+    [
+     "Grass Ring of Sanctification DMG or Kuki Shinobu's [[To Sever Sealing|4th Constellation]]",
+     "0.45"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Grass Ring of Sanctification DMG or Kuki Shinobu's 4th Constellation",
+      "count": 0.45
+     }
+    }
+   ]
+  },
+  "lan-yan": {
+   "page": "Swallow-Wisp Pinion Dance",
+   "revid": 2164441,
+   "notes": [
+    [
+     "a thrown Feathermoon Ring",
+     "3"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "a thrown Feathermoon Ring",
+      "count": 3.0
+     }
+    }
+   ]
+  },
+  "lauma": {
+   "page": "Runo: Dawnless Rest of Karsikko",
+   "revid": 2165132,
+   "notes": [
+    [
+     "Frostgrove Sanctuary",
+     "1.3"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Frostgrove Sanctuary",
+      "count": 1.3
+     }
+    }
+   ]
+  },
+  "layla": {
+   "page": "Nights of Formal Focus",
+   "revid": 2042114,
+   "notes": [
+    [
+     "Shooting Star",
+     "1.33"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Shooting Star",
+      "count": 1.33
+     }
+    }
+   ]
+  },
+  "linnea": {
+   "page": "Countermeasure: Lumi's Battle Cry!",
+   "revid": 2141056,
+   "notes": [],
+   "readings": []
+  },
+  "lisa": {
+   "page": "Violet Arc",
+   "revid": 2089134,
+   "notes": [],
+   "readings": []
+  },
+  "lohen": {
+   "page": "Unforeseen Strike",
+   "revid": 2130200,
+   "notes": [
+    [
+     "any attack under Masterstroke",
+     "1"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "any attack under Masterstroke",
+      "count": 1.0
+     }
+    }
+   ]
+  },
+  "lynette": {
+   "page": "Enigmatic Feint",
+   "revid": 1764073,
+   "notes": [
+    [
+     "Enigma Thrust DMG",
+     "4"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Enigma Thrust DMG",
+      "count": 4.0
+     }
+    }
+   ]
+  },
+  "lyney": {
+   "page": "Bewildering Lights",
+   "revid": 1764132,
+   "notes": [
+    [
+     "5"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 5.0
+    }
+   ]
+  },
+  "mavuika": {
+   "page": "The Named Moment",
+   "revid": 1908611,
+   "notes": [
+    [
+     "Skill DMG",
+     "5"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Skill DMG",
+      "count": 5.0
+     }
+    }
+   ]
+  },
+  "mika": {
+   "page": "Starfrost Swirl",
+   "revid": 1865519,
+   "notes": [
+    [
+     "Flowfrost Arrow or Rimestar Flare",
+     "4"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Flowfrost Arrow or Rimestar Flare",
+      "count": 4.0
+     }
+    }
+   ]
+  },
+  "mona": {
+   "page": "Mirror Reflection of Doom",
+   "revid": 1854096,
+   "notes": [
+    [
+     "the Phantom Explosion",
+     "3.33"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "the Phantom Explosion",
+      "count": 3.33
+     }
+    }
+   ]
+  },
+  "mualani": {
+   "page": "Surfshark Wavebreaker",
+   "revid": 2089132,
+   "notes": [
+    [
+     "Sharky's Bite or Sharky's Surging Bite",
+     "4.5"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Sharky's Bite or Sharky's Surging Bite",
+      "count": 4.5
+     }
+    }
+   ]
+  },
+  "nahida": {
+   "page": "All Schemes to Know",
+   "revid": 2100125,
+   "notes": [
+    [
+     "Tri-Karma Purification",
+     "3"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Tri-Karma Purification",
+      "count": 3.0
+     }
+    }
+   ]
+  },
+  "navia": {
+   "page": "Ceremonial Crystalshot",
+   "revid": 2087953,
+   "notes": [
+    [
+     "3.5"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 3.5
+    }
+   ]
+  },
+  "nefer": {
+   "page": "Senet Strategy: Dance of a Thousand Nights",
+   "revid": 2089175,
+   "notes": [
+    [
+     "Skill DMG",
+     "2.6667"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Skill DMG",
+      "count": 2.6667
+     }
+    }
+   ]
+  },
+  "neuvillette": {
+   "page": "O Tears, I Shall Repay",
+   "revid": 1908126,
+   "notes": [
+    [
+     "Skill DMG",
+     "4"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Skill DMG",
+      "count": 4.0
+     }
+    }
+   ]
+  },
+  "nicole": {
+   "page": "Revelation: Uncreated Light",
+   "revid": 2141003,
+   "notes": [
+    [
+     "5"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 5.0
+    }
+   ]
+  },
+  "nilou": {
+   "page": "Dance of Haftkarsvar",
+   "revid": 2075582,
+   "notes": [
+    [
+     "Skill DMG",
+     "1.5"
+    ],
+    [
+     "Sword Dance, Whirling Steps, Luminous Illusion, or Water Wheel during the Pirouette state",
+     "1"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Skill DMG",
+      "count": 1.5
+     }
+    },
+    {
+     "perEvent": {
+      "event": "Sword Dance, Whirling Steps, Luminous Illusion, or Water Wheel during the Pirouette state",
+      "count": 1.0
+     }
+    }
+   ]
+  },
+  "ningguang": {
+   "page": "Jade Screen",
+   "revid": 1760850,
+   "notes": [
+    [
+     "3.33"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 3.33
+    }
+   ]
+  },
+  "noelle": {
+   "page": "Breastplate",
+   "revid": 1676959,
+   "notes": [
+    [
+     "0"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 0.0
+    }
+   ]
+  },
+  "odette": {
+   "page": "Adagio: Phantom Night Dancers",
+   "revid": 2170365,
+   "notes": [
+    [
+     "Skill DMG or Coda at Dawn's Tolling DoT",
+     "5"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Skill DMG or Coda at Dawn's Tolling DoT",
+      "count": 5.0
+     }
+    }
+   ]
+  },
+  "ororon": {
+   "page": "Night's Sling",
+   "revid": 1759775,
+   "notes": [
+    [
+     "3"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 3.0
+    }
+   ]
+  },
+  "prune": {
+   "page": "Ring-A-Ding-Ding! Hexhunter Chime",
+   "revid": 2111125,
+   "notes": [
+    [
+     "5",
+     "Ring-A-Ding-Ding! Hexhunter Chime DMG"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 5.0
+    }
+   ]
+  },
+  "qiqi": {
+   "page": "Adeptus Art: Herald of Frost",
+   "revid": 2168469,
+   "notes": [
+    [
+     "Skill DMG, Herald of Frost or Coordinated Attack",
+     "2"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Skill DMG, Herald of Frost or Coordinated Attack",
+      "count": 2.0
+     }
+    }
+   ]
+  },
+  "raiden-shogun": {
+   "page": "Transcendence: Baleful Omen",
+   "revid": 1885760,
+   "notes": [
+    [
+     "each Coordinated Attack",
+     "0.5"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "each Coordinated Attack",
+      "count": 0.5
+     }
+    }
+   ]
+  },
+  "razor": {
+   "page": "Claw and Thunder",
+   "revid": 1677060,
+   "notes": [
+    [
+     "3",
+     "4"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 3.0,
+     "hold": 4.0
+    }
+   ]
+  },
+  "rosaria": {
+   "page": "Ravaging Confession",
+   "revid": 1765464,
+   "notes": [
+    [
+     "the 2nd slash",
+     "3"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "the 2nd slash",
+      "count": 3.0
+     }
+    }
+   ]
+  },
+  "sandrone": {
+   "page": "Formule Phenomenale: Differential Analysis",
+   "revid": 2174514,
+   "notes": [
+    [
+     "Prism Shot or Charged Attack Condensed Beam",
+     "1"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Prism Shot or Charged Attack Condensed Beam",
+      "count": 1.0
+     }
+    }
+   ]
+  },
+  "sangonomiya-kokomi": {
+   "page": "Kurage's Oath",
+   "revid": 1682894,
+   "notes": [
+    [
+     "each of the first 6 hits",
+     "{{Not a Typo|0.67}}"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "each of the first 6 hits",
+      "count": 0.67
+     }
+    }
+   ]
+  },
+  "sayu": {
+   "page": "Yoohoo Art: Fuuin Dash",
+   "revid": 1887815,
+   "notes": [],
+   "readings": []
+  },
+  "sethos": {
+   "page": "Ancient Rite: The Thundering Sands",
+   "revid": 2107544,
+   "notes": [
+    [
+     "2"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 2.0
+    }
+   ]
+  },
+  "shenhe": {
+   "page": "Spring Spirit Summoning",
+   "revid": 1746843,
+   "notes": [
+    [
+     "3",
+     "4"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 3.0,
+     "hold": 4.0
+    }
+   ]
+  },
+  "shikanoin-heizou": {
+   "page": "Heartstopper Strike",
+   "revid": 2089141,
+   "notes": [],
+   "readings": []
+  },
+  "sigewinne": {
+   "page": "Rebound Hydrotherapy",
+   "revid": 1879274,
+   "notes": [
+    [
+     "4"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 4.0
+    }
+   ]
+  },
+  "skirk": {
+   "page": "Havoc: Warp",
+   "revid": 2070116,
+   "notes": [],
+   "readings": []
+  },
+  "sucrose": {
+   "page": "Astable Anemohypostasis Creation - 6308",
+   "revid": 1404156,
+   "notes": [
+    [
+     "4"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 4.0
+    }
+   ]
+  },
+  "tartaglia": {
+   "page": "Foul Legacy: Raging Tide",
+   "revid": 1766865,
+   "notes": [
+    [
+     "Riptide Slash",
+     "1"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Riptide Slash",
+      "count": 1.0
+     }
+    }
+   ]
+  },
+  "thoma": {
+   "page": "Blazing Blessing",
+   "revid": 1761033,
+   "notes": [
+    [
+     "3.5"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 3.5
+    }
+   ]
+  },
+  "tighnari": {
+   "page": "Vijnana-Phala Mine",
+   "revid": 1758929,
+   "notes": [
+    [
+     "3.5"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 3.5
+    }
+   ]
+  },
+  "varesa": {
+   "page": "Riding the Night-Rainbow",
+   "revid": 2089131,
+   "notes": [],
+   "readings": []
+  },
+  "varka": {
+   "page": "Windbound Execution",
+   "revid": 2126766,
+   "notes": [
+    [
+     "Skill DMG",
+     "6"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Skill DMG",
+      "count": 6.0
+     }
+    }
+   ]
+  },
+  "venti": {
+   "page": "Skyward Sonnet",
+   "revid": 1860204,
+   "notes": [
+    [
+     "3",
+     "4"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 3.0,
+     "hold": 4.0
+    }
+   ]
+  },
+  "wanderer": {
+   "page": "Hanega: Song of the Wind",
+   "revid": 1865445,
+   "notes": [
+    [
+     "a Normal or Charged Attack during the Windfavored State",
+     "1"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "a Normal or Charged Attack during the Windfavored State",
+      "count": 1.0
+     }
+    }
+   ]
+  },
+  "wriothesley": {
+   "page": "Icefang Rush",
+   "revid": 1772134,
+   "notes": [
+    [
+     "a Normal Attack during the Chilling Penalty state while above 50% HP",
+     "1"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "a Normal Attack during the Chilling Penalty state while above 50% HP",
+      "count": 1.0
+     }
+    }
+   ]
+  },
+  "xiangling": {
+   "page": "Guoba Attack",
+   "revid": 1657653,
+   "notes": [
+    [
+     "each breath",
+     "1"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "each breath",
+      "count": 1.0
+     }
+    }
+   ]
+  },
+  "xianyun": {
+   "page": "White Clouds at Dawn",
+   "revid": 2089130,
+   "notes": [
+    [
+     "Driftcloud Wave",
+     "5"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "Driftcloud Wave",
+      "count": 5.0
+     }
+    }
+   ]
+  },
+  "xiao": {
+   "page": "Lemniscatic Wind Cycling",
+   "revid": 1865270,
+   "notes": [
+    [
+     "3"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 3.0
+    }
+   ]
+  },
+  "xilonen": {
+   "page": "Yohual's Scratch",
+   "revid": 2089171,
+   "notes": [
+    [
+     "4"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 4.0
+    }
+   ]
+  },
+  "xingqiu": {
+   "page": "Guhua Sword: Fatal Rainscreen",
+   "revid": 1860087,
+   "notes": [
+    [
+     "5"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 5.0
+    }
+   ]
+  },
+  "xinyan": {
+   "page": "Sweeping Fervor",
+   "revid": 1884686,
+   "notes": [
+    [
+     "initial swing",
+     "4"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "initial swing",
+      "count": 4.0
+     }
+    }
+   ]
+  },
+  "yae-miko": {
+   "page": "Yakan Evocation: Sesshou Sakura",
+   "revid": 1739664,
+   "notes": [
+    [
+     "1"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 1.0
+    }
+   ]
+  },
+  "yanfei": {
+   "page": "Signed Edict",
+   "revid": 1681974,
+   "notes": [
+    [
+     "3"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 3.0
+    }
+   ]
+  },
+  "yaoyao": {
+   "page": "Raphanus Sky Cluster",
+   "revid": 1853663,
+   "notes": [
+    [
+     "1"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 1.0
+    }
+   ]
+  },
+  "yelan": {
+   "page": "Lingering Lifeline",
+   "revid": 2049822,
+   "notes": [
+    [
+     "4"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 4.0
+    }
+   ]
+  },
+  "yoimiya": {
+   "page": "Niwabi Fire-Dance",
+   "revid": 1683531,
+   "notes": [
+    [
+     "a converted attack",
+     "1"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "a converted attack",
+      "count": 1.0
+     }
+    }
+   ]
+  },
+  "yumemizuki-mizuki": {
+   "page": "Aisa Utamakura Pilgrimage",
+   "revid": 2163056,
+   "notes": [
+    [
+     "1"
+    ]
+   ],
+   "readings": [
+    {
+     "press": 1.0
+    }
+   ]
+  },
+  "yun-jin": {
+   "page": "Opening Flourish",
+   "revid": 1742653,
+   "notes": [],
+   "readings": []
+  },
+  "zhongli": {
+   "page": "Dominus Lapidis",
+   "revid": 1679049,
+   "notes": [
+    [
+     "any DMG dealt by this skill",
+     "0.5"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "any DMG dealt by this skill",
+      "count": 0.5
+     }
+    }
+   ]
+  },
+  "zibai": {
+   "page": "Heaven and Earth Made Manifest",
+   "revid": 2110820,
+   "notes": [
+    [
+     "any attack during Lunar Phase Shift",
+     "1"
+    ]
+   ],
+   "readings": [
+    {
+     "perEvent": {
+      "event": "any attack during Lunar Phase Shift",
+      "count": 1.0
+     }
+    }
+   ]
+  }
+ }
+}

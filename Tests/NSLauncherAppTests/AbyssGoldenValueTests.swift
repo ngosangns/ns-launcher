@@ -92,6 +92,7 @@ final class AbyssGoldenValueTests: XCTestCase {
                 ("partyElementalMastery", stats.partyElementalMastery, want.party_em),
                 ("partyDMG", stats.partyDMG, want.party_dmg),
                 ("partyFlatATK", stats.partyFlatATK, want.party_flat_atk),
+                ("burstPartyFlatATK", stats.burstPartyFlatATK, want.burst_party_flat_atk),
             ]
             for (name, got, wanted) in fields {
                 XCTAssertEqual(got, wanted, accuracy: max(abs(wanted), 1) * 1e-9,
@@ -108,6 +109,12 @@ final class AbyssGoldenValueTests: XCTestCase {
                 XCTAssertEqual(stats.partyElementalDMG[element.simdIndex], value,
                                accuracy: max(abs(value), 1) * 1e-9,
                                "\(characterID): party \(rawElement) DMG bonus differs")
+            }
+            for (rawElement, value) in want.burst_party_elemental_dmg {
+                let element = try XCTUnwrap(GenshinElement(rawValue: rawElement))
+                XCTAssertEqual(stats.burstPartyElementalDMG[element.simdIndex], value,
+                               accuracy: max(abs(value), 1) * 1e-9,
+                               "\(characterID): burst party \(rawElement) DMG bonus differs")
             }
         }
     }

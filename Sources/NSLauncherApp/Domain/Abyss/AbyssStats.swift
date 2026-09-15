@@ -55,6 +55,11 @@ struct AbyssStats: Sendable, Equatable, Codable {
     /// Distinct from `partyDMG`, which reaches every element: a buff that only
     /// lifts Anemo must not lift the Pyro member's damage too.
     var partyElementalDMG: SIMD8<Double> = .zero
+    /// The share of `partyFlatATK` / `partyElementalDMG` a *burst* grants —
+    /// kept apart so the scorer can scale it by how often that burst is
+    /// actually up. Bennett's Fantastic Voyage is worth what his energy buys.
+    var burstPartyFlatATK: Double = 0
+    var burstPartyElementalDMG: SIMD8<Double> = .zero
 
     /// Stats the character's kit or weapon turns into ATK, as rates: Hu Tao's
     /// Paramita Papilio and Staff of Homa hand over a share of Max HP, Noelle's

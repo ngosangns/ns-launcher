@@ -141,6 +141,30 @@
               "oneOf": [ { "required": ["label"] }, { "required": ["value"] } ]
             }
           },
+          "energy": {
+            "type": "object",
+            "required": ["note"],
+            "additionalProperties": false,
+            "description": "Pha 3: điều particles.json không nói được. Mọi số kèm nguồn trong note (bảng talent, mô tả kỹ năng, hoặc file:dòng gcsim).",
+            "properties": {
+              "variant": { "enum": ["press", "hold"], "description": "Số nào của ghi chú press/hold. Mặc định press." },
+              "eventsPerCast": { "type": "number", "exclusiveMinimum": 0, "description": "Số sự kiện mỗi lần E (đếm trong một rotation) cho ghi chú 'mỗi sự kiện'; cũng nhân ghi chú số khi con số thực ra là mỗi đòn." },
+              "particlesPerCast": { "type": "number", "minimum": 0, "description": "Số literal khi trang wiki không có ghi chú." },
+              "skillCastsPerRotation": { "type": "number", "exclusiveMinimum": 0, "description": "Ghi đè min(maxSkillCastsPerRotation, T/CD) — cho E mở một cửa sổ dùng một lần mỗi rotation." },
+              "collectedBy": { "enum": ["caster", "field"], "description": "Ai nhận hạt ở giá trị đủ: người dùng E (mặc định) hay người đang đứng sân (triệu hồi)." },
+              "note": { "type": "string" }
+            }
+          },
+          "stance": {
+            "type": "object",
+            "required": ["talent", "note"],
+            "additionalProperties": false,
+            "description": "Chuỗi đòn của nhân vật chỉ có khi talent này đang bật (Raiden, Cyno, Xiao: burst).",
+            "properties": {
+              "talent": { "$ref": "#/definitions/talentKey" },
+              "note": { "type": "string" }
+            }
+          },
           "reactionBaseDamageBonus": {
             "type": "array",
             "description": "Cộng vào BASE DAMAGE của phản ứng Lunar/Stellar chỉ nhờ có mặt trong đội. `reactions` là mảng tên tường minh — đó chính là điểm cải tiến so với cột nó thay thế: cột cũ là chuỗi tự do ('Lunar-Charged/Bloom/Crystallize') mà engine không hề đọc, nên mọi nguồn cộng cho MỌI phản ứng Lunar/Stellar; Lauma chỉ nâng Lunar-Bloom mà đang trả tiền cho Stellar-Conduct của đội.",

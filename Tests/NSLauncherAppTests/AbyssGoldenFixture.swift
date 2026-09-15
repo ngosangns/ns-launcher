@@ -49,6 +49,10 @@ struct AbyssGoldenFixture: Decodable {
         let party_flat_atk: Double
         /// Keyed by element name, only the non-zero entries.
         let party_elemental_dmg: [String: Double]
+        /// What a burst grants the party, before the scorer scales it by
+        /// bursts per rotation.
+        let burst_party_flat_atk: Double
+        let burst_party_elemental_dmg: [String: Double]
     }
 
     struct Gear: Decodable {

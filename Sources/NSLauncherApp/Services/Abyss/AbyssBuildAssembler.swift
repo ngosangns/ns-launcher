@@ -166,8 +166,12 @@ struct AbyssBuildAssembler: Sendable {
     func applyTalentBuffs(for character: AbyssCharacter, to stats: inout AbyssStats) {
         for buff in talentBuffs[character.id] ?? [] {
             switch buff.kind {
+            case .flatATKFromBaseATK where buff.fromBurst:
+                stats.burstPartyFlatATK += buff.value * stats.baseATK
             case .flatATKFromBaseATK:
                 stats.partyFlatATK += buff.value * stats.baseATK
+            case .elementalDMG where buff.fromBurst:
+                stats.burstPartyElementalDMG[character.element.simdIndex] += buff.value
             case .elementalDMG:
                 stats.partyElementalDMG[character.element.simdIndex] += buff.value
             case .ownStat(let field):
@@ -568,23 +572,22 @@ struct AbyssBuildAssembler: Sendable {
     /// here, so the other six are not candidates, they are wasted evaluations.
     ///
     /// The other cut is a constraint standing in for something the objective
-    /// cannot see. The score is damage, and it has no term for "the heal landed"
-    /// or "the burst was up" — so Energy Recharge and Healing Bonus are worth
-    /// nothing to it, and a free search would strip both from every support and
-    /// call it an improvement. It would be an improvement in the model and a
-    /// worse team in the game. So a healer keeps the Healing Bonus circlet and a
-    /// support or shielder keeps the Energy Recharge sands, and the search picks
-    /// the rest. Model the two objectives properly and these two lines go away.
+    /// cannot see. The score is damage, and it has no term for "the heal
+    /// landed" — so Healing Bonus is worth nothing to it, and a free search
+    /// would strip it from every healer and call it an improvement. So a
+    /// healer keeps the Healing Bonus circlet, and the search picks the rest.
+    ///
+    /// There used to be a second such line: a support or shielder kept the
+    /// Energy Recharge sands, because the score could not see "the burst was
+    /// up" either. Phase 3 made it see that — a burst is cast as often as
+    /// energy allows, and a support's party buff from it scales the same way —
+    /// so the sands is searched like every other slot now.
     func mainStatCandidates(role: AbyssRole,
                             element: GenshinElement) -> (sands: [AbyssMainStat],
                                                          goblet: [AbyssMainStat],
                                                          circlet: [AbyssMainStat]) {
         let scaling: [AbyssMainStat] = [.atkPercent, .hpPercent, .defPercent, .elementalMastery]
-        let sands: [AbyssMainStat]
-        switch role {
-        case .support, .shield: sands = [.energyRecharge]
-        case .healer, .mainDPS, .subDPS: sands = scaling + [.energyRecharge]
-        }
+        let sands: [AbyssMainStat] = scaling + [.energyRecharge]
         let circlet: [AbyssMainStat] = role == .healer
             ? [.healingBonus]
             : scaling + [.critRate, .critDMG]

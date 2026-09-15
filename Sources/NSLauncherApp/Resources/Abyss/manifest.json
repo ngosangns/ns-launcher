@@ -53,6 +53,10 @@
       "count": 118,
       "note": "Sinh 2026-09-15 bằng scripts/sync-abyss-talent-params.py từ gi.yatta.moe (Pha 1 docs/redesign.md). 118/125 nhân vật — 7 Nhà Lữ Hành không có avatar riêng trên Yatta, vẫn đi đường parse văn xuôi. Nguồn ưu tiên cho damage profile; bảng scaling trong characters/*.json giờ chỉ là dự phòng."
     },
+    "particles.json": {
+      "count": 118,
+      "note": "Sinh 2026-09-15 bằng scripts/sync-abyss-particles.py từ template {{Talent Note|particles}} trên trang kỹ năng của genshin-impact.fandom.com (Pha 3 docs/redesign.md), đối chiếu gcsim@a086a05. 118 nhân vật có talent-params.json; 13 trang không có ghi chú (bổ sung ở character-kits.json → energy.particlesPerCast từ gcsim, trừ Linnea không có trong gcsim). Số liệu cộng đồng đo, không phải file game."
+    },
     "artifact-sets.json": {
       "textSource": "name/nameVI/description/descriptionVI đồng bộ từ bản địa hoá chính thức qua gi.yatta.moe/api/v2/{en,vi}/reliquary bằng scripts/sync-abyss-artifact-text.py, ngày 2026-09-14",
       "count": 63

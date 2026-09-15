@@ -30,6 +30,7 @@ là **bản duy nhất**.
 | `team-bonus.json` | Cộng hưởng nguyên tố, Nguyệt Triệu, Hexerei, Nightsoul Burst — **luật**, không phải danh sách nhân vật |
 | `character-kits.json` | Mọi thứ chỉ đúng với **một** nhân vật và không file game nào ghi: một lần dùng chiêu gồm những dòng nào (`hits`), kit đổi HP/DEF ra ATK (`conversions`), talent buff gì cho đội/cho mình (`buffs`), tag cơ chế, nhãn đòn nặng, giảm kháng, base damage phản ứng (xem "Kit nhân vật") |
 | `talent-params.json` | Hệ số talent **đúng như file game**, mọi cấp 1–15, sinh tự động — nguồn thay thế cho bảng `scaling` văn xuôi (xem "Số liệu talent") |
+| `particles.json` | Số hạt nguyên tố Kỹ năng Nguyên tố tạo ra, theo Genshin Impact Wiki, sinh tự động (xem "Năng lượng") |
 | `tuning.json` | Tham số thuật toán (xem bên dưới) |
 | `game-ids.json` | Id số trong game → slug ở đây, để nhập Showcase theo UID |
 | `icons/characters/<id>.png`, `icons/weapons/<id>.png` | Ảnh chân dung, 256×256 |
@@ -174,6 +175,41 @@ Nhân vật hoặc vũ khí không tải được ảnh sẽ hiện icon SF Symb
 không hiện ô trống.
 
 Schema JSON của từng loại: `toi-uu-doi-hinh/data-model/schema/`.
+
+## Năng lượng: hạt nguyên tố và số lần Q
+
+Pha 3 của `docs/redesign.md`. Trước đây mọi Q được dùng đúng một lần mỗi
+rotation, và nhân vật ngoài sân bị nhân phẳng `offFieldUptime = 0.85` — nên
+Energy Recharge đáng giá 0 với điểm, và support bị ép mang cát ER. Giờ số lần
+Q = `min(1, rotationSeconds / CD, năng lượng × ER / năng lượng Q)`, với năng
+lượng tính từ hạt của cả đội:
+
+- **Hạt mỗi lần E** — `particles.json`, sinh bằng
+
+  ```bash
+  python3 scripts/sync-abyss-particles.py
+  ```
+
+  từ template `{{Talent Note|particles|…}}` trên trang kỹ năng của Genshin
+  Impact Wiki (MediaWiki API), đối chiếu với code nhân vật của gcsim
+  (github.com/genshinsim/gcsim, MIT) — hai nguồn khớp nhau ở mọi nhân vật đã
+  so. Số liệu do cộng đồng đo, không phải file game: Yatta có CD, năng lượng
+  Q, gauge và ICD, nhưng không có số hạt.
+- **Điều wiki không nói** nằm ở `character-kits.json` → `energy`: ghi chú
+  "mỗi đòn của Oz" cần biết một lần E có bao nhiêu đòn (`eventsPerCast`,
+  kèm nguồn nhịp đánh: bảng talent, mô tả kỹ năng hoặc hằng số gcsim); trang
+  không có ghi chú cần số literal (`particlesPerCast`, trích file:dòng gcsim);
+  triệu hồi thì hạt về người đang đứng sân (`collectedBy: field`); E kiểu vào
+  trạng thái chỉ dùng một lần mỗi rotation (`skillCastsPerRotation`); chuỗi
+  đòn chỉ có trong Q (`stance` — Raiden, Cyno, Xiao).
+- **Luật và giả định** ở `tuning.json` → `energy`: hạt cùng nguyên tố 3, khác
+  nguyên tố 1, không màu 2, ngoài sân nhận 60% (luật game); quái rơi 0 hạt
+  mỗi rotation và tối đa 2 lần E mỗi rotation (giả định, xem `notes.energy`).
+
+Nhân vật không đọc được số hạt (7 Nhà Lữ Hành, Linnea, Lohen, Zibai) dùng
+trung vị của mọi nhân vật đọc được, và được ghim đích danh trong
+`AbyssEnergyTests`. Buff đội từ Q (Bennett, Faruzan) đi kênh riêng
+(`AbyssStats.burstPartyFlatATK`) để scorer nhân theo số lần Q của người buff.
 
 ## Dữ liệu chu kỳ Trầm Thủy hết hạn nhanh
 

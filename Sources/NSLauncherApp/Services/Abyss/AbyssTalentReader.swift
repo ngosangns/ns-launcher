@@ -428,7 +428,8 @@ enum AbyssTalentReader {
             switch slot {
             case .combo: action = .combo
             case .charged: action = .charged
-            case .skill, .burst: action = .ability
+            case .skill: action = .skill
+            case .burst: action = .burst
             }
             for (basis, multiplier) in totals.sorted(by: { $0.key.rawValue < $1.key.rawValue }) {
                 terms.append(.init(multiplier: multiplier * scale, basis: basis, category: category, action: action))

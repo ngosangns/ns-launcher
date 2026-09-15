@@ -94,7 +94,7 @@ xem mục 4 (Pha 0) về hướng thay thế đã chọn.
 | **0** | Nhập kháng quái thật từ Yatta; đặt nền benchmark | `enemyOwnElementResistance` làm fallback thay vì luật chính | **Xong — xem mục 4** |
 | 1 | Talent → `params` cấu trúc từ Yatta, thay 26 regex trong `AbyssTextParser` | — (gỡ nguồn lỗi lớn nhất) | **Xong cho 118/125 — xem mục 5** |
 | 2 | `character-kits.json` cho ~30 nhân vật hay dùng nhất; nhân vật chưa có kit rơi về mô hình cũ | — | **Khung xong + 21 kit — xem mục 6** |
-| 3 | Dựng rotation + năng lượng | `offFieldUptime`, hack ER | Chưa bắt đầu |
+| 3 | Dựng rotation + năng lượng | `offFieldUptime`, hack ER | **Xong (năng lượng; thời gian đứng sân để sau) — xem mục 7** |
 | 4 | Gauge/ICD/phản ứng theo timeline | `amplifyingUptime`, `transformativeReactionsPerRotation` | Chưa bắt đầu |
 | 5 | Timeline buff + stack | `conditionalUptime`, `assumedStacks`, phần lớn `setEffectApprox` | Chưa bắt đầu |
 | 6 | Điểm = thời gian dọn — cần nhập HP quái từ Yatta (script Pha 0 cố tình **chưa** lấy HP: chưa có gì đọc nó, và một key không ai hỏi là đúng loại lỗ hổng im lặng đã dọn ở `physical_dmg`) | trung bình điều hoà giả định HP bằng nhau | Chưa bắt đầu |
@@ -349,11 +349,74 @@ nhờ chuyển đổi, đúng với game (E cộng ~2k ATK ở 33k HP).
 - Còn lại của mục 5.3 (basis chủ đạo đếm dòng, `AbyssTextParser` cho Nhà Lữ
   Hành) chưa đụng.
 
-## 7. Chưa xác minh, cần làm trước Pha 3
+## 7. Pha 3 — kết quả
 
-- Yatta có ghi **hạt năng lượng/kỹ năng** không (particle count mỗi hit) —
-  cộng đồng có bảng riêng nếu Yatta không có; Pha 3 (năng lượng) cần số này.
-  `talent-params.json` đã mang `cooldown` và `energyCost` cho từng talent.
-- ~~Format string phân loại được bao nhiêu~~ — đã trả lời ở Pha 1: grammar phủ
-  100% dòng DMG trừ 7 dòng cố ý bỏ (5.3); phần cần người xếp loại là *biến
-  thể theo chế độ*, không phải format.
+### 7.1. Nguồn số hạt: wiki, đối chiếu gcsim
+
+Yatta có CD, năng lượng Q, gauge và ICD (`advancedProps` — dùng được cho Pha
+4) nhưng **không có số hạt**. Hai nguồn cộng đồng đã xét:
+
+| Nguồn | Có gì | Vấn đề |
+|---|---|---|
+| gcsim (MIT, commit `a086a05`) | 109/118 nhân vật, số hạt trong code Go kèm ICD và xác suất | Phải đọc code từng người để ra "mỗi lần E" |
+| Genshin Impact Wiki | Template `{{Talent Note|particles|…}}` có cấu trúc trên trang kỹ năng: `2.25|3` (nhấn/giữ), `each of Oz's attacks|0.67` | 13 trang không có ghi chú |
+
+Chọn wiki làm nguồn chính (`scripts/sync-abyss-particles.py`, lưu tham số
+template nguyên văn + revid), gcsim để đối chiếu: **khoảng 50 nhân vật đã so
+đều khớp** (0.67 của wiki = xác suất 67% trong gcsim; 2.25 của Bennett = 2 hoặc 3
+với 25%). Dạng "mỗi sự kiện" không thể thành "mỗi lần E" chỉ bằng dữ liệu —
+số đòn của Oz là tri thức kit — nên nằm ở `character-kits.json → energy`
+kèm nguồn nhịp đánh (bảng talent, mô tả kỹ năng, hoặc hằng số gcsim).
+
+### 7.2. Mô hình
+
+Với mỗi thành viên i, không phụ thuộc trang bị:
+
+- Số lần E: `s = min(maxSkillCastsPerRotation = 2, T / CD)`, kit ghi 1 cho E
+  kiểu vào trạng thái.
+- Năng lượng trước ER: mỗi hạt của j cho i giá trị 3 (cùng nguyên tố) hoặc 1,
+  nhận đủ nếu i đứng sân lúc hạt tới, 60% nếu không. Hạt E tức thời tới khi
+  người dùng còn trên sân; hạt triệu hồi tới người đang đứng sân — nên mỗi
+  thành viên chỉ mang **hai** con số: năng lượng khi ngoài sân và khi trên sân.
+- Số lần Q: `min(1, T / CD, năng lượng × ER / năng lượng Q)`.
+- Sát thương = `s × E + Q × burst` (+ chuỗi đòn nếu đứng sân, nhân cửa sổ
+  stance). Buff đội từ Q nhân số lần Q của người buff.
+
+`offFieldUptime` bị xoá. Cát của support/shielder được tìm như mọi ô khác —
+điểm giờ thấy "Q có sẵn không". Circlet Healing Bonus của healer vẫn ghim.
+
+Tối ưu vẫn chính xác, không xấp xỉ: tổng = Σ ngoài sân + max theo X của (phần
+thêm khi X đứng sân), vẫn một lần tính split mỗi thành viên.
+
+### 7.3. Đo trên golden
+
+Đội đầu cả bốn tầng **giữ nguyên** (Bennett/Diona/Hu Tao/Venti), điểm −2%
+đến +1%; phần của Bennett và Venti tăng (hồi chiêu ngắn → 2 lần E). Điểm solo
+đổi nhiều nhất đúng ở nhân vật ăn năng lượng: Cyno ×0.52 (và giờ tự chọn
+Engulfing Lightning), Xiao ×0.63, Raiden ×0.75; tăng: Beidou ×1.32, Candace
+×1.31, Skirk ×1.24 (E hồi nhanh).
+
+### 7.4. Giới hạn — đã ghi, chưa làm
+
+- **Thời gian đứng sân chưa có**: `normalCombosPerRotation`/`chargedAttacksPerRotation`
+  vẫn là hằng số; mỗi lần dùng E/Q không trừ thời gian của người đứng sân. Cần
+  frame data (gcsim có) — không bịa thời gian cast.
+- **Hạt quái rơi = 0** (giả định thận trọng — đòi ER hơi cao). gcsim có bảng
+  rơi theo ngưỡng HP từng quái; cần thời gian dọn (Pha 6).
+- **Năng lượng ngoài hạt**: hồi năng lượng của Q Raiden, Favonius/Sacrificial,
+  Emblem, cung mệnh — chưa mô hình hoá.
+- **Cửa sổ stance chỉ gating đòn của người đứng sân**; Raiden ngoài Isshin
+  đánh thường không được đếm.
+- **Buff đội từ Q tính theo năng lượng ngoài sân** kể cả khi người buff đứng
+  sân (tránh vòng lặp đội hình ↔ buff ↔ sát thương).
+- **Trung vị** cho 10 nhân vật: 7 Nhà Lữ Hành, Linnea (không ghi chú, không có
+  trong gcsim), Lohen và Zibai (sự kiện không có nhịp để đếm).
+
+## 8. Chưa xác minh, cần làm trước Pha 4
+
+- ~~Yatta có ghi hạt năng lượng không~~ — không; dùng wiki + gcsim (mục 7.1).
+- Gauge và ICD: Yatta `talent.advancedProps` có `elementalGaugeTheory` ("1U",
+  "2U", "1U, 2.1s") và `internalCooldown` ("Normal Attack, 2.5s/3 Hits") cho
+  từng đòn — đủ cho Pha 4 nếu tên đòn ở đó khớp được với dòng của
+  `talent-params.json` (tên không trùng hẳn: "Normal Attack 1-Hit" vs
+  "1-Hit DMG").
