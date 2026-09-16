@@ -78,6 +78,10 @@ final class AbyssViewModel: ObservableObject {
     /// session. Shown next to the results so "these are last week's numbers"
     /// is something the player can see rather than has to guess.
     @Published private(set) var resultsComputedAt: Date?
+    /// A short local log of past cycles' best plan per floor — see
+    /// `AbyssCycleHistoryStore`. Loaded at init and refreshed after every
+    /// search that actually runs (not a cache hit, which changes nothing here).
+    @Published private(set) var cycleHistory = AbyssCycleHistory()
     @Published var errorMessage: String?
 
     @Published var section: Section = .roster
@@ -168,6 +172,7 @@ final class AbyssViewModel: ObservableObject {
     private let store: AbyssRosterStoring
     private let showcaseStore: AbyssShowcaseStoring
     private let searchCacheStore: AbyssSearchCacheStoring
+    private let cycleHistoryStore: AbyssCycleHistoryStoring
     private let enka: AbyssShowcaseFetching
     private let hoyolab: AbyssFullRosterFetching
     private let hoyolabCredentials: AbyssHoyolabCredentialStoring
@@ -178,12 +183,14 @@ final class AbyssViewModel: ObservableObject {
     init(store: AbyssRosterStoring = AbyssRosterStore(),
          showcaseStore: AbyssShowcaseStoring = AbyssShowcaseStore(),
          searchCacheStore: AbyssSearchCacheStoring = AbyssSearchCacheStore(),
+         cycleHistoryStore: AbyssCycleHistoryStoring = AbyssCycleHistoryStore(),
          enka: AbyssShowcaseFetching = AbyssEnkaClient(),
          hoyolab: AbyssFullRosterFetching = AbyssHoyolabClient(),
          hoyolabCredentials: AbyssHoyolabCredentialStoring = AbyssHoyolabCredentialStore()) {
         self.store = store
         self.showcaseStore = showcaseStore
         self.searchCacheStore = searchCacheStore
+        self.cycleHistoryStore = cycleHistoryStore
         self.enka = enka
         self.hoyolab = hoyolab
         self.hoyolabCredentials = hoyolabCredentials
@@ -199,6 +206,7 @@ final class AbyssViewModel: ObservableObject {
 
         showcase = try? showcaseStore.load()
         uid = showcase?.uid ?? ""
+        cycleHistory = cycleHistoryStore.load()
 
         if let credentials = hoyolabCredentials.load() {
             hoyolabLtuid = credentials.ltuid
@@ -770,8 +778,41 @@ final class AbyssViewModel: ObservableObject {
                 // error the player has to act on.
                 try? self.searchCacheStore.save(
                     AbyssSearchCache(key: cacheKey, computedAt: computedAt, output: output))
+
+                if let cyclePeriodStart = library.latestCycle?.periodStart {
+                    for report in output.reports {
+                        guard let entry = Self.historyEntry(for: report, cyclePeriodStart: cyclePeriodStart,
+                                                            computedAt: computedAt) else { continue }
+                        try? self.cycleHistoryStore.append(entry)
+                    }
+                    self.cycleHistory = self.cycleHistoryStore.load()
+                }
             }
         }
+    }
+
+    /// The entry this floor's search result adds to the cycle history, or
+    /// `nil` when the floor produced no usable plan — an empty search should
+    /// not overwrite a real past entry with a zero.
+    private static func historyEntry(for report: AbyssFloorReport, cyclePeriodStart: String,
+                                     computedAt: Date) -> AbyssCycleHistoryEntry? {
+        if let team = report.wholeFloorTeams?.first, team.score > 0 {
+            return AbyssCycleHistoryEntry(cyclePeriodStart: cyclePeriodStart, computedAt: computedAt,
+                                          floor: report.floor, bestScore: team.score,
+                                          bestClearTimeSeconds: report.enemyHP.map { $0 / team.score },
+                                          teamMemberIDs: team.memberIDs)
+        }
+        if let plan = report.halfPlans?.first, plan.score > 0 {
+            let clearSeconds: Double? = {
+                guard let firstHP = plan.firstHalfHP, let secondHP = plan.secondHalfHP else { return nil }
+                return (firstHP + secondHP) / plan.score
+            }()
+            return AbyssCycleHistoryEntry(cyclePeriodStart: cyclePeriodStart, computedAt: computedAt,
+                                          floor: report.floor, bestScore: plan.score,
+                                          bestClearTimeSeconds: clearSeconds,
+                                          teamMemberIDs: plan.firstHalf.memberIDs + plan.secondHalf.memberIDs)
+        }
+        return nil
     }
 
     func cancelSearch() {
@@ -785,6 +826,7 @@ final class AbyssViewModel: ObservableObject {
     func character(_ id: String) -> AbyssCharacter? { library?.charactersByID[id] }
     func weapon(_ id: String) -> AbyssWeapon? { library?.weaponsByID[id] }
     func artifactSet(_ id: String) -> AbyssArtifactSet? { library?.artifactSetsByID[id] }
+    func resonance(_ id: String) -> AbyssTeamBonus.Resonance? { library?.resonancesByID[id] }
 
     /// What the model read from a set's bonuses, so the tab can say what it
     /// priced next to the game's own text.
@@ -793,6 +835,7 @@ final class AbyssViewModel: ObservableObject {
     }
     func characterIconURL(_ id: String) -> URL? { library?.icons.characterIconURL(id) }
     func weaponIconURL(_ id: String) -> URL? { library?.icons.weaponIconURL(id) }
+    func artifactSetIconURL(_ id: String) -> URL? { library?.icons.artifactSetIconURL(id) }
 
     /// Damage share within a team, used for the per-character bar. Computed
     /// against the sum of the members rather than the team score, because the

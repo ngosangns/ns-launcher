@@ -25,6 +25,13 @@ struct AbyssScorer: Sendable {
     let library: AbyssDataLibrary
     let tuning: AbyssTuning
 
+    /// Below this share of `Rotation.burstCap`, a member's burst is not
+    /// actually sustainable at this build's Energy Recharge — the score is
+    /// pricing in more casts than the rotation can deliver. High enough that
+    /// ordinary rounding does not trip it, low enough to catch a real ER
+    /// shortfall.
+    private static let energyStarvedThreshold = 0.9
+
     /// The party-wide stats the model tracks.
     struct PartyBuff: Sendable {
         var atkPercent = 0.0
@@ -763,12 +770,21 @@ struct AbyssScorer: Sendable {
                                 fieldSeconds: fieldSeconds(driver: index, members: context.members, stats: stats))
                 : offFieldDamage(split, rotation: rotation, energyRecharge: energyRecharge))
         }
-        // Reaction damage is credited to whoever sets it off, so the per-member
-        // bars in the tab show a high-EM support carrying a Bloom team rather
-        // than looking idle next to damage they are in fact causing.
+        // Classic transformative reaction damage is credited to whoever sets
+        // it off (the team's best Elemental Mastery), so the per-member bars
+        // in the tab show a high-EM support carrying a Bloom team rather than
+        // looking idle next to damage they are in fact causing.
         if damage.reactionTriggerIndex >= 0 {
-            perCharacter[members[damage.reactionTriggerIndex].id, default: 0]
-                += perSecond(damage.reactionDamage)
+            let transformativeOnly = damage.reactionDamage - damage.indirectLunarDamage.reduce(0, +)
+            perCharacter[members[damage.reactionTriggerIndex].id, default: 0] += perSecond(transformativeOnly)
+        }
+        // Indirect Lunar-Charged/Lunar-Crystallize is already split by
+        // contribution (see `indirectLunarStellarDamage`), so it is credited
+        // per contributor rather than collapsed onto a single trigger — the
+        // way it was collapsed here used to hand a shielder's high EM 100% of
+        // this reaction even when a real sub-DPS applied most of the elements.
+        for (index, share) in damage.indirectLunarDamage.enumerated() where share > 0 {
+            perCharacter[members[index].id, default: 0] += perSecond(share)
         }
 
         let modifiers = teamModifiers(team: team, floor: floor)
@@ -783,6 +799,23 @@ struct AbyssScorer: Sendable {
 
         let sources = Set(members.map { assignment[$0.id]?.statSource ?? .modelled })
         if sources.count > 1 { notes.append(.mixedStatSources) }
+
+        // `burstCost == 0` is the no-energy-profile fallback (`.unconstrained`),
+        // not a real character with no burst — skipped so missing data never
+        // reads as an ER shortfall.
+        var energyStarved: [String] = []
+        for (index, memberContext) in context.members.enumerated() {
+            let rotation = memberContext.rotation
+            guard rotation.burstCost > 0, rotation.burstCap > 0 else { continue }
+            let onField = index == damage.onFieldIndex
+            let casts = rotation.burstCasts(energyRecharge: stats[index].energyRecharge, onField: onField)
+            if casts / rotation.burstCap < Self.energyStarvedThreshold {
+                energyStarved.append(members[index].id)
+            }
+        }
+        if !energyStarved.isEmpty {
+            notes.append(.energyStarved(energyStarved.sorted()))
+        }
 
         return AbyssTeamResult(
             memberIDs: members.map(\.id),
@@ -925,12 +958,23 @@ struct AbyssScorer: Sendable {
     /// rather than spreading them out, exactly as the data records it. A
     /// contributor is anyone of the reaction's two elements who lands at
     /// least one application with this member on field.
+    /// `indirectLunarStellarDamage`'s result: the reaction's total damage, and
+    /// each contributor's own share of it (same order and count as `members`,
+    /// zero for anyone who did not contribute) — so a caller crediting damage
+    /// per character does not have to collapse the weighted split back into a
+    /// single trigger the way a classic transformative reaction is.
+    struct IndirectLunarDamage: Sendable {
+        let total: Double
+        let perMember: [Double]
+    }
+
     func indirectLunarStellarDamage(pricing: [IndirectLunarPricing],
                                     members: [DamageContext],
                                     stats: [AbyssStats],
                                     party: PartyBuff,
-                                    applications: [Double]) -> Double {
-        guard !pricing.isEmpty else { return 0 }
+                                    applications: [Double]) -> IndirectLunarDamage {
+        var perMember = [Double](repeating: 0, count: members.count)
+        guard !pricing.isEmpty else { return IndirectLunarDamage(total: 0, perMember: perMember) }
         var byElement = SIMD8<Double>(repeating: 0)
         for (index, member) in members.enumerated() { byElement[member.element.simdIndex] += applications[index] }
 
@@ -938,23 +982,26 @@ struct AbyssScorer: Sendable {
         for entry in pricing {
             let count = Self.reactionCount(entry.reaction, lanes: byElement)
             guard count > 0 else { continue }
-            var contributions: [Double] = []
+            var contributions: [(index: Int, value: Double)] = []
             for (index, member) in members.enumerated()
             where applications[index] > 0 && (member.element == entry.pair.0 || member.element == entry.pair.1) {
                 let effective = effectiveStats(context: member, stats: stats[index], partyBuffs: party)
                 let resistance = entry.resistanceByElement[member.element] ?? 1
-                contributions.append(entry.prefix
+                contributions.append((index, entry.prefix
                     * (1 + library.damageConstants.lunarStellarEM.bonus(max(effective.elementalMastery, 0))
                         + entry.floorBonus)
-                    * resistance * effective.critMultiplier)
+                    * resistance * effective.critMultiplier))
             }
             guard !contributions.isEmpty else { continue }
-            contributions.sort(by: >)
+            contributions.sort { $0.value > $1.value }
             let weights: [Double] = [0.6, 0.3, 0.05, 0.05]
-            let reactionBase = zip(contributions.prefix(4), weights).reduce(0) { $0 + $1.0 * $1.1 }
-            total += count * reactionBase
+            for (rank, contribution) in contributions.prefix(4).enumerated() {
+                let share = count * contribution.value * weights[rank]
+                total += share
+                perMember[contribution.index] += share
+            }
         }
-        return total
+        return IndirectLunarDamage(total: total, perMember: perMember)
     }
 
     /// The strongest transformative reaction a team unlocks, priced against the
@@ -1145,10 +1192,18 @@ struct AbyssScorer: Sendable {
     struct TeamDamage: Sendable {
         let total: Double
         let onFieldIndex: Int
-        /// Reaction damage, and the member credited with triggering it. Zero and
-        /// -1 when the team sets off no transformative reaction.
+        /// Reaction damage — the classic transformative reaction plus indirect
+        /// Lunar/Stellar — and the member credited with triggering the
+        /// transformative part. Zero and -1 when the team sets off no
+        /// transformative reaction; indirect Lunar/Stellar can still be
+        /// non-zero in that case, see `indirectLunarDamage`.
         let reactionDamage: Double
         let reactionTriggerIndex: Int
+        /// Indirect Lunar-Charged/Lunar-Crystallize damage, per member (same
+        /// order as `members`) — already split by contribution, unlike the
+        /// classic transformative reaction which is credited whole to
+        /// `reactionTriggerIndex`. See `indirectLunarStellarDamage`.
+        let indirectLunarDamage: [Double]
     }
 
     func teamDamage(context: TeamDamageContext,
@@ -1192,7 +1247,7 @@ struct AbyssScorer: Sendable {
         // candidates differ in whose attacks apply an element, so the whole
         // team is summed per candidate — still no damage recomputed, only
         // arithmetic over the splits above.
-        var best: (total: Double, index: Int, reaction: Double)?
+        var best: (total: Double, index: Int, transformativeReaction: Double, indirectLunar: [Double])?
         for driver in context.members.indices {
             let variant = driver < context.variants.count ? context.variants[driver] : nil
             var total = 0.0
@@ -1214,26 +1269,29 @@ struct AbyssScorer: Sendable {
                     total += offFieldDamage(split, rotation: rotation, energyRecharge: energyRecharge)
                 }
             }
-            var reaction = 0.0
+            var transformativeReaction = 0.0
             if let variant, let transformative = variant.transformative, triggerIndex >= 0 {
-                reaction = variant.transformativeCount * transformative.base
+                transformativeReaction = variant.transformativeCount * transformative.base
                     * (1 + transformative.emCurve.bonus(max(bestEM, 0)))
             }
+            var indirectLunar = [Double](repeating: 0, count: context.members.count)
             if let variant {
-                reaction += indirectLunarStellarDamage(pricing: context.indirectLunarPricing,
-                                                        members: context.members, stats: stats, party: party,
-                                                        applications: variant.applications)
+                indirectLunar = indirectLunarStellarDamage(pricing: context.indirectLunarPricing,
+                                                            members: context.members, stats: stats, party: party,
+                                                            applications: variant.applications).perMember
             }
-            total += reaction
+            total += transformativeReaction + indirectLunar.reduce(0, +)
             // First maximum wins: strict `>` over members in order, so a tie
             // resolves to the earlier member and the pick is the same every run.
-            if best == nil || total > best!.total { best = (total, driver, reaction) }
+            if best == nil || total > best!.total { best = (total, driver, transformativeReaction, indirectLunar) }
         }
 
+        let indirectLunar = best?.indirectLunar ?? []
         return TeamDamage(total: best?.total ?? 0,
                           onFieldIndex: best?.index ?? 0,
-                          reactionDamage: best?.reaction ?? 0,
-                          reactionTriggerIndex: (best?.reaction ?? 0) > 0 ? triggerIndex : -1)
+                          reactionDamage: (best?.transformativeReaction ?? 0) + indirectLunar.reduce(0, +),
+                          reactionTriggerIndex: (best?.transformativeReaction ?? 0) > 0 ? triggerIndex : -1,
+                          indirectLunarDamage: indirectLunar)
     }
 
     /// For callers scoring one team once, with no context to reuse.
@@ -1356,7 +1414,7 @@ struct AbyssScorer: Sendable {
         }
         if team.moonsignLevel >= 2 { notes.append(.moonsignAscendantGleam) }
         if team.hexerei { notes.append(.hexereiSecretRite) }
-        notes.append(contentsOf: team.resonances.map { .resonance(name: $0.name) })
+        notes.append(contentsOf: team.resonances.map { .resonance(id: $0.id, name: $0.name, nameVI: $0.nameVI) })
 
         return (multiplier, notes)
     }

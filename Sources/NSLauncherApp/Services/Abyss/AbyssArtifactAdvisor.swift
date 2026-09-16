@@ -403,22 +403,63 @@ struct AbyssArtifactAdvisor: Sendable {
                 }
             }
 
+            let substatPriority = assembler.substatPlan(role: option.role, basis: profile.basis).map(\.key)
+
             advice[member.id] = AbyssArtifactAdvice(
                 setIDs: option.setIDs,
                 sands: plan.sands,
                 goblet: plan.goblet,
                 circlet: plan.circlet,
-                substatPriority: assembler.substatPlan(role: option.role, basis: profile.basis).map(\.key),
+                substatPriority: substatPriority,
                 gainOverNeutralPick: max(gain, 0),
                 alternativeSetIDs: alternativeIDs == option.setIDs ? [] : alternativeIDs,
                 alternativeGap: alternativeGap,
                 currentSetIDs: currentSetIDs,
-                upgradeOverCurrent: upgrade)
+                upgradeOverCurrent: upgrade,
+                substatMarginalGain: substatMarginalGain(for: member, option: option, members: members,
+                                                         floor: floor, context: context,
+                                                         profiles: profiles, priority: substatPriority,
+                                                         team: team))
         }
 
         var result = team
         result.artifactAdvice = advice
         if result.baseScore <= 0 { result.baseScore = team.score }
         return result
+    }
+
+    /// What one average roll of each substat in `priority` is worth to this
+    /// team right now, as a fraction of the team score.
+    ///
+    /// `substatPriority` on its own is a static share table — see
+    /// `AbyssBuildAssembler.substatPlan` — so it cannot see that a team's own
+    /// buffs already pushed a member's CRIT Rate past the point another roll
+    /// helps, or that a floor's Ley Line Disorder makes Elemental Mastery
+    /// worth more here than the table assumes anywhere else. Re-evaluating the
+    /// team with the roll actually added is what catches that; everything
+    /// else about this member — sets, main stats, everyone else's gear — is
+    /// held fixed, so the number isolates the one substat.
+    private func substatMarginalGain(for member: AbyssCharacter,
+                                     option: AbyssGearOption,
+                                     members: [AbyssCharacter],
+                                     floor: AbyssFloorContext,
+                                     context: AbyssTeamContext,
+                                     profiles: [String: AbyssDamageProfile],
+                                     priority: [String],
+                                     team: AbyssTeamResult) -> [String: Double] {
+        guard team.score > 0 else { return [:] }
+        var gains: [String: Double] = [:]
+        gains.reserveCapacity(priority.count)
+        for key in priority {
+            guard let field = AbyssStatField(tuningKey: key) else { continue }
+            var boostedStats = option.stats
+            boostedStats.add(scorer.tuning.rollValue(key), to: field)
+            var boosted = team.assignment
+            boosted[member.id] = option.replacingSets(option.setIDs, stats: boostedStats)
+            guard let after = scorer.evaluate(members: members, assignment: boosted, floor: floor,
+                                              team: context, profiles: profiles)?.score else { continue }
+            gains[key] = after / team.score - 1
+        }
+        return gains
     }
 }

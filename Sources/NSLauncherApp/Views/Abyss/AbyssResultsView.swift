@@ -71,6 +71,17 @@ struct AbyssResultsView: View {
             // only the ones both halves share; the rest sit with their half.
             buffLines(report.buffs, prefix: nil)
 
+            // A locally-logged reference point, not a public leaderboard: the
+            // most recent *other* cycle's top plan for this same floor number.
+            if let previous = viewModel.cycleHistory.mostRecent(
+                forFloor: report.floor, excludingCycle: viewModel.library?.latestCycle?.periodStart),
+               let seconds = previous.bestClearTimeSeconds {
+                Text(text.abyssPreviousCycleClearTime(seconds))
+                    .font(.system(size: 10, design: .rounded))
+                    .foregroundStyle(LauncherPalette.mist.opacity(0.5))
+                    .help(text.abyssPreviousCycleHint)
+            }
+
             switch report.outcome {
             case .whole(let teams):
                 ForEach(Array(teams.enumerated()), id: \.element.id) { index, team in
@@ -177,9 +188,14 @@ struct AbyssResultsView: View {
                 if !team.notes.isEmpty {
                     VStack(alignment: .leading, spacing: 3) {
                         ForEach(Array(team.notes.enumerated()), id: \.offset) { _, note in
-                            Label(text.abyssTeamNote(note), systemImage: note.symbolName)
-                                .font(.system(.caption2, design: .rounded))
-                                .foregroundStyle(note.accentColor.opacity(0.85))
+                            if case .resonance(let id, let name, let nameVI) = note {
+                                AbyssResonanceLabel(viewModel: viewModel, text: text,
+                                                    id: id, name: name, nameVI: nameVI)
+                            } else {
+                                Label(text.abyssTeamNote(note), systemImage: note.symbolName)
+                                    .font(.system(.caption2, design: .rounded))
+                                    .foregroundStyle(note.accentColor.opacity(0.85))
+                            }
                         }
                     }
                 }
@@ -241,11 +257,14 @@ struct AbyssResultsView: View {
                                    systemImage: character?.weaponType.symbolName ?? "wand.and.rays",
                                    tint: LauncherPalette.mist.opacity(0.7),
                                    size: 20, cornerRadius: 5)
-                Text(weapon.map { text.pick(en: $0.name, vi: $0.nameVI) } ?? "—")
-                    .font(.system(size: 10, design: .rounded))
-                    .foregroundStyle(weapon.map { RarityAppearance.genshin($0.rarity).accent.opacity(0.85) }
-                        ?? LauncherPalette.mist.opacity(0.6))
-                    .lineLimit(1)
+                if let weapon {
+                    AbyssWeaponLabel(viewModel: viewModel, text: text, weapon: weapon,
+                                     refinement: option?.weaponID.map { viewModel.refinement(for: $0) } ?? 1)
+                } else {
+                    Text("—")
+                        .font(.system(size: 10, design: .rounded))
+                        .foregroundStyle(LauncherPalette.mist.opacity(0.6))
+                }
                 // Only for a weapon the player actually owns: `refinement(for:)`
                 // answers R1 for anything it has never seen, and printing that
                 // next to a weapon from a full-roster search would read as a
@@ -337,7 +356,11 @@ struct AbyssResultsView: View {
             "\(text.abyssGobletSlot) \(text.abyssMainStatName(advice.goblet))",
             "\(text.abyssCircletSlot) \(text.abyssMainStatName(advice.circlet))",
         ].joined(separator: " · ")
-        let substats = advice.substatPriority.prefix(3).map { text.abyssSubstatName($0) }.joined(separator: " > ")
+        let substats = advice.substatPriority.prefix(3).map { key -> String in
+            let name = text.abyssSubstatName(key)
+            guard let gain = advice.substatMarginalGain[key], gain > 0.0001 else { return name }
+            return text.abyssSubstatWithGain(name, gain: gain)
+        }.joined(separator: " > ")
         return substats.isEmpty ? slots : "\(slots)  ·  \(text.abyssSubstatsLabel) \(substats)"
     }
 

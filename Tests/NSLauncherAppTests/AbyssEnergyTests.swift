@@ -201,6 +201,54 @@ final class AbyssEnergyTests: XCTestCase {
         XCTAssertEqual(rotation.attackWindow(burstCasts: 1), 1)
     }
 
+    // MARK: - The energy-starved note
+
+    private func bareAssignment(_ members: [AbyssCharacter], overriding stats: [String: AbyssStats] = [:])
+        -> [String: AbyssGearOption] {
+        let plan = AbyssMainStatPlan(sands: .energyRecharge, goblet: .atkPercent, circlet: .critRate)
+        return Dictionary(uniqueKeysWithValues: members.map { character in
+            (character.id, AbyssGearOption(stats: stats[character.id] ?? AbyssStats(), weaponID: nil,
+                                           setIDs: [], mainStats: plan, role: .mainDPS, soloScore: 0))
+        })
+    }
+
+    /// Raiden's attack string exists only inside her burst window
+    /// (`testAStanceGatesTheAttackString`), and at the game's base 100% Energy
+    /// Recharge — `AbyssStats()`'s default — she cannot burst as often as
+    /// `testEnergyRechargeBuysBurstsUntilTheCooldownCaps` shows a funded
+    /// rotation can. The score still prices in the funded number; the note is
+    /// what says the rotation itself cannot deliver it.
+    func testEnergyStarvedNoteFlagsAMemberWhoCannotSustainTheirBurst() throws {
+        let scorer = try scorer()
+        let members = try characters(["raiden-shogun", "bennett", "xiangling", "xingqiu"])
+        let team = AbyssTeamContext.build(members: members, library: library)
+        let result = try XCTUnwrap(scorer.evaluate(members: members, assignment: bareAssignment(members),
+                                                    floor: .neutral, team: team))
+        let starvedIDs = result.notes.compactMap { note -> [String]? in
+            if case .energyStarved(let ids) = note { return ids }
+            return nil
+        }.first
+        XCTAssertTrue((starvedIDs ?? []).contains("raiden-shogun"),
+                      "expected raiden-shogun in an energyStarved note, got \(result.notes)")
+    }
+
+    /// The same team, but Raiden's Energy Recharge is high enough to fund her
+    /// burst every rotation now — the warning drops for her specifically.
+    func testEnergyStarvedNoteClearsOnceEnergyRechargeFundsTheBurst() throws {
+        let scorer = try scorer()
+        let members = try characters(["raiden-shogun", "bennett", "xiangling", "xingqiu"])
+        let team = AbyssTeamContext.build(members: members, library: library)
+        var fed = AbyssStats()
+        fed.energyRecharge = 3
+        let assignment = bareAssignment(members, overriding: ["raiden-shogun": fed])
+        let result = try XCTUnwrap(scorer.evaluate(members: members, assignment: assignment,
+                                                    floor: .neutral, team: team))
+        XCTAssertFalse(result.notes.contains {
+            if case .energyStarved(let ids) = $0 { return ids.contains("raiden-shogun") }
+            return false
+        })
+    }
+
     // MARK: - Field time
 
     /// Field time is spent on the best loop open to the character, and a loop

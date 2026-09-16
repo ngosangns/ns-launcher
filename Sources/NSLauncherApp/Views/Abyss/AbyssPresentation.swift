@@ -115,13 +115,15 @@ extension AbyssTeamNote {
         case .resonance: return "circle.hexagongrid.fill"
         case .weaponContested: return "exclamationmark.arrow.triangle.2.circlepath"
         case .mixedStatSources: return "questionmark.circle"
+        case .energyStarved: return "bolt.badge.clock"
         }
     }
 
     /// Warnings read differently from bonuses, so they are tinted differently.
     var accentColor: Color {
         switch self {
-        case .noSustainPenalty, .weaponContested, .mixedStatSources: return LauncherPalette.warning
+        case .noSustainPenalty, .weaponContested, .mixedStatSources, .energyStarved:
+            return LauncherPalette.warning
         case .breaksShield, .exploitsWeakness: return LauncherPalette.success
         case .moonsignAscendantGleam, .hexereiSecretRite, .resonance: return LauncherPalette.goldHighlight
         }

@@ -41,6 +41,35 @@ final class AbyssArtifactAdvisorTests: XCTestCase {
         }
     }
 
+    /// The marginal gain is computed only for keys the static priority table
+    /// already names, and re-evaluating the team with one roll added should
+    /// never produce a number that reads as more than the roll itself, or as
+    /// a meaningful loss — the roll can be added and ignored, never subtracted.
+    func testSubstatMarginalGainMatchesThePriorityKeysAndIsSane() async throws {
+        let optimizer = try makeOptimizer()
+        let roster = try AbyssGoldenFixture.exampleRoster()
+        let output = await optimizer.run(AbyssOptimizerRequest(roster: roster, floors: [12], topN: 3,
+                                                               splitsHalves: false))
+        let teams = try XCTUnwrap(output.reports.first?.wholeFloorTeams)
+        XCTAssertFalse(teams.isEmpty)
+
+        var sawPositiveGain = false
+        for team in teams {
+            for memberID in team.memberIDs {
+                let advice = try XCTUnwrap(team.artifactAdvice[memberID])
+                XCTAssertTrue(Set(advice.substatMarginalGain.keys).isSubset(of: Set(advice.substatPriority)),
+                              "\(memberID): marginal gain has a key outside substatPriority")
+                for (key, gain) in advice.substatMarginalGain {
+                    XCTAssertTrue(gain.isFinite, "\(memberID): \(key) marginal gain is not finite")
+                    XCTAssertLessThan(gain, 1, "\(memberID): \(key) marginal gain from one roll looks too large")
+                    XCTAssertGreaterThan(gain, -0.01, "\(memberID): \(key) marginal gain is meaningfully negative")
+                    if gain > 0.0001 { sawPositiveGain = true }
+                }
+            }
+        }
+        XCTAssertTrue(sawPositiveGain, "no member showed any positive substat marginal gain across the search")
+    }
+
     /// What each slot is allowed to hold.
     ///
     /// Two of the lists are cut down and both cuts have to stay honest. The

@@ -819,6 +819,25 @@ struct AppText {
                       + "so sánh giữa các đội, không phải đồng hồ trong game.")
     }
 
+    /// A locally-logged best time from a past cycle, next to this cycle's own
+    /// — never phrased as "better" or "worse", since the roster, the gear and
+    /// the monsters can all have moved between the two.
+    func abyssPreviousCycleClearTime(_ seconds: Double) -> String {
+        let total = Int(seconds.rounded())
+        let clock = String(format: "%d:%02d", total / 60, total % 60)
+        return localized(en: "Last cycle's plan: ≈ \(clock)", vi: "Chu kỳ trước: ≈ \(clock)")
+    }
+
+    var abyssPreviousCycleHint: String {
+        localized(
+            en: "The best plan a past search found for this floor, logged locally on this Mac. "
+                + "Roster, gear and the monsters themselves can all have changed since — read this "
+                + "as a personal log, not a like-for-like comparison.",
+            vi: "Phương án tốt nhất mà lần tìm kiếm trước tìm được cho tầng này, lưu local trên máy. "
+                + "Roster, trang bị và cả quái vật có thể đã đổi từ đó — coi đây là nhật ký cá nhân, "
+                + "không phải so sánh ngang hàng.")
+    }
+
     /// The score, with its unit. Damage per second under the model's
     /// assumptions — not a figure to compare against a damage meter in game.
     func abyssScorePerSecond(_ formatted: String) -> String { "\(formatted)/s" }
@@ -906,6 +925,33 @@ struct AppText {
     var abyssOnFieldLabel: String { localized(en: "on-field", vi: "đứng sân") }
     var abyssDamageShare: String { localized(en: "of team damage", vi: "sát thương đội") }
 
+    // MARK: - Resonance / weapon popovers
+
+    /// "2x Pyro" — how many characters of the element the resonance needs.
+    func abyssResonanceRequirement(element: GenshinElement, count: Int) -> String {
+        localized(en: "\(count)x \(abyssElementLabel(element))",
+                  vi: "\(count) nhân vật hệ \(abyssElementLabel(element))")
+    }
+
+    var abyssResonanceRequirementUnique: String {
+        localized(en: "4 different elements", vi: "4 nguyên tố khác nhau")
+    }
+
+    /// "+25% ATK" from a resonance's plain stat/value bonus list.
+    func abyssResonanceBonusLine(_ bonus: AbyssTeamBonus.Bonus) -> String {
+        let percent = bonus.value.magnitude < 1 && bonus.value != 0
+        let amount = percent ? "+\(abyssPercent(bonus.value))%" : "+\(Int(bonus.value.rounded()))"
+        return "\(amount) \(bonus.stat)"
+    }
+
+    /// "R\(n)" refinement value line for a weapon passive effect: "+40% ATK".
+    func abyssWeaponEffectLine(_ effect: AbyssWeapon.PassiveEffect, refinement: Int) -> String? {
+        guard let value = effect.value(refinement: refinement) else { return nil }
+        let percent = value.magnitude < 1 && value != 0
+        let amount = percent ? "+\(abyssPercent(value))%" : "+\(Int(value.rounded()))"
+        return "\(amount) \(effect.stat)"
+    }
+
     func abyssCyclePeriod(start: String, end: String) -> String {
         localized(en: "Rotation \(start) → \(end)", vi: "Chu kỳ \(start) → \(end)")
     }
@@ -976,8 +1022,8 @@ struct AppText {
             return localized(en: "Moonsign: Ascendant Gleam", vi: "Nguyệt Triệu: Ascendant Gleam")
         case .hexereiSecretRite:
             return localized(en: "Hexerei: Secret Rite", vi: "Hexerei: Secret Rite")
-        case .resonance(let name):
-            return localized(en: "Resonance: \(name)", vi: "Cộng hưởng: \(name)")
+        case .resonance(_, let name, let nameVI):
+            return localized(en: "Resonance: \(name)", vi: "Cộng hưởng: \(nameVI)")
         case .weaponContested(let weapons):
             let names = weapons.joined(separator: ", ")
             return localized(
@@ -987,6 +1033,11 @@ struct AppText {
             return localized(
                 en: "Mixes imported and assumed builds — the score is not a like-for-like comparison",
                 vi: "Trộn nhân vật có chỉ số thật với nhân vật build giả định — điểm không so ngang được")
+        case .energyStarved(let ids):
+            let names = ids.joined(separator: ", ")
+            return localized(
+                en: "Not enough Energy Recharge to burst as often as scored: \(names)",
+                vi: "Không đủ Nạp Năng Lượng để bung chiêu nhiều lần như điểm số giả định: \(names)")
         }
     }
 
@@ -1204,6 +1255,14 @@ struct AppText {
         case "flat_def": return localized(en: "flat DEF", vi: "DEF cố định")
         default: return key
         }
+    }
+
+    /// What re-evaluating the team with one more average roll of this substat
+    /// is worth — computed, not read off the static priority table, so it can
+    /// say "this one is already saturated" where the ordering alone cannot.
+    /// The same in both languages: a name and a number, nothing to translate.
+    func abyssSubstatWithGain(_ name: String, gain: Double) -> String {
+        "\(name) (+\(String(format: "%.1f", gain * 100))%)"
     }
 
     /// The scores are a ranking heuristic, not a DPS simulation. This belongs

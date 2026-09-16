@@ -365,6 +365,13 @@ struct AbyssArtifactAdvice: Sendable, Equatable, Codable {
     /// What moving from `currentSetIDs` to `setIDs` is worth, as a fraction of
     /// the team score. Zero when they are already wearing the best option.
     var upgradeOverCurrent: Double = 0
+    /// What one average roll of each key in `substatPriority` is actually
+    /// worth to this team, as a fraction of the team score — computed by
+    /// re-evaluating the team with that roll added, not read off the static
+    /// share table. `substatPriority`'s static order can rank a stat this
+    /// team has already saturated (e.g. CRIT Rate past 100% from a team buff)
+    /// above one still worth chasing; this is the number that would catch it.
+    var substatMarginalGain: [String: Double] = [:]
 }
 
 /// Something worth telling the user about a team, kept structured so it can be
@@ -376,7 +383,7 @@ enum AbyssTeamNote: Sendable, Equatable, Hashable, Codable {
     case exploitsWeakness([GenshinElement])
     case moonsignAscendantGleam
     case hexereiSecretRite
-    case resonance(name: String)
+    case resonance(id: String, name: String, nameVI: String)
     /// The roster has fewer copies of a weapon than the team wants; someone is
     /// holding a weapon another member is also credited with.
     case weaponContested([String])
@@ -384,6 +391,11 @@ enum AbyssTeamNote: Sendable, Equatable, Hashable, Codable {
     /// standardised build, so the two are not strictly comparable — a
     /// well-built imported character and an assumed one are different claims.
     case mixedStatSources
+    /// One or more members cannot actually cast their burst as often as the
+    /// score assumes: `Rotation.burstCasts` came in meaningfully under
+    /// `burstCap` even at this build's energy recharge, so the rotation the
+    /// score is priced on is not one the team can sustain.
+    case energyStarved([String])
 }
 
 struct AbyssTeamResult: Sendable, Identifiable, Codable {
