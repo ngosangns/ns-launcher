@@ -202,6 +202,10 @@ struct AbyssArtifactSet: Decodable, Sendable, Identifiable {
 struct AbyssCycle: Decodable, Sendable {
     struct Blessing: Decodable, Sendable {
         let name: String
+        /// Absent on an older or hand-edited cycle file — the view falls back
+        /// to `name` rather than failing to decode the whole cycle over one
+        /// missing translation.
+        let nameVI: String?
         let description: String
         let timeStart: String
         let timeEnd: String

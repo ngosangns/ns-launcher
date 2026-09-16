@@ -92,6 +92,29 @@ final class AbyssTextParserTests: XCTestCase {
         XCTAssertTrue(buffs[2].elements.contains(.pyro))
     }
 
+    /// Official Vietnamese client text calls Stellar-Conduct "Tinh-Siêu Dẫn"
+    /// and Stellar Swirl "Tinh-Khuếch Tán" — both compound terms that contain
+    /// (or, for Stellar-Conduct, literally spell out) the plain-Superconduct
+    /// needle "siêu dẫn". A clause naming the compound reaction must not also
+    /// register as the reaction it is a variant of.
+    func testCompoundStellarTermsDoNotAlsoMatchTheirPlainReaction() {
+        var diagnostics = AbyssParseDiagnostics()
+
+        let conduct = AbyssTextParser.floorBuffs(
+            "Sát thương Tinh-Siêu Dẫn nhân vật gây ra tăng 50%.", diagnostics: &diagnostics)
+        XCTAssertEqual(conduct.first?.reactions, [.stellarConduct],
+                       "\"Tinh-Siêu Dẫn\" must not also read as plain Superconduct")
+
+        let swirl = AbyssTextParser.floorBuffs(
+            "Sát thương Tinh-Khuếch Tán nhân vật gây ra tăng 50%.", diagnostics: &diagnostics)
+        XCTAssertEqual(swirl.first?.reactions, [.stellarSwirl])
+
+        // Plain Superconduct, unprefixed, still reads correctly on its own.
+        let plain = AbyssTextParser.floorBuffs(
+            "Sát thương Siêu Dẫn nhân vật gây ra tăng 200%.", diagnostics: &diagnostics)
+        XCTAssertEqual(plain.first?.reactions, [.superconduct])
+    }
+
     func testFloorBuffsIgnoreNumbersThatAreNotBuffs() {
         var diagnostics = AbyssParseDiagnostics()
         // A percentage with nothing to attach it to is prose, not a buff.

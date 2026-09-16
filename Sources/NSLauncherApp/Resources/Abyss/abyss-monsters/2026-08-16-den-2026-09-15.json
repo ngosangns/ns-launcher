@@ -1,22 +1,23 @@
 {
-  "sourceFile": "quai-vat-la-hoan/2026-08-16-den-2026-09-15.md",
-  "dataFetchDate": "2026-09-08",
+  "sourceFile": "TowerScheduleExcelConfigData + TowerFloorExcelConfigData + TextMap{EN,VI} (game client text, resolved by literal-phrase search in TextMapEN.json against the schedule's floor ids, then by nameTextMapHash/descTextMapHash into TextMapVI.json, via DimbreathBot/AnimeGameData)",
+  "dataFetchDate": "2026-09-16",
   "periodStart": "2026-08-16",
   "periodEnd": "2026-09-15",
   "gameVersion": "7.0",
   "mechanicNotes": "Stellar Glimmer Reaction (Stellar Swirl = biến thể Cryo Swirl, Stellar-Conduct = biến thể Superconduct) chỉ kích hoạt được khi đội có Sandrone, traveler-cryo hoặc Odette (passive Stellar Jubilee). Volkodlak Basher (Tầng 9) bị choáng khi trúng Stellar Glimmer Reaction lúc gầm/ra đòn.",
   "blessingOfTheAbyssalMoon": {
-    "name": "Luster-Piercing",
-    "description": "Khi nhân vật đang thi triển đứng trong Polestar Field, các đòn đánh gây sát thương lên địch sẽ tạo thêm một đợt sóng xung kích tại vị trí địch gây sát thương thật (True DMG). Hiệu ứng này kích hoạt tối đa 1 lần mỗi 4 giây.",
+    "name": "Luster-Piercing Moon",
+    "nameVI": "Vầng Trăng Vinh Quang",
+    "description": "Khi nhân vật trong trận hiện tại ở trong Vùng Trục Sao gây sát thương lên kẻ địch, sẽ giải phóng sóng xung kích tại vị trí kẻ địch, gây Sát Thương Chuẩn. Hiệu quả này mỗi 4s tối đa kích hoạt một lần.",
     "timeStart": "2026-08-16 04:00:00",
     "timeEnd": "2026-09-16 03:59:59",
-    "relatedMechanic": "Polestar Field — vùng hiệu ứng do Starlight Prism duy trì 7s sau khi kích hoạt Stellar-Conduct: hệ số phản ứng Stellar-Conduct +40%+5%/đòn Cryo-Electro ghi nhận (tối đa 12 đòn, hệ số tối đa 2.0, khớp damage-formula.json lunarStellar.direct.coefficients.stellarConductMin/Max); nhân vật trong vùng +20% (hoặc +28% nếu có ghi nhận đòn) sát thương Cryo/Electro. Buff này áp dụng cho MỌI tầng 1-12 suốt cả chu kỳ, khuếch đại thêm giá trị của Sandrone/traveler-cryo/Odette ngoài phần Ley Line Disorder riêng của từng tầng."
+    "relatedMechanic": "Polestar Field (Vùng Trục Sao) — vùng hiệu ứng do Starlight Prism duy trì 7s sau khi kích hoạt Stellar-Conduct: hệ số phản ứng Stellar-Conduct +40%+5%/đòn Cryo-Electro ghi nhận (tối đa 12 đòn, hệ số tối đa 2.0, khớp damage-formula.json lunarStellar.direct.coefficients.stellarConductMin/Max); nhân vật trong vùng +20% (hoặc +28% nếu có ghi nhận đòn) sát thương Cryo/Electro. Buff này áp dụng cho MỌI tầng 1-12 suốt cả chu kỳ, khuếch đại thêm giá trị của Sandrone/traveler-cryo/Odette ngoài phần Ley Line Disorder riêng của từng tầng. (relatedMechanic là ghi chú kỹ thuật nội bộ đối chiếu damage-formula.json, không phải trích game — description ở trên mới là text chính thức.)"
   },
   "floors": [
     {
       "floor": 9,
       "enemyHPMultiplier": 2,
-      "leyLineDisorder": "Sát thương Stellar Swirl gây bởi mọi nhân vật +50%.",
+      "leyLineDisorder": "Sát thương Tinh-Khuếch Tán (Stellar Swirl) nhân vật gây ra tăng 50%.",
       "chambers": [
         {
           "chamber": 1,
@@ -82,7 +83,7 @@
     {
       "floor": 10,
       "enemyHPMultiplier": 2,
-      "leyLineDisorder": "Sát thương Stellar-Conduct gây bởi mọi nhân vật +50%.",
+      "leyLineDisorder": "Sát thương Tinh-Siêu Dẫn (Stellar-Conduct) nhân vật gây ra tăng 50%.",
       "chambers": [
         {
           "chamber": 1,
@@ -148,7 +149,7 @@
     },
     {
       "floor": 11,
-      "leyLineDisorder": "Toàn đội +60% sát thương Cryo và +60% sát thương Pyro (áp dụng cùng lúc cho cả tầng, không tách theo nửa).",
+      "leyLineDisorder": "Toàn đội tăng 60% sát thương nguyên tố Băng (Cryo) và tăng 60% sát thương Nguyên Tố Hỏa (Pyro) (áp dụng cùng lúc cho cả tầng, không tách theo nửa).",
       "chambers": [
         {
           "chamber": 1,
@@ -219,7 +220,7 @@
     {
       "floor": 12,
       "enemyHPMultiplier": 2.5,
-      "leyLineDisorder": "Nửa 1 (nửa trước): Sát thương Superconduct +200%, sát thương Stellar-Conduct +75%. Nửa 2 (nửa sau): Sát thương Thường công (Normal Attack) hệ Pyro +75%.",
+      "leyLineDisorder": "Nửa 1 (nửa trước): Nhân vật tăng sát thương Siêu Dẫn (Superconduct) 200%, tăng sát thương Tinh-Siêu Dẫn (Stellar-Conduct) 75%. Nửa 2 (nửa sau): Tăng 75% Sát Thương Nguyên Tố Hỏa (Pyro) gây ra bởi Tấn Công Thường (Normal Attack) của nhân vật.",
       "chambers": [
         {
           "chamber": 1,

@@ -116,7 +116,8 @@ enum AbyssTextParser {
     /// "không tách theo nửa" about a bonus that applies to both, and that is a
     /// mention of halves, not a split.
     private static let halfMarker = regex("[Nn]ửa\\s*([12])(?![0-9])")
-    private static let normalAttackOnly = regex("thường công|normal attack|đòn thường", options: [.caseInsensitive])
+    private static let normalAttackOnly = regex(
+        "thường công|normal attack|đòn thường|tấn công thường", options: [.caseInsensitive])
 
     /// Vietnamese element names as they appear in resistance notes.
     private static let vietnameseElements: [String: ResistanceTarget] = [
@@ -128,9 +129,18 @@ enum AbyssTextParser {
     ]
 
     /// Substrings that name a reaction in buff text, lowercased for matching.
+    ///
+    /// Order matters: `floorBuffs` below consumes a needle out of the clause
+    /// once it matches, so a specific compound term has to be checked before
+    /// a generic one it contains — official Vietnamese "Tinh-Siêu Dẫn"
+    /// (Stellar-Conduct) has "siêu dẫn" (Superconduct) sitting right inside
+    /// it, and checked in the wrong order every Stellar-Conduct clause would
+    /// also register as an ordinary Superconduct one.
     private static let reactionKeywords: [(needle: String, reaction: AbyssReaction)] = [
         ("stellar swirl", .stellarSwirl),
+        ("tinh-khuếch tán", .stellarSwirl),
         ("stellar-conduct", .stellarConduct),
+        ("tinh-siêu dẫn", .stellarConduct),
         ("superconduct", .superconduct),
         ("siêu dẫn", .superconduct),
         ("lunar-charged", .lunarCharged),
@@ -460,8 +470,17 @@ enum AbyssTextParser {
             }
             guard let first = percents.first else { continue }
 
+            // A matched needle is removed from the scratch copy before the next
+            // one is checked, so a compound term already counted (e.g.
+            // "tinh-siêu dẫn") cannot also be picked up by a shorter needle
+            // it happens to contain ("siêu dẫn") — see `reactionKeywords`.
+            var scratch = clause.lowercased()
+            var reactions: Set<AbyssReaction> = []
+            for (needle, reaction) in reactionKeywords where scratch.contains(needle) {
+                reactions.insert(reaction)
+                scratch = scratch.replacingOccurrences(of: needle, with: "")
+            }
             let lowered = clause.lowercased()
-            let reactions = Set(reactionKeywords.filter { lowered.contains($0.needle) }.map(\.reaction))
             let elements = Set(GenshinElement.allCases.filter { lowered.contains($0.rawValue.lowercased()) })
             let normalOnly = matches(normalAttackOnly, lowered)
 
@@ -488,9 +507,10 @@ enum AbyssTextParser {
     /// Every Abyss chamber is fought twice, by two teams, and this rotation's
     /// floor 12 does not treat the two the same:
     ///
-    ///     Nửa 1 (nửa trước): Sát thương Superconduct +200%, sát thương
-    ///     Stellar-Conduct +75%. Nửa 2 (nửa sau): Sát thương Thường công
-    ///     (Normal Attack) hệ Pyro +75%.
+    ///     Nửa 1 (nửa trước): Nhân vật tăng sát thương Siêu Dẫn (Superconduct)
+    ///     200%, tăng sát thương Tinh-Siêu Dẫn (Stellar-Conduct) 75%. Nửa 2
+    ///     (nửa sau): Tăng 75% Sát Thương Nguyên Tố Hỏa (Pyro) gây ra bởi Tấn
+    ///     Công Thường (Normal Attack) của nhân vật.
     ///
     /// Read whole, that text hands every team both bonuses — a Cryo/Electro
     /// team scored as though it also collected the second half's Pyro

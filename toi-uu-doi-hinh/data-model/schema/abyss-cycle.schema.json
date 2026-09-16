@@ -16,6 +16,7 @@
       "description": "Buff áp dụng cho TOÀN BỘ Trầm Thủy (mọi tầng 1-12) suốt cả chu kỳ — khác với leyLineDisorder trong floors[] vốn chỉ áp dụng riêng từng tầng 9-12.",
       "properties": {
         "name": { "type": "string" },
+        "nameVI": { "type": "string", "description": "Tên chính thức tiếng Việt, từ TextMapVI (nameTextMapHash) — không phải bản dịch. Vắng mặt trên file chu kỳ cũ/tự sửa tay thì UI dùng name." },
         "description": { "type": "string" },
         "timeStart": { "type": "string" },
         "timeEnd": { "type": "string" },

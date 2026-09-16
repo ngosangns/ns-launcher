@@ -317,7 +317,9 @@ struct AbyssView: View {
                     .font(.system(.caption2, design: .rounded, weight: .semibold))
                     .foregroundStyle(LauncherPalette.mist.opacity(0.82))
 
-                Text(cycle.blessingOfTheAbyssalMoon.name)
+                Text(text.pick(en: cycle.blessingOfTheAbyssalMoon.name,
+                               vi: cycle.blessingOfTheAbyssalMoon.nameVI
+                                   ?? cycle.blessingOfTheAbyssalMoon.name))
                     .font(.system(.caption2, design: .rounded))
                     .foregroundStyle(LauncherPalette.goldHighlight.opacity(0.85))
 
