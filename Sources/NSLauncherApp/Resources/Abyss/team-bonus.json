@@ -1,45 +1,50 @@
 {
-  "sourceFile": "cong-huong-nguyen-to.md",
-  "dataFetchDate": "2026-09-08",
+  "sourceFile": "TeamResonanceExcelConfigData + TextMap_Medium{EN,VI} (game client text, resolved by nameTextMapHash/descTextMapHash via DimbreathBot/AnimeGameData)",
+  "dataFetchDate": "2026-09-16",
   "elementalResonance": [
     {
       "id": "fervent-flames",
       "name": "Fervent Flames",
+      "nameVI": "Hỏa Nhiệt Tình",
       "elements": ["Pyro"],
       "requiredCount": 2,
-      "description": "Giảm 40% thời gian dính hiệu ứng Cryo. Tăng ATK +25%.",
+      "description": "Thời gian duy trì ấn nguyên tố Băng giảm 40%. Tấn công tăng 25%.",
       "bonuses": [{ "stat": "ATK", "value": 0.25 }]
     },
     {
       "id": "soothing-water",
       "name": "Soothing Water",
+      "nameVI": "Thủy Trị Liệu",
       "elements": ["Hydro"],
       "requiredCount": 2,
-      "description": "Giảm 40% thời gian dính hiệu ứng Pyro. Tăng HP tối đa +25%.",
+      "description": "Thời gian duy trì ấn nguyên tố Hỏa giảm 40%. Giới hạn HP tăng 25%.",
       "bonuses": [{ "stat": "HP", "value": 0.25 }]
     },
     {
       "id": "high-voltage",
       "name": "High Voltage",
+      "nameVI": "Lôi Mạnh Mẽ",
       "elements": ["Electro"],
       "requiredCount": 2,
-      "description": "Giảm 40% thời gian dính hiệu ứng Hydro. Superconduct, Stellar-Conduct, Overloaded, Electro-Charged, Lunar-Charged, Quicken, Aggravate, hoặc Hyperbloom có 100% cơ hội tạo 1 Hạt Nguyên Tố Electro (hồi chuỗi 5s).",
+      "description": "Thời gian duy trì ấn Nguyên Tố Thủy giảm 40%. Khi kích hoạt phản ứng Siêu Dẫn, Tinh-Siêu Dẫn, Quá Tải, Điện Cảm, Nguyệt-Điện Cảm, Sinh Trưởng, Tăng Cường, Nở Rộ sẽ có 100% tỉ lệ rơi 1 Hạt Nhân Nguyên Tố Lôi, CD 5s.",
       "bonuses": []
     },
     {
       "id": "shattering-ice",
       "name": "Shattering Ice",
+      "nameVI": "Băng Vụn Vỡ",
       "elements": ["Cryo"],
       "requiredCount": 2,
-      "description": "Giảm 40% thời gian dính hiệu ứng Electro. Tăng CRIT Rate +15% khi đánh địch đang Đóng Băng (Frozen) hoặc dính Cryo.",
+      "description": "Thời gian duy trì ấn nguyên tố Lôi giảm 40%. Khi tấn công kẻ địch bị gán ấn nguyên tố Băng hoặc địch ở trạng thái Đóng Băng, tỷ lệ bạo kích tăng 15%.",
       "bonuses": [{ "stat": "CRIT Rate vs Frozen/Cryo-affected", "value": 0.15 }]
     },
     {
       "id": "impetuous-winds",
       "name": "Impetuous Winds",
+      "nameVI": "Phong Nhạy Bén",
       "elements": ["Anemo"],
       "requiredCount": 2,
-      "description": "Giảm 15% tiêu hao Thể Lực. Tăng Tốc Độ Di Chuyển +10%. Giảm hồi chiêu Kỹ Năng 5%.",
+      "description": "Tiêu hao thể lực giảm 15%, tốc độ di chuyển tăng 10%, CD rút ngắn 5%.",
       "bonuses": [
         { "stat": "Stamina Consumption Reduction", "value": 0.15 },
         { "stat": "Movement SPD", "value": 0.10 },
@@ -49,9 +54,10 @@
     {
       "id": "enduring-rock",
       "name": "Enduring Rock",
+      "nameVI": "Nham Kiên Định",
       "elements": ["Geo"],
       "requiredCount": 2,
-      "description": "Tăng 15% độ bền khiên. Ngoài ra khi nhân vật đang có khiên bảo vệ hoặc ở gần Moondrift (do phản ứng Lunar-Crystallize tạo ra): tăng 15% sát thương gây ra; gây sát thương lên địch giảm 20% kháng Geo của địch trong 15s.",
+      "description": "Hiệu quả khiên tăng 15%. Ngoài ra, khi nhân vật có khiên bảo hộ, hoặc xung quanh có Trăng Trôi sinh ra từ phản ứng Nguyệt-Kết Tinh, thì sẽ có đặc tính sau: Sát thương gây ra tăng 15%. Khi nhân vật gây sát thương cho địch, sẽ khiến kháng nguyên tố Nham của địch giảm 20%, duy trì 15s.",
       "bonuses": [
         { "stat": "Shield Strength", "value": 0.15 },
         { "stat": "DMG Bonus (khi có khiên/gần Moondrift)", "value": 0.15 },
@@ -61,18 +67,20 @@
     {
       "id": "sprawling-greenery",
       "name": "Sprawling Greenery",
+      "nameVI": "Thảo Sinh Sôi",
       "elements": ["Dendro"],
       "requiredCount": 2,
-      "description": "Tăng Tinh Thông Nguyên Tố (EM) +50. Sau khi kích hoạt Thiêu Đốt (Burning), Nảy Mầm Nhanh (Quicken), Nảy Mầm (Bloom), hoặc Lunar-Bloom: đồng đội gần đó +30 EM trong 6s. Sau khi kích hoạt Cảm Điện Kích Phát (Aggravate), Lan Toả (Spread), Kích Nổ Siêu Cấp (Hyperbloom), hoặc Sinh Trưởng Kịch Phát (Burgeon): đồng đội gần đó +20 EM trong 6s. Các hiệu ứng này tính thời lượng độc lập, có thể cộng dồn nếu kích hoạt nhiều loại phản ứng.",
+      "description": "Tinh Thông Nguyên Tố tăng 50 điểm. Sau khi kích hoạt phản ứng Thiêu Đốt, Sinh Trưởng, Sum Suê, Nguyệt-Sum Suê, tất cả nhân vật trong đội gần đó tăng 30 Tinh Thông Nguyên Tố, duy trì 6s. Sau khi kích hoạt phản ứng Tăng Cường, Lan Tràn, Nở Rộ, Bung Tỏa, tất cả nhân vật trong đội gần đó tăng 20 Tinh Thông Nguyên Tố, duy trì 6s. Thời gian của các hiệu ứng trên sẽ tính độc lập với nhau.",
       "bonuses": [{ "stat": "Elemental Mastery", "value": 50 }]
     },
     {
       "id": "protective-canopy",
       "name": "Protective Canopy",
+      "nameVI": "Bảo Hộ Đan Xen",
       "elements": [],
       "requiredCount": 4,
       "requiresUniqueElements": true,
-      "description": "Đủ 4 nguyên tố khác nhau (không lặp) trong đội. Tăng Kháng Nguyên Tố (mọi hệ) +15%, Kháng Vật Lý +15%.",
+      "description": "Tất cả kháng Nguyên Tố tăng 15%, kháng vật lý tăng 15%.",
       "bonuses": [
         { "stat": "Elemental RES (all)", "value": 0.15 },
         { "stat": "Physical RES", "value": 0.15 }

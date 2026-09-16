@@ -82,7 +82,7 @@ struct AbyssArtifactSetLabel: View {
             }
             .onDisappear { hoverTask?.cancel() }
             .popover(isPresented: $isShowingEffects, arrowEdge: .bottom) {
-                AbyssSetEffectCard(entries: entries, text: text)
+                AbyssSetEffectCard(entries: entries, text: text, viewModel: viewModel)
                     .onHover { hovering in
                         // Reading the popover keeps it open; leaving it closes
                         // it the same way leaving the label does.
@@ -122,12 +122,17 @@ private struct AbyssSetEffectCard: View {
 
     let entries: [Entry]
     let text: AppText
+    @ObservedObject var viewModel: AbyssViewModel
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             ForEach(entries) { entry in
                 VStack(alignment: .leading, spacing: 7) {
                     HStack(spacing: 6) {
+                        AbyssPortraitImage(url: viewModel.artifactSetIconURL(entry.artifactSet.id),
+                                           systemImage: "seal.fill",
+                                           tint: LauncherPalette.gold.opacity(0.7),
+                                           size: 26, cornerRadius: 6)
                         Text(text.pick(en: entry.artifactSet.name, vi: entry.artifactSet.nameVI))
                             .font(.system(.subheadline, design: .rounded, weight: .bold))
                             .foregroundStyle(LauncherPalette.goldHighlight)

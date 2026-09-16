@@ -303,6 +303,7 @@ struct AbyssTeamBonus: Decodable, Sendable {
     struct Resonance: Decodable, Sendable, Identifiable {
         let id: String
         let name: String
+        let nameVI: String
         let elements: [GenshinElement]
         let requiredCount: Int
         let requiresUniqueElements: Bool?

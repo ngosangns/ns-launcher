@@ -38,7 +38,7 @@ là **bản duy nhất**.
 | `passives.json` | **Viết tay**: ý nghĩa có cấu trúc của từng passive/hiệu ứng set (chỉ số, trigger, thời lượng, stack, phạm vi). Mọi giá trị là số R1 tham chiếu vào `passive-text.json`; `AbyssPassiveTests` ghim mọi tham chiếu giải được — nền của timeline buff Pha 5 |
 | `tuning.json` | Tham số thuật toán (xem bên dưới) |
 | `game-ids.json` | Id số trong game → slug ở đây, để nhập Showcase theo UID |
-| `icons/characters/<id>.png`, `icons/weapons/<id>.png` | Ảnh chân dung, 256×256 |
+| `icons/characters/<id>.png`, `icons/weapons/<id>.png`, `icons/artifact-sets/<id>.png` | Ảnh chân dung, 256×256 |
 | `manifest.json` | Số lượng bản ghi + các khoảng trống dữ liệu đã biết |
 
 ## Thêm nhân vật mới thì sửa ở đâu
@@ -173,6 +173,10 @@ bộ của Yatta — chỉ mở đúng file theo id, giống hệt cách `charac
 `weapons/<id>` đã hoạt động. File đã có thì bỏ qua, không tải lại; dùng
 `--force` nếu muốn tải lại toàn bộ. Nặng khoảng 8.6 MB, dùng riêng cho tab
 Trầm Thủy — không tính vào phần Story hay dung lượng game.
+
+`icons/artifact-sets/<id>.png` khớp qua `game-ids.json` (id số của Yatta) thay
+vì tên, vì endpoint `reliquary` của Yatta có sẵn field `icon` trên từng bộ —
+khớp tên sẽ là một chỗ nữa có thể lỡ chọn nhầm bộ.
 
 Nhân vật Nhà Lữ Hành (Traveler) dùng chung một ảnh cho cả 7 biến thể nguyên
 tố — game không vẽ ảnh riêng theo nguyên tố, chỉ khác theo giới (chọn cố định

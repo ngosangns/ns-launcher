@@ -34,6 +34,7 @@ struct AbyssDataLibrary: Sendable {
     let fiveStarArtifactSets: [AbyssArtifactSet]
 
     let teamBonus: AbyssTeamBonus?
+    let resonancesByID: [String: AbyssTeamBonus.Resonance]
     let damageFormula: AbyssDamageFormula?
     let tuning: AbyssTuning?
     /// Newest first.
@@ -149,6 +150,8 @@ struct AbyssDataLibrary: Sendable {
         let teamBonus: AbyssTeamBonus? = Self.decode(from: root?.appendingPathComponent("team-bonus.json"),
                                                      hasher: &hasher)
         self.teamBonus = teamBonus
+        let resonances = teamBonus?.elementalResonance ?? []
+        resonancesByID = Dictionary(resonances.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         damageFormula = Self.decode(from: root?.appendingPathComponent("damage-formula.json"), hasher: &hasher)
         let tuning: AbyssTuning? = Self.decode(from: root?.appendingPathComponent("tuning.json"), hasher: &hasher)
         self.tuning = tuning

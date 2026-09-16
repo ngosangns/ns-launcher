@@ -18,16 +18,20 @@ import Foundation
 struct AbyssIconLibrary: Sendable {
     private let charactersDirectory: URL?
     private let weaponsDirectory: URL?
+    private let artifactSetsDirectory: URL?
     private let availableCharacterIDs: Set<String>
     private let availableWeaponIDs: Set<String>
+    private let availableArtifactSetIDs: Set<String>
 
     static let empty = AbyssIconLibrary(root: nil)
 
     init(root: URL?) {
         charactersDirectory = root?.appendingPathComponent("icons/characters")
         weaponsDirectory = root?.appendingPathComponent("icons/weapons")
+        artifactSetsDirectory = root?.appendingPathComponent("icons/artifact-sets")
         availableCharacterIDs = Self.pngStems(in: charactersDirectory)
         availableWeaponIDs = Self.pngStems(in: weaponsDirectory)
+        availableArtifactSetIDs = Self.pngStems(in: artifactSetsDirectory)
     }
 
     func characterIconURL(_ id: String) -> URL? {
@@ -38,6 +42,11 @@ struct AbyssIconLibrary: Sendable {
     func weaponIconURL(_ id: String) -> URL? {
         guard availableWeaponIDs.contains(id) else { return nil }
         return weaponsDirectory?.appendingPathComponent("\(id).png")
+    }
+
+    func artifactSetIconURL(_ id: String) -> URL? {
+        guard availableArtifactSetIDs.contains(id) else { return nil }
+        return artifactSetsDirectory?.appendingPathComponent("\(id).png")
     }
 
     private static func pngStems(in directory: URL?) -> Set<String> {
