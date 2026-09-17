@@ -84,8 +84,15 @@ struct AbyssResultsView: View {
 
             switch report.outcome {
             case .whole(let teams):
-                ForEach(Array(teams.enumerated()), id: \.element.id) { index, team in
-                    teamPanel(title: "#\(index + 1)", team: team, enemyHP: report.enemyHP)
+                // Two teams per row: `teamPanel` already fills the width it's
+                // given, so an HStack of two splits it into equal columns.
+                let ranked = Array(teams.enumerated())
+                ForEach(Array(stride(from: 0, to: ranked.count, by: 2)), id: \.self) { start in
+                    HStack(alignment: .top, spacing: 14) {
+                        ForEach(ranked[start..<min(start + 2, ranked.count)], id: \.element.id) { index, team in
+                            teamPanel(title: "#\(index + 1)", team: team, enemyHP: report.enemyHP)
+                        }
+                    }
                 }
             case .split(let halves, let plans):
                 ForEach(halves) { half in
@@ -143,9 +150,13 @@ struct AbyssResultsView: View {
                     .help(text.abyssPlanScoreHint)
             }
 
-            ForEach(plan.byHalf, id: \.half) { entry in
-                teamPanel(title: text.abyssHalfTitle(entry.half), team: entry.team,
-                          enemyHP: entry.half == 1 ? plan.firstHalfHP : plan.secondHalfHP)
+            // The two halves of one plan are the natural pair for a row: they
+            // are chosen together and only ever read side by side.
+            HStack(alignment: .top, spacing: 14) {
+                ForEach(plan.byHalf, id: \.half) { entry in
+                    teamPanel(title: text.abyssHalfTitle(entry.half), team: entry.team,
+                              enemyHP: entry.half == 1 ? plan.firstHalfHP : plan.secondHalfHP)
+                }
             }
         }
     }
@@ -180,9 +191,15 @@ struct AbyssResultsView: View {
                 }
 
                 // Members in damage order rather than team order: the reader
-                // wants to know who is carrying.
-                ForEach(orderedMembers(of: team), id: \.self) { characterID in
-                    memberRow(characterID: characterID, team: team)
+                // wants to know who is carrying. Each is just a portrait —
+                // role, share, weapon and artifact advice sit in a popover
+                // shown on hover, so four members fit in half a row next to
+                // another team's four.
+                HStack(spacing: 10) {
+                    ForEach(orderedMembers(of: team), id: \.self) { characterID in
+                        AbyssTeamMemberCell(viewModel: viewModel, text: text,
+                                           characterID: characterID, team: team)
+                    }
                 }
 
                 if !team.notes.isEmpty {
@@ -201,167 +218,6 @@ struct AbyssResultsView: View {
                 }
             }
         }
-    }
-
-    private func memberRow(characterID: String, team: AbyssTeamResult) -> some View {
-        let character = viewModel.character(characterID)
-        let option = team.assignment[characterID]
-        let role = viewModel.displayRole(of: characterID, in: team)
-        let share = viewModel.damageShare(of: characterID, in: team)
-        let isOnField = characterID == team.onFieldID
-
-        return VStack(alignment: .leading, spacing: 4) {
-            HStack(spacing: 8) {
-                AbyssPortraitImage(url: viewModel.characterIconURL(characterID),
-                                   systemImage: character?.element.symbolName ?? "questionmark",
-                                   tint: character?.element.accentColor ?? LauncherPalette.mist,
-                                   size: 34, cornerRadius: 8)
-
-                Text(character.map { text.pick(en: $0.name, vi: $0.nameVI) } ?? characterID)
-                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
-                    .foregroundStyle(character.map { RarityAppearance.genshin($0.rarity).accent }
-                        ?? LauncherPalette.parchment)
-
-                if isOnField {
-                    Image(systemName: "star.fill")
-                        .font(.system(size: 9))
-                        .foregroundStyle(LauncherPalette.goldHighlight)
-                        .help(text.abyssOnFieldLabel)
-                }
-
-                Text(text.abyssRoleLabel(role))
-                    .font(.system(.caption2, design: .rounded, weight: .bold))
-                    .foregroundStyle(role.accentColor.opacity(0.85))
-
-                // Measured or modelled. Never left implicit: the same number
-                // means something different depending on which it is.
-                if option?.statSource == .measured {
-                    Label(text.abyssMeasuredBadge, systemImage: "checkmark.seal.fill")
-                        .font(.system(size: 9, weight: .semibold, design: .rounded))
-                        .foregroundStyle(LauncherPalette.success.opacity(0.9))
-                }
-
-                Spacer()
-
-                Text("\(Int((share * 100).rounded()))%")
-                    .font(.system(.caption2, design: .monospaced))
-                    .foregroundStyle(LauncherPalette.mist.opacity(0.7))
-                    .help(text.abyssDamageShare)
-            }
-
-            // The weapon is tinted by its rarity too: "which of my 5★ is this
-            // team asking for" is the first thing anyone checks.
-            let weapon = option?.weaponID.flatMap { viewModel.weapon($0) }
-            HStack(spacing: 6) {
-                AbyssPortraitImage(url: option?.weaponID.flatMap { viewModel.weaponIconURL($0) },
-                                   systemImage: character?.weaponType.symbolName ?? "wand.and.rays",
-                                   tint: LauncherPalette.mist.opacity(0.7),
-                                   size: 20, cornerRadius: 5)
-                if let weapon {
-                    AbyssWeaponLabel(viewModel: viewModel, text: text, weapon: weapon,
-                                     refinement: option?.weaponID.map { viewModel.refinement(for: $0) } ?? 1)
-                } else {
-                    Text("—")
-                        .font(.system(size: 10, design: .rounded))
-                        .foregroundStyle(LauncherPalette.mist.opacity(0.6))
-                }
-                // Only for a weapon the player actually owns: `refinement(for:)`
-                // answers R1 for anything it has never seen, and printing that
-                // next to a weapon from a full-roster search would read as a
-                // claim about their account.
-                if let weaponID = option?.weaponID, viewModel.owns(weaponID: weaponID) {
-                    Text("R\(viewModel.refinement(for: weaponID))")
-                        .font(.system(size: 9, design: .monospaced))
-                        .foregroundStyle(LauncherPalette.mist.opacity(0.45))
-                }
-            }
-
-            artifactBlock(characterID: characterID, team: team)
-
-            GoldenProgressBar(value: share)
-        }
-    }
-
-    /// The artifact recommendation: which set, what it was worth here, which
-    /// main stats, and what to wear instead if the set is not farmed yet.
-    @ViewBuilder
-    private func artifactBlock(characterID: String, team: AbyssTeamResult) -> some View {
-        let advice = team.artifactAdvice[characterID]
-        let setIDs = advice?.setIDs ?? team.assignment[characterID]?.setIDs ?? []
-
-        if !setIDs.isEmpty {
-            VStack(alignment: .leading, spacing: 2) {
-                HStack(spacing: 6) {
-                    Image(systemName: "seal.fill")
-                        .font(.system(size: 9))
-                        .foregroundStyle(LauncherPalette.gold.opacity(0.55))
-                        .frame(width: 16)
-                    AbyssArtifactSetLabel(viewModel: viewModel, text: text,
-                                          title: setNames(setIDs), setIDs: setIDs)
-                    if let gain = advice?.gainOverNeutralPick, gain > 0.0005 {
-                        Text(text.abyssArtifactGain(gain))
-                            .font(.system(size: 9, design: .rounded))
-                            .foregroundStyle(LauncherPalette.success.opacity(0.8))
-                    }
-                }
-
-                if let advice {
-                    Text(mainStatLine(advice))
-                        .font(.system(size: 9, design: .rounded))
-                        .foregroundStyle(LauncherPalette.mist.opacity(0.55))
-                        .lineLimit(1)
-                        .padding(.leading, 22)
-
-                    // For an imported character the useful line is not "wear
-                    // this" but "this beats what you have, by this much".
-                    if !advice.currentSetIDs.isEmpty {
-                        Text(text.abyssArtifactUpgrade(from: setNames(advice.currentSetIDs),
-                                                       gain: advice.upgradeOverCurrent))
-                            .font(.system(size: 9, weight: .semibold, design: .rounded))
-                            .foregroundStyle(LauncherPalette.goldHighlight.opacity(0.85))
-                            .lineLimit(1)
-                            .padding(.leading, 22)
-                    } else if team.assignment[characterID]?.statSource == .measured {
-                        Text(text.abyssArtifactAlreadyBest(setNames(advice.setIDs)))
-                            .font(.system(size: 9, design: .rounded))
-                            .foregroundStyle(LauncherPalette.success.opacity(0.8))
-                            .lineLimit(1)
-                            .padding(.leading, 22)
-                    }
-
-                    if !advice.alternativeSetIDs.isEmpty {
-                        Text(text.abyssArtifactAlternative(setNames(advice.alternativeSetIDs),
-                                                           gap: advice.alternativeGap))
-                            .font(.system(size: 9, design: .rounded))
-                            .foregroundStyle(LauncherPalette.mist.opacity(0.42))
-                            .lineLimit(1)
-                            .padding(.leading, 22)
-                    }
-                }
-            }
-        }
-    }
-
-    /// A 4-piece set reads as one name; two 2-piece sets read as a pair.
-    private func setNames(_ ids: [String]) -> String {
-        let names = ids.map { id in
-            viewModel.artifactSet(id).map { text.pick(en: $0.name, vi: $0.nameVI) } ?? id
-        }
-        return ids.count == 1 ? names.joined() : names.joined(separator: " + ")
-    }
-
-    private func mainStatLine(_ advice: AbyssArtifactAdvice) -> String {
-        let slots = [
-            "\(text.abyssSandsSlot) \(text.abyssMainStatName(advice.sands))",
-            "\(text.abyssGobletSlot) \(text.abyssMainStatName(advice.goblet))",
-            "\(text.abyssCircletSlot) \(text.abyssMainStatName(advice.circlet))",
-        ].joined(separator: " · ")
-        let substats = advice.substatPriority.prefix(3).map { key -> String in
-            let name = text.abyssSubstatName(key)
-            guard let gain = advice.substatMarginalGain[key], gain > 0.0001 else { return name }
-            return text.abyssSubstatWithGain(name, gain: gain)
-        }.joined(separator: " > ")
-        return substats.isEmpty ? slots : "\(slots)  ·  \(text.abyssSubstatsLabel) \(substats)"
     }
 
     private func orderedMembers(of team: AbyssTeamResult) -> [String] {
