@@ -13395,45 +13395,21 @@
 
           ],
           "normalAttackOnly" : false,
-          "raw" : "Sát thương Stellar Swirl gây bởi mọi nhân vật +50%",
+          "raw" : "Sát thương Tinh-Khuếch Tán (Stellar Swirl) nhân vật gây ra tăng 50%",
           "reactions" : [
             "Stellar Swirl"
           ]
-        },
-        {
-          "bonus" : 0.40000000000000002,
-          "elements" : [
-            "Cryo",
-            "Electro"
-          ],
-          "normalAttackOnly" : false,
-          "raw" : "Polestar Field — vùng hiệu ứng do Starlight Prism duy trì 7s sau khi kích hoạt Stellar-Conduct: hệ số phản ứng Stellar-Conduct +40%+5%/đòn Cryo-Electro ghi nhận (tối đa 12 đòn, hệ số tối đa 2",
-          "reactions" : [
-            "Stellar-Conduct"
-          ]
-        },
-        {
-          "bonus" : 0.20000000000000001,
-          "elements" : [
-            "Cryo",
-            "Electro"
-          ],
-          "normalAttackOnly" : false,
-          "raw" : "nhân vật trong vùng +20% (hoặc +28% nếu có ghi nhận đòn) sát thương Cryo/Electro",
-          "reactions" : [
-
-          ]
         }
       ],
-      "enemyHP" : 3070039.4860000005,
+      "enemyHP" : null,
       "monsterLevel" : 74,
       "res" : {
-        "Anemo" : 0.27675957560162956,
-        "Cryo" : 0.10000000000000002,
+        "Anemo" : 0.26666666666666666,
+        "Cryo" : 0.10000000000000001,
         "Dendro" : 0.30000000000000004,
         "Electro" : 0.10000000000000001,
-        "Geo" : 0.2194425167121071,
-        "Pyro" : -0.34054622102207938
+        "Geo" : 0.23333333333333336,
+        "Pyro" : -0.38
       },
       "shieldElements" : [
 
@@ -13447,42 +13423,18 @@
 
           ],
           "normalAttackOnly" : false,
-          "raw" : "Sát thương Stellar-Conduct gây bởi mọi nhân vật +50%",
+          "raw" : "Sát thương Tinh-Siêu Dẫn (Stellar-Conduct) nhân vật gây ra tăng 50%",
           "reactions" : [
             "Stellar-Conduct"
-          ]
-        },
-        {
-          "bonus" : 0.40000000000000002,
-          "elements" : [
-            "Cryo",
-            "Electro"
-          ],
-          "normalAttackOnly" : false,
-          "raw" : "Polestar Field — vùng hiệu ứng do Starlight Prism duy trì 7s sau khi kích hoạt Stellar-Conduct: hệ số phản ứng Stellar-Conduct +40%+5%/đòn Cryo-Electro ghi nhận (tối đa 12 đòn, hệ số tối đa 2",
-          "reactions" : [
-            "Stellar-Conduct"
-          ]
-        },
-        {
-          "bonus" : 0.20000000000000001,
-          "elements" : [
-            "Cryo",
-            "Electro"
-          ],
-          "normalAttackOnly" : false,
-          "raw" : "nhân vật trong vùng +20% (hoặc +28% nếu có ghi nhận đòn) sát thương Cryo/Electro",
-          "reactions" : [
-
           ]
         }
       ],
-      "enemyHP" : 4309786.6041999999,
+      "enemyHP" : null,
       "monsterLevel" : 82,
       "res" : {
         "Cryo" : 0.29999999999999999,
         "Dendro" : 0.10000000000000002,
-        "Electro" : 0.099999999999999992,
+        "Electro" : 0.10000000000000001,
         "Geo" : 0.10000000000000001,
         "Hydro" : 0.10000000000000001,
         "Pyro" : 0.10000000000000001
@@ -13496,55 +13448,39 @@
         {
           "bonus" : 0.59999999999999998,
           "elements" : [
-            "Cryo",
-            "Pyro"
+            "Anemo"
           ],
           "normalAttackOnly" : false,
-          "raw" : "Toàn đội +60% sát thương Cryo và +60% sát thương Pyro (áp dụng cùng lúc cho cả tầng, không tách theo nửa)",
+          "raw" : "Tất cả thành viên trong đội nhận 60% buff Sát Thương Nguyên Tố Phong (Anemo)",
           "reactions" : [
 
           ]
         },
         {
-          "bonus" : 0.40000000000000002,
+          "bonus" : 0.59999999999999998,
           "elements" : [
-            "Cryo",
             "Electro"
           ],
           "normalAttackOnly" : false,
-          "raw" : "Polestar Field — vùng hiệu ứng do Starlight Prism duy trì 7s sau khi kích hoạt Stellar-Conduct: hệ số phản ứng Stellar-Conduct +40%+5%/đòn Cryo-Electro ghi nhận (tối đa 12 đòn, hệ số tối đa 2",
-          "reactions" : [
-            "Stellar-Conduct"
-          ]
-        },
-        {
-          "bonus" : 0.20000000000000001,
-          "elements" : [
-            "Cryo",
-            "Electro"
-          ],
-          "normalAttackOnly" : false,
-          "raw" : "nhân vật trong vùng +20% (hoặc +28% nếu có ghi nhận đòn) sát thương Cryo/Electro",
+          "raw" : "Tất cả thành viên trong đội nhận 60% buff sát thương nguyên tố Lôi (Electro)",
           "reactions" : [
 
           ]
         }
       ],
-      "enemyHP" : null,
-      "monsterLevel" : 90,
+      "enemyHP" : 16050308.4716,
+      "monsterLevel" : 89,
       "res" : {
-        "Anemo" : 0.20000000000000001,
-        "Cryo" : 0.40000000000000002,
+        "Anemo" : 0.10000000000000003,
+        "Cryo" : 0.16998269215806014,
         "Dendro" : 0.10000000000000001,
-        "Electro" : 0.46666666666666662,
-        "Geo" : 0.44999999999999996,
-        "Hydro" : 0.40000000000000002,
-        "Pyro" : 0.19999999999999998
+        "Electro" : 0.10000000000000001,
+        "Geo" : 0.15221129931198399,
+        "Hydro" : 0.11061864580101735,
+        "Pyro" : 0.1206201033275757
       },
       "shieldElements" : [
-        "Cryo",
-        "Electro",
-        "Geo"
+
       ]
     },
     "12" : {
@@ -13555,9 +13491,9 @@
 
           ],
           "normalAttackOnly" : false,
-          "raw" : "Nửa 1 (nửa trước): Sát thương Superconduct +200%",
+          "raw" : "Nửa 1: Nhân vật tăng 200% sát thương phản ứng Khuếch Tán",
           "reactions" : [
-            "Superconduct"
+            "Swirl"
           ]
         },
         {
@@ -13566,59 +13502,44 @@
 
           ],
           "normalAttackOnly" : false,
-          "raw" : "sát thương Stellar-Conduct +75%",
+          "raw" : "tăng 75% sát thương Tinh-Khuếch Tán (Stellar Swirl)",
           "reactions" : [
-            "Stellar-Conduct"
+            "Stellar Swirl"
+          ]
+        },
+        {
+          "bonus" : 2,
+          "elements" : [
+            "Electro"
+          ],
+          "normalAttackOnly" : false,
+          "raw" : "Nửa 2: Nhân vật tăng 200% sát thương phản ứng Điện Cảm (Electro-Charged)",
+          "reactions" : [
+            "Electro-Charged"
           ]
         },
         {
           "bonus" : 0.75,
           "elements" : [
-            "Pyro"
-          ],
-          "normalAttackOnly" : true,
-          "raw" : "Nửa 2 (nửa sau): Sát thương Thường công (Normal Attack) hệ Pyro +75%",
-          "reactions" : [
 
-          ]
-        },
-        {
-          "bonus" : 0.40000000000000002,
-          "elements" : [
-            "Cryo",
-            "Electro"
           ],
           "normalAttackOnly" : false,
-          "raw" : "Polestar Field — vùng hiệu ứng do Starlight Prism duy trì 7s sau khi kích hoạt Stellar-Conduct: hệ số phản ứng Stellar-Conduct +40%+5%/đòn Cryo-Electro ghi nhận (tối đa 12 đòn, hệ số tối đa 2",
+          "raw" : "tăng 75% sát thương Nguyệt-Điện Cảm (Lunar-Charged)",
           "reactions" : [
-            "Stellar-Conduct"
-          ]
-        },
-        {
-          "bonus" : 0.20000000000000001,
-          "elements" : [
-            "Cryo",
-            "Electro"
-          ],
-          "normalAttackOnly" : false,
-          "raw" : "nhân vật trong vùng +20% (hoặc +28% nếu có ghi nhận đòn) sát thương Cryo/Electro",
-          "reactions" : [
-
+            "Lunar-Charged"
           ]
         }
       ],
-      "enemyHP" : 23042942.179840002,
+      "enemyHP" : 20853396.712683603,
       "monsterLevel" : 97,
       "res" : {
-        "Anemo" : 0.57554057215252907,
-        "Cryo" : 0.33125231536488209,
-        "Dendro" : 0.69999999999999996,
-        "Electro" : 0.37421383647798739,
-        "Hydro" : 0.10000000000000001,
-        "Pyro" : 0.12632069907672133
+        "Anemo" : 0.29999999999999999,
+        "Cryo" : 0.29999999999999999,
+        "Electro" : 0.20802968134352512,
+        "Pyro" : 0.42105984555052167
       },
       "shieldElements" : [
-        "Cryo"
+
       ]
     }
   },
@@ -13633,12 +13554,12 @@
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 12105.735496840523,
-          "hu-tao" : 22995.673479481487,
-          "raiden-shogun" : 2678.2781611495361,
+          "bennett" : 12309.797697521586,
+          "hu-tao" : 23383.30360221057,
+          "raiden-shogun" : 2446.5387937696655,
           "xingqiu" : 3549.6793503496069
         },
-        "score" : 44635.715806846842
+        "score" : 45024.464999359545
       },
       {
         "memberIds" : [
@@ -13649,12 +13570,12 @@
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 9019.1505050048982,
-          "hu-tao" : 21340.134179802295,
-          "raiden-shogun" : 2918.1406414665735,
+          "bennett" : 9171.18320890838,
+          "hu-tao" : 21699.857448553386,
+          "raiden-shogun" : 2666.7946213404771,
           "yelan" : 6633.7540582570273
         },
-        "score" : 43104.073735293263
+        "score" : 43385.316484024006
       },
       {
         "memberIds" : [
@@ -13665,12 +13586,12 @@
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 11642.618501703451,
+          "bennett" : 11838.874099206612,
           "furina" : 1888.5407599432378,
-          "hu-tao" : 21910.77514144512,
-          "raiden-shogun" : 2842.0475227571965
+          "hu-tao" : 22280.117507727457,
+          "raiden-shogun" : 2597.2555741774854
         },
-        "score" : 41346.700479916923
+        "score" : 41693.170976339177
       },
       {
         "memberIds" : [
@@ -13681,12 +13602,12 @@
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 8130.0635722445168,
-          "hu-tao" : 21521.522095259083,
-          "kuki-shinobu" : 701.54375081584737,
+          "bennett" : 8267.1092449062198,
+          "hu-tao" : 21884.302957430642,
+          "kuki-shinobu" : 622.98342037734255,
           "yelan" : 6514.6732921710218
         },
-        "score" : 39817.226927329713
+        "score" : 40272.194428076051
       },
       {
         "memberIds" : [
@@ -13697,12 +13618,12 @@
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 2413.0136158343403,
-          "fischl" : 3458.1980947204374,
-          "hu-tao" : 23425.869087874416,
+          "bennett" : 2453.6889526487817,
+          "fischl" : 3386.3628026264814,
+          "hu-tao" : 23820.750869339554,
           "yelan" : 6732.5152023255559
         },
-        "score" : 38911.963680815141
+        "score" : 39304.783253095608
       },
       {
         "memberIds" : [
@@ -13713,12 +13634,12 @@
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 3159.726350965133,
-          "hu-tao" : 23691.377463562847,
-          "sucrose" : 1263.7933874138519,
+          "bennett" : 3208.7957770791509,
+          "hu-tao" : 24059.296127035879,
+          "sucrose" : 1281.429779326523,
           "yelan" : 7660.3461867832857
         },
-        "score" : 38637.262859823131
+        "score" : 39106.657299842831
       },
       {
         "memberIds" : [
@@ -13729,12 +13650,12 @@
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "furina" : 10565.537941469756,
-          "hu-tao" : 20774.122267840157,
-          "raiden-shogun" : 2337.8145429553615,
-          "xiangling" : 2060.7544193841181
+          "furina" : 10705.915634301462,
+          "hu-tao" : 21124.304469351111,
+          "raiden-shogun" : 2136.3177416602921,
+          "xiangling" : 2095.4918446312258
         },
-        "score" : 38597.287505381348
+        "score" : 38946.992065139624
       },
       {
         "memberIds" : [
@@ -13745,44 +13666,44 @@
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 5142.6151872589071,
-          "fischl" : 1534.9948464812953,
-          "hu-tao" : 24821.679230950551,
+          "bennett" : 5229.3024746725296,
+          "fischl" : 1396.4574054631273,
+          "hu-tao" : 25240.089701738481,
           "xingqiu" : 3603.7604986443466
         },
-        "score" : 37911.293744401912
+        "score" : 38307.178886959977
       },
       {
         "memberIds" : [
+          "hu-tao",
           "yelan",
-          "raiden-shogun",
-          "xiangling",
+          "nahida",
           "bennett"
         ],
-        "onFieldId" : "raiden-shogun",
+        "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 10170.847695626053,
-          "raiden-shogun" : 15002.243832542741,
-          "xiangling" : 3097.2527394431272,
-          "yelan" : 6824.8662843923348
+          "bennett" : 2553.3083085145017,
+          "hu-tao" : 21328.821467901282,
+          "nahida" : 5031.4064310021477,
+          "yelan" : 6519.2726057943964
         },
-        "score" : 37902.827396164597
+        "score" : 38267.433518269318
       },
       {
         "memberIds" : [
-          "raiden-shogun",
-          "xiangling",
+          "hu-tao",
+          "fischl",
           "xingqiu",
-          "bennett"
+          "kuki-shinobu"
         ],
-        "onFieldId" : "raiden-shogun",
+        "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 12780.183985891137,
-          "raiden-shogun" : 15863.450587067182,
-          "xiangling" : 2914.9017721488117,
-          "xingqiu" : 3533.6407390411864
+          "fischl" : 1151.3179112279383,
+          "hu-tao" : 22548.375067852779,
+          "kuki-shinobu" : 9289.0339365014188,
+          "xingqiu" : 2419.6328075834967
         },
-        "score" : 37899.551250880184
+        "score" : 38241.028501018882
       }
     ],
     "10" : [
@@ -13797,10 +13718,10 @@
         "perCharacter" : {
           "bennett" : 9267.728490628464,
           "hu-tao" : 17304.532077537231,
-          "raiden-shogun" : 2620.6807813398686,
+          "raiden-shogun" : 2393.9250562692423,
           "xingqiu" : 3473.342160019507
         },
-        "score" : 35279.586190287075
+        "score" : 32439.52778445444
       },
       {
         "memberIds" : [
@@ -13813,10 +13734,26 @@
         "perCharacter" : {
           "bennett" : 6894.1835284182016,
           "hu-tao" : 16058.718035931346,
-          "raiden-shogun" : 2855.3849287468611,
+          "raiden-shogun" : 2609.4441993761657,
           "yelan" : 6491.092680660101
         },
-        "score" : 34883.329507657036
+        "score" : 32053.438444385818
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "yelan",
+          "sucrose",
+          "bennett"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 2565.2664736045808,
+          "hu-tao" : 19162.005042412919,
+          "sucrose" : 1538.8430927689474,
+          "yelan" : 7495.6075591105255
+        },
+        "score" : 30761.722167896973
       },
       {
         "memberIds" : [
@@ -13828,27 +13765,27 @@
         "onFieldId" : "raiden-shogun",
         "perCharacter" : {
           "bennett" : 7780.6179687147751,
-          "raiden-shogun" : 14679.614932918164,
+          "raiden-shogun" : 13498.812143725892,
           "xiangling" : 2330.7214476565173,
           "yelan" : 6678.0949664484115
         },
-        "score" : 33986.573260996898
+        "score" : 30288.246526545594
       },
       {
         "memberIds" : [
-          "raiden-shogun",
-          "xiangling",
-          "xingqiu",
+          "hu-tao",
+          "yelan",
+          "nahida",
           "bennett"
         ],
-        "onFieldId" : "raiden-shogun",
+        "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 9787.9468501124175,
-          "raiden-shogun" : 15522.30111207649,
-          "xiangling" : 2193.5000626977335,
-          "xingqiu" : 3457.6484650833108
+          "bennett" : 1889.5450480467844,
+          "hu-tao" : 15784.137329186906,
+          "nahida" : 5787.7307202036473,
+          "yelan" : 6379.073194917095
         },
-        "score" : 33438.308209167546
+        "score" : 29840.486292354431
       },
       {
         "memberIds" : [
@@ -13862,9 +13799,25 @@
           "bennett" : 8910.7114531891439,
           "furina" : 1847.9269801595124,
           "hu-tao" : 16488.132500974778,
-          "raiden-shogun" : 2780.9282211925261
+          "raiden-shogun" : 2541.4006155930228
         },
-        "score" : 32429.915087957244
+        "score" : 29788.17154991646
+      },
+      {
+        "memberIds" : [
+          "raiden-shogun",
+          "xiangling",
+          "xingqiu",
+          "bennett"
+        ],
+        "onFieldId" : "raiden-shogun",
+        "perCharacter" : {
+          "bennett" : 9787.9468501124175,
+          "raiden-shogun" : 14275.575077292524,
+          "xiangling" : 2193.5000626977335,
+          "xingqiu" : 3457.6484650833108
+        },
+        "score" : 29714.670455185988
       },
       {
         "memberIds" : [
@@ -13877,42 +13830,10 @@
         "perCharacter" : {
           "bennett" : 6212.4035190625327,
           "hu-tao" : 16195.214712330077,
-          "kuki-shinobu" : 686.45678843271094,
+          "kuki-shinobu" : 609.58592746600198,
           "yelan" : 6374.5727912641159
         },
-        "score" : 31826.139635976597
-      },
-      {
-        "memberIds" : [
-          "raiden-shogun",
-          "xiangling",
-          "sucrose",
-          "bennett"
-        ],
-        "onFieldId" : "raiden-shogun",
-        "perCharacter" : {
-          "bennett" : 8002.2649322008529,
-          "raiden-shogun" : 18157.756176177416,
-          "sucrose" : 1554.9777654844015,
-          "xiangling" : 1671.2569331144864
-        },
-        "score" : 31737.156271535332
-      },
-      {
-        "memberIds" : [
-          "yelan",
-          "raiden-shogun",
-          "xingqiu",
-          "bennett"
-        ],
-        "onFieldId" : "raiden-shogun",
-        "perCharacter" : {
-          "bennett" : 9307.6184653313776,
-          "raiden-shogun" : 12956.071458617496,
-          "xingqiu" : 2086.5285278976021,
-          "yelan" : 5033.4824135035251
-        },
-        "score" : 31734.396934578002
+        "score" : 29391.77695012273
       },
       {
         "memberIds" : [
@@ -13924,11 +13845,109 @@
         "onFieldId" : "hu-tao",
         "perCharacter" : {
           "hu-tao" : 17169.050900254479,
-          "kuki-shinobu" : 4550.7473860467171,
+          "kuki-shinobu" : 4467.705581506716,
           "sucrose" : 1125.4586582982015,
           "yelan" : 6513.4798232172398
         },
-        "score" : 31707.43570924197
+        "score" : 29275.694963276637
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "xingqiu",
+          "nahida",
+          "bennett"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 6863.3018085403928,
+          "hu-tao" : 16992.815877160414,
+          "nahida" : 1998.51388316425,
+          "xingqiu" : 3398.9117762487344
+        },
+        "score" : 29253.543345113798
+      }
+    ],
+    "11" : [
+      {
+        "memberIds" : [
+          "yelan",
+          "raiden-shogun",
+          "xiangling",
+          "bennett"
+        ],
+        "onFieldId" : "raiden-shogun",
+        "perCharacter" : {
+          "bennett" : 7568.4545727493396,
+          "raiden-shogun" : 16726.475013732474,
+          "xiangling" : 2235.2604102087653,
+          "yelan" : 6477.4166222201675
+        },
+        "score" : 33007.606618910744
+      },
+      {
+        "memberIds" : [
+          "raiden-shogun",
+          "xiangling",
+          "xingqiu",
+          "bennett"
+        ],
+        "onFieldId" : "raiden-shogun",
+        "perCharacter" : {
+          "bennett" : 9530.2985199818631,
+          "raiden-shogun" : 17683.008399925387,
+          "xiangling" : 2103.6593003718122,
+          "xingqiu" : 3353.7453052177561
+        },
+        "score" : 32670.711525496816
+      },
+      {
+        "memberIds" : [
+          "raiden-shogun",
+          "xiangling",
+          "sucrose",
+          "bennett"
+        ],
+        "onFieldId" : "raiden-shogun",
+        "perCharacter" : {
+          "bennett" : 7903.2722694223603,
+          "raiden-shogun" : 20686.39517245947,
+          "sucrose" : 2042.8551041938931,
+          "xiangling" : 1624.2822485589579
+        },
+        "score" : 32256.804794634685
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "raiden-shogun",
+          "xingqiu",
+          "bennett"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 9020.7403087685962,
+          "hu-tao" : 16595.777890574838,
+          "raiden-shogun" : 3017.4129554379333,
+          "xingqiu" : 3368.9674008834349
+        },
+        "score" : 32002.8985556648
+      },
+      {
+        "memberIds" : [
+          "hu-tao",
+          "yelan",
+          "raiden-shogun",
+          "bennett"
+        ],
+        "onFieldId" : "hu-tao",
+        "perCharacter" : {
+          "bennett" : 6701.7380034305306,
+          "hu-tao" : 15400.989552189838,
+          "raiden-shogun" : 3285.4435254502109,
+          "yelan" : 6296.0337996571379
+        },
+        "score" : 31684.204880727724
       },
       {
         "memberIds" : [
@@ -13939,336 +13958,238 @@
         ],
         "onFieldId" : "raiden-shogun",
         "perCharacter" : {
-          "bennett" : 996.09739847715048,
-          "nahida" : 9866.3019565645936,
-          "raiden-shogun" : 16751.913366605077,
-          "xiangling" : 1496.2848221596789
+          "bennett" : 955.29951971165247,
+          "nahida" : 9657.8346337470211,
+          "raiden-shogun" : 19230.056764232471,
+          "xiangling" : 1435.0004067335849
         },
-        "score" : 31439.445347311015
-      }
-    ],
-    "11" : [
-      {
-        "memberIds" : [
-          "hu-tao",
-          "yelan",
-          "sucrose",
-          "bennett"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 3147.6032698205627,
-          "hu-tao" : 24047.745851120446,
-          "sucrose" : 1339.0634631814,
-          "yelan" : 5590.7087959681503
-        },
-        "score" : 37537.633518099625
+        "score" : 31278.191324424733
       },
       {
         "memberIds" : [
-          "hu-tao",
-          "xingqiu",
-          "sucrose",
-          "bennett"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 3233.4786261952804,
-          "hu-tao" : 25597.105551948334,
-          "sucrose" : 1269.6831553460322,
-          "xingqiu" : 2986.4134445147538
-        },
-        "score" : 36395.348855804841
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "raiden-shogun",
-          "xingqiu",
-          "bennett"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 8817.8668501557622,
-          "hu-tao" : 20280.747269558397,
-          "raiden-shogun" : 1520.3013655492107,
-          "xingqiu" : 2266.8127781179946
-        },
-        "score" : 36174.301089719505
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "xingqiu",
-          "sucrose",
-          "kuki-shinobu"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "hu-tao" : 23273.581662647106,
-          "kuki-shinobu" : 5333.2655143215707,
-          "sucrose" : 964.02612477461298,
-          "xingqiu" : 1984.472827040483
-        },
-        "score" : 34710.880741662157
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "yelan",
-          "sucrose",
-          "kuki-shinobu"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "hu-tao" : 21513.33675719102,
-          "kuki-shinobu" : 4134.8080686186158,
-          "sucrose" : 979.34648160685629,
-          "yelan" : 4858.1744245349637
-        },
-        "score" : 34634.232305146601
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
           "yelan",
           "raiden-shogun",
-          "bennett"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 6721.572815351572,
-          "hu-tao" : 18851.025857627945,
-          "raiden-shogun" : 1656.4572218227411,
-          "yelan" : 4236.292065272909
-        },
-        "score" : 34611.882756082683
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
           "xingqiu",
-          "nahida",
           "bennett"
         ],
-        "onFieldId" : "hu-tao",
+        "onFieldId" : "raiden-shogun",
         "perCharacter" : {
-          "bennett" : 7218.633276112183,
-          "hu-tao" : 19907.835701260417,
-          "nahida" : 1956.4399066765814,
-          "xingqiu" : 2218.2371592360169
+          "bennett" : 9241.888657123649,
+          "raiden-shogun" : 14762.076486912574,
+          "xingqiu" : 2023.8278486968422,
+          "yelan" : 4882.225068179926
         },
-        "score" : 34431.260647613723
+        "score" : 30910.018060912989
       },
       {
         "memberIds" : [
-          "hu-tao",
-          "sucrose",
+          "raiden-shogun",
+          "xiangling",
           "furina",
           "bennett"
         ],
-        "onFieldId" : "hu-tao",
+        "onFieldId" : "raiden-shogun",
         "perCharacter" : {
-          "bennett" : 3343.9891830126121,
-          "furina" : 1574.038390511306,
-          "hu-tao" : 24836.747386630937,
-          "sucrose" : 1304.0066533476552
+          "bennett" : 9602.5428328527069,
+          "furina" : 1833.3794558177128,
+          "raiden-shogun" : 16919.28829925941,
+          "xiangling" : 2183.5680745740888
         },
-        "score" : 34164.659774852757
+        "score" : 30538.778662503919
       },
       {
         "memberIds" : [
           "hu-tao",
           "yelan",
-          "nahida",
+          "sucrose",
           "bennett"
         ],
         "onFieldId" : "hu-tao",
         "perCharacter" : {
-          "bennett" : 2266.2668476527228,
-          "hu-tao" : 18521.507842630606,
-          "nahida" : 5744.2582682858065,
-          "yelan" : 4163.1846114195787
+          "bennett" : 2503.4790735474176,
+          "hu-tao" : 18623.410931307961,
+          "sucrose" : 2021.6581461132769,
+          "yelan" : 7319.9647620709075
         },
-        "score" : 33764.73932698759
+        "score" : 30468.512913039573
       },
       {
         "memberIds" : [
-          "hu-tao",
+          "yelan",
           "raiden-shogun",
-          "furina",
+          "sucrose",
           "bennett"
         ],
-        "onFieldId" : "hu-tao",
+        "onFieldId" : "raiden-shogun",
         "perCharacter" : {
-          "bennett" : 8512.2848533390516,
-          "furina" : 1206.0155028409449,
-          "hu-tao" : 19358.171553132368,
-          "raiden-shogun" : 1613.2636230543781
+          "bennett" : 5299.8848163063603,
+          "raiden-shogun" : 17618.191803055557,
+          "sucrose" : 1899.4994082470926,
+          "yelan" : 5563.2660573752728
         },
-        "score" : 33758.709085603419
+        "score" : 30380.842084984284
       }
     ],
     "12" : [
       {
         "memberIds" : [
-          "hu-tao",
           "raiden-shogun",
           "xingqiu",
-          "bennett"
+          "sucrose",
+          "furina"
         ],
-        "onFieldId" : "hu-tao",
+        "onFieldId" : "raiden-shogun",
         "perCharacter" : {
-          "bennett" : 8924.4413918639257,
-          "hu-tao" : 19826.300150876537,
-          "raiden-shogun" : 1751.5782577463201,
-          "xingqiu" : 3338.7164949024727
+          "furina" : 27724.98262787304,
+          "raiden-shogun" : 11377.312808592751,
+          "sucrose" : 870.9477805424815,
+          "xingqiu" : 1495.07356416831
         },
-        "score" : 37225.139924928182
+        "score" : 41468.316781176582
       },
       {
         "memberIds" : [
-          "hu-tao",
+          "raiden-shogun",
+          "xingqiu",
+          "venti",
+          "furina"
+        ],
+        "onFieldId" : "raiden-shogun",
+        "perCharacter" : {
+          "furina" : 27728.410774716562,
+          "raiden-shogun" : 8907.8103169954666,
+          "venti" : 1858.4758440028586,
+          "xingqiu" : 1496.3715427070783
+        },
+        "score" : 39991.068478421963
+      },
+      {
+        "memberIds" : [
           "yelan",
           "raiden-shogun",
-          "bennett"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 6620.6486897838513,
-          "hu-tao" : 18280.124398287167,
-          "raiden-shogun" : 1908.4469174198543,
-          "yelan" : 6239.4999410996334
-        },
-        "score" : 36353.591941249564
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "yelan",
-          "sucrose",
-          "bennett"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 2457.6685735740739,
-          "hu-tao" : 22384.653422474814,
-          "sucrose" : 697.62171299968782,
-          "yelan" : 7205.0801343387993
-        },
-        "score" : 36019.526227726121
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "yelan",
-          "sucrose",
-          "kuki-shinobu"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "hu-tao" : 20180.285806232288,
-          "kuki-shinobu" : 4322.048027474003,
-          "sucrose" : 510.21731897275947,
-          "yelan" : 6261.0193649530065
-        },
-        "score" : 34400.927569395259
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
-          "yelan",
-          "kuki-shinobu",
-          "bennett"
-        ],
-        "onFieldId" : "hu-tao",
-        "perCharacter" : {
-          "bennett" : 5962.1859437691228,
-          "hu-tao" : 18595.314649398999,
-          "kuki-shinobu" : 458.80551117193409,
-          "yelan" : 6127.4963264864382
-        },
-        "score" : 34258.182673909148
-      },
-      {
-        "memberIds" : [
-          "hu-tao",
           "xingqiu",
-          "sucrose",
-          "bennett"
+          "furina"
         ],
-        "onFieldId" : "hu-tao",
+        "onFieldId" : "raiden-shogun",
         "perCharacter" : {
-          "bennett" : 2580.8747233295931,
-          "hu-tao" : 23983.490439743113,
-          "sucrose" : 661.476145196978,
-          "xingqiu" : 3848.7692647331614
+          "furina" : 26068.999539657132,
+          "raiden-shogun" : 7969.2779118232884,
+          "xingqiu" : 1312.6431113604172,
+          "yelan" : 4283.1047985155956
         },
-        "score" : 34182.071630303137
+        "score" : 39634.025361356435
       },
       {
         "memberIds" : [
-          "hu-tao",
+          "yelan",
           "raiden-shogun",
           "furina",
           "bennett"
         ],
-        "onFieldId" : "hu-tao",
+        "onFieldId" : "raiden-shogun",
         "perCharacter" : {
-          "bennett" : 8576.3993633969731,
-          "furina" : 1776.3019034091437,
-          "hu-tao" : 18756.948898810471,
-          "raiden-shogun" : 1858.6824626933721
+          "bennett" : 23407.861718489512,
+          "furina" : 1269.2133769732959,
+          "raiden-shogun" : 9152.9248564931149,
+          "yelan" : 4995.4149900800112
         },
-        "score" : 34065.165891140954
+        "score" : 38825.414942035932
       },
       {
         "memberIds" : [
-          "hu-tao",
           "yelan",
-          "fischl",
+          "raiden-shogun",
+          "xingqiu",
           "bennett"
         ],
-        "onFieldId" : "hu-tao",
+        "onFieldId" : "raiden-shogun",
         "perCharacter" : {
-          "bennett" : 1694.3963663069567,
-          "fischl" : 2462.5278857931753,
-          "hu-tao" : 20269.779436825105,
-          "yelan" : 6332.3915598100839
+          "bennett" : 21326.938704250511,
+          "raiden-shogun" : 10077.724257110549,
+          "xingqiu" : 2005.6553291418804,
+          "yelan" : 4838.3861959258693
         },
-        "score" : 33835.00477360886
+        "score" : 38248.704486428804
       },
       {
         "memberIds" : [
-          "hu-tao",
-          "xingqiu",
+          "yelan",
+          "raiden-shogun",
           "sucrose",
+          "furina"
+        ],
+        "onFieldId" : "raiden-shogun",
+        "perCharacter" : {
+          "furina" : 21911.944082619699,
+          "raiden-shogun" : 10036.662659060714,
+          "sucrose" : 884.11061942289712,
+          "yelan" : 4843.1683873234742
+        },
+        "score" : 37675.885748426794
+      },
+      {
+        "memberIds" : [
+          "yelan",
+          "raiden-shogun",
+          "kuki-shinobu",
+          "furina"
+        ],
+        "onFieldId" : "yelan",
+        "perCharacter" : {
+          "furina" : 25462.972703495572,
+          "kuki-shinobu" : 838.92813772932891,
+          "raiden-shogun" : 1843.8647300333391,
+          "yelan" : 9493.3316631845755
+        },
+        "score" : 37639.097234442816
+      },
+      {
+        "memberIds" : [
+          "raiden-shogun",
+          "xingqiu",
+          "nahida",
+          "furina"
+        ],
+        "onFieldId" : "raiden-shogun",
+        "perCharacter" : {
+          "furina" : 22210.334651869365,
+          "nahida" : 3320.675265038094,
+          "raiden-shogun" : 9887.5900631013756,
+          "xingqiu" : 1286.9097597018097
+        },
+        "score" : 36705.509739710644
+      },
+      {
+        "memberIds" : [
+          "yelan",
+          "raiden-shogun",
+          "xingqiu",
           "kuki-shinobu"
         ],
-        "onFieldId" : "hu-tao",
+        "onFieldId" : "yelan",
         "perCharacter" : {
-          "hu-tao" : 21953.981771696417,
-          "kuki-shinobu" : 5561.0355873780782,
-          "sucrose" : 502.23576031557434,
-          "xingqiu" : 2557.5085852362818
+          "kuki-shinobu" : 23490.283121847762,
+          "raiden-shogun" : 1758.8192991758133,
+          "xingqiu" : 1278.5989885435824,
+          "yelan" : 10087.014931401525
         },
-        "score" : 33632.237875088991
+        "score" : 36614.716340968684
       },
       {
         "memberIds" : [
-          "hu-tao",
           "yelan",
-          "xingqiu",
-          "bennett"
+          "raiden-shogun",
+          "venti",
+          "furina"
         ],
-        "onFieldId" : "hu-tao",
+        "onFieldId" : "raiden-shogun",
         "perCharacter" : {
-          "bennett" : 1724.5732593858691,
-          "hu-tao" : 18643.417921043649,
-          "xingqiu" : 3295.3248977513031,
-          "yelan" : 6395.7958628755641
+          "furina" : 1075.1789419520744,
+          "raiden-shogun" : 7532.743607473315,
+          "venti" : 23118.655746418965,
+          "yelan" : 4854.6206264363782
         },
-        "score" : 33065.023135162024
+        "score" : 36581.198922280731
       }
     ]
   }

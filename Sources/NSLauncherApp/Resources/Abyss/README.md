@@ -223,8 +223,11 @@ trung vị của mọi nhân vật đọc được, và được ghim đích dan
 
 ## Dữ liệu chu kỳ Trầm Thủy hết hạn nhanh
 
-`abyss-monsters/` là phần **hết hạn nhanh nhất**: quái và chúc phúc đổi mỗi 2
-tuần (reset ngày 1 và 16). Bản `.app` đã phát hành sẽ mang dữ liệu của chu kỳ
+`abyss-monsters/` là phần **hết hạn nhanh nhất**: quái và chúc phúc đổi mỗi
+tháng (reset ngày 16 — `TowerScheduleExcelConfigData` cho thấy nhịp 2
+tuần/reset-ngày-1 chỉ còn đúng cho dữ liệu trước 2025-09; xem ghi chú trong
+`toi-uu-doi-hinh/quai-vat-la-hoan/2026-09-16-den-2026-10-15.md`). Bản `.app`
+đã phát hành sẽ mang dữ liệu của chu kỳ
 lúc build. App hiển thị khoảng ngày áp dụng + cảnh báo khi quá hạn, và đọc
 thêm file đè đặt ở:
 
@@ -235,9 +238,25 @@ thêm file đè đặt ở:
 File đè cùng định dạng, trùng `periodStart` thì thắng bản đóng gói — cập nhật
 được dữ liệu mùa mới mà không cần phát hành lại app.
 
-Sau khi thêm/sửa một file chu kỳ, chạy script đồng bộ — không tham số thì
-nó quét các file đóng gói trong repo; file đè nằm ngoài repo thì đưa đường
-dẫn vào:
+**`scripts/update-abyss-cycle.py` chuẩn hoá toàn bộ luồng này thành 3 lệnh** —
+xem chi tiết ở `toi-uu-doi-hinh/quai-vat-la-hoan/README.md` mục "Cập nhật khi
+mùa mới bắt đầu". Tóm tắt:
+
+```bash
+python3 scripts/update-abyss-cycle.py new       # sinh khung file .md + file đè ở trên cho chu kỳ kế tiếp
+# ... điền quái/chúc phúc/Ley Line Disorder bằng tay như trước, test ngay trong app thật ...
+python3 scripts/update-abyss-cycle.py sync      # resistance + HP + schema + swift test, dừng ở bước đầu tiên fail
+python3 scripts/update-abyss-cycle.py publish   # ưng ý rồi thì copy vào bản đóng gói ở đây
+```
+
+`new` ghi JSON vào thư mục đè, không phải `abyss-monsters/` — một chu kỳ còn
+dở dang thì không kéo `swift test` xuống (xem lưu ý trong
+`toi-uu-doi-hinh/quai-vat-la-hoan/README.md`). Chỉ `publish` mới thật sự đưa
+file vào đây.
+
+Chạy tay từng bước (vẫn hoạt động, `update-abyss-cycle.py sync` chỉ gọi đúng
+hai script này rồi thêm bước validate + test) — không tham số thì nó quét các
+file đóng gói trong repo; file đè nằm ngoài repo thì đưa đường dẫn vào:
 
 ```bash
 python3 scripts/sync-abyss-monster-resistance.py

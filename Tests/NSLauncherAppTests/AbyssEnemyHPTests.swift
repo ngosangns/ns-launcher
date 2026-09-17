@@ -30,46 +30,55 @@ final class AbyssEnemyHPTests: XCTestCase {
         XCTAssertNil(table.hp(ratio: 1, type: "no-such-type", level: 95))
     }
 
-    /// The variant is read, not assumed: the Battle-Hardened Archer on floor 12
-    /// is a Voywolf Hunter at 25.652, seven times the Normal one's 3.6.
+    /// The variant is read, not assumed: the Battle-Hardened Domovoy Sculptor
+    /// on floor 12 (2026-09-16 rotation; the previous rotation's Battle-Hardened
+    /// Chimeric Volkodlak Archer is gone) is really a Churin (Local Legend) at
+    /// 25.168, its base page's own Normal-variant ratio nowhere near it.
     func testABattleHardenedMonsterScalesByItsOwnVariant() throws {
         let floor = try XCTUnwrap(library.latestCycle?.floors.first { $0.floor == 12 })
-        let archer = try XCTUnwrap(floor.chambers.flatMap { $0.waves.flatMap(\.monsters) }
-            .first { $0.name == "Battle-Hardened Chimeric Volkodlak Archer" })
-        XCTAssertEqual(archer.hp?.page, "Voywolf Hunter")
-        XCTAssertEqual(archer.hp?.variant, "Battle-Hardened")
-        XCTAssertEqual(archer.hp?.ratio ?? 0, 25.652, accuracy: 1e-9)
+        let boss = try XCTUnwrap(floor.chambers.flatMap { $0.waves.flatMap(\.monsters) }
+            .first { $0.name == "Battle-Hardened Domovoy Sculptor" })
+        XCTAssertEqual(boss.hp?.page, "Churin (Local Legend)")
+        XCTAssertEqual(boss.hp?.variant, "Battle-Hardened")
+        XCTAssertEqual(boss.hp?.ratio ?? 0, 25.168, accuracy: 1e-9)
         XCTAssertEqual(floor.enemyHPMultiplier, 2.5)
     }
 
     // MARK: - A fight's HP
 
     /// Floor 12's halves do not hold the same HP — the assumption the harmonic
-    /// mean made — and not by a little.
+    /// mean made — and not by a little. (2026-09-16 rotation; the numbers
+    /// changed with the rotation, the property they demonstrate did not.)
     func testFloor12sHalvesHoldDifferentHP() throws {
         let first = try XCTUnwrap(context(floor: 12, half: 1).0.enemyHP)
         let second = try XCTUnwrap(context(floor: 12, half: 2).0.enemyHP)
-        XCTAssertEqual(first, 14_389_458, accuracy: 10)
-        XCTAssertEqual(second, 8_653_484, accuracy: 10)
+        XCTAssertEqual(first, 9_466_072.53336, accuracy: 10)
+        XCTAssertEqual(second, 11_387_324.1793236, accuracy: 10)
         XCTAssertEqual(try XCTUnwrap(context(floor: 12, half: nil).0.enemyHP), first + second, accuracy: 1e-3)
     }
 
     /// A floor whose counts the wiki marks uncertain has no HP, and says so,
-    /// rather than a guessed one.
+    /// rather than a guessed one. (2026-09-16 rotation: floor 11's own count
+    /// is no longer uncertain — it's a floor that changed this rotation and
+    /// fully resolved. Floors 9 and 10 didn't change this rotation at all, so
+    /// the current cycle's wiki page carries no Domain Enemies section for
+    /// them, which reads exactly like an uncertain count does: no HP, and
+    /// `fightHPUnknown` says why.)
     func testAFightWithoutHPSaysSo() throws {
-        let (floor11, diagnostics) = try context(floor: 11, half: 1)
-        XCTAssertNil(floor11.enemyHP)
-        XCTAssertTrue(diagnostics.fightHPUnknown.contains("floor 11 half 1"))
+        let (floor9, diagnostics) = try context(floor: 9, half: 1)
+        XCTAssertNil(floor9.enemyHP)
+        XCTAssertTrue(diagnostics.fightHPUnknown.contains("floor 9 half 1"))
     }
 
     /// Time is spent where the HP is, so the level the DEF multiplier uses is
-    /// weighted by it: floor 12's first half has most of its HP in chamber 1
-    /// (level 95) and chamber 3 (level 100).
+    /// weighted by it. (2026-09-16 rotation; the previous rotation's floor 12
+    /// half 1 example moved to half 2 here — this rotation's half 1 landed on
+    /// the same weighted and unweighted level by coincidence.)
     func testTheLevelIsWeightedByHP() throws {
-        let weighted = try context(floor: 12, half: 1).0.monsterLevel
+        let weighted = try context(floor: 12, half: 2).0.monsterLevel
         var diagnostics = AbyssParseDiagnostics()
         let unweighted = try XCTUnwrap(AbyssFloorContext.build(
-            cycle: try XCTUnwrap(library.latestCycle), floor: 12, half: 1,
+            cycle: try XCTUnwrap(library.latestCycle), floor: 12, half: 2,
             ownElementResistance: try XCTUnwrap(library.tuning).enemyOwnElementResistance,
             diagnostics: &diagnostics)).monsterLevel
         XCTAssertEqual(unweighted, 98, "without HP the three chambers weigh the same")

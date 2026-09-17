@@ -150,4 +150,9 @@ Khi có bản game mới hoặc mùa Trầm Thủy mới:
 2. Transcribe lại đúng phần thay đổi sang JSON tương ứng ở đây (không cần
    viết lại toàn bộ nếu chỉ một vài nhân vật/vũ khí mới).
 3. Với `abyss-monsters/`, luôn tạo file JSON mới theo khoảng ngày (giống quy
-   ước file `.md`), không ghi đè file cũ.
+   ước file `.md`), không ghi đè file cũ — `scripts/update-abyss-cycle.py new`
+   sinh khung file (`.md` ở đây + JSON ở thư mục đè, chưa vào `abyss-monsters/`),
+   `scripts/update-abyss-cycle.py sync` gộp resistance/HP sync + validate
+   schema + `swift test` thành một bước, và
+   `scripts/update-abyss-cycle.py publish` copy vào `abyss-monsters/` khi đã
+   ưng ý; xem `../quai-vat-la-hoan/README.md`.

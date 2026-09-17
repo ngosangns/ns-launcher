@@ -113,6 +113,18 @@ final class AbyssTextParserTests: XCTestCase {
         let plain = AbyssTextParser.floorBuffs(
             "Sát thương Siêu Dẫn nhân vật gây ra tăng 200%.", diagnostics: &diagnostics)
         XCTAssertEqual(plain.first?.reactions, [.superconduct])
+
+        // Official Vietnamese "Nguyệt-Điện Cảm" (Lunar-Charged) contains
+        // "Điện Cảm" (Electro-Charged) the same way "Tinh-Siêu Dẫn" contains
+        // "Siêu Dẫn" above.
+        let lunarCharged = AbyssTextParser.floorBuffs(
+            "Nhân vật tăng 75% sát thương Nguyệt-Điện Cảm.", diagnostics: &diagnostics)
+        XCTAssertEqual(lunarCharged.first?.reactions, [.lunarCharged],
+                       "\"Nguyệt-Điện Cảm\" must not also read as plain Electro-Charged")
+
+        let electroCharged = AbyssTextParser.floorBuffs(
+            "Nhân vật tăng 200% sát thương phản ứng Điện Cảm.", diagnostics: &diagnostics)
+        XCTAssertEqual(electroCharged.first?.reactions, [.electroCharged])
     }
 
     func testFloorBuffsIgnoreNumbersThatAreNotBuffs() {
@@ -269,6 +281,27 @@ final class AbyssTextParserTests: XCTestCase {
     private func comboHitCount(labels: [AbyssCharacter.ScalingEntry]) -> Int {
         let character = AbyssCharacter.stub(normalAttackHits: labels)
         return AbyssTextParser.normalAttackCombo(character).count
+    }
+
+    /// A `,` can close one bonus ("...200%, tăng...", the old floor 12 text)
+    /// or open the next one ("...Khuếch Tán, tăng 75%...", this cycle's floor
+    /// 12 first half) — official Vietnamese buff text is not consistent about
+    /// which side of the comma the number lands on, and `clauseSplit` has to
+    /// split on both, or the second bonus in a clause is lost entirely
+    /// (`floorBuffs` only reads `percents.first`).
+    func testACommaSplitsWhicheverSideTheNumberIsOn() {
+        var diagnostics = AbyssParseDiagnostics()
+        let numberAfterName = AbyssTextParser.floorBuffs(
+            "Nhân vật tăng 200% sát thương phản ứng Khuếch Tán, tăng 75% sát thương Tinh-Khuếch Tán (Stellar Swirl).",
+            diagnostics: &diagnostics)
+        XCTAssertEqual(numberAfterName.map(\.bonus), [2.0, 0.75])
+        XCTAssertEqual(numberAfterName.map(\.reactions), [[.swirl], [.stellarSwirl]])
+
+        let numberBeforeName = AbyssTextParser.floorBuffs(
+            "Nhân vật tăng sát thương Siêu Dẫn (Superconduct) 200%, tăng sát thương Tinh-Siêu Dẫn (Stellar-Conduct) 75%.",
+            diagnostics: &diagnostics)
+        XCTAssertEqual(numberBeforeName.map(\.bonus), [2.0, 0.75])
+        XCTAssertEqual(numberBeforeName.map(\.reactions), [[.superconduct], [.stellarConduct]])
     }
 }
 

@@ -152,7 +152,12 @@ def domain_enemies(text: str) -> dict[int, dict[int, dict[int, dict[str, int]]]]
                     if not item:
                         continue
                     name, _, count = item.partition("*")
-                    counts[name.strip()] = counts.get(name.strip(), 0) + int(count or 1)
+                    # Collapse doubled spaces ("Water-Spouting  Phantasm") —
+                    # a wiki transcription slip, not a different monster; left
+                    # alone it silently fails `match()` and rejects the whole
+                    # floor.
+                    name = re.sub(r"\s+", " ", name.strip())
+                    counts[name] = counts.get(name, 0) + int(count or 1)
             chambers.setdefault(chamber, {})[half] = counts
     return floors
 

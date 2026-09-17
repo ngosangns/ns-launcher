@@ -109,7 +109,15 @@ enum AbyssTextParser {
     ]
 
     private static let resistanceMentioned = regex("kháng|res", options: [.caseInsensitive])
-    private static let clauseSplit = regex("[;.]|(?<=%)\\s*,\\s*")
+    /// A `,` splits a clause when it closes one bonus ("...200%, tăng...") or
+    /// opens the next one ("...Khuếch Tán, tăng 75%...") — official Vietnamese
+    /// buff text puts the number before the reaction name as often as after
+    /// it, and only the first form has the number immediately before the
+    /// comma. Without the second branch, "Nhân vật tăng 200% sát thương phản
+    /// ứng Khuếch Tán, tăng 75% sát thương Tinh-Khuếch Tán." stayed one
+    /// clause and lost the 75% entirely — `floorBuffs` only reads
+    /// `percents.first`.
+    private static let clauseSplit = regex("[;.]|(?<=%)\\s*,\\s*|,\\s*(?=tăng\\b)", options: [.caseInsensitive])
 
     /// "Nửa 1", "Nửa 2" — the marker a Ley Line Disorder uses when its two
     /// halves get different modifiers. The digit is required: floor 11 says
@@ -139,11 +147,21 @@ enum AbyssTextParser {
     private static let reactionKeywords: [(needle: String, reaction: AbyssReaction)] = [
         ("stellar swirl", .stellarSwirl),
         ("tinh-khuếch tán", .stellarSwirl),
+        // Plain Swirl, checked after its Stellar-prefixed compound above for
+        // the same reason "siêu dẫn" is checked after "tinh-siêu dẫn" below.
+        ("swirl", .swirl),
+        ("khuếch tán", .swirl),
         ("stellar-conduct", .stellarConduct),
         ("tinh-siêu dẫn", .stellarConduct),
         ("superconduct", .superconduct),
         ("siêu dẫn", .superconduct),
         ("lunar-charged", .lunarCharged),
+        // Official Vietnamese "Nguyệt-Điện Cảm" contains "điện cảm"
+        // (Electro-Charged) the same way "Tinh-Siêu Dẫn" contains "siêu dẫn"
+        // above, so it has to be checked first.
+        ("nguyệt-điện cảm", .lunarCharged),
+        ("electro-charged", .electroCharged),
+        ("điện cảm", .electroCharged),
         ("lunar-bloom", .lunarBloom),
         ("lunar-crystallize", .lunarCrystallize),
         ("overloaded", .overloaded),
