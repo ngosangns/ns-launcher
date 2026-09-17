@@ -220,7 +220,7 @@ final class AbyssViewModel: ObservableObject {
 
         Task.detached(priority: .userInitiated) { [weak self] in
             let library = AbyssDataLibrary()
-            await MainActor.run {
+            await MainActor.run { [weak self] in
                 self?.library = library
             }
         }

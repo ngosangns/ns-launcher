@@ -21,7 +21,7 @@ final class StoryViewModel: ObservableObject {
     init() {
         Task.detached(priority: .userInitiated) { [weak self] in
             let library = StoryLibrary()
-            await MainActor.run {
+            await MainActor.run { [weak self] in
                 guard let self else { return }
                 self.library = library
                 if self.selection == nil {
