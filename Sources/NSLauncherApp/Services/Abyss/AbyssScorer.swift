@@ -483,14 +483,21 @@ struct AbyssScorer: Sendable {
                     // the talent multiplier, raised by the team's base-damage
                     // bonus and the Lunar/Stellar EM curve; no DMG bonus and no
                     // enemy DEF, but CRIT.
+                    // Split out and explicitly typed so the release-mode type
+                    // checker doesn't have to solve the whole product at once
+                    // — left as one expression, it timed out ("unable to
+                    // type-check this expression in reasonable time") only in
+                    // `-c release`, never in debug.
                     let constants = library.damageConstants
+                    let coefficient: Double = constants.lunarStellarCoefficients[reaction] ?? 1
+                    let baseBonus: Double = 1 + (context.lunarBaseBonus[reaction] ?? 0)
+                    let emBonus: Double = constants.lunarStellarEM.bonus(effective.elementalMastery)
+                        + (context.lunarFloorBonus[reaction] ?? 0)
+                    let critMultiplier: Double = categoryCrit
+                        ? effective.critMultiplier(term.category) : effective.critMultiplier
                     damage = term.multiplier * effective.stat(for: term.basis)
-                        * (constants.lunarStellarCoefficients[reaction] ?? 1)
-                        * (1 + (context.lunarBaseBonus[reaction] ?? 0))
-                        * (1 + constants.lunarStellarEM.bonus(effective.elementalMastery)
-                            + (context.lunarFloorBonus[reaction] ?? 0))
-                        * context.resistanceMultiplier * (categoryCrit ? effective.critMultiplier(term.category)
-                            : effective.critMultiplier)
+                        * coefficient * baseBonus * (1 + emBonus)
+                        * context.resistanceMultiplier * critMultiplier
                 } else {
                     damage = 0
                 }
