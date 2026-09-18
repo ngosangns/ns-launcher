@@ -3,6 +3,8 @@ import SwiftUI
 private enum AppTab: Hashable {
     case home
     case settings
+    case story
+    case abyss
 }
 
 /// App shell: pinned chrome (wordmark, tab switch, language) plus the active tab's content.
@@ -11,6 +13,12 @@ private enum AppTab: Hashable {
 struct ContentView: View {
     @ObservedObject var viewModel: LauncherViewModel
     @State private var activeTab: AppTab = .home
+    // Held here, above the tab switch below, so switching away from and back to
+    // Story doesn't re-parse Resources/Story/ every time.
+    @StateObject private var storyViewModel = StoryViewModel()
+    // Same reasoning, and more so: the Abyss library parses ~950 KB with regexes,
+    // and the tab also holds computed teams that should survive a tab switch.
+    @StateObject private var abyssViewModel = AbyssViewModel()
 
     private var text: AppText { viewModel.text }
 
@@ -20,9 +28,13 @@ struct ContentView: View {
 
             VStack(spacing: 0) {
                 topBar
-                    .padding(.horizontal, 34)
-                    .padding(.top, 22)
-                    .padding(.bottom, 16)
+                    // Horizontal and top padding must clear WindowFrameOrnament's corner brackets,
+                    // which occupy a 16-40pt band from each window edge — see HomeView's matching
+                    // comment. Bottom is untouched: the top bar never gets near the window's bottom
+                    // corners.
+                    .padding(.horizontal, 44)
+                    .padding(.top, 44)
+                    .padding(.bottom, 12)
 
                 Group {
                     switch activeTab {
@@ -30,11 +42,12 @@ struct ContentView: View {
                         HomeView(viewModel: viewModel)
                     case .settings:
                         SettingsView(viewModel: viewModel)
+                    case .story:
+                        StoryView(viewModel: storyViewModel, text: text)
+                    case .abyss:
+                        AbyssView(viewModel: abyssViewModel, text: text)
                     }
                 }
-                .id(activeTab)
-                .transition(.opacity)
-                .animation(.easeOut(duration: 0.2), value: activeTab)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
 
@@ -79,12 +92,18 @@ struct ContentView: View {
     }
 
     private var tabSwitcher: some View {
-        HStack(spacing: 8) {
+        TabGroup {
             SidebarTabButton(title: text.homeTitle, systemImage: "house.fill", isSelected: activeTab == .home) {
                 activeTab = .home
             }
             SidebarTabButton(title: text.settingsTitle, systemImage: "gearshape.fill", isSelected: activeTab == .settings) {
                 activeTab = .settings
+            }
+            SidebarTabButton(title: text.storyTitle, systemImage: "book.closed.fill", isSelected: activeTab == .story) {
+                activeTab = .story
+            }
+            SidebarTabButton(title: text.abyssTitle, systemImage: "shield.lefthalf.filled", isSelected: activeTab == .abyss) {
+                activeTab = .abyss
             }
         }
         .fixedSize()

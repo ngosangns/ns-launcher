@@ -55,29 +55,11 @@ enum GameProcessInspector {
     /// The full command line (executable plus arguments) for one PID, matching what `ps`'s
     /// `command=` column shows — or nil for a PID this process cannot read (exited between
     /// `allPIDs()` and here, owned by another user, or a kernel task with no argument vector).
-    ///
-    /// `KERN_PROCARGS2` returns argc as a leading `Int32`, then the process's saved executable
-    /// path as one NUL-terminated string, then NUL padding up to the start of `argv[0]`, then
-    /// `argc` more NUL-terminated strings for `argv`. See `<sys/sysctl.h>` and `ps`'s own source
-    /// for this exact shape — there is no higher-level API for it.
     static func commandLine(forPID pid: Int32) -> String? {
-        var mib: [Int32] = [CTL_KERN, KERN_PROCARGS2, pid]
-        var size = 0
-        guard sysctl(&mib, 3, nil, &size, nil, 0) == 0, size > 4 else { return nil }
-
-        var buffer = [UInt8](repeating: 0, count: size)
-        guard sysctl(&mib, 3, &buffer, &size, nil, 0) == 0 else { return nil }
-
+        guard let buffer = procArgs2Buffer(forPID: pid) else { return nil }
         return buffer.withUnsafeBytes { raw -> String? in
-            guard raw.count >= 4 else { return nil }
-            let argc = raw.load(fromByteOffset: 0, as: Int32.self)
-            guard argc > 0 else { return nil }
-
-            var offset = 4
-            // Skip the saved executable path and the NUL padding that follows it.
-            while offset < raw.count, raw[offset] != 0 { offset += 1 }
-            while offset < raw.count, raw[offset] == 0 { offset += 1 }
-
+            guard let argc = argumentCount(in: raw) else { return nil }
+            var offset = argvStartOffset(in: raw)
             var arguments: [String] = []
             arguments.reserveCapacity(Int(argc))
             for _ in 0..<argc {
@@ -89,5 +71,54 @@ enum GameProcessInspector {
             }
             return arguments.joined(separator: " ")
         }
+    }
+
+    /// The current working directory of a PID, via `libproc`'s `PROC_PIDVNODEPATHINFO` — or nil for
+    /// one this process cannot inspect.
+    ///
+    /// `WINEPREFIX` itself is NOT readable this way: `sysctl(KERN_PROCARGS2)` only returns another
+    /// process's environment strings on older macOS — confirmed empirically against this SDK
+    /// (macOS 26): a same-UID child process's `envp` comes back empty to everyone but itself, argv
+    /// still included. Wine's own service processes (`winedevice.exe`, `services.exe`,
+    /// `plugplay.exe`) run with their POSIX current directory set to the Windows one Wine gave them
+    /// — normally `<prefix>/drive_c/windows/system32` — so cwd is the next-best per-prefix signal
+    /// actually available without root.
+    static func currentWorkingDirectory(forPID pid: Int32) -> String? {
+        var info = proc_vnodepathinfo()
+        let size = proc_pidinfo(pid, PROC_PIDVNODEPATHINFO, 0, &info, Int32(MemoryLayout<proc_vnodepathinfo>.stride))
+        guard size > 0 else { return nil }
+        return withUnsafeBytes(of: info.pvi_cdir.vip_path) { raw -> String? in
+            guard let base = raw.baseAddress else { return nil }
+            let path = String(cString: base.assumingMemoryBound(to: CChar.self))
+            return path.isEmpty ? nil : path
+        }
+    }
+
+    /// Raw `KERN_PROCARGS2` bytes for a PID, or nil for one this process cannot read.
+    private static func procArgs2Buffer(forPID pid: Int32) -> [UInt8]? {
+        var mib: [Int32] = [CTL_KERN, KERN_PROCARGS2, pid]
+        var size = 0
+        guard sysctl(&mib, 3, nil, &size, nil, 0) == 0, size > 4 else { return nil }
+
+        var buffer = [UInt8](repeating: 0, count: size)
+        guard sysctl(&mib, 3, &buffer, &size, nil, 0) == 0 else { return nil }
+        return buffer
+    }
+
+    /// The leading `argc` `KERN_PROCARGS2` carries, or nil for an empty/malformed buffer.
+    private static func argumentCount(in raw: UnsafeRawBufferPointer) -> Int32? {
+        guard raw.count >= 4 else { return nil }
+        let argc = raw.load(fromByteOffset: 0, as: Int32.self)
+        return argc > 0 ? argc : nil
+    }
+
+    /// `KERN_PROCARGS2` follows the leading argc with the process's saved executable path as one
+    /// NUL-terminated string, then NUL padding up to the start of `argv[0]`. See `<sys/sysctl.h>`
+    /// and `ps`'s own source for this exact shape — there is no higher-level API for it.
+    private static func argvStartOffset(in raw: UnsafeRawBufferPointer) -> Int {
+        var offset = 4
+        while offset < raw.count, raw[offset] != 0 { offset += 1 }
+        while offset < raw.count, raw[offset] == 0 { offset += 1 }
+        return offset
     }
 }

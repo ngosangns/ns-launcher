@@ -1,0 +1,235 @@
+// AbyssResultsView.swift
+//
+// The suggested teams, grouped by floor. Each team is one panel: its members in
+// damage order, the gear the engine picked for them, and the notes explaining
+// why the score came out where it did.
+
+import SwiftUI
+
+struct AbyssResultsView: View {
+    @ObservedObject var viewModel: AbyssViewModel
+    let text: AppText
+
+    var body: some View {
+        Group {
+            if viewModel.reports.isEmpty {
+                emptyState
+            } else {
+                ScrollView(showsIndicators: false) {
+                    // Lazy: a run is five teams of four members, and every
+                    // member row carries two portraits and a handful of
+                    // formatted strings. Building all of them to show the first
+                    // screenful is what made opening this section hitch.
+                    LazyVStack(alignment: .leading, spacing: 22) {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Label(text.abyssArtifactAdviceNotice, systemImage: "seal")
+                            if viewModel.showcase != nil {
+                                Label(text.abyssShowcaseNotice, systemImage: "checkmark.seal")
+                            }
+                        }
+                        .font(.system(size: 10, design: .rounded))
+                        .foregroundStyle(LauncherPalette.mist.opacity(0.55))
+                        .fixedSize(horizontal: false, vertical: true)
+
+                        ForEach(viewModel.reports) { report in
+                            floorSection(report)
+                        }
+                    }
+                }
+            }
+        }
+        .frame(maxWidth: 900, alignment: .leading)
+    }
+
+    private var emptyState: some View {
+        OrnamentalPanel(padding: 16, showsMark: false) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(text.abyssNoResultsYet)
+                    .font(.system(.subheadline, design: .rounded, weight: .bold))
+                    .foregroundStyle(LauncherPalette.parchment)
+                Text(text.abyssNoResultsHint)
+                    .font(.system(.caption, design: .rounded))
+                    .foregroundStyle(LauncherPalette.mist.opacity(0.75))
+            }
+        }
+    }
+
+    private func floorSection(_ report: AbyssFloorReport) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+                Text(text.abyssFloorTitle(report.floor))
+                    .font(.system(.title3, design: .rounded, weight: .bold))
+                    .foregroundStyle(LauncherPalette.goldHighlight)
+                Text(text.abyssMonsterLevel(report.monsterLevel))
+                    .font(.system(.caption, design: .rounded))
+                    .foregroundStyle(LauncherPalette.mist.opacity(0.7))
+                Spacer()
+            }
+
+            // The floor's own modifiers, so a surprising ranking can be traced
+            // back to the sentence that caused it. On a split floor these are
+            // only the ones both halves share; the rest sit with their half.
+            buffLines(report.buffs, prefix: nil)
+
+            // A locally-logged reference point, not a public leaderboard: the
+            // most recent *other* cycle's top plan for this same floor number.
+            if let previous = viewModel.cycleHistory.mostRecent(
+                forFloor: report.floor, excludingCycle: viewModel.library?.latestCycle?.periodStart),
+               let seconds = previous.bestClearTimeSeconds {
+                Text(text.abyssPreviousCycleClearTime(seconds))
+                    .font(.system(size: 10, design: .rounded))
+                    .foregroundStyle(LauncherPalette.mist.opacity(0.5))
+                    .help(text.abyssPreviousCycleHint)
+            }
+
+            switch report.outcome {
+            case .whole(let teams):
+                // Two teams per row: `teamPanel` already fills the width it's
+                // given, so an HStack of two splits it into equal columns.
+                let ranked = Array(teams.enumerated())
+                ForEach(Array(stride(from: 0, to: ranked.count, by: 2)), id: \.self) { start in
+                    HStack(alignment: .top, spacing: 14) {
+                        ForEach(ranked[start..<min(start + 2, ranked.count)], id: \.element.id) { index, team in
+                            teamPanel(title: "#\(index + 1)", team: team, enemyHP: report.enemyHP)
+                        }
+                    }
+                }
+            case .split(let halves, let plans):
+                ForEach(halves) { half in
+                    buffLines(half.buffs, prefix: text.abyssHalfTitle(half.half))
+                }
+
+                Label(text.abyssHalfPlanNotice, systemImage: "person.2")
+                    .font(.system(size: 10, design: .rounded))
+                    .foregroundStyle(LauncherPalette.mist.opacity(0.55))
+                    .fixedSize(horizontal: false, vertical: true)
+
+                ForEach(Array(plans.enumerated()), id: \.element.id) { index, plan in
+                    planPanel(rank: index + 1, plan: plan)
+                }
+            }
+        }
+    }
+
+    /// The buff clauses behind a ranking, optionally tagged with the half they
+    /// belong to.
+    @ViewBuilder
+    private func buffLines(_ buffs: [AbyssFloorBuff], prefix: String?) -> some View {
+        if !buffs.isEmpty {
+            VStack(alignment: .leading, spacing: 3) {
+                ForEach(Array(buffs.enumerated()), id: \.offset) { _, buff in
+                    let tag = prefix.map { "\($0)  ·  " } ?? ""
+                    Text("\(tag)+\(Int((buff.bonus * 100).rounded()))%  ·  \(text.abyssBuffSource(buff.source))  ·  \(buff.raw)")
+                        .font(.system(size: 10, design: .rounded))
+                        .foregroundStyle(LauncherPalette.mist.opacity(0.55))
+                        .lineLimit(2)
+                }
+            }
+        }
+    }
+
+    /// One plan: the team for the first half and the team for the second, under
+    /// a single rank because they are chosen together and only work together.
+    private func planPanel(rank: Int, plan: AbyssFloorPlan) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 8) {
+                Text("#\(rank)")
+                    .font(.system(.headline, design: .rounded, weight: .bold))
+                    .foregroundStyle(LauncherPalette.goldHighlight)
+                Spacer()
+                if let clear = plan.clearSeconds {
+                    Text(text.abyssClearTime(clear.first + clear.second))
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundStyle(LauncherPalette.parchment.opacity(0.8))
+                        .help(text.abyssClearTimeHint)
+                }
+                Text(text.abyssScorePerSecond(
+                    Self.scoreFormatter.string(from: NSNumber(value: plan.score)) ?? ""))
+                    .font(.system(.caption, design: .monospaced))
+                    .foregroundStyle(LauncherPalette.mist.opacity(0.7))
+                    .help(text.abyssPlanScoreHint)
+            }
+
+            // The two halves of one plan are the natural pair for a row: they
+            // are chosen together and only ever read side by side.
+            HStack(alignment: .top, spacing: 14) {
+                ForEach(plan.byHalf, id: \.half) { entry in
+                    teamPanel(title: text.abyssHalfTitle(entry.half), team: entry.team,
+                              enemyHP: entry.half == 1 ? plan.firstHalfHP : plan.secondHalfHP)
+                }
+            }
+        }
+    }
+
+    private func teamPanel(title: String, team: AbyssTeamResult, enemyHP: Double? = nil) -> some View {
+        OrnamentalPanel(padding: 16, showsMark: false) {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: 8) {
+                    Text(title)
+                        .font(.system(.headline, design: .rounded, weight: .bold))
+                        .foregroundStyle(LauncherPalette.goldHighlight)
+
+                    // What re-picking the artifacts for this floor was worth.
+                    if team.artifactGain > 0.0005 {
+                        Text(text.abyssTeamArtifactGain(team.artifactGain))
+                            .font(.system(size: 10, weight: .semibold, design: .rounded))
+                            .foregroundStyle(LauncherPalette.success.opacity(0.85))
+                    }
+
+                    Spacer()
+                    if let enemyHP, team.score > 0 {
+                        Text(text.abyssClearTime(enemyHP / team.score))
+                            .font(.system(.caption, design: .monospaced))
+                            .foregroundStyle(LauncherPalette.parchment.opacity(0.8))
+                            .help(text.abyssClearTimeHint)
+                    }
+                    Text(text.abyssScorePerSecond(
+                        Self.scoreFormatter.string(from: NSNumber(value: team.score)) ?? ""))
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundStyle(LauncherPalette.mist.opacity(0.7))
+                        .help(text.abyssScoreHint)
+                }
+
+                // Members in damage order rather than team order: the reader
+                // wants to know who is carrying. Each is just a portrait —
+                // role, share, weapon and artifact advice sit in a popover
+                // shown on hover, so four members fit in half a row next to
+                // another team's four.
+                HStack(spacing: 10) {
+                    ForEach(orderedMembers(of: team), id: \.self) { characterID in
+                        AbyssTeamMemberCell(viewModel: viewModel, text: text,
+                                           characterID: characterID, team: team)
+                    }
+                }
+
+                if !team.notes.isEmpty {
+                    VStack(alignment: .leading, spacing: 3) {
+                        ForEach(Array(team.notes.enumerated()), id: \.offset) { _, note in
+                            if case .resonance(let id, let name, let nameVI) = note {
+                                AbyssResonanceLabel(viewModel: viewModel, text: text,
+                                                    id: id, name: name, nameVI: nameVI)
+                            } else {
+                                Label(text.abyssTeamNote(note), systemImage: note.symbolName)
+                                    .font(.system(.caption2, design: .rounded))
+                                    .foregroundStyle(note.accentColor.opacity(0.85))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private func orderedMembers(of team: AbyssTeamResult) -> [String] {
+        team.memberIDs.sorted {
+            (team.perCharacterDamage[$0] ?? 0) > (team.perCharacterDamage[$1] ?? 0)
+        }
+    }
+
+    private static let scoreFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 0
+        return formatter
+    }()
+}

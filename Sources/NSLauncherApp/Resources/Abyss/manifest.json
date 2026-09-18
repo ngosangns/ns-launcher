@@ -1,0 +1,127 @@
+{
+  "dataFetchDate": "2026-09-08",
+  "gameVersion": "7.0",
+  "validatedAgainstSchema": true,
+  "files": {
+    "characters": {
+      "mondstadt.json": {
+        "count": 43,
+        "note": "25 Mondstadt + 10 Nod-Krai + 7 Traveler element-variants + Aloy (collab, không quốc gia). Zibai bổ sung 2026-09-08; Dahlia + Aloy bổ sung 2026-09-08 (đợt đối chiếu toàn bộ danh sách với API)."
+      },
+      "liyue.json": {
+        "count": 27,
+        "note": "21 Liyue + 5 Snezhnaya + Skirk (không có quốc gia trong game, xếp cùng nhóm Snezhnaya). CẢNH BÁO LỊCH SỬ: 26 nhân vật gốc của file này từng có chỉ số cấp 90 sai 60-70% (quên hệ số đường cong tăng trưởng), đã sửa toàn bộ 2026-09-08."
+      },
+      "inazuma-fontaine.json": {
+        "count": 30,
+        "note": "17 Inazuma + 13 Fontaine. Kaedehara Kazuha bổ sung 2026-09-08."
+      },
+      "sumeru-natlan.json": {
+        "count": 25,
+        "note": "14 Sumeru + 11 Natlan"
+      },
+      "total": 125
+    },
+    "weapons": {
+      "kiem.json": {
+        "count": 56,
+        "type": "Sword"
+      },
+      "dai-kiem.json": {
+        "count": 45,
+        "type": "Claymore"
+      },
+      "thuong.json": {
+        "count": 43,
+        "type": "Polearm"
+      },
+      "cung.json": {
+        "count": 49,
+        "type": "Bow"
+      },
+      "phap-khi.json": {
+        "count": 53,
+        "type": "Catalyst"
+      },
+      "total": 246
+    },
+    "character-kits.json": {
+      "count": 54,
+      "note": "Tên cũ character-traits.json: gộp 2026-09-12 từ 7 bảng nằm rải ở tuning.json, team-bonus.json và damage-formula.json; đổi tên và mở rộng thành kit 2026-09-15 (Pha 2 docs/redesign.md). Tags: moonsign 10, hexerei 12, stellar-jubilee 3. chargedAttackLabels 8, hits 21 (Bennett, Beidou, Cyno, Freminet, Hu Tao, Iansan, Kinich, Lauma, Lisa, Lyney, Mavuika, Raiden, Razor, Tartaglia, Varesa, Varka, Wanderer, Wriothesley, Xiao, Xilonen, Yoimiya), conversions 2 (Hu Tao HP→ATK, Noelle DEF→ATK), buffs 4 (Bennett, Kujou Sara, Faruzan cho đội; Xiao cho mình), resistanceShred 2, reactionBaseDamageBonus 10. Mọi số là tham chiếu vào talent-params.json. Chưa có kit (cố ý, cần Pha 3–4): Furina (số lần đánh của Salon Members), Columbina/Sandrone (biến thể theo phản ứng Lunar/Stellar), Charlotte/Neuvillette (đòn arkhe theo chu kỳ), Navia (shrapnel không có trong bảng)."
+    },
+    "talent-params.json": {
+      "count": 118,
+      "note": "Sinh 2026-09-15 bằng scripts/sync-abyss-talent-params.py từ gi.yatta.moe (Pha 1 docs/redesign.md). 118/125 nhân vật — 7 Nhà Lữ Hành không có avatar riêng trên Yatta, vẫn đi đường parse văn xuôi. Nguồn ưu tiên cho damage profile; bảng scaling trong characters/*.json giờ chỉ là dự phòng."
+    },
+    "particles.json": {
+      "count": 118,
+      "note": "Sinh 2026-09-15 bằng scripts/sync-abyss-particles.py từ template {{Talent Note|particles}} trên trang kỹ năng của genshin-impact.fandom.com (Pha 3 docs/redesign.md), đối chiếu gcsim@a086a05. 118 nhân vật có talent-params.json; 13 trang không có ghi chú (bổ sung ở character-kits.json → energy.particlesPerCast từ gcsim, trừ Linnea không có trong gcsim). Số liệu cộng đồng đo, không phải file game."
+    },
+    "frames.json": {
+      "count": 109,
+      "note": "Sinh 2026-09-16 bằng scripts/sync-abyss-frames.py từ frame data gcsim@a086a05 (attack/charge/aimed/skill/burst.go). 40 trường không nhận ra mẫu → trung vị, báo ở diagnostics.framesEstimated. Thay normalCombosPerRotation/chargedAttacksPerRotation."
+    },
+    "gauge.json": {
+      "count": 118,
+      "note": "Sinh 2026-09-16 bằng scripts/sync-abyss-gauge.py từ gi.yatta.moe talent.advancedProps: gauge (U) và ICD từng hit. Pha 4 docs/redesign.md — thay amplifyingUptime và transformativeReactionsPerRotation."
+    },
+    "passive-text.json": {
+      "count": 299,
+      "note": "Sinh 2026-09-15 bằng scripts/sync-abyss-passives.py từ gi.yatta.moe (weapon affix R1–R5, reliquary affixList): chữ game tiếng Anh của 236 passive vũ khí và 63 bộ thánh di vật, kèm các số game đánh dấu theo tinh luyện."
+    },
+    "passives.json": {
+      "count": 299,
+      "note": "Viết tay 2026-09-15 (Pha 5 docs/redesign.md): ý nghĩa có cấu trúc của từng passive/hiệu ứng set; mọi giá trị tham chiếu vào passive-text.json, ghim bởi AbyssPassiveTests. Thay tuning.json setEffectApprox, conditionalUptime, assumedStacks và các dòng effects tóm tắt trong weapons/*.json (không còn được đọc để chấm điểm)."
+    },
+    "artifact-sets.json": {
+      "textSource": "name/nameVI/description/descriptionVI đồng bộ từ bản địa hoá chính thức qua gi.yatta.moe/api/v2/{en,vi}/reliquary bằng scripts/sync-abyss-artifact-text.py, ngày 2026-09-14",
+      "count": 63
+    },
+    "abyss-monsters": {
+      "2026-08-16-den-2026-09-15.json": {
+        "period": "2026-08-16 to 2026-09-15",
+        "floors": [
+          9,
+          10,
+          11,
+          12
+        ],
+        "blessingOfTheAbyssalMoon": "Luster-Piercing Moon",
+        "monsterResistanceSync": "39/41 tên quái khớp gameId qua scripts/sync-abyss-monster-resistance.py ngày 2026-09-15 (gi.yatta.moe). 2 chưa khớp: Battle-Hardened Chimeric Volkodlak Archer, Veteran Tainted Water-Splitting Phantasm — dùng suy đoán phẳng như cũ.",
+        "monsterHPSync": "Tầng 9, 10, 12 có spawns + hp + enemyHPMultiplier qua scripts/sync-abyss-monster-hp.py ngày 2026-09-15 (wiki Spiral Abyss/Floors/2026-08-16 revid 2152154); HP đối chiếu với đường cong game trên gi.yatta.moe cho 27 quái, lệch < 1%. Tầng 11 bị từ chối: wiki ghi chú số lượng quái 'unsure'."
+      }
+    },
+    "enemy-hp.json": {
+      "note": "Sinh 2026-09-15 bằng scripts/sync-abyss-monster-hp.py từ Module:Enemy Stats/HP của wiki (đường cong HP quái của game × 13.584). Pha 6 docs/redesign.md — điểm phương án theo thời gian dọn."
+    },
+    "damage-formula.json": {
+      "sections": [
+        "resMultiplier",
+        "defMultiplier",
+        "critMultiplier",
+        "amplifying",
+        "catalyze",
+        "transformative",
+        "lunarStellar",
+        "trueDamage",
+        "critValueHeuristic",
+        "workedExample"
+      ]
+    },
+    "team-bonus.json": {
+      "sections": [
+        "elementalResonance (8)",
+        "moonsign (10 nhân vật)",
+        "hexerei (12 nhân vật)",
+        "nightsoulBurst"
+      ]
+    }
+  },
+  "knownDataGaps": {
+    "note": "Một số trường được giữ nguyên 'chưa xác nhận'/'~' từ Markdown nguồn thay vì bịa số — không phải lỗi transcribe.",
+    "characters": "~20 mốc số liệu trong sumeru-natlan.json, ~26 trong liyue.json, 1 trong mondstadt.json (chi tiết xem README từng file nguồn nhan-vat/*.md). Chỉ số cơ bản cấp 90 của TOÀN BỘ 125 nhân vật đã được đối chiếu lại với gi.yatta.moe 2026-09-08 (initValue × hệ số đường cong theo mã GROW_CURVE trong API + addProps): 0 sai lệch >2%.",
+    "weapons": "cung.json và phap-khi.json chỉ có mốc R1/R5 trong nguồn (không có R2-R4) nên passive.effects để rỗng, số liệu đầy đủ vẫn giữ trong description dạng 'R1: ... R5: ...'",
+    "abyssMonsters": "nhiều hpRatio/resistanceNotes ghi 'chưa xác nhận' do wiki không công khai đầy đủ",
+    "charactersVerified": "2026-09-08: đối chiếu đủ 125/125 nhân vật với API; danh sách nhân vật cũng đã diff với API (chỉ còn Manekin/Manekina bị loại có chủ đích — chế độ Miliastra Wonderland, không dùng trong Trầm Thủy)."
+  }
+}

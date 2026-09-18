@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 enum LauncherPalette {
@@ -33,24 +34,62 @@ struct CelestialBackdrop: View {
                 let width = proxy.size.width
                 let height = proxy.size.height
 
+                // Soft glows, drawn as gradients rather than as blurred circles.
+                // A `.blur` here is an offscreen pass over a rect ~70% of the
+                // window, redone on every resize frame and every full redraw,
+                // for a shape whose whole purpose is to have no visible edge —
+                // a radial fade reaches the same look with no pass at all.
                 Group {
-                    Circle()
-                        .fill(LauncherPalette.mist.opacity(0.12))
-                        .frame(width: width * 0.72, height: width * 0.30)
-                        .blur(radius: 28)
-                        .offset(x: -width * 0.26, y: height * 0.49)
+                    SoftGlow(color: LauncherPalette.mist.opacity(0.12),
+                             radius: width * 0.15,
+                             feather: 28,
+                             center: CGPoint(x: width * 0.10, y: width * 0.15 + height * 0.49))
 
-                    Circle()
-                        .fill(LauncherPalette.parchment.opacity(0.09))
-                        .frame(width: width * 0.66, height: width * 0.20)
-                        .blur(radius: 38)
-                        .offset(x: width * 0.40, y: -height * 0.36)
+                    SoftGlow(color: LauncherPalette.parchment.opacity(0.09),
+                             radius: width * 0.10,
+                             feather: 38,
+                             center: CGPoint(x: width * 0.73, y: width * 0.10 - height * 0.36))
                 }
 
                 ConstellationField(size: proxy.size)
             }
         }
         .ignoresSafeArea()
+    }
+}
+
+/// A circle of `color` fading to nothing over `feather` points beyond `radius`.
+///
+/// The falloff is a gradient stop rather than a `.blur`, so there is no
+/// offscreen pass — and because the fade reaches `.clear` exactly at the shape's
+/// own edge, the circle has no visible boundary to give it away.
+private struct SoftGlow: View {
+    let color: Color
+    /// Radius of the solid core, before the fade begins.
+    let radius: CGFloat
+    /// How far past the core the fade runs.
+    let feather: CGFloat
+    /// Where the glow sits in the parent's coordinate space.
+    let center: CGPoint
+
+    var body: some View {
+        let outer = max(radius + feather, 1)
+        // The core is pulled in by half the feather so the midpoint of the fade
+        // lands on the original circle's edge, which is where a blur of this
+        // radius would have put it.
+        let coreStop = max(0, min(1, (radius - feather / 2) / outer))
+        Circle()
+            .fill(RadialGradient(
+                stops: [
+                    .init(color: color, location: 0),
+                    .init(color: color, location: coreStop),
+                    .init(color: color.opacity(0), location: 1)
+                ],
+                center: .center,
+                startRadius: 0,
+                endRadius: outer))
+            .frame(width: outer * 2, height: outer * 2)
+            .offset(x: center.x - outer, y: center.y - outer)
     }
 }
 
@@ -83,10 +122,19 @@ struct OrnamentalPanel<Content: View>: View {
     private let content: Content
     private let padding: CGFloat
     private let tone: Color
+    /// Panels whose top-right corner carries its own controls opt out of the mark so the two don't
+    /// overlap — and so only one mark shows per screen.
+    private let showsMark: Bool
 
-    init(padding: CGFloat = 22, tone: Color = LauncherPalette.night.opacity(0.54), @ViewBuilder content: () -> Content) {
+    init(
+        padding: CGFloat = 22,
+        tone: Color = LauncherPalette.night.opacity(0.54),
+        showsMark: Bool = true,
+        @ViewBuilder content: () -> Content
+    ) {
         self.padding = padding
         self.tone = tone
+        self.showsMark = showsMark
         self.content = content()
     }
 
@@ -107,9 +155,11 @@ struct OrnamentalPanel<Content: View>: View {
                     )
             }
             .overlay(alignment: .topTrailing) {
-                CelestialMark()
-                    .padding(14)
-                    .opacity(0.66)
+                if showsMark {
+                    CelestialMark()
+                        .padding(14)
+                        .opacity(0.66)
+                }
             }
             .shadow(color: LauncherPalette.night.opacity(0.26), radius: 24, y: 12)
     }
@@ -160,10 +210,7 @@ private struct QuestButtonBody: View {
                 Capsule()
                     .stroke(border, lineWidth: role == .quiet ? 0.8 : 1)
             }
-            .shadow(color: shadowColor, radius: isHovering ? 16 : 6, y: isHovering ? 7 : 3)
-            .scaleEffect(configuration.isPressed ? 0.96 : (isHovering ? 1.03 : 1))
-            .animation(.easeOut(duration: 0.16), value: configuration.isPressed)
-            .animation(.easeOut(duration: 0.2), value: isHovering)
+            .shadow(color: shadowColor, radius: isHovering ? 10 : 6, y: 3)
             .onHover { isHovering = $0 }
     }
 
@@ -217,10 +264,17 @@ extension View {
 
 /// Thin gold corner brackets framing the whole window, echoing a HUD/quest-log border.
 struct WindowFrameOrnament: View {
+    /// Distance from the true window edge. Deliberately NOT `.ignoresSafeArea()`: that made this
+    /// view's `GeometryReader` measure a taller region than the `ZStack` it sits in actually
+    /// renders at (the window's own titlebar already claims that space), so the bottom pair of
+    /// brackets landed below the visible window and the top pair sat too high — both effectively
+    /// off-window. Matching the same bounds every other child of that `ZStack` gets keeps all four
+    /// brackets anchored to the corners actually on screen.
+    private let inset: CGFloat = 16
+    private let length: CGFloat = 24
+
     var body: some View {
         GeometryReader { proxy in
-            let length: CGFloat = 26
-            let inset: CGFloat = 14
             let corners: [(CGPoint, (CGFloat, CGFloat), (CGFloat, CGFloat))] = [
                 (CGPoint(x: inset, y: inset), (1, 0), (0, 1)),
                 (CGPoint(x: proxy.size.width - inset, y: inset), (-1, 0), (0, 1)),
@@ -238,7 +292,66 @@ struct WindowFrameOrnament: View {
             }
         }
         .allowsHitTesting(false)
-        .ignoresSafeArea()
+    }
+}
+
+/// Wraps a row of mutually-exclusive controls — `SidebarTabButton`s or filter
+/// chips — in one shared "track" so the row reads as a single connected tab
+/// group instead of loose pills scattered across the bar. The active item
+/// still draws its own highlight; everything else sits flush against this
+/// track's background.
+struct TabGroup<Content: View>: View {
+    var spacing: CGFloat = 3
+    /// When true, every segment shares one width — the widest segment's own
+    /// ideal width — instead of each hugging its own label. Two tabs that
+    /// switch the same pane in and out (e.g. "Roster" / "Results") read as one
+    /// balanced control this way; a row of differently-sized filter chips
+    /// should leave this off.
+    var equalWidth: Bool = false
+    @ViewBuilder let content: () -> Content
+
+    var body: some View {
+        Group {
+            if equalWidth {
+                EqualWidthHStack(spacing: spacing) { content() }
+            } else {
+                HStack(spacing: spacing) { content() }
+            }
+        }
+        .padding(3)
+        .background(LauncherPalette.night.opacity(0.30), in: RoundedRectangle(cornerRadius: 13, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 13, style: .continuous)
+                .stroke(LauncherPalette.mist.opacity(0.10), lineWidth: 1)
+        }
+    }
+}
+
+/// A row layout that gives every subview the same width — the widest
+/// subview's own ideal width — rather than each hugging its own content
+/// (`HStack`) or all stretching to fill the parent (`.frame(maxWidth:
+/// .infinity)`, which ignores what its siblings need).
+private struct EqualWidthHStack: Layout {
+    var spacing: CGFloat = 0
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        guard !subviews.isEmpty else { return .zero }
+        let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
+        let segmentWidth = sizes.map(\.width).max() ?? 0
+        let height = sizes.map(\.height).max() ?? 0
+        let totalWidth = segmentWidth * CGFloat(subviews.count) + spacing * CGFloat(subviews.count - 1)
+        return CGSize(width: totalWidth, height: height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        guard !subviews.isEmpty else { return }
+        let segmentWidth = subviews.map { $0.sizeThatFits(.unspecified).width }.max() ?? 0
+        var x = bounds.minX
+        for subview in subviews {
+            subview.place(at: CGPoint(x: x, y: bounds.minY),
+                           proposal: ProposedViewSize(width: segmentWidth, height: bounds.height))
+            x += segmentWidth + spacing
+        }
     }
 }
 
@@ -247,31 +360,52 @@ struct SidebarTabButton: View {
     let title: String
     let systemImage: String
     let isSelected: Bool
+    /// When false, this button shows only its icon while inactive — the label
+    /// returns the moment it becomes the active tab.
+    ///
+    /// Default `true` keeps every existing call site unchanged: this only
+    /// belongs on a tight row of two or three peers switching one another out
+    /// (the Abyss Roster/Results toggle is the case it was built for), never on
+    /// a vertical navigation list, where a reader has nothing but an icon to
+    /// recognise an item they have not learned the icon for yet.
+    var showsLabelWhenInactive: Bool = true
     let action: () -> Void
 
     @State private var isHovering = false
 
+    private var showsLabel: Bool { isSelected || showsLabelWhenInactive }
+
     var body: some View {
         Button(action: action) {
-            Label(title, systemImage: systemImage)
-                .font(.system(.subheadline, design: .rounded, weight: .semibold))
-                .foregroundStyle(isSelected ? LauncherPalette.ink : LauncherPalette.parchment.opacity(0.86))
-                .padding(.horizontal, 14)
-                .padding(.vertical, 9)
-                .frame(maxWidth: .infinity, minHeight: 22, alignment: .leading)
-                .background(
-                    isSelected
-                        ? LauncherPalette.goldHighlight
-                        : LauncherPalette.night.opacity(isHovering ? 0.48 : 0.30),
-                    in: RoundedRectangle(cornerRadius: 12, style: .continuous)
-                )
+            Group {
+                if showsLabel {
+                    Label(title, systemImage: systemImage)
+                } else {
+                    Image(systemName: systemImage)
+                }
+            }
+            .font(.system(.subheadline, design: .rounded, weight: .semibold))
+            .foregroundStyle(isSelected ? LauncherPalette.ink : LauncherPalette.parchment.opacity(0.86))
+            .padding(.horizontal, showsLabel ? 14 : 10)
+            .padding(.vertical, 9)
+            .frame(maxWidth: showsLabel ? .infinity : nil, minHeight: 22,
+                   alignment: showsLabel ? .leading : .center)
+            .background(
+                // Unselected tabs stay flush against the shared `TabGroup` track
+                // rather than drawing a second pill on top of it — only a hover
+                // tint and the active tab's highlight ever show here.
+                isSelected
+                    ? LauncherPalette.goldHighlight
+                    : (isHovering ? LauncherPalette.mist.opacity(0.14) : Color.clear),
+                in: RoundedRectangle(cornerRadius: 10, style: .continuous)
+            )
         }
         .buttonStyle(.plain)
-        .scaleEffect(isHovering && !isSelected ? 1.02 : 1)
-        .animation(.easeOut(duration: 0.16), value: isSelected)
-        .animation(.easeOut(duration: 0.16), value: isHovering)
-        .pointerOnHover()
-        .onHover { isHovering = $0 }
+        .pointerOnHover { isHovering = $0 }
+        // The icon-only state still needs the name to reach a reader —
+        // a hover tooltip for a sighted user, and always for VoiceOver.
+        .help(title)
+        .accessibilityLabel(title)
     }
 }
 
@@ -285,9 +419,8 @@ struct CircularActionButton: View {
     let isActive: Bool
     let action: () -> Void
 
-    private let diameter: CGFloat = 132
+    private let diameter: CGFloat = 92
 
-    @State private var spinnerAngle: Double = 0
     @State private var isHovering = false
     @State private var isPressed = false
 
@@ -295,57 +428,45 @@ struct CircularActionButton: View {
         Button(action: action) {
             ZStack {
                 Circle()
-                    .stroke(LauncherPalette.mist.opacity(0.14), lineWidth: 5)
+                    .stroke(LauncherPalette.mist.opacity(0.14), lineWidth: 4)
 
                 if let progress {
                     Circle()
                         .trim(from: 0, to: max(0.02, min(progress, 1)))
                         .stroke(
                             LinearGradient(colors: [LauncherPalette.gold, LauncherPalette.goldHighlight], startPoint: .top, endPoint: .bottom),
-                            style: StrokeStyle(lineWidth: 5, lineCap: .round)
+                            style: StrokeStyle(lineWidth: 4, lineCap: .round)
                         )
                         .rotationEffect(.degrees(-90))
-                        .animation(.easeOut(duration: 0.25), value: progress)
                 } else if isActive {
                     Circle()
-                        .trim(from: 0, to: 0.22)
-                        .stroke(LauncherPalette.goldHighlight, style: StrokeStyle(lineWidth: 5, lineCap: .round))
-                        .rotationEffect(.degrees(spinnerAngle))
-                        .animation(.linear(duration: 1.1).repeatForever(autoreverses: false), value: spinnerAngle)
+                        .stroke(LauncherPalette.goldHighlight.opacity(0.85), lineWidth: 4)
                 }
 
                 Circle()
                     .fill(LauncherPalette.goldHighlight)
-                    .frame(width: diameter - 22, height: diameter - 22)
-                    .shadow(color: LauncherPalette.gold.opacity(isHovering ? 0.75 : 0.5), radius: isHovering ? 26 : 18, y: 6)
+                    .frame(width: diameter - 16, height: diameter - 16)
+                    .shadow(color: LauncherPalette.gold.opacity(isHovering ? 0.65 : 0.5), radius: isHovering ? 14 : 12, y: 4)
 
-                VStack(spacing: 6) {
+                VStack(spacing: 4) {
                     Image(systemName: systemImage)
-                        .font(.system(size: 26, weight: .bold))
-                        .contentTransition(.symbolEffect(.replace))
+                        .font(.system(size: 19, weight: .bold))
                     Text(title.uppercased())
-                        .font(.system(.caption, design: .rounded, weight: .bold))
-                        .tracking(1.1)
-                        .contentTransition(.opacity)
+                        .font(.system(.caption2, design: .rounded, weight: .bold))
+                        .tracking(1.0)
                 }
                 .foregroundStyle(LauncherPalette.ink)
             }
             .frame(width: diameter, height: diameter)
         }
         .buttonStyle(.plain)
-        .scaleEffect(isPressed ? 0.96 : (isHovering ? 1.035 : 1))
-        .animation(.easeOut(duration: 0.15), value: isPressed)
-        .animation(.easeOut(duration: 0.2), value: isHovering)
-        .animation(.easeOut(duration: 0.2), value: title)
-        .pointerOnHover()
-        .onHover { isHovering = $0 }
+        .opacity(isPressed ? 0.92 : 1)
+        .pointerOnHover { isHovering = $0 }
         .simultaneousGesture(
             DragGesture(minimumDistance: 0)
                 .onChanged { _ in isPressed = true }
                 .onEnded { _ in isPressed = false }
         )
-        .onAppear { if isActive { spinnerAngle = 360 } }
-        .onChange(of: isActive) { _, active in spinnerAngle = active ? 360 : 0 }
     }
 }
 
@@ -435,5 +556,232 @@ struct GoldenProgressBar: View {
             }
         }
         .frame(height: 8)
+    }
+}
+
+/// How a rarity tier looks: an accent for glyphs and edges on the dark ground,
+/// and a light fill for when the tile is selected and its text turns to ink.
+///
+/// Two colours rather than one because the tile inverts when selected — a single
+/// accent saturated enough to read against the backdrop is too dark to put ink
+/// text on. The mapping from a game's own rarity scale lives with that game's
+/// presentation code, not here.
+struct RarityAppearance: Equatable {
+    let stars: Int
+    let accent: Color
+    let fill: Color
+    /// The top tier gets a sheen the others do not, so it reads at a glance in a
+    /// grid of a hundred tiles.
+    var isTopTier: Bool = false
+}
+
+/// A compact own/don't-own tile for grid pickers, with an optional level stepper
+/// once the item is owned.
+///
+/// `InventoryRow` above is a full-width row; a roster picker shows 125 entries at
+/// once and needs a tile. Kept here with the rest of the design system rather
+/// than private to the Abyss views so the next grid picker does not invent a
+/// third look.
+struct RosterCard<Icon: View>: View {
+    let title: String
+    let subtitle: String
+    let isSelected: Bool
+    /// Current level and its range, shown only while selected. nil hides the stepper.
+    let level: (value: Int, range: ClosedRange<Int>, label: String)?
+    /// Rarity tier, drawn as pips and as the tile's own colour. nil for pickers
+    /// whose items have no rarity.
+    var rarity: RarityAppearance?
+    /// A solid colour bar down the left edge — a character's element, say.
+    /// nil for pickers with nothing categorical to put there.
+    var leadingAccent: Color?
+    /// The leading glyph — an SF Symbol, a portrait, whatever the caller has.
+    /// A closure rather than a fixed `systemImage`/`accent` pair so a picker
+    /// that has real artwork (`AbyssPortraitImage`) is not stuck drawing a
+    /// generic glyph just because this type was written for one.
+    @ViewBuilder let icon: () -> Icon
+    let onToggle: () -> Void
+    let onLevelChange: (Int) -> Void
+
+    @State private var isHovering = false
+
+    private var tint: Color { rarity?.accent ?? LauncherPalette.gold }
+    private var selectedFill: Color { rarity?.fill ?? LauncherPalette.goldHighlight }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 8) {
+                icon()
+
+                // Title, stars, and the level stepper share this column so the
+                // stepper lands directly under the stars it is levelling —
+                // not under the portrait, which is a wider, unrelated anchor.
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                        .foregroundStyle(isSelected ? LauncherPalette.ink : LauncherPalette.parchment)
+                        .lineLimit(1)
+
+                    HStack(spacing: 3) {
+                        if let rarity {
+                            starPips(rarity)
+                        }
+                        if !subtitle.isEmpty {
+                            Text(subtitle)
+                                .font(.system(.caption2, design: .rounded))
+                                .foregroundStyle(isSelected
+                                    ? LauncherPalette.ink.opacity(0.62)
+                                    : LauncherPalette.mist.opacity(0.62))
+                                .lineLimit(1)
+                        }
+                    }
+
+                    if isSelected, let level {
+                        HStack(spacing: 6) {
+                            levelButton(systemImage: "minus", disabled: level.value <= level.range.lowerBound) {
+                                onLevelChange(level.value - 1)
+                            }
+                            Text("\(level.label)\(level.value)")
+                                .font(.system(.caption2, design: .rounded, weight: .bold))
+                                .foregroundStyle(LauncherPalette.ink.opacity(0.78))
+                                .frame(minWidth: 22, alignment: .center)
+                            levelButton(systemImage: "plus", disabled: level.value >= level.range.upperBound) {
+                                onLevelChange(level.value + 1)
+                            }
+                        }
+                    }
+                }
+
+                Spacer(minLength: 0)
+
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(isSelected ? LauncherPalette.ink.opacity(0.72) : LauncherPalette.mist.opacity(0.34))
+            }
+            .contentShape(Rectangle())
+            .onTapGesture(perform: onToggle)
+        }
+        .padding(.leading, 11 + (leadingAccent != nil ? 15 : 0))
+        .padding(.trailing, 11)
+        .padding(.vertical, 9)
+        .background(background)
+        .overlay(alignment: .leading) { leadingAccentBar }
+        .overlay(alignment: .top) { sheen }
+        .pointerOnHover { isHovering = $0 }
+    }
+
+    /// A flat "-"/"+" pair flanking the value, rather than a stacked up/down
+    /// stepper: two side-by-side targets are easier to hit at this size than
+    /// two glyphs stacked in the same small control.
+    private func levelButton(systemImage: String, disabled: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: systemImage)
+                .font(.system(size: 9, weight: .bold))
+                .foregroundStyle(LauncherPalette.ink.opacity(disabled ? 0.25 : 0.85))
+                .frame(width: 16, height: 16)
+                .background(LauncherPalette.ink.opacity(0.12), in: Circle())
+        }
+        .buttonStyle(.plain)
+        .disabled(disabled)
+        .pointerOnHover()
+    }
+
+    /// The element-colour (or whatever the caller passes) bar down the left
+    /// edge. Rounded only on the left, so it reads as part of the card's own
+    /// frame rather than as a stripe painted across it.
+    @ViewBuilder
+    private var leadingAccentBar: some View {
+        if let leadingAccent {
+            UnevenRoundedRectangle(topLeadingRadius: 12, bottomLeadingRadius: 12, style: .continuous)
+                .fill(leadingAccent)
+                .frame(width: 15)
+        }
+    }
+
+    /// Rarity tints the tile itself in both states, so it survives selection —
+    /// which is the state the player spends most of their time looking at.
+    ///
+    /// One shape carrying a border, rather than a fill under a second filled
+    /// shape under a separate stroked overlay: this is drawn once per tile and a
+    /// full grid is a hundred of them, so each extra layer here is a hundred
+    /// extra layers to composite.
+    @ViewBuilder
+    private var background: some View {
+        let shape = RoundedRectangle(cornerRadius: 12, style: .continuous)
+        if isSelected {
+            shape.fill(selectedFill.opacity(0.92))
+        } else {
+            shape
+                .fill(LauncherPalette.night.opacity(isHovering ? 0.52 : 0.34))
+                .overlay {
+                    shape.fill(
+                        LinearGradient(colors: [tint.opacity(isHovering ? 0.22 : 0.14), .clear],
+                                       startPoint: .topLeading, endPoint: .bottomTrailing))
+                }
+                .overlay {
+                    shape.strokeBorder(tint.opacity(isHovering ? 0.55 : 0.32), lineWidth: 1)
+                }
+        }
+    }
+
+    /// A hairline of light along the top edge, for the top rarity only.
+    ///
+    /// Deliberately faint. It has to survive being one tile among a hundred
+    /// without turning the card muddy, so it reads as a lit edge rather than as
+    /// a band of colour.
+    @ViewBuilder
+    private var sheen: some View {
+        if rarity?.isTopTier == true {
+            LinearGradient(
+                colors: [(isSelected ? LauncherPalette.parchment : tint).opacity(isSelected ? 0.30 : 0.38), .clear],
+                startPoint: .top, endPoint: .bottom)
+                .frame(height: 5)
+                .clipShape(UnevenRoundedRectangle(topLeadingRadius: 12, topTrailingRadius: 12,
+                                                  style: .continuous))
+                .allowsHitTesting(false)
+        }
+    }
+
+    /// Filled pips up to the rarity, hollow after — readable at a glance and
+    /// narrower than five glyphs of text.
+    private func starPips(_ rarity: RarityAppearance) -> some View {
+        HStack(spacing: 1.5) {
+            ForEach(1...5, id: \.self) { index in
+                Circle()
+                    .fill(index <= rarity.stars
+                        ? (isSelected ? LauncherPalette.ink.opacity(0.7) : rarity.accent)
+                        : (isSelected ? LauncherPalette.ink.opacity(0.16)
+                                      : LauncherPalette.mist.opacity(0.18)))
+                    .frame(width: 4, height: 4)
+            }
+        }
+        .padding(.trailing, subtitle.isEmpty ? 0 : 2)
+        .accessibilityLabel("\(rarity.stars) star")
+    }
+}
+
+/// A small clipboard button that swaps to a checkmark for a beat after
+/// copying, so the tap reads as confirmed without a toast or alert.
+struct CopyIconButton: View {
+    let value: String
+    var tint: Color = LauncherPalette.mist
+    var help: String? = nil
+
+    @State private var didCopy = false
+
+    var body: some View {
+        Button {
+            let pasteboard = NSPasteboard.general
+            pasteboard.clearContents()
+            pasteboard.setString(value, forType: .string)
+            didCopy = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { didCopy = false }
+        } label: {
+            Image(systemName: didCopy ? "checkmark" : "doc.on.doc")
+                .font(.system(size: 9, weight: .bold))
+                .foregroundStyle(tint.opacity(didCopy ? 0.95 : 0.6))
+        }
+        .buttonStyle(.plain)
+        .pointerOnHover()
+        .help(help ?? "")
     }
 }

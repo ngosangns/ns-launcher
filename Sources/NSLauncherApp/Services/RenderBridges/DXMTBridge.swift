@@ -1,23 +1,21 @@
 // DXMTBridge.swift
 //
 // DXMT: open-source Direct3D 11-to-Metal translation layer, bundled into CrossOver-derived Wine
-// builds under `lib/dxmt` alongside Apple's own D3DMetal (`lib64/apple_gptk`) — confirmed on a
-// real CrossOver install, same `x86_64-windows`/`i386-windows`/`x86_64-unix` layout D3DMetalBridge
-// already knows how to detect.
+// builds under `lib/dxmt` — confirmed on a real CrossOver install, with a
+// `x86_64-windows`/`i386-windows`/`x86_64-unix` layout this bridge detects directly.
 //
 // This replaces an earlier DXMTBridge that downloaded DXMT from GitHub and gated it behind a
 // minimum Wine version plus an `nm` symbol check (both needed because that payload had to work
 // against ANY Wine build the user might have). None of that applies here: CrossOver ships its own
-// DXMT build matched to its own Wine, exactly like D3DMetal, so detection is just "does this Wine
-// build carry the payload" — see `resolveWineBuild`.
+// DXMT build matched to its own Wine, so detection is just "does this Wine build carry the
+// payload" — see `resolveWineBuild`.
 //
-// Offered as a second choice alongside D3DMetal (`AppSettings.metalRenderBackend`) simply because it
-// is a different translator: when one backend renders a given effect wrong, the other is the cheapest
-// thing to try. It is NOT here because of a proven D3DMetal bug. An earlier version of this comment
-// claimed D3DMetal bit-reinterprets `texture_buffer<uint>` inputs through a `float` hack, citing
-// `SPIRV-Cross: applying texture_buffer<float> hack, original pixel type was uint!` from real game
-// logs. That line is emitted by `libMoltenVK.dylib` (the only binary in a CrossOver install that
-// contains it), so it came from a DXVK-on-MoltenVK render path, never from D3DMetal — see
+// DXMT is now the only Metal-native backend this launcher supports; Apple's own D3DMetal backend
+// was removed. An earlier version of this comment claimed D3DMetal bit-reinterprets
+// `texture_buffer<uint>` inputs through a `float` hack, citing `SPIRV-Cross: applying
+// texture_buffer<float> hack, original pixel type was uint!` from real game logs. That line is
+// emitted by `libMoltenVK.dylib` (the only binary in a CrossOver install that contains it), so it
+// came from a DXVK-on-MoltenVK render path, never from D3DMetal — see
 // `RenderBridges.builtinD3DOverrides` for why that path was running at all.
 
 import Foundation
@@ -40,8 +38,7 @@ struct DXMTBridge: RenderBridge {
         // DXMT_LOG_PATH names the directory `d3d11.log` is written into, not a file — confirmed by
         // the strings in a real bundled dxmt d3d11.dll (`DXMT_LOG_PATH`, `DXMT_CONFIG_FILE` both
         // present; `DXMT_SHADER_CACHE`/`DXMT_SHADER_CACHE_PATH` from the old GitHub-downloaded
-        // build are NOT — this build's pipeline cache is internal with no path to configure, same
-        // situation as D3DMetal's own cache).
+        // build are NOT — this build's pipeline cache is internal, with no path to configure).
         env["DXMT_LOG_PATH"] = Self.supportDirectory.path
         env["DXMT_CONFIG_FILE"] = Self.supportDirectory.appendingPathComponent("dxmt.conf").path
 
@@ -53,9 +50,8 @@ struct DXMTBridge: RenderBridge {
 
     /// Picks the newest installed Wine build that carries DXMT under `lib/dxmt`.
     ///
-    /// Never falls back to auto-installing a Wine build, for the same reason as D3DMetalBridge: the
-    /// managed download this launcher can fetch on its own is a plain Wine build with no CrossOver
-    /// payload at all.
+    /// Never falls back to auto-installing a Wine build: the managed download this launcher can
+    /// fetch on its own is a plain Wine build with no CrossOver payload at all.
     func resolveWineBuild(
         preferredPath: String,
         processRunner: ProcessRunning,

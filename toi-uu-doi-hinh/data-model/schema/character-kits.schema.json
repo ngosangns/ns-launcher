@@ -1,0 +1,203 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "character-kits.schema.json",
+  "title": "CharacterKits",
+  "description": "Mọi thứ engine cần biết về MỘT nhân vật cụ thể mà không file game nào ghi — cách kit được CHƠI — gom về một bản ghi. Tiền thân: character-traits.json (2026-09-12) gộp 48 sự thật rải ở 7 bảng/3 file, 6 trong 7 bảng không kiểm id lúc load. Pha 2 của docs/redesign.md (2026-09-15) mở rộng thành kit: `hits` (một lần dùng chiêu thật sự gồm những dòng nào của talent-params.json), `conversions` (kit đổi HP/DEF ra ATK), `buffs` (talent cộng gì cho đội hay cho chính mình). Mọi con số là THAM CHIẾU vào talent-params.json (nhãn dòng đúng chữ game hoặc chỉ số param), đọc ở đúng cấp talent — trừ số của thiên phú không có bảng, phải là literal kèm trích dẫn. KHÔNG để hằng số chung ở đây (rotationSeconds, swapSeconds vẫn thuộc tuning.json): ranh giới là câu đó có gọi tên một nhân vật hay không.",
+  "type": "object",
+  "required": ["kits"],
+  "definitions": {
+    "talentKey": {
+      "enum": ["normalAttack", "elementalSkill", "elementalBurst"],
+      "description": "Bảng talent trong talent-params.json, cùng chữ với key ở đó."
+    },
+    "hitReference": {
+      "type": "object",
+      "description": "Một dòng (label) hoặc một param của một bảng talent, đếm `count` lần. `label` là nhãn CHÍNH XÁC như game in (sau khi bỏ tag layout), biểu thức của dòng được đọc bằng đúng grammar của AbyssTalentReader ({a}+{b} cộng, {a}/{b} lấy mạnh hơn, hậu tố nói basis). `param` dành cho dòng grammar cố ý từ chối (tỉ lệ mỗi stack như 'Resolve Bonus' của Raiden) — chỉ là đòn khi kit nói bao nhiêu stack; phải được in dưới dạng phần trăm ở đâu đó trong bảng. `factor` nhân với param của bảng khác, cho dòng là PHẦN của đòn khác ('Blazing Arrow DMG|{p} Normal Attack DMG'). Đúng một trong label/param.",
+      "properties": {
+        "talent": { "$ref": "#/definitions/talentKey", "description": "Mặc định là bảng của slot: skill→elementalSkill, burst→elementalBurst, combo/charged→normalAttack." },
+        "label": { "type": "string" },
+        "param": { "type": "integer", "minimum": 1 },
+        "basis": { "enum": ["ATK", "HP", "DEF", "EM"], "description": "Chỉ có nghĩa với `param`; dòng có nhãn mang hậu tố của chính nó. Mặc định ATK như game." },
+        "count": { "type": "number", "exclusiveMinimum": 0, "description": "Số lần dòng này xảy ra trong một đơn vị (một lần dùng chiêu / một chuỗi đòn thường / một đòn nặng). Mặc định 1. Lẻ = trung bình, phải nói trong note." },
+        "category": { "enum": ["normal", "charged", "skill", "burst"], "description": "Bucket DMG bonus. Mặc định theo slot; chuỗi đòn của chế độ mà game gọi là Elemental Burst DMG (Musou Isshin của Raiden) ghi `burst` dù nằm ở slot combo. Slot quyết định TẦN SUẤT (combo × normalCombosPerRotation, ability × 1), category quyết định BUFF." },
+        "factor": {
+          "type": "object",
+          "required": ["talent", "param"],
+          "properties": {
+            "talent": { "$ref": "#/definitions/talentKey" },
+            "param": { "type": "integer", "minimum": 1 }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false,
+      "oneOf": [ { "required": ["label"] }, { "required": ["param"] } ]
+    },
+    "hitSlot": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/hitReference" },
+      "description": "Có mặt = THAY TOÀN BỘ suy luận của reader cho slot này; mảng rỗng = 'không có gì' (Xilonen không đòn nặng trong Blade Roller). Vắng = reader đọc như thường."
+    }
+  },
+  "properties": {
+    "_doc": { "type": "string" },
+    "tags": {
+      "type": "object",
+      "description": "Giải thích từng tag, và luật của nó nằm ở file nào."
+    },
+    "kits": {
+      "type": "array",
+      "description": "Một entry mỗi nhân vật, không trùng. characterId phải trùng một id trong characters/*.json — AbyssDataLibrary báo id lạ vào diagnostics.unknownKitCharacterIDs, tham chiếu không giải được vào diagnostics.kitReferencesUnresolved, và AbyssCharacterKitTests ghim cả hai rỗng, vì id sai hay nhãn trôi không làm hỏng gì cả, nó chỉ lặng lẽ gỡ mất một cơ chế.",
+      "items": {
+        "type": "object",
+        "required": ["characterId"],
+        "properties": {
+          "characterId": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+            "description": "Slug, trùng characters/*.json. Không phải tên hiển thị."
+          },
+          "tags": {
+            "type": "array",
+            "items": { "enum": ["moonsign", "hexerei", "stellar-jubilee", "bond-of-life"] },
+            "description": "Nhân vật này ĐƯỢC TÍNH vào cơ chế nào. Luật của cơ chế ở team-bonus.json / damage-formula.json; ở đây chỉ là danh sách, vì danh sách đổi theo mỗi banner còn luật đổi theo phiên bản game."
+          },
+          "chargedAttackLabels": {
+            "type": "object",
+            "required": ["labels", "note"],
+            "description": "Nhãn dòng damage mà từ vựng chung của reader không nhận ra là đòn nặng ('Frostflake Arrow', 'Equitable Judgment'). Liệt kê theo nhân vật chứ không nới regex: phân loại một chiêu là trọng kích hay đòn thường là kiến thức game, không phải luật chữ. Dòng được nhãn chỉ đích danh thắng dòng chung bất kể hệ số (Neuvillette: 14.5% Max HP thắng 246% ATK). Không cần khi kit đã ghi `hits.charged`.",
+            "properties": {
+              "labels": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+              "note": { "type": "string" }
+            }
+          },
+          "hits": {
+            "type": "object",
+            "required": ["note"],
+            "description": "Một lần dùng chiêu thật sự gồm những dòng nào — điều duy nhất bảng talent của game KHÔNG nói được: 'Press DMG' và 'Charge Level 2 DMG' đều trong bảng E của Bennett mà một lần bấm chỉ là một trong hai; bảng burst của Raiden liệt kê cả chuỗi đòn thay đòn thường. Mỗi slot có mặt thay toàn bộ suy luận của AbyssTalentReader cho slot đó. `note` bắt buộc: trích chữ game và nói rõ giả định (chế độ nào, bao nhiêu stack).",
+            "properties": {
+              "skill": { "$ref": "#/definitions/hitSlot" },
+              "burst": { "$ref": "#/definitions/hitSlot" },
+              "combo": { "$ref": "#/definitions/hitSlot", "description": "MỘT chuỗi đòn thường (nhân normalCombosPerRotation)." },
+              "charged": { "$ref": "#/definitions/hitSlot", "description": "MỘT đòn nặng (nhân chargedAttacksPerRotation)." },
+              "note": { "type": "string" }
+            },
+            "additionalProperties": false
+          },
+          "conversions": {
+            "type": "array",
+            "description": "Chỉ số kit đổi ra ATK: Hu Tao 'ATK Increase|{p} Max HP', Noelle 'ATK Bonus|{p} DEF'. Chỉ nêu dòng; đổi TỪ chỉ số nào là hậu tố game viết trên dòng đó (HP hay DEF), file không được nói khác. Lên sheet dưới dạng TỈ LỆ (AbyssStats.atkFromHPRate) chứ không phải số, để tìm kiếm substat tự thấy HP đáng giá ATK với nhân vật này.",
+            "items": {
+              "type": "object",
+              "required": ["talent", "label", "uptime", "note"],
+              "properties": {
+                "talent": { "$ref": "#/definitions/talentKey" },
+                "label": { "type": "string" },
+                "uptime": { "type": "number", "minimum": 0, "maximum": 1, "description": "Phần đòn được đếm xảy ra khi chuyển đổi đang bật. Chế độ CHÍNH LÀ cửa sổ sát thương của nhân vật → 1; thời gian đứng sân là câu hỏi của Pha 3." },
+                "note": { "type": "string" }
+              },
+              "additionalProperties": false
+            }
+          },
+          "buffs": {
+            "type": "array",
+            "description": "Buff từ talent — cho đội (scope party) hay cho chính mình (scope self). SỐ không nằm ở đây với talent có bảng — engine đọc từ talent-params.json theo `label`; thiên phú không có bảng thì `value` literal kèm trích dẫn trong note. Ở đây là phần không luật nào suy ra được: 'ATK Bonus Ratio' của Bennett là phần ATK CƠ BẢN của Bennett cộng phẳng cho cả đội; 'Normal/Charged/Plunging Attack DMG Bonus' của Xiao là của riêng Xiao.",
+            "items": {
+              "type": "object",
+              "required": ["scope", "kind", "uptime", "note"],
+              "properties": {
+                "scope": { "enum": ["party", "self"] },
+                "kind": { "enum": ["flat-atk-from-base-atk", "elemental-dmg", "stat"], "description": "party: flat-atk-from-base-atk | elemental-dmg (nguyên tố của người cast). self: stat (ô nào của sheet, ghi ở `stat`)." },
+                "stat": { "type": "string", "description": "Với kind=stat: một AbyssStatField.tuningKey (atk_pct, dmg_normal, crit_rate, ...) hoặc 'elemental_dmg' = nguyên tố của người cast." },
+                "talent": { "$ref": "#/definitions/talentKey" },
+                "label": { "type": "string", "description": "Nhãn CHÍNH XÁC của dòng. Đổi tên dòng thì phải báo lỗi, không phải đoán quanh — xem diagnostics.talentBuffUnresolved." },
+                "value": { "type": "number", "description": "Literal, chỉ cho thiên phú không có bảng. Không đi cùng label." },
+                "uptime": { "type": "number", "minimum": 0, "maximum": 1 },
+                "note": { "type": "string", "description": "uptime là số chủ quan nhất ở đây; note phải nói nó ra từ đâu." }
+              },
+              "additionalProperties": false,
+              "oneOf": [ { "required": ["label"] }, { "required": ["value"] } ]
+            }
+          },
+          "resistanceShred": {
+            "type": "array",
+            "description": "Giảm kháng nguyên tố địch do chính nhân vật này. Đối trọng ở tuning.json.resistanceShred là các BỘ thánh di vật, gate theo nguyên tố của đội — đó là giả định về ai mặc gì; cái ở đây gate theo có mặt nhân vật, đó là sự thật. Số lấy từ dòng talent (`talent` + `label`) khi game có dòng, literal `value` khi không.",
+            "items": {
+              "type": "object",
+              "required": ["elements", "uptime", "note"],
+              "properties": {
+                "elements": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Tên nguyên tố, hoặc \"swirled\" = mọi nguyên tố đội khuếch tán được."
+                },
+                "talent": { "$ref": "#/definitions/talentKey" },
+                "label": { "type": "string" },
+                "value": { "type": "number", "minimum": 0, "maximum": 1 },
+                "uptime": { "type": "number", "minimum": 0, "maximum": 1 },
+                "note": { "type": "string" }
+              },
+              "additionalProperties": false,
+              "oneOf": [ { "required": ["label"] }, { "required": ["value"] } ]
+            }
+          },
+          "energy": {
+            "type": "object",
+            "required": ["note"],
+            "additionalProperties": false,
+            "description": "Pha 3: điều particles.json không nói được. Mọi số kèm nguồn trong note (bảng talent, mô tả kỹ năng, hoặc file:dòng gcsim).",
+            "properties": {
+              "variant": { "enum": ["press", "hold"], "description": "Số nào của ghi chú press/hold. Mặc định press." },
+              "eventsPerCast": { "type": "number", "exclusiveMinimum": 0, "description": "Số sự kiện mỗi lần E (đếm trong một rotation) cho ghi chú 'mỗi sự kiện'; cũng nhân ghi chú số khi con số thực ra là mỗi đòn." },
+              "particlesPerCast": { "type": "number", "minimum": 0, "description": "Số literal khi trang wiki không có ghi chú." },
+              "skillCastsPerRotation": { "type": "number", "exclusiveMinimum": 0, "description": "Ghi đè min(maxSkillCastsPerRotation, T/CD) — cho E mở một cửa sổ dùng một lần mỗi rotation." },
+              "collectedBy": { "enum": ["caster", "field"], "description": "Ai nhận hạt ở giá trị đủ: người dùng E (mặc định) hay người đang đứng sân (triệu hồi)." },
+              "note": { "type": "string" }
+            }
+          },
+          "stance": {
+            "type": "object",
+            "required": ["talent", "note"],
+            "additionalProperties": false,
+            "description": "Chuỗi đòn của nhân vật chỉ có khi talent này đang bật (Raiden, Cyno, Xiao: burst).",
+            "properties": {
+              "talent": { "$ref": "#/definitions/talentKey" },
+              "note": { "type": "string" }
+            }
+          },
+          "attack": {
+            "type": "object",
+            "required": ["note"],
+            "additionalProperties": false,
+            "description": "Nhân vật dùng thời gian đứng sân thế nào, khi frame data hoặc luật chung sai: chỉ đánh thường (combo), chỉ đòn nặng (charged — Neuvillette), hoặc thời lượng khác với frame của gcsim.",
+            "properties": {
+              "loop": { "enum": ["combo", "charged"] },
+              "infused": { "type": "boolean", "description": "Đòn thường/nặng của chính nhân vật gây sát thương nguyên tố (chữ game 'converted to X DMG' / 'infused with X'); catalyst và mũi sạc đầy của cung không cần ghi." },
+              "comboSeconds": { "type": "number", "exclusiveMinimum": 0 },
+              "chargedSeconds": { "type": "number", "exclusiveMinimum": 0 },
+              "note": { "type": "string" }
+            }
+          },
+          "reactionBaseDamageBonus": {
+            "type": "array",
+            "description": "Cộng vào BASE DAMAGE của phản ứng Lunar/Stellar chỉ nhờ có mặt trong đội. `reactions` là mảng tên tường minh — đó chính là điểm cải tiến so với cột nó thay thế: cột cũ là chuỗi tự do ('Lunar-Charged/Bloom/Crystallize') mà engine không hề đọc, nên mọi nguồn cộng cho MỌI phản ứng Lunar/Stellar; Lauma chỉ nâng Lunar-Bloom mà đang trả tiền cho Stellar-Conduct của đội.",
+            "items": {
+              "type": "object",
+              "required": ["reactions", "value"],
+              "properties": {
+                "reactions": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": { "type": "string" },
+                  "description": "Tên phản ứng đúng như AbyssReaction rawValue: \"Lunar-Bloom\", \"Stellar Swirl\", ..."
+                },
+                "value": { "type": "number", "minimum": 0, "maximum": 1 }
+              }
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

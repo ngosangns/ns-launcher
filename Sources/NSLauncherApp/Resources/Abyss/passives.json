@@ -1,0 +1,1771 @@
+{
+  "_doc": "Ý NGHĨA của passive vũ khí và hiệu ứng bộ thánh di vật, viết tay có cấu trúc (Pha 5 docs/redesign.md) — thay các dòng stat tóm tắt trong weapons/*.json, `setEffectApprox`, `conditionalUptime` và `assumedStacks`. CON SỐ không nằm ở đây mà ở passive-text.json (chữ game từ Yatta): `value` là số R1 như chữ game ghi (16% → 0.16), engine tìm cột có R1 đó và đọc R2–R5 từ cột; `column` chỉ khi hai cột trùng R1; `tiers` cho thẻ chứa danh sách (\"8/16/28%\"). `duration`/`stacks`/`cooldown`/`scale`/`per` phải có trong chữ game. Không giải được → diagnostics.passiveReferencesUnresolved, AbyssPassiveTests ghim rỗng. `stat`: atk% hp% def% flat-atk em er crit-rate crit-dmg dmg own-element-dmg <element>-dmg. `on`: chỉ hit của các đòn đó (normal charged plunge skill burst; vắng = mọi hit). `from`: value là tỉ lệ theo chỉ số của người mang (em hp def atk er er-over-100), `per` là mẫu số (\"mỗi 1,000 HP\"), `cap` là trần. `scope`: self (mặc định) | party (cả người mang) | others (trừ người mang) | active (người đang đứng sân). `scale`: giá trị là một phần của số khác trong chữ game (\"tăng 50% hiệu ứng 2 món\"). `trigger` vắng = luôn bật; một object hoặc mảng (mọi điều kiện cùng đúng). Kind: cast{by} hit{by,elemental} every{seconds} on-field off-field swap-in aura{elements} reaction{reactions} shield healed heals hp-change hp-above{percent} hp-below{percent} bond-of-life nightsoul moonsign{level} hexerei party-members{match,atLeast,includeWearer} distinct-elements{atLeast} weapon-type{types} energy-full energy-empty enemies{atLeast|below} defeat crystallize unmodelled{reason}. `group`: các hiệu ứng cùng group chỉ một cái có hiệu lực mỗi lần (The Widsith). CHỈ ghi điều chữ game nói — uptime và số stack trung bình là việc của AbyssBuffTimeline, không phải của file này. Bỏ qua (ghi `note`): năng lượng, hồi máu, khiên, tốc độ, hồi chiêu, đòn sát thương thêm, sát thương phản ứng, giảm kháng (ở tuning.resistanceShred), Physical DMG. Bản nháp do 6 agent soạn theo cùng một brief rồi được soát tay 2026-09-15; mọi giá trị đã qua kiểm tra tự động với chữ game.",
+  "weapons": {
+    "a-teaspoon-of-transcendence": {
+      "effects": [
+        {"stat": "atk%", "value": 0.28}
+      ],
+      "note": "Stellar reaction DMG bonus skipped."
+    },
+    "a-thousand-blazing-suns": {
+      "effects": [
+        {"stat": "crit-dmg", "value": 0.2, "trigger": {"kind": "cast", "by": ["skill", "burst"]}, "duration": 6, "cooldown": 10, "note": "Duration extension from Normal/Charged Elemental DMG skipped."},
+        {"stat": "atk%", "value": 0.28, "trigger": {"kind": "cast", "by": ["skill", "burst"]}, "duration": 6, "cooldown": 10},
+        {"stat": "crit-dmg", "value": 0.2, "trigger": [{"kind": "cast", "by": ["skill", "burst"]}, {"kind": "nightsoul"}], "duration": 6, "note": "Nightsoul's Blessing raises Scorching Brilliance by 75%.", "scale": 0.75, "cooldown": 10},
+        {"stat": "atk%", "value": 0.28, "trigger": [{"kind": "cast", "by": ["skill", "burst"]}, {"kind": "nightsoul"}], "duration": 6, "note": "Nightsoul's Blessing raises Scorching Brilliance by 75%.", "scale": 0.75, "cooldown": 10}
+      ]
+    },
+    "a-thousand-floating-dreams": {
+      "effects": [
+        {"stat": "em", "value": 32, "stacks": 3, "trigger": {"kind": "party-members", "match": "same-element"}},
+        {"stat": "own-element-dmg", "value": 0.1, "stacks": 3, "trigger": {"kind": "party-members", "match": "other-element"}},
+        {"stat": "em", "value": 40, "scope": "others"}
+      ]
+    },
+    "absolution": {
+      "effects": [
+        {"stat": "crit-dmg", "value": 0.2},
+        {"stat": "dmg", "value": 0.16, "stacks": 3, "duration": 6, "trigger": {"kind": "bond-of-life"}, "note": "Stacks when Bond of Life value increases."}
+      ]
+    },
+    "akuoumaru": {
+      "effects": [
+        {"stat": "dmg", "value": 0.4, "on": ["burst"], "trigger": {"kind": "unmodelled", "reason": "0.12% per point of the party's combined max Energy"}, "note": "Value is the stated maximum."}
+      ]
+    },
+    "alley-hunter": {
+      "effects": [
+        {"stat": "dmg", "value": 0.2, "trigger": {"kind": "off-field"}, "note": "Ramps 2%/s off-field to the max; decays 4%/s after 4s on-field."}
+      ]
+    },
+    "amenoma-kageuchi": {
+      "effects": [],
+      "note": "Energy only."
+    },
+    "amos-bow": {
+      "effects": [
+        {"stat": "dmg", "value": 0.12, "on": ["normal", "charged"]},
+        {"stat": "dmg", "value": 0.08, "stacks": 5, "on": ["normal", "charged"], "trigger": {"kind": "unmodelled", "reason": "arrow flight time (per 0.1s in the air)"}}
+      ]
+    },
+    "angelos-heptades": {
+      "effects": [
+        {"stat": "atk%", "value": 0.12},
+        {"stat": "dmg", "value": 0.1, "from": "atk", "per": 1000, "cap": 0.26, "scope": "active", "trigger": {"kind": "shield"}, "duration": 20, "note": "Energy restore and Hexerei off-field 50% share skipped."}
+      ]
+    },
+    "aqua-simulacra": {
+      "effects": [
+        {"stat": "hp%", "value": 0.16},
+        {"stat": "dmg", "value": 0.2, "note": "Needs opponents nearby; treated as always on."}
+      ]
+    },
+    "aquila-favonia": {
+      "effects": [
+        {"stat": "atk%", "value": 0.2}
+      ],
+      "note": "Healing and extra damage instance skipped."
+    },
+    "ash-graven-drinking-horn": {
+      "effects": [],
+      "note": "Extra damage instance, not a stat buff."
+    },
+    "astral-vultures-crimson-plumage": {
+      "effects": [
+        {"stat": "atk%", "value": 0.24, "trigger": {"kind": "reaction", "reactions": ["swirl", "stellar-swirl"]}, "duration": 12},
+        {"stat": "dmg", "tiers": [0.2, 0.48], "column": 1, "stacks": 2, "on": ["charged"], "trigger": {"kind": "party-members", "match": "other-element"}},
+        {"stat": "dmg", "tiers": [0.1, 0.24], "column": 2, "stacks": 2, "on": ["burst"], "trigger": {"kind": "party-members", "match": "other-element"}}
+      ]
+    },
+    "athame-artis": {
+      "effects": [
+        {"stat": "crit-dmg", "value": 0.16, "on": ["burst"]},
+        {"stat": "atk%", "value": 0.2, "trigger": {"kind": "hit", "by": ["burst"]}, "duration": 3},
+        {"stat": "atk%", "value": 0.16, "column": 2, "scope": "others", "trigger": {"kind": "hit", "by": ["burst"]}, "duration": 3},
+        {"stat": "atk%", "value": 0.2, "trigger": {"kind": "hexerei"}, "duration": 3, "note": "Hexerei raises the base by 75%; also needs a Burst hit.", "scale": 0.75},
+        {"stat": "atk%", "value": 0.16, "column": 2, "scope": "others", "trigger": {"kind": "hexerei"}, "duration": 3, "note": "Hexerei raises the base by 75%; also needs a Burst hit.", "scale": 0.75}
+      ]
+    },
+    "azurelight": {
+      "effects": [
+        {"stat": "atk%", "value": 0.24, "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 12},
+        {"stat": "atk%", "value": 0.24, "column": 1, "trigger": {"kind": "energy-empty"}, "duration": 12, "note": "Only within 12s after an Elemental Skill."},
+        {"stat": "crit-dmg", "value": 0.4, "trigger": {"kind": "energy-empty"}, "duration": 12, "note": "Only within 12s after an Elemental Skill."}
+      ]
+    },
+    "ballad-of-the-boundless-blue": {
+      "effects": [
+        {"stat": "dmg", "value": 0.08, "on": ["normal"], "stacks": 3, "duration": 6, "cooldown": 0.3, "trigger": {"kind": "hit", "by": ["normal", "charged"]}},
+        {"stat": "dmg", "value": 0.06, "on": ["charged"], "stacks": 3, "duration": 6, "cooldown": 0.3, "trigger": {"kind": "hit", "by": ["normal", "charged"]}}
+      ]
+    },
+    "ballad-of-the-fjords": {
+      "effects": [
+        {"stat": "em", "value": 120, "trigger": {"kind": "distinct-elements", "atLeast": 3}}
+      ]
+    },
+    "beacon-of-the-reed-sea": {
+      "effects": [
+        {"stat": "atk%", "value": 0.2, "trigger": {"kind": "hit", "by": ["skill"]}, "duration": 8},
+        {"stat": "atk%", "value": 0.2, "column": 1, "trigger": {"kind": "unmodelled", "reason": "after taking DMG"}, "duration": 8},
+        {"stat": "hp%", "value": 0.32, "note": "Only while not protected by a shield; treated as always on."}
+      ]
+    },
+    "black-tassel": {
+      "effects": [
+        {"stat": "dmg", "value": 0.4, "trigger": {"kind": "unmodelled", "reason": "only against slimes"}}
+      ]
+    },
+    "blackcliff-agate": {
+      "effects": [
+        {"stat": "atk%", "value": 0.12, "stacks": 3, "duration": 30, "trigger": {"kind": "defeat"}}
+      ]
+    },
+    "blackcliff-longsword": {
+      "effects": [
+        {"stat": "atk%", "value": 0.12, "stacks": 3, "duration": 30, "trigger": {"kind": "defeat"}}
+      ]
+    },
+    "blackcliff-pole": {
+      "effects": [
+        {"stat": "atk%", "value": 0.12, "stacks": 3, "duration": 30, "trigger": {"kind": "defeat"}}
+      ]
+    },
+    "blackcliff-slasher": {
+      "effects": [
+        {"stat": "atk%", "value": 0.12, "stacks": 3, "duration": 30, "trigger": {"kind": "defeat"}}
+      ]
+    },
+    "blackcliff-warbow": {
+      "effects": [
+        {"stat": "atk%", "value": 0.12, "stacks": 3, "duration": 30, "trigger": {"kind": "defeat"}}
+      ]
+    },
+    "blackmarrow-lantern": {
+      "effects": [],
+      "note": "Reaction damage bonuses only."
+    },
+    "blade-of-atonement": {
+      "effects": [
+        {"stat": "em", "value": 64, "trigger": {"kind": "reaction"}, "duration": 12},
+        {"stat": "atk%", "value": 0.16, "trigger": {"kind": "reaction", "reactions": ["stellar-glimmer"]}, "duration": 12}
+      ]
+    },
+    "bloodsoaked-ruins": {
+      "effects": [
+        {"stat": "crit-dmg", "value": 0.28, "trigger": {"kind": "reaction", "reactions": ["lunar-charged"]}, "duration": 6, "note": "Lunar-Charged DMG bonus and energy skipped."}
+      ]
+    },
+    "bloodtainted-greatsword": {
+      "effects": [
+        {"stat": "dmg", "value": 0.12, "trigger": {"kind": "aura", "elements": ["pyro", "electro"]}}
+      ]
+    },
+    "calamity-of-eshu": {
+      "effects": [
+        {"stat": "dmg", "value": 0.2, "on": ["normal", "charged"], "trigger": {"kind": "shield"}},
+        {"stat": "crit-rate", "value": 0.08, "on": ["normal", "charged"], "trigger": {"kind": "shield"}}
+      ]
+    },
+    "calamity-queller": {
+      "effects": [
+        {"stat": "dmg", "value": 0.12},
+        {"stat": "atk%", "value": 0.032, "stacks": 6, "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 20, "note": "Gains one stack per second."},
+        {"stat": "atk%", "value": 0.032, "stacks": 6, "trigger": {"kind": "off-field"}, "duration": 20, "note": "Off-field doubling of Consummation; value is the base per stack; needs Consummation active."}
+      ]
+    },
+    "cashflow-supervision": {
+      "effects": [
+        {"stat": "atk%", "value": 0.16},
+        {"stat": "dmg", "value": 0.16, "column": 1, "on": ["normal"], "stacks": 3, "duration": 4, "cooldown": 0.3, "trigger": {"kind": "hp-change"}},
+        {"stat": "dmg", "value": 0.14, "on": ["charged"], "stacks": 3, "duration": 4, "cooldown": 0.3, "trigger": {"kind": "hp-change"}, "note": "Stellar-Conduct DMG and ATK SPD skipped."}
+      ]
+    },
+    "chain-breaker": {
+      "effects": [
+        {"stat": "atk%", "value": 0.048, "stacks": 3, "trigger": {"kind": "party-members", "match": "natlan-or-other-element"}},
+        {"stat": "em", "value": 24, "trigger": {"kind": "party-members", "match": "natlan-or-other-element", "atLeast": 3}}
+      ]
+    },
+    "cinnabar-spindle": {
+      "effects": [],
+      "note": "Flat damage addition."
+    },
+    "clash-of-kings": {
+      "effects": [
+        {"stat": "atk%", "value": 0.2, "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 6, "cooldown": 12, "note": "Charged Attack extension up to 6s skipped."},
+        {"stat": "em", "value": 100, "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 6, "cooldown": 12}
+      ]
+    },
+    "cloudforged": {
+      "effects": [
+        {"stat": "em", "value": 40, "stacks": 2, "duration": 18, "trigger": {"kind": "unmodelled", "reason": "after Elemental Energy is decreased"}}
+      ]
+    },
+    "compound-bow": {
+      "effects": [
+        {"stat": "atk%", "value": 0.04, "stacks": 4, "duration": 6, "cooldown": 0.3, "trigger": {"kind": "hit", "by": ["normal", "charged"]}, "note": "Normal ATK SPD skipped."}
+      ]
+    },
+    "cool-steel": {
+      "effects": [
+        {"stat": "dmg", "value": 0.12, "trigger": {"kind": "aura", "elements": ["hydro", "cryo"]}}
+      ]
+    },
+    "covenant-of-frost-and-snow": {
+      "effects": [
+        {"stat": "em", "value": 120, "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 12}
+      ]
+    },
+    "cranes-echoing-call": {
+      "effects": [
+        {"stat": "dmg", "value": 0.28, "on": ["plunge"], "scope": "party", "trigger": {"kind": "hit", "by": ["plunge"]}, "duration": 20, "note": "Energy restore skipped."}
+      ]
+    },
+    "crescent-pike": {
+      "effects": [],
+      "note": "Extra damage instance, not a stat buff."
+    },
+    "crimson-moons-semblance": {
+      "effects": [
+        {"stat": "dmg", "value": 0.12, "trigger": {"kind": "bond-of-life"}},
+        {"stat": "dmg", "value": 0.24, "trigger": {"kind": "bond-of-life"}, "note": "Only when Bond of Life is at least 30% of Max HP."}
+      ]
+    },
+    "dark-iron-sword": {
+      "effects": [
+        {"stat": "atk%", "value": 0.2, "duration": 12, "trigger": {"kind": "reaction", "reactions": ["overloaded", "superconduct", "stellar-conduct", "electro-charged", "quicken", "aggravate", "hyperbloom", "lunar-charged", "swirl"]}, "note": "Swirl counts only when Electro-infused."}
+      ]
+    },
+    "dawning-frost": {
+      "effects": [
+        {"stat": "em", "value": 72, "trigger": {"kind": "hit", "by": ["charged"]}, "duration": 10},
+        {"stat": "em", "value": 48, "trigger": {"kind": "hit", "by": ["skill"]}, "duration": 10}
+      ]
+    },
+    "deathmatch": {
+      "effects": [
+        {"stat": "atk%", "value": 0.16, "trigger": {"kind": "enemies", "atLeast": 2}},
+        {"stat": "def%", "value": 0.16, "column": 1, "trigger": {"kind": "enemies", "atLeast": 2}},
+        {"stat": "atk%", "value": 0.24, "trigger": {"kind": "enemies", "below": 2}}
+      ]
+    },
+    "debate-club": {
+      "effects": [],
+      "note": "Extra damage instance, not a stat buff."
+    },
+    "dialogues-of-the-desert-sages": {
+      "effects": [],
+      "note": "Energy only."
+    },
+    "disaster-and-remorse": {
+      "effects": [
+        {"stat": "dmg", "value": 0.4, "on": ["normal", "charged"], "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 3, "cooldown": 18, "note": "Unforgivable; duration extensions from Skill/Burst hits skipped."},
+        {"stat": "dmg", "value": 0.4, "column": 1, "on": ["skill", "burst"], "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 3, "cooldown": 18, "note": "Irreparable; duration extensions from Normal/Charged hits skipped."},
+        {"stat": "dmg", "value": 0.4, "on": ["normal", "charged"], "trigger": {"kind": "hexerei"}, "duration": 3, "note": "Hexerei raises the base by 75%; also needs Unforgivable active.", "scale": 0.75},
+        {"stat": "dmg", "value": 0.4, "column": 1, "on": ["skill", "burst"], "trigger": {"kind": "hexerei"}, "duration": 3, "note": "Hexerei raises the base by 75%; also needs Irreparable active.", "scale": 0.75}
+      ]
+    },
+    "dodoco-tales": {
+      "effects": [
+        {"stat": "dmg", "value": 0.16, "on": ["charged"], "trigger": {"kind": "hit", "by": ["normal"]}, "duration": 6},
+        {"stat": "atk%", "value": 0.08, "trigger": {"kind": "hit", "by": ["charged"]}, "duration": 6}
+      ]
+    },
+    "dragons-bane": {
+      "effects": [
+        {"stat": "dmg", "value": 0.2, "trigger": {"kind": "aura", "elements": ["hydro", "pyro"]}}
+      ]
+    },
+    "dragonspine-spear": {
+      "effects": [],
+      "note": "extra damage instance, not a stat buff"
+    },
+    "earth-shaker": {
+      "effects": [
+        {"stat": "dmg", "value": 0.16, "on": ["skill"], "trigger": {"kind": "reaction"}, "duration": 8, "note": "Only Pyro-related reactions, by any party member (even off-field)."}
+      ]
+    },
+    "echoes-of-the-heart": {
+      "effects": [
+        {"stat": "em", "value": 60, "trigger": {"kind": "reaction"}, "duration": 12, "note": "Stellar Glimmer reaction DMG bonus skipped."}
+      ]
+    },
+    "elegy-for-the-end": {
+      "effects": [
+        {"stat": "em", "value": 60},
+        {"stat": "em", "value": 100, "scope": "party", "trigger": {"kind": "hit", "by": ["skill", "burst"]}, "duration": 12, "cooldown": 20, "note": "Needs 4 Sigils from Skill/Burst hits (one per 0.2s); no Sigils for 20s after; Millennial Movement buffs do not stack."},
+        {"stat": "atk%", "value": 0.2, "scope": "party", "trigger": {"kind": "hit", "by": ["skill", "burst"]}, "duration": 12, "cooldown": 20, "note": "Needs 4 Sigils from Skill/Burst hits (one per 0.2s); no Sigils for 20s after; Millennial Movement buffs do not stack."}
+      ]
+    },
+    "emberwell": {
+      "effects": [
+        {"stat": "atk%", "value": 0.16, "trigger": {"kind": "reaction"}, "duration": 12, "note": "Stellar Glimmer reaction DMG bonus skipped."}
+      ]
+    },
+    "emerald-orb": {
+      "effects": [
+        {"stat": "atk%", "value": 0.2, "trigger": {"kind": "reaction", "reactions": ["vaporize", "electro-charged", "frozen", "bloom", "lunar-charged", "lunar-bloom", "swirl"]}, "duration": 12, "note": "Swirl only when Hydro-infused."}
+      ]
+    },
+    "end-of-the-line": {
+      "effects": [],
+      "note": "extra damage instance, not a stat buff"
+    },
+    "engulfing-lightning": {
+      "effects": [
+        {"stat": "atk%", "value": 0.28, "from": "er-over-100", "cap": 0.8},
+        {"stat": "er", "value": 0.3, "trigger": {"kind": "cast", "by": ["burst"]}, "duration": 12}
+      ]
+    },
+    "etherlight-spindlelute": {
+      "effects": [
+        {"stat": "em", "value": 100, "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 20}
+      ]
+    },
+    "everlasting-moonglow": {
+      "effects": [],
+      "note": "Normal Attack bonus is a flat damage addition from Max HP; healing bonus and energy skipped"
+    },
+    "exaiphanes-blade": {
+      "effects": [
+        {"stat": "atk%", "value": 0.16, "trigger": {"kind": "unmodelled", "reason": "only when the Traveler equips it; after hitting an opponent"}, "duration": 8, "cooldown": 5, "note": "Energy regeneration skipped."}
+      ]
+    },
+    "eye-of-perception": {
+      "effects": [],
+      "note": "extra damage instance, not a stat buff"
+    },
+    "fading-twilight": {
+      "effects": [
+        {"stat": "dmg", "tiers": [0.06, 0.1, 0.14], "column": 0, "trigger": {"kind": "hit"}, "cooldown": 7, "note": "Three cycling states (6/10/14%) that advance on hit, modelled as tiers (stacks omitted: the count is written as a word); wraps back to the first state."}
+      ]
+    },
+    "fang-of-the-mountain-king": {
+      "effects": [
+        {"stat": "dmg", "value": 0.1, "on": ["skill", "burst"], "trigger": {"kind": "hit", "by": ["skill"]}, "duration": 6, "stacks": 6, "cooldown": 0.5, "note": "Also 3 stacks per party Burning/Burgeon (once every 2s); stacks expire independently."}
+      ]
+    },
+    "favonius-codex": {
+      "effects": [],
+      "note": "energy only"
+    },
+    "favonius-greatsword": {
+      "effects": [],
+      "note": "energy only"
+    },
+    "favonius-lance": {
+      "effects": [],
+      "note": "energy only"
+    },
+    "favonius-sword": {
+      "effects": [],
+      "note": "energy only"
+    },
+    "favonius-warbow": {
+      "effects": [],
+      "note": "energy only"
+    },
+    "ferrous-shadow": {
+      "effects": [
+        {"stat": "dmg", "value": 0.3, "on": ["charged"], "trigger": {"kind": "hp-below", "percent": 70}, "note": "Interruption resistance skipped."}
+      ]
+    },
+    "festering-desire": {
+      "effects": [
+        {"stat": "dmg", "value": 0.16, "on": ["skill"]},
+        {"stat": "crit-rate", "value": 0.06, "on": ["skill"]}
+      ]
+    },
+    "fillet-blade": {
+      "effects": [],
+      "note": "extra damage instance, not a stat buff"
+    },
+    "finale-of-the-deep": {
+      "effects": [
+        {"stat": "atk%", "value": 0.12, "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 15, "cooldown": 10, "note": "Bond of Life grant skipped."},
+        {"stat": "flat-atk", "value": 150, "trigger": [{"kind": "cast", "by": ["skill"]}, {"kind": "healed"}], "duration": 15, "cooldown": 10, "note": "The weapon grants its own Bond of Life on skill use; healing clears it. Maximum used; actual is 2.4% of the Bond of Life cleared."}
+      ]
+    },
+    "flame-forged-insight": {
+      "effects": [
+        {"stat": "em", "value": 60, "trigger": {"kind": "reaction", "reactions": ["electro-charged", "lunar-charged", "bloom", "lunar-bloom", "crystallize", "lunar-crystallize"]}, "duration": 15, "cooldown": 15, "note": "Energy restore skipped."}
+      ]
+    },
+    "fleuve-cendre-ferryman": {
+      "effects": [
+        {"stat": "crit-rate", "value": 0.08, "on": ["skill"]},
+        {"stat": "er", "value": 0.16, "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 5}
+      ]
+    },
+    "flower-wreathed-feathers": {
+      "effects": [
+        {"stat": "dmg", "value": 0.06, "on": ["charged"], "trigger": {"kind": "cast", "by": ["charged"]}, "stacks": 6, "duration": 10, "note": "Gains a stack every 0.5s while aiming; removed 10s after leaving Aiming Mode; gliding stamina skipped."}
+      ]
+    },
+    "flowing-purity": {
+      "effects": [
+        {"stat": "dmg", "value": 0.08, "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 15, "cooldown": 10, "note": "Bond of Life grant skipped."},
+        {"stat": "dmg", "value": 0.12, "trigger": [{"kind": "cast", "by": ["skill"]}, {"kind": "healed"}], "duration": 15, "cooldown": 10, "note": "The weapon grants its own Bond of Life on skill use; healing clears it. Maximum used; actual is 2% per 1,000 HP of Bond of Life cleared."}
+      ]
+    },
+    "flute-of-ezpitzal": {
+      "effects": [
+        {"stat": "def%", "value": 0.16, "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 15}
+      ]
+    },
+    "footprint-of-the-rainbow": {
+      "effects": [
+        {"stat": "def%", "value": 0.16, "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 15}
+      ]
+    },
+    "forest-regalia": {
+      "effects": [
+        {"stat": "em", "value": 60, "trigger": {"kind": "reaction", "reactions": ["burning", "quicken", "aggravate", "spread", "bloom", "lunar-bloom", "hyperbloom", "burgeon"]}, "duration": 12, "cooldown": 20, "note": "Leaf must be picked up; does not stack."}
+      ]
+    },
+    "forged-by-the-golden-melody": {
+      "effects": [
+        {"stat": "atk%", "value": 0.18, "trigger": {"kind": "every", "seconds": 10}, "duration": 10, "note": "Rotates ATK > EM > Stellar Glimmer DMG, one 10s each; Contrapuntal extra instance skipped."},
+        {"stat": "em", "value": 120, "trigger": {"kind": "every", "seconds": 10}, "duration": 10, "note": "Rotates ATK > EM > Stellar Glimmer DMG, one 10s each; Contrapuntal extra instance skipped."}
+      ]
+    },
+    "fractured-halo": {
+      "effects": [
+        {"stat": "atk%", "value": 0.24, "trigger": {"kind": "cast", "by": ["skill", "burst"]}, "duration": 20, "note": "Lunar-Charged DMG bonus skipped."}
+      ]
+    },
+    "freedom-sworn": {
+      "effects": [
+        {"stat": "dmg", "value": 0.1},
+        {"stat": "dmg", "value": 0.16, "on": ["normal", "charged", "plunge"], "scope": "party", "trigger": {"kind": "reaction"}, "duration": 12, "cooldown": 20, "note": "Needs 2 Sigils from reactions (one per 0.5s); no Sigils for 20s after; Millennial Movement buffs do not stack."},
+        {"stat": "atk%", "value": 0.2, "scope": "party", "trigger": {"kind": "reaction"}, "duration": 12, "cooldown": 20, "note": "Needs 2 Sigils from reactions (one per 0.5s); no Sigils for 20s after; Millennial Movement buffs do not stack."}
+      ]
+    },
+    "frostbearer": {
+      "effects": [],
+      "note": "extra damage instance, not a stat buff"
+    },
+    "frostbreath": {
+      "effects": [
+        {"stat": "atk%", "value": 0.2, "trigger": {"kind": "reaction"}, "duration": 15, "cooldown": 16, "note": "Only Cryo- or Hydro-related reactions; energy for others skipped."}
+      ]
+    },
+    "fruit-of-fulfillment": {
+      "effects": [
+        {"stat": "em", "value": 24, "trigger": {"kind": "reaction"}, "stacks": 5, "note": "One stack per 0.3s; loses a stack per 6s without reactions; the 5% ATK loss per stack is skipped."}
+      ]
+    },
+    "fruitful-hook": {
+      "effects": [
+        {"stat": "crit-rate", "value": 0.16, "on": ["plunge"]},
+        {"stat": "dmg", "value": 0.16, "on": ["normal", "charged", "plunge"], "trigger": {"kind": "hit", "by": ["plunge"]}, "duration": 10}
+      ]
+    },
+    "gest-of-the-mighty-wolf": {
+      "effects": [
+        {"stat": "dmg", "value": 0.075, "trigger": {"kind": "hit", "by": ["normal"]}, "stacks": 4, "duration": 4, "note": "Also 2 stacks on Skill cast and on Charged Attack start; ATK SPD skipped."},
+        {"stat": "crit-dmg", "value": 0.075, "trigger": {"kind": "hexerei"}, "stacks": 4, "duration": 4, "note": "Per Four Winds' Hymn stack, only with Hexerei: Secret Rite."}
+      ]
+    },
+    "golden-frostbound-oath": {
+      "effects": [
+        {"stat": "def%", "value": 0.16},
+        {"stat": "geo-dmg", "value": 0.4, "trigger": {"kind": "hit", "by": ["skill"]}, "duration": 6, "note": "Also on Lunar-Crystallize hits; Lunar-Crystallize DMG bonus skipped."},
+        {"stat": "geo-dmg", "value": 0.2, "scope": "others", "trigger": {"kind": "unmodelled", "reason": "needs Moondrifts near the wearer while Frost Fae's Favor is active"}, "note": "Lunar-Crystallize DMG bonus skipped."}
+      ]
+    },
+    "hakushin-ring": {
+      "effects": [
+        {"stat": "own-element-dmg", "value": 0.1, "scope": "party", "trigger": {"kind": "reaction"}, "duration": 6, "note": "Only Electro reactions, and only members whose element took part in the reaction; does not stack."}
+      ]
+    },
+    "halberd": {
+      "effects": [],
+      "note": "extra damage instance, not a stat buff"
+    },
+    "hamayumi": {
+      "effects": [
+        {"stat": "dmg", "value": 0.16, "on": ["normal"]},
+        {"stat": "dmg", "value": 0.12, "on": ["charged"]},
+        {"stat": "dmg", "value": 0.16, "on": ["normal"], "trigger": {"kind": "energy-full"}, "note": "Increased by 100% at full Energy."},
+        {"stat": "dmg", "value": 0.12, "on": ["charged"], "trigger": {"kind": "energy-full"}, "note": "Increased by 100% at full Energy."}
+      ]
+    },
+    "haran-geppaku-futsu": {
+      "effects": [
+        {"stat": "dmg", "value": 0.12},
+        {"stat": "dmg", "value": 0.2, "on": ["normal"], "trigger": {"kind": "cast", "by": ["skill"]}, "stacks": 2, "duration": 8, "note": "Per Wavespike consumed; Wavespikes come from other party members' Skills (once every 0.3s)."}
+      ]
+    },
+    "harbinger-of-dawn": {
+      "effects": [
+        {"stat": "crit-rate", "value": 0.14, "trigger": {"kind": "hp-above", "percent": 90}}
+      ]
+    },
+    "heretics-molten-blade": {
+      "effects": [
+        {"stat": "atk%", "value": 0.18, "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 14, "cooldown": 14, "note": "Low end of the 18%-36% range; removed when leaving the field."},
+        {"stat": "atk%", "value": 0.18, "trigger": {"kind": "unmodelled", "reason": "scales with distance travelled each second"}, "duration": 14, "cooldown": 14, "note": "Extra up to the 36% maximum, based on distance travelled."}
+      ]
+    },
+    "hunters-path": {
+      "effects": [
+        {"stat": "dmg", "value": 0.12}
+      ],
+      "note": "Tireless Hunt is a flat damage addition from Elemental Mastery, skipped."
+    },
+    "ibis-piercer": {
+      "effects": [
+        {"stat": "em", "value": 40, "trigger": {"kind": "hit", "by": ["charged"]}, "stacks": 2, "duration": 6, "cooldown": 0.5}
+      ]
+    },
+    "iron-sting": {
+      "effects": [
+        {"stat": "dmg", "value": 0.06, "trigger": {"kind": "hit", "elemental": true}, "duration": 6, "stacks": 2, "cooldown": 1}
+      ]
+    },
+    "jade-vista": {
+      "effects": [
+        {"stat": "em", "value": 64, "trigger": {"kind": "party-members", "match": "same-element"}, "stacks": 3, "note": "Shares a 3-stack total with the ATK effect; EM stacks applied first."},
+        {"stat": "atk%", "value": 0.12, "trigger": {"kind": "party-members", "match": "other-element"}, "stacks": 3, "note": "Shares a 3-stack total with the EM effect."}
+      ]
+    },
+    "jadefalls-splendor": {
+      "effects": [
+        {"stat": "own-element-dmg", "value": 0.003, "from": "hp", "per": 1000, "cap": 0.12, "trigger": {"kind": "cast", "by": ["burst"]}, "duration": 3, "note": "Also triggered by creating a shield; works off-field; energy skipped."}
+      ]
+    },
+    "kagotsurube-isshin": {
+      "effects": [
+        {"stat": "atk%", "value": 0.15, "trigger": {"kind": "hit", "by": ["normal", "charged", "plunge"]}, "duration": 8, "cooldown": 8, "note": "AoE DMG instance skipped."}
+      ]
+    },
+    "kaguras-verity": {
+      "effects": [
+        {"stat": "dmg", "value": 0.12, "on": ["skill"], "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 24, "stacks": 3, "note": "Stellar-Conduct DMG bonus skipped."},
+        {"stat": "dmg", "value": 0.12, "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 24, "note": "Only while holding 3 Kagura Dance stacks."}
+      ]
+    },
+    "katsuragikiri-nagamasa": {
+      "effects": [
+        {"stat": "dmg", "value": 0.06, "on": ["skill"], "note": "Energy loss/regeneration skipped."}
+      ]
+    },
+    "key-of-khaj-nisut": {
+      "effects": [
+        {"stat": "hp%", "value": 0.2},
+        {"stat": "em", "value": 0.0012, "from": "hp", "trigger": {"kind": "hit", "by": ["skill"]}, "duration": 20, "stacks": 3, "cooldown": 0.3},
+        {"stat": "em", "value": 0.002, "from": "hp", "scope": "party", "trigger": {"kind": "hit", "by": ["skill"]}, "duration": 20, "note": "Only once Grand Hymn reaches 3 stacks; uses the wearer's Max HP."}
+      ]
+    },
+    "kings-squire": {
+      "effects": [
+        {"stat": "em", "value": 60, "trigger": {"kind": "cast", "by": ["skill", "burst"]}, "duration": 12, "cooldown": 20, "note": "Removed on character switch; the ending DMG instance is skipped."}
+      ]
+    },
+    "kitain-cross-spear": {
+      "effects": [
+        {"stat": "dmg", "value": 0.06, "on": ["skill"], "note": "Energy loss/regeneration skipped."}
+      ]
+    },
+    "light-of-foliar-incision": {
+      "effects": [
+        {"stat": "crit-rate", "value": 0.04}
+      ],
+      "note": "Foliar Incision (120% of EM added to Normal Attack and Skill DMG) is a flat damage addition."
+    },
+    "lightbearing-moonshard": {
+      "effects": [
+        {"stat": "def%", "value": 0.2}
+      ],
+      "note": "Lunar-Crystallize reaction DMG bonus skipped."
+    },
+    "lions-roar": {
+      "effects": [
+        {"stat": "dmg", "value": 0.2, "trigger": {"kind": "aura", "elements": ["pyro", "electro"]}}
+      ]
+    },
+    "lithic-blade": {
+      "effects": [
+        {"stat": "atk%", "value": 0.07, "trigger": {"kind": "party-members", "match": "liyue", "includeWearer": true}, "stacks": 4, "note": "Counts every party member from Liyue, the wearer included."},
+        {"stat": "crit-rate", "value": 0.03, "trigger": {"kind": "party-members", "match": "liyue", "includeWearer": true}, "stacks": 4, "note": "Counts every party member from Liyue, the wearer included."}
+      ]
+    },
+    "lithic-spear": {
+      "effects": [
+        {"stat": "atk%", "value": 0.07, "trigger": {"kind": "party-members", "match": "liyue", "includeWearer": true}, "stacks": 4, "note": "Counts every party member from Liyue, the wearer included."},
+        {"stat": "crit-rate", "value": 0.03, "trigger": {"kind": "party-members", "match": "liyue", "includeWearer": true}, "stacks": 4, "note": "Counts every party member from Liyue, the wearer included."}
+      ]
+    },
+    "lost-prayer-to-the-sacred-winds": {
+      "effects": [
+        {"stat": "dmg", "value": 0.08, "trigger": {"kind": "every", "seconds": 4}, "stacks": 4, "note": "In battle, one stack every 4s up to 4, kept until the character falls or leaves combat; Movement SPD skipped."}
+      ]
+    },
+    "lumidouce-elegy": {
+      "effects": [
+        {"stat": "atk%", "value": 0.15},
+        {"stat": "dmg", "value": 0.18, "trigger": {"kind": "reaction", "reactions": ["burning"]}, "duration": 8, "stacks": 2, "note": "Also triggered by dealing Dendro DMG to Burning opponents; works off-field; energy skipped."}
+      ]
+    },
+    "luxurious-sea-lord": {
+      "effects": [
+        {"stat": "dmg", "value": 0.12, "on": ["burst"], "note": "Tuna AoE DMG instance skipped."}
+      ]
+    },
+    "magic-guide": {
+      "effects": [
+        {"stat": "dmg", "value": 0.12, "trigger": {"kind": "aura", "elements": ["hydro", "electro"]}}
+      ]
+    },
+    "mailed-flower": {
+      "effects": [
+        {"stat": "atk%", "value": 0.12, "trigger": {"kind": "hit", "by": ["skill"]}, "duration": 8, "note": "Also triggered by the wearer triggering an Elemental Reaction."},
+        {"stat": "em", "value": 48, "trigger": {"kind": "hit", "by": ["skill"]}, "duration": 8, "note": "Also triggered by the wearer triggering an Elemental Reaction."}
+      ]
+    },
+    "makhaira-aquamarine": {
+      "effects": [
+        {"stat": "flat-atk", "value": 0.24, "from": "em", "trigger": {"kind": "every", "seconds": 10}, "duration": 12},
+        {"stat": "flat-atk", "value": 0.24, "from": "em", "scale": 0.3, "scope": "others", "trigger": {"kind": "every", "seconds": 10}, "duration": 12, "note": "Nearby party members gain 30% of the wearer's buff."}
+      ]
+    },
+    "mappa-mare": {
+      "effects": [
+        {"stat": "dmg", "value": 0.08, "trigger": {"kind": "reaction"}, "duration": 10, "stacks": 2}
+      ]
+    },
+    "master-key": {
+      "effects": [
+        {"stat": "em", "value": 60, "trigger": {"kind": "reaction"}, "duration": 12, "note": "Works off-field."},
+        {"stat": "em", "value": 60, "trigger": {"kind": "moonsign", "level": 2}, "duration": 12, "note": "Extra EM on the reaction buff under Ascendant Gleam; also needs the reaction."}
+      ]
+    },
+    "memory-of-dust": {
+      "effects": [
+        {"stat": "atk%", "value": 0.04, "trigger": {"kind": "hit"}, "duration": 8, "stacks": 5, "cooldown": 0.3, "note": "Shield Strength skipped."},
+        {"stat": "atk%", "value": 0.04, "trigger": {"kind": "shield"}, "duration": 8, "stacks": 5, "cooldown": 0.3, "note": "The +100% of the hit stacks while shielded; also needs the hit stacks."}
+      ]
+    },
+    "messenger": {
+      "effects": [],
+      "note": "Extra damage instance on weak-point hits, not a stat buff."
+    },
+    "missive-windspear": {
+      "effects": [
+        {"stat": "atk%", "value": 0.12, "trigger": {"kind": "reaction"}, "duration": 10},
+        {"stat": "em", "value": 48, "trigger": {"kind": "reaction"}, "duration": 10}
+      ]
+    },
+    "mistsplitter-reforged": {
+      "effects": [
+        {"stat": "dmg", "value": 0.12},
+        {"stat": "own-element-dmg", "tiers": [0.08, 0.16, 0.28], "column": 1, "stacks": 3, "trigger": {"kind": "hit", "by": ["normal"], "elemental": true}, "duration": 5, "note": "One stack each from Normal Attack Elemental DMG (5s), casting Burst (10s), and Energy below full."}
+      ]
+    },
+    "mitternachts-waltz": {
+      "effects": [
+        {"stat": "dmg", "value": 0.2, "on": ["skill"], "trigger": {"kind": "hit", "by": ["normal"]}, "duration": 5},
+        {"stat": "dmg", "value": 0.2, "on": ["normal"], "trigger": {"kind": "hit", "by": ["skill"]}, "duration": 5}
+      ]
+    },
+    "moonpiercer": {
+      "effects": [
+        {"stat": "atk%", "value": 0.16, "trigger": {"kind": "reaction", "reactions": ["burning", "quicken", "aggravate", "spread", "bloom", "lunar-bloom", "hyperbloom", "burgeon"]}, "duration": 12, "cooldown": 20, "note": "Requires picking up the Leaf of Revival."}
+      ]
+    },
+    "moonweavers-dawn": {
+      "effects": [
+        {"stat": "dmg", "value": 0.2, "on": ["burst"]},
+        {"stat": "dmg", "value": 0.16, "on": ["burst"], "trigger": {"kind": "unmodelled", "reason": "Energy Capacity does not exceed 60"}, "note": "Replaced by the 28% version when capacity does not exceed 40."},
+        {"stat": "dmg", "value": 0.28, "on": ["burst"], "trigger": {"kind": "unmodelled", "reason": "Energy Capacity does not exceed 40"}, "note": "Replaces the 16% version, not additive with it."}
+      ]
+    },
+    "mountain-bracing-bolt": {
+      "effects": [
+        {"stat": "dmg", "value": 0.12, "on": ["skill"], "note": "Climbing stamina skipped."},
+        {"stat": "dmg", "value": 0.12, "on": ["skill"], "trigger": {"kind": "unmodelled", "reason": "other party members use Elemental Skills"}, "duration": 8}
+      ]
+    },
+    "mouuns-moon": {
+      "effects": [
+        {"stat": "dmg", "value": 0.4, "on": ["burst"], "trigger": {"kind": "unmodelled", "reason": "0.12% per point of the party's combined max Energy"}, "note": "Value is the maximum."}
+      ]
+    },
+    "nightweavers-looking-glass": {
+      "effects": [
+        {"stat": "em", "value": 60, "trigger": {"kind": "hit", "by": ["skill"], "elemental": true}, "duration": 4.5, "note": "Skill must deal Hydro or Dendro DMG."},
+        {"stat": "em", "value": 60, "trigger": {"kind": "unmodelled", "reason": "a nearby party member triggers Lunar-Bloom"}, "duration": 10}
+      ],
+      "note": "Bloom/Hyperbloom/Burgeon/Lunar-Bloom DMG bonuses skipped."
+    },
+    "nocturnes-curtain-call": {
+      "effects": [
+        {"stat": "hp%", "value": 0.1},
+        {"stat": "hp%", "value": 0.14, "trigger": {"kind": "reaction", "reactions": ["lunar-charged", "lunar-bloom", "lunar-crystallize"]}, "duration": 12, "note": "Also on dealing Lunar Reaction DMG; Lunar CRIT DMG and energy skipped."}
+      ]
+    },
+    "oathsworn-eye": {
+      "effects": [
+        {"stat": "er", "value": 0.24, "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 10}
+      ]
+    },
+    "otherworldly-story": {
+      "effects": [],
+      "note": "Healing only."
+    },
+    "peak-patrol-song": {
+      "effects": [
+        {"stat": "def%", "value": 0.08, "trigger": {"kind": "hit", "by": ["normal", "plunge"]}, "duration": 6, "stacks": 2, "cooldown": 0.1},
+        {"stat": "dmg", "value": 0.1, "trigger": {"kind": "hit", "by": ["normal", "plunge"]}, "duration": 6, "stacks": 2, "cooldown": 0.1},
+        {"stat": "dmg", "value": 0.08, "from": "def", "per": 1000, "cap": 0.256, "scope": "party", "trigger": {"kind": "hit", "by": ["normal", "plunge"]}, "duration": 15, "note": "Only once Ode to Flowers reaches 2 stacks; uses the wearer's DEF."}
+      ]
+    },
+    "polar-star": {
+      "effects": [
+        {"stat": "dmg", "value": 0.12, "on": ["skill", "burst"]},
+        {"stat": "atk%", "tiers": [0.1, 0.2, 0.3, 0.48], "column": 1, "stacks": 4, "trigger": {"kind": "hit", "by": ["normal", "charged", "skill", "burst"]}, "duration": 12, "note": "One independent stack per action type that hits."}
+      ]
+    },
+    "portable-power-saw": {
+      "effects": [
+        {"stat": "em", "value": 40, "trigger": {"kind": "healed"}, "duration": 10, "stacks": 3, "cooldown": 15, "note": "Symbols from being healed or healing; consumed on Skill/Burst cast for 40 EM each; energy skipped."}
+      ]
+    },
+    "predator": {
+      "effects": [
+        {"stat": "dmg", "value": 0.1, "on": ["normal", "charged"], "trigger": {"kind": "hit", "elemental": true}, "duration": 6, "stacks": 2, "note": "Requires dealing Cryo DMG; PlayStation-only weapon."},
+        {"stat": "flat-atk", "value": 66, "trigger": {"kind": "unmodelled", "reason": "Aloy must wield it"}}
+      ]
+    },
+    "primordial-jade-cutter": {
+      "effects": [
+        {"stat": "hp%", "value": 0.2},
+        {"stat": "flat-atk", "value": 0.012, "from": "hp"}
+      ]
+    },
+    "primordial-jade-winged-spear": {
+      "effects": [
+        {"stat": "atk%", "value": 0.032, "trigger": {"kind": "hit"}, "duration": 6, "stacks": 7, "cooldown": 0.3},
+        {"stat": "dmg", "value": 0.12, "trigger": {"kind": "hit"}, "duration": 6, "note": "Only at 7 ATK stacks."}
+      ]
+    },
+    "prospectors-drill": {
+      "effects": [
+        {"stat": "atk%", "value": 0.03, "trigger": {"kind": "healed"}, "duration": 10, "stacks": 3, "cooldown": 15, "note": "Symbols from being healed or healing; consumed on Skill/Burst cast."},
+        {"stat": "dmg", "value": 0.07, "trigger": {"kind": "healed"}, "duration": 10, "stacks": 3, "cooldown": 15, "note": "Symbols from being healed or healing; consumed on Skill/Burst cast."}
+      ]
+    },
+    "prospectors-shovel": {
+      "effects": [],
+      "note": "Electro-Charged and Lunar-Charged reaction DMG bonuses only."
+    },
+    "prototype-amber": {
+      "effects": [],
+      "note": "Energy and healing only."
+    },
+    "prototype-archaic": {
+      "effects": [],
+      "note": "Extra damage instance, not a stat buff."
+    },
+    "prototype-crescent": {
+      "effects": [
+        {"stat": "atk%", "value": 0.36, "trigger": {"kind": "unmodelled", "reason": "Charged Attack hits on weak points"}, "duration": 10, "note": "Movement SPD skipped."}
+      ]
+    },
+    "prototype-rancour": {
+      "effects": [
+        {"stat": "atk%", "value": 0.04, "trigger": {"kind": "hit", "by": ["normal", "charged"]}, "duration": 6, "stacks": 4, "cooldown": 0.3},
+        {"stat": "def%", "value": 0.04, "trigger": {"kind": "hit", "by": ["normal", "charged"]}, "duration": 6, "stacks": 4, "cooldown": 0.3}
+      ]
+    },
+    "prototype-starglitter": {
+      "effects": [
+        {"stat": "dmg", "value": 0.08, "on": ["normal", "charged"], "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 12, "stacks": 2}
+      ]
+    },
+    "rainbow-serpents-rain-bow": {
+      "effects": [
+        {"stat": "atk%", "value": 0.28, "trigger": {"kind": "off-field"}, "duration": 8, "note": "Needs the wearer's attacks to hit while off-field."}
+      ]
+    },
+    "rainslasher": {
+      "effects": [
+        {"stat": "dmg", "value": 0.2, "trigger": {"kind": "aura", "elements": ["hydro", "electro"]}}
+      ]
+    },
+    "range-gauge": {
+      "effects": [
+        {"stat": "atk%", "value": 0.03, "stacks": 3, "trigger": {"kind": "cast", "by": ["skill", "burst"]}, "duration": 10, "cooldown": 15, "note": "Per Unity's Symbol, which are gained when the wearer is healed or heals others."},
+        {"stat": "dmg", "value": 0.07, "stacks": 3, "trigger": {"kind": "cast", "by": ["skill", "burst"]}, "duration": 10, "cooldown": 15, "note": "Per Unity's Symbol, which are gained when the wearer is healed or heals others."}
+      ]
+    },
+    "raven-bow": {
+      "effects": [
+        {"stat": "dmg", "value": 0.12, "trigger": {"kind": "aura", "elements": ["hydro", "pyro"]}}
+      ]
+    },
+    "recurve-bow": {
+      "effects": [],
+      "note": "healing only"
+    },
+    "redhorn-stonethresher": {
+      "effects": [
+        {"stat": "def%", "value": 0.28}
+      ],
+      "note": "Normal/Charged DMG increased by 40% of DEF is a flat damage addition, skipped."
+    },
+    "reliquary-of-truth": {
+      "effects": [
+        {"stat": "crit-rate", "value": 0.08},
+        {"stat": "em", "value": 80, "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 12},
+        {"stat": "crit-dmg", "value": 0.24, "trigger": {"kind": "reaction", "reactions": ["lunar-bloom"]}, "duration": 4},
+        {"stat": "em", "value": 80, "trigger": {"kind": "reaction", "reactions": ["lunar-bloom"]}, "duration": 4, "note": "Both effects active raise this by 50%; also needs an Elemental Skill cast within 12s.", "scale": 0.5},
+        {"stat": "crit-dmg", "value": 0.24, "trigger": {"kind": "reaction", "reactions": ["lunar-bloom"]}, "duration": 4, "note": "Both effects active raise this by 50%; also needs an Elemental Skill cast within 12s.", "scale": 0.5}
+      ]
+    },
+    "rightful-reward": {
+      "effects": [],
+      "note": "energy only"
+    },
+    "ring-of-yaxche": {
+      "effects": [
+        {"stat": "dmg", "value": 0.006, "from": "hp", "per": 1000, "cap": 0.16, "on": ["normal"], "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 10}
+      ]
+    },
+    "royal-bow": {
+      "effects": [
+        {"stat": "crit-rate", "value": 0.08, "stacks": 5, "trigger": {"kind": "unmodelled", "reason": "a CRIT hit removes all stacks"}}
+      ]
+    },
+    "royal-greatsword": {
+      "effects": [
+        {"stat": "crit-rate", "value": 0.08, "stacks": 5, "trigger": {"kind": "unmodelled", "reason": "a CRIT hit removes all stacks"}}
+      ]
+    },
+    "royal-grimoire": {
+      "effects": [
+        {"stat": "crit-rate", "value": 0.08, "stacks": 5, "trigger": {"kind": "unmodelled", "reason": "a CRIT hit removes all stacks"}}
+      ]
+    },
+    "royal-longsword": {
+      "effects": [
+        {"stat": "crit-rate", "value": 0.08, "stacks": 5, "trigger": {"kind": "unmodelled", "reason": "a CRIT hit removes all stacks"}}
+      ]
+    },
+    "royal-spear": {
+      "effects": [
+        {"stat": "crit-rate", "value": 0.08, "stacks": 5, "trigger": {"kind": "unmodelled", "reason": "a CRIT hit removes all stacks"}}
+      ]
+    },
+    "rust": {
+      "effects": [
+        {"stat": "dmg", "value": 0.4, "on": ["normal"]}
+      ],
+      "note": "Charged Attack DMG decrease of 10% not encoded."
+    },
+    "sacrificers-staff": {
+      "effects": [
+        {"stat": "atk%", "value": 0.08, "stacks": 3, "trigger": {"kind": "hit", "by": ["skill"]}, "duration": 6},
+        {"stat": "er", "value": 0.06, "stacks": 3, "trigger": {"kind": "hit", "by": ["skill"]}, "duration": 6}
+      ]
+    },
+    "sacrificial-bow": {
+      "effects": [],
+      "note": "cooldown reset only"
+    },
+    "sacrificial-fragments": {
+      "effects": [],
+      "note": "cooldown reset only"
+    },
+    "sacrificial-greatsword": {
+      "effects": [],
+      "note": "cooldown reset only"
+    },
+    "sacrificial-jade": {
+      "effects": [
+        {"stat": "hp%", "value": 0.32, "trigger": {"kind": "off-field"}, "duration": 10, "note": "Gained after 5s off-field; canceled after 10s on-field."},
+        {"stat": "em", "value": 40, "trigger": {"kind": "off-field"}, "duration": 10, "note": "Gained after 5s off-field; canceled after 10s on-field."}
+      ]
+    },
+    "sacrificial-sword": {
+      "effects": [],
+      "note": "cooldown reset only"
+    },
+    "sapwood-blade": {
+      "effects": [
+        {"stat": "em", "value": 60, "trigger": {"kind": "reaction", "reactions": ["burning", "quicken", "aggravate", "spread", "bloom", "lunar-bloom", "hyperbloom", "burgeon"]}, "duration": 12, "cooldown": 20, "note": "Granted when the Leaf of Consciousness is picked up."}
+      ]
+    },
+    "scion-of-the-blazing-sun": {
+      "effects": [],
+      "note": "extra damage instance and a DMG taken increase on the opponent, not stat buffs"
+    },
+    "sequence-of-solitude": {
+      "effects": [],
+      "note": "extra damage instance, not a stat buff"
+    },
+    "serenitys-call": {
+      "effects": [
+        {"stat": "hp%", "value": 0.16, "trigger": {"kind": "reaction"}, "duration": 12},
+        {"stat": "hp%", "value": 0.16, "trigger": {"kind": "moonsign", "level": 2}, "duration": 12, "note": "Also needs an Elemental Reaction."}
+      ]
+    },
+    "serpent-spine": {
+      "effects": [
+        {"stat": "dmg", "value": 0.06, "stacks": 5, "trigger": {"kind": "on-field"}, "note": "One stack per 4s on-field, lost one per DMG taken; DMG taken increase skipped."}
+      ]
+    },
+    "sharpshooters-oath": {
+      "effects": [
+        {"stat": "dmg", "value": 0.24, "trigger": {"kind": "unmodelled", "reason": "weak spots"}}
+      ]
+    },
+    "silvershower-heartstrings": {
+      "effects": [
+        {"stat": "hp%", "tiers": [0.12, 0.24, 0.4], "stacks": 3, "column": 0, "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 25, "note": "Remedy stacks also come from Bond of Life increases (25s) and healing (20s)."},
+        {"stat": "crit-rate", "value": 0.28, "on": ["burst"], "trigger": {"kind": "unmodelled", "reason": "needs 3 Remedy stacks"}}
+      ]
+    },
+    "skyrider-greatsword": {
+      "effects": [
+        {"stat": "atk%", "value": 0.06, "stacks": 4, "trigger": {"kind": "hit", "by": ["normal", "charged"]}, "duration": 6, "cooldown": 0.5}
+      ]
+    },
+    "skyrider-sword": {
+      "effects": [
+        {"stat": "atk%", "value": 0.12, "trigger": {"kind": "cast", "by": ["burst"]}, "duration": 15, "note": "Movement SPD skipped."}
+      ]
+    },
+    "skyward-atlas": {
+      "effects": [
+        {"stat": "dmg", "value": 0.12}
+      ],
+      "note": "Cloud extra damage instance skipped."
+    },
+    "skyward-blade": {
+      "effects": [
+        {"stat": "crit-rate", "value": 0.04}
+      ],
+      "note": "Movement/ATK SPD and additional DMG from ATK skipped."
+    },
+    "skyward-harp": {
+      "effects": [
+        {"stat": "crit-dmg", "value": 0.2}
+      ],
+      "note": "Physical AoE extra damage instance skipped."
+    },
+    "skyward-pride": {
+      "effects": [
+        {"stat": "dmg", "value": 0.08}
+      ],
+      "note": "Vacuum blade extra damage instance skipped."
+    },
+    "skyward-spine": {
+      "effects": [
+        {"stat": "crit-rate", "value": 0.08}
+      ],
+      "note": "Normal ATK SPD and vacuum blade extra damage skipped."
+    },
+    "slingshot": {
+      "effects": [
+        {"stat": "dmg", "value": 0.36, "on": ["normal", "charged"], "trigger": {"kind": "unmodelled", "reason": "hit within 0.3s of being fired"}, "note": "Otherwise DMG decreased by 10%, not encoded."}
+      ]
+    },
+    "snare-hook": {
+      "effects": [
+        {"stat": "em", "value": 60, "trigger": {"kind": "reaction"}, "duration": 12},
+        {"stat": "em", "value": 60, "trigger": {"kind": "moonsign", "level": 2}, "duration": 12, "note": "Also needs an Elemental Reaction."}
+      ]
+    },
+    "snow-tombed-starsilver": {
+      "effects": [],
+      "note": "extra damage instance, not a stat buff"
+    },
+    "solar-pearl": {
+      "effects": [
+        {"stat": "dmg", "value": 0.2, "on": ["skill", "burst"], "trigger": {"kind": "hit", "by": ["normal"]}, "duration": 6},
+        {"stat": "dmg", "value": 0.2, "on": ["normal"], "trigger": {"kind": "hit", "by": ["skill", "burst"]}, "duration": 6}
+      ]
+    },
+    "song-of-broken-pines": {
+      "effects": [
+        {"stat": "atk%", "value": 0.16},
+        {"stat": "atk%", "value": 0.2, "scope": "party", "trigger": {"kind": "hit", "by": ["normal", "charged"]}, "duration": 12, "cooldown": 20, "note": "Needs 4 Sigils of Whispers (one per 0.3s); Normal ATK SPD skipped."}
+      ]
+    },
+    "song-of-stillness": {
+      "effects": [
+        {"stat": "dmg", "value": 0.16, "trigger": {"kind": "healed"}, "duration": 8}
+      ]
+    },
+    "song-of-the-vigil": {
+      "effects": [
+        {"stat": "atk%", "value": 0.2, "trigger": {"kind": "reaction", "reactions": ["stellar-glimmer"]}, "duration": 12}
+      ],
+      "note": "Energy regeneration skipped."
+    },
+    "splendor-of-tranquil-waters": {
+      "effects": [
+        {"stat": "dmg", "value": 0.08, "on": ["skill"], "stacks": 3, "trigger": {"kind": "hp-change"}, "duration": 6, "cooldown": 0.2},
+        {"stat": "hp%", "value": 0.14, "stacks": 2, "trigger": {"kind": "unmodelled", "reason": "other party members' current HP increases or decreases"}, "duration": 6, "cooldown": 0.2}
+      ]
+    },
+    "staff-of-homa": {
+      "effects": [
+        {"stat": "hp%", "value": 0.2},
+        {"stat": "flat-atk", "value": 0.008, "from": "hp"},
+        {"stat": "flat-atk", "value": 0.01, "from": "hp", "trigger": {"kind": "hp-below", "percent": 50}}
+      ]
+    },
+    "staff-of-the-scarlet-sands": {
+      "effects": [
+        {"stat": "flat-atk", "value": 0.52, "from": "em"},
+        {"stat": "flat-atk", "value": 0.28, "from": "em", "stacks": 3, "trigger": {"kind": "hit", "by": ["skill"]}, "duration": 10}
+      ]
+    },
+    "starcallers-watch": {
+      "effects": [
+        {"stat": "em", "value": 100},
+        {"stat": "dmg", "value": 0.28, "scope": "active", "trigger": {"kind": "shield"}, "duration": 15, "cooldown": 14}
+      ]
+    },
+    "sturdy-bone": {
+      "effects": [],
+      "note": "flat damage addition after sprinting; stamina reduction skipped"
+    },
+    "summit-shaper": {
+      "effects": [
+        {"stat": "atk%", "value": 0.04, "stacks": 5, "trigger": {"kind": "hit"}, "duration": 8, "cooldown": 0.3},
+        {"stat": "atk%", "value": 0.04, "stacks": 5, "trigger": {"kind": "shield"}, "duration": 8, "cooldown": 0.3, "note": "Extra is 100% of the base stacking ATK while shielded; stacks still come from hits."}
+      ],
+      "note": "Shield Strength skipped."
+    },
+    "sunny-morning-sleep-in": {
+      "effects": [
+        {"stat": "em", "value": 120, "trigger": {"kind": "reaction", "reactions": ["swirl"]}, "duration": 6, "note": "Also Stellar Swirl."},
+        {"stat": "em", "value": 96, "trigger": {"kind": "hit", "by": ["skill"]}, "duration": 9},
+        {"stat": "em", "value": 32, "trigger": {"kind": "hit", "by": ["burst"]}, "duration": 30}
+      ]
+    },
+    "surfs-up": {
+      "effects": [
+        {"stat": "hp%", "value": 0.2},
+        {"stat": "dmg", "value": 0.12, "on": ["normal"], "stacks": 4, "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 14, "cooldown": 15, "note": "Starts at 4 stacks; loses 1 per Normal Attack hit and gains 1 per Vaporize, each once every 1.5s."}
+      ]
+    },
+    "sword-of-descension": {
+      "effects": [
+        {"stat": "flat-atk", "value": 66, "trigger": {"kind": "unmodelled", "reason": "Traveler only, PlayStation only"}}
+      ],
+      "note": "50% chance extra damage instance skipped."
+    },
+    "sword-of-narzissenkreuz": {
+      "effects": [],
+      "note": "extra damage instance, not a stat buff"
+    },
+    "symphonist-of-scents": {
+      "effects": [
+        {"stat": "atk%", "value": 0.12},
+        {"stat": "atk%", "value": 0.12, "trigger": {"kind": "off-field"}},
+        {"stat": "atk%", "value": 0.32, "scope": "party", "trigger": {"kind": "heals"}, "duration": 3, "note": "Wearer and the characters they healed."}
+      ]
+    },
+    "talking-stick": {
+      "effects": [
+        {"stat": "atk%", "value": 0.16, "trigger": {"kind": "unmodelled", "reason": "wearer affected by Pyro"}, "duration": 15, "cooldown": 12},
+        {"stat": "dmg", "value": 0.12, "trigger": {"kind": "unmodelled", "reason": "wearer affected by Hydro, Cryo, Electro or Dendro"}, "duration": 15, "cooldown": 12}
+      ]
+    },
+    "tamayuratei-no-ohanashi": {
+      "effects": [
+        {"stat": "atk%", "value": 0.2, "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 10, "note": "Movement SPD skipped."}
+      ]
+    },
+    "the-alley-flash": {
+      "effects": [
+        {"stat": "dmg", "value": 0.12, "note": "Taking DMG disables this effect for 5s."}
+      ]
+    },
+    "the-bell": {
+      "effects": [
+        {"stat": "dmg", "value": 0.12, "trigger": {"kind": "shield"}}
+      ],
+      "note": "Shield skipped."
+    },
+    "the-black-sword": {
+      "effects": [
+        {"stat": "dmg", "value": 0.2, "on": ["normal", "charged"]}
+      ],
+      "note": "Healing on crit skipped."
+    },
+    "the-catch": {
+      "effects": [
+        {"stat": "dmg", "value": 0.16, "on": ["burst"]},
+        {"stat": "crit-rate", "value": 0.06, "on": ["burst"]}
+      ]
+    },
+    "the-daybreak-chronicles": {
+      "effects": [
+        {"stat": "dmg", "value": 0.1, "cap": 0.6, "on": ["normal"], "trigger": {"kind": "hit", "by": ["normal"]}, "cooldown": 0.1, "note": "+10% per Normal Attack hit up to 60%, decaying 10% per second in combat; the out-of-combat 60% and the Hexerei 20% are not priced."},
+        {"stat": "dmg", "value": 0.1, "cap": 0.6, "on": ["skill"], "trigger": {"kind": "hit", "by": ["skill"]}, "cooldown": 0.1, "note": "+10% per Elemental Skill hit up to 60%."},
+        {"stat": "dmg", "value": 0.1, "cap": 0.6, "on": ["burst"], "trigger": {"kind": "hit", "by": ["burst"]}, "cooldown": 0.1, "note": "+10% per Elemental Burst hit up to 60%."}
+      ]
+    },
+    "the-dockhands-assistant": {
+      "effects": [
+        {"stat": "em", "value": 40, "stacks": 3, "trigger": {"kind": "healed"}, "duration": 10, "cooldown": 15, "note": "Symbols from being healed or healing others; consumed on Skill/Burst cast for 10s of EM per Symbol. Energy skipped."}
+      ]
+    },
+    "the-first-great-magic": {
+      "effects": [
+        {"stat": "dmg", "value": 0.16, "on": ["charged"]},
+        {"stat": "atk%", "tiers": [0.16, 0.32, 0.48], "column": 1, "stacks": 3, "trigger": {"kind": "party-members", "match": "same-element", "includeWearer": true}, "note": "Gimmick stacks count same-element members including the wielder. Movement SPD skipped."}
+      ]
+    },
+    "the-flute": {
+      "effects": [],
+      "note": "extra damage instance, not a stat buff"
+    },
+    "the-stringless": {
+      "effects": [
+        {"stat": "dmg", "value": 0.24, "on": ["skill", "burst"]}
+      ]
+    },
+    "the-unforged": {
+      "effects": [
+        {"stat": "atk%", "value": 0.04, "stacks": 5, "trigger": {"kind": "hit"}, "duration": 8, "cooldown": 0.3},
+        {"stat": "atk%", "value": 0.04, "stacks": 5, "trigger": {"kind": "shield"}, "duration": 8, "cooldown": 0.3, "note": "Shield doubles the hit stacks (+100%); still needs hits."}
+      ],
+      "note": "Shield Strength skipped."
+    },
+    "the-viridescent-hunt": {
+      "effects": [],
+      "note": "extra damage instance, not a stat buff"
+    },
+    "the-widsith": {
+      "effects": [
+        {"stat": "atk%", "value": 0.6, "trigger": {"kind": "swap-in"}, "duration": 10, "cooldown": 30, "note": "One of the three songs, at random.", "group": "theme-song"},
+        {"stat": "dmg", "value": 0.48, "trigger": {"kind": "swap-in"}, "duration": 10, "cooldown": 30, "note": "One of the three songs, at random.", "group": "theme-song"},
+        {"stat": "em", "value": 240, "trigger": {"kind": "swap-in"}, "duration": 10, "cooldown": 30, "note": "One of the three songs, at random.", "group": "theme-song"}
+      ]
+    },
+    "thrilling-tales-of-dragon-slayers": {
+      "effects": [
+        {"stat": "atk%", "value": 0.24, "scope": "active", "trigger": {"kind": "swap-in"}, "duration": 10, "cooldown": 20}
+      ]
+    },
+    "thundering-pulse": {
+      "effects": [
+        {"stat": "atk%", "value": 0.2},
+        {"stat": "dmg", "tiers": [0.12, 0.24, 0.4], "column": 1, "stacks": 3, "on": ["normal"], "trigger": {"kind": "hit", "by": ["normal"]}, "note": "Stacks from Normal Attack DMG (5s), Skill cast (10s), and Energy below 100%."}
+      ]
+    },
+    "tidal-shadow": {
+      "effects": [
+        {"stat": "atk%", "value": 0.24, "trigger": {"kind": "healed"}, "duration": 8}
+      ]
+    },
+    "tome-of-the-eternal-flow": {
+      "effects": [
+        {"stat": "hp%", "value": 0.16},
+        {"stat": "dmg", "value": 0.14, "on": ["charged"], "stacks": 3, "trigger": {"kind": "hp-change"}, "duration": 4, "cooldown": 0.3}
+      ],
+      "note": "Energy restoration skipped."
+    },
+    "toukabou-shigure": {
+      "effects": [
+        {"stat": "dmg", "value": 0.16, "trigger": {"kind": "hit"}, "duration": 10, "cooldown": 15, "note": "Only against the one opponent carrying Cursed Parasol; CD refreshes if it is defeated."}
+      ]
+    },
+    "travelers-handy-sword": {
+      "effects": [],
+      "note": "healing only"
+    },
+    "tulaytullahs-remembrance": {
+      "effects": [
+        {"stat": "dmg", "value": 0.48, "on": ["normal"], "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 14, "note": "Maximum used: ramps 4.8%/s plus 9.6% per Normal Attack hit (once every 0.3s); removed on leaving the field. Normal ATK SPD skipped."}
+      ]
+    },
+    "twin-nephrite": {
+      "effects": [
+        {"stat": "atk%", "value": 0.12, "trigger": {"kind": "defeat"}, "duration": 15, "note": "Movement SPD skipped."}
+      ]
+    },
+    "ultimate-overlords-mega-magic-sword": {
+      "effects": [
+        {"stat": "atk%", "value": 0.12},
+        {"stat": "atk%", "value": 0.12, "trigger": {"kind": "unmodelled", "reason": "scales with Melusines helped"}, "note": "Up to this value."}
+      ]
+    },
+    "uraku-misugiri": {
+      "effects": [
+        {"stat": "dmg", "value": 0.16, "on": ["normal"]},
+        {"stat": "dmg", "value": 0.24, "on": ["skill"]},
+        {"stat": "dmg", "value": 0.16, "on": ["normal"], "trigger": {"kind": "unmodelled", "reason": "nearby active character deals Geo DMG"}, "duration": 15, "note": "The bonus rises by 100%."},
+        {"stat": "dmg", "value": 0.24, "on": ["skill"], "trigger": {"kind": "unmodelled", "reason": "nearby active character deals Geo DMG"}, "duration": 15, "note": "The bonus rises by 100%."},
+        {"stat": "def%", "value": 0.2}
+      ]
+    },
+    "verdict": {
+      "effects": [
+        {"stat": "atk%", "value": 0.2},
+        {"stat": "dmg", "value": 0.18, "on": ["skill"], "stacks": 2, "trigger": {"kind": "crystallize"}, "duration": 15, "note": "Seals from party Crystallize shards or Lunar-Crystallize; all removed 0.2s after Skill deals DMG."}
+      ]
+    },
+    "vivid-notions": {
+      "effects": [
+        {"stat": "atk%", "value": 0.28},
+        {"stat": "crit-dmg", "value": 0.28, "on": ["plunge"], "trigger": {"kind": "cast", "by": ["plunge"]}, "duration": 15, "note": "Cancelled 0.1s after the ground impact hits."},
+        {"stat": "crit-dmg", "value": 0.4, "on": ["plunge"], "trigger": {"kind": "cast", "by": ["skill", "burst"]}, "duration": 15, "note": "Cancelled 0.1s after the ground impact hits."}
+      ]
+    },
+    "vortex-vanquisher": {
+      "effects": [
+        {"stat": "atk%", "value": 0.04, "stacks": 5, "trigger": {"kind": "hit"}, "duration": 8, "cooldown": 0.3},
+        {"stat": "atk%", "value": 0.04, "stacks": 5, "trigger": {"kind": "shield"}, "duration": 8, "cooldown": 0.3, "note": "Shield doubles the hit stacks (+100%); still needs hits."}
+      ],
+      "note": "Shield Strength skipped."
+    },
+    "wandering-evenstar": {
+      "effects": [
+        {"stat": "flat-atk", "value": 0.24, "from": "em", "trigger": {"kind": "every", "seconds": 10}, "duration": 12},
+        {"stat": "flat-atk", "value": 0.24, "from": "em", "scale": 0.3, "scope": "others", "trigger": {"kind": "every", "seconds": 10}, "duration": 12, "note": "Nearby party members gain 30% of the wearer's buff."}
+      ]
+    },
+    "wavebreakers-fin": {
+      "effects": [
+        {"stat": "dmg", "value": 0.4, "on": ["burst"], "trigger": {"kind": "unmodelled", "reason": "0.12% per point of the party's combined max Energy"}, "note": "Cap used as value."}
+      ]
+    },
+    "waveriding-whirl": {
+      "effects": [
+        {"stat": "hp%", "value": 0.2, "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 10, "cooldown": 15},
+        {"stat": "hp%", "value": 0.12, "cap": 0.24, "trigger": {"kind": "party-members", "match": "hydro"}, "duration": 10, "cooldown": 15, "note": "Per Hydro party member, only during the 10s after Skill cast."}
+      ],
+      "note": "Swimming stamina skipped."
+    },
+    "white-iron-greatsword": {
+      "effects": [],
+      "note": "healing only"
+    },
+    "white-tassel": {
+      "effects": [
+        {"stat": "dmg", "value": 0.24, "on": ["normal"]}
+      ]
+    },
+    "whiteblind": {
+      "effects": [
+        {"stat": "atk%", "value": 0.06, "stacks": 4, "trigger": {"kind": "hit", "by": ["normal", "charged"]}, "duration": 6, "cooldown": 0.5},
+        {"stat": "def%", "value": 0.06, "stacks": 4, "trigger": {"kind": "hit", "by": ["normal", "charged"]}, "duration": 6, "cooldown": 0.5}
+      ]
+    },
+    "whitelake-frostfeather": {
+      "effects": [
+        {"stat": "atk%", "value": 0.08, "stacks": 3, "trigger": {"kind": "hit", "by": ["skill"]}, "duration": 8, "cooldown": 0.1}
+      ],
+      "note": "Stellar Glimmer reaction CRIT DMG and energy skipped."
+    },
+    "windblume-ode": {
+      "effects": [
+        {"stat": "atk%", "value": 0.16, "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 6}
+      ]
+    },
+    "wine-and-song": {
+      "effects": [
+        {"stat": "atk%", "value": 0.2, "trigger": {"kind": "unmodelled", "reason": "using Sprint or Alternate Sprint"}, "duration": 5}
+      ],
+      "note": "Stamina reduction skipped."
+    },
+    "wolf-fang": {
+      "effects": [
+        {"stat": "dmg", "value": 0.16, "on": ["skill", "burst"]},
+        {"stat": "crit-rate", "value": 0.02, "on": ["skill"], "stacks": 4, "trigger": {"kind": "hit", "by": ["skill"]}, "duration": 10, "cooldown": 0.1},
+        {"stat": "crit-rate", "value": 0.02, "on": ["burst"], "stacks": 4, "trigger": {"kind": "hit", "by": ["burst"]}, "duration": 10, "cooldown": 0.1}
+      ]
+    },
+    "wolfs-gravestone": {
+      "effects": [
+        {"stat": "atk%", "value": 0.2},
+        {"stat": "atk%", "value": 0.4, "scope": "party", "trigger": {"kind": "unmodelled", "reason": "hitting an opponent below 30% HP"}, "duration": 12, "cooldown": 30}
+      ]
+    },
+    "xiphos-moonlight": {
+      "effects": [
+        {"stat": "er", "value": 0.00036, "from": "em", "trigger": {"kind": "every", "seconds": 10}, "duration": 12, "note": "Party members' 30% share is Energy Recharge, which the party channels do not carry."}
+      ]
+    }
+  },
+  "sets": {
+    "a-day-carved-from-rising-winds": {
+      "twoPiece": [
+        {"stat": "atk%", "value": 0.18}
+      ],
+      "fourPiece": [
+        {"stat": "atk%", "value": 0.25, "trigger": {"kind": "hit", "by": ["normal", "charged", "skill", "burst"]}, "duration": 6},
+        {"stat": "crit-rate", "value": 0.2, "trigger": {"kind": "unmodelled", "reason": "Witch's Homework"}, "duration": 6}
+      ]
+    },
+    "adventurer": {
+      "twoPiece": [],
+      "fourPiece": [],
+      "note": "flat Max HP is not a modelled stat; 4-piece is healing"
+    },
+    "archaic-petra": {
+      "twoPiece": [
+        {"stat": "geo-dmg", "value": 0.15}
+      ],
+      "fourPiece": [
+        {"stat": "dmg", "value": 0.35, "scope": "party", "trigger": {"kind": "crystallize"}, "duration": 10, "note": "bonus is only for the element of the shard picked up"}
+      ]
+    },
+    "aubade-of-morningstar-and-moon": {
+      "twoPiece": [
+        {"stat": "em", "value": 80}
+      ],
+      "fourPiece": [],
+      "note": "4-piece is Lunar Reaction DMG only"
+    },
+    "berserker": {
+      "twoPiece": [
+        {"stat": "crit-rate", "value": 0.12}
+      ],
+      "fourPiece": [
+        {"stat": "crit-rate", "value": 0.24, "trigger": {"kind": "hp-below", "percent": 70}}
+      ]
+    },
+    "blizzard-strayer": {
+      "twoPiece": [
+        {"stat": "cryo-dmg", "value": 0.15}
+      ],
+      "fourPiece": [
+        {"stat": "crit-rate", "value": 0.2, "trigger": {"kind": "aura", "elements": ["cryo"]}},
+        {"stat": "crit-rate", "value": 0.2, "trigger": {"kind": "unmodelled", "reason": "opponent must be Frozen"}, "note": "additional to the Cryo bonus"}
+      ]
+    },
+    "bloodstained-chivalry": {
+      "twoPiece": [],
+      "fourPiece": [
+        {"stat": "dmg", "value": 0.5, "on": ["charged"], "trigger": {"kind": "defeat"}, "duration": 10, "note": "stamina reduction skipped"}
+      ],
+      "note": "2-piece is Physical DMG"
+    },
+    "brave-heart": {
+      "twoPiece": [
+        {"stat": "atk%", "value": 0.18}
+      ],
+      "fourPiece": [
+        {"stat": "dmg", "value": 0.3, "trigger": {"kind": "unmodelled", "reason": "opponent HP above 50%"}}
+      ]
+    },
+    "celestial-gift": {
+      "twoPiece": [
+        {"stat": "er", "value": 0.2}
+      ],
+      "fourPiece": [
+        {"stat": "own-element-dmg", "value": 0.2, "scope": "party", "trigger": {"kind": "unmodelled", "reason": "Witch's Homework"}, "duration": 20, "note": "element is the wearer's, not each member's"},
+        {"stat": "own-element-dmg", "value": 0.4, "scope": "party", "trigger": {"kind": "unmodelled", "reason": "Witch's Homework plus Hexerei: Secret Rite; replaces the 20% version"}}
+      ]
+    },
+    "crimson-witch-of-flames": {
+      "twoPiece": [
+        {"stat": "pyro-dmg", "value": 0.15}
+      ],
+      "fourPiece": [
+        {"stat": "pyro-dmg", "value": 0.15, "scale": 0.5, "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 10, "stacks": 3, "note": "each stack adds 50% of the 2-piece 15%; reaction bonuses skipped"}
+      ]
+    },
+    "deepwood-memories": {
+      "twoPiece": [
+        {"stat": "dendro-dmg", "value": 0.15}
+      ],
+      "fourPiece": [],
+      "note": "4-piece is enemy RES reduction"
+    },
+    "defenders-will": {
+      "twoPiece": [
+        {"stat": "def%", "value": 0.3}
+      ],
+      "fourPiece": [],
+      "note": "4-piece is elemental RES"
+    },
+    "desert-pavilion-chronicle": {
+      "twoPiece": [
+        {"stat": "anemo-dmg", "value": 0.15}
+      ],
+      "fourPiece": [
+        {"stat": "dmg", "value": 0.4, "on": ["normal", "charged", "plunge"], "trigger": {"kind": "hit", "by": ["charged"]}, "duration": 15, "note": "Normal ATK SPD skipped"}
+      ]
+    },
+    "disenchantment-in-deep-shadow": {
+      "twoPiece": [
+        {"stat": "atk%", "value": 0.18}
+      ],
+      "fourPiece": [
+        {"stat": "crit-rate", "value": 0.16, "trigger": {"kind": "unmodelled", "reason": "opponent affected by Superconduct or Stellar-Conduct"}, "note": "reaction bonuses skipped"}
+      ]
+    },
+    "echoes-of-an-offering": {
+      "twoPiece": [
+        {"stat": "atk%", "value": 0.18}
+      ],
+      "fourPiece": [],
+      "note": "4-piece is a flat damage addition"
+    },
+    "emblem-of-severed-fate": {
+      "twoPiece": [
+        {"stat": "er", "value": 0.2}
+      ],
+      "fourPiece": [
+        {"stat": "dmg", "value": 0.25, "on": ["burst"], "from": "er", "cap": 0.75}
+      ]
+    },
+    "finale-of-the-deep-galleries": {
+      "twoPiece": [
+        {"stat": "cryo-dmg", "value": 0.15}
+      ],
+      "fourPiece": [
+        {"stat": "dmg", "value": 0.6, "on": ["normal"], "trigger": {"kind": "energy-empty"}, "note": "paused 6s after dealing Burst DMG"},
+        {"stat": "dmg", "value": 0.6, "on": ["burst"], "trigger": {"kind": "energy-empty"}, "note": "paused 6s after dealing Normal Attack DMG"}
+      ]
+    },
+    "flower-of-paradise-lost": {
+      "twoPiece": [
+        {"stat": "em", "value": 80}
+      ],
+      "fourPiece": [],
+      "note": "4-piece is reaction DMG only"
+    },
+    "fragment-of-harmonic-whimsy": {
+      "twoPiece": [
+        {"stat": "atk%", "value": 0.18}
+      ],
+      "fourPiece": [
+        {"stat": "dmg", "value": 0.18, "trigger": {"kind": "bond-of-life"}, "duration": 6, "stacks": 3}
+      ]
+    },
+    "gambler": {
+      "twoPiece": [
+        {"stat": "dmg", "value": 0.2, "on": ["skill"]}
+      ],
+      "fourPiece": [],
+      "note": "4-piece is a cooldown reset"
+    },
+    "gilded-dreams": {
+      "twoPiece": [
+        {"stat": "em", "value": 80}
+      ],
+      "fourPiece": [
+        {"stat": "atk%", "value": 0.14, "trigger": {"kind": "party-members", "match": "same-element"}, "stacks": 3, "note": "only for 8s after triggering a reaction, once every 8s"},
+        {"stat": "em", "value": 50, "trigger": {"kind": "party-members", "match": "other-element"}, "stacks": 3, "note": "only for 8s after triggering a reaction, once every 8s"}
+      ]
+    },
+    "gladiators-finale": {
+      "twoPiece": [
+        {"stat": "atk%", "value": 0.18}
+      ],
+      "fourPiece": [
+        {"stat": "dmg", "value": 0.35, "on": ["normal"], "trigger": {"kind": "weapon-type", "types": ["Sword", "Claymore", "Polearm"]}}
+      ]
+    },
+    "golden-troupe": {
+      "twoPiece": [
+        {"stat": "dmg", "value": 0.2, "on": ["skill"]}
+      ],
+      "fourPiece": [
+        {"stat": "dmg", "value": 0.25, "on": ["skill"]},
+        {"stat": "dmg", "value": 0.25, "on": ["skill"], "trigger": {"kind": "off-field"}, "note": "cleared 2s after taking the field"}
+      ]
+    },
+    "heart-of-depth": {
+      "twoPiece": [
+        {"stat": "hydro-dmg", "value": 0.15}
+      ],
+      "fourPiece": [
+        {"stat": "dmg", "value": 0.3, "on": ["normal", "charged"], "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 15}
+      ]
+    },
+    "heart-of-the-furnace": {
+      "twoPiece": [
+        {"stat": "atk%", "value": 0.18}
+      ],
+      "fourPiece": [
+        {"stat": "atk%", "value": 0.12, "trigger": {"kind": "reaction", "reactions": ["stellar-glimmer"]}, "duration": 12, "note": "Stellar Glimmer reaction DMG bonus skipped"}
+      ]
+    },
+    "husk-of-opulent-dreams": {
+      "twoPiece": [
+        {"stat": "def%", "value": 0.3}
+      ],
+      "fourPiece": [
+        {"stat": "def%", "value": 0.06, "trigger": {"kind": "hit"}, "stacks": 4, "cooldown": 0.3, "note": "on-field: Geo hits; off-field: 1 stack every 3s; loses a stack after 6s without gaining"},
+        {"stat": "geo-dmg", "value": 0.06, "trigger": {"kind": "hit"}, "stacks": 4, "cooldown": 0.3, "note": "on-field: Geo hits; off-field: 1 stack every 3s; loses a stack after 6s without gaining"}
+      ]
+    },
+    "instructor": {
+      "twoPiece": [
+        {"stat": "em", "value": 80}
+      ],
+      "fourPiece": [
+        {"stat": "em", "value": 120, "scope": "party", "trigger": {"kind": "reaction"}, "duration": 8}
+      ]
+    },
+    "lavawalker": {
+      "twoPiece": [],
+      "fourPiece": [
+        {"stat": "dmg", "value": 0.35, "trigger": {"kind": "aura", "elements": ["pyro"]}}
+      ],
+      "note": "2-piece is elemental RES"
+    },
+    "long-nights-oath": {
+      "twoPiece": [
+        {"stat": "dmg", "value": 0.25, "on": ["plunge"]}
+      ],
+      "fourPiece": [
+        {"stat": "dmg", "value": 0.15, "on": ["plunge"], "trigger": {"kind": "hit", "by": ["plunge", "charged", "skill"]}, "duration": 6, "stacks": 5, "cooldown": 1, "note": "plunge hits give 1 stack, charged and skill hits 2"}
+      ]
+    },
+    "lucky-dog": {
+      "twoPiece": [],
+      "fourPiece": [],
+      "note": "flat DEF is not a modelled stat; 4-piece is healing"
+    },
+    "maiden-beloved": {
+      "twoPiece": [],
+      "fourPiece": [],
+      "note": "healing bonuses only"
+    },
+    "marechaussee-hunter": {
+      "twoPiece": [
+        {"stat": "dmg", "value": 0.15, "on": ["normal", "charged"]}
+      ],
+      "fourPiece": [
+        {"stat": "crit-rate", "value": 0.12, "trigger": {"kind": "hp-change"}, "duration": 5, "stacks": 3}
+      ]
+    },
+    "martial-artist": {
+      "twoPiece": [
+        {"stat": "dmg", "value": 0.15, "on": ["normal", "charged"]}
+      ],
+      "fourPiece": [
+        {"stat": "dmg", "value": 0.25, "on": ["normal", "charged"], "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 8}
+      ]
+    },
+    "night-of-the-skys-unveiling": {
+      "twoPiece": [
+        {"stat": "em", "value": 80}
+      ],
+      "fourPiece": [
+        {"stat": "crit-rate", "value": 0.15, "trigger": [{"kind": "moonsign", "level": 1}, {"kind": "on-field"}], "duration": 4, "note": "needs a party Lunar Reaction while the wearer is on-field; Lunar Reaction DMG skipped"},
+        {"stat": "crit-rate", "value": 0.15, "trigger": [{"kind": "moonsign", "level": 2}, {"kind": "on-field"}], "duration": 4, "note": "Ascendant Gleam raises the 15% to 30%; this is the extra"}
+      ]
+    },
+    "nighttime-whispers-in-the-echoing-woods": {
+      "twoPiece": [
+        {"stat": "atk%", "value": 0.18}
+      ],
+      "fourPiece": [
+        {"stat": "geo-dmg", "value": 0.2, "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 10},
+        {"stat": "geo-dmg", "value": 0.2, "trigger": [{"kind": "cast", "by": ["skill"]}, {"kind": "crystallize"}], "note": "A Crystallize shield or Lunar-Crystallize Moondrifts raise the skill buff by 150%.", "scale": 1.5, "duration": 10}
+      ]
+    },
+    "noblesse-oblige": {
+      "twoPiece": [
+        {"stat": "dmg", "value": 0.2, "on": ["burst"]}
+      ],
+      "fourPiece": [
+        {"stat": "atk%", "value": 0.2, "scope": "party", "trigger": {"kind": "cast", "by": ["burst"]}, "duration": 12, "note": "cannot stack"}
+      ]
+    },
+    "nymphs-dream": {
+      "twoPiece": [
+        {"stat": "hydro-dmg", "value": 0.15}
+      ],
+      "fourPiece": [
+        {"stat": "atk%", "tiers": [0.07, 0.16, 0.25], "stacks": 3, "trigger": {"kind": "hit", "by": ["normal", "charged", "plunge", "skill", "burst"]}, "duration": 8, "note": "stacks from different action types exist independently"},
+        {"stat": "hydro-dmg", "tiers": [0.04, 0.09, 0.15], "stacks": 3, "trigger": {"kind": "hit", "by": ["normal", "charged", "plunge", "skill", "burst"]}, "duration": 8, "note": "stacks from different action types exist independently"}
+      ]
+    },
+    "obsidian-codex": {
+      "twoPiece": [
+        {"stat": "dmg", "value": 0.15, "trigger": [{"kind": "nightsoul"}, {"kind": "on-field"}]}
+      ],
+      "fourPiece": [
+        {"stat": "crit-rate", "value": 0.4, "trigger": [{"kind": "nightsoul"}, {"kind": "on-field"}], "duration": 6, "cooldown": 1, "note": "on consuming a Nightsoul point while on-field"}
+      ]
+    },
+    "ocean-hued-clam": {
+      "twoPiece": [],
+      "fourPiece": [],
+      "note": "healing bonus and a damage instance from healing"
+    },
+    "pale-flame": {
+      "twoPiece": [],
+      "fourPiece": [
+        {"stat": "atk%", "value": 0.09, "trigger": {"kind": "hit", "by": ["skill"]}, "duration": 7, "stacks": 2, "cooldown": 0.3, "note": "Physical DMG increase at 2 stacks skipped"}
+      ],
+      "note": "2-piece is Physical DMG"
+    },
+    "prayers-for-destiny": {
+      "twoPiece": [],
+      "fourPiece": [],
+      "note": "no 2-piece; 4-piece shortens element duration on the wearer"
+    },
+    "prayers-for-illumination": {
+      "twoPiece": [],
+      "fourPiece": [],
+      "note": "no 2-piece; 4-piece shortens element duration on the wearer"
+    },
+    "prayers-for-wisdom": {
+      "twoPiece": [],
+      "fourPiece": [],
+      "note": "no 2-piece; 4-piece shortens element duration on the wearer"
+    },
+    "prayers-to-springtime": {
+      "twoPiece": [],
+      "fourPiece": [],
+      "note": "no 2-piece; 4-piece shortens element duration on the wearer"
+    },
+    "resolution-of-sojourner": {
+      "twoPiece": [
+        {"stat": "atk%", "value": 0.18}
+      ],
+      "fourPiece": [
+        {"stat": "crit-rate", "value": 0.3, "on": ["charged"]}
+      ]
+    },
+    "retracing-bolide": {
+      "twoPiece": [],
+      "fourPiece": [
+        {"stat": "dmg", "value": 0.4, "on": ["normal", "charged"], "trigger": {"kind": "shield"}}
+      ],
+      "note": "2-piece is Shield Strength"
+    },
+    "scarlet-proof": {
+      "twoPiece": [
+        {"stat": "atk%", "value": 0.18}
+      ],
+      "fourPiece": [
+        {"stat": "crit-rate", "value": 0.16, "trigger": {"kind": "reaction", "reactions": ["stellar-swirl"]}, "duration": 10, "note": "Stellar Swirl reaction DMG skipped"}
+      ]
+    },
+    "scholar": {
+      "twoPiece": [
+        {"stat": "er", "value": 0.2}
+      ],
+      "fourPiece": [],
+      "note": "4-piece is energy"
+    },
+    "scroll-of-the-hero-of-cinder-city": {
+      "twoPiece": [],
+      "fourPiece": [
+        {"stat": "dmg", "value": 0.12, "scope": "party", "trigger": {"kind": "reaction"}, "duration": 15, "note": "only for the elements involved in a reaction of the wearer's element"},
+        {"stat": "dmg", "value": 0.28, "scope": "party", "trigger": [{"kind": "reaction"}, {"kind": "nightsoul"}], "duration": 20, "note": "extra when the wearer triggers the reaction in Nightsoul's Blessing; same elements only"}
+      ],
+      "note": "2-piece is energy"
+    },
+    "shimenawas-reminiscence": {
+      "twoPiece": [
+        {"stat": "atk%", "value": 0.18}
+      ],
+      "fourPiece": [
+        {"stat": "dmg", "value": 0.5, "on": ["normal", "charged", "plunge"], "trigger": {"kind": "cast", "by": ["skill"]}, "duration": 10, "note": "costs 15 Energy; needs 15 or more"}
+      ]
+    },
+    "silken-moons-serenade": {
+      "twoPiece": [
+        {"stat": "er", "value": 0.2}
+      ],
+      "fourPiece": [
+        {"stat": "em", "value": 60, "scope": "party", "trigger": {"kind": "moonsign", "level": 1}, "duration": 8, "note": "gained on dealing Elemental DMG; Lunar Reaction DMG skipped"},
+        {"stat": "em", "value": 60, "scope": "party", "trigger": {"kind": "moonsign", "level": 2}, "duration": 8, "note": "Ascendant Gleam raises 60 to 120; this is the extra"}
+      ]
+    },
+    "song-of-days-past": {
+      "twoPiece": [],
+      "fourPiece": [],
+      "note": "healing bonus and a flat damage addition from healing"
+    },
+    "tenacity-of-the-millelith": {
+      "twoPiece": [
+        {"stat": "hp%", "value": 0.2}
+      ],
+      "fourPiece": [
+        {"stat": "atk%", "value": 0.2, "scope": "party", "trigger": {"kind": "hit", "by": ["skill"]}, "duration": 3, "cooldown": 0.5, "note": "Shield Strength skipped"}
+      ]
+    },
+    "the-exile": {
+      "twoPiece": [
+        {"stat": "er", "value": 0.2}
+      ],
+      "fourPiece": [],
+      "note": "4-piece is energy"
+    },
+    "thundering-fury": {
+      "twoPiece": [
+        {"stat": "electro-dmg", "value": 0.15}
+      ],
+      "fourPiece": [],
+      "note": "4-piece is reaction DMG and cooldown reduction"
+    },
+    "thundersoother": {
+      "twoPiece": [],
+      "fourPiece": [
+        {"stat": "dmg", "value": 0.35, "trigger": {"kind": "aura", "elements": ["electro"]}}
+      ],
+      "note": "2-piece is elemental RES"
+    },
+    "tiny-miracle": {
+      "twoPiece": [],
+      "fourPiece": [],
+      "note": "elemental RES only"
+    },
+    "traveling-doctor": {
+      "twoPiece": [],
+      "fourPiece": [],
+      "note": "healing only"
+    },
+    "unfinished-reverie": {
+      "twoPiece": [
+        {"stat": "atk%", "value": 0.18}
+      ],
+      "fourPiece": [
+        {"stat": "dmg", "value": 0.5, "trigger": {"kind": "unmodelled", "reason": "Burning opponents nearby, or out of combat"}, "note": "decays 10% per second without Burning opponents"}
+      ]
+    },
+    "vermillion-hereafter": {
+      "twoPiece": [
+        {"stat": "atk%", "value": 0.18}
+      ],
+      "fourPiece": [
+        {"stat": "atk%", "value": 0.08, "trigger": {"kind": "cast", "by": ["burst"]}, "duration": 16, "note": "dispelled on leaving the field"},
+        {"stat": "atk%", "value": 0.1, "trigger": {"kind": "hp-change"}, "duration": 16, "stacks": 4, "cooldown": 0.8, "note": "HP decreases only, during Nascent Light"}
+      ]
+    },
+    "viridescent-venerer": {
+      "twoPiece": [
+        {"stat": "anemo-dmg", "value": 0.15}
+      ],
+      "fourPiece": [],
+      "note": "4-piece is reaction DMG and RES reduction"
+    },
+    "vourukashas-glow": {
+      "twoPiece": [
+        {"stat": "hp%", "value": 0.2}
+      ],
+      "fourPiece": [
+        {"stat": "dmg", "value": 0.1, "on": ["skill", "burst"]},
+        {"stat": "dmg", "value": 0.1, "on": ["skill", "burst"], "trigger": {"kind": "unmodelled", "reason": "after taking DMG"}, "duration": 5, "stacks": 5, "note": "Each stack raises the 10% by 80%.", "scale": 0.8}
+      ]
+    },
+    "wanderers-troupe": {
+      "twoPiece": [
+        {"stat": "em", "value": 80}
+      ],
+      "fourPiece": [
+        {"stat": "dmg", "value": 0.35, "on": ["charged"], "trigger": {"kind": "weapon-type", "types": ["Catalyst", "Bow"]}}
+      ]
+    }
+  }
+}

@@ -8,12 +8,12 @@ final class ErrorMessageTests: XCTestCase {
     private let vietnamese = AppText(language: .vietnamese)
     private let english = AppText(language: .english)
 
-    /// D3DMetal cannot be downloaded by the launcher, so its unavailability error has to name the
+    /// DXMT cannot be downloaded by the launcher, so its unavailability error has to name the
     /// remedy (installing CrossOver) rather than just failing. Apple's Game Porting Toolkit is
-    /// deliberately not named here: the popular Homebrew cask that goes by that name ships DXMT
-    /// relabeled, not Apple's real D3DMetal, so naming it would send users to the wrong fix.
-    func testTheD3DMetalUnavailableErrorExplainsWhatToDo() {
-        let message = english.message(for: WineServiceError.d3dMetalUnavailable("/opt/wine"))
+    /// deliberately not named here: the popular Homebrew cask that goes by that name ships a
+    /// relabeled DXMT, so naming it would send users to the wrong fix.
+    func testTheDXMTUnavailableErrorExplainsWhatToDo() {
+        let message = english.message(for: WineServiceError.dxmtUnavailable("/opt/wine"))
         XCTAssertTrue(message.contains("/opt/wine"))
         XCTAssertTrue(message.contains("CrossOver"))
         XCTAssertFalse(message.contains("Game Porting Toolkit"))
@@ -62,7 +62,6 @@ final class ErrorMessageTests: XCTestCase {
             LaunchPreflightError.updateRequiredBeforeLaunch("version drift"),
             LaunchPreflightError.gameAlreadyRunning([1]),
             WineServiceError.binaryQuarantined("/p"),
-            WineServiceError.d3dMetalUnavailable("/p"),
             WineServiceError.dxmtUnavailable("/p"),
             WineServiceError.wineRootNotFound("/p"),
             WineServiceError.unsupportedKernelDriver("HoYoKProtect.sys"),

@@ -1,12 +1,22 @@
+import AppKit
 import SwiftUI
 
-/// Home tab: the game hero, the primary Play/Update action, and a status drawer that only takes
-/// up space while an operation is running or diagnostics are explicitly requested.
+/// Home tab: a fixed layout sized to the window — the game hero on top, the activity panel filling
+/// the rest — where the diagnostics console is the only scrolling region. Nothing else moves off
+/// screen, so the primary controls stay in the same place for the whole session.
 struct HomeView: View {
     @ObservedObject var viewModel: LauncherViewModel
-    @State private var isShowingDiagnostics = false
+    @State private var logChannel: LogChannel = .update
 
     private var text: AppText { viewModel.text }
+
+    /// Diagnostics streams the console can show. Only one is rendered at a time so the panel keeps a
+    /// single, predictable scroll region instead of stacking two scrollers.
+    private enum LogChannel: Hashable {
+        case update
+        case wine
+    }
+
 
     var body: some View {
         Group {
@@ -20,179 +30,149 @@ struct HomeView: View {
     }
 
     private func gameHome(for game: GameDefinition) -> some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 22) {
-                hero(for: game)
-                if isDrawerVisible {
-                    statusDrawer
-                }
-            }
-            .animation(.easeOut(duration: 0.22), value: isDrawerVisible)
-            .frame(maxWidth: 1_180)
-            .padding(.horizontal, 34)
-            .padding(.vertical, 28)
-            .frame(maxWidth: .infinity)
+        VStack(spacing: 12) {
+            hero(for: game)
+            activityPanel
         }
+        .frame(maxWidth: 1_180, maxHeight: .infinity)
+        // Horizontal and bottom padding must clear WindowFrameOrnament's corner brackets, which sit
+        // 16-40pt in from every window edge — anything inside that band has a panel edge cutting
+        // through the bracket lines. The top edge already clears it via the top bar's own height, so
+        // it only needs a small gap of its own.
+        .padding(.horizontal, 44)
+        .padding(.top, 4)
+        .padding(.bottom, 44)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    private var isDrawerVisible: Bool {
-        viewModel.isBusy || viewModel.isLaunchingWithWine || isShowingDiagnostics
-    }
+    // MARK: - Hero
 
     private func hero(for game: GameDefinition) -> some View {
-        OrnamentalPanel(padding: 34, tone: LauncherPalette.twilight.opacity(0.60)) {
-            VStack(alignment: .leading, spacing: 26) {
-                HStack(alignment: .top) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(game.displayName)
-                            .font(.system(size: 46, weight: .bold, design: .serif))
-                            .foregroundStyle(LauncherPalette.parchment)
-                        Text(viewModel.statusText)
-                            .font(.system(.subheadline, design: .rounded, weight: .semibold))
-                            .foregroundStyle(LauncherPalette.mist.opacity(0.78))
-                    }
+        OrnamentalPanel(padding: 18, tone: LauncherPalette.twilight.opacity(0.60)) {
+            HStack(alignment: .center, spacing: 18) {
+                playButton
 
-                    Spacer(minLength: 20)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(game.displayName)
+                        .font(.system(size: 24, weight: .bold, design: .serif))
+                        .foregroundStyle(LauncherPalette.parchment)
+                        .lineLimit(1)
 
-                    CelestialMark()
-                        .scaleEffect(1.55)
-                        .padding(8)
+                    statusLine
+                    controlRow
                 }
 
-                Divider()
-                    .overlay(LauncherPalette.gold.opacity(0.40))
-
-                actionRow
+                Spacer(minLength: 0)
             }
         }
     }
 
-    private var actionRow: some View {
-        HStack(alignment: .center, spacing: 24) {
-            let playDisabled = viewModel.isBusy && !viewModel.isLaunchingWithWine
-            CircularActionButton(
-                systemImage: viewModel.isLaunchingWithWine ? "stop.fill" : "play.fill",
-                title: viewModel.isLaunchingWithWine ? text.stopTitle : text.playTitle,
-                progress: nil,
-                isActive: viewModel.isLaunchingWithWine
-            ) {
+    private var playButton: some View {
+        let gameIsRunning = viewModel.isLaunchingWithWine || viewModel.isGameRunning
+        let isDisabled = viewModel.isBusy && !viewModel.isLaunchingWithWine
+        return CircularActionButton(
+            systemImage: gameIsRunning ? "stop.fill" : "play.fill",
+            title: gameIsRunning ? text.stopTitle : text.playTitle,
+            progress: nil,
+            isActive: gameIsRunning
+        ) {
+            if gameIsRunning {
                 if viewModel.isLaunchingWithWine {
                     viewModel.stopCurrentOperation()
                 } else {
-                    viewModel.launchSelectedGame()
+                    viewModel.stopRunningGame()
                 }
+            } else {
+                viewModel.launchSelectedGame()
             }
-            .disabled(playDisabled)
-            .opacity(playDisabled ? 0.5 : 1)
+        }
+        .disabled(isDisabled)
+        .opacity(isDisabled ? 0.5 : 1)
+    }
 
-            VStack(alignment: .leading, spacing: 10) {
-                let updateDisabled = viewModel.isBusy || !viewModel.canUpdateSelectedGame
-                Button {
-                    viewModel.updateSelectedGame()
-                } label: {
-                    Label(text.updateGameTitle, systemImage: "arrow.triangle.2.circlepath")
-                }
-                .quest(.secondary, disabled: updateDisabled)
-
-                if !viewModel.isLaunchingWithWine {
-                    Button {
-                        withAnimation(.easeOut(duration: 0.2)) {
-                            isShowingDiagnostics.toggle()
-                        }
-                    } label: {
-                        Label(
-                            isShowingDiagnostics ? text.hideDiagnostics : text.showDiagnostics,
-                            systemImage: isShowingDiagnostics ? "chevron.up" : "chevron.down"
-                        )
-                    }
-                    .quest(.quiet)
-                }
-            }
-
-            Spacer(minLength: 0)
+    private var statusLine: some View {
+        HStack(spacing: 8) {
+            statusIndicator
+                .frame(width: 16, height: 16)
+            Text(viewModel.statusText)
+                .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                .foregroundStyle(LauncherPalette.mist.opacity(0.78))
+                .lineLimit(1)
+            playtimeReminderBadge
         }
     }
 
-    private var statusDrawer: some View {
-        OrnamentalPanel(padding: 24, tone: LauncherPalette.night.opacity(0.66)) {
-            VStack(alignment: .leading, spacing: 18) {
-                if viewModel.isBusy || viewModel.isLaunchingWithWine {
-                    statusHeader
-                }
-
-                // While a game is launching there is no meaningful overall progress to show
-                // (the launch bar is always indeterminate), so skip the progress section and
-                // surface only the diagnostics log.
-                if let progress = viewModel.operationProgress, !viewModel.isLaunchingWithWine {
-                    progressDetails(progress)
-                }
-
-                if viewModel.isBusy && !viewModel.isLaunchingWithWine {
-                    pauseStopRow
-                }
-
-                if isShowingDiagnostics || viewModel.isLaunchingWithWine {
-                    logsSection
-                }
-            }
-        }
-        .transition(.opacity)
-    }
-
-    private var statusHeader: some View {
-        HStack(alignment: .center, spacing: 14) {
-            ZStack {
-                Circle()
-                    .fill(statusTint.opacity(0.14))
-                    .frame(width: 42, height: 42)
-                if viewModel.isPaused {
-                    Image(systemName: "pause.fill")
-                        .font(.system(.title3, weight: .semibold))
-                        .foregroundStyle(statusTint)
-                } else {
-                    ProgressView()
-                        .controlSize(.small)
-                        .tint(statusTint)
-                }
-            }
-
-            VStack(alignment: .leading, spacing: 5) {
-                Text(text.status.uppercased())
-                    .font(.system(.caption2, design: .rounded, weight: .bold))
-                    .tracking(1.2)
-                    .foregroundStyle(LauncherPalette.goldHighlight)
-                Text(viewModel.statusText)
-                    .font(.system(.title3, design: .rounded, weight: .bold))
-                    .foregroundStyle(LauncherPalette.parchment)
-                    .lineLimit(2)
-            }
-
-            Spacer(minLength: 12)
+    @ViewBuilder
+    private var playtimeReminderBadge: some View {
+        if let remaining = viewModel.playtimeRemainingText {
+            Text(viewModel.isPlaytimeReminderDue ? text.playtimeReminderDue : "· \(remaining)")
+                .font(.system(.caption, design: .monospaced, weight: .semibold))
+                .foregroundStyle(viewModel.isPlaytimeReminderDue ? LauncherPalette.warning : LauncherPalette.mist.opacity(0.55))
+                .lineLimit(1)
         }
     }
 
-    private var statusTint: Color {
-        viewModel.isBusy || viewModel.isLaunchingWithWine ? LauncherPalette.warning : LauncherPalette.success
+    @ViewBuilder
+    private var statusIndicator: some View {
+        if viewModel.isPaused {
+            Image(systemName: "pause.fill")
+                .font(.system(size: 11, weight: .bold))
+                .foregroundStyle(LauncherPalette.warning)
+        } else if viewModel.isBusy || viewModel.isLaunchingWithWine {
+            ProgressView()
+                .controlSize(.small)
+                .tint(LauncherPalette.warning)
+        } else {
+            Circle()
+                .fill(viewModel.isGameRunning ? LauncherPalette.success : LauncherPalette.mist.opacity(0.45))
+                .frame(width: 8, height: 8)
+        }
     }
 
-    private var pauseStopRow: some View {
+    /// Update plus the pause/stop pair for the running operation. They share the hero row because a
+    /// fixed layout has no drawer to reveal them in, and stopping an update is a primary action.
+    private var controlRow: some View {
         HStack(spacing: 10) {
-            Button(viewModel.isPaused ? text.resumeTitle : text.pauseTitle) {
-                viewModel.togglePause()
+            Button {
+                viewModel.updateSelectedGame()
+            } label: {
+                Label(text.updateGameTitle, systemImage: "arrow.triangle.2.circlepath")
             }
-            .quest(.quiet)
+            .quest(.secondary, disabled: viewModel.isBusy || !viewModel.canUpdateSelectedGame)
 
-            Button(text.stopTitle) {
-                viewModel.stopCurrentOperation()
+            if viewModel.isBusy && !viewModel.isLaunchingWithWine {
+                Button(viewModel.isPaused ? text.resumeTitle : text.pauseTitle) {
+                    viewModel.togglePause()
+                }
+                .quest(.quiet)
+
+                Button(text.stopTitle) {
+                    viewModel.stopCurrentOperation()
+                }
+                .quest(.quiet)
             }
-            .quest(.quiet)
-
-            Spacer(minLength: 0)
         }
     }
 
-    private func progressDetails(_ progress: OperationProgress) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
+    // MARK: - Activity Panel
+
+    private var activityPanel: some View {
+        OrnamentalPanel(padding: 14, tone: LauncherPalette.night.opacity(0.66), showsMark: false) {
+            VStack(alignment: .leading, spacing: 10) {
+                // While a game is launching there is no meaningful overall progress to show (the
+                // launch bar is always indeterminate), so the console gets the whole panel.
+                if let progress = viewModel.operationProgress, !viewModel.isLaunchingWithWine {
+                    progressSection(progress)
+                }
+                logSection
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        }
+        .frame(maxHeight: .infinity)
+    }
+
+    private func progressSection(_ progress: OperationProgress) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
             progressLine(
                 title: text.totalProgressLabel,
                 detail: progress.detailText ?? text.waitingForProgress,
@@ -200,8 +180,6 @@ struct HomeView: View {
             )
 
             if progress.partText != nil || progress.currentPartDetailText != nil {
-                Divider()
-                    .overlay(LauncherPalette.mist.opacity(0.12))
                 progressLine(
                     title: text.currentPartProgressLabel,
                     detail: progress.currentPartDetailText ?? progress.partText ?? text.waitingForProgress,
@@ -210,134 +188,181 @@ struct HomeView: View {
             }
 
             if progress.speedText != nil || progress.etaText != nil || progress.totalKBText != nil {
-                transferMetricsStrip(progress)
+                metricsRow(progress)
             }
 
             if let paths = progress.itemPaths, !paths.isEmpty {
-                activeItemList(paths)
+                activeItems(paths)
             } else if let path = progress.itemPath {
-                activeItemList([path])
+                activeItems([path])
             }
         }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(LauncherPalette.ink.opacity(0.26), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
 
+    /// One progress row on a single line — label, detail, percentage — above its bar, so the section
+    /// keeps a height the surrounding fixed layout can absorb.
     private func progressLine(title: String, detail: String, value: Double?) -> some View {
-        VStack(alignment: .leading, spacing: 9) {
-            HStack(alignment: .firstTextBaseline) {
+        VStack(alignment: .leading, spacing: 5) {
+            HStack(alignment: .firstTextBaseline, spacing: 10) {
                 Text(title.uppercased())
                     .font(.system(.caption2, design: .rounded, weight: .bold))
                     .tracking(0.8)
                     .foregroundStyle(LauncherPalette.mist.opacity(0.70))
-                Spacer()
+                    .fixedSize()
+                Text(detail)
+                    .font(.caption)
+                    .foregroundStyle(LauncherPalette.parchment.opacity(0.92))
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+                Spacer(minLength: 8)
                 if let value {
                     Text("\(Int((value * 100).rounded()))%")
                         .font(.system(.caption, design: .monospaced, weight: .semibold))
                         .foregroundStyle(LauncherPalette.goldHighlight)
                 }
             }
-            Text(detail)
-                .font(.subheadline)
-                .foregroundStyle(LauncherPalette.parchment.opacity(0.92))
-                .lineLimit(2)
             GoldenProgressBar(value: value)
         }
     }
 
-    private func transferMetricsStrip(_ progress: OperationProgress) -> some View {
-        ViewThatFits(in: .horizontal) {
-            HStack(alignment: .top, spacing: 24) { transferMetrics(progress) }
-            VStack(alignment: .leading, spacing: 12) { transferMetrics(progress) }
+    private func metricsRow(_ progress: OperationProgress) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 20) {
+            metric(text.speedLabel, progress.speedText)
+            metric(text.etaLabel, progress.etaText ?? (progress.isETAWarmingUp ? text.etaWarmupMessage : nil))
+            metric(text.progressLabel, progress.totalKBText)
+            Spacer(minLength: 0)
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(LauncherPalette.ink.opacity(0.26), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-    }
-
-    @ViewBuilder
-    private func transferMetrics(_ progress: OperationProgress) -> some View {
-        metric(text.speedLabel, progress.speedText)
-        metric(text.etaLabel, progress.etaText ?? (progress.isETAWarmingUp ? text.etaWarmupMessage : nil))
-        metric(text.progressLabel, progress.totalKBText)
     }
 
     @ViewBuilder
     private func metric(_ label: String, _ value: String?) -> some View {
         if let value {
-            VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 6) {
                 Text(label.uppercased())
                     .font(.system(.caption2, design: .rounded, weight: .bold))
                     .tracking(0.8)
                     .foregroundStyle(LauncherPalette.gold.opacity(0.80))
                 Text(value)
-                    .font(.system(.body, design: .monospaced, weight: .medium))
+                    .font(.system(.caption, design: .monospaced, weight: .medium))
                     .foregroundStyle(LauncherPalette.parchment)
+                    .lineLimit(1)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
-    private func activeItemList(_ paths: [String]) -> some View {
-        VStack(alignment: .leading, spacing: 9) {
-            Text(paths.count > 1 ? text.currentItemsLabel : text.currentItemLabel)
+    private func activeItems(_ paths: [String]) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text((paths.count > 1 ? text.currentItemsLabel : text.currentItemLabel).uppercased())
                 .font(.system(.caption2, design: .rounded, weight: .bold))
                 .tracking(0.8)
                 .foregroundStyle(LauncherPalette.mist.opacity(0.70))
-            ForEach(paths.prefix(3), id: \.self) { path in
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    Image(systemName: "doc.text")
-                        .font(.caption2)
-                        .foregroundStyle(LauncherPalette.gold.opacity(0.82))
-                    Text(path)
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundStyle(LauncherPalette.parchment.opacity(0.88))
-                        .lineLimit(1)
-                        .textSelection(.enabled)
-                }
+            ForEach(paths.prefix(2), id: \.self) { path in
+                Text(path)
+                    .font(.system(.caption, design: .monospaced))
+                    .foregroundStyle(LauncherPalette.parchment.opacity(0.88))
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+                    .textSelection(.enabled)
             }
         }
-        .padding(14)
-        .background(LauncherPalette.ink.opacity(0.20), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    private var logsSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            if !viewModel.updateRunLog.isEmpty {
-                logPanel(title: text.updateRunLogTitle, contents: viewModel.updateRunLog, bottomID: "update-log")
-            }
-            if !viewModel.wineRunLog.isEmpty {
-                logPanel(title: text.wineRunLogTitle, contents: viewModel.wineRunLog, bottomID: "wine-log")
-            }
-            if viewModel.updateRunLog.isEmpty && viewModel.wineRunLog.isEmpty {
-                Text(text.waitingForProgress)
-                    .font(.caption)
-                    .foregroundStyle(LauncherPalette.mist.opacity(0.72))
-            }
-        }
-    }
+    // MARK: - Diagnostics Console
 
-    private func logPanel(title: String, contents: String, bottomID: String) -> some View {
+    private var logSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(title)
-                .font(.system(.caption, design: .rounded, weight: .bold))
-                .foregroundStyle(LauncherPalette.gold.opacity(0.86))
-
-            ScrollViewReader { proxy in
-                ScrollView {
-                    Text(contents)
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundStyle(LauncherPalette.mist.opacity(0.88))
-                        .textSelection(.enabled)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Color.clear.frame(height: 1).id(bottomID)
-                }
-                .onChange(of: viewModel.runLogVersion) { _, _ in
-                    proxy.scrollTo(bottomID, anchor: .bottom)
+            HStack(alignment: .center, spacing: 12) {
+                Text(text.diagnosticsTitle.uppercased())
+                    .font(.system(.caption2, design: .rounded, weight: .bold))
+                    .tracking(1.0)
+                    .foregroundStyle(LauncherPalette.goldHighlight)
+                Spacer(minLength: 0)
+                if availableChannels.count > 1 {
+                    channelTabs
                 }
             }
-            .frame(minHeight: 130, maxHeight: 230)
-            .padding(12)
-            .background(LauncherPalette.ink.opacity(0.48), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            logConsole
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    }
+
+    private var channelTabs: some View {
+        TabGroup {
+            ForEach(availableChannels, id: \.self) { channel in
+                SidebarTabButton(
+                    title: title(for: channel),
+                    systemImage: channel == .update ? "arrow.down.circle" : "terminal",
+                    isSelected: activeChannel == channel
+                ) {
+                    logChannel = channel
+                }
+            }
+        }
+        .fixedSize()
+    }
+
+    @ViewBuilder
+    private var logConsole: some View {
+        Group {
+            if let contents = logContents {
+                // Tailing and selection are the text view's own job — see
+                // RunLogConsole for why this is not a `Text` in a `ScrollView`.
+                RunLogConsole(text: contents,
+                              font: .monospacedSystemFont(ofSize: NSFont.smallSystemFontSize, weight: .regular),
+                              textColor: NSColor(LauncherPalette.mist.opacity(0.88)))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                emptyConsole
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(10)
+        .background(LauncherPalette.ink.opacity(0.48), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
+
+    private var emptyConsole: some View {
+        VStack(spacing: 10) {
+            Image(systemName: "terminal")
+                .font(.system(size: 26, weight: .light))
+                .foregroundStyle(LauncherPalette.mist.opacity(0.30))
+            Text(text.noDiagnosticsYet)
+                .font(.caption)
+                .foregroundStyle(LauncherPalette.mist.opacity(0.58))
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var availableChannels: [LogChannel] {
+        var channels: [LogChannel] = []
+        if !viewModel.updateRunLog.isEmpty { channels.append(.update) }
+        if !viewModel.wineRunLog.isEmpty { channels.append(.wine) }
+        return channels
+    }
+
+    /// The channel actually rendered: the user's pick while it still has content, otherwise whichever
+    /// stream is live. Deriving it means a run that clears one log never needs `logChannel` reset.
+    private var activeChannel: LogChannel? {
+        let channels = availableChannels
+        return channels.contains(logChannel) ? logChannel : channels.first
+    }
+
+    private var logContents: String? {
+        guard let channel = activeChannel else { return nil }
+        switch channel {
+        case .update: return viewModel.updateRunLog
+        case .wine: return viewModel.wineRunLog
+        }
+    }
+
+    private func title(for channel: LogChannel) -> String {
+        switch channel {
+        case .update: return text.updateRunLogTitle
+        case .wine: return text.wineRunLogTitle
         }
     }
 }

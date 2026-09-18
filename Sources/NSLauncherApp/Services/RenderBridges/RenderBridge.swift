@@ -64,7 +64,7 @@ protocol RenderBridge: Sendable {
 extension RenderBridge {
     /// Default resolution: the newest usable Wine, with no extra requirement.
     ///
-    /// Bridges that need more — D3DMetal's `lib64/apple_gptk` requirement — override this.
+    /// Bridges that need more — DXMT's `lib/dxmt` payload requirement — override this.
     func resolveWineBuild(
         preferredPath: String,
         processRunner: ProcessRunning,
@@ -85,12 +85,11 @@ extension RenderBridge {
 
 /// Maps a resolved backend onto its bridge.
 enum RenderBridges {
-    /// Picks the backend a game actually launches with: the user's preference when the game
-    /// declares support for it, otherwise the first supported fallback.
+    /// Picks the backend a game actually launches with: the preferred backend when the game
+    /// declares support for it, otherwise plain Wine.
     static func resolveBackend(requirements: [RuntimeRequirement], preferred: RuntimeBackend) -> RuntimeBackend {
         let preferredRequirement: RuntimeRequirement? = {
             switch preferred {
-            case .d3dMetal: return .d3dMetal
             case .dxmt: return .dxmt
             case .plainWine: return nil
             }
@@ -98,14 +97,12 @@ enum RenderBridges {
         if let preferredRequirement, requirements.contains(preferredRequirement) {
             return preferred
         }
-        if requirements.contains(.d3dMetal) { return .d3dMetal }
         if requirements.contains(.dxmt) { return .dxmt }
         return .plainWine
     }
 
     static func bridge(for backend: RuntimeBackend) -> RenderBridge? {
         switch backend {
-        case .d3dMetal: return D3DMetalBridge()
         case .dxmt: return DXMTBridge()
         case .plainWine: return nil
         }
@@ -134,8 +131,9 @@ enum RenderBridges {
         "d3d10,d3d10_1,d3d10core,d3d11,dxgi=b"
     }
 
-    /// Environment every Metal-native backend (D3DMetal, DXMT) needs, regardless of which one:
-    /// esync, plus the builtin-forcing overrides above.
+    /// Environment a Metal-native backend needs: esync, plus the builtin-forcing overrides above.
+    /// Only DXMT uses this today (Apple's own D3DMetal backend was removed), kept separate from
+    /// `DXMTBridge` so a future second Metal-native backend inherits it automatically.
     ///
     /// `vulkan-1=` used to be here, on the theory that Unity was falling back to Vulkan-via-MoltenVK.
     /// That theory is disproven; DO NOT reintroduce it. The game's own log reports

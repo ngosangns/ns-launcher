@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "tuning.schema.json",
+  "title": "AbyssTuning",
+  "description": "Hằng số/giả định của thuật toán gợi ý đội hình. Khác với các file dữ liệu còn lại: đây KHÔNG phải số liệu game fetch về, mà là tham số mô hình — nhóm 'hằng số game chuẩn' (chưa đối chiếu API) và nhóm 'ước lượng heuristic' (chủ quan, chỉnh tay được). LƯU Ý 2026-09-12: mọi thứ chỉ đúng với MỘT nhân vật cụ thể — nhãn đòn nặng, party buff theo talent, tag Stellar Jubilee, giảm kháng từ talent — đã chuyển sang character-traits.json. File này chỉ giữ hằng số áp cho mọi nhân vật.",
+  "type": "object",
+  "required": [
+    "artifactMainStats", "substatRollValue", "substatRollBudget", "substatPriority",
+    "scalingBasisSwap", "rotationSeconds", "swapSeconds", "energy",
+    "noSustainPenalty",
+    "shieldBreakBonus", "weaknessExploitBonus",
+    "stellarConductRamp", "enemyOwnElementResistance", "resistanceShred"
+  ],
+  "properties": {
+    "_doc": { "type": "string" },
+    "artifactMainStats": {
+      "type": "object",
+      "description": "Main stat từng vị trí ở thánh di vật 5★ cấp 20",
+      "additionalProperties": { "type": "number" }
+    },
+    "substatRollValue": {
+      "type": "object",
+      "description": "Giá trị trung bình 1 roll substat ở 5★",
+      "additionalProperties": { "type": "number" }
+    },
+    "substatRollBudget": { "type": "number", "minimum": 0 },
+    "substatPriority": {
+      "type": "object",
+      "description": "Phân bổ ngân sách roll theo vai trò; tổng mỗi vai trò = 1.0",
+      "additionalProperties": { "type": "object", "additionalProperties": { "type": "number" } }
+    },
+    "scalingBasisSwap": {
+      "type": "object",
+      "additionalProperties": { "type": "object", "additionalProperties": { "type": "string" } }
+    },
+    "rotationSeconds": { "type": "number", "exclusiveMinimum": 0 },
+    "swapSeconds": { "type": "number", "minimum": 0, "description": "Giây mỗi lần đổi người để cast; giả định theo swap_delay mặc định của gcsim." },
+    "energy": {
+      "type": "object",
+      "description": "Pha 3: luật game về năng lượng (sameElementParticle, otherElementParticle, clearParticle, offFieldShare) và một giả định (enemyClearParticlesPerRotation). Thay cho offFieldUptime.",
+      "required": ["sameElementParticle", "otherElementParticle", "clearParticle", "offFieldShare", "enemyClearParticlesPerRotation", "maxSkillCastsPerRotation"],
+      "properties": {
+        "sameElementParticle": { "type": "number", "minimum": 0 },
+        "otherElementParticle": { "type": "number", "minimum": 0 },
+        "clearParticle": { "type": "number", "minimum": 0 },
+        "offFieldShare": { "type": "number", "minimum": 0, "maximum": 1 },
+        "enemyClearParticlesPerRotation": { "type": "number", "minimum": 0 },
+        "maxSkillCastsPerRotation": { "type": "number", "exclusiveMinimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "noSustainPenalty": { "type": "number", "exclusiveMinimum": 0 },
+    "shieldBreakBonus": { "type": "number", "exclusiveMinimum": 0 },
+    "weaknessExploitBonus": { "type": "number", "exclusiveMinimum": 0 },
+    "stellarConductRamp": { "type": "number", "minimum": 0, "maximum": 1, "description": "Vị trí trên dải hệ số Stellar-Conduct: 0 = stellarConductMin, 1 = stellarConductMax. Giả định, vì hệ số thật leo theo số đòn Cryo/Electro trước đó mà model không đếm đòn" },
+    "enemyOwnElementResistance": { "type": "number", "minimum": 0, "maximum": 1, "description": "Kháng của quái với CHÍNH nguyên tố nó dùng để đánh/khiên. Suy luận, không phải dữ liệu: đặt 0.10 để tắt" },
+    "resistanceShred": {
+      "type": "array",
+      "description": "Nguồn giảm kháng nguyên tố gắn với BỘ THÁNH DI VẬT, gate theo nguyên tố của đội — một giả định về ai mặc gì. Nguồn gắn với nhân vật (Faruzan, Shenhe) nằm ở character-traits.json, vì đó là sự thật chứ không phải giả định",
+      "items": {
+        "type": "object",
+        "required": ["id", "elements", "value", "uptime", "note"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+          "requiresElement": { "type": ["string", "null"], "description": "Đội phải có nguyên tố này" },
+          "elements": { "type": "array", "items": { "type": "string" }, "description": "Tên nguyên tố, hoặc \"swirled\" = mọi nguyên tố đội khuếch tán được" },
+          "value": { "type": "number", "minimum": 0, "maximum": 1 },
+          "uptime": { "type": "number", "minimum": 0, "maximum": 1 },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "notes": {
+      "type": "object",
+      "description": "Giải thích ý nghĩa từng nhóm số — JSON không có comment nên phần văn xuôi giải thích 'vì sao con số này' phải nằm ở đây",
+      "additionalProperties": { "type": "string" }
+    }
+  }
+}

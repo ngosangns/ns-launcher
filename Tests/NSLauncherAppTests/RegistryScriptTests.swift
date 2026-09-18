@@ -12,7 +12,7 @@ final class RegistryScriptTests: XCTestCase {
         let script = RegistryScript.render([
             RegistryEntry(key: macDriver, name: "RetinaMode", value: .string("y")),
             RegistryEntry(key: genshin, name: "WINDOWS_HDR_ON_h3132281285", value: .dword(1)),
-            RegistryEntry(key: macDriver, name: "LeftCommandIsCtrl", value: .string("n"))
+            RegistryEntry(key: macDriver, name: "CaptureDisplaysForFullscreen", value: .string("y"))
         ])
 
         XCTAssertTrue(script.hasPrefix("Windows Registry Editor Version 5.00"))
@@ -20,7 +20,7 @@ final class RegistryScriptTests: XCTestCase {
         XCTAssertEqual(script.components(separatedBy: "[\(macDriver)]").count - 1, 1)
         let macSection = try? XCTUnwrap(script.components(separatedBy: "[\(macDriver)]").last)
         XCTAssertEqual(macSection?.contains("\"RetinaMode\"=\"y\""), true)
-        XCTAssertEqual(macSection?.contains("\"LeftCommandIsCtrl\"=\"n\""), true)
+        XCTAssertEqual(macSection?.contains("\"CaptureDisplaysForFullscreen\"=\"y\""), true)
         XCTAssertLessThan(
             try XCTUnwrap(script.range(of: "[\(macDriver)]")).lowerBound,
             try XCTUnwrap(script.range(of: "[\(genshin)]")).lowerBound

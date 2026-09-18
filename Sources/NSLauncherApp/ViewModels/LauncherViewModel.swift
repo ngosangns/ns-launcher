@@ -13,6 +13,7 @@
 // Logs are capped (~80k chars) so the SwiftUI text views stay responsive; progress
 // and speed/ETA are throttled independently of the raw download callbacks.
 
+import AppKit
 import Foundation
 import SwiftUI
 
@@ -55,6 +56,10 @@ final class LauncherViewModel: ObservableObject {
     @Published var isPaused = false
     /// True while the selected game is being launched through Wine.
     @Published var isLaunchingWithWine = false
+    /// True while the selected game's executable is running, whether this session launched it or
+    /// it was already running when the launcher started. Drives the Home button's Play/Stop state
+    /// so a leftover session reads *Stop* and is stoppable instead of re-launchable.
+    @Published private(set) var isGameRunning = false
     /// Streaming diagnostic log for the latest Wine launch.
     @Published var wineRunLog = ""
     /// Streaming diagnostic log for the latest game update.
@@ -62,7 +67,6 @@ final class LauncherViewModel: ObservableObject {
     /// Bumped on every published log change so views can drive auto-scroll without measuring the
     /// log text itself; `contents.count` is O(n) and the panel re-renders far more often than the
     /// log changes.
-    @Published var runLogVersion = 0
     /// True while the selected game is being updated through Sophon.
     @Published var isUpdatingGame = false
     /// Voice-over packages with local assets in the selected game installation.
@@ -75,8 +79,18 @@ final class LauncherViewModel: ObservableObject {
     @Published var cacheReport: [RemovableCache] = []
     /// True while cache sizes are being refreshed or a category is being cleared.
     @Published var isManagingCache = false
+    /// Cutscene video files found under `StreamingAssets/VideoAssets`, for manual review.
+    @Published var cutsceneFiles: [CutsceneFile] = []
+    /// True while cutscene files are being scanned or one is being deleted.
+    @Published var isManagingCutscenes = false
     /// True while CrossOver is being installed through Homebrew.
     @Published var isInstallingCrossOver = false
+    /// Seconds left in the current playtime reminder countdown, started fresh on every launch; nil
+    /// when no countdown is running. Advisory only — reaching zero never stops the game.
+    @Published private(set) var playtimeRemainingSeconds: Int?
+    /// True once the countdown has reached zero, so the Home screen can flag it without the text
+    /// itself having to double as the signal.
+    @Published private(set) var isPlaytimeReminderDue = false
 
     private let coordinator: LauncherCoordinator
     private var currentTask: Task<Void, Never>?
@@ -91,6 +105,12 @@ final class LauncherViewModel: ObservableObject {
     private var wineLogBuffer = RunLogBuffer()
     private var updateLogBuffer = RunLogBuffer()
     private var runLogFlushTask: Task<Void, Never>?
+    /// Watches an instance found already running at startup until it exits; nil when none was
+    /// found or the instance has stopped.
+    private var gameRunningMonitorTask: Task<Void, Never>?
+    /// Ticks `playtimeRemainingSeconds` down once a second while a launch this session started is
+    /// running; nil when no countdown is active.
+    private var playtimeReminderTask: Task<Void, Never>?
 
     /// How long buffered log text waits before it is published. Long enough to collapse a burst of
     /// process output, short enough that the panel still reads as live.
@@ -118,7 +138,9 @@ final class LauncherViewModel: ObservableObject {
         if settings != loadedSettings {
             try? coordinator.saveSettings(settings)
         }
-        return LauncherViewModel(settings: settings, coordinator: coordinator)
+        let viewModel = LauncherViewModel(settings: settings, coordinator: coordinator)
+        viewModel.checkForRunningGameAtStartup()
+        return viewModel
     }
 
     /// Games configured in settings.
@@ -169,16 +191,6 @@ final class LauncherViewModel: ObservableObject {
         update(\.language, to: language)
     }
 
-    /// Updates the custom-resolution width and persists the choice.
-    func setResolutionWidth(_ width: Int) {
-        update(\.resolutionWidth, to: max(width, 1))
-    }
-
-    /// Updates the custom-resolution height and persists the choice.
-    func setResolutionHeight(_ height: Int) {
-        update(\.resolutionHeight, to: max(height, 1))
-    }
-
     /// Refreshes local storage inventory for the selected game.
     func refreshVoicePackages() {
         guard !isManagingVoicePacks, let game = selectedGame else { return }
@@ -226,7 +238,7 @@ final class LauncherViewModel: ObservableObject {
                 self.voicePackages.removeAll { $0.matchingField == package.matchingField }
                 self.storageInventory.voicePackages.removeAll { $0.matchingField == package.matchingField }
                 self.statusText = self.text.voicePackRemoved(
-                    ByteCountFormatter.string(fromByteCount: freedBytes, countStyle: .file)
+                    ByteCountFormatter.fileSize(freedBytes)
                 )
             } catch {
                 self.errorMessage = self.text.message(for: error)
@@ -270,7 +282,7 @@ final class LauncherViewModel: ObservableObject {
                 switch outcome {
                 case let .success(freedBytes):
                     self.statusText = self.text.cacheCleared(
-                        ByteCountFormatter.string(fromByteCount: freedBytes, countStyle: .file)
+                        ByteCountFormatter.fileSize(freedBytes)
                     )
                 case let .failure(error):
                     self.errorMessage = self.text.message(for: error)
@@ -281,11 +293,123 @@ final class LauncherViewModel: ObservableObject {
         }
     }
 
-    /// True once a CrossOver carrying Apple D3DMetal is installed — hides the install action in
-    /// Settings once it is no longer needed.
+    /// Scans cutscene video files for the selected game off the main actor.
+    func refreshCutsceneFiles() {
+        guard !isManagingCutscenes, let game = selectedGame else { return }
+        isManagingCutscenes = true
+        let coordinator = self.coordinator
+        Task.detached(priority: .userInitiated) {
+            let files = coordinator.listCutsceneFiles(for: game).sorted { $0.sizeBytes > $1.sizeBytes }
+            await MainActor.run { [weak self] in
+                self?.cutsceneFiles = files
+                self?.isManagingCutscenes = false
+            }
+        }
+    }
+
+    /// Cutscene files whose filename carries the given Traveler-gender suffix — see
+    /// `LauncherCoordinator.travelerGenderToken(inRelativePath:)`. Files with no detected gender
+    /// token (most of the library) never appear in either gender's list.
+    func cutsceneFiles(forGender gender: TravelerGender) -> [CutsceneFile] {
+        cutsceneFiles.filter { LauncherCoordinator.travelerGenderToken(inRelativePath: $0.relativePath) == gender }
+    }
+
+    /// Trashes every cutscene file matching one Traveler-gender variant off the main actor, then
+    /// removes them from the local list.
+    func deleteAllCutscenes(forGender gender: TravelerGender) {
+        guard !isManagingCutscenes else { return }
+        let targets = cutsceneFiles(forGender: gender)
+        guard !targets.isEmpty else { return }
+
+        isManagingCutscenes = true
+        statusText = text.clearingCache
+        errorMessage = nil
+        let coordinator = self.coordinator
+        Task.detached(priority: .userInitiated) {
+            var freedBytes: Int64 = 0
+            var removedIDs = Set<CutsceneFile.ID>()
+            var lastError: Error?
+            for file in targets {
+                do {
+                    freedBytes += try coordinator.trashCutsceneFile(file)
+                    removedIDs.insert(file.id)
+                } catch {
+                    lastError = error
+                }
+            }
+            await MainActor.run { [weak self] in
+                guard let self else { return }
+                self.cutsceneFiles.removeAll { removedIDs.contains($0.id) }
+                if let lastError {
+                    self.errorMessage = self.text.message(for: lastError)
+                    self.statusText = self.text.cacheClearFailed
+                } else {
+                    self.statusText = self.text.cacheCleared(
+                        ByteCountFormatter.fileSize(freedBytes)
+                    )
+                }
+                self.isManagingCutscenes = false
+            }
+        }
+    }
+
+    /// Decrypts one cutscene through the user's configured GI-cutscenes install, then opens it.
+    ///
+    /// NS Launcher never embeds the decryption itself — see `LauncherCoordinator.decryptedCutsceneURL`.
+    func openCutsceneFile(_ file: CutsceneFile) {
+        guard !isManagingCutscenes else { return }
+        isManagingCutscenes = true
+        statusText = text.decryptingCutscene
+        errorMessage = nil
+        let coordinator = self.coordinator
+        let binaryPath = settings.giCutscenesBinaryPath
+
+        Task { [weak self] in
+            guard let self else { return }
+            defer { self.isManagingCutscenes = false }
+            do {
+                let playableURL = try await coordinator.decryptedCutsceneURL(for: file, binaryPath: binaryPath)
+                NSWorkspace.shared.open(playableURL)
+                self.statusText = self.text.ready
+            } catch {
+                self.errorMessage = self.text.message(for: error)
+                self.statusText = self.text.cutsceneDecryptFailed
+            }
+        }
+    }
+
+    /// Sends one cutscene file to the Trash off the main actor, then updates the local list.
+    func deleteCutsceneFile(_ file: CutsceneFile) {
+        guard !isManagingCutscenes else { return }
+        isManagingCutscenes = true
+        errorMessage = nil
+        let coordinator = self.coordinator
+        Task.detached(priority: .userInitiated) {
+            let outcome: Result<Int64, Error>
+            do {
+                outcome = .success(try coordinator.trashCutsceneFile(file))
+            } catch {
+                outcome = .failure(error)
+            }
+            await MainActor.run { [weak self] in
+                guard let self else { return }
+                switch outcome {
+                case .success:
+                    self.cutsceneFiles.removeAll { $0.id == file.id }
+                    self.statusText = self.text.cutsceneDeleted(file.relativePath)
+                case let .failure(error):
+                    self.errorMessage = self.text.message(for: error)
+                }
+                self.isManagingCutscenes = false
+            }
+        }
+    }
+
+    /// True once a CrossOver carrying DXMT is installed — hides the install action in Settings
+    /// once it is no longer needed.
     var isCrossOverInstalled: Bool { CrossOverInstaller.isInstalled }
 
-    /// Installs CrossOver through Homebrew so the D3DMetal render backend has a build to select.
+    /// Installs CrossOver through Homebrew so the DXMT render backend has a build to select.
     ///
     /// Only ever triggered by an explicit tap in Settings — see `CrossOverInstaller` for why this
     /// installs a paid trial and must never run on its own.
@@ -370,7 +494,7 @@ final class LauncherViewModel: ObservableObject {
                     }
                 }
                 let currentVersion = plan.installedVersion ?? self.text.missingVersionLabel
-                let downloadText = ByteCountFormatter.string(fromByteCount: plan.bytesToDownload, countStyle: .file)
+                let downloadText = ByteCountFormatter.fileSize(plan.bytesToDownload)
                 let summary = self.text.updatePlanSummary(
                     currentVersion: currentVersion,
                     latestVersion: plan.latestVersion,
@@ -395,11 +519,11 @@ final class LauncherViewModel: ObservableObject {
                         vi: "Bộ tải Sophon: tải nhiều chunk song song, giải nén zstd trong tiến trình, gom batch trạng thái resume."
                     ))
                     self.appendUpdateLogLine(self.logText(
-                        en: "Bytes to write after decompression: \(ByteCountFormatter.string(fromByteCount: plan.decompressedBytesToWrite, countStyle: .file))",
-                        vi: "Dung lượng ghi sau giải nén: \(ByteCountFormatter.string(fromByteCount: plan.decompressedBytesToWrite, countStyle: .file))"
+                        en: "Bytes to write after decompression: \(ByteCountFormatter.fileSize(plan.decompressedBytesToWrite))",
+                        vi: "Dung lượng ghi sau giải nén: \(ByteCountFormatter.fileSize(plan.decompressedBytesToWrite))"
                     ))
                 }
-                self.appendUpdateLogLine(self.logText(en: "Peak temporary bytes: \(ByteCountFormatter.string(fromByteCount: plan.peakTemporaryBytes, countStyle: .file))", vi: "Bộ nhớ tạm tối đa: \(ByteCountFormatter.string(fromByteCount: plan.peakTemporaryBytes, countStyle: .file))"))
+                self.appendUpdateLogLine(self.logText(en: "Peak temporary bytes: \(ByteCountFormatter.fileSize(plan.peakTemporaryBytes))", vi: "Bộ nhớ tạm tối đa: \(ByteCountFormatter.fileSize(plan.peakTemporaryBytes))"))
                 self.appendUpdateLogLine(self.logText(en: "Metadata rewrite needed: \(plan.metadataNeedsUpdate ? "yes" : "no")", vi: "Cần ghi lại metadata: \(plan.metadataNeedsUpdate ? "có" : "không")"))
                 self.appendPlannedUpdateItemsToLog(plan)
 
@@ -508,6 +632,8 @@ final class LauncherViewModel: ObservableObject {
         isBusy = true
         isPaused = false
         isLaunchingWithWine = true
+        isGameRunning = true
+        startPlaytimeReminder()
         discardBufferedRunLogs()
         wineLogBuffer.reset()
         wineRunLog = ""
@@ -553,8 +679,10 @@ final class LauncherViewModel: ObservableObject {
                 self.isBusy = false
                 self.isPaused = false
                 self.isLaunchingWithWine = false
+                self.isGameRunning = false
                 self.currentTask = nil
                 self.operationController = nil
+                self.stopPlaytimeReminder()
                 self.flushRunLogs()
             }
             do {
@@ -643,6 +771,100 @@ final class LauncherViewModel: ObservableObject {
         operationProgress = nil
     }
 
+    /// Startup check for a game instance left running outside this session — a crashed or
+    /// force-quit launcher, or a game the user started another way. The Home button must read
+    /// *Stop*, not *Play*, so the leftover session can be terminated from here; the monitor keeps
+    /// watching it so the button flips back to *Play* the moment that instance exits (same signal
+    /// WineService uses during its own launches, so the two cannot disagree about the game).
+    func checkForRunningGameAtStartup() {
+        guard gameRunningMonitorTask == nil, let game = selectedGame else { return }
+        let executable = game.installDirectory.appendingPathComponent(game.executableRelativePath)
+        gameRunningMonitorTask = Task { [weak self] in
+            let monitor = GameProcessMonitor(isGameRunning: {
+                await GameProcessInspector.runningProcessIDs(forExecutable: executable).isEmpty == false
+            })
+            guard await monitor.isGameRunning() else {
+                self?.gameRunningMonitorTask = nil
+                return
+            }
+            self?.isGameRunning = true
+            do {
+                try await monitor.waitUntilStopped()
+            } catch {
+                // Cancelled by `stopRunningGame` or app teardown; nothing left to update.
+                return
+            }
+            guard !Task.isCancelled, let self else { return }
+            self.isGameRunning = false
+            self.gameRunningMonitorTask = nil
+        }
+    }
+
+    /// Stops a game instance that was already running when the launcher started — one this
+    /// session did not launch, so there is no operation to cancel, only the game to terminate.
+    /// The launch path's Stop goes through `stopCurrentOperation()` instead.
+    func stopRunningGame() {
+        guard isGameRunning, !isLaunchingWithWine, let game = selectedGame else { return }
+        gameRunningMonitorTask?.cancel()
+        gameRunningMonitorTask = nil
+        let coordinator = self.coordinator
+        Task {
+            await coordinator.terminateRunningGame(game)
+        }
+        isGameRunning = false
+        statusText = text.operationStopped
+    }
+
+    /// Formatted remaining time for the Home screen, or nil while no countdown is running.
+    var playtimeRemainingText: String? {
+        playtimeRemainingSeconds.map(Self.formattedCountdown)
+    }
+
+    /// Starts a fresh countdown from `settings.playtimeReminderHours` for this launch.
+    ///
+    /// Purely advisory: reaching zero only flips `isPlaytimeReminderDue` for the Home screen to
+    /// flag, it never stops the game. The duration is read once here, so changing the setting
+    /// mid-session does not retroactively change a countdown already running.
+    private func startPlaytimeReminder() {
+        playtimeReminderTask?.cancel()
+        isPlaytimeReminderDue = false
+        let totalSeconds = max(1, Int((settings.playtimeReminderHours * 3_600).rounded()))
+        playtimeRemainingSeconds = totalSeconds
+
+        playtimeReminderTask = Task { [weak self] in
+            while true {
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                guard let self, !Task.isCancelled else { return }
+                guard let remaining = self.playtimeRemainingSeconds, remaining > 0 else { return }
+                let next = remaining - 1
+                self.playtimeRemainingSeconds = next
+                if next == 0 {
+                    self.isPlaytimeReminderDue = true
+                }
+            }
+        }
+    }
+
+    /// Cancels the countdown and clears it from the Home screen. Called once the launch session
+    /// ends, however it ends (normal exit, failure, or Stop).
+    private func stopPlaytimeReminder() {
+        playtimeReminderTask?.cancel()
+        playtimeReminderTask = nil
+        playtimeRemainingSeconds = nil
+        isPlaytimeReminderDue = false
+    }
+
+    /// Formats a countdown as `H:MM:SS`, or `M:SS` under an hour. `nonisolated` and internal (not
+    /// private) so tests can verify it directly, synchronously, instead of through the timer.
+    nonisolated static func formattedCountdown(_ totalSeconds: Int) -> String {
+        let hours = totalSeconds / 3_600
+        let minutes = (totalSeconds % 3_600) / 60
+        let seconds = totalSeconds % 60
+        return hours > 0
+            ? String(format: "%d:%02d:%02d", hours, minutes, seconds)
+            : String(format: "%d:%02d", minutes, seconds)
+    }
+
     /// Appends one complete line to the Wine run log.
     private func appendWineLogLine(_ line: String) {
         appendWineLogText(line + "\n")
@@ -699,7 +921,6 @@ final class LauncherViewModel: ObservableObject {
         if updateLogBuffer.flush() {
             updateRunLog = updateLogBuffer.contents
         }
-        runLogVersion &+= 1
     }
 
     /// Drops buffered text and any pending flush, so a new run never inherits the previous tail.
@@ -740,8 +961,8 @@ final class LauncherViewModel: ObservableObject {
         guard !assets.isEmpty else { return }
         appendUpdateLogLine(logText(en: "Changed Sophon asset sample:", vi: "Một số asset Sophon sẽ cập nhật:"))
         for asset in assets.prefix(25) {
-            let downloadText = ByteCountFormatter.string(fromByteCount: asset.compressedBytes, countStyle: .file)
-            let writeText = ByteCountFormatter.string(fromByteCount: asset.size, countStyle: .file)
+            let downloadText = ByteCountFormatter.fileSize(asset.compressedBytes)
+            let writeText = ByteCountFormatter.fileSize(asset.size)
             appendUpdateLogLine("- \(asset.path) (\(downloadText) download, \(writeText) write) md5=\(asset.md5)")
         }
         if assets.count > 25 {
@@ -755,8 +976,8 @@ final class LauncherViewModel: ObservableObject {
 
         if fileReceived == 0 {
             appendUpdateLogLine(logText(
-                en: "[download] start \(path) (\(ByteCountFormatter.string(fromByteCount: fileTotal, countStyle: .file)))",
-                vi: "[download] bắt đầu \(path) (\(ByteCountFormatter.string(fromByteCount: fileTotal, countStyle: .file)))"
+                en: "[download] start \(path) (\(ByteCountFormatter.fileSize(fileTotal)))",
+                vi: "[download] bắt đầu \(path) (\(ByteCountFormatter.fileSize(fileTotal)))"
             ))
             return
         }
@@ -771,8 +992,8 @@ final class LauncherViewModel: ObservableObject {
         let bucket = Int((Double(overallReceived) / Double(overallTotal) * 100).rounded(.down) / 5) * 5
         guard bucket > 0, bucket < 100, bucket != lastUpdateLogOverallBucket else { return }
         lastUpdateLogOverallBucket = bucket
-        let receivedText = ByteCountFormatter.string(fromByteCount: overallReceived, countStyle: .file)
-        let totalText = ByteCountFormatter.string(fromByteCount: overallTotal, countStyle: .file)
+        let receivedText = ByteCountFormatter.fileSize(overallReceived)
+        let totalText = ByteCountFormatter.fileSize(overallTotal)
         appendUpdateLogLine(logText(en: "[progress] \(bucket)% (\(receivedText) / \(totalText))", vi: "[tiến độ] \(bucket)% (\(receivedText) / \(totalText))"))
     }
 
@@ -810,16 +1031,16 @@ final class LauncherViewModel: ObservableObject {
                 fileReceived: fileReceived,
                 fileTotal: fileTotal
             )
-            let overallReceivedText = ByteCountFormatter.string(fromByteCount: overallReceived, countStyle: .file)
-            let overallTotalText = ByteCountFormatter.string(fromByteCount: overallTotal, countStyle: .file)
-            let fileReceivedText = ByteCountFormatter.string(fromByteCount: fileReceived, countStyle: .file)
-            let fileTotalText = ByteCountFormatter.string(fromByteCount: fileTotal, countStyle: .file)
+            let overallReceivedText = ByteCountFormatter.fileSize(overallReceived)
+            let overallTotalText = ByteCountFormatter.fileSize(overallTotal)
+            let fileReceivedText = ByteCountFormatter.fileSize(fileReceived)
+            let fileTotalText = ByteCountFormatter.fileSize(fileTotal)
             let overallFraction = overallTotal > 0 ? min(max(Double(overallReceived) / Double(overallTotal), 0), 1) : nil
             let fileFraction = fileTotal > 0 ? min(max(Double(fileReceived) / Double(fileTotal), 0), 1) : nil
             let now = Date()
             let estimate = transferRate.update(received: overallReceived, total: overallTotal, now: now)
             let latestSpeedText = estimate.speedBytesPerSecond.map {
-                ByteCountFormatter.string(fromByteCount: $0, countStyle: .file) + "/s"
+                ByteCountFormatter.fileSize($0) + "/s"
             }
             // The ETA is withheld until the rolling window has warmed up; an estimate off the first
             // second of a multi-gigabyte download is wrong by hours.

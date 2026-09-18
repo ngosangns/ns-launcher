@@ -1,0 +1,102 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "abyss-cycle.schema.json",
+  "title": "AbyssCycle",
+  "description": "Dữ liệu quái Trầm Thủy của một chu kỳ 2 tuần (tầng 9-12).",
+  "type": "object",
+  "required": ["periodStart", "periodEnd", "gameVersion", "blessingOfTheAbyssalMoon", "floors"],
+  "properties": {
+    "periodStart": { "type": "string", "format": "date" },
+    "periodEnd": { "type": "string", "format": "date" },
+    "gameVersion": { "type": "string" },
+    "mechanicNotes": { "type": "string", "description": "Ghi chú cơ chế mới/đặc biệt của bản này (vd. Stellar Glimmer Reaction)" },
+    "blessingOfTheAbyssalMoon": {
+      "type": "object",
+      "required": ["name", "description", "timeStart", "timeEnd"],
+      "description": "Buff áp dụng cho TOÀN BỘ Trầm Thủy (mọi tầng 1-12) suốt cả chu kỳ — khác với leyLineDisorder trong floors[] vốn chỉ áp dụng riêng từng tầng 9-12.",
+      "properties": {
+        "name": { "type": "string" },
+        "nameVI": { "type": "string", "description": "Tên chính thức tiếng Việt, từ TextMapVI (nameTextMapHash) — không phải bản dịch. Vắng mặt trên file chu kỳ cũ/tự sửa tay thì UI dùng name." },
+        "description": { "type": "string" },
+        "timeStart": { "type": "string" },
+        "timeEnd": { "type": "string" },
+        "relatedMechanic": { "type": ["string", "null"], "description": "Cơ chế nền liên quan nếu buff gắn với 1 phản ứng/hiệu ứng cụ thể (vd. Polestar Field / Stellar-Conduct)" }
+      }
+    },
+    "floors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["floor", "leyLineDisorder", "chambers", "recommendation"],
+        "properties": {
+          "floor": { "type": "integer" },
+          "enemyHPMultiplier": { "type": "number", "description": "HP quái ở tầng này so với thế giới mở (tầng 12 = 2.5), do scripts/sync-abyss-monster-hp.py ghi từ mục 'Enemy HP' trang Spiral Abyss của wiki. Vắng = script từ chối tầng này (xem output script); engine giữ giả định HP bằng nhau." },
+          "leyLineDisorder": { "type": "string" },
+          "chambers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["chamber", "monsterLevel", "waves"],
+              "properties": {
+                "chamber": { "type": "integer" },
+                "monsterLevel": { "type": ["integer", "null"] },
+                "waves": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["wave", "monsters"],
+                    "properties": {
+                      "wave": { "type": "integer" },
+                      "monsters": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": ["name", "count", "size", "elements", "weakpoint"],
+                          "properties": {
+                            "name": { "type": "string" },
+                            "count": { "type": "string" },
+                            "size": { "type": "string", "description": "Nhỏ/Vừa/Lớn/Trùm" },
+                            "elements": { "type": "array", "items": { "type": "string" }, "description": "Nguyên tố tấn công/khiên" },
+                            "resistanceNotes": { "type": ["string", "null"] },
+                            "weakpoint": { "type": ["boolean", "null"] },
+                            "mechanics": { "type": ["string", "null"] },
+                            "hpRatio": { "type": ["string", "null"] },
+                            "gameId": { "type": "integer", "description": "Id số của game cho quái này, do scripts/sync-abyss-monster-resistance.py ghi từ gi.yatta.moe. Vắng mặt = script chưa khớp được tên quái này (xem README của thư mục abyss-monsters)." },
+                            "resistances": {
+                              "type": "object",
+                              "description": "Kháng nguyên tố THẬT của quái, lấy thẳng từ file game qua gi.yatta.moe — không phải suy đoán. Có đủ 7 nguyên tố khi có mặt, kể cả những nguyên tố ở baseline 10% (đó cũng là thông tin thật: quái KHÔNG kháng thêm nguyên tố đó). resistanceNotes (transcribed từ wiki) vẫn thắng field này nếu cả hai cùng nói về một nguyên tố — resistanceNotes có thể ghi trạng thái động trong trận (vd. 'kháng Pyro -220% khi Rooted') mà bảng tĩnh của game không thấy được.",
+                              "properties": {
+                                "Anemo": { "type": "number" }, "Geo": { "type": "number" },
+                                "Electro": { "type": "number" }, "Dendro": { "type": "number" },
+                                "Hydro": { "type": "number" }, "Pyro": { "type": "number" },
+                                "Cryo": { "type": "number" }
+                              }
+                            },
+                            "physicalResistance": { "type": "number", "description": "Kháng Vật Lý thật của quái, cùng nguồn. Ghi lại nhưng CHƯA được engine dùng: không nhân vật nào có damage được mô hình hoá là Vật Lý." },
+                            "spawns": { "type": "integer", "minimum": 1, "description": "Tổng số con của quái này trong nửa đó, từ template Domain Enemies của trang chu kỳ trên wiki (Tên*số). Do scripts/sync-abyss-monster-hp.py ghi; `count` là văn xuôi và không được đọc." },
+                            "hp": {
+                              "type": "object",
+                              "description": "HP của quái = ratio × enemy-hp.json[type][cấp] × enemyHPMultiplier của tầng × spawns. Đọc từ template Enemy Stats trên trang wiki của quái, đúng biến thể (Normal/Battle-Hardened).",
+                              "required": ["page", "variant", "ratio", "type"],
+                              "properties": {
+                                "page": { "type": "string" },
+                                "variant": { "type": "string" },
+                                "ratio": { "type": "number" },
+                                "type": { "type": "string" }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "recommendation": { "type": "string" }
+        }
+      }
+    }
+  }
+}

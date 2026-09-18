@@ -1,18 +1,43 @@
 import AppKit
 import SwiftUI
 
+private enum CutsceneSortOrder: CaseIterable {
+    case sizeDescending
+    case sizeAscending
+    case nameAscending
+    case nameDescending
+
+    func title(_ text: AppText) -> String {
+        switch self {
+        case .sizeDescending: return text.cutsceneSortSizeDescending
+        case .sizeAscending: return text.cutsceneSortSizeAscending
+        case .nameAscending: return text.cutsceneSortNameAscending
+        case .nameDescending: return text.cutsceneSortNameDescending
+        }
+    }
+
+    func sort(_ files: [CutsceneFile]) -> [CutsceneFile] {
+        switch self {
+        case .sizeDescending: return files.sorted { $0.sizeBytes > $1.sizeBytes }
+        case .sizeAscending: return files.sorted { $0.sizeBytes < $1.sizeBytes }
+        case .nameAscending: return files.sorted { $0.relativePath.localizedStandardCompare($1.relativePath) == .orderedAscending }
+        case .nameDescending: return files.sorted { $0.relativePath.localizedStandardCompare($1.relativePath) == .orderedDescending }
+        }
+    }
+}
+
 private enum SettingsTab: CaseIterable {
     case general
     case display
-    case launchOptions
     case cache
+    case cutscenes
 
     func title(_ text: AppText) -> String {
         switch self {
         case .general: return text.selectedGame
         case .display: return text.displayOptionsLabel
-        case .launchOptions: return text.launchOptionsTitle
         case .cache: return text.cacheManagementTitle
+        case .cutscenes: return text.cutscenesTitle
         }
     }
 
@@ -20,8 +45,8 @@ private enum SettingsTab: CaseIterable {
         switch self {
         case .general: return "gamecontroller.fill"
         case .display: return "display"
-        case .launchOptions: return "flag.checkered"
         case .cache: return "trash.fill"
+        case .cutscenes: return "play.rectangle.on.rectangle"
         }
     }
 }
@@ -31,37 +56,21 @@ private enum SettingsTab: CaseIterable {
 struct SettingsView: View {
     @ObservedObject var viewModel: LauncherViewModel
     @State private var activeSection: SettingsTab = .general
+    @State private var cutsceneSearchQuery: String = ""
+    @State private var pendingCutsceneDelete: CutsceneFile?
+    @State private var cutsceneGenderTab: TravelerGender = .aether
+    @State private var cutsceneSortOrder: CutsceneSortOrder = .sizeDescending
+    @State private var showClearAllCutscenesConfirm = false
 
     private var text: AppText { viewModel.text }
-
-    /// The display a fullscreen launch would stretch the configured custom resolution onto, or nil
-    /// when the two have the same shape (or the launch would not be fullscreen at all).
-    private var stretchingDisplay: RenderSize? {
-        guard viewModel.settings.resolutionCustom,
-              viewModel.settings.launchDisplayMode == .fullscreen,
-              let display = DisplayGeometry.mainDisplaySize(retina: viewModel.settings.macDriverRetina) else {
-            return nil
-        }
-        let configured = RenderSize(
-            width: viewModel.settings.resolutionWidth,
-            height: viewModel.settings.resolutionHeight
-        )
-        return configured.isStretched(onto: display) ? display : nil
-    }
-
-    private var selectedRenderBackend: RuntimeBackend {
-        guard let game = viewModel.selectedGame else { return .plainWine }
-        return RenderBridges.resolveBackend(
-            requirements: game.runtimeRequirements,
-            preferred: viewModel.settings.metalRenderBackend
-        )
-    }
 
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             sidebar
                 .frame(width: 232)
-                .padding(.leading, 34)
+                // Leading/trailing must clear WindowFrameOrnament's corner brackets, which occupy a
+                // 16-40pt band from each window edge — see HomeView's matching comment.
+                .padding(.leading, 44)
                 .padding(.trailing, 18)
                 .padding(.vertical, 28)
 
@@ -72,12 +81,49 @@ struct SettingsView: View {
                     }
                 }
                 .frame(maxWidth: 860)
-                .padding(.trailing, 34)
+                .padding(.trailing, 44)
                 .padding(.vertical, 28)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
         .onAppear { viewModel.refreshCacheReport() }
+        .onChange(of: activeSection) { _, newValue in
+            if newValue == .cutscenes && viewModel.cutsceneFiles.isEmpty {
+                viewModel.refreshCutsceneFiles()
+            }
+        }
+        .alert(
+            text.deleteCutsceneConfirmTitle,
+            isPresented: Binding(
+                get: { pendingCutsceneDelete != nil },
+                set: { if !$0 { pendingCutsceneDelete = nil } }
+            ),
+            presenting: pendingCutsceneDelete
+        ) { file in
+            Button(text.deleteCutsceneTitle, role: .destructive) {
+                viewModel.deleteCutsceneFile(file)
+                pendingCutsceneDelete = nil
+            }
+            Button(text.cancel, role: .cancel) { pendingCutsceneDelete = nil }
+        } message: { file in
+            Text(text.deleteCutsceneConfirmMessage(file.relativePath))
+        }
+        .alert(
+            text.clearAllCutscenesConfirmTitle,
+            isPresented: $showClearAllCutscenesConfirm
+        ) {
+            Button(text.deleteCutsceneTitle, role: .destructive) {
+                viewModel.deleteAllCutscenes(forGender: cutsceneGenderTab)
+            }
+            Button(text.cancel, role: .cancel) {}
+        } message: {
+            let files = viewModel.cutsceneFiles(forGender: cutsceneGenderTab)
+            Text(text.clearAllCutscenesConfirmMessage(
+                files.count,
+                ByteCountFormatter.fileSize(files.reduce(0) { $0 + $1.sizeBytes }),
+                text.travelerGenderShortName(cutsceneGenderTab)
+            ))
+        }
     }
 
     private var sidebar: some View {
@@ -106,15 +152,13 @@ struct SettingsView: View {
                 SettingsSection(title: SettingsTab.display.title(text)) {
                     VStack(alignment: .leading, spacing: 14) {
                         displayModeField
-                        macDriverOptions
+                        playtimeReminderField
                     }
-                }
-            case .launchOptions:
-                SettingsSection(title: SettingsTab.launchOptions.title(text)) {
-                    launchOptions
                 }
             case .cache:
                 cacheSection(for: game)
+            case .cutscenes:
+                cutscenesSection(for: game)
             }
         }
         .id(activeSection)
@@ -141,6 +185,26 @@ struct SettingsView: View {
         }
     }
 
+    private var playtimeReminderField: some View {
+        SettingField(label: text.playtimeReminderLabel) {
+            VStack(alignment: .leading, spacing: 6) {
+                Stepper(
+                    text.playtimeReminderHoursValue(viewModel.settings.playtimeReminderHours),
+                    value: Binding(
+                        get: { viewModel.settings.playtimeReminderHours },
+                        set: { viewModel.update(\.playtimeReminderHours, to: $0) }
+                    ),
+                    in: 0.5...12,
+                    step: 0.5
+                )
+                .pointerOnHover()
+                Text(text.playtimeReminderDescription)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
     private func pathFields(for game: GameDefinition) -> some View {
         PathInputRow(
             label: text.installRoot,
@@ -154,265 +218,6 @@ struct SettingsView: View {
             secondaryAction: { openDirectory(game.installDirectory.path) },
             choose: chooseDirectoryPath
         )
-    }
-
-    private var macDriverOptions: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            SettingToggle(
-                title: text.retinaLabel,
-                detail: text.retinaDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.macDriverRetina },
-                    set: { viewModel.update(\.macDriverRetina, to: $0) }
-                )
-            )
-            SettingToggle(
-                title: text.leftCommandLabel,
-                detail: text.leftCommandDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.leftCommandIsCtrl },
-                    set: { viewModel.update(\.leftCommandIsCtrl, to: $0) }
-                )
-            )
-            SettingToggle(
-                title: text.metalHUDLabel,
-                detail: text.metalHUDDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.showMetalHUD },
-                    set: { viewModel.update(\.showMetalHUD, to: $0) }
-                )
-            )
-            SettingToggle(
-                title: text.hdrLabel,
-                detail: text.hdrDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.enableHDR },
-                    set: { viewModel.update(\.enableHDR, to: $0) }
-                )
-            )
-
-            // Offer only backends the selected game declares, and only when there is a choice.
-            if let requirements = viewModel.selectedGame?.runtimeRequirements,
-               [RuntimeRequirement.d3dMetal, .dxmt].filter({ requirements.contains($0) }).count > 1 {
-                SettingField(label: text.renderBackendLabel) {
-                    VStack(alignment: .leading, spacing: 6) {
-                        HStack {
-                            Picker(text.renderBackendLabel, selection: Binding(
-                                get: { selectedRenderBackend },
-                                set: { viewModel.update(\.metalRenderBackend, to: $0) }
-                            )) {
-                                if requirements.contains(.d3dMetal) {
-                                    Text(text.renderBackendD3DMetal).tag(RuntimeBackend.d3dMetal)
-                                }
-                                if requirements.contains(.dxmt) {
-                                    Text(text.renderBackendDXMT).tag(RuntimeBackend.dxmt)
-                                }
-                            }
-                            .pickerStyle(.segmented)
-                            .fixedSize()
-                            .pointerOnHover()
-
-                            Spacer(minLength: 0)
-                        }
-                        Text(text.renderBackendDescription)
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-
-            SettingToggle(
-                title: text.metalFXUpscalingLabel,
-                detail: text.metalFXUpscalingDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.metalFXUpscaling },
-                    set: { viewModel.update(\.metalFXUpscaling, to: $0) }
-                )
-            )
-            if viewModel.settings.metalFXUpscaling, selectedRenderBackend != .d3dMetal {
-                Text(text.metalFXUnsupportedBackendWarning)
-                    .font(.caption)
-                    .foregroundStyle(LauncherPalette.gold.opacity(0.85))
-                    .fixedSize(horizontal: false, vertical: true)
-            } else if viewModel.settings.metalFXUpscaling, !viewModel.settings.resolutionCustom {
-                Text(text.metalFXNeedsCustomResolutionWarning)
-                    .font(.caption)
-                    .foregroundStyle(LauncherPalette.gold.opacity(0.85))
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-
-            SettingToggle(
-                title: text.d3dMetalAsyncCommitLabel,
-                detail: text.d3dMetalAsyncCommitDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.d3dMetalAsyncCommit },
-                    set: { viewModel.update(\.d3dMetalAsyncCommit, to: $0) }
-                )
-            )
-            SettingToggle(
-                title: text.d3dMetalMultithreadedInterfaceLabel,
-                detail: text.d3dMetalMultithreadedInterfaceDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.d3dMetalMultithreadedInterface },
-                    set: { viewModel.update(\.d3dMetalMultithreadedInterface, to: $0) }
-                )
-            )
-            d3dMetalShaderCompatibilityOptions
-        }
-    }
-
-    /// D3DMetal's float-behaviour overrides, grouped under one heading because they are diagnostic
-    /// switches rather than preferences: they exist to be tried one at a time against a model that
-    /// renders wrong, and mean nothing on any other backend.
-    @ViewBuilder
-    private var d3dMetalShaderCompatibilityOptions: some View {
-        if selectedRenderBackend == .d3dMetal {
-            VStack(alignment: .leading, spacing: 10) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(text.d3dMetalShaderCompatibilityTitle)
-                        .font(.system(.caption, design: .rounded, weight: .bold))
-                        .foregroundStyle(LauncherPalette.gold.opacity(0.88))
-                    Text(text.d3dMetalShaderCompatibilityDescription)
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                SettingToggle(
-                    title: text.d3dMetalSampleNaNToZeroLabel,
-                    detail: text.d3dMetalSampleNaNToZeroDescription,
-                    isOn: Binding(
-                        get: { viewModel.settings.d3dMetalSampleNaNToZero },
-                        set: { viewModel.update(\.d3dMetalSampleNaNToZero, to: $0) }
-                    )
-                )
-                SettingToggle(
-                    title: text.d3dMetalFlushPositiveInfinityToNaNLabel,
-                    detail: text.d3dMetalFlushPositiveInfinityToNaNDescription,
-                    isOn: Binding(
-                        get: { viewModel.settings.d3dMetalFlushPositiveInfinityToNaN },
-                        set: { viewModel.update(\.d3dMetalFlushPositiveInfinityToNaN, to: $0) }
-                    )
-                )
-                SettingToggle(
-                    title: text.d3dMetalForceRTZTextureWriteLabel,
-                    detail: text.d3dMetalForceRTZTextureWriteDescription,
-                    isOn: Binding(
-                        get: { viewModel.settings.d3dMetalForceRTZTextureWrite },
-                        set: { viewModel.update(\.d3dMetalForceRTZTextureWrite, to: $0) }
-                    )
-                )
-                SettingToggle(
-                    title: text.d3dMetalPositionInvarianceLabel,
-                    detail: text.d3dMetalPositionInvarianceDescription,
-                    isOn: Binding(
-                        get: { viewModel.settings.d3dMetalPositionInvariance },
-                        set: { viewModel.update(\.d3dMetalPositionInvariance, to: $0) }
-                    )
-                )
-            }
-        }
-    }
-
-    private var launchOptions: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            LaunchOption(
-                title: text.cloudCompatibilityLabel,
-                detail: text.cloudCompatibilityDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.cloudCompatibilityMode },
-                    set: { viewModel.update(\.cloudCompatibilityMode, to: $0) }
-                )
-            )
-            LaunchOption(
-                title: text.acPatchLabel,
-                detail: text.acPatchDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.acPatchMode },
-                    set: { viewModel.update(\.acPatchMode, to: $0) }
-                )
-            )
-            LaunchOption(
-                title: text.blockNetLabel,
-                detail: text.blockNetDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.blockNetMode },
-                    set: { viewModel.update(\.blockNetMode, to: $0) }
-                )
-            )
-            LaunchOption(
-                title: text.timeoutFixLabel,
-                detail: text.timeoutFixDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.timeoutFix },
-                    set: { viewModel.update(\.timeoutFix, to: $0) }
-                )
-            )
-            LaunchOption(
-                title: text.steamPatchLabel,
-                detail: text.steamPatchDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.steamPatch },
-                    set: { viewModel.update(\.steamPatch, to: $0) }
-                )
-            )
-            LaunchOption(
-                title: text.resolutionCustomLabel,
-                detail: text.resolutionCustomDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.resolutionCustom },
-                    set: { viewModel.update(\.resolutionCustom, to: $0) }
-                )
-            )
-            if viewModel.settings.resolutionCustom {
-                HStack(spacing: 12) {
-                    numericField(label: text.resolutionWidthLabel, value: viewModel.settings.resolutionWidth, set: viewModel.setResolutionWidth)
-                    numericField(label: text.resolutionHeightLabel, value: viewModel.settings.resolutionHeight, set: viewModel.setResolutionHeight)
-                }
-                // The one stretched-image case the launcher cannot resolve on the user's behalf:
-                // fullscreen fills the screen by scaling, so a custom size of a different shape is
-                // distorted by definition. Say so here rather than letting it be discovered in-game.
-                if let display = stretchingDisplay {
-                    Text(text.resolutionAspectMismatchWarning(displayWidth: display.width, displayHeight: display.height))
-                        .font(.caption)
-                        .foregroundStyle(LauncherPalette.gold.opacity(0.85))
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
-            LaunchOption(
-                title: text.proxyEnabledLabel,
-                detail: text.proxyEnabledDescription,
-                isOn: Binding(
-                    get: { viewModel.settings.proxyEnabled },
-                    set: { viewModel.update(\.proxyEnabled, to: $0) }
-                )
-            )
-            if viewModel.settings.proxyEnabled {
-                SettingField(label: text.proxyHostLabel) {
-                    TextField(text.proxyHostLabel, text: Binding(
-                        get: { viewModel.settings.proxyHost },
-                        set: { viewModel.update(\.proxyHost, to: $0) }
-                    ))
-                    .textFieldStyle(.roundedBorder)
-                    .font(.system(.body, design: .monospaced))
-                }
-            }
-        }
-    }
-
-    private func numericField(label: String, value: Int, set: @escaping (Int) -> Void) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(label.uppercased())
-                .font(.system(.caption2, design: .rounded, weight: .bold))
-                .tracking(0.8)
-                .foregroundStyle(LauncherPalette.gold.opacity(0.88))
-            TextField(label, value: Binding(
-                get: { value },
-                set: { set($0) }
-            ), format: .number)
-            .textFieldStyle(.roundedBorder)
-            .font(.system(.body, design: .monospaced))
-            .frame(maxWidth: 160)
-        }
     }
 
     private func cacheSection(for game: GameDefinition) -> some View {
@@ -452,7 +257,7 @@ struct SettingsView: View {
             subtitleLines: [text.cacheKindDescription(item.kind)]
         ) {
             VStack(alignment: .trailing, spacing: 6) {
-                Text(ByteCountFormatter.string(fromByteCount: item.sizeBytes, countStyle: .file))
+                Text(ByteCountFormatter.fileSize(item.sizeBytes))
                     .font(.system(.caption, design: .monospaced))
                     .foregroundStyle(LauncherPalette.mist.opacity(0.72))
                 Button(text.clearCacheTitle) {
@@ -470,11 +275,165 @@ struct SettingsView: View {
                 .font(.system(.body, design: .rounded, weight: .semibold))
                 .foregroundStyle(LauncherPalette.parchment)
             Spacer()
-            Text(ByteCountFormatter.string(fromByteCount: total, countStyle: .file))
+            Text(ByteCountFormatter.fileSize(total))
                 .font(.system(.caption, design: .monospaced))
                 .foregroundStyle(LauncherPalette.goldHighlight)
         }
         .padding(.vertical, 10)
+    }
+
+    private func cutscenesSection(for game: GameDefinition) -> some View {
+        SettingsSection(title: text.cutscenesTitle, subtitle: text.cutscenesSubtitle) {
+            VStack(alignment: .leading, spacing: 14) {
+                giCutscenesPathField
+                travelerGenderField
+
+                Picker("", selection: $cutsceneGenderTab) {
+                    ForEach(TravelerGender.allCases) { gender in
+                        Text(text.travelerGenderShortName(gender)).tag(gender)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .pointerOnHover()
+                .labelsHidden()
+
+                clearAllCutscenesRow
+
+                HStack {
+                    TextField(text.cutsceneSearchPlaceholder, text: $cutsceneSearchQuery)
+                        .textFieldStyle(.roundedBorder)
+
+                    Picker(text.cutsceneSortLabel, selection: $cutsceneSortOrder) {
+                        ForEach(CutsceneSortOrder.allCases, id: \.self) { order in
+                            Text(order.title(text)).tag(order)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .labelsHidden()
+                    .fixedSize()
+
+                    Spacer()
+                    Button(text.refreshCutscenesTitle) {
+                        viewModel.refreshCutsceneFiles()
+                    }
+                    .quest(.quiet, disabled: viewModel.isManagingCutscenes)
+                }
+
+                if filteredCutsceneFiles.isEmpty {
+                    Label(text.noCutscenesForGender(text.travelerGenderShortName(cutsceneGenderTab)), systemImage: "film.stack")
+                        .font(.subheadline)
+                        .foregroundStyle(LauncherPalette.mist.opacity(0.74))
+                        .padding(.vertical, 8)
+                } else {
+                    LazyVStack(alignment: .leading, spacing: 8) {
+                        ForEach(filteredCutsceneFiles) { file in
+                            cutsceneRow(file)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private var filteredCutsceneFiles: [CutsceneFile] {
+        var genderFiles = viewModel.cutsceneFiles(forGender: cutsceneGenderTab)
+        if !cutsceneSearchQuery.isEmpty {
+            genderFiles = genderFiles.filter {
+                $0.relativePath.localizedCaseInsensitiveContains(cutsceneSearchQuery)
+            }
+        }
+        return cutsceneSortOrder.sort(genderFiles)
+    }
+
+    private var giCutscenesPathField: some View {
+        SettingField(label: text.giCutscenesPathLabel) {
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 10) {
+                    TextField(text.giCutscenesPathLabel, text: Binding(
+                        get: { viewModel.settings.giCutscenesBinaryPath },
+                        set: { viewModel.update(\.giCutscenesBinaryPath, to: $0) }
+                    ))
+                    .textFieldStyle(.roundedBorder)
+                    .font(.system(.body, design: .monospaced))
+
+                    Button(text.browse) {
+                        if let chosen = chooseFilePath() {
+                            viewModel.update(\.giCutscenesBinaryPath, to: chosen)
+                        }
+                    }
+                    .quest(.quiet)
+                }
+                Text(text.giCutscenesPathHint)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private var travelerGenderField: some View {
+        SettingField(label: text.travelerGenderLabel) {
+            VStack(alignment: .leading, spacing: 6) {
+                Picker(text.travelerGenderLabel, selection: Binding(
+                    get: { viewModel.settings.travelerGender },
+                    set: { viewModel.update(\.travelerGender, to: $0) }
+                )) {
+                    ForEach(TravelerGender.allCases) { gender in
+                        Text(text.travelerGenderName(gender)).tag(gender)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .pointerOnHover()
+                Text(text.travelerGenderHint)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private var clearAllCutscenesRow: some View {
+        let genderShortName = text.travelerGenderShortName(cutsceneGenderTab)
+        let files = viewModel.cutsceneFiles(forGender: cutsceneGenderTab)
+        let totalBytes = files.reduce(Int64(0)) { $0 + $1.sizeBytes }
+        return SettingField(label: text.clearAllCutscenesTitle(genderShortName)) {
+            HStack {
+                Text(text.clearAllCutscenesSummary(
+                    files.count,
+                    ByteCountFormatter.fileSize(totalBytes)
+                ))
+                .font(.subheadline)
+                .foregroundStyle(LauncherPalette.mist.opacity(0.82))
+                Spacer()
+                Button(text.clearAllCutscenesTitle(genderShortName)) {
+                    showClearAllCutscenesConfirm = true
+                }
+                .quest(.quiet, disabled: viewModel.isManagingCutscenes || files.isEmpty)
+            }
+        }
+    }
+
+    private func cutsceneRow(_ file: CutsceneFile) -> some View {
+        InventoryRow(
+            icon: "film",
+            title: file.relativePath,
+            subtitleLines: [ByteCountFormatter.fileSize(file.sizeBytes)]
+        ) {
+            HStack(spacing: 6) {
+                Button(text.openCutsceneTitle) {
+                    viewModel.openCutsceneFile(file)
+                }
+                .quest(.quiet, disabled: viewModel.isManagingCutscenes)
+
+                Button(text.revealCutsceneTitle) {
+                    NSWorkspace.shared.activateFileViewerSelecting([file.url])
+                }
+                .quest(.quiet, disabled: viewModel.isManagingCutscenes)
+
+                Button(text.deleteCutsceneTitle) {
+                    pendingCutsceneDelete = file
+                }
+                .quest(.quiet, disabled: viewModel.isManagingCutscenes)
+            }
+        }
     }
 
     private static func cacheIcon(for kind: RemovableCache.Kind) -> String {
@@ -485,7 +444,6 @@ struct SettingsView: View {
         case .gameWorldAssetCache: return "globe.americas"
         case .winePrefixTemp: return "wineglass"
         case .launcherDownloadArchives: return "archivebox"
-        case .d3dMetalShaderCache: return "cpu"
         }
     }
 
@@ -493,6 +451,14 @@ struct SettingsView: View {
         let panel = NSOpenPanel()
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
+        panel.allowsMultipleSelection = false
+        return panel.runModal() == .OK ? panel.url?.path : nil
+    }
+
+    private func chooseFilePath() -> String? {
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = true
+        panel.canChooseDirectories = false
         panel.allowsMultipleSelection = false
         return panel.runModal() == .OK ? panel.url?.path : nil
     }
@@ -559,66 +525,6 @@ private struct SettingField<Content: View>: View {
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(LauncherPalette.ink.opacity(0.30), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
-    }
-}
-
-private struct LaunchOption: View {
-    let title: String
-    let detail: String
-    @Binding var isOn: Bool
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Toggle(isOn: $isOn) {
-                Text(title)
-                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
-                    .foregroundStyle(LauncherPalette.parchment)
-            }
-            .toggleStyle(.switch)
-            .tint(LauncherPalette.gold)
-            .pointerOnHover()
-
-            Text(detail)
-                .font(.caption)
-                .foregroundStyle(LauncherPalette.mist.opacity(0.72))
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(LauncherPalette.warning.opacity(0.09), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
-        .hoverLift()
-        .overlay {
-            RoundedRectangle(cornerRadius: 15, style: .continuous)
-                .stroke(LauncherPalette.warning.opacity(0.28), lineWidth: 1)
-        }
-    }
-}
-
-private struct SettingToggle: View {
-    let title: String
-    let detail: String
-    @Binding var isOn: Bool
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Toggle(isOn: $isOn) {
-                Text(title)
-                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
-                    .foregroundStyle(LauncherPalette.parchment)
-            }
-            .toggleStyle(.switch)
-            .tint(LauncherPalette.gold)
-            .pointerOnHover()
-
-            Text(detail)
-                .font(.caption)
-                .foregroundStyle(LauncherPalette.mist.opacity(0.72))
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(LauncherPalette.ink.opacity(0.30), in: RoundedRectangle(cornerRadius: 15, style: .continuous))
-        .hoverLift()
     }
 }
 

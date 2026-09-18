@@ -43,10 +43,39 @@ public enum AppIcon {
         NSBezierPath(ovalIn: NSRect(x: center.x - size * 0.045, y: center.y - size * 0.045, width: size * 0.09, height: size * 0.09)).fill()
 
         context.restoreGState()
+
+        #if DEBUG
+        // Distinguishes a `swift run`/`task dev` build's Dock icon from the
+        // release-bundled one so a dev build is never mistaken for a real
+        // release while both are running side by side.
+        drawDevBadge(size: size)
+        #endif
+
         image.unlockFocus()
         image.isTemplate = false
         return image
     }
+
+    #if DEBUG
+    private static func drawDevBadge(size: CGFloat) {
+        let bandHeight = size * 0.22
+        let bandRect = NSRect(x: 0, y: 0, width: size, height: bandHeight)
+        NSColor(calibratedRed: 0.95, green: 0.36, blue: 0.13, alpha: 0.96).setFill()
+        NSBezierPath(rect: bandRect).fill()
+
+        guard size >= 32 else { return }
+
+        let text = "DEV"
+        let font = NSFont.boldSystemFont(ofSize: bandHeight * 0.6)
+        let attrs: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .foregroundColor: NSColor.white
+        ]
+        let textSize = text.size(withAttributes: attrs)
+        let origin = NSPoint(x: (size - textSize.width) / 2, y: (bandHeight - textSize.height) / 2)
+        text.draw(at: origin, withAttributes: attrs)
+    }
+    #endif
 
     private static func compassPoint(center: NSPoint, radius: CGFloat, angle: CGFloat) -> NSBezierPath {
         let radians = angle * .pi / 180

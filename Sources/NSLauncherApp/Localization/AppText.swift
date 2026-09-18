@@ -19,6 +19,7 @@ struct AppText {
 
     var homeTitle: String { localized(en: "Home", vi: "Trang chủ") }
     var settingsTitle: String { localized(en: "Settings", vi: "Cài đặt") }
+    var storyTitle: String { localized(en: "Story", vi: "Cốt truyện") }
     var close: String { localized(en: "Close", vi: "Đóng") }
     var open: String { localized(en: "Open", vi: "Mở") }
     var browse: String { localized(en: "Browse", vi: "Chọn") }
@@ -28,7 +29,6 @@ struct AppText {
     var installDirectory: String { localized(en: "Install Directory", vi: "Thư mục cài đặt") }
     var executable: String { localized(en: "Executable", vi: "File chạy") }
     var format: String { localized(en: "Format", vi: "Định dạng") }
-    var status: String { localized(en: "Status", vi: "Trạng thái") }
     var currentItemLabel: String { localized(en: "Current item", vi: "Mục đang xử lý") }
     var currentItemsLabel: String { localized(en: "Current items", vi: "Các mục đang xử lý") }
     var currentPartProgressLabel: String { localized(en: "Current part progress", vi: "Tiến độ part hiện tại") }
@@ -41,11 +41,15 @@ struct AppText {
     var playTitle: String { localized(en: "Play", vi: "Chơi") }
     var resumeTitle: String { localized(en: "Resume", vi: "Tiếp tục") }
     var stopTitle: String { localized(en: "Stop", vi: "Dừng") }
-    var wineRunLogTitle: String { localized(en: "Wine run log (filtered)", vi: "Log chạy Wine (đã lọc)") }
+    var wineRunLogTitle: String { localized(en: "Wine log (filtered)", vi: "Log Wine (đã lọc)") }
     var updateRunLogTitle: String { localized(en: "Update log", vi: "Log cập nhật") }
-    var showDiagnostics: String { localized(en: "Show diagnostics", vi: "Hiện chẩn đoán") }
-    var hideDiagnostics: String { localized(en: "Hide diagnostics", vi: "Ẩn chẩn đoán") }
-    var launchOptionsTitle: String { localized(en: "Launch options", vi: "Tùy chọn khởi chạy") }
+    var diagnosticsTitle: String { localized(en: "Diagnostics", vi: "Chẩn đoán") }
+    var noDiagnosticsYet: String {
+        localized(
+            en: "No diagnostics yet. Logs appear here while the game updates or launches.",
+            vi: "Chưa có chẩn đoán. Log sẽ hiện ở đây khi game cập nhật hoặc khởi chạy."
+        )
+    }
     var preparingStage: String { localized(en: "Preparing", vi: "Chuẩn bị") }
     var downloadingStage: String { localized(en: "Downloading", vi: "Đang tải") }
     var verifyingStage: String { localized(en: "Verifying", vi: "Đang xác thực") }
@@ -82,172 +86,22 @@ struct AppText {
             vi: "Toàn màn hình chạy game ở chế độ fullscreen độc quyền theo đúng độ phân giải màn hình, nên hình không bị kéo dãn cho vừa màn hình."
         )
     }
-    var cloudCompatibilityLabel: String { localized(en: "Cloud compatibility mode", vi: "Chế độ tương thích cloud") }
-    var cloudCompatibilityDescription: String {
+    var playtimeReminderLabel: String { localized(en: "Playtime reminder", vi: "Nhắc nhở giờ chơi") }
+    var playtimeReminderDescription: String {
         localized(
-            en: "Launch the Windows client in cloud-gaming mode and place a protection-driver stub so it can start under Wine. Unsupported by HoYoverse and may risk your account.",
-            vi: "Chạy client Windows ở chế độ cloud-gaming và đặt driver protection giả để game khởi động được dưới Wine. HoYoverse không hỗ trợ và có thể khiến tài khoản gặp rủi ro."
+            en: "Shows a countdown on the Home screen after Play and flags it once it runs out. Advisory only — it never stops the game.",
+            vi: "Hiện đồng hồ đếm ngược ở Trang chủ sau khi bấm Chơi và báo khi hết giờ. Chỉ mang tính nhắc nhở — không tự tắt game."
         )
     }
-    var acPatchLabel: String { localized(en: "AC patch (hide crash/Vulkan files)", vi: "AC patch (ẩn file crash/Vulkan)") }
-    var acPatchDescription: String {
-        localized(
-            en: "Temporarily move the crash reporter and Vulkan fallback files out of the way during launch, then restore them. Mirrors YAAGL's current Genshin behavior.",
-            vi: "Tạm di chuyển file crash reporter và Vulkan fallback ra chỗ khác trong lúc chạy game, rồi khôi phục sau. Theo đúng hành vi Genshin hiện tại của YAAGL."
-        )
+    /// Formats the Stepper's current value, e.g. "3h" / "3 giờ" or "2.5h" / "2.5 giờ".
+    func playtimeReminderHoursValue(_ hours: Double) -> String {
+        let formatted = hours.truncatingRemainder(dividingBy: 1) == 0
+            ? String(format: "%.0f", hours)
+            : String(format: "%.1f", hours)
+        return localized(en: "\(formatted)h", vi: "\(formatted) giờ")
     }
-    var blockNetLabel: String { localized(en: "Launch network block", vi: "Chặn mạng lúc mở game") }
-    var blockNetDescription: String {
-        localized(
-            en: "Temporarily block the anti-cheat and telemetry hosts in the Wine prefix hosts file for the whole launch, then restore. No administrator password required.",
-            vi: "Tạm chặn host anti-cheat và telemetry trong file hosts của Wine prefix suốt phiên game, rồi khôi phục. Không cần mật khẩu quản trị."
-        )
-    }
-    var timeoutFixLabel: String { localized(en: "Network timeout fix", vi: "Sửa lỗi timeout mạng") }
-    var timeoutFixDescription: String {
-        localized(
-            en: "Set WINE_ENABLE_TIMEOUT_FIX so YAAGL-patched Wine keeps sockets from dropping the game back to the title screen mid-session. Ignored by Wine builds without the patch.",
-            vi: "Bật WINE_ENABLE_TIMEOUT_FIX để Wine bản YAAGL không làm rớt kết nối khiến game quay về màn hình chờ giữa lúc chơi. Bản Wine không có patch sẽ bỏ qua."
-        )
-    }
-    var steamPatchLabel: String { localized(en: "Steam parent patch", vi: "Steam parent patch") }
-    var steamPatchDescription: String {
-        localized(
-            en: "Launch through a real steam.exe + lsteamclient.dll parent so the anti-cheat skips loading its kernel driver. The stubs are downloaded once and cached.",
-            vi: "Chạy game qua tiến trình cha steam.exe + lsteamclient.dll thật để anti-cheat bỏ qua việc nạp kernel driver. File stub chỉ tải một lần và được lưu cache."
-        )
-    }
-    var retinaLabel: String { localized(en: "Retina scaling", vi: "Hiển thị Retina") }
-    var retinaDescription: String {
-        localized(
-            en: "Enable HiDPI Retina rendering through the Wine Mac Driver registry.",
-            vi: "Bật render Retina độ phân giải cao qua registry Mac Driver của Wine."
-        )
-    }
-    var leftCommandLabel: String { localized(en: "Left Command as Ctrl", vi: "Command trái thành Ctrl") }
-    var leftCommandDescription: String {
-        localized(
-            en: "Treat the left Command key as Ctrl for games that assume Windows keyboard bindings.",
-            vi: "Dùng phím Command trái như phím Ctrl cho game dùng phím tắt kiểu Windows."
-        )
-    }
-    var renderBackendLabel: String { localized(en: "Render backend", vi: "Backend render") }
-    var renderBackendD3DMetal: String { localized(en: "D3DMetal", vi: "D3DMetal") }
-    var renderBackendDXMT: String { localized(en: "DXMT (experimental)", vi: "DXMT (thử nghiệm)") }
-    var renderBackendDescription: String {
-        localized(
-            en: "D3DMetal is the recommended default. DXMT is a different Metal translator worth trying when a specific effect renders wrong.",
-            vi: "D3DMetal là lựa chọn mặc định khuyến nghị. DXMT là một translator Metal khác, đáng thử khi một hiệu ứng cụ thể render sai."
-        )
-    }
-    var metalHUDLabel: String { localized(en: "Metal HUD overlay", vi: "Hiển thị Metal HUD") }
-    var metalHUDDescription: String {
-        localized(
-            en: "Show the Metal performance HUD during launch (MTL_HUD_ENABLED).",
-            vi: "Hiện bảng thông số hiệu năng Metal khi chạy game (MTL_HUD_ENABLED)."
-        )
-    }
-    var resolutionCustomLabel: String { localized(en: "Custom resolution", vi: "Độ phân giải tùy chỉnh") }
-    var resolutionCustomDescription: String {
-        localized(
-            en: "Render at a resolution you choose instead of the one the launcher picks. Left off, Fullscreen runs at your display's own resolution and Windowed at 1280x720; either way the size is rewritten before every launch, so a resolution changed in-game cannot carry over.",
-            vi: "Render ở độ phân giải bạn chọn thay vì độ phân giải launcher tự chọn. Nếu tắt, chế độ Fullscreen chạy đúng độ phân giải màn hình còn Windowed chạy 1280x720; dù chọn cách nào thì kích thước cũng được ghi lại trước mỗi lần chạy, nên độ phân giải đổi trong game không còn dính sang lần sau."
-        )
-    }
-    func resolutionAspectMismatchWarning(displayWidth: Int, displayHeight: Int) -> String {
-        localized(
-            en: "This is a different shape from your display (\(displayWidth)×\(displayHeight)). In Fullscreen the screen is filled by stretching it, which distorts models. Match your display's aspect ratio, or turn this off to render at the display's own resolution.",
-            vi: "Tỉ lệ này khác với màn hình của bạn (\(displayWidth)×\(displayHeight)). Ở chế độ Fullscreen, hình sẽ bị kéo dãn cho đầy màn hình nên model bị méo. Hãy chọn đúng tỉ lệ màn hình, hoặc tắt mục này để game render đúng độ phân giải của màn hình."
-        )
-    }
-    var resolutionWidthLabel: String { localized(en: "Width", vi: "Chiều rộng") }
-    var resolutionHeightLabel: String { localized(en: "Height", vi: "Chiều cao") }
-    var hdrLabel: String { localized(en: "Enable HDR", vi: "Bật HDR") }
-    var hdrDescription: String {
-        localized(
-            en: "Set the game's HDR registry flag before launch. Leave it off unless you want HDR: the flag is rewritten on every launch, so turning it off here also clears an HDR mode enabled inside the game — which on Wine renders with washed-out, wrong-looking colour.",
-            vi: "Bật cờ HDR trong registry của game trước khi chạy. Nên để tắt nếu bạn không cần HDR: cờ này được ghi lại mỗi lần chạy, nên tắt ở đây cũng tắt luôn chế độ HDR đã bật trong game — trên Wine chế độ đó làm màu bị bợt và sai."
-        )
-    }
-    var proxyEnabledLabel: String { localized(en: "Proxy", vi: "Proxy") }
-    var proxyEnabledDescription: String {
-        localized(
-            en: "Route the game through an HTTP/HTTPS proxy.",
-            vi: "Định tuyến game qua proxy HTTP/HTTPS."
-        )
-    }
-    var proxyHostLabel: String { localized(en: "Proxy host", vi: "Địa chỉ proxy") }
+    var playtimeReminderDue: String { localized(en: "Reminder time's up", vi: "Đã hết giờ nhắc nhở") }
     var displayOptionsLabel: String { localized(en: "Display & input", vi: "Hiển thị & nhập liệu") }
-    var metalFXUpscalingLabel: String { localized(en: "MetalFX upscaling (experimental)", vi: "MetalFX upscaling (thử nghiệm)") }
-    var metalFXUpscalingDescription: String {
-        localized(
-            en: "D3DMetal renders at the game's own resolution and lets Metal upscale to the window size. Only has an effect if you also lower the resolution below your display's native size (use Custom windowed resolution above). Lowering the render resolution this way also reduces stutter when the game has to compile new shaders — rotating the camera, loading a new scene, or switching characters — since there is less GPU work competing with that compile.",
-            vi: "D3DMetal sẽ render ở độ phân giải game đang đặt rồi để Metal upscale lên kích thước cửa sổ. Chỉ có tác dụng nếu bạn cũng hạ độ phân giải thấp hơn màn hình (dùng Custom windowed resolution ở trên). Hạ độ phân giải render theo cách này cũng giảm giật khi game phải biên dịch shader mới — lúc xoay camera, load cảnh mới, hoặc đổi nhân vật — vì GPU có ít việc hơn để tranh chấp với lúc biên dịch đó."
-        )
-    }
-    var metalFXNeedsCustomResolutionWarning: String {
-        localized(
-            en: "No effect yet: turn on Custom windowed resolution and set it below your display's native size, otherwise the game still renders at full resolution.",
-            vi: "Chưa có tác dụng: bật Custom windowed resolution và đặt thấp hơn độ phân giải gốc của màn hình, nếu không game vẫn render ở độ phân giải đầy đủ."
-        )
-    }
-    var metalFXUnsupportedBackendWarning: String {
-        localized(
-            en: "No effect: MetalFX upscaling is D3DMetal-only. Switch the render backend to D3DMetal above to use it, or turn this off with the current backend.",
-            vi: "Không có tác dụng: MetalFX upscaling chỉ dùng được với D3DMetal. Đổi backend render sang D3DMetal ở trên để dùng, hoặc tắt mục này với backend hiện tại."
-        )
-    }
-    var d3dMetalAsyncCommitLabel: String { localized(en: "Async command commit (experimental)", vi: "Async command commit (thử nghiệm)") }
-    var d3dMetalAsyncCommitDescription: String {
-        localized(
-            en: "D3DM_ENABLE_ASYNC_COMMIT: lets D3DMetal overlap encoding the next frame with submitting the previous one instead of stalling the CPU on each submit. On by default; turn off if you suspect it is causing stutter or instability.",
-            vi: "D3DM_ENABLE_ASYNC_COMMIT: cho phép D3DMetal chồng lấn việc encode frame kế tiếp với việc submit frame trước, thay vì để CPU chờ ở mỗi lần submit. Mặc định bật; tắt đi nếu nghi ngờ nó gây giật hoặc mất ổn định."
-        )
-    }
-    var d3dMetalMultithreadedInterfaceLabel: String { localized(en: "Multithreaded D3D11 interface (experimental)", vi: "Multithreaded D3D11 interface (thử nghiệm)") }
-    var d3dMetalMultithreadedInterfaceDescription: String {
-        localized(
-            en: "D3DM_MULTITHREADED_INTERFACE_ENABLE: stops D3DMetal serializing D3D11 context access more conservatively than the game's own threading needs. On by default; turn off if you suspect it is causing stutter or instability.",
-            vi: "D3DM_MULTITHREADED_INTERFACE_ENABLE: ngăn D3DMetal khoá truy cập D3D11 context chặt hơn mức game thực sự cần khi đa luồng. Mặc định bật; tắt đi nếu nghi ngờ nó gây giật hoặc mất ổn định."
-        )
-    }
-    var d3dMetalShaderCompatibilityTitle: String {
-        localized(en: "Shader compatibility (experimental)", vi: "Tương thích shader (thử nghiệm)")
-    }
-    var d3dMetalShaderCompatibilityDescription: String {
-        localized(
-            en: "For shading that comes out wrong on some models while the rest of the frame looks right. These change how D3DMetal handles NaN, infinity, rounding and cross-pass vertex positions — the cases where a shader written for Direct3D hardware behaves differently on Metal. Apple documents none of them, so turn on one at a time and look at the affected model; leave them off if none makes a difference.",
-            vi: "Dành cho trường hợp một số model bị sai màu/sai shader trong khi phần còn lại vẫn đúng. Các tuỳ chọn này đổi cách D3DMetal xử lý NaN, vô cực, làm tròn và vị trí đỉnh giữa các pass — đúng những chỗ shader viết cho phần cứng Direct3D chạy khác đi trên Metal. Apple không có tài liệu cho chúng, nên hãy bật từng cái một rồi nhìn lại model bị lỗi; nếu không cái nào thay đổi thì để tắt hết."
-        )
-    }
-    var d3dMetalSampleNaNToZeroLabel: String { localized(en: "Sampled NaN reads as zero", vi: "NaN khi sample đọc thành 0") }
-    var d3dMetalSampleNaNToZeroDescription: String {
-        localized(
-            en: "D3DM_SAMPLE_NAN_TO_ZERO: a NaN coming out of a texture sample becomes zero instead of propagating through the rest of the shader. Try this first when a material is the wrong colour rather than the wrong shape.",
-            vi: "D3DM_SAMPLE_NAN_TO_ZERO: giá trị NaN đọc ra từ texture sẽ thành 0 thay vì lan tiếp trong shader. Thử cái này trước khi một material bị sai màu (không phải sai hình)."
-        )
-    }
-    var d3dMetalFlushPositiveInfinityToNaNLabel: String { localized(en: "Flush positive infinity to NaN", vi: "Chuyển vô cực dương thành NaN") }
-    var d3dMetalFlushPositiveInfinityToNaNDescription: String {
-        localized(
-            en: "D3DM_FLUSH_POS_INF_TO_NAN: changes what an overflow to positive infinity turns into, which decides whether it is clamped later or poisons the value. Pairs with the option above for blown-out or black materials.",
-            vi: "D3DM_FLUSH_POS_INF_TO_NAN: đổi kết quả khi giá trị tràn thành vô cực dương, quyết định nó bị kẹp lại sau đó hay làm hỏng luôn giá trị. Đi kèm với tuỳ chọn trên cho material bị cháy sáng hoặc đen thui."
-        )
-    }
-    var d3dMetalForceRTZTextureWriteLabel: String { localized(en: "Round texture writes toward zero", vi: "Làm tròn về 0 khi ghi texture") }
-    var d3dMetalForceRTZTextureWriteDescription: String {
-        localized(
-            en: "D3DM_FORCE_RTZ_TEXWRITE: writes to a texture round toward zero instead of to nearest, matching how some Direct3D hardware stored intermediate render targets. Worth trying for banding or a slight colour shift that builds up across effect passes.",
-            vi: "D3DM_FORCE_RTZ_TEXWRITE: khi ghi vào texture sẽ làm tròn về 0 thay vì làm tròn gần nhất, giống cách một số phần cứng Direct3D lưu render target trung gian. Đáng thử khi bị banding hoặc màu lệch nhẹ tích luỹ qua nhiều pass hiệu ứng."
-        )
-    }
-    var d3dMetalPositionInvarianceLabel: String { localized(en: "Invariant vertex position", vi: "Cố định vị trí đỉnh giữa các pass") }
-    var d3dMetalPositionInvarianceDescription: String {
-        localized(
-            en: "D3DM_POSITION_INVARIANCE: forces a vertex to land on exactly the same position in every pass that draws it. Try this when a model is patchy, flickering or shaded in stripes rather than uniformly wrong — that pattern comes from a depth pre-pass disagreeing with the pass being shaded.",
-            vi: "D3DM_POSITION_INVARIANCE: buộc một đỉnh phải ra đúng cùng một vị trí ở mọi pass vẽ nó. Thử khi model bị loang lổ, nhấp nháy hoặc sọc chứ không phải sai màu đều — kiểu đó đến từ depth pre-pass lệch với pass đang tô."
-        )
-    }
     var name: String { localized(en: "Name", vi: "Tên") }
     var installRoot: String { localized(en: "Install root", vi: "Thư mục cài đặt") }
     var executablePath: String { localized(en: "Executable path", vi: "Đường dẫn file chạy") }
@@ -300,21 +154,96 @@ struct AppText {
     var noRemovableCache: String { localized(en: "No removable cache found. Refresh after the game is installed.", vi: "Chưa có cache nào có thể xóa. Hãy làm mới sau khi game được cài đặt.") }
     var totalRemovableCacheLabel: String { localized(en: "Total", vi: "Tổng cộng") }
 
-    // MARK: - D3DMetal Setup
+    // MARK: - Cutscene Browser
 
-    var d3dMetalSetupTitle: String { localized(en: "D3DMetal (render backend)", vi: "D3DMetal (render backend)") }
-    var d3dMetalAlreadyInstalled: String {
+    var cutscenesTitle: String { localized(en: "Cutscenes", vi: "Cutscene") }
+    var cutscenesSubtitle: String {
         localized(
-            en: "CrossOver with Apple D3DMetal is installed.",
-            vi: "Đã cài CrossOver kèm Apple D3DMetal."
+            en: "Every cutscene video installed under StreamingAssets, for you to review yourself. NS Launcher cannot tell which quest or Traveler-gender variant a file belongs to, so nothing here is selected automatically — open a file to check it, then delete only what you're sure you don't need.",
+            vi: "Toàn bộ video cutscene đã cài trong StreamingAssets, để bạn tự xem lại. NS Launcher không thể biết một file thuộc nhiệm vụ nào hay biến thể giới tính Traveler nào, nên không có gì được chọn sẵn — hãy mở file để kiểm tra rồi chỉ xóa những gì bạn chắc chắn không cần."
         )
     }
-    var d3dMetalSetupDescription: String {
+    var travelerGenderLabel: String { localized(en: "Traveler gender", vi: "Giới tính Traveler") }
+    var travelerGenderHint: String {
         localized(
-            en: "Genshin needs a Direct3D-to-Metal layer to run. Apple's D3DMetal ships only inside CrossOver, which this button installs through Homebrew as a 14-day trial — after that CrossOver needs a license purchased from CodeWeavers to keep running. This downloads about 1 GB and installs CrossOver.app into /Applications.",
-            vi: "Genshin cần một lớp dịch Direct3D-to-Metal để chạy. Apple D3DMetal chỉ đi kèm CrossOver, và nút này cài CrossOver qua Homebrew dưới dạng dùng thử 14 ngày — sau đó CrossOver cần mua license từ CodeWeavers để tiếp tục dùng. Việc này tải khoảng 1 GB và cài CrossOver.app vào /Applications."
+            en: "For your own reference while reviewing the list below — it does not filter or select anything.",
+            vi: "Chỉ để bạn tham khảo khi xem danh sách bên dưới — không dùng để lọc hay chọn file nào cả."
         )
     }
+    func travelerGenderName(_ gender: TravelerGender) -> String {
+        switch gender {
+        case .aether: return localized(en: "Aether (Boy)", vi: "Aether (Nam)")
+        case .lumine: return localized(en: "Lumine (Girl)", vi: "Lumine (Nữ)")
+        }
+    }
+    /// Short label for the Boy/Girl cutscene tab picker — `travelerGenderName` is too long for a
+    /// segmented control.
+    func travelerGenderShortName(_ gender: TravelerGender) -> String {
+        switch gender {
+        case .aether: return localized(en: "Boy", vi: "Nam")
+        case .lumine: return localized(en: "Girl", vi: "Nữ")
+        }
+    }
+    var cutsceneSearchPlaceholder: String { localized(en: "Filter by filename", vi: "Lọc theo tên file") }
+    var cutsceneSortLabel: String { localized(en: "Sort", vi: "Sắp xếp") }
+    var cutsceneSortSizeDescending: String { localized(en: "Size (largest first)", vi: "Dung lượng (lớn nhất trước)") }
+    var cutsceneSortSizeAscending: String { localized(en: "Size (smallest first)", vi: "Dung lượng (nhỏ nhất trước)") }
+    var cutsceneSortNameAscending: String { localized(en: "Name (A–Z)", vi: "Tên (A–Z)") }
+    var cutsceneSortNameDescending: String { localized(en: "Name (Z–A)", vi: "Tên (Z–A)") }
+    var refreshCutscenesTitle: String { localized(en: "Refresh", vi: "Làm mới") }
+    var openCutsceneTitle: String { localized(en: "Open", vi: "Mở") }
+    var revealCutsceneTitle: String { localized(en: "Reveal in Finder", vi: "Hiện trong Finder") }
+    var deleteCutsceneTitle: String { localized(en: "Delete", vi: "Xóa") }
+    var deleteCutsceneConfirmTitle: String { localized(en: "Delete this cutscene?", vi: "Xóa cutscene này?") }
+    func deleteCutsceneConfirmMessage(_ filename: String) -> String {
+        localized(
+            en: "\"\(filename)\" will be moved to the Trash. You can recover it from there if you change your mind.",
+            vi: "\"\(filename)\" sẽ được chuyển vào Thùng rác. Bạn có thể khôi phục lại nếu đổi ý."
+        )
+    }
+    func cutsceneDeleted(_ filename: String) -> String {
+        localized(en: "Moved \"\(filename)\" to the Trash.", vi: "Đã chuyển \"\(filename)\" vào Thùng rác.")
+    }
+    var noCutscenesFound: String { localized(en: "No cutscene files found. Refresh after the game is installed.", vi: "Chưa tìm thấy cutscene nào. Hãy làm mới sau khi game được cài đặt.") }
+    var cancel: String { localized(en: "Cancel", vi: "Hủy") }
+    var giCutscenesPathLabel: String { localized(en: "GI-cutscenes tool path", vi: "Đường dẫn công cụ GI-cutscenes") }
+    var giCutscenesPathHint: String {
+        localized(
+            en: "A separate tool you install yourself (github.com/ToaHartor/GI-cutscenes). NS Launcher does not bundle it or any decryption logic — Open just runs the binary at this path to decrypt a cutscene, then opens the result.",
+            vi: "Một công cụ riêng bạn tự cài (github.com/ToaHartor/GI-cutscenes). NS Launcher không đóng gói công cụ này hay logic giải mã nào — nút Mở chỉ chạy binary tại đường dẫn này để giải mã cutscene rồi mở kết quả."
+        )
+    }
+    var decryptingCutscene: String { localized(en: "Decrypting cutscene...", vi: "Đang giải mã cutscene...") }
+    var cutsceneDecryptFailed: String { localized(en: "Failed to decrypt cutscene", vi: "Giải mã cutscene thất bại") }
+    func cutsceneDecryptOutputMissing(_ details: String) -> String {
+        let trimmed = details.trimmingCharacters(in: .whitespacesAndNewlines)
+        return localized(
+            en: "GI-cutscenes ran but did not produce a playable file.\(trimmed.isEmpty ? "" : " Its output: \(trimmed)")",
+            vi: "GI-cutscenes đã chạy nhưng không tạo ra file phát được.\(trimmed.isEmpty ? "" : " Output của công cụ: \(trimmed)")"
+        )
+    }
+    func clearAllCutscenesTitle(_ genderShortName: String) -> String {
+        localized(en: "Clear all \(genderShortName)", vi: "Xóa tất cả \(genderShortName)")
+    }
+    func clearAllCutscenesSummary(_ count: Int, _ size: String) -> String {
+        localized(en: "\(count) files · \(size)", vi: "\(count) file · \(size)")
+    }
+    func noCutscenesForGender(_ genderShortName: String) -> String {
+        localized(
+            en: "No \(genderShortName) cutscene files found.",
+            vi: "Không tìm thấy file cutscene \(genderShortName)."
+        )
+    }
+    var clearAllCutscenesConfirmTitle: String { localized(en: "Clear all these cutscenes?", vi: "Xóa toàn bộ cutscene này?") }
+    func clearAllCutscenesConfirmMessage(_ count: Int, _ size: String, _ genderShortName: String) -> String {
+        localized(
+            en: "\(count) \(genderShortName) files (\(size)) will be moved to the Trash. You can recover them from there if you change your mind.",
+            vi: "\(count) file \(genderShortName) (\(size)) sẽ được chuyển vào Thùng rác. Bạn có thể khôi phục lại nếu đổi ý."
+        )
+    }
+
+    // MARK: - CrossOver Setup
+
     var installCrossOverButtonTitle: String { localized(en: "Install CrossOver via Homebrew", vi: "Cài CrossOver qua Homebrew") }
     var installingCrossOver: String { localized(en: "Installing CrossOver via Homebrew...", vi: "Đang cài CrossOver qua Homebrew...") }
     var crossOverInstalled: String { localized(en: "CrossOver installed.", vi: "Đã cài CrossOver.") }
@@ -347,7 +276,6 @@ struct AppText {
         case .gameWorldAssetCache: return localized(en: "World asset cache", vi: "Cache tài nguyên thế giới")
         case .winePrefixTemp: return localized(en: "Wine temporary files", vi: "File tạm Wine")
         case .launcherDownloadArchives: return localized(en: "Download archives", vi: "Archive tải về")
-        case .d3dMetalShaderCache: return localized(en: "Render (D3DMetal) shader cache", vi: "Cache shader render (D3DMetal)")
         }
     }
     func cacheKindDescription(_ kind: RemovableCache.Kind) -> String {
@@ -381,11 +309,6 @@ struct AppText {
             return localized(
                 en: "Compressed archives left after extraction (DXVK/Wine).",
                 vi: "Archive nén còn lại sau khi giải nén (DXVK/Wine)."
-            )
-        case .d3dMetalShaderCache:
-            return localized(
-                en: "Compiled shaders D3DMetal caches on disk. Rebuilt automatically as the game runs; clearing it can fix stutter or crashes caused by a stale or corrupted cache, at the cost of a fresh round of one-time compile stutter on the next launch.",
-                vi: "Shader đã biên dịch mà D3DMetal lưu trên đĩa. Tự tạo lại khi game chạy; xóa cache này có thể khắc phục giật hoặc crash do cache cũ/hỏng, đổi lại là một đợt giật biên dịch lại từ đầu ở lần chạy kế tiếp."
             )
         }
     }
@@ -502,19 +425,12 @@ struct AppText {
         )
     }
 
-    /// Error text when no installed Wine build carries Apple D3DMetal.
+    /// Error text when no installed Wine build carries DXMT.
     ///
     /// Only CrossOver is named as a remedy: the popular `game-porting-toolkit` Homebrew cask
-    /// (`gcenx/wine` tap) ships the open-source DXMT project relabeled, not Apple's real D3DMetal,
-    /// and Apple's own Game Porting Toolkit is gated behind an Apple Developer sign-in with no
-    /// public download to point at. Use the Settings screen's install button for CrossOver instead
-    /// of typing a command here.
-    func d3dMetalUnavailable(_ path: String) -> String {
-        localized(
-            en: "No Wine build with Apple D3DMetal was found. Checked: \(path). D3DMetal ships only inside CrossOver (CodeWeavers) — NSLauncher cannot download it on its own. Install CrossOver from Settings, then try again.",
-            vi: "Chưa tìm thấy bản Wine nào có Apple D3DMetal. Đã kiểm tra: \(path). D3DMetal chỉ đi kèm CrossOver (CodeWeavers) — NSLauncher không thể tự tải D3DMetal. Hãy cài CrossOver từ màn hình Cài đặt rồi thử lại."
-        )
-    }
+    /// (`gcenx/wine` tap) ships the open-source DXMT project relabeled, and Apple's own Game
+    /// Porting Toolkit is gated behind an Apple Developer sign-in with no public download to point
+    /// at. Use the Settings screen's install button for CrossOver instead of typing a command here.
     func dxmtUnavailable(_ path: String) -> String {
         localized(
             en: "No Wine build with DXMT was found. Checked: \(path). DXMT ships only inside CrossOver (CodeWeavers) — NSLauncher cannot download it on its own. Install CrossOver from Settings, then try again.",
@@ -546,8 +462,6 @@ struct AppText {
             switch wineError {
             case let .binaryQuarantined(path):
                 return wineBinaryQuarantined(path)
-            case let .d3dMetalUnavailable(path):
-                return d3dMetalUnavailable(path)
             case let .dxmtUnavailable(path):
                 return dxmtUnavailable(path)
             case let .wineRootNotFound(path):
@@ -569,6 +483,11 @@ struct AppText {
             case let .nonZeroExit(result):
                 let details = result.stderr.isEmpty ? result.stdout : result.stderr
                 return processFailed(code: result.exitCode, details: details)
+            }
+        case let decryptionError as CutsceneDecryptionError:
+            switch decryptionError {
+            case let .decryptedFileNotProduced(details):
+                return cutsceneDecryptOutputMissing(details)
             }
         case let sophonError as SophonInstallerError:
             switch sophonError {
@@ -665,6 +584,705 @@ struct AppText {
         localized(en: "Checksum mismatch for \(path)", vi: "Checksum không khớp cho \(path)")
     }
 
+    // MARK: - Story Tab
+
+    var storyLoadingLabel: String { localized(en: "Loading story content...", vi: "Đang tải nội dung cốt truyện...") }
+    var storySearchPlaceholder: String {
+        localized(en: "Search characters, chapters, quests...", vi: "Tìm nhân vật, chương, nhiệm vụ...")
+    }
+    var storyChaptersLabel: String { localized(en: "Story", vi: "Cốt truyện") }
+    var storyEntitiesLabel: String { localized(en: "Characters & Events", vi: "Nhân vật & sự kiện") }
+    var storyQuestsLabel: String { localized(en: "Quest Reference", vi: "Nhiệm vụ") }
+    var storyAppearsInLabel: String { localized(en: "Appears in", vi: "Xuất hiện trong") }
+    var storyRelatedQuestsLabel: String { localized(en: "Related quests", vi: "Liên quan trong nhiệm vụ") }
+    var storyNoSummaryLabel: String { localized(en: "No summary yet.", vi: "Chưa có tóm tắt.") }
+    var storyAlsoKnownAsLabel: String { localized(en: "Also known as", vi: "Còn được gọi là") }
+    var storyEmptySearchResult: String { localized(en: "No results.", vi: "Không tìm thấy kết quả.") }
+    var storySelectAPrompt: String {
+        localized(en: "Pick a chapter, character, or quest on the left.", vi: "Chọn một chương, nhân vật, hoặc nhiệm vụ ở bên trái.")
+    }
+
+    func storyEntityKindLabel(_ kind: StoryEntity.Kind) -> String {
+        switch kind {
+        case .character: return localized(en: "Character", vi: "Nhân vật")
+        case .archon: return localized(en: "Archon", vi: "Archon")
+        case .faction: return localized(en: "Faction", vi: "Phe phái")
+        case .nation: return localized(en: "Nation", vi: "Quốc gia")
+        case .event: return localized(en: "Event", vi: "Sự kiện")
+        case .concept: return localized(en: "Concept", vi: "Khái niệm")
+        }
+    }
+
+    /// Shown once at the top of the Story tab — required alongside the fan
+    /// content itself, not just in repo documentation, since this ships to
+    /// end users.
+    var storyCopyrightNotice: String {
+        localized(
+            en: "Genshin Impact and its characters, locations, and original "
+                + "story are property of HoYoverse. This tab is a personal, "
+                + "non-commercial retelling for reference — not a translation "
+                + "or reproduction of in-game text.",
+            vi: "Genshin Impact cùng nhân vật, địa danh và cốt truyện gốc "
+                + "thuộc bản quyền HoYoverse. Tab này chỉ là bản diễn giải cá "
+                + "nhân, phi lợi nhuận để tham khảo — không phải bản dịch hay "
+                + "tái bản nội dung trong game."
+        )
+    }
+
+    // MARK: - Abyss
+
+    var abyssTitle: String { localized(en: "Abyss", vi: "La Hoàn") }
+    var abyssLoadingLabel: String { localized(en: "Loading Abyss data...", vi: "Đang tải dữ liệu La Hoàn...") }
+
+    var abyssRosterSection: String { localized(en: "My roster", vi: "Roster của tôi") }
+    var abyssResultsSection: String { localized(en: "Suggested teams", vi: "Đội hình gợi ý") }
+    var abyssCharactersTab: String { localized(en: "Characters", vi: "Nhân vật") }
+    var abyssWeaponsTab: String { localized(en: "Weapons", vi: "Vũ khí") }
+
+    var abyssSearchCharacters: String { localized(en: "Search characters", vi: "Tìm nhân vật") }
+    var abyssSearchWeapons: String { localized(en: "Search weapons", vi: "Tìm vũ khí") }
+    var abyssClearSearch: String { localized(en: "Clear search", vi: "Xoá ô tìm kiếm") }
+    var abyssClearFilters: String { localized(en: "Clear filters", vi: "Bỏ bộ lọc") }
+    var abyssAllWeaponTypes: String { localized(en: "All types", vi: "Mọi loại") }
+    var abyssOwnedOnly: String { localized(en: "Owned only", vi: "Chỉ đồ đang có") }
+
+    func abyssShowingCount(shown: Int, total: Int) -> String {
+        localized(en: "\(shown) of \(total)", vi: "\(shown) / \(total)")
+    }
+
+    var abyssNoMatches: String {
+        localized(en: "Nothing matches that search", vi: "Không có gì khớp với tìm kiếm")
+    }
+    var abyssRecompute: String { localized(en: "Find teams", vi: "Tìm đội hình") }
+    var abyssRecomputing: String { localized(en: "Searching...", vi: "Đang tìm...") }
+    var abyssCancel: String { localized(en: "Stop", vi: "Dừng") }
+
+    /// Shown next to the results once there is a `resultsComputedAt` — from a
+    /// fresh search or from `AbyssSearchCacheStore`'s week-long cache, either
+    /// way, since to the player both are just "when were these teams worked
+    /// out".
+    func abyssResultsComputedAt(_ date: Date) -> String {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.locale = Locale(identifier: language == .vietnamese ? "vi" : "en")
+        formatter.unitsStyle = .short
+        let relative = formatter.localizedString(for: date, relativeTo: Date())
+        return localized(en: "Updated \(relative)", vi: "Cập nhật \(relative)")
+    }
+    var abyssImport: String { localized(en: "Import", vi: "Nhập") }
+    var abyssExport: String { localized(en: "Export", vi: "Xuất") }
+    func abyssSortLabel(_ sort: AbyssViewModel.RosterSort) -> String {
+        switch sort {
+        case .name: return localized(en: "Name", vi: "Tên")
+        case .rarity: return localized(en: "Stars", vi: "Số sao")
+        case .element: return localized(en: "Element", vi: "Nguyên tố")
+        case .release: return localized(en: "Release date", vi: "Ngày ra mắt")
+        case .attack: return localized(en: "Base ATK", vi: "ATK gốc")
+        case .owned: return localized(en: "Owned", vi: "Đang sở hữu")
+        }
+    }
+
+    /// Spells out which end of the sort comes first, because "descending" means
+    /// something different for each key — Z first, 5★ first, newest first.
+    func abyssSortDirection(_ sort: AbyssViewModel.RosterSort, descending: Bool) -> String {
+        switch sort {
+        case .name:
+            return descending ? "Z → A" : "A → Z"
+        case .rarity:
+            return descending ? "5★ → 1★" : "1★ → 5★"
+        case .element:
+            return descending ? localized(en: "Z → A", vi: "Z → A") : localized(en: "A → Z", vi: "A → Z")
+        case .release:
+            return descending ? localized(en: "newest first", vi: "mới nhất trước")
+                              : localized(en: "oldest first", vi: "cũ nhất trước")
+        case .attack:
+            return descending ? localized(en: "highest first", vi: "cao nhất trước")
+                              : localized(en: "lowest first", vi: "thấp nhất trước")
+        case .owned:
+            return descending ? localized(en: "owned first", vi: "đang có trước")
+                              : localized(en: "missing first", vi: "chưa có trước")
+        }
+    }
+
+    var abyssFlipSortDirection: String {
+        localized(en: "Reverse the order", vi: "Đảo chiều sắp xếp")
+    }
+    var abyssClearCharacters: String { localized(en: "Clear characters", vi: "Xoá hết nhân vật") }
+    var abyssClearWeapons: String { localized(en: "Clear weapons", vi: "Xoá hết vũ khí") }
+
+    func abyssOwnedCharacterCount(_ count: Int) -> String {
+        localized(en: "\(count) characters owned", vi: "\(count) nhân vật đang sở hữu")
+    }
+
+    func abyssOwnedWeaponCount(_ count: Int) -> String {
+        localized(en: "\(count) weapons owned", vi: "\(count) vũ khí đang sở hữu")
+    }
+
+    var abyssEmptyRosterTitle: String {
+        localized(en: "Nothing in your roster yet", vi: "Roster còn trống")
+    }
+
+    var abyssEmptyRosterHint: String {
+        localized(
+            en: "Mark the characters and weapons you own, or import a roster file. "
+                + "You can also search teams across every character to compare in theory.",
+            vi: "Đánh dấu nhân vật và vũ khí bạn đang có, hoặc nhập từ file roster. "
+                + "Bạn cũng có thể tìm đội hình trên toàn bộ nhân vật để so sánh lý thuyết.")
+    }
+
+    var abyssUseFullRoster: String {
+        localized(en: "Compare across all characters", vi: "So sánh toàn bộ nhân vật")
+    }
+
+    var abyssUseFullWeaponPool: String {
+        localized(en: "Compare across all weapons", vi: "So sánh toàn bộ vũ khí")
+    }
+
+    var abyssNoResultsYet: String {
+        localized(en: "No teams computed yet", vi: "Chưa tính đội hình nào")
+    }
+
+    var abyssNoResultsHint: String {
+        localized(en: "Press \"Find teams\" to search.", vi: "Bấm \"Tìm đội hình\" để bắt đầu.")
+    }
+
+    /// Constellations are stored but do not change the score yet. Saying so
+    /// where the stepper is avoids everyone assuming otherwise.
+    var abyssConstellationNotScored: String {
+        localized(en: "C-level is saved but does not affect scoring yet",
+                  vi: "Cung mệnh được lưu nhưng chưa tính vào điểm")
+    }
+
+    func abyssFloorTitle(_ floor: Int) -> String {
+        localized(en: "Floor \(floor)", vi: "Tầng \(floor)")
+    }
+
+    func abyssMonsterLevel(_ level: Int) -> String {
+        localized(en: "Enemies ~Lv\(level)", vi: "Quái ~cấp \(level)")
+    }
+
+    /// Which layer a floor buff came from. Worth naming: the Blessing applies
+    /// to every floor for the whole rotation while the disorder is this floor's
+    /// own, and a reader tracing a score back to a sentence needs to know which
+    /// of the two they are looking at.
+    func abyssBuffSource(_ source: AbyssFloorBuff.Source) -> String {
+        switch source {
+        case .leyLine:
+            return localized(en: "Ley Line Disorder", vi: "Địa Mạch Dị Biến")
+        case .blessing:
+            return localized(en: "Abyssal Moon Blessing", vi: "Chúc Phúc Trăng Vực Sâu")
+        }
+    }
+
+    /// Which half of a floor a team is for.
+    ///
+    /// Not a decoration: a floor is two fights, and the teams named here are the
+    /// two teams the player actually has to build.
+    func abyssHalfTitle(_ half: Int) -> String {
+        half == 1
+            ? localized(en: "First half", vi: "Nửa trước")
+            : localized(en: "Second half", vi: "Nửa sau")
+    }
+
+    var abyssHalfPlanNotice: String {
+        localized(en: "Floor 12 is two fights. Each plan is a team for each half, "
+                      + "with nobody in both.",
+                  vi: "Tầng 12 là hai lượt đánh. Mỗi phương án gồm một đội cho mỗi nửa, "
+                      + "không ai đứng cả hai.")
+    }
+
+    /// Why a plan's score is not the two team scores added up.
+    var abyssPlanScoreHint: String {
+        localized(en: "Both halves have to be cleared in one timer, so a plan is ranked on how "
+                      + "long it takes, not on how much damage it does — the half you are slow "
+                      + "at is the half that costs the star. The score is the damage per second "
+                      + "that clears both halves' enemy HP in that time.",
+                  vi: "Phải qua cả hai nửa trong cùng một lượt đếm giờ, nên phương án được xếp "
+                      + "theo thời gian chứ không theo sát thương — nửa nào đánh chậm mới là "
+                      + "nửa làm mất sao. Điểm là sát thương mỗi giây dọn hết HP quái của cả hai "
+                      + "nửa trong đúng thời gian đó.")
+    }
+
+    /// Modelled time to clear, as "1:32". Same units as the score: a ranking
+    /// figure, not the in-game timer.
+    func abyssClearTime(_ seconds: Double) -> String {
+        let total = Int(seconds.rounded())
+        let clock = String(format: "%d:%02d", total / 60, total % 60)
+        return localized(en: "≈ \(clock) to clear", vi: "≈ \(clock) để dọn")
+    }
+
+    var abyssClearTimeHint: String {
+        localized(en: "Enemy HP over this team's modelled damage per second, on one target. "
+                      + "The model's damage is approximate and ignores AoE, so read this as a "
+                      + "comparison between teams, not as the in-game timer.",
+                  vi: "HP quái chia cho sát thương mỗi giây theo mô hình, trên một mục tiêu. "
+                      + "Sát thương mô hình là ước lượng và chưa tính đánh lan, nên đây là thước "
+                      + "so sánh giữa các đội, không phải đồng hồ trong game.")
+    }
+
+    /// A locally-logged best time from a past cycle, next to this cycle's own
+    /// — never phrased as "better" or "worse", since the roster, the gear and
+    /// the monsters can all have moved between the two.
+    func abyssPreviousCycleClearTime(_ seconds: Double) -> String {
+        let total = Int(seconds.rounded())
+        let clock = String(format: "%d:%02d", total / 60, total % 60)
+        return localized(en: "Last cycle's plan: ≈ \(clock)", vi: "Chu kỳ trước: ≈ \(clock)")
+    }
+
+    var abyssPreviousCycleHint: String {
+        localized(
+            en: "The best plan a past search found for this floor, logged locally on this Mac. "
+                + "Roster, gear and the monsters themselves can all have changed since — read this "
+                + "as a personal log, not a like-for-like comparison.",
+            vi: "Phương án tốt nhất mà lần tìm kiếm trước tìm được cho tầng này, lưu local trên máy. "
+                + "Roster, trang bị và cả quái vật có thể đã đổi từ đó — coi đây là nhật ký cá nhân, "
+                + "không phải so sánh ngang hàng.")
+    }
+
+    /// The score, with its unit. Damage per second under the model's
+    /// assumptions — not a figure to compare against a damage meter in game.
+    func abyssScorePerSecond(_ formatted: String) -> String { "\(formatted)/s" }
+
+    var abyssScoreHint: String {
+        localized(en: "Modelled damage per second: one rotation's damage over the rotation's "
+                      + "assumed length. A ranking heuristic, not a damage simulation.",
+                  vi: "Sát thương mỗi giây theo mô hình: sát thương một vòng rotation chia cho "
+                      + "độ dài rotation giả định. Đây là thang xếp hạng, không phải mô phỏng "
+                      + "sát thương thật.")
+    }
+
+    // MARK: - Artifact set effects
+
+    func abyssSetPieces(_ count: Int) -> String {
+        localized(en: "\(count)-piece", vi: "\(count) món")
+    }
+
+    /// What the engine took from an effect, as opposed to what the game says it
+    /// does. The two are not always the same, which is the whole reason this is
+    /// shown next to the effect text.
+    func abyssSetModelled(_ value: String) -> String {
+        localized(en: "Model applies \(value)", vi: "Mô hình tính \(value)")
+    }
+
+    /// An effect the model does not price at all. Better said than left to look
+    /// like the set was judged on its full strength.
+    var abyssSetNotModelled: String {
+        localized(en: "Not priced by the model", vi: "Mô hình chưa tính hiệu ứng này")
+    }
+
+    /// Under a triggered effect: the number shown is its full strength, and what
+    /// the model credits is the share the wearer's rotation keeps up.
+    var abyssSetTimed: String {
+        localized(en: "Triggered effects count for the share of the rotation they are up",
+                  vi: "Hiệu ứng có điều kiện chỉ được tính theo phần thời gian duy trì trong rotation")
+    }
+
+    /// One buff at R1 and full stacks: "+25% ATK", "+80 Elemental Mastery ×3",
+    /// "+20% party ATK (conditional)".
+    func abyssBuffLine(_ buff: AbyssBuff) -> String {
+        let value = buff.tiers.first?.last ?? buff.value(refinement: 1)
+        let stacks = buff.tiers.isEmpty && buff.stacks > 1 ? " ×\(buff.stacks)" : ""
+        let isPercent = buff.source != nil || !(buff.stat == .elementalMastery || buff.stat == .flatATK)
+        let amount = isPercent ? "+\(abyssPercent(value))%" : "+\(Int(value.rounded()))"
+        var line = "\(amount) \(abyssBuffStat(buff))\(stacks)"
+        if buff.scope != .wearer { line += " · " + abyssSetPartyWide }
+        if !buff.isAlwaysOn { line += " " + localized(en: "(conditional)", vi: "(có điều kiện)") }
+        return line
+    }
+
+    private func abyssPercent(_ value: Double) -> String {
+        let percent = value * 100
+        return percent.rounded() == percent ? "\(Int(percent))" : String(format: "%.1f", percent)
+    }
+
+    private func abyssBuffStat(_ buff: AbyssBuff) -> String {
+        let hits = [(AbyssBuff.Actions.normal, localized(en: "Normal Attack", vi: "đòn thường")),
+                    (.charged, localized(en: "Charged Attack", vi: "trọng kích")),
+                    (.plunge, localized(en: "Plunging Attack", vi: "đòn đáp")),
+                    (.skill, localized(en: "Elemental Skill", vi: "kỹ năng")),
+                    (.burst, localized(en: "Elemental Burst", vi: "nộ"))]
+            .filter { buff.on.contains($0.0) }.map(\.1).joined(separator: "/")
+        let prefix = hits.isEmpty ? "" : hits + " "
+        switch buff.stat {
+        case .atkPercent: return localized(en: "ATK", vi: "ATK")
+        case .hpPercent: return localized(en: "Max HP", vi: "HP")
+        case .defPercent: return localized(en: "DEF", vi: "DEF")
+        case .flatATK: return localized(en: "ATK", vi: "ATK")
+        case .elementalMastery: return localized(en: "Elemental Mastery", vi: "Tinh Thông Nguyên Tố")
+        case .energyRecharge: return localized(en: "Energy Recharge", vi: "Hiệu Quả Nạp")
+        case .critRate: return prefix + localized(en: "CRIT Rate", vi: "Tỷ Lệ Bạo Kích")
+        case .critDMG: return prefix + localized(en: "CRIT DMG", vi: "ST Bạo Kích")
+        case .dmg: return localized(en: "\(prefix)DMG", vi: "ST \(prefix)".trimmingCharacters(in: .whitespaces))
+        case .ownElementDMG: return localized(en: "own Elemental DMG", vi: "ST nguyên tố bản thân")
+        case .elementDMG(let element):
+            return localized(en: "\(abyssElementLabel(element)) DMG", vi: "ST \(abyssElementLabel(element))")
+        }
+    }
+
+    var abyssSetPartyWide: String {
+        localized(en: "whole party", vi: "cả đội")
+    }
+
+    var abyssOnFieldLabel: String { localized(en: "on-field", vi: "đứng sân") }
+    var abyssDamageShare: String { localized(en: "of team damage", vi: "sát thương đội") }
+
+    // MARK: - Resonance / weapon popovers
+
+    /// "2x Pyro" — how many characters of the element the resonance needs.
+    func abyssResonanceRequirement(element: GenshinElement, count: Int) -> String {
+        localized(en: "\(count)x \(abyssElementLabel(element))",
+                  vi: "\(count) nhân vật hệ \(abyssElementLabel(element))")
+    }
+
+    var abyssResonanceRequirementUnique: String {
+        localized(en: "4 different elements", vi: "4 nguyên tố khác nhau")
+    }
+
+    /// "+25% ATK" from a resonance's plain stat/value bonus list.
+    func abyssResonanceBonusLine(_ bonus: AbyssTeamBonus.Bonus) -> String {
+        let percent = bonus.value.magnitude < 1 && bonus.value != 0
+        let amount = percent ? "+\(abyssPercent(bonus.value))%" : "+\(Int(bonus.value.rounded()))"
+        return "\(amount) \(bonus.stat)"
+    }
+
+    /// "R\(n)" refinement value line for a weapon passive effect: "+40% ATK".
+    func abyssWeaponEffectLine(_ effect: AbyssWeapon.PassiveEffect, refinement: Int) -> String? {
+        guard let value = effect.value(refinement: refinement) else { return nil }
+        let percent = value.magnitude < 1 && value != 0
+        let amount = percent ? "+\(abyssPercent(value))%" : "+\(Int(value.rounded()))"
+        return "\(amount) \(effect.stat)"
+    }
+
+    func abyssCyclePeriod(start: String, end: String) -> String {
+        localized(en: "Rotation \(start) → \(end)", vi: "Chu kỳ \(start) → \(end)")
+    }
+
+    var abyssCycleExpired: String { localized(en: "Rotation expired", vi: "Chu kỳ đã hết hạn") }
+
+    /// Bundled Abyss data goes stale every two weeks, so a released build will
+    /// eventually recommend teams for a rotation that is no longer live.
+    var abyssCycleExpiredHint: String {
+        localized(
+            en: "This build ships the rotation that was live when it was made. Drop an "
+                + "updated cycle file into ~/Library/Application Support/NSLauncher/abyss-cycles/ "
+                + "to refresh it without waiting for a new release.",
+            vi: "Bản này mang dữ liệu của chu kỳ lúc build. Đặt file chu kỳ mới vào "
+                + "~/Library/Application Support/NSLauncher/abyss-cycles/ để cập nhật mà "
+                + "không cần chờ bản phát hành mới.")
+    }
+
+    func abyssRosterUnknownIDs(_ ids: [String]) -> String {
+        localized(en: "Not in the data, ignored: \(ids.joined(separator: ", "))",
+                  vi: "Không có trong dữ liệu, đã bỏ qua: \(ids.joined(separator: ", "))")
+    }
+
+    func abyssRoleLabel(_ role: AbyssRole) -> String {
+        switch role {
+        case .mainDPS: return localized(en: "Main DPS", vi: "DPS chính")
+        case .subDPS: return localized(en: "Sub DPS", vi: "DPS phụ")
+        case .support: return localized(en: "Support", vi: "Hỗ trợ")
+        case .shield: return localized(en: "Shield", vi: "Khiên")
+        case .healer: return localized(en: "Healer", vi: "Hồi máu")
+        }
+    }
+
+    func abyssElementLabel(_ element: GenshinElement) -> String {
+        switch element {
+        case .anemo: return localized(en: "Anemo", vi: "Phong")
+        case .geo: return localized(en: "Geo", vi: "Nham")
+        case .electro: return localized(en: "Electro", vi: "Lôi")
+        case .dendro: return localized(en: "Dendro", vi: "Thảo")
+        case .hydro: return localized(en: "Hydro", vi: "Thủy")
+        case .pyro: return localized(en: "Pyro", vi: "Hỏa")
+        case .cryo: return localized(en: "Cryo", vi: "Băng")
+        }
+    }
+
+    func abyssWeaponTypeLabel(_ type: WeaponType) -> String {
+        switch type {
+        case .sword: return localized(en: "Sword", vi: "Kiếm")
+        case .claymore: return localized(en: "Claymore", vi: "Đại kiếm")
+        case .polearm: return localized(en: "Polearm", vi: "Thương")
+        case .bow: return localized(en: "Bow", vi: "Cung")
+        case .catalyst: return localized(en: "Catalyst", vi: "Pháp khí")
+        }
+    }
+
+    func abyssTeamNote(_ note: AbyssTeamNote) -> String {
+        switch note {
+        case .noSustainPenalty:
+            return localized(en: "No healer or shield — scored down for survivability",
+                             vi: "Không có hồi máu/khiên — bị trừ điểm sinh tồn")
+        case .breaksShield(let elements):
+            let names = elements.map { abyssElementLabel($0) }.joined(separator: "/")
+            return localized(en: "Can break \(names) shields", vi: "Phá được khiên \(names)")
+        case .exploitsWeakness(let elements):
+            let names = elements.map { abyssElementLabel($0) }.joined(separator: "/")
+            return localized(en: "Exploits \(names) weakness", vi: "Khai thác điểm yếu \(names)")
+        case .moonsignAscendantGleam:
+            return localized(en: "Moonsign: Ascendant Gleam", vi: "Nguyệt Triệu: Ascendant Gleam")
+        case .hexereiSecretRite:
+            return localized(en: "Hexerei: Secret Rite", vi: "Hexerei: Secret Rite")
+        case .resonance(_, let name, let nameVI):
+            return localized(en: "Resonance: \(name)", vi: "Cộng hưởng: \(nameVI)")
+        case .weaponContested(let weapons):
+            let names = weapons.joined(separator: ", ")
+            return localized(
+                en: "Roster is short a weapon: \(names) is assigned to more than one character",
+                vi: "Roster thiếu vũ khí: \(names) đang xếp cho nhiều nhân vật")
+        case .mixedStatSources:
+            return localized(
+                en: "Mixes imported and assumed builds — the score is not a like-for-like comparison",
+                vi: "Trộn nhân vật có chỉ số thật với nhân vật build giả định — điểm không so ngang được")
+        case .energyStarved(let ids):
+            let names = ids.joined(separator: ", ")
+            return localized(
+                en: "Not enough Energy Recharge to burst as often as scored: \(names)",
+                vi: "Không đủ Nạp Năng Lượng để bung chiêu nhiều lần như điểm số giả định: \(names)")
+        }
+    }
+
+    // MARK: - Abyss showcase import
+
+    var abyssImportFromUID: String { localized(en: "Import from UID", vi: "Nhập từ UID") }
+    var abyssUIDPlaceholder: String { localized(en: "UID (9-10 digits)", vi: "UID (9-10 chữ số)") }
+    var abyssFetching: String { localized(en: "Fetching...", vi: "Đang tải...") }
+    var abyssMeasuredBadge: String { localized(en: "your build", vi: "chỉ số thật") }
+    var abyssModelledBadge: String { localized(en: "assumed build", vi: "build giả định") }
+
+    /// The UID is enough — its first digit is the region — so the tab never
+    /// asks which server the account is on.
+    var abyssUIDHint: String {
+        localized(
+            en: "Via Enka.Network — no login, no server to pick. Up to 8 characters; needs "
+                + "\"Show Character Details\" on in-game.",
+            vi: "Qua Enka.Network — không cần đăng nhập, không cần chọn server. Tối đa 8 nhân vật; "
+                + "cần bật \"Hiển thị chi tiết nhân vật\" trong game.")
+    }
+
+    func abyssShowcaseSummary(nickname: String, count: Int) -> String {
+        localized(en: "\(nickname) — \(count) characters imported with their real stats",
+                  vi: "\(nickname) — đã nhập \(count) nhân vật kèm chỉ số thật")
+    }
+
+    func abyssShowcaseFetchedAt(_ date: String) -> String {
+        localized(en: "Last fetched \(date)", vi: "Lấy lúc \(date)")
+    }
+
+    func abyssShowcaseUnmapped(_ ids: [String]) -> String {
+        localized(en: "Newer than the bundled data, skipped: \(ids.joined(separator: ", "))",
+                  vi: "Mới hơn dữ liệu đi kèm nên bỏ qua: \(ids.joined(separator: ", "))")
+    }
+
+    func abyssShowcaseTooSoon(_ seconds: Int) -> String {
+        localized(en: "Enka has no newer data yet — try again in \(seconds)s",
+                  vi: "Enka chưa có dữ liệu mới — thử lại sau \(seconds)s")
+    }
+
+    func abyssEnkaError(_ error: AbyssEnkaError) -> String {
+        switch error {
+        case .malformedUID:
+            return localized(en: "That is not a valid UID.", vi: "UID không hợp lệ.")
+        case .notFound:
+            return localized(en: "No player with that UID.", vi: "Không tìm thấy người chơi với UID này.")
+        case .showcaseEmpty:
+            return localized(
+                en: "That showcase is empty or hidden. In game, open your profile, edit the "
+                    + "Character Showcase, and turn on \"Show Character Details\".",
+                vi: "Showcase trống hoặc đang ẩn. Trong game, mở hồ sơ, sửa Showcase nhân vật và bật "
+                    + "\"Hiển thị chi tiết nhân vật\".")
+        case .rateLimited:
+            return localized(en: "Enka.Network is rate-limiting requests. Try again shortly.",
+                             vi: "Enka.Network đang giới hạn truy cập. Thử lại sau ít phút.")
+        case .gameMaintenance:
+            return localized(en: "The game server is in maintenance.", vi: "Máy chủ game đang bảo trì.")
+        case .serviceUnavailable:
+            return localized(en: "Enka.Network is unavailable right now.",
+                             vi: "Enka.Network hiện không truy cập được.")
+        case .badResponse(let status):
+            return localized(en: "Enka.Network answered with HTTP \(status).",
+                             vi: "Enka.Network trả về HTTP \(status).")
+        case .transport(let message):
+            return localized(en: "Could not reach Enka.Network: \(message)",
+                             vi: "Không kết nối được Enka.Network: \(message)")
+        }
+    }
+
+    // MARK: - Full roster import (HoYoLAB)
+
+    var abyssImportFullRoster: String { localized(en: "Import full roster", vi: "Nhập toàn bộ roster") }
+    var abyssLtuidPlaceholder: String { localized(en: "ltuid_v2", vi: "ltuid_v2") }
+    var abyssLtokenPlaceholder: String { localized(en: "ltoken_v2", vi: "ltoken_v2") }
+
+    func abyssCopyTokenNameHelp(_ name: String) -> String {
+        localized(en: "Copy \"\(name)\" — the cookie name to look for on hoyolab.com",
+                   vi: "Sao chép \"\(name)\" — tên cookie cần tìm trên hoyolab.com")
+    }
+
+    var abyssCopyErrorHelp: String { localized(en: "Copy error message", vi: "Sao chép thông báo lỗi") }
+
+    func abyssFullRosterImported(_ count: Int) -> String {
+        localized(en: "Imported \(count) characters", vi: "Đã nhập \(count) nhân vật")
+    }
+
+    /// Unlike the UID import above, this needs the player's own HoYoLAB login
+    /// session and a privacy toggle most people have never turned on — both
+    /// worth spelling out here, not just in a support doc, since pasting a
+    /// login token is a bigger ask than pasting a UID.
+    var abyssHoyolabHint: String {
+        localized(
+            en: "Every character you own, not just 8 — but needs your own HoYoLAB session "
+                + "(hoyolab.com → cookies → ltuid_v2/ltoken_v2) and \"Character Details\" turned on "
+                + "under your HoYoLAB privacy settings. Kept only on this Mac, in a file only you can read.",
+            vi: "Toàn bộ nhân vật bạn có, không chỉ 8 — nhưng cần phiên đăng nhập HoYoLAB của chính bạn "
+                + "(hoyolab.com → cookie → ltuid_v2/ltoken_v2) và bật \"Character Details\" trong cài đặt "
+                + "riêng tư HoYoLAB. Chỉ lưu trên máy này, trong một file chỉ bạn đọc được.")
+    }
+
+    func abyssHoyolabError(_ error: AbyssHoyolabError) -> String {
+        switch error {
+        case .malformedUID:
+            return localized(en: "That is not a valid UID.", vi: "UID không hợp lệ.")
+        case .notFound:
+            return localized(en: "No player with that UID.", vi: "Không tìm thấy người chơi với UID này.")
+        case .dataNotPublic:
+            return localized(
+                en: "Character Details are not public for that account. On hoyolab.com, open your "
+                    + "profile's privacy settings and turn on \"Character Details\" under Battle Chronicle.",
+                vi: "Chi tiết nhân vật của tài khoản này chưa công khai. Trên hoyolab.com, mở cài đặt "
+                    + "riêng tư của hồ sơ và bật \"Character Details\" trong Battle Chronicle.")
+        case .invalidCredentials:
+            return localized(
+                en: "That ltuid_v2/ltoken_v2 pair was rejected — the session may have expired.",
+                vi: "Cặp ltuid_v2/ltoken_v2 này bị từ chối — phiên đăng nhập có thể đã hết hạn.")
+        case .rateLimited:
+            return localized(en: "HoYoLAB is rate-limiting requests. Try again shortly.",
+                             vi: "HoYoLAB đang giới hạn truy cập. Thử lại sau ít phút.")
+        case .badResponse(let status):
+            return localized(en: "HoYoLAB answered with HTTP \(status).", vi: "HoYoLAB trả về HTTP \(status).")
+        case .server(let retcode, let message):
+            return localized(en: "HoYoLAB error \(retcode): \(message)", vi: "Lỗi HoYoLAB \(retcode): \(message)")
+        case .transport(let message):
+            return localized(en: "Could not reach HoYoLAB: \(message)", vi: "Không kết nối được HoYoLAB: \(message)")
+        }
+    }
+
+    /// Imported characters carry their own artifacts, so the advice for them is
+    /// a comparison rather than a suggestion.
+    func abyssArtifactUpgrade(from current: String, gain: Double) -> String {
+        let percent = String(format: "%.1f", gain * 100)
+        return localized(en: "You have \(current) — switching is worth +\(percent)%",
+                         vi: "Bạn đang đeo \(current) — đổi sang bộ này hơn +\(percent)%")
+    }
+
+    func abyssArtifactAlreadyBest(_ name: String) -> String {
+        localized(en: "You already have \(name) — nothing better for this floor",
+                  vi: "Bạn đã đeo \(name) — không có bộ nào tốt hơn cho tầng này")
+    }
+
+    var abyssShowcaseNotice: String {
+        localized(
+            en: "Imported characters are scored on the artifacts you actually rolled; everyone "
+                + "else is scored on a standard build. Teams that mix the two are flagged.",
+            vi: "Nhân vật đã nhập được chấm bằng thánh di vật thật của bạn; những người còn lại "
+                + "dùng build chuẩn giả định. Đội trộn cả hai loại sẽ được đánh dấu.")
+    }
+
+    // MARK: - Abyss artifact advice
+
+    var abyssArtifactsLabel: String { localized(en: "Artifacts", vi: "Thánh di vật") }
+    var abyssSandsSlot: String { localized(en: "Sands", vi: "Đồng hồ") }
+    var abyssGobletSlot: String { localized(en: "Goblet", vi: "Ly") }
+    var abyssCircletSlot: String { localized(en: "Circlet", vi: "Mũ") }
+    var abyssSubstatsLabel: String { localized(en: "Substats", vi: "Chỉ số phụ") }
+
+    /// The set was chosen for this floor and these team mates, which is the
+    /// whole point of showing it per team rather than once per character.
+    func abyssArtifactGain(_ gain: Double) -> String {
+        let percent = String(format: "%.1f", gain * 100)
+        return localized(en: "+\(percent)% over the generic pick",
+                         vi: "+\(percent)% so với bộ chọn chung")
+    }
+
+    func abyssArtifactAlternative(_ names: String, gap: Double) -> String {
+        let percent = String(format: "%.1f", gap * 100)
+        return localized(en: "Or \(names) (−\(percent)%)", vi: "Hoặc \(names) (−\(percent)%)")
+    }
+
+    func abyssTeamArtifactGain(_ gain: Double) -> String {
+        let percent = String(format: "%.1f", gain * 100)
+        return localized(en: "artifacts +\(percent)%", vi: "thánh di vật +\(percent)%")
+    }
+
+    var abyssArtifactAdviceNotice: String {
+        localized(
+            en: "Artifacts are picked per team and per floor, so the same character can want a "
+                + "different set depending on who they are with and what the enemies resist. Most "
+                + "of the gain shown is supports being given sets that buff the party instead of "
+                + "sets that raise their own damage.",
+            vi: "Thánh di vật được chọn riêng cho từng đội và từng tầng, nên cùng một nhân vật có "
+                + "thể cần bộ khác nhau tuỳ đồng đội và tuỳ kháng của quái. Phần lớn mức tăng hiển "
+                + "thị đến từ việc nhân vật hỗ trợ được đổi sang bộ buff cả đội thay vì bộ tăng sát "
+                + "thương của riêng họ.")
+    }
+
+    func abyssMainStatName(_ stat: AbyssMainStat) -> String {
+        switch stat {
+        case .atkPercent: return "ATK%"
+        case .hpPercent: return "HP%"
+        case .defPercent: return "DEF%"
+        case .elementalMastery: return localized(en: "EM", vi: "Tinh Thông")
+        case .energyRecharge: return localized(en: "ER", vi: "Hồi Năng")
+        case .critRate: return localized(en: "CRIT Rate", vi: "Tỉ Lệ Bạo")
+        case .critDMG: return localized(en: "CRIT DMG", vi: "ST Bạo")
+        case .healingBonus: return localized(en: "Healing", vi: "Trị Liệu")
+        case .elementalDMG(let element):
+            return localized(en: "\(element.rawValue) DMG", vi: "ST \(abyssElementLabel(element))")
+        }
+    }
+
+    /// Substat keys as they are written in `tuning.json`.
+    func abyssSubstatName(_ key: String) -> String {
+        switch key {
+        case "crit_rate": return localized(en: "CRIT Rate", vi: "Tỉ Lệ Bạo")
+        case "crit_dmg": return localized(en: "CRIT DMG", vi: "ST Bạo")
+        case "atk_pct": return "ATK%"
+        case "hp_pct": return "HP%"
+        case "def_pct": return "DEF%"
+        case "em": return localized(en: "EM", vi: "Tinh Thông")
+        case "er": return localized(en: "ER", vi: "Hồi Năng")
+        case "flat_atk": return localized(en: "flat ATK", vi: "ATK cố định")
+        case "flat_hp": return localized(en: "flat HP", vi: "HP cố định")
+        case "flat_def": return localized(en: "flat DEF", vi: "DEF cố định")
+        default: return key
+        }
+    }
+
+    /// What re-evaluating the team with one more average roll of this substat
+    /// is worth — computed, not read off the static priority table, so it can
+    /// say "this one is already saturated" where the ordering alone cannot.
+    /// The same in both languages: a name and a number, nothing to translate.
+    func abyssSubstatWithGain(_ name: String, gain: Double) -> String {
+        "\(name) (+\(String(format: "%.1f", gain * 100))%)"
+    }
+
+    /// The scores are a ranking heuristic, not a DPS simulation. This belongs
+    /// in the UI, not only in the repo docs — a number with no caveat reads as
+    /// a measurement.
+    var abyssMethodologyNotice: String {
+        localized(
+            en: "Ranking estimate, not a damage simulation: no rotation/energy/constellations; "
+                + "artifacts assume a standard build.",
+            vi: "Điểm chỉ để xếp hạng, không mô phỏng sát thương: chưa tính rotation/năng lượng/"
+                + "cung mệnh; thánh di vật dùng build chuẩn giả định.")
+    }
+
+    var abyssDataNotice: String {
+        localized(
+            en: "Genshin data © HoYoverse, via Yatta/Ambr + Genshin Wiki (CC BY-SA 3.0). Reference only.",
+            vi: "Dữ liệu Genshin © HoYoverse, qua Yatta/Ambr + Genshin Wiki (CC BY-SA 3.0). "
+                + "Chỉ để tham khảo.")
+    }
+
     /// Returns the string for the currently selected language.
     private func localized(en: String, vi: String) -> String {
         switch language {
@@ -674,4 +1292,9 @@ struct AppText {
             return vi
         }
     }
+
+    /// The same choice as `localized`, exposed for data-driven content (e.g.
+    /// character/weapon/artifact-set names loaded from Resources/Abyss) rather
+    /// than this file's own hard-coded copy.
+    func pick(en: String, vi: String) -> String { localized(en: en, vi: vi) }
 }

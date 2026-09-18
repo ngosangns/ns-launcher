@@ -129,7 +129,11 @@ struct RunLogBuffer {
     }
 
     static func trimmed(_ log: String) -> String {
-        guard log.count > trimThreshold else { return log }
+        // `count` walks the whole string to count grapheme clusters, and this
+        // runs on every flush while a game is streaming output. `utf8.count` is
+        // O(1) and never smaller than the character count, so it rules out the
+        // common "still well under the cap" case without the walk.
+        guard log.utf8.count > trimThreshold, log.count > trimThreshold else { return log }
         return String(log.suffix(retainedCharacters))
     }
 }

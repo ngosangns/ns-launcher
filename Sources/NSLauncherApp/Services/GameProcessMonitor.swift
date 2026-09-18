@@ -10,8 +10,19 @@ import Foundation
 
 /// Watches one game executable and reports when it is running and when it stops.
 struct GameProcessMonitor: Sendable {
-    /// How long the monitor sleeps between process-table probes.
+    /// How long the monitor sleeps between process-table probes while waiting
+    /// for the game to come up. Kept short: this window is the delay between the
+    /// player pressing Play and the UI admitting the game started.
     static let pollIntervalNanoseconds: UInt64 = 500_000_000
+
+    /// The interval used for the rest of the session, once the game is up.
+    ///
+    /// Each probe walks the whole process table and reads the arguments of every
+    /// PID on the system, which is hundreds of syscalls — and it runs for the
+    /// entire play session, competing with the game itself. Noticing the game
+    /// quit a second or two later costs nothing: nothing is waiting on that edge
+    /// but a status label.
+    static let runningPollIntervalNanoseconds: UInt64 = 2_000_000_000
 
     /// Probe returning true while the game executable is running.
     let isGameRunning: @Sendable () async -> Bool
@@ -45,7 +56,7 @@ struct GameProcessMonitor: Sendable {
         while true {
             try Task.checkCancellation()
             if !(await isGameRunning()) { return }
-            try await sleep(Self.pollIntervalNanoseconds)
+            try await sleep(Self.runningPollIntervalNanoseconds)
         }
     }
 }

@@ -1,3 +1,4 @@
+import Darwin
 import XCTest
 @testable import NSLauncherApp
 
@@ -80,5 +81,38 @@ final class GameProcessInspectorTests: XCTestCase {
 
         XCTAssertTrue(pids.contains(myPID))
         XCTAssertNotNil(GameProcessInspector.commandLine(forPID: myPID))
+    }
+
+    /// The read this launcher's WINEPREFIX-scoped cleanup depends on, since `WINEPREFIX` itself
+    /// cannot be read back from another process on current macOS (see the comment on
+    /// `currentWorkingDirectory(forPID:)`).
+    func testCurrentWorkingDirectoryReadsARealProcessesCWD() async throws {
+        let directory = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent("GameProcessInspectorTests-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/bin/sleep")
+        process.arguments = ["5"]
+        process.currentDirectoryURL = directory
+        process.standardOutput = FileHandle.nullDevice
+        try process.run()
+        defer { process.terminate() }
+        let pid = process.processIdentifier
+
+        var cwd: String?
+        for _ in 0..<50 {
+            cwd = GameProcessInspector.currentWorkingDirectory(forPID: pid)
+            if cwd != nil { break }
+            try await Task.sleep(nanoseconds: 20_000_000)
+        }
+        // `resolvingSymlinksInPath()` does not canonicalize `/var` -> `/private/var` the way the
+        // kernel's `getcwd()` (what the sysctl this reads from is backed by) always does, so match
+        // its behavior with `realpath(3)` directly rather than asserting a path shape Foundation
+        // does not actually produce.
+        var resolved = [Int8](repeating: 0, count: Int(PATH_MAX))
+        XCTAssertNotNil(realpath(directory.path, &resolved))
+        XCTAssertEqual(cwd, String(cString: resolved))
     }
 }

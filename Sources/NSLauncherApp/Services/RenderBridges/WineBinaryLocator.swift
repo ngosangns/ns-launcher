@@ -2,9 +2,9 @@
 //
 // Finds usable Wine builds and ranks them newest first.
 //
-// Shared by the render bridges, which disagree about which builds they can run on — D3DMetal needs
-// a build carrying Apple's Game Porting Toolkit payload, DXVK only needs a loader — but agree on
-// where to look, on what counts as a usable binary, and on not letting Gatekeeper kill a launch
+// Shared by the render bridges, which disagree about which builds they can run on — DXMT needs a
+// build carrying CrossOver's bundled `lib/dxmt` payload, plain Wine only needs a loader — but agree
+// on where to look, on what counts as a usable binary, and on not letting Gatekeeper kill a launch
 // mid-flight.
 //
 // A candidate is usable only if it answers `--version` with a `wine-<major>` string. That single
