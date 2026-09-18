@@ -86,7 +86,6 @@ struct SettingsView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .onAppear { viewModel.refreshCacheReport() }
         .onChange(of: activeSection) { _, newValue in
             if newValue == .cutscenes && viewModel.cutsceneFiles.isEmpty {
                 viewModel.refreshCutsceneFiles()

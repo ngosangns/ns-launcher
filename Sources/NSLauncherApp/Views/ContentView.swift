@@ -9,7 +9,9 @@ private enum AppTab: Hashable {
 
 /// App shell: pinned chrome (wordmark, tab switch, language) plus the active tab's content.
 /// Settings used to be a pushed `NavigationStack` destination; a tab switch keeps both screens'
-/// state alive and drops that extra navigation layer.
+/// state alive and drops that extra navigation layer. All four tabs are mounted for the life of
+/// the window (see `tabContent`), so every tab keeps its own scroll position and in-progress UI
+/// state across switches, on top of the view models hoisted below for Story/Abyss.
 struct ContentView: View {
     @ObservedObject var viewModel: LauncherViewModel
     @State private var activeTab: AppTab = .home
@@ -36,22 +38,28 @@ struct ContentView: View {
                     .padding(.top, 44)
                     .padding(.bottom, 12)
 
-                Group {
-                    switch activeTab {
-                    case .home:
-                        HomeView(viewModel: viewModel)
-                    case .settings:
-                        SettingsView(viewModel: viewModel)
-                    case .story:
-                        StoryView(viewModel: storyViewModel, text: text)
-                    case .abyss:
-                        AbyssView(viewModel: abyssViewModel, text: text)
-                    }
+                // All four tabs stay mounted at all times — only opacity/hit-testing toggle —
+                // so each tab's local @State (scroll position, in-progress edits, expanded
+                // sections) survives switching away and back, not just the hoisted view models
+                // above.
+                ZStack {
+                    tabContent(.home) { HomeView(viewModel: viewModel) }
+                    tabContent(.settings) { SettingsView(viewModel: viewModel) }
+                    tabContent(.story) { StoryView(viewModel: storyViewModel, text: text) }
+                    tabContent(.abyss) { AbyssView(viewModel: abyssViewModel, text: text) }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
 
             WindowFrameOrnament()
+        }
+        .onChange(of: activeTab) { _, newValue in
+            // SettingsView's cache report used to refresh in its own onAppear; now that the view
+            // stays mounted permanently, that would only fire once at launch instead of on every
+            // visit, so the refresh moves here.
+            if newValue == .settings {
+                viewModel.refreshCacheReport()
+            }
         }
         .alert(text.error, isPresented: Binding(get: {
             viewModel.errorMessage != nil
@@ -94,19 +102,40 @@ struct ContentView: View {
     private var tabSwitcher: some View {
         TabGroup {
             SidebarTabButton(title: text.homeTitle, systemImage: "house.fill", isSelected: activeTab == .home) {
-                activeTab = .home
+                switchTab(to: .home)
             }
             SidebarTabButton(title: text.settingsTitle, systemImage: "gearshape.fill", isSelected: activeTab == .settings) {
-                activeTab = .settings
+                switchTab(to: .settings)
             }
             SidebarTabButton(title: text.storyTitle, systemImage: "book.closed.fill", isSelected: activeTab == .story) {
-                activeTab = .story
+                switchTab(to: .story)
             }
             SidebarTabButton(title: text.abyssTitle, systemImage: "shield.lefthalf.filled", isSelected: activeTab == .abyss) {
-                activeTab = .abyss
+                switchTab(to: .abyss)
             }
         }
         .fixedSize()
+    }
+
+    private func switchTab(to tab: AppTab) {
+        guard tab != activeTab else { return }
+        withAnimation(.easeInOut(duration: 0.22)) {
+            activeTab = tab
+        }
+    }
+
+    /// Renders `content` permanently in the `ZStack`, cross-fading and settling in from a slight
+    /// scale/offset when it becomes the active tab rather than popping in — the mount/unmount a
+    /// `switch` would otherwise do is what loses each tab's local state on every visit.
+    @ViewBuilder
+    private func tabContent(_ tab: AppTab, @ViewBuilder content: () -> some View) -> some View {
+        let isActive = activeTab == tab
+        content()
+            .opacity(isActive ? 1 : 0)
+            .scaleEffect(isActive ? 1 : 0.98)
+            .offset(y: isActive ? 0 : 6)
+            .allowsHitTesting(isActive)
+            .accessibilityHidden(!isActive)
     }
 
     private var languageSwitcher: some View {
