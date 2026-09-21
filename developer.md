@@ -67,6 +67,8 @@ task build       # release binary
 task bundle      # ad-hoc-signed NSLauncher.app
 task install     # copy the bundle to /Applications
 task screenshots # capture launcher and game windows
+task web         # Vite companion at http://localhost:5173
+task web:deploy  # Cloudflare Pages → https://teyvat.gnas.dev
 ```
 
 The raw release binary is produced by SwiftPM at:

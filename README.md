@@ -120,9 +120,10 @@ launcher's celestial theme.
 task web
 ```
 
-That serves `http://localhost:5173`. The damage-model team search still lives
-only in the macOS app; the site is the story reader, cycle/enemy browser,
-catalogs, and Ley Line team composer.
+That serves `http://localhost:5173`. Production is Cloudflare Pages at
+https://teyvat.gnas.dev (`task web:deploy`, same script as CI). The macOS app
+still owns the full damage-model team search; the site ranks floor-12 teams by
+Ley Line fit, resonance, and role.
 
 ## Building From Source Or Contributing
 

@@ -18,3 +18,8 @@ When updating this file, preserve this bar for all agents and keep entries conci
 `web/` is a Vite + React site that reads Story and Abyss data from
 `Sources/NSLauncherApp/Resources/` (no copies). Run with `task web` or
 `cd web && npm run dev`. See `web/README.md`.
+
+Deploy to Cloudflare Pages (not cloudflared): `task web:deploy` runs
+`scripts/deploy-web.sh`, which is also the GitHub Actions path. Live URL is
+https://teyvat.gnas.dev (`gn-teyvat` Pages project). Needs
+`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, and `CLOUDFLARE_ZONE_ID`.

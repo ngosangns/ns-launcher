@@ -22,7 +22,8 @@ gán thánh di vật, cộng hưởng, thời gian dọn ước lượng).
 
 Điểm trên web là thang xếp hạng theo Ley Line + cộng hưởng + vai trò, không
 phải mô phỏng DPS đầy đủ của engine Swift (`AbyssScorer`). Enka/HoYoLAB đi
-qua proxy Vite (`npm run dev` / `task web`).
+qua `/api/enka` và `/api/hoyolab` (Vite proxy lúc `task web`, Pages Functions
+khi deploy).
 
 ## Theme & chữ
 
@@ -48,3 +49,16 @@ npm run preview
 ```
 
 `task web` từ thư mục gốc repo cũng chạy `npm run dev`.
+
+## Deploy
+
+Cloudflare Pages, cùng kiểu `phat.gnas.dev` / `money.gnas.dev` — không dùng
+cloudflared (tunnel chỉ cho API). Subdomain: **https://teyvat.gnas.dev**.
+
+```bash
+task web:deploy
+```
+
+Cần `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_ZONE_ID`.
+Script dùng chung với `.github/workflows/deploy-web.yml`: tạo project
+`gn-teyvat` nếu chưa có, upload `web/dist`, gắn domain, tạo CNAME nếu thiếu.

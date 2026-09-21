@@ -76,7 +76,8 @@ export async function fetchHoyolabRoster(
     headers: {
       "Content-Type": "application/json",
       Accept: "application/json",
-      Cookie: `ltuid_v2=${ltuid.trim()}; ltoken_v2=${ltoken.trim()}`,
+      "X-Ltuid": ltuid.trim(),
+      "X-Ltoken": ltoken.trim(),
       "x-rpc-app_version": "1.5.0",
       "x-rpc-client_type": "5",
       "x-rpc-language": "en-us",

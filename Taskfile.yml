@@ -69,3 +69,8 @@ tasks:
     cmds:
       - npm install
       - npm run build
+
+  web:deploy:
+    desc: Build and deploy the web companion to teyvat.gnas.dev (Cloudflare Pages).
+    cmds:
+      - ./scripts/deploy-web.sh

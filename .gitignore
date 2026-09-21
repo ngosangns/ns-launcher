@@ -5,6 +5,7 @@
 /web/dist/
 /web/tsconfig.tsbuildinfo
 /web/node_modules/.tmp/
+.wrangler/
 
 # Swift Package Manager build and workspace state
 /.build/
