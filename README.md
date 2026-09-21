@@ -109,6 +109,21 @@ The launcher uses HoYoPlay Sophon metadata for both fresh install and update:
 Archive packages, local archive install, generic JSON manifests, and the old
 `pkg_version`/file-level streaming path are no longer product paths.
 
+## Web companion (Story + Abyss)
+
+The macOS app's **Story** and **Abyss** tabs also have a browser companion in
+[`web/`](web/README.md): Ký Sự Teyvat. It reads the same bundled markdown and
+JSON (no second copy of the data) and uses Vietnamese-capable fonts on the
+launcher's celestial theme.
+
+```bash
+task web
+```
+
+That serves `http://localhost:5173`. The damage-model team search still lives
+only in the macOS app; the site is the story reader, cycle/enemy browser,
+catalogs, and Ley Line team composer.
+
 ## Building From Source Or Contributing
 
 See [developer.md](developer.md) for build setup, architecture, test commands,

@@ -12,3 +12,9 @@ Keep this file for knowledge useful to almost every future agent session in this
 Do not repeat what the codebase already shows; point to the authoritative file or command instead.
 Prefer rewriting or pruning existing entries over appending new ones.
 When updating this file, preserve this bar for all agents and keep entries concise.
+
+## Web companion
+
+`web/` is a Vite + React site that reads Story and Abyss data from
+`Sources/NSLauncherApp/Resources/` (no copies). Run with `task web` or
+`cd web && npm run dev`. See `web/README.md`.

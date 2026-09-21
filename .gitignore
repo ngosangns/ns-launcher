@@ -1,5 +1,11 @@
 .DS_Store
 
+# Web companion
+/web/node_modules/
+/web/dist/
+/web/tsconfig.tsbuildinfo
+/web/node_modules/.tmp/
+
 # Swift Package Manager build and workspace state
 /.build/
 /.swiftpm/

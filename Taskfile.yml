@@ -48,3 +48,24 @@ tasks:
     desc: Launch the app, start the game, and capture screenshots into Screenshots/.
     cmds:
       - ./scripts/capture-screenshots.sh
+
+  web:
+    desc: Run the Story + Abyss web companion (Vite) at http://localhost:5173.
+    dir: web
+    cmds:
+      - npm install
+      - npm run dev
+
+  web:test:
+    desc: Run the web companion unit tests.
+    dir: web
+    cmds:
+      - npm install
+      - npm test
+
+  web:build:
+    desc: Typecheck and build the web companion into web/dist.
+    dir: web
+    cmds:
+      - npm install
+      - npm run build
