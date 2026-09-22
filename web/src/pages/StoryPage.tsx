@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { parseStoryPath } from "../lib/paths";
 import { GroupLabel } from "../components/ui";
 import { entityKindLabel, t, type Lang } from "../lib/i18n";
 import { foldVi } from "../lib/slug";
@@ -12,9 +13,10 @@ import {
 } from "../lib/story";
 import { StoryBlocks } from "./StoryBlocks";
 
-export function StoryPage({ lang }: { lang: Lang }) {
+export function StoryPage({ lang, active }: { lang: Lang; active: boolean }) {
   const copy = t(lang);
-  const { docId, sectionId, entityId } = useParams();
+  const { pathname } = useLocation();
+  const { docId, sectionId, entityId } = parseStoryPath(pathname);
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
@@ -43,11 +45,12 @@ export function StoryPage({ lang }: { lang: Lang }) {
   const selectedEntity = entityId ? library.entitiesByID[entityId] : undefined;
 
   useEffect(() => {
+    if (!active) return;
     if (!docId && !entityId) {
       const first = chaptersOf(library)[0];
       if (first) navigate(documentHref(first.id), { replace: true });
     }
-  }, [docId, entityId, library, navigate]);
+  }, [active, docId, entityId, library, navigate]);
 
   useEffect(() => {
     if (!sectionId) return;

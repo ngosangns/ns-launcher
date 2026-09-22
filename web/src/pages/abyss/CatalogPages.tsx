@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   artifactSets,
   artifactSetsByID,
@@ -103,10 +103,13 @@ export function CharacterCatalog({ lang }: { lang: Lang }) {
   );
 }
 
-export function CharacterDetail({ lang }: { lang: Lang }) {
+export function CharacterDetail({ lang, id }: { lang: Lang; id?: string }) {
   const copy = t(lang);
-  const { id } = useParams();
-  const character = id ? charactersByID[id] : undefined;
+  const [kept, setKept] = useState(id);
+  useEffect(() => {
+    if (id) setKept(id);
+  }, [id]);
+  const character = kept ? charactersByID[kept] : undefined;
   if (!character) return <p className="empty">{copy.abyssEmpty}</p>;
   const lv90 = character.baseStats.lv90;
   const lv1 = character.baseStats.lv1;
@@ -362,10 +365,13 @@ export function WeaponCatalog({ lang }: { lang: Lang }) {
   );
 }
 
-export function WeaponDetail({ lang }: { lang: Lang }) {
+export function WeaponDetail({ lang, id }: { lang: Lang; id?: string }) {
   const copy = t(lang);
-  const { id } = useParams();
-  const weapon = id ? weaponsByID[id] : undefined;
+  const [kept, setKept] = useState(id);
+  useEffect(() => {
+    if (id) setKept(id);
+  }, [id]);
+  const weapon = kept ? weaponsByID[kept] : undefined;
   if (!weapon) return <p className="empty">{copy.abyssEmpty}</p>;
   return (
     <article>
@@ -471,10 +477,13 @@ export function ArtifactCatalog({ lang }: { lang: Lang }) {
   );
 }
 
-export function ArtifactDetail({ lang }: { lang: Lang }) {
+export function ArtifactDetail({ lang, id }: { lang: Lang; id?: string }) {
   const copy = t(lang);
-  const { id } = useParams();
-  const set = id ? artifactSetsByID[id] : undefined;
+  const [kept, setKept] = useState(id);
+  useEffect(() => {
+    if (id) setKept(id);
+  }, [id]);
+  const set = kept ? artifactSetsByID[kept] : undefined;
   if (!set) return <p className="empty">{copy.abyssEmpty}</p>;
   const two = lang === "vi" ? set.twoPiece.descriptionVI ?? set.twoPiece.description : set.twoPiece.description;
   const four = lang === "vi" ? set.fourPiece.descriptionVI ?? set.fourPiece.description : set.fourPiece.description;

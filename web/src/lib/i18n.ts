@@ -53,6 +53,7 @@ type Copy = {
   abyssArtifacts: string;
   abyssResonance: string;
   abyssTeam: string;
+  abyssMonsters: string;
   abyssSearchCharacters: string;
   abyssSearchWeapons: string;
   abyssSearchArtifacts: string;
@@ -161,6 +162,7 @@ const vi: Copy = {
   abyssArtifacts: "Thánh di vật",
   abyssResonance: "Cộng hưởng",
   abyssTeam: "Đội hình",
+  abyssMonsters: "Quái",
   abyssSearchCharacters: "Tìm nhân vật",
   abyssSearchWeapons: "Tìm vũ khí",
   abyssSearchArtifacts: "Tìm thánh di vật",
@@ -275,6 +277,7 @@ const en: Copy = {
   abyssArtifacts: "Artifacts",
   abyssResonance: "Resonance",
   abyssTeam: "Teams",
+  abyssMonsters: "Monsters",
   abyssSearchCharacters: "Search characters",
   abyssSearchWeapons: "Search weapons",
   abyssSearchArtifacts: "Search artifacts",

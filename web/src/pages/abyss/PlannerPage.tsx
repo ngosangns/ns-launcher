@@ -32,7 +32,9 @@ import {
 } from "../../lib/roster";
 import { clearSeconds, findTeams, type PlannedPlan, type PlannerOutput } from "../../lib/planner";
 import { foldVi } from "../../lib/slug";
+import { KeepAlive } from "../../components/KeepAlive";
 import { CatalogTile, Chip, ElementBadge, Portrait, Stars } from "../../components/ui";
+import { FloorMonsters, UniqueMonsterStrip } from "./MonsterList";
 
 function clock(seconds: number): string {
   const total = Math.max(0, Math.round(seconds));
@@ -42,7 +44,7 @@ function clock(seconds: number): string {
 export function PlannerPage({ lang }: { lang: Lang }) {
   const copy = t(lang);
   const [roster, setRoster] = useState<Roster>(loadRoster);
-  const [section, setSection] = useState<"roster" | "results">("roster");
+  const [section, setSection] = useState<"roster" | "monsters" | "results">("roster");
   const [tab, setTab] = useState<"characters" | "weapons">("characters");
   const [query, setQuery] = useState("");
   const [element, setElement] = useState<ElementName | "all">("all");
@@ -60,6 +62,7 @@ export function PlannerPage({ lang }: { lang: Lang }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const cycle = currentCycle();
   const blessing = cycle.blessingOfTheAbyssalMoon;
+  const floor12 = cycle.floors.find((floor) => floor.floor === 12);
   const needle = foldVi(query);
   const ownedChars = new Set(roster.characters.map((item) => item.id));
   const ownedWeapons = new Set(roster.weapons.map((item) => item.id));
@@ -144,6 +147,12 @@ export function PlannerPage({ lang }: { lang: Lang }) {
         </p>
         <p className="meta">{formatDateRange(cycle.periodStart, cycle.periodEnd, lang)}</p>
         <p className="notice">{blessing.description}</p>
+        {floor12 && (
+          <>
+            <div className="group-label">{copy.abyssMonsters} · 12</div>
+            <UniqueMonsterStrip floor={floor12} lang={lang} />
+          </>
+        )}
 
         <div className="group-label">{copy.abyssImportUID}</div>
         <input className="search" value={uid} onChange={(e) => setUid(e.target.value)} placeholder={copy.abyssUIDPlaceholder} />
@@ -180,12 +189,15 @@ export function PlannerPage({ lang }: { lang: Lang }) {
           <button type="button" className={`tab ${section === "roster" ? "active" : ""}`} onClick={() => setSection("roster")}>
             {copy.abyssRoster}
           </button>
+          <button type="button" className={`tab ${section === "monsters" ? "active" : ""}`} onClick={() => setSection("monsters")}>
+            {copy.abyssMonsters}
+          </button>
           <button type="button" className={`tab ${section === "results" ? "active" : ""}`} onClick={() => setSection("results")}>
             {copy.abyssResults}
           </button>
         </div>
 
-        {section === "roster" ? (
+        <KeepAlive active={section === "roster"}>
           <>
             <div className="abyss-nav tabs">
               <button type="button" className={`tab ${tab === "characters" ? "active" : ""}`} onClick={() => setTab("characters")}>
@@ -279,74 +291,85 @@ export function PlannerPage({ lang }: { lang: Lang }) {
             {roster.characters.length === 0 && roster.weapons.length === 0 && (
               <p className="empty">{copy.abyssEmptyRoster}</p>
             )}
-            <div className="catalog">
-              {tab === "characters"
-                ? visibleCharacters.map((character) => {
-                    const owned = roster.characters.find((item) => item.id === character.id);
-                    return (
-                      <div key={character.id}>
-                        <CatalogTile
-                          kind="characters"
-                          id={character.id}
-                          title={lang === "vi" ? character.nameVI ?? character.name : character.name}
-                          accent={character.element}
-                          selected={Boolean(owned)}
-                          onClick={() => update(toggleCharacter(roster, character.id))}
-                          subtitle={
-                            <>
-                              <Stars n={character.rarity} /> {character.element}
-                            </>
-                          }
-                        />
-                        {owned && (
-                          <div className="meta" style={{ padding: "4px 8px" }}>
-                            C{owned.constellation}{" "}
-                            <button type="button" className="chip" onClick={() => update(setConstellation(roster, character.id, owned.constellation - 1))}>
-                              −
-                            </button>
-                            <button type="button" className="chip" onClick={() => update(setConstellation(roster, character.id, owned.constellation + 1))}>
-                              +
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })
-                : visibleWeapons.map((weapon) => {
-                    const owned = roster.weapons.find((item) => item.id === weapon.id);
-                    return (
-                      <div key={weapon.id}>
-                        <CatalogTile
-                          kind="weapons"
-                          id={weapon.id}
-                          title={lang === "vi" ? weapon.nameVI ?? weapon.name : weapon.name}
-                          selected={Boolean(owned)}
-                          onClick={() => update(toggleWeapon(roster, weapon.id))}
-                          subtitle={
-                            <>
-                              <Stars n={weapon.rarity} /> {weapon.type}
-                            </>
-                          }
-                        />
-                        {owned && (
-                          <div className="meta" style={{ padding: "4px 8px" }}>
-                            R{owned.refinement}{" "}
-                            <button type="button" className="chip" onClick={() => update(setRefinement(roster, weapon.id, owned.refinement - 1))}>
-                              −
-                            </button>
-                            <button type="button" className="chip" onClick={() => update(setRefinement(roster, weapon.id, owned.refinement + 1))}>
-                              +
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-            </div>
+            <KeepAlive active={tab === "characters"}>
+              <div className="catalog">
+                {visibleCharacters.map((character) => {
+                  const owned = roster.characters.find((item) => item.id === character.id);
+                  return (
+                    <div key={character.id}>
+                      <CatalogTile
+                        kind="characters"
+                        id={character.id}
+                        title={lang === "vi" ? character.nameVI ?? character.name : character.name}
+                        accent={character.element}
+                        selected={Boolean(owned)}
+                        onClick={() => update(toggleCharacter(roster, character.id))}
+                        subtitle={
+                          <>
+                            <Stars n={character.rarity} /> {character.element}
+                          </>
+                        }
+                      />
+                      {owned && (
+                        <div className="meta" style={{ padding: "4px 8px" }}>
+                          C{owned.constellation}{" "}
+                          <button type="button" className="chip" onClick={() => update(setConstellation(roster, character.id, owned.constellation - 1))}>
+                            −
+                          </button>
+                          <button type="button" className="chip" onClick={() => update(setConstellation(roster, character.id, owned.constellation + 1))}>
+                            +
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </KeepAlive>
+            <KeepAlive active={tab === "weapons"}>
+              <div className="catalog">
+                {visibleWeapons.map((weapon) => {
+                  const owned = roster.weapons.find((item) => item.id === weapon.id);
+                  return (
+                    <div key={weapon.id}>
+                      <CatalogTile
+                        kind="weapons"
+                        id={weapon.id}
+                        title={lang === "vi" ? weapon.nameVI ?? weapon.name : weapon.name}
+                        selected={Boolean(owned)}
+                        onClick={() => update(toggleWeapon(roster, weapon.id))}
+                        subtitle={
+                          <>
+                            <Stars n={weapon.rarity} /> {weapon.type}
+                          </>
+                        }
+                      />
+                      {owned && (
+                        <div className="meta" style={{ padding: "4px 8px" }}>
+                          R{owned.refinement}{" "}
+                          <button type="button" className="chip" onClick={() => update(setRefinement(roster, weapon.id, owned.refinement - 1))}>
+                            −
+                          </button>
+                          <button type="button" className="chip" onClick={() => update(setRefinement(roster, weapon.id, owned.refinement + 1))}>
+                            +
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </KeepAlive>
           </>
-        ) : (
+        </KeepAlive>
+        <KeepAlive active={section === "monsters"}>
+          {cycle.floors.map((floor) => (
+            <FloorMonsters key={floor.floor} floor={floor} lang={lang} defaultOpen={floor.floor === 12} />
+          ))}
+        </KeepAlive>
+        <KeepAlive active={section === "results"}>
           <Results lang={lang} output={output} />
-        )}
+        </KeepAlive>
       </div>
     </div>
   );

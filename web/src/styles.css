@@ -200,8 +200,68 @@ img {
 
 .page {
   flex: 1;
-  padding: 8px 28px 48px;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 8px 28px 24px;
   width: 100%;
+}
+
+.keep-alive {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.keep-alive.is-active.keep-alive-fill {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.keep-alive[hidden] {
+  display: none !important;
+}
+
+.abyss-shell {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.abyss-stack {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.monster-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.monster-chip {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(8, 14, 32, 0.34);
+  border: 1px solid rgba(230, 184, 92, 0.28);
+  font-size: 0.82rem;
+  max-width: 100%;
+}
+
+.monster-chip strong {
+  font-size: 0.78rem;
 }
 
 .hero {

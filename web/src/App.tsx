@@ -1,24 +1,32 @@
-import { useState } from "react";
-import { Navigate, NavLink, Route, Routes } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { KeepAlive } from "./components/KeepAlive";
 import { HomePage } from "./pages/HomePage";
 import { StoryPage } from "./pages/StoryPage";
 import { AbyssLayout } from "./pages/AbyssLayout";
-import { CyclePage } from "./pages/abyss/CyclePage";
-import {
-  ArtifactCatalog,
-  ArtifactDetail,
-  CharacterCatalog,
-  CharacterDetail,
-  WeaponCatalog,
-  WeaponDetail,
-} from "./pages/abyss/CatalogPages";
-import { ResonancePage } from "./pages/abyss/ResonancePage";
-import { PlannerPage } from "./pages/abyss/PlannerPage";
 import { BookIcon, HomeIcon, ShieldIcon, SparkleIcon } from "./lib/icons";
 import { readLang, t, writeLang, type Lang } from "./lib/i18n";
+import { topTab } from "./lib/paths";
 
 export function App() {
   const [lang, setLang] = useState<Lang>(readLang);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const tab = topTab(location.pathname);
+  const [last, setLast] = useState({ home: "/", story: "/story", abyss: "/abyss/team" });
+
+  useEffect(() => {
+    const path = `${location.pathname}${location.search}${location.hash}`;
+    if (location.pathname === "/abyss" || location.pathname === "/abyss/") {
+      navigate("/abyss/team", { replace: true });
+      return;
+    }
+    setLast((current) => {
+      if (tab === "story") return { ...current, story: path };
+      if (tab === "abyss") return { ...current, abyss: path };
+      return { ...current, home: path };
+    });
+  }, [location.hash, location.pathname, location.search, navigate, tab]);
 
   const switchLang = (next: Lang) => {
     setLang(next);
@@ -43,11 +51,11 @@ export function App() {
             <HomeIcon />
             <span className="label">{copy.home}</span>
           </NavLink>
-          <NavLink to="/story" className={({ isActive }) => `tab ${isActive ? "active" : ""}`}>
+          <NavLink to={last.story} className={`tab ${tab === "story" ? "active" : ""}`}>
             <BookIcon />
             <span className="label">{copy.story}</span>
           </NavLink>
-          <NavLink to="/abyss" className={({ isActive }) => `tab ${isActive ? "active" : ""}`}>
+          <NavLink to={last.abyss} className={`tab ${tab === "abyss" ? "active" : ""}`}>
             <ShieldIcon />
             <span className="label">{copy.abyss}</span>
           </NavLink>
@@ -63,25 +71,15 @@ export function App() {
         </div>
       </header>
       <main className="page">
-        <Routes>
-          <Route path="/" element={<HomePage lang={lang} />} />
-          <Route path="/story" element={<StoryPage lang={lang} />} />
-          <Route path="/story/d/:docId" element={<StoryPage lang={lang} />} />
-          <Route path="/story/d/:docId/:sectionId" element={<StoryPage lang={lang} />} />
-          <Route path="/story/e/:entityId" element={<StoryPage lang={lang} />} />
-          <Route path="/abyss" element={<AbyssLayout lang={lang} />}>
-            <Route index element={<Navigate to="team" replace />} />
-            <Route path="cycle" element={<CyclePage lang={lang} />} />
-            <Route path="characters" element={<CharacterCatalog lang={lang} />} />
-            <Route path="characters/:id" element={<CharacterDetail lang={lang} />} />
-            <Route path="weapons" element={<WeaponCatalog lang={lang} />} />
-            <Route path="weapons/:id" element={<WeaponDetail lang={lang} />} />
-            <Route path="artifacts" element={<ArtifactCatalog lang={lang} />} />
-            <Route path="artifacts/:id" element={<ArtifactDetail lang={lang} />} />
-            <Route path="resonance" element={<ResonancePage lang={lang} />} />
-            <Route path="team" element={<PlannerPage lang={lang} />} />
-          </Route>
-        </Routes>
+        <KeepAlive active={tab === "home"}>
+          <HomePage lang={lang} />
+        </KeepAlive>
+        <KeepAlive active={tab === "story"}>
+          <StoryPage lang={lang} active={tab === "story"} />
+        </KeepAlive>
+        <KeepAlive active={tab === "abyss"} className="keep-alive-fill">
+          <AbyssLayout lang={lang} />
+        </KeepAlive>
       </main>
     </div>
   );
