@@ -1,5 +1,5 @@
 {
-  "_doc": "Hằng số và giả định của thuật toán gợi ý đội hình Trầm Thủy. Đọc bởi engine Swift trong Services/Abyss/. Xem README.md cùng thư mục để biết ý nghĩa từng nhóm.",
+  "_doc": "Hằng số và giả định của thuật toán gợi ý đội hình Trầm Thủy. Web đọc file này trong web/src/lib/combat/. Xem README.md cùng thư mục để biết ý nghĩa từng nhóm.",
   "artifactMainStats": {
     "flat_hp": 4780.0,
     "flat_atk": 311.0,

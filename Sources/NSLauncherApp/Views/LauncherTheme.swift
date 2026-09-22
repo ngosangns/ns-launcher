@@ -1,4 +1,3 @@
-import AppKit
 import SwiftUI
 
 enum LauncherPalette {
@@ -360,50 +359,30 @@ struct SidebarTabButton: View {
     let title: String
     let systemImage: String
     let isSelected: Bool
-    /// When false, this button shows only its icon while inactive — the label
-    /// returns the moment it becomes the active tab.
-    ///
-    /// Default `true` keeps every existing call site unchanged: this only
-    /// belongs on a tight row of two or three peers switching one another out
-    /// (the Abyss Roster/Results toggle is the case it was built for), never on
-    /// a vertical navigation list, where a reader has nothing but an icon to
-    /// recognise an item they have not learned the icon for yet.
-    var showsLabelWhenInactive: Bool = true
     let action: () -> Void
 
     @State private var isHovering = false
 
-    private var showsLabel: Bool { isSelected || showsLabelWhenInactive }
-
     var body: some View {
         Button(action: action) {
-            Group {
-                if showsLabel {
-                    Label(title, systemImage: systemImage)
-                } else {
-                    Image(systemName: systemImage)
-                }
-            }
-            .font(.system(.subheadline, design: .rounded, weight: .semibold))
-            .foregroundStyle(isSelected ? LauncherPalette.ink : LauncherPalette.parchment.opacity(0.86))
-            .padding(.horizontal, showsLabel ? 14 : 10)
-            .padding(.vertical, 9)
-            .frame(maxWidth: showsLabel ? .infinity : nil, minHeight: 22,
-                   alignment: showsLabel ? .leading : .center)
-            .background(
-                // Unselected tabs stay flush against the shared `TabGroup` track
-                // rather than drawing a second pill on top of it — only a hover
-                // tint and the active tab's highlight ever show here.
-                isSelected
-                    ? LauncherPalette.goldHighlight
-                    : (isHovering ? LauncherPalette.mist.opacity(0.14) : Color.clear),
-                in: RoundedRectangle(cornerRadius: 10, style: .continuous)
-            )
+            Label(title, systemImage: systemImage)
+                .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                .foregroundStyle(isSelected ? LauncherPalette.ink : LauncherPalette.parchment.opacity(0.86))
+                .padding(.horizontal, 14)
+                .padding(.vertical, 9)
+                .frame(maxWidth: .infinity, minHeight: 22, alignment: .leading)
+                .background(
+                    // Unselected tabs stay flush against the shared `TabGroup` track
+                    // rather than drawing a second pill on top of it — only a hover
+                    // tint and the active tab's highlight ever show here.
+                    isSelected
+                        ? LauncherPalette.goldHighlight
+                        : (isHovering ? LauncherPalette.mist.opacity(0.14) : Color.clear),
+                    in: RoundedRectangle(cornerRadius: 10, style: .continuous)
+                )
         }
         .buttonStyle(.plain)
         .pointerOnHover { isHovering = $0 }
-        // The icon-only state still needs the name to reach a reader —
-        // a hover tooltip for a sighted user, and always for VoiceOver.
         .help(title)
         .accessibilityLabel(title)
     }
@@ -559,229 +538,3 @@ struct GoldenProgressBar: View {
     }
 }
 
-/// How a rarity tier looks: an accent for glyphs and edges on the dark ground,
-/// and a light fill for when the tile is selected and its text turns to ink.
-///
-/// Two colours rather than one because the tile inverts when selected — a single
-/// accent saturated enough to read against the backdrop is too dark to put ink
-/// text on. The mapping from a game's own rarity scale lives with that game's
-/// presentation code, not here.
-struct RarityAppearance: Equatable {
-    let stars: Int
-    let accent: Color
-    let fill: Color
-    /// The top tier gets a sheen the others do not, so it reads at a glance in a
-    /// grid of a hundred tiles.
-    var isTopTier: Bool = false
-}
-
-/// A compact own/don't-own tile for grid pickers, with an optional level stepper
-/// once the item is owned.
-///
-/// `InventoryRow` above is a full-width row; a roster picker shows 125 entries at
-/// once and needs a tile. Kept here with the rest of the design system rather
-/// than private to the Abyss views so the next grid picker does not invent a
-/// third look.
-struct RosterCard<Icon: View>: View {
-    let title: String
-    let subtitle: String
-    let isSelected: Bool
-    /// Current level and its range, shown only while selected. nil hides the stepper.
-    let level: (value: Int, range: ClosedRange<Int>, label: String)?
-    /// Rarity tier, drawn as pips and as the tile's own colour. nil for pickers
-    /// whose items have no rarity.
-    var rarity: RarityAppearance?
-    /// A solid colour bar down the left edge — a character's element, say.
-    /// nil for pickers with nothing categorical to put there.
-    var leadingAccent: Color?
-    /// The leading glyph — an SF Symbol, a portrait, whatever the caller has.
-    /// A closure rather than a fixed `systemImage`/`accent` pair so a picker
-    /// that has real artwork (`AbyssPortraitImage`) is not stuck drawing a
-    /// generic glyph just because this type was written for one.
-    @ViewBuilder let icon: () -> Icon
-    let onToggle: () -> Void
-    let onLevelChange: (Int) -> Void
-
-    @State private var isHovering = false
-
-    private var tint: Color { rarity?.accent ?? LauncherPalette.gold }
-    private var selectedFill: Color { rarity?.fill ?? LauncherPalette.goldHighlight }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 8) {
-                icon()
-
-                // Title, stars, and the level stepper share this column so the
-                // stepper lands directly under the stars it is levelling —
-                // not under the portrait, which is a wider, unrelated anchor.
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
-                        .font(.system(.subheadline, design: .rounded, weight: .semibold))
-                        .foregroundStyle(isSelected ? LauncherPalette.ink : LauncherPalette.parchment)
-                        .lineLimit(1)
-
-                    HStack(spacing: 3) {
-                        if let rarity {
-                            starPips(rarity)
-                        }
-                        if !subtitle.isEmpty {
-                            Text(subtitle)
-                                .font(.system(.caption2, design: .rounded))
-                                .foregroundStyle(isSelected
-                                    ? LauncherPalette.ink.opacity(0.62)
-                                    : LauncherPalette.mist.opacity(0.62))
-                                .lineLimit(1)
-                        }
-                    }
-
-                    if isSelected, let level {
-                        HStack(spacing: 6) {
-                            levelButton(systemImage: "minus", disabled: level.value <= level.range.lowerBound) {
-                                onLevelChange(level.value - 1)
-                            }
-                            Text("\(level.label)\(level.value)")
-                                .font(.system(.caption2, design: .rounded, weight: .bold))
-                                .foregroundStyle(LauncherPalette.ink.opacity(0.78))
-                                .frame(minWidth: 22, alignment: .center)
-                            levelButton(systemImage: "plus", disabled: level.value >= level.range.upperBound) {
-                                onLevelChange(level.value + 1)
-                            }
-                        }
-                    }
-                }
-
-                Spacer(minLength: 0)
-
-                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(isSelected ? LauncherPalette.ink.opacity(0.72) : LauncherPalette.mist.opacity(0.34))
-            }
-            .contentShape(Rectangle())
-            .onTapGesture(perform: onToggle)
-        }
-        .padding(.leading, 11 + (leadingAccent != nil ? 15 : 0))
-        .padding(.trailing, 11)
-        .padding(.vertical, 9)
-        .background(background)
-        .overlay(alignment: .leading) { leadingAccentBar }
-        .overlay(alignment: .top) { sheen }
-        .pointerOnHover { isHovering = $0 }
-    }
-
-    /// A flat "-"/"+" pair flanking the value, rather than a stacked up/down
-    /// stepper: two side-by-side targets are easier to hit at this size than
-    /// two glyphs stacked in the same small control.
-    private func levelButton(systemImage: String, disabled: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: systemImage)
-                .font(.system(size: 9, weight: .bold))
-                .foregroundStyle(LauncherPalette.ink.opacity(disabled ? 0.25 : 0.85))
-                .frame(width: 16, height: 16)
-                .background(LauncherPalette.ink.opacity(0.12), in: Circle())
-        }
-        .buttonStyle(.plain)
-        .disabled(disabled)
-        .pointerOnHover()
-    }
-
-    /// The element-colour (or whatever the caller passes) bar down the left
-    /// edge. Rounded only on the left, so it reads as part of the card's own
-    /// frame rather than as a stripe painted across it.
-    @ViewBuilder
-    private var leadingAccentBar: some View {
-        if let leadingAccent {
-            UnevenRoundedRectangle(topLeadingRadius: 12, bottomLeadingRadius: 12, style: .continuous)
-                .fill(leadingAccent)
-                .frame(width: 15)
-        }
-    }
-
-    /// Rarity tints the tile itself in both states, so it survives selection —
-    /// which is the state the player spends most of their time looking at.
-    ///
-    /// One shape carrying a border, rather than a fill under a second filled
-    /// shape under a separate stroked overlay: this is drawn once per tile and a
-    /// full grid is a hundred of them, so each extra layer here is a hundred
-    /// extra layers to composite.
-    @ViewBuilder
-    private var background: some View {
-        let shape = RoundedRectangle(cornerRadius: 12, style: .continuous)
-        if isSelected {
-            shape.fill(selectedFill.opacity(0.92))
-        } else {
-            shape
-                .fill(LauncherPalette.night.opacity(isHovering ? 0.52 : 0.34))
-                .overlay {
-                    shape.fill(
-                        LinearGradient(colors: [tint.opacity(isHovering ? 0.22 : 0.14), .clear],
-                                       startPoint: .topLeading, endPoint: .bottomTrailing))
-                }
-                .overlay {
-                    shape.strokeBorder(tint.opacity(isHovering ? 0.55 : 0.32), lineWidth: 1)
-                }
-        }
-    }
-
-    /// A hairline of light along the top edge, for the top rarity only.
-    ///
-    /// Deliberately faint. It has to survive being one tile among a hundred
-    /// without turning the card muddy, so it reads as a lit edge rather than as
-    /// a band of colour.
-    @ViewBuilder
-    private var sheen: some View {
-        if rarity?.isTopTier == true {
-            LinearGradient(
-                colors: [(isSelected ? LauncherPalette.parchment : tint).opacity(isSelected ? 0.30 : 0.38), .clear],
-                startPoint: .top, endPoint: .bottom)
-                .frame(height: 5)
-                .clipShape(UnevenRoundedRectangle(topLeadingRadius: 12, topTrailingRadius: 12,
-                                                  style: .continuous))
-                .allowsHitTesting(false)
-        }
-    }
-
-    /// Filled pips up to the rarity, hollow after — readable at a glance and
-    /// narrower than five glyphs of text.
-    private func starPips(_ rarity: RarityAppearance) -> some View {
-        HStack(spacing: 1.5) {
-            ForEach(1...5, id: \.self) { index in
-                Circle()
-                    .fill(index <= rarity.stars
-                        ? (isSelected ? LauncherPalette.ink.opacity(0.7) : rarity.accent)
-                        : (isSelected ? LauncherPalette.ink.opacity(0.16)
-                                      : LauncherPalette.mist.opacity(0.18)))
-                    .frame(width: 4, height: 4)
-            }
-        }
-        .padding(.trailing, subtitle.isEmpty ? 0 : 2)
-        .accessibilityLabel("\(rarity.stars) star")
-    }
-}
-
-/// A small clipboard button that swaps to a checkmark for a beat after
-/// copying, so the tap reads as confirmed without a toast or alert.
-struct CopyIconButton: View {
-    let value: String
-    var tint: Color = LauncherPalette.mist
-    var help: String? = nil
-
-    @State private var didCopy = false
-
-    var body: some View {
-        Button {
-            let pasteboard = NSPasteboard.general
-            pasteboard.clearContents()
-            pasteboard.setString(value, forType: .string)
-            didCopy = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { didCopy = false }
-        } label: {
-            Image(systemName: didCopy ? "checkmark" : "doc.on.doc")
-                .font(.system(size: 9, weight: .bold))
-                .foregroundStyle(tint.opacity(didCopy ? 0.95 : 0.6))
-        }
-        .buttonStyle(.plain)
-        .pointerOnHover()
-        .help(help ?? "")
-    }
-}

@@ -1,5 +1,9 @@
 # Thiết kế lại mô hình damage — kế hoạch và tiến độ
 
+> **2026-09-22:** Engine Swift mà tài liệu này mô tả đã được gỡ khỏi launcher.
+> Dữ liệu JSON vẫn ở `Sources/NSLauncherApp/Resources/Abyss/`; trang web đọc
+> nó. Phần dưới chỉ là nhật ký của engine đã xoá.
+
 > Bắt đầu 2026-09-15, sau khi đánh giá thuật toán tìm đội hình hiện tại. Tài
 > liệu này ghi lại **vì sao** cần thiết kế lại, **thiết kế thế nào**, và
 > **đã làm tới đâu**. Cập nhật tài liệu này mỗi khi một pha hoàn tất — nó là

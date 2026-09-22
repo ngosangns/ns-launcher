@@ -1407,18 +1407,8 @@ a.jump:hover {
   scroll-margin-top: 16px;
 }
 
-.fold {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows var(--dur-slow) var(--ease-out);
-}
-
-details[open] > .fold {
-  grid-template-rows: 1fr;
-}
-
-.fold-inner {
-  overflow: hidden;
+details.floor:not(.open) > .fold {
+  display: none;
 }
 
 details.floor > summary::after {
@@ -1431,7 +1421,7 @@ details.floor > summary::after {
   transition: transform var(--dur) var(--ease-out);
 }
 
-details.floor:not([open]) > summary::after {
+details.floor:not(.open) > summary::after {
   transform: rotate(-90deg);
 }
 

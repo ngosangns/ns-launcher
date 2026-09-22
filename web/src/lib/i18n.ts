@@ -120,6 +120,9 @@ type Copy = {
   abyssImportFull: string;
   abyssHoyolabHint: string;
   abyssMethodology: string;
+  abyssFallbackNote: string;
+  abyssShockwave: string;
+  abyssOnField: string;
   abyssFullChars: string;
   abyssFullWeapons: string;
   abyssOwnedOnly: string;
@@ -199,7 +202,7 @@ const vi: Copy = {
   abyssPickTeam: "Chọn nhân vật cho mỗi nửa tầng 12",
   abyssClearSlot: "Bỏ",
   abyssTeamHint:
-    "Công cụ tìm đội hình theo mô hình sát thương nằm trong NS Launcher trên macOS. Trang này đọc chu kỳ hiện tại, cộng hưởng, và độ khớp Ley Line — không mô phỏng DPS.",
+    "Tìm đội hình bằng một vòng đánh 20 giây: hồi chiêu, năng lượng, đòn đánh và phản ứng trên một mục tiêu. Thời gian dọn là HP nửa tầng chia cho sát thương mỗi giây.",
   homeStoryLead:
     "Chín chương từ Mondstadt tới Snezhnaya, danh mục nhiệm vụ, và hồ sơ nhân vật liên kết với nhau.",
   homeAbyssLead:
@@ -242,7 +245,10 @@ const vi: Copy = {
   abyssHoyolabHint:
     "Dán ltuid_v2/ltoken_v2 từ cookie hoyolab.com. Cần bật Character Details. Chỉ hoạt động khi chạy Vite (có proxy).",
   abyssMethodology:
-    "Điểm là thang xếp hạng theo Ley Line, cộng hưởng và vai trò — không phải mô phỏng DPS của NS Launcher trên macOS.",
+    "Điểm là sát thương mỗi giây của một vòng đánh 20 giây: hồi chiêu, năng lượng, đòn và phản ứng trên một mục tiêu. Thời gian dọn bằng HP nửa tầng chia cho điểm đó. Quái nhiều con được tính bằng tổng HP.",
+  abyssFallbackNote: "Chưa có kit chiêu, mỗi dòng talent tính một lần",
+  abyssShockwave: "Sóng xung kích",
+  abyssOnField: "đứng sân",
   abyssFullChars: "So sánh toàn bộ nhân vật",
   abyssFullWeapons: "So sánh toàn bộ vũ khí",
   abyssOwnedOnly: "Chỉ đồ đang có",
@@ -322,7 +328,7 @@ const en: Copy = {
   abyssPickTeam: "Pick characters for each floor-12 half",
   abyssClearSlot: "Clear",
   abyssTeamHint:
-    "The damage-model team finder lives in the macOS NS Launcher. This page reads the current cycle, resonances, and Ley Line fit — it does not simulate DPS.",
+    "Team search simulates a 20-second rotation: cooldowns, energy, hits and reactions on one target. Clear time is that half's HP divided by damage per second.",
   homeStoryLead:
     "Nine chapters from Mondstadt to Snezhnaya, a quest catalogue, and a linked character glossary.",
   homeAbyssLead:
@@ -365,7 +371,10 @@ const en: Copy = {
   abyssHoyolabHint:
     "Paste ltuid_v2/ltoken_v2 from hoyolab.com cookies. Needs Character Details on. Works when served through Vite (proxy).",
   abyssMethodology:
-    "Scores rank teams by Ley Line fit, resonance and role — they are not the macOS NS Launcher damage simulation.",
+    "The score is damage per second over a 20-second rotation: cooldowns, energy, hits and reactions on one target. Clear time is that half's HP divided by the score. Several enemies count as their combined HP.",
+  abyssFallbackNote: "No attack kit yet, so each talent line is counted once",
+  abyssShockwave: "Shockwave",
+  abyssOnField: "on field",
   abyssFullChars: "Compare across all characters",
   abyssFullWeapons: "Compare across all weapons",
   abyssOwnedOnly: "Owned only",

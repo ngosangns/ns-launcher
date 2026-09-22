@@ -32,32 +32,29 @@ thường không đổi theo mùa) cần ghi:
 ## Cập nhật khi mùa mới bắt đầu
 
 Từng là các bước thủ công rải rác (tự tính khoảng ngày, tự gõ khung JSON theo
-schema, chạy hai script sync riêng, tự nhớ validate + `swift test`).
+schema, chạy hai script sync riêng, tự nhớ validate).
 `scripts/update-abyss-cycle.py` gộp toàn bộ luồng cơ học đó thành ba lệnh —
 phần còn lại (đọc quái/chúc phúc/Ley Line Disorder từ wiki hoặc TextMap và
 gõ vào JSON) vẫn phải làm tay, vì đó là phần duy nhất không thể suy ra từ dữ
 liệu đã có:
 
 ```bash
-# 1. Sinh khung file .md (ở đây) + .json — JSON nằm ở thư mục đè
+# 1. Sinh khung file .md (ở đây) + .json — JSON nằm ở thư mục nháp
 #    (~/Library/Application Support/NSLauncher/abyss-cycles/), KHÔNG phải
-#    Resources/Abyss/abyss-monsters/: app đang chạy đọc thẳng từ đây (đè lên
-#    bản đóng gói cùng periodStart) nên sửa xong test được ngay, còn
-#    `swift test` thì không thấy — một chu kỳ dở dang sẽ không làm đỏ
-#    AbyssGoldenValueTests hay các test không liên quan khác.
+#    Resources/Abyss/abyss-monsters/. Web chỉ đọc bản trong repo, nên một
+#    chu kỳ dở dang không lên site và không làm đỏ `npm test`.
 python3 scripts/update-abyss-cycle.py new
 
 # 2. Điền tay từng mục "TODO": quái theo từng wave, Uyên Nguyệt Chúc Phúc,
 #    Ley Line Disorder từng tầng, recommendation. Tên quái phải khớp
 #    game/wiki — bước 3 khớp theo tên.
 
-# 3. Đồng bộ resistance + HP thật từ game, validate schema, chạy swift test —
-#    dừng ngay ở bước đầu tiên fail để biết sửa gì trước.
+# 3. Đồng bộ resistance + HP thật từ game, validate schema, chạy npm test
+#    trong web/ — dừng ngay ở bước đầu tiên fail để biết sửa gì trước.
 python3 scripts/update-abyss-cycle.py sync
 
-# 4. Ưng ý rồi thì copy vào bản đóng gói — từ đây swift test mới thực sự
-#    thấy chu kỳ mới, và AbyssGoldenValueTests đỏ là chuyện phải làm tiếp
-#    (sinh lại golden fixture), không phải lỗi.
+# 4. Ưng ý rồi thì copy vào abyss-monsters/ — từ đây web và `npm test` mới
+#    thấy chu kỳ mới.
 python3 scripts/update-abyss-cycle.py publish
 ```
 
@@ -68,14 +65,5 @@ danh sách quái và đặt các trường văn bản của chu kỳ mới về 
 gì thì thấy ngay, không lặng lẽ giữ dữ liệu cũ. `sync` chỉ là gọi đúng
 `scripts/sync-abyss-monster-resistance.py` rồi `scripts/sync-abyss-monster-hp.py`
 (xem `Sources/NSLauncherApp/Resources/Abyss/README.md`), sau đó validate theo
-`abyss-cycle.schema.json` và `swift test --filter Abyss`. `publish` chỉ copy
-file — refuse nếu bản đóng gói cùng tên đã tồn tại.
-
-**Lưu ý đã biết:** `AbyssViewModel` (khác `AbyssDataLibraryTests`) luôn đọc
-thư mục đè thật khi tạo `AbyssDataLibrary()`, nên trong lúc một chu kỳ nháp
-còn nằm ở đó, `AbyssSearchCachingTests.testAPreExistingCacheIsUsedOnTheFirstSearchOfTheSession`
-có thể tự đỏ (cache seed theo digest tính *không* có thư mục đè, còn
-`AbyssViewModel` mới tạo lại tính *có* — lệch digest, cache miss). Đây là lỗ
-hổng cô lập test có từ trước, không phải do chu kỳ nháp sai; `swift test` đỏ
-đúng một test này (và không đỏ gì khác) trong lúc có nháp thì bỏ qua, không
-phải dấu hiệu dữ liệu chu kỳ mới sai.
+`abyss-cycle.schema.json` và `npm test` trong `web/`. `publish` chỉ copy
+file — refuse nếu bản trong repo cùng tên đã tồn tại.

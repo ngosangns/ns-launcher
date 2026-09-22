@@ -121,7 +121,13 @@ export function FloorMonsters({
   const split = splitDisorder(floor.leyLineDisorder);
   const multiplier = floor.enemyHPMultiplier ?? 1;
   return (
-    <details className="panel floor" open={defaultOpen}>
+    <details
+      className={`panel floor${defaultOpen ? " open" : ""}`}
+      open={defaultOpen}
+      onToggle={(event) => {
+        event.currentTarget.classList.toggle("open", event.currentTarget.open);
+      }}
+    >
       <summary className="floor-head">
         <strong>
           {lang === "vi" ? "Tầng" : "Floor"} {floor.floor}
@@ -130,6 +136,8 @@ export function FloorMonsters({
           ×{multiplier} HP · {monsterCount(floor)} {copy.abyssMonsters.toLowerCase()}
         </span>
       </summary>
+      <div className="fold">
+        <div className="fold-inner">
       <div className="section-title">{copy.abyssLeyLine}</div>
       {split.half1 || split.half2 ? (
         <>
@@ -179,6 +187,8 @@ export function FloorMonsters({
           ))}
         </div>
       ))}
+        </div>
+      </div>
     </details>
   );
 }

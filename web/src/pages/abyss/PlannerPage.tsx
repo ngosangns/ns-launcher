@@ -31,7 +31,7 @@ import {
   toggleWeapon,
   type Roster,
 } from "../../lib/roster";
-import { clearSeconds, findTeams, type PlannedPlan, type PlannerOutput } from "../../lib/planner";
+import { clearSeconds, findTeams, type PlannedPlan, type PlannedTeam, type PlannerOutput } from "../../lib/planner";
 import { foldVi } from "../../lib/slug";
 import { KeepAlive } from "../../components/KeepAlive";
 import { Segmented } from "../../components/Segmented";
@@ -41,6 +41,36 @@ import { FloorMonsters, UniqueMonsterStrip } from "./MonsterList";
 function clock(seconds: number): string {
   const total = Math.max(0, Math.round(seconds));
   return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, "0")}`;
+}
+
+const REACTION_LABELS: Record<string, { vi: string; en: string }> = {
+  vaporize: { vi: "Bốc Hơi", en: "Vaporize" },
+  melt: { vi: "Tan Chảy", en: "Melt" },
+  swirl: { vi: "Khuếch Tán", en: "Swirl" },
+  "stellar-swirl": { vi: "Tinh-Khuếch Tán", en: "Stellar Swirl" },
+  "electro-charged": { vi: "Điện Cảm", en: "Electro-Charged" },
+  "lunar-charged": { vi: "Nguyệt-Điện Cảm", en: "Lunar-Charged" },
+  overload: { vi: "Quá Tải", en: "Overloaded" },
+  superconduct: { vi: "Siêu Dẫn", en: "Superconduct" },
+  bloom: { vi: "Sum Suê", en: "Bloom" },
+  hyperbloom: { vi: "Nở Rộ", en: "Hyperbloom" },
+  burgeon: { vi: "Bung Tỏa", en: "Burgeon" },
+  burning: { vi: "Thiêu Đốt", en: "Burning" },
+  aggravate: { vi: "Tăng Cường", en: "Aggravate" },
+  spread: { vi: "Lan Tràn", en: "Spread" },
+};
+
+function reactionLabel(id: string, lang: Lang): string {
+  return REACTION_LABELS[id]?.[lang] ?? id;
+}
+
+function formatRotation(team: PlannedTeam, lang: Lang, onField: string): string {
+  const nameOf = (id: string) => {
+    const character = charactersByID[id];
+    return lang === "vi" ? character?.nameVI ?? character?.name ?? id : character?.name ?? id;
+  };
+  const casts = team.rotation.map((step) => `${nameOf(step.characterId)} ${step.casts.join(" ")}`);
+  return [...casts, `${nameOf(team.onFieldId)} ${onField}`].join(" · ");
 }
 
 export function PlannerPage({ lang }: { lang: Lang }) {
@@ -467,6 +497,27 @@ function HalfTeam({
         {time != null ? `${copy.abyssClearApprox} ${clock(time)}` : ""}
         {hp != null ? ` · HP ${formatHP(hp)}` : ""} · {Math.round(team.score)}/s
       </p>
+      {team.rotation.length > 0 && <p className="meta">{formatRotation(team, lang, copy.abyssOnField)}</p>}
+      {team.reactions.length > 0 && (
+        <p className="meta">
+          {team.reactions
+            .slice(0, 4)
+            .map((reaction) => `${reactionLabel(reaction.id, lang)} ${reaction.count}`)
+            .join(" · ")}
+          {team.shockwaves > 0 ? ` · ${copy.abyssShockwave} × ${team.shockwaves}` : ""}
+        </p>
+      )}
+      {team.fallbackIds.length > 0 && (
+        <p className="meta">
+          {team.fallbackIds
+            .map((id) => {
+              const character = charactersByID[id];
+              return lang === "vi" ? character?.nameVI ?? character?.name ?? id : character?.name ?? id;
+            })
+            .join(", ")}
+          {` — ${copy.abyssFallbackNote}`}
+        </p>
+      )}
       <div className="catalog">
         {team.members.map((member) => {
           const character = charactersByID[member.characterId];

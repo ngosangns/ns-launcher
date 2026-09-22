@@ -52,30 +52,6 @@ removal, but voice packs are not downloaded by the launcher.
 
 - The Home tab shows the game hero with **Play**, **Update**, and a
   diagnostics drawer for the current operation's progress and logs.
-- The Abyss tab suggests Spiral Abyss teams for the current rotation. Search
-  and filter to mark the characters and weapons you own, import a roster file,
-  or paste your UID to pull your Character Showcase straight from
-  Enka.Network — no login, and no server to pick, though it only covers up to
-  eight characters. For your full roster instead, paste your own HoYoLAB
-  session (`ltuid_v2`/`ltoken_v2`, kept only on this Mac, in a file only you
-  can read) and turn
-  on "Character Details" under your HoYoLAB privacy settings. Then press
-  **Find teams**. It plans for floor 12 — clear that and the floors below come
-  with it — and it plans it as the two fights it is: a team for the first half
-  and a different team for the second, with nobody in both, each scored against
-  the enemies and the Ley Line Disorder of its own half (this rotation the two
-  halves are not even paid for the same thing). Each suggested team comes with
-  the artifact set, main stats, and
-  substat priority for every member, picked out of every five-star set rather
-  than in the abstract, and for the team mates they will actually stand next
-  to; for characters imported from your Showcase, it compares against the
-  artifacts you are actually wearing. Everyone is scored at level 90, imported
-  or not, so a half-levelled account is ranked on what its builds can do —
-  though constellations do count, since C3 and C5 raise a talent's level.
-  Teams that set off a reaction (Hyperbloom, Overload, Superconduct and the
-  rest) are credited for it, which is most of what a Bloom team actually does.
-  Scores rank teams against each other — they are an estimate, not a damage
-  simulation.
 - Installing or updating downloads and verifies game assets directly from
   HoYoPlay's Sophon CDN; you don't need the official launcher installed.
 - Settings covers the Wine runtime, display mode, install location, and
@@ -111,19 +87,19 @@ Archive packages, local archive install, generic JSON manifests, and the old
 
 ## Web companion (Story + Abyss)
 
-The macOS app's **Story** and **Abyss** tabs also have a browser companion in
-[`web/`](web/README.md): Ký Sự Teyvat. It reads the same bundled markdown and
-JSON (no second copy of the data) and uses Vietnamese-capable fonts on the
-launcher's celestial theme.
+Story and Spiral Abyss team planning live in the browser companion
+[`web/`](web/README.md): Ký Sự Teyvat. It reads markdown and JSON from
+`Sources/NSLauncherApp/Resources/` (no second copy of the data) and uses
+Vietnamese-capable fonts on the launcher's celestial theme. The macOS app
+does not include these screens.
 
 ```bash
 task web
 ```
 
 That serves `http://localhost:5173`. Production is Cloudflare Pages at
-https://teyvat.gnas.dev (`task web:deploy`, same script as CI). The macOS app
-still owns the full damage-model team search; the site ranks floor-12 teams by
-Ley Line fit, resonance, and role.
+https://teyvat.gnas.dev (`task web:deploy`, same script as CI). The site ranks
+floor-12 teams by Ley Line fit, resonance, and role.
 
 ## Building From Source Or Contributing
 

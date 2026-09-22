@@ -39,7 +39,7 @@ Sources/NSLauncherApp/Resources/Abyss/     ← dữ liệu thật nằm ở đâ
 ├── abyss-monsters/                  # 1 file JSON / chu kỳ Trầm Thủy
 ├── damage-formula.json              # hằng số + công thức DPS
 ├── team-bonus.json                  # Cộng Hưởng Nguyên Tố, Nguyệt Triệu, Hexerei, Nightsoul Burst
-└── tuning.json                      # tham số thuật toán của engine Swift
+└── tuning.json                      # tham số thuật toán đi kèm dữ liệu
 ```
 
 Validate toàn bộ dữ liệu ở vị trí mới:

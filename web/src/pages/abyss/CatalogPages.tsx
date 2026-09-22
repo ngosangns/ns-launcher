@@ -18,6 +18,7 @@ import {
 import { formatStatValue } from "../../lib/format";
 import { t, type Lang } from "../../lib/i18n";
 import { foldVi } from "../../lib/slug";
+import { Reveal } from "../../components/Reveal";
 import { CatalogTile, Chip, ElementBadge, Portrait, Stars } from "../../components/ui";
 
 function displayName(lang: Lang, en: string, vi?: string): string {
@@ -81,8 +82,8 @@ export function CharacterCatalog({ lang }: { lang: Lang }) {
           </Chip>
         ))}
       </div>
-      {filtered.length === 0 && <p className="empty">{copy.abyssEmpty}</p>}
-      <div className="catalog">
+      {filtered.length === 0 && <p className="empty rise-once">{copy.abyssEmpty}</p>}
+      <div className="catalog swap" key={`${element}|${weapon}|${nation}`}>
         {filtered.map((character) => (
           <CatalogTile
             key={character.id}
@@ -114,6 +115,7 @@ export function CharacterDetail({ lang, id }: { lang: Lang; id?: string }) {
   const lv90 = character.baseStats.lv90;
   const lv1 = character.baseStats.lv1;
   return (
+    <Reveal id={character.id}>
     <article>
       <p className="meta">
         <Link to="/abyss/characters">{copy.abyssCharacters}</Link>
@@ -191,6 +193,7 @@ export function CharacterDetail({ lang, id }: { lang: Lang; id?: string }) {
         </div>
       ))}
     </article>
+    </Reveal>
   );
 }
 
@@ -343,8 +346,8 @@ export function WeaponCatalog({ lang }: { lang: Lang }) {
           </Chip>
         ))}
       </div>
-      {filtered.length === 0 && <p className="empty">{copy.abyssEmpty}</p>}
-      <div className="catalog">
+      {filtered.length === 0 && <p className="empty rise-once">{copy.abyssEmpty}</p>}
+      <div className="catalog swap" key={`${type}|${rarity}`}>
         {filtered.map((weapon) => (
           <CatalogTile
             key={weapon.id}
@@ -374,6 +377,7 @@ export function WeaponDetail({ lang, id }: { lang: Lang; id?: string }) {
   const weapon = kept ? weaponsByID[kept] : undefined;
   if (!weapon) return <p className="empty">{copy.abyssEmpty}</p>;
   return (
+    <Reveal id={weapon.id}>
     <article>
       <p className="meta">
         <Link to="/abyss/weapons">{copy.abyssWeapons}</Link>
@@ -441,6 +445,7 @@ export function WeaponDetail({ lang, id }: { lang: Lang; id?: string }) {
         </>
       )}
     </article>
+    </Reveal>
   );
 }
 
@@ -460,8 +465,8 @@ export function ArtifactCatalog({ lang }: { lang: Lang }) {
         onChange={(event) => setQuery(event.target.value)}
         placeholder={copy.abyssSearchArtifacts}
       />
-      {filtered.length === 0 && <p className="empty">{copy.abyssEmpty}</p>}
-      <div className="catalog">
+      {filtered.length === 0 && <p className="empty rise-once">{copy.abyssEmpty}</p>}
+      <div className="catalog swap">
         {filtered.map((set) => (
           <CatalogTile
             key={set.id}
@@ -488,6 +493,7 @@ export function ArtifactDetail({ lang, id }: { lang: Lang; id?: string }) {
   const two = lang === "vi" ? set.twoPiece.descriptionVI ?? set.twoPiece.description : set.twoPiece.description;
   const four = lang === "vi" ? set.fourPiece.descriptionVI ?? set.fourPiece.description : set.fourPiece.description;
   return (
+    <Reveal id={set.id}>
     <article>
       <p className="meta">
         <Link to="/abyss/artifacts">{copy.abyssArtifacts}</Link>
@@ -521,5 +527,6 @@ export function ArtifactDetail({ lang, id }: { lang: Lang; id?: string }) {
         </>
       )}
     </article>
+    </Reveal>
   );
 }

@@ -16,13 +16,10 @@ let package = Package(
             name: "NSLauncherApp",
             dependencies: ["AppIconKit"],
             path: "Sources/NSLauncherApp",
-            resources: [
-                .copy("Resources/Story"),
-                // Abyss team-planning data. `.copy` (not `.process`) because the
-                // loader resolves characters/, weapons/ and abyss-monsters/ as
-                // real subdirectories and `.process` may flatten them.
-                .copy("Resources/Abyss")
-            ]
+            // Story and Abyss data stays here for the web companion. The
+            // launcher does not bundle it; excluding it keeps SwiftPM from
+            // warning about every file in the target directory.
+            exclude: ["Resources"]
         ),
         .executableTarget(
             name: "IconGen",
@@ -33,12 +30,8 @@ let package = Package(
             name: "NSLauncherAppTests",
             dependencies: ["NSLauncherApp"],
             path: "Tests/NSLauncherAppTests",
-            resources: [
-                // The Abyss engine's regression baseline — see
-                // Tests/NSLauncherAppTests/AbyssGoldenDump.swift, which is what
-                // rewrites it.
-                .copy("Fixtures")
-            ]
+            // The web planner tests import this JSON from disk.
+            exclude: ["Fixtures"]
         ),
     ]
 )

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { KeepAlive } from "./components/KeepAlive";
+import { Segmented } from "./components/Segmented";
 import { HomePage } from "./pages/HomePage";
 import { StoryPage } from "./pages/StoryPage";
 import { AbyssLayout } from "./pages/AbyssLayout";
@@ -46,7 +47,7 @@ export function App() {
         <NavLink to="/" className="brand">
           {copy.brand}
         </NavLink>
-        <nav className="tabs">
+        <Segmented nav className="tabs" label={copy.brand}>
           <NavLink to="/" end className={({ isActive }) => `tab ${isActive ? "active" : ""}`}>
             <HomeIcon />
             <span className="label">{copy.home}</span>
@@ -59,27 +60,29 @@ export function App() {
             <ShieldIcon />
             <span className="label">{copy.abyss}</span>
           </NavLink>
-        </nav>
+        </Segmented>
         <span className="spacer" />
-        <div className="lang-switch" role="group" aria-label="Language">
+        <Segmented className="lang-switch" label="Language">
           <button type="button" className={lang === "vi" ? "active" : ""} onClick={() => switchLang("vi")}>
             VI
           </button>
           <button type="button" className={lang === "en" ? "active" : ""} onClick={() => switchLang("en")}>
             EN
           </button>
-        </div>
+        </Segmented>
       </header>
       <main className="page">
-        <KeepAlive active={tab === "home"}>
-          <HomePage lang={lang} />
-        </KeepAlive>
-        <KeepAlive active={tab === "story"}>
-          <StoryPage lang={lang} active={tab === "story"} />
-        </KeepAlive>
-        <KeepAlive active={tab === "abyss"} className="keep-alive-fill">
-          <AbyssLayout lang={lang} />
-        </KeepAlive>
+        <div className="stage">
+          <KeepAlive stage active={tab === "home"}>
+            <HomePage lang={lang} />
+          </KeepAlive>
+          <KeepAlive stage active={tab === "story"}>
+            <StoryPage lang={lang} active={tab === "story"} />
+          </KeepAlive>
+          <KeepAlive stage active={tab === "abyss"} className="keep-alive-fill">
+            <AbyssLayout lang={lang} />
+          </KeepAlive>
+        </div>
       </main>
     </div>
   );

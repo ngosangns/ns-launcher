@@ -13,6 +13,7 @@ import {
   type ElementName,
   type Weapon,
 } from "./abyss";
+import { enemyOfHalf, fightTeam, reactionBonusFromText } from "./combat/fight";
 import { foldVi } from "./slug";
 import type { Roster } from "./roster";
 
@@ -28,6 +29,12 @@ export type PlannedTeam = {
   score: number;
   resonances: ReturnType<typeof activeResonances>;
   notes: string[];
+  reactions: Array<{ id: string; count: number }>;
+  rotation: Array<{ characterId: string; casts: Array<"E" | "Q"> }>;
+  onFieldId: string;
+  confidence: "kit" | "fallback";
+  fallbackIds: string[];
+  shockwaves: number;
 };
 
 export type PlannedPlan = {
@@ -111,19 +118,13 @@ function characterHalfScore(character: Character, text: string): number {
   return score;
 }
 
-function teamScore(members: Character[], text: string): { score: number; notes: string[] } {
-  const notes: string[] = [];
+function draftScore(members: Character[], text: string): number {
   let score = members.reduce((sum, character) => sum + characterHalfScore(character, text), 0);
-  const resonances = activeResonances(members.map((item) => item.element));
-  score += resonances.length * 6;
   const roles = members.map(roleOf);
   if (roles.includes("dps")) score += 4;
-  else notes.push("Thiếu DPS đứng sân");
   if (roles.includes("shield") || roles.includes("healer")) score += 2;
-  const uniqueRoles = new Set(roles).size;
-  if (uniqueRoles >= 3) score += 2;
   if (new Set(members.map((item) => item.element)).size === 1) score -= 3;
-  return { score, notes };
+  return score;
 }
 
 const ELEMENT_SETS: Record<ElementName, string> = {
@@ -159,9 +160,16 @@ function pickWeapon(
   return (named[0] ?? available[0])?.id ?? null;
 }
 
-function buildTeam(ids: string[], text: string, byType: Map<string, Weapon[]>): PlannedTeam {
+function equipTeam(ids: string[], byType: Map<string, Weapon[]>): {
+  characters: Character[];
+  members: MemberBuild[];
+  resonances: ReturnType<typeof activeResonances>;
+  notes: string[];
+} {
   const membersChars = ids.map((id) => charactersByID[id]).filter(Boolean);
-  const { score, notes } = teamScore(membersChars, text);
+  const notes: string[] = [];
+  const roles = membersChars.map(roleOf);
+  if (!roles.includes("dps")) notes.push("Thiếu DPS đứng sân");
   const used = new Set<string>();
   const members: MemberBuild[] = membersChars.map((character) => {
     const weaponId = pickWeapon(character, byType, used);
@@ -174,10 +182,45 @@ function buildTeam(ids: string[], text: string, byType: Map<string, Weapon[]>): 
     };
   });
   const resonances = activeResonances(membersChars.map((item) => item.element));
-  for (const item of resonances) {
-    notes.push(item.nameVI ?? item.name);
-  }
-  return { members, score, resonances, notes };
+  for (const item of resonances) notes.push(item.nameVI ?? item.name);
+  return { characters: membersChars, members, resonances, notes };
+}
+
+function simulateTeam(
+  equipped: ReturnType<typeof equipTeam>,
+  text: string,
+  enemy: { level: number; res: Record<string, number>; hp?: number; targets?: number; groups?: number },
+  shockwave: boolean,
+): PlannedTeam {
+  const result = fightTeam(
+    equipped.members.map((member) => ({
+      characterId: member.characterId,
+      weaponId: member.weaponId,
+      artifactSetId: member.artifactSetId,
+      role: member.role,
+    })),
+    {
+      enemyLevel: enemy.level,
+      res: enemy.res,
+      reactionBonus: reactionBonusFromText(text),
+      shockwave,
+      targets: enemy.targets,
+      hp: enemy.hp,
+      groups: enemy.groups,
+    },
+  );
+  return {
+    members: equipped.members,
+    score: result.dps,
+    resonances: equipped.resonances,
+    notes: equipped.notes,
+    reactions: result.reactions,
+    rotation: result.rotation,
+    onFieldId: result.onFieldId,
+    confidence: result.confidence,
+    fallbackIds: result.fallbackIds,
+    shockwaves: result.shockwaves,
+  };
 }
 
 function halfHP(floor: CycleFloor | undefined, half: 1 | 2): number | null {
@@ -228,20 +271,26 @@ export function findTeams(
     return { plans: [], half1Text, half2Text, recommendation: floor?.recommendation };
   }
 
-  const rankHalf = (text: string) => {
+  const shockwave = /khuech|swirl/i.test(foldVi(`${cycle.blessingOfTheAbyssalMoon.description} ${half1Text} ${half2Text}`));
+  // 40 teams measured about 1.3s. 24 keeps a full-roster search near one second.
+  const SIMULATED_PER_HALF = 24;
+  const rankHalf = (text: string, half: 1 | 2) => {
     const ranked = characterPool
       .map((character) => ({ character, score: characterHalfScore(character, text) }))
       .sort((a, b) => b.score - a.score)
       .slice(0, 12)
       .map((item) => item.character);
+    const enemy = floor ? enemyOfHalf(floor, half) : { level: 90, hp: 0, res: {} };
     return combinations(ranked, 4)
-      .map((combo) => buildTeam(combo.map((item) => item.id), text, weaponsByType))
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 20);
+      .map((combo) => equipTeam(combo.map((item) => item.id), weaponsByType))
+      .sort((a, b) => draftScore(b.characters, text) - draftScore(a.characters, text))
+      .slice(0, SIMULATED_PER_HALF)
+      .map((equipped) => simulateTeam(equipped, text, enemy, shockwave))
+      .sort((a, b) => b.score - a.score);
   };
 
-  const first = rankHalf(half1Text);
-  const second = rankHalf(half2Text);
+  const first = rankHalf(half1Text, 1);
+  const second = rankHalf(half2Text, 2);
   const plans: PlannedPlan[] = [];
   const usedPair = new Set<string>();
 

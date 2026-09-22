@@ -1,22 +1,20 @@
-# Dữ liệu tab Trầm Thủy (Abyss)
+# Dữ liệu La Hoàn (Abyss)
 
-Dữ liệu tra cứu Genshin Impact cho tính năng gợi ý đội hình Trầm Thủy: nhân
-vật, vũ khí, thánh di vật, quái + chúc phúc của mùa hiện tại, công thức sát
-thương, buff đội, và bộ tham số của thuật toán.
+Dữ liệu tra cứu Genshin Impact cho trang web Ký Sự Teyvat: nhân vật, vũ khí,
+thánh di vật, quái + chúc phúc của mùa hiện tại, công thức sát thương, buff
+đội, và bộ tham số đi kèm.
 
 > Genshin Impact và toàn bộ nhân vật, vật phẩm, số liệu gốc thuộc bản quyền
 > HoYoverse. Số liệu ở đây được trích xuất từ file game qua Yatta/Ambr
 > (`gi.yatta.moe`) và đối chiếu với Genshin Impact Wiki trên Fandom
 > (nội dung Fandom theo giấy phép CC BY-SA 3.0). Thư mục này chỉ phục vụ tra
-> cứu và tính toán trong ứng dụng, không nhằm thay thế hay tái bản nguồn gốc.
+> cứu trên web, không nhằm thay thế hay tái bản nguồn gốc.
 
 ## Vì sao dữ liệu nằm ở đây chứ không ở `toi-uu-doi-hinh/`
 
 Bản Markdown cho người đọc vẫn ở `toi-uu-doi-hinh/` (kèm `data-model/schema/`
-để validate). Nhưng SwiftPM **chỉ đóng gói được tài nguyên nằm trong thư mục
-target**, nên bản JSON mà app đọc lúc chạy phải nằm ở đây. Giữ hai bản sao ở
-hai nơi thì sớm muộn cũng lệch nhau mà không ai phát hiện — nên thư mục này
-là **bản duy nhất**.
+để validate). Bản JSON mà web đọc lúc chạy nằm ở đây — một bản duy nhất, để
+hai nơi không lệch nhau. App macOS không đóng gói thư mục này.
 
 ## Nội dung
 
@@ -226,33 +224,25 @@ trung vị của mọi nhân vật đọc được, và được ghim đích dan
 `abyss-monsters/` là phần **hết hạn nhanh nhất**: quái và chúc phúc đổi mỗi
 tháng (reset ngày 16 — `TowerScheduleExcelConfigData` cho thấy nhịp 2
 tuần/reset-ngày-1 chỉ còn đúng cho dữ liệu trước 2025-09; xem ghi chú trong
-`toi-uu-doi-hinh/quai-vat-la-hoan/2026-09-16-den-2026-10-15.md`). Bản `.app`
-đã phát hành sẽ mang dữ liệu của chu kỳ
-lúc build. App hiển thị khoảng ngày áp dụng + cảnh báo khi quá hạn, và đọc
-thêm file đè đặt ở:
-
-```
-~/Library/Application Support/NSLauncher/abyss-cycles/*.json
-```
-
-File đè cùng định dạng, trùng `periodStart` thì thắng bản đóng gói — cập nhật
-được dữ liệu mùa mới mà không cần phát hành lại app.
+`toi-uu-doi-hinh/quai-vat-la-hoan/2026-09-16-den-2026-10-15.md`). Web đọc
+các file trong `abyss-monsters/` của thư mục này. Chu kỳ đang soạn thì nằm ở
+`~/Library/Application Support/NSLauncher/abyss-cycles/` để bản dở dang không
+lên site; `publish` mới copy vào đây.
 
 **`scripts/update-abyss-cycle.py` chuẩn hoá toàn bộ luồng này thành 3 lệnh** —
 xem chi tiết ở `toi-uu-doi-hinh/quai-vat-la-hoan/README.md` mục "Cập nhật khi
 mùa mới bắt đầu". Tóm tắt:
 
 ```bash
-python3 scripts/update-abyss-cycle.py new       # sinh khung file .md + file đè ở trên cho chu kỳ kế tiếp
-# ... điền quái/chúc phúc/Ley Line Disorder bằng tay như trước, test ngay trong app thật ...
-python3 scripts/update-abyss-cycle.py sync      # resistance + HP + schema + swift test, dừng ở bước đầu tiên fail
-python3 scripts/update-abyss-cycle.py publish   # ưng ý rồi thì copy vào bản đóng gói ở đây
+python3 scripts/update-abyss-cycle.py new       # sinh khung file .md + JSON nháp ở thư mục đè
+# ... điền quái/chúc phúc/Ley Line Disorder bằng tay ...
+python3 scripts/update-abyss-cycle.py sync      # resistance + HP + schema + npm test, dừng ở bước đầu tiên fail
+python3 scripts/update-abyss-cycle.py publish   # ưng ý rồi thì copy vào abyss-monsters/ ở đây
 ```
 
 `new` ghi JSON vào thư mục đè, không phải `abyss-monsters/` — một chu kỳ còn
-dở dang thì không kéo `swift test` xuống (xem lưu ý trong
-`toi-uu-doi-hinh/quai-vat-la-hoan/README.md`). Chỉ `publish` mới thật sự đưa
-file vào đây.
+dở dang thì `npm test` trong `web/` không thấy. Chỉ `publish` mới đưa file
+vào đây.
 
 Chạy tay từng bước (vẫn hoạt động, `update-abyss-cycle.py sync` chỉ gọi đúng
 hai script này rồi thêm bước validate + test) — không tham số thì nó quét các
@@ -332,26 +322,5 @@ có comment).
 1. Sửa Markdown nguồn trong `toi-uu-doi-hinh/` theo quy ước ở README của nó.
 2. Cập nhật JSON tương ứng ở đây.
 3. Validate: xem lệnh trong `toi-uu-doi-hinh/data-model/README.md`.
-4. Chạy `swift test` — các test Abyss pin số lượng bản ghi và tính toàn vẹn
-   tham chiếu, nên dữ liệu hỏng sẽ làm đỏ test thay vì âm thầm rỗng trong app.
-
-## Golden fixture cho test
-
-`Tests/NSLauncherAppTests/Fixtures/abyss-golden.json` giữ giá trị trung gian
-(scaling basis, hệ số từng đòn, chỉ số build, bối cảnh tầng, top-10 đội hình
-của roster mẫu) — engine phải khớp trong sai số tương đối `1e-9`. Nó bắt đúng
-loại lỗi nguy hiểm nhất ở đây: một nhánh quy đổi tên chỉ số đấu nhầm ô sẽ cho
-ra số *hợp lý nhưng sai*, không crash, không ai nhận ra.
-
-Số trong file vốn do một bản Python sinh ra, bản đó đã bị xoá sau khi engine
-Swift chứng minh khớp từng chữ số. Nay file do **chính engine** sinh, nên nó
-là **mốc hồi quy**: "hôm kiểm, engine tính ra thế này". Vì vậy sinh lại là một
-**quyết định**, không phải cách chữa test đỏ — chỉ sinh lại khi cố ý đổi mô
-hình (sửa `tuning.json`, sửa parser, cập nhật dữ liệu làm đổi kết quả), rồi
-**đọc diff**: một thay đổi nhắm vào một nhân vật mà làm trôi ba trăm con số là
-diff đang nói cho bạn biết điều gì đó.
-
-```bash
-ABYSS_DUMP_GOLDEN=Tests/NSLauncherAppTests/Fixtures/abyss-golden.json \
-    swift test --filter testRegenerateGoldenFixture
-```
+4. Chạy `npm test` trong `web/` — test coverage pin số lượng bản ghi, nên dữ
+   liệu hỏng sẽ làm đỏ test thay vì âm thầm rỗng trên site.

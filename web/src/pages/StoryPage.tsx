@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { parseStoryPath } from "../lib/paths";
+import { scrollBehavior } from "../components/motion";
+import { Reveal } from "../components/Reveal";
 import { GroupLabel } from "../components/ui";
 import { entityKindLabel, t, type Lang } from "../lib/i18n";
 import { foldVi } from "../lib/slug";
@@ -16,7 +18,12 @@ import { StoryBlocks } from "./StoryBlocks";
 export function StoryPage({ lang, active }: { lang: Lang; active: boolean }) {
   const copy = t(lang);
   const { pathname } = useLocation();
-  const { docId, sectionId, entityId } = parseStoryPath(pathname);
+  const [heldPath, setHeldPath] = useState(pathname);
+  useEffect(() => {
+    if (pathname.startsWith("/story")) setHeldPath(pathname);
+  }, [pathname]);
+  // Keep the open chapter mounted while another tab is showing, so its scroll position survives.
+  const { docId, sectionId, entityId } = parseStoryPath(pathname.startsWith("/story") ? pathname : heldPath);
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
@@ -53,20 +60,27 @@ export function StoryPage({ lang, active }: { lang: Lang; active: boolean }) {
   }, [active, docId, entityId, library, navigate]);
 
   useEffect(() => {
-    if (!sectionId) return;
+    if (!active || !sectionId) return;
     const node = document.getElementById(sectionId);
-    node?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, [sectionId, docId]);
+    node?.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
+  }, [active, sectionId, docId]);
 
   const empty = chapters.length === 0 && quests.length === 0 && entities.length === 0;
 
   return (
     <div className="split">
       <aside className={`sidebar collapsible ${open ? "open" : ""}`}>
-        <p className="notice">{copy.storyCopyright}</p>
-        <button type="button" className="btn btn-quiet drawer-toggle" onClick={() => setOpen((v) => !v)}>
+        <button
+          type="button"
+          className="btn btn-quiet drawer-toggle"
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+        >
           {copy.storyOpenToc}
         </button>
+        <div className="drawer-fold">
+          <div className="drawer-fold-inner">
+        <p className="notice">{copy.storyCopyright}</p>
         <input
           className="search"
           value={query}
@@ -126,9 +140,12 @@ export function StoryPage({ lang, active }: { lang: Lang; active: boolean }) {
             </>
           )}
         </div>
+          </div>
+        </div>
       </aside>
 
       <article className="detail">
+        <Reveal id={selectedEntity?.id ?? selectedDocument?.id ?? "empty"} pinTop={!sectionId}>
         {selectedDocument && (
           <>
             <div className="story-title">
@@ -146,6 +163,7 @@ export function StoryPage({ lang, active }: { lang: Lang; active: boolean }) {
           <EntityDetail lang={lang} entityId={selectedEntity.id} />
         )}
         {!selectedDocument && !selectedEntity && <p className="empty">{copy.storySelect}</p>}
+        </Reveal>
       </article>
     </div>
   );

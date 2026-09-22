@@ -3,24 +3,16 @@ import SwiftUI
 private enum AppTab: Hashable {
     case home
     case settings
-    case story
-    case abyss
 }
 
 /// App shell: pinned chrome (wordmark, tab switch, language) plus the active tab's content.
 /// Settings used to be a pushed `NavigationStack` destination; a tab switch keeps both screens'
-/// state alive and drops that extra navigation layer. All four tabs are mounted for the life of
-/// the window (see `tabContent`), so every tab keeps its own scroll position and in-progress UI
-/// state across switches, on top of the view models hoisted below for Story/Abyss.
+/// state alive and drops that extra navigation layer. Both tabs are mounted for the life of
+/// the window (see `tabContent`), so each keeps its own scroll position and in-progress UI
+/// state across switches.
 struct ContentView: View {
     @ObservedObject var viewModel: LauncherViewModel
     @State private var activeTab: AppTab = .home
-    // Held here, above the tab switch below, so switching away from and back to
-    // Story doesn't re-parse Resources/Story/ every time.
-    @StateObject private var storyViewModel = StoryViewModel()
-    // Same reasoning, and more so: the Abyss library parses ~950 KB with regexes,
-    // and the tab also holds computed teams that should survive a tab switch.
-    @StateObject private var abyssViewModel = AbyssViewModel()
 
     private var text: AppText { viewModel.text }
 
@@ -38,15 +30,12 @@ struct ContentView: View {
                     .padding(.top, 44)
                     .padding(.bottom, 12)
 
-                // All four tabs stay mounted at all times — only opacity/hit-testing toggle —
+                // Both tabs stay mounted at all times — only opacity/hit-testing toggle —
                 // so each tab's local @State (scroll position, in-progress edits, expanded
-                // sections) survives switching away and back, not just the hoisted view models
-                // above.
+                // sections) survives switching away and back.
                 ZStack {
                     tabContent(.home) { HomeView(viewModel: viewModel) }
                     tabContent(.settings) { SettingsView(viewModel: viewModel) }
-                    tabContent(.story) { StoryView(viewModel: storyViewModel, text: text) }
-                    tabContent(.abyss) { AbyssView(viewModel: abyssViewModel, text: text) }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
@@ -106,12 +95,6 @@ struct ContentView: View {
             }
             SidebarTabButton(title: text.settingsTitle, systemImage: "gearshape.fill", isSelected: activeTab == .settings) {
                 switchTab(to: .settings)
-            }
-            SidebarTabButton(title: text.storyTitle, systemImage: "book.closed.fill", isSelected: activeTab == .story) {
-                switchTab(to: .story)
-            }
-            SidebarTabButton(title: text.abyssTitle, systemImage: "shield.lefthalf.filled", isSelected: activeTab == .abyss) {
-                switchTab(to: .abyss)
             }
         }
         .fixedSize()

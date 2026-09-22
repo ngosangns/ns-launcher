@@ -10,10 +10,10 @@ export function HomePage({ lang }: { lang: Lang }) {
   const blessing = cycle.blessingOfTheAbyssalMoon;
 
   return (
-    <div className="hero">
+    <div className="hero rise">
       <h1>{copy.brand}</h1>
       <p className="lead">{copy.tagline}</p>
-      <div className="card-grid">
+      <div className="card-grid rise">
         <section className="panel">
           <h2>
             <BookIcon /> {copy.story}

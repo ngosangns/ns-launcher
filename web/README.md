@@ -1,8 +1,8 @@
 # Ký Sự Teyvat
 
-Bản web của tab **Cốt truyện** và **La Hoàn** trong NS Launcher: đọc chương
-truyện, tra cứu nhân vật/vũ khí/thánh di vật, xem chu kỳ Trầm Thủy, và ghép
-đội theo Ley Line.
+Trang web cho cốt truyện và La Hoàn: đọc chương truyện, tra cứu nhân vật/vũ
+khí/thánh di vật, xem chu kỳ Trầm Thủy, và ghép đội theo Ley Line. App macOS
+không còn hai màn này.
 
 Dữ liệu lấy thẳng từ
 [`Sources/NSLauncherApp/Resources/Story`](../Sources/NSLauncherApp/Resources/Story)
@@ -15,15 +15,14 @@ và
 vật; 2 chu kỳ quái; cộng hưởng / Nguyệt Triệu / Hexerei / Nightsoul; toàn bộ
 công thức sát thương trong `damage-formula.json`.
 
-Tab **Đội hình** là luồng chính của app macOS: roster (đánh dấu sở hữu, cung
-mệnh, tinh luyện, nhập/xuất JSON), nhập UID qua Enka, nhập full roster
-HoYoLAB, và **Tìm đội hình** cho tầng 12 (hai nửa, không trùng người/vũ khí,
-gán thánh di vật, cộng hưởng, thời gian dọn ước lượng).
+Trang **Đội hình**: roster (đánh dấu sở hữu, cung mệnh, tinh luyện, nhập/xuất
+JSON), nhập UID qua Enka, nhập full roster HoYoLAB, và **Tìm đội hình** cho
+tầng 12 (hai nửa, không trùng người/vũ khí, gán thánh di vật, cộng hưởng,
+thời gian dọn ước lượng).
 
-Điểm trên web là thang xếp hạng theo Ley Line + cộng hưởng + vai trò, không
-phải mô phỏng DPS đầy đủ của engine Swift (`AbyssScorer`). Enka/HoYoLAB đi
-qua `/api/enka` và `/api/hoyolab` (Vite proxy lúc `task web`, Pages Functions
-khi deploy).
+Điểm là sát thương mỗi giây của một vòng đánh 20 giây (hồi chiêu, năng lượng,
+đòn và phản ứng trên một mục tiêu). Enka/HoYoLAB đi qua `/api/enka` và
+`/api/hoyolab` (Vite proxy lúc `task web`, Pages Functions khi deploy).
 
 ## Theme & chữ
 

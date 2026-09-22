@@ -22,6 +22,8 @@ describe("findTeams", () => {
     const output = findTeams(roster, { fullCharacters: false, fullWeapons: false });
     expect(output.plans.length).toBeGreaterThan(0);
     expect(output.plans.length).toBeLessThanOrEqual(5);
+    expect(output.plans[0].score).toBeGreaterThan(0);
+    expect(output.plans[0].half1.rotation.length + output.plans[0].half2.rotation.length).toBeGreaterThan(0);
     for (const plan of output.plans) {
       const ids = [
         ...plan.half1.members.map((m) => m.characterId),

@@ -9,21 +9,19 @@ two weeks (reset on the 1st and the 16th) — but updating it used to mean
 following a checklist spread across three READMEs: hand-write two new files
 with matching dates, run two independent sync scripts, hand-run a validation
 heredoc copied out of `toi-uu-doi-hinh/data-model/README.md`, then remember to
-run `swift test`. Nothing enforced the order, and a step skipped silently
-(forgetting to sync resistance, say) does not fail loudly — the app just falls
-back to the flat inference `AbyssTuning.enemyOwnElementResistance` describes.
+run `npm test` in `web/`. Nothing enforced the order, and a step skipped
+silently (forgetting to sync resistance, say) does not fail loudly.
 
 This script does not replace the one step that has to stay manual — reading
 the new cycle's monsters and blessing text off the wiki/TextMap and writing
 them into JSON — but it standardizes everything mechanical around it, and
-keeps a half-filled cycle from breaking `swift test` for everyone while it is
-still being authored:
+keeps a half-filled cycle out of the files the site serves while it is still
+being authored:
 
     python3 scripts/update-abyss-cycle.py new              # scaffold the next cycle
     # ... fill in monsters / blessing / Ley Line Disorder by hand ...
-    python3 scripts/update-abyss-cycle.py sync              # resistance + HP + schema + swift test
-    # ... test-drive it in the actual app (it already reads this override path) ...
-    python3 scripts/update-abyss-cycle.py publish           # copy the finished file into the bundle
+    python3 scripts/update-abyss-cycle.py sync              # resistance + HP + schema + npm test
+    python3 scripts/update-abyss-cycle.py publish           # copy the finished file into abyss-monsters/
 
 ## `new`
 
@@ -34,17 +32,10 @@ Reads the newest bundled cycle, computes the next Spiral Abyss period
 - `toi-uu-doi-hinh/quai-vat-la-hoan/<range>.md` — a stub with the standard
   header and a TODO checklist, never overwriting an existing file.
 - `~/Library/Application Support/NSLauncher/abyss-cycles/<range>.json` — a
-  schema-shaped stub, **not** the bundled `Resources/Abyss/abyss-monsters/`
-  directory. `AbyssDataLibrary` already treats this folder as an override
-  that beats the bundled cycle of the same `periodStart` (see
-  `Sources/NSLauncherApp/Resources/Abyss/README.md`) — so a half-filled draft
-  here is live in the actual running app for test-driving, but invisible to
-  `swift test`, which always runs with the override directory disabled
-  (`AbyssDataLibrary(cycleOverrideDirectory: nil)` in
-  `AbyssDataLibraryTests`). Landing the stub straight in the bundle instead
-  would make the whole Abyss test suite red — including golden-fixture and
-  roster-ranking tests that have nothing to do with this cycle — for as long
-  as the wiki research takes.
+  schema-shaped stub, **not** the published `Resources/Abyss/abyss-monsters/`
+  directory. The site and `npm test` only read the published files, so a
+  half-filled draft stays off the site until `publish`. Landing the stub
+  straight in `abyss-monsters/` would ship an unfinished cycle.
 
   Floor/chamber/wave numbers and monster levels are copied from the previous
   cycle (those rarely change), but every monster list is emptied and every
@@ -71,35 +62,21 @@ stops at the first failure:
 1. `scripts/sync-abyss-monster-resistance.py <file>`
 2. `scripts/sync-abyss-monster-hp.py <file>`
 3. JSON Schema validation against `abyss-cycle.schema.json`
-4. `swift test --filter Abyss`
+4. `npm test` in `web/`
 
 Steps 1-2 need the monster names already in the file (they patch resistance
 and HP onto lines that name a monster they can resolve) and network access
 (they call `gi.yatta.moe` and the Fandom wiki). Step 4 does not exercise an
 override-only file (see `new` above) — it is a regression check that
-whatever *is* bundled still works, not a check of the new cycle's numbers.
-
-Caveat: `AbyssViewModel` (unlike `AbyssDataLibraryTests`) always loads
-`AbyssDataLibrary()` with the *real* override directory, so a handful of
-`AbyssViewModel`-driven tests can see the draft cycle sitting there.
-`AbyssSearchCachingTests.testAPreExistingCacheIsUsedOnTheFirstSearchOfTheSession`
-is the one known to flake this way (it seeds a cache keyed by a digest
-computed *without* the override directory, then expects a fresh
-`AbyssViewModel` — which reads the real one — to still hit it). This is a
-pre-existing test-isolation gap, not something this script causes; it just
-means a swift test failure limited to that one test, while a draft sits in
-the override directory, is that gap and not your new cycle's data.
+whatever is already published still loads, not a check of the new cycle's
+numbers.
 
 ## `publish [cycle.json]`
 
-Once a cycle in the override directory is filled in, synced and test-driven
-in the app, copies it into
-`Sources/NSLauncherApp/Resources/Abyss/abyss-monsters/` — the step that
-actually ships it. Refuses to overwrite an existing bundled file. From this
-point on `swift test` **will** see the new cycle (it is bundled now), so a
-red `AbyssGoldenValueTests` afterwards is expected, not a bug — regenerate
-the golden fixture per `Sources/NSLauncherApp/Resources/Abyss/README.md` if
-the new numbers are correct.
+Once a cycle in the override directory is filled in and synced, copies it
+into `Sources/NSLauncherApp/Resources/Abyss/abyss-monsters/` — the step that
+actually ships it to the site. Refuses to overwrite an existing file there.
+From this point on `npm test` sees the new cycle.
 """
 
 from __future__ import annotations
@@ -268,16 +245,15 @@ def cmd_new(args: list[str]) -> int:
       mẫu chu kỳ trước.
 
 File JSON nằm ở `~/Library/Application Support/NSLauncher/abyss-cycles/` —
-app đang chạy đọc thẳng từ đây (đè lên bản đóng gói cùng `periodStart`), nên
-sửa xong là test được ngay trong app thật, và `swift test` không bị ảnh hưởng
-trong lúc file còn dở dang.
+web không đọc thư mục này, nên chu kỳ dở dang không lên site và `npm test`
+không thấy.
 
 Sau khi điền xong danh sách quái ở trên (tên quái là bắt buộc — hai script
 sync khớp theo tên), chạy:
 
 ```bash
-python3 scripts/update-abyss-cycle.py sync       # resistance + HP + schema + swift test
-python3 scripts/update-abyss-cycle.py publish     # copy vào bản đóng gói khi đã ưng ý
+python3 scripts/update-abyss-cycle.py sync       # resistance + HP + schema + npm test
+python3 scripts/update-abyss-cycle.py publish     # copy vào abyss-monsters/ khi đã ưng ý
 ```
 """
     with open(md_path, "w", encoding="utf-8") as handle:
@@ -323,10 +299,10 @@ def cmd_sync(args: list[str]) -> int:
     )
     print("== schema validation ==", flush=True)
     validate_cycle(path)
-    run_step("swift test --filter Abyss", ["swift", "test", "--filter", "Abyss"])
+    run_step("npm test (web/)", ["npm", "test", "--prefix", os.path.join(ROOT, "web")])
     print("all steps passed")
     if os.path.commonpath([path, OVERRIDE_CYCLES]) == OVERRIDE_CYCLES:
-        print("note: swift test never sees this override-only file — it only checks the bundled suite still passes")
+        print("note: npm test never sees this override-only file — it only checks the published data still loads")
     return 0
 
 
@@ -343,8 +319,7 @@ def cmd_publish(args: list[str]) -> int:
 
     shutil.copyfile(path, dest)
     print(f"published {dest}")
-    print("swift test now sees this cycle — a red AbyssGoldenValueTests is expected until you")
-    print("regenerate the golden fixture (see Sources/NSLauncherApp/Resources/Abyss/README.md)")
+    print("the site and npm test now see this cycle")
     return 0
 
 

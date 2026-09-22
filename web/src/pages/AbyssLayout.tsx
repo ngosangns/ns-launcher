@@ -1,5 +1,6 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { KeepAlive } from "../components/KeepAlive";
+import { Segmented } from "../components/Segmented";
 import { t, type Lang } from "../lib/i18n";
 import { parseAbyssPath } from "../lib/paths";
 import { CyclePage } from "./abyss/CyclePage";
@@ -28,7 +29,7 @@ export function AbyssLayout({ lang }: { lang: Lang }) {
   ];
   return (
     <div className="hero abyss-shell">
-      <nav className="abyss-nav tabs" aria-label={copy.abyss}>
+      <Segmented nav className="abyss-nav tabs" label={copy.abyss}>
         {items.map((item) => (
           <NavLink
             key={item.to}
@@ -38,33 +39,33 @@ export function AbyssLayout({ lang }: { lang: Lang }) {
             {item.label}
           </NavLink>
         ))}
-      </nav>
-      <div className="abyss-stack">
-        <KeepAlive active={section === "team"}>
+      </Segmented>
+      <div className="stage abyss-stage">
+        <KeepAlive stage active={section === "team"}>
           <PlannerPage lang={lang} />
         </KeepAlive>
-        <KeepAlive active={section === "cycle"}>
+        <KeepAlive stage active={section === "cycle"}>
           <CyclePage lang={lang} />
         </KeepAlive>
-        <KeepAlive active={section === "characters" && !id}>
+        <KeepAlive stage active={section === "characters" && !id}>
           <CharacterCatalog lang={lang} />
         </KeepAlive>
-        <KeepAlive active={section === "characters" && Boolean(id)}>
+        <KeepAlive stage active={section === "characters" && Boolean(id)}>
           <CharacterDetail lang={lang} id={id} />
         </KeepAlive>
-        <KeepAlive active={section === "weapons" && !id}>
+        <KeepAlive stage active={section === "weapons" && !id}>
           <WeaponCatalog lang={lang} />
         </KeepAlive>
-        <KeepAlive active={section === "weapons" && Boolean(id)}>
+        <KeepAlive stage active={section === "weapons" && Boolean(id)}>
           <WeaponDetail lang={lang} id={id} />
         </KeepAlive>
-        <KeepAlive active={section === "artifacts" && !id}>
+        <KeepAlive stage active={section === "artifacts" && !id}>
           <ArtifactCatalog lang={lang} />
         </KeepAlive>
-        <KeepAlive active={section === "artifacts" && Boolean(id)}>
+        <KeepAlive stage active={section === "artifacts" && Boolean(id)}>
           <ArtifactDetail lang={lang} id={id} />
         </KeepAlive>
-        <KeepAlive active={section === "resonance"}>
+        <KeepAlive stage active={section === "resonance"}>
           <ResonancePage lang={lang} />
         </KeepAlive>
       </div>

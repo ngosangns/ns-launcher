@@ -1,22 +1,13 @@
 # Tối ưu đội hình — Dữ liệu tra cứu Genshin Impact
 
-Tư liệu nguồn dạng Markdown cho tính năng gợi ý đội hình Trầm Thủy (Spiral
-Abyss) của NS Launcher — người viết đọc và cập nhật ở đây, còn app đọc bản
-JSON tương ứng.
+Tư liệu nguồn dạng Markdown cho dữ liệu La Hoàn — người viết đọc và cập nhật
+ở đây, còn trang web đọc bản JSON tương ứng.
 
-> **Đã đổi (2026-09-09):** thư mục `optimizer/` — bản Python của thuật toán —
-> đã bị xoá. Engine Swift trong `Sources/NSLauncherApp/Services/Abyss/` là bản
-> duy nhất, và fixture đối chiếu
-> (`Tests/NSLauncherAppTests/Fixtures/abyss-golden.json`) nay do chính engine
-> đó sinh ra: xem `Tests/NSLauncherAppTests/AbyssGoldenDump.swift`.
-
-> **Đã đổi (2026-09-08):** trước đây thư mục này ghi rõ "không được đóng gói
-> vào NSLauncher". Quyết định đó đã đảo: tính năng nay chạy **trong app** nên
-> bản JSON đã chuyển sang
-> [`Sources/NSLauncherApp/Resources/Abyss/`](../Sources/NSLauncherApp/Resources/Abyss/README.md)
-> để SwiftPM đóng gói được (SwiftPM chỉ đóng gói tài nguyên nằm trong thư mục
-> target). Thư mục này giữ **bản Markdown cho người đọc** + JSON Schema; nó
-> vẫn không được đóng gói vào app.
+> **Đã đổi (2026-09-22):** engine Swift và hai tab Cốt truyện / La Hoàn đã
+> được gỡ khỏi launcher. Bản JSON duy nhất vẫn ở
+> [`Sources/NSLauncherApp/Resources/Abyss/`](../Sources/NSLauncherApp/Resources/Abyss/README.md);
+> trang web đọc thẳng từ đó. Thư mục này giữ **bản Markdown cho người đọc**
+> + JSON Schema, và không được đóng gói vào app.
 
 ## Cấu trúc
 
@@ -40,7 +31,7 @@ JSON tương ứng.
 - [`data-model/`](data-model/README.md) — JSON Schema (hợp đồng dữ liệu) cho
   bản JSON của toàn bộ các mục trên. **Dữ liệu JSON thật nằm ở
   [`Sources/NSLauncherApp/Resources/Abyss/`](../Sources/NSLauncherApp/Resources/Abyss/README.md)**
-  vì nó được đóng gói vào app.
+  vì trang web đọc thẳng từ đó.
 
 ## Nguồn dữ liệu
 
