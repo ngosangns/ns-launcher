@@ -14,6 +14,8 @@ import {
   type Weapon,
 } from "./abyss";
 import { enemyOfHalf, fightTeam, reactionBonusFromText } from "./combat/fight";
+import { artifactMains, scalingBasis, type ArtifactMains } from "./combat/sheet";
+import { characterProfile } from "./combat/talent";
 import { foldVi } from "./slug";
 import type { Roster } from "./roster";
 
@@ -22,6 +24,10 @@ export type MemberBuild = {
   weaponId: string | null;
   artifactSetId: string | null;
   role: string;
+  /** Optional on results saved before these fields existed. */
+  artifactMains?: ArtifactMains;
+  constellation?: number;
+  refinement?: number;
 };
 
 export type PlannedTeam = {
@@ -54,8 +60,13 @@ export type PlannerOutput = {
 
 type Role = "dps" | "support" | "shield" | "healer";
 
-function roleOf(character: Character): Role {
-  const text = foldVi(character.abyssRoleNotes ?? "");
+export function roleOf(character: Character): Role {
+  // Judge only the character's own description: the "combo phổ biến" tail lists
+  // teammates (their shields/heals are not this character's), and "cần/thiếu"
+  // clauses describe what the character needs, not what they provide.
+  const text = foldVi(character.abyssRoleNotes ?? "")
+    .split(/combo pho bien|doi hinh mau|pho bien cung|combo:/u)[0]
+    .replace(/(?:can|thieu|phai co)\b[^.,;]*/gu, "");
   if (/khien|shield/.test(text)) return "shield";
   if (/hoi mau|heal|tri lieu/.test(text)) return "healer";
   if (/\bdps\b|carry|on-field|on field|dung san|chu luc/.test(text)) return "dps";
@@ -82,16 +93,18 @@ function combinations<T>(items: T[], k: number): T[][] {
 
 function halfFlags(text: string) {
   const folded = foldVi(text);
+  // Word boundaries matter: "phòng", "bằng", "lợi", "nhầm", "thảo" would all
+  // false-positive as elements if matched as bare substrings.
   return {
-    swirl: /khuech tan|swirl|stellar swirl|tinh-khuech|tinh khuech/.test(folded),
-    electroCharged: /dien cam|electro-charged|lunar-charged|nguyet-dien|nguyet dien/.test(folded),
-    pyro: /hoa|pyro/.test(folded),
-    hydro: /thuy|hydro/.test(folded),
-    cryo: /bang|cryo/.test(folded),
-    electro: /loi|electro/.test(folded),
-    anemo: /phong|anemo/.test(folded),
-    dendro: /thao|dendro/.test(folded),
-    geo: /nham|geo/.test(folded),
+    swirl: /\b(khuech tan|stellar swirl|tinh[-\s]?khuech|swirl)\b/u.test(folded),
+    electroCharged: /\b(dien cam|electro[-\s]?charged|lunar[-\s]?charged|nguyet[-\s]?dien)\b/u.test(folded),
+    pyro: /\b(hoa|pyro)\b/u.test(folded),
+    hydro: /\b(thuy|hydro)\b/u.test(folded),
+    cryo: /\b(bang|cryo)\b/u.test(folded),
+    electro: /\b(loi|electro)\b/u.test(folded),
+    anemo: /\b(phong|anemo)\b/u.test(folded),
+    dendro: /\b(thao|dendro)\b/u.test(folded),
+    geo: /\b(nham|geo)\b/u.test(folded),
   };
 }
 
@@ -123,7 +136,13 @@ function draftScore(members: Character[], text: string): number {
   const roles = members.map(roleOf);
   if (roles.includes("dps")) score += 4;
   if (roles.includes("shield") || roles.includes("healer")) score += 2;
-  if (new Set(members.map((item) => item.element)).size === 1) score -= 3;
+  const elements = new Set(members.map((item) => item.element));
+  if (elements.size === 1) score -= 3;
+  // Combos that can actually trigger the buffed reaction rank above piles of
+  // individually strong characters that never interact.
+  const flags = halfFlags(text);
+  if (flags.swirl && elements.has("Anemo") && ["Pyro", "Hydro", "Electro", "Cryo"].some((el) => elements.has(el as ElementName))) score += 6;
+  if (flags.electroCharged && elements.has("Electro") && elements.has("Hydro")) score += 6;
   return score;
 }
 
@@ -137,12 +156,19 @@ const ELEMENT_SETS: Record<ElementName, string> = {
   Geo: "archaic-petra",
 };
 
-function pickArtifact(character: Character): string | null {
+function pickArtifact(character: Character, role: Role): string | null {
   const name = foldVi(character.name);
   const named = artifactSets.find((set) =>
     set.bestCharacters.some((entry) => foldVi(entry).includes(name) || name.includes(foldVi(entry))),
   );
   if (named) return named.id;
+  // Role-aware fallbacks: a healer in Crimson Witch or an Anemo carry in
+  // Viridescent Venerer is worse than a generic fit.
+  if (role === "healer") return "maiden-beloved";
+  if (role === "shield") return "tenacity-of-the-millelith";
+  if (character.element === "Anemo") return role === "dps" ? "desert-pavilion-chronicle" : "viridescent-venerer";
+  if (character.element === "Dendro") return role === "dps" ? "gilded-dreams" : "deepwood-memories";
+  if (role === "support") return "noblesse-oblige";
   return ELEMENT_SETS[character.element] ?? null;
 }
 
@@ -150,6 +176,7 @@ function pickWeapon(
   character: Character,
   byType: Map<string, Weapon[]>,
   used: Set<string>,
+  role: Role,
 ): string | null {
   const available = (byType.get(character.weaponType) ?? []).filter((weapon) => !used.has(weapon.id));
   if (available.length === 0) return null;
@@ -157,10 +184,32 @@ function pickWeapon(
   const named = available.filter((weapon) =>
     weapon.bestCharacters.some((entry) => foldVi(entry).includes(name) || name.includes(foldVi(entry))),
   );
-  return (named[0] ?? available[0])?.id ?? null;
+  if (named.length > 0) return named[0].id;
+  // No signature weapon: score by substat synergy with the member's job.
+  const basis = scalingBasis(character.id);
+  const wantsEr =
+    (role === "support" || role === "healer" || role === "shield") &&
+    characterProfile(character.id).burstCost > 0;
+  const scored = available
+    .map((weapon) => {
+      const sub = (weapon.subStat.type ?? "").toLowerCase();
+      let score = weapon.rarity * 10 + (weapon.atkLv90 ?? 0) / 100;
+      if (wantsEr && (sub.includes("energy") || weapon.id.startsWith("favonius-") || weapon.id.startsWith("sacrificial-"))) score += 8;
+      if (basis === "EM" && sub.includes("mastery")) score += 8;
+      if (basis === "HP" && sub.includes("hp")) score += 4;
+      if (basis === "DEF" && sub.includes("def")) score += 4;
+      if (role === "dps" && sub.includes("crit")) score += 4;
+      return { weapon, score };
+    })
+    .sort((a, b) => b.score - a.score);
+  return scored[0]?.weapon.id ?? null;
 }
 
-function equipTeam(ids: string[], byType: Map<string, Weapon[]>): {
+function equipTeam(
+  ids: string[],
+  byType: Map<string, Weapon[]>,
+  roster: Roster,
+): {
   characters: Character[];
   members: MemberBuild[];
   resonances: ReturnType<typeof activeResonances>;
@@ -170,15 +219,21 @@ function equipTeam(ids: string[], byType: Map<string, Weapon[]>): {
   const notes: string[] = [];
   const roles = membersChars.map(roleOf);
   if (!roles.includes("dps")) notes.push("Thiếu DPS đứng sân");
+  const constellationOf = (id: string) => roster.characters.find((item) => item.id === id)?.constellation ?? 0;
+  const refinementOf = (id: string | null) => roster.weapons.find((item) => item.id === id)?.refinement ?? 1;
   const used = new Set<string>();
-  const members: MemberBuild[] = membersChars.map((character) => {
-    const weaponId = pickWeapon(character, byType, used);
+  const members: MemberBuild[] = membersChars.map((character, index) => {
+    const role = roles[index] ?? roleOf(character);
+    const weaponId = pickWeapon(character, byType, used, role);
     if (weaponId) used.add(weaponId);
     return {
       characterId: character.id,
       weaponId,
-      artifactSetId: pickArtifact(character),
-      role: roleOf(character),
+      artifactSetId: pickArtifact(character, role),
+      role,
+      artifactMains: artifactMains(character.id, role),
+      constellation: constellationOf(character.id),
+      refinement: weaponId ? refinementOf(weaponId) : undefined,
     };
   });
   const resonances = activeResonances(membersChars.map((item) => item.element));
@@ -198,6 +253,8 @@ function simulateTeam(
       weaponId: member.weaponId,
       artifactSetId: member.artifactSetId,
       role: member.role,
+      refinement: member.refinement,
+      constellation: member.constellation,
     })),
     {
       enemyLevel: enemy.level,
@@ -282,7 +339,7 @@ export function findTeams(
       .map((item) => item.character);
     const enemy = floor ? enemyOfHalf(floor, half) : { level: 90, hp: 0, res: {} };
     return combinations(ranked, 4)
-      .map((combo) => equipTeam(combo.map((item) => item.id), weaponsByType))
+      .map((combo) => equipTeam(combo.map((item) => item.id), weaponsByType, roster))
       .sort((a, b) => draftScore(b.characters, text) - draftScore(a.characters, text))
       .slice(0, SIMULATED_PER_HALF)
       .map((equipped) => simulateTeam(equipped, text, enemy, shockwave))

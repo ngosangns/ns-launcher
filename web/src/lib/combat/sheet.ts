@@ -13,7 +13,14 @@ import {
   weaponPassive,
   type PassiveEffect,
 } from "./catalog";
-import { characterProfile, cleanLabel, triggersOf, type Basis } from "./talent";
+import {
+  characterProfile,
+  cleanLabel,
+  constellationBoosts,
+  triggersOf,
+  type Basis,
+  type TalentBoost,
+} from "./talent";
 
 export type TimedBuff = {
   stat: string;
@@ -34,6 +41,7 @@ export type Sheet = {
   element: ElementName;
   weaponType: string;
   baseAtk: number;
+  baseHp: number;
   hp: number;
   atk: number;
   def: number;
@@ -61,6 +69,7 @@ export type SheetRequest = {
   refinement?: number;
   role?: string;
   energyRecharge?: number;
+  constellation?: number;
 };
 
 type Acc = {
@@ -97,6 +106,7 @@ export function buildSheet(request: SheetRequest): Sheet {
     request.refinement ?? 1,
     request.role ?? "dps",
     request.energyRecharge ?? "",
+    request.constellation ?? 0,
   ]);
   const cached = cache.get(key);
   if (cached) return cached;
@@ -134,7 +144,8 @@ function emptyAcc(): Acc {
 function assemble(request: SheetRequest): Sheet {
   const character = charactersByID[request.characterId];
   const weapon = request.weaponId ? weaponsByID[request.weaponId] : undefined;
-  const profile = characterProfile(request.characterId);
+  const boosts = constellationBoosts(request.characterId, request.constellation ?? 0);
+  const profile = characterProfile(request.characterId, boosts);
   const role = request.role ?? "dps";
   const refinement = request.refinement ?? 1;
   const basis = scalingBasis(request.characterId);
@@ -146,7 +157,7 @@ function assemble(request: SheetRequest): Sheet {
 
   addNamed(acc, lv90?.ascensionStatType, lv90?.ascensionStatValue ?? 0);
   addNamed(acc, weapon?.subStat.type, weapon?.subStat.valueLv90 ?? 0);
-  addArtifactMains(acc, role, basis, profile.burstCost > 0);
+  addArtifactMains(acc, role, basis, profile.burstCost > 0, character?.element ?? profile.element);
   addSubstats(acc, role, basis);
   for (const effect of request.weaponId ? weaponPassive(request.weaponId) : []) {
     applyEffect(acc, effect, refinement, request.weaponId ?? "", "weapons");
@@ -162,7 +173,7 @@ function assemble(request: SheetRequest): Sheet {
   const def = baseDef * (1 + acc.defPct) + acc.flatDef;
   let conversion = 0;
   for (const row of character?.kit?.conversions ?? []) {
-    const converted = conversionTerm(request.characterId, row.talent, row.label);
+    const converted = conversionTerm(request.characterId, row.talent, row.label, boosts);
     const pool = converted.from === "HP" ? hp : def;
     conversion += pool * converted.rate * (row.uptime ?? 1);
   }
@@ -180,6 +191,7 @@ function assemble(request: SheetRequest): Sheet {
     element: character?.element ?? profile.element,
     weaponType: character?.weaponType ?? profile.weaponType,
     baseAtk,
+    baseHp,
     hp,
     atk,
     def,
@@ -205,6 +217,7 @@ function conversionTerm(
   id: string,
   talent: string | undefined,
   label: string | undefined,
+  boosts: TalentBoost,
 ): { rate: number; from: "HP" | "DEF" } {
   if (!talent || !label) return { rate: 0, from: "ATK" as "DEF" };
   const key = talent === "elementalBurst" || talent === "normalAttack" ? talent : "elementalSkill";
@@ -213,11 +226,11 @@ function conversionTerm(
   const line = data.lines.find((row) => cleanLabel(row.split("|")[0] ?? "") === label);
   if (!line) return { rate: 0, from: "DEF" };
   const match = /\{param(\d+)/i.exec(line);
-  const rate = match ? (paramsAtTalentLevel(data)[Number(match[1]) - 1] ?? 0) : 0;
+  const rate = match ? (paramsAtTalentLevel(data, boosts[key] ?? 0)[Number(match[1]) - 1] ?? 0) : 0;
   return { rate, from: /max hp/i.test(line) ? "HP" : "DEF" };
 }
 
-function scalingBasis(id: string): Basis {
+export function scalingBasis(id: string): Basis {
   const notes = (charactersByID[id]?.kit?.conversions ?? []).map((row) => row.note ?? "").join(" ");
   if (/max hp/i.test(notes)) return "HP";
   if (/\bdef\b/i.test(notes)) return "DEF";
@@ -228,10 +241,15 @@ function scalingBasis(id: string): Basis {
   return (Object.entries(score).sort((a, b) => b[1] - a[1])[0]?.[0] as Basis) ?? "ATK";
 }
 
-function addArtifactMains(acc: Acc, role: string, basis: Basis, hasBurst: boolean): void {
+function addArtifactMains(acc: Acc, role: string, basis: Basis, hasBurst: boolean, element: string): void {
   const mains = tuningConstants().artifactMainStats;
   acc.flatHp += mains.flat_hp;
   acc.flatAtk += mains.flat_atk;
+  // Swirl drivers stack EM on all three flexible slots.
+  if (element === "Anemo" && role === "support") {
+    acc.em += mains.em * 3;
+    return;
+  }
   const sandsEr = role === "support" || role === "healer" || role === "shield";
   if (sandsEr && hasBurst) acc.er += mains.er;
   else addBasisMain(acc, basis, mains);
@@ -245,6 +263,34 @@ function addBasisMain(acc: Acc, basis: Basis, mains: Record<string, number>): vo
   else if (basis === "DEF") acc.defPct += mains.def_pct;
   else if (basis === "EM") acc.em += mains.em;
   else acc.atkPct += mains.atk_pct;
+}
+
+export type ArtifactMains = { sands: string; goblet: string; circlet: string };
+
+/**
+ * The main stats addArtifactMains assumes, surfaced as build advice.
+ * Slot order is sands · goblet · circlet.
+ */
+export function artifactMains(id: string, role: string): ArtifactMains {
+  const character = charactersByID[id];
+  const profile = characterProfile(id);
+  const basis = scalingBasis(id);
+  const element = character?.element ?? profile.element;
+  if (basis === "EM" || (element === "Anemo" && role === "support")) {
+    return { sands: "EM", goblet: "EM", circlet: "EM" };
+  }
+  const basisMain = `${basis}%`;
+  const utility = role === "support" || role === "healer" || role === "shield";
+  const sands = utility && profile.burstCost > 0 ? "ER" : basisMain;
+  const physical = character?.baseStats.lv90.ascensionStatType?.includes("Physical") ?? false;
+  const goblet =
+    role === "healer" || role === "shield"
+      ? "HP%"
+      : physical
+        ? "Physical DMG"
+        : `${element} DMG`;
+  const circlet = role === "healer" ? "Healing Bonus" : role === "shield" ? basisMain : "CRIT Rate";
+  return { sands, goblet, circlet };
 }
 
 function addSubstats(acc: Acc, role: string, basis: Basis): void {
@@ -390,7 +436,7 @@ export function applyResonance(sheets: Sheet[]): void {
     for (const sheet of sheets) sheet.atk += sheet.baseAtk * 0.25;
   }
   if ((counts.get("Hydro") ?? 0) >= 2) {
-    for (const sheet of sheets) sheet.hp += sheet.hp * 0.25;
+    for (const sheet of sheets) sheet.hp += sheet.baseHp * 0.25;
   }
   if ((counts.get("Dendro") ?? 0) >= 2) {
     for (const sheet of sheets) sheet.em += 50;

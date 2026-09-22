@@ -12,8 +12,8 @@ import {
 } from "./formula";
 import { Gauge, icdReady, type GaugeEvent } from "./gauge";
 import { scheduleTeam, type RotationAction } from "./rotation";
-import { applyResonance, buildSheet, dmgBonusFor, statAmount, type Sheet, type TimedBuff } from "./sheet";
-import { characterProfile, type HitKind, type HitTemplate } from "./talent";
+import { applyResonance, buildSheet, dmgBonusFor, scalingBasis, statAmount, type Sheet, type TimedBuff } from "./sheet";
+import { characterProfile, constellationBoosts, type HitKind, type HitTemplate } from "./talent";
 
 export type FightMember = {
   characterId: string;
@@ -22,6 +22,7 @@ export type FightMember = {
   refinement?: number;
   role?: string;
   energyRecharge?: number;
+  constellation?: number;
 };
 
 export type FightHit = {
@@ -72,6 +73,12 @@ const REACTION_RES: Record<string, string> = {
 };
 
 export function fightTeam(members: FightMember[], options: FightOptions = {}): FightResult {
+  const profiles = new Map(
+    members.map((member) => [
+      member.characterId,
+      characterProfile(member.characterId, constellationBoosts(member.characterId, member.constellation ?? 0)),
+    ]),
+  );
   const sheets = members.map((member) => buildSheet(member));
   applyResonance(sheets);
   applyStaticBuffs(sheets);
@@ -105,8 +112,8 @@ export function fightTeam(members: FightMember[], options: FightOptions = {}): F
   let damage = 0;
   let shockwaves = 0;
   let lastShock = -10;
-  const stellar = members.some((member) => characterProfile(member.characterId).tags.includes("stellar-jubilee"));
-  const moonsign = members.some((member) => characterProfile(member.characterId).tags.includes("moonsign"));
+  const stellar = members.some((member) => profiles.get(member.characterId)?.tags.includes("stellar-jubilee"));
+  const moonsign = members.some((member) => profiles.get(member.characterId)?.tags.includes("moonsign"));
   const wearsVV = members.some((member) => member.artifactSetId === "viridescent-venerer");
   const wearsDeepwood = members.some((member) => member.artifactSetId === "deepwood-memories");
   const level = options.enemyLevel ?? 90;
@@ -169,11 +176,13 @@ export function fightTeam(members: FightMember[], options: FightOptions = {}): F
         hitDamage += lunarCharged(members, byId, reactionRes, bonus["lunar-charged"] ?? 0);
       }
     }
+    const targets = template.aoe ? Math.max(1, options.targets ?? 1) : 1;
     if (options.shockwave && (reactionId === "swirl" || stellarSwirl) && time - lastShock >= 4) {
       shockwaves += 1;
       lastShock = time;
+      // Ley-line shockwave is true damage hitting everything nearby.
+      damage += tuningConstants().shockwaveDamage * Math.max(1, options.targets ?? 1);
     }
-    const targets = template.aoe ? Math.max(1, options.targets ?? 1) : 1;
     damage += hitDamage * targets;
     hits.push({ time, owner, kind: template.kind, motion: template.motion, damage: hitDamage, reaction: reactionId });
   };
@@ -185,7 +194,7 @@ export function fightTeam(members: FightMember[], options: FightOptions = {}): F
     queue.push({ time, owner, template, order: order++ });
   };
   for (const action of rotation.actions) {
-    const profile = characterProfile(action.owner);
+    const profile = profiles.get(action.owner) ?? characterProfile(action.owner);
     const time = action.start / 60;
     if (action.kind === "burst") {
       const sheet = byId.get(action.owner);
@@ -230,6 +239,12 @@ export function fightTeam(members: FightMember[], options: FightOptions = {}): F
   queue.sort((a, b) => a.time - b.time || a.order - b.order);
   for (const hit of queue) resolve(hit.owner, hit.template, hit.time);
 
+  // Teams fielding an element the enemy is weak to exploit it (stagger windows, exposed states).
+  const teamElements = new Set(sheets.map((sheet) => sheet.element));
+  const exploitsWeakness = Object.entries(options.res ?? {}).some(
+    ([element, res]) => (res ?? 0) < 0 && teamElements.has(element as Sheet["element"]),
+  );
+  if (exploitsWeakness) damage *= tuningConstants().weaknessExploitBonus;
   const sustain = members.some((member) => member.role === "healer" || member.role === "shield");
   if (!sustain) damage *= tuningConstants().noSustainPenalty;
   const seconds = tuningConstants().rotationSeconds;
@@ -241,7 +256,7 @@ export function fightTeam(members: FightMember[], options: FightOptions = {}): F
   }
   const fallbackIds = members
     .map((member) => member.characterId)
-    .filter((id) => characterProfile(id).fallback);
+    .filter((id) => profiles.get(id)?.fallback ?? characterProfile(id).fallback);
   return {
     damage,
     dps,
@@ -295,7 +310,11 @@ function templatesFor(profile: ReturnType<typeof characterProfile>, kind: Rotati
 function pickOnField(members: FightMember[], sheets: Sheet[]): string {
   const dps = members.filter((member) => member.role === "dps");
   const pool = dps.length > 0 ? dps : members;
-  return pool.slice().sort((a, b) => (sheets.find((sheet) => sheet.id === b.characterId)?.atk ?? 0) - (sheets.find((sheet) => sheet.id === a.characterId)?.atk ?? 0))[0]
+  const power = (id: string) => {
+    const sheet = sheets.find((item) => item.id === id);
+    return sheet ? statAmount(sheet, scalingBasis(id)) : 0;
+  };
+  return pool.slice().sort((a, b) => power(b.characterId) - power(a.characterId))[0]
     ?.characterId ?? members[0]?.characterId ?? "";
 }
 

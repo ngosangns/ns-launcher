@@ -740,7 +740,7 @@ const PREVIEW_GAP = 8;
 const PREVIEW_MARGIN = 12;
 const PREVIEW_CAP = 360;
 
-function finePointer(): boolean {
+export function finePointer(): boolean {
   return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 }
 

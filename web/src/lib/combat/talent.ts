@@ -46,6 +46,9 @@ type KitHit = {
 
 type TalentKey = "normalAttack" | "elementalSkill" | "elementalBurst";
 
+/** Extra talent levels from owned constellations (C3/C5-style "+3 level" entries). */
+export type TalentBoost = Partial<Record<TalentKey, number>>;
+
 const SLOT_TALENT: Record<HitKind, TalentKey> = {
   combo: "normalAttack",
   charged: "normalAttack",
@@ -84,15 +87,37 @@ export type CharacterProfile = {
 
 const profiles = new Map<string, CharacterProfile>();
 
-export function characterProfile(id: string): CharacterProfile {
-  const cached = profiles.get(id);
+export function characterProfile(id: string, boost: TalentBoost = {}): CharacterProfile {
+  const key = `${id}:${boost.normalAttack ?? 0},${boost.elementalSkill ?? 0},${boost.elementalBurst ?? 0}`;
+  const cached = profiles.get(key);
   if (cached) return cached;
-  const built = buildProfile(id);
-  profiles.set(id, built);
+  const built = buildProfile(id, boost);
+  profiles.set(key, built);
   return built;
 }
 
-function buildProfile(id: string): CharacterProfile {
+/** Parses constellation entries like "Cấp kỹ năng <talent> +3" into per-talent level boosts. */
+export function constellationBoosts(id: string, constellation: number): TalentBoost {
+  const boost: Required<TalentBoost> = { normalAttack: 0, elementalSkill: 0, elementalBurst: 0 };
+  const character = charactersByID[id];
+  if (!character || constellation <= 0) return boost;
+  const talents: Array<[TalentKey, string]> = [
+    ["normalAttack", foldVi(character.normalAttack.name ?? "")],
+    ["elementalSkill", foldVi(character.elementalSkill.name ?? "")],
+    ["elementalBurst", foldVi(character.elementalBurst.name ?? "")],
+  ];
+  for (const entry of character.constellations) {
+    if (entry.level > constellation) continue;
+    const match = /cap ky nang\s+(.+?)\s*\+\s*(\d+)/i.exec(foldVi(entry.description));
+    if (!match) continue;
+    const named = match[1].trim();
+    const target = talents.find(([, name]) => name && (name.includes(named) || named.includes(name)));
+    if (target) boost[target[0]] += Number(match[2]);
+  }
+  return boost;
+}
+
+function buildProfile(id: string, boost: TalentBoost = {}): CharacterProfile {
   const character = charactersByID[id];
   const element = character?.element ?? "Pyro";
   const weaponType = character?.weaponType ?? "Sword";
@@ -117,23 +142,23 @@ function buildProfile(id: string): CharacterProfile {
   const infused = kit?.attack?.infused === true || weaponType === "Catalyst";
   const attacksApply = infused || weaponType === "Bow";
 
-  const skillAbility = resolveSlot(id, "skill", kit?.hits?.skill, true, {
+  const skillAbility = resolveSlot(id, "skill", kit?.hits?.skill, true, boost, {
     count: kit?.hits?.skill ? 0 : eventCount(kit?.energy?.eventsPerCast),
     event: reading.event,
   });
-  const burstAbility = resolveSlot(id, "burst", kit?.hits?.burst, true);
+  const burstAbility = resolveSlot(id, "burst", kit?.hits?.burst, true, boost);
   const skillText = character?.elementalSkill.description ?? "";
   const burstText = character?.elementalBurst.description ?? "";
   const skillSplit = skillAbility.ticks.length > 0 ? skillAbility : splitContinuous(skillAbility.cast, skillText);
   const burstSplit = burstAbility.ticks.length > 0 ? burstAbility : splitContinuous(burstAbility.cast, burstText);
   const slots = {
-    combo: resolveSlot(id, "combo", kit?.hits?.combo, attacksApply && weaponType !== "Bow").cast,
-    charged: resolveSlot(id, "charged", kit?.hits?.charged, attacksApply).cast,
+    combo: resolveSlot(id, "combo", kit?.hits?.combo, attacksApply && weaponType !== "Bow", boost).cast,
+    charged: resolveSlot(id, "charged", kit?.hits?.charged, attacksApply, boost).cast,
     skill: markAoe(skillSplit.cast, skillText),
     burst: markAoe(burstSplit.cast, burstText),
   };
-  const skillSustain = sustainOf(skillSplit.ticks, skillText, durationOf(skillBlock), kit?.energy?.note ?? "", eventCount(kit?.energy?.eventsPerCast));
-  const burstSustain = sustainOf(burstSplit.ticks, burstText, durationOf(burstBlock), "", 0);
+  const skillSustain = sustainOf(skillSplit.ticks, skillText, durationOf(skillBlock, boost.elementalSkill ?? 0), kit?.energy?.note ?? "", eventCount(kit?.energy?.eventsPerCast));
+  const burstSustain = sustainOf(burstSplit.ticks, burstText, durationOf(burstBlock, boost.elementalBurst ?? 0), "", 0);
 
   const hasHitKit = Boolean(kit?.hits && (kit.hits.skill || kit.hits.burst || kit.hits.combo || kit.hits.charged));
   const particles =
@@ -157,7 +182,7 @@ function buildProfile(id: string): CharacterProfile {
     skillCooldown: cooldown > 0 ? cooldown : ROTATION_SECONDS,
     burstCooldown: burstBlock?.cooldown || ROTATION_SECONDS,
     burstCost: burstBlock?.energyCost || 0,
-    burstDuration: durationOf(burstBlock),
+    burstDuration: durationOf(burstBlock, boost.elementalBurst ?? 0),
     particles,
     particlesToField: kit?.energy?.collectedBy === "field",
     maxSkillCasts,
@@ -171,7 +196,7 @@ function buildProfile(id: string): CharacterProfile {
     fallback: !hasHitKit,
     infused,
     loop,
-    partyBuff: partyBuffOf(id, kit?.buffs),
+    partyBuff: partyBuffOf(id, kit?.buffs, boost),
     tags: kit?.tags ?? [],
   };
 }
@@ -179,23 +204,24 @@ function buildProfile(id: string): CharacterProfile {
 function partyBuffOf(
   id: string,
   buffs: Array<{ scope?: string; kind?: string; talent?: TalentKey; label?: string }> | undefined,
+  boost: TalentBoost = {},
 ): { ratio: number; duration: number } | null {
   const buff = buffs?.find((item) => item.scope === "party" && item.kind === "flat-atk-from-base-atk" && item.label);
   if (!buff?.label || !buff.talent) return null;
   const block = characterTalent(id)?.[buff.talent];
   const line = block?.lines.find((row) => cleanLabel(row.split("|")[0] ?? "") === buff.label);
   if (!line) return null;
-  const params = paramsAtTalentLevel(block);
+  const params = paramsAtTalentLevel(block, boost[buff.talent] ?? 0);
   const expr = line.split("|").slice(1).join("|");
   const ratio = firstParam(expr, params);
-  return { ratio, duration: durationOf(block) || 12 };
+  return { ratio, duration: durationOf(block, boost[buff.talent] ?? 0) || 12 };
 }
 
-function durationOf(block: { lines: string[]; params: number[][] } | undefined): number {
+function durationOf(block: { lines: string[]; params: number[][] } | undefined, boost = 0): number {
   if (!block) return 0;
   const line = block.lines.find((row) => /^duration\|/i.test(cleanLabel(row).split("|")[0] ?? "") || row.startsWith("Duration|"));
   if (!line) return 0;
-  const params = paramsAtTalentLevel(block);
+  const params = paramsAtTalentLevel(block, boost);
   const match = /\{param(\d+)/i.exec(line);
   if (!match) return 0;
   return params[Number(match[1]) - 1] ?? 0;
@@ -206,10 +232,11 @@ function resolveSlot(
   kind: HitKind,
   kitHits: KitHit[] | undefined,
   appliesElement: boolean,
+  boost: TalentBoost,
   events?: { count: number; event: string },
 ): { cast: HitTemplate[]; ticks: HitTemplate[] } {
-  if (kitHits) return { cast: kitHits.flatMap((hit) => hitFromKit(id, kind, hit, appliesElement)), ticks: [] };
-  return fallbackSlot(id, kind, appliesElement, events);
+  if (kitHits) return { cast: kitHits.flatMap((hit) => hitFromKit(id, kind, hit, appliesElement, boost)), ticks: [] };
+  return fallbackSlot(id, kind, appliesElement, boost, events);
 }
 
 function eventCount(value: number | undefined): number {
@@ -217,16 +244,16 @@ function eventCount(value: number | undefined): number {
   return value;
 }
 
-function hitFromKit(id: string, kind: HitKind, hit: KitHit, appliesElement: boolean): HitTemplate[] {
+function hitFromKit(id: string, kind: HitKind, hit: KitHit, appliesElement: boolean, boost: TalentBoost): HitTemplate[] {
   const talentKey = hit.talent ?? SLOT_TALENT[hit.category === "normal" ? "combo" : hit.category === "charged" ? "charged" : kind];
   const block = characterTalent(id)?.[talentKey];
-  const params = paramsAtTalentLevel(block);
+  const params = paramsAtTalentLevel(block, boost[talentKey] ?? 0);
   const count = hit.count ?? 1;
   let motion = 0;
   let basis: Basis = hit.basis ?? "ATK";
   if (hit.factor) {
     const factorBlock = characterTalent(id)?.[hit.factor.talent];
-    motion = (paramsAtTalentLevel(factorBlock)[hit.factor.param - 1] ?? 0) * (hit.param ? (params[hit.param - 1] ?? 1) : 1);
+    motion = (paramsAtTalentLevel(factorBlock, boost[hit.factor.talent] ?? 0)[hit.factor.param - 1] ?? 0) * (hit.param ? (params[hit.param - 1] ?? 1) : 1);
   } else if (hit.param) {
     motion = params[hit.param - 1] ?? 0;
   } else if (hit.label && block) {
@@ -257,12 +284,13 @@ function fallbackSlot(
   id: string,
   kind: HitKind,
   appliesElement: boolean,
+  boost: TalentBoost,
   events?: { count: number; event: string },
 ): { cast: HitTemplate[]; ticks: HitTemplate[] } {
   const talentKey = SLOT_TALENT[kind];
   const block = characterTalent(id)?.[talentKey];
   if (!block) return { cast: [], ticks: [] };
-  const params = paramsAtTalentLevel(block);
+  const params = paramsAtTalentLevel(block, boost[talentKey] ?? 0);
   let rows = block.lines
     .map((row) => ({ raw: row, label: cleanLabel(row.split("|")[0] ?? "") }))
     .filter((row) => isDamageLabel(row.label));

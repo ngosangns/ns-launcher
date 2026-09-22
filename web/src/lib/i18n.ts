@@ -62,7 +62,7 @@ type Copy = {
   abyssEmpty: string;
   abyssBlessing: string;
   abyssLeyLine: string;
-  abyssRecommendation: string;
+
   abyssChamber: string;
   abyssWave: string;
   abyssLevel: string;
@@ -131,6 +131,8 @@ type Copy = {
 
   abyssNoResultsHint: string;
   abyssHalfPlanNotice: string;
+  abyssStaleResult: string;
+  abyssMainStats: string;
   abyssClearApprox: string;
 };
 
@@ -177,7 +179,7 @@ const vi: Copy = {
   abyssEmpty: "Không có mục nào khớp.",
   abyssBlessing: "Uyên Nguyệt Chúc Phúc",
   abyssLeyLine: "Ley Line Disorder",
-  abyssRecommendation: "Gợi ý",
+
   abyssChamber: "Phòng",
   abyssWave: "Đợt",
   abyssLevel: "Cấp",
@@ -249,6 +251,8 @@ const vi: Copy = {
 
   abyssNoResultsHint: 'Bấm "Tìm đội hình" để bắt đầu.',
   abyssHalfPlanNotice: "Tầng 12 là hai lượt đánh. Mỗi phương án gồm một đội cho mỗi nửa, không ai đứng cả hai.",
+  abyssStaleResult: 'Kết quả từ lần tính trước — roster hoặc mùa đã đổi, bấm "Tìm đội hình" để tính lại.',
+  abyssMainStats: "Chỉ số chính (Cát · Ly · Nón)",
   abyssClearApprox: "≈ để dọn",
 };
 
@@ -295,7 +299,7 @@ const en: Copy = {
   abyssEmpty: "Nothing matches.",
   abyssBlessing: "Blessing of the Abyssal Moon",
   abyssLeyLine: "Ley Line Disorder",
-  abyssRecommendation: "Recommendation",
+
   abyssChamber: "Chamber",
   abyssWave: "Wave",
   abyssLevel: "Lv.",
@@ -367,6 +371,8 @@ const en: Copy = {
 
   abyssNoResultsHint: 'Press "Find teams" to search.',
   abyssHalfPlanNotice: "Floor 12 is two fights. Each plan is a team for each half, with nobody in both.",
+  abyssStaleResult: 'Saved result from an earlier run — the roster or cycle changed, press "Find teams" to recompute.',
+  abyssMainStats: "Main stats (Sands · Goblet · Circlet)",
   abyssClearApprox: "≈ to clear",
 };
 

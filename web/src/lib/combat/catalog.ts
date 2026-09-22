@@ -80,6 +80,10 @@ type Tuning = {
   };
   noSustainPenalty: number;
   enemyOwnElementResistance: number;
+  weaknessExploitBonus: number;
+  shieldBreakBonus: number;
+  shockwaveDamage: number;
+  stellarConductRamp: number;
 };
 
 const talents = talentParamsJson as {
@@ -114,9 +118,9 @@ export function characterTalent(id: string): (typeof talents.characters)[string]
   return talents.characters[id];
 }
 
-export function paramsAtTalentLevel(block: TalentBlock | undefined): number[] {
+export function paramsAtTalentLevel(block: TalentBlock | undefined, boost = 0): number[] {
   if (!block) return [];
-  return block.params[TALENT_LEVEL - 1] ?? block.params[block.params.length - 1] ?? [];
+  return block.params[TALENT_LEVEL - 1 + boost] ?? block.params[block.params.length - 1] ?? [];
 }
 
 export function gaugeTable(id: string): Record<string, GaugeHit[]> {

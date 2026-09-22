@@ -15,7 +15,7 @@ import {
   WEAPON_TYPES,
   weaponTypeName,
 } from "../../lib/abyss";
-import { formatDateRange, formatHP } from "../../lib/format";
+import { formatDateRange, formatHP, formatStatValue } from "../../lib/format";
 import { fetchHoyolabRoster } from "../../lib/hoyolab";
 import { t, type Lang } from "../../lib/i18n";
 import {
@@ -30,7 +30,15 @@ import {
   toggleWeapon,
   type Roster,
 } from "../../lib/roster";
-import { clearSeconds, findTeams, type PlannedPlan, type PlannedTeam, type PlannerOutput } from "../../lib/planner";
+import {
+  clearSeconds,
+  findTeams,
+  type MemberBuild,
+  type PlannedPlan,
+  type PlannedTeam,
+  type PlannerOutput,
+} from "../../lib/planner";
+import { loadPlans, plansInputKey, savePlans } from "../../lib/plans";
 import { foldVi } from "../../lib/slug";
 import { navigate } from "../../router";
 import { KeepAlive } from "../../components/KeepAlive";
@@ -40,6 +48,7 @@ import {
   CharacterPreviewBody,
   WeaponPreviewBody,
   createCatalogPreview,
+  finePointer,
 } from "./CatalogPages";
 import { FloorMonsters } from "./MonsterList";
 
@@ -93,11 +102,21 @@ export function PlannerPage(props: { lang: Lang; section: string }) {
   const [ltoken, setLtoken] = createSignal("");
   const [status, setStatus] = createSignal<string | null>(null);
   const [busy, setBusy] = createSignal(false);
-  const [output, setOutput] = createSignal<PlannerOutput | null>(null);
+  const savedPlans = loadPlans();
+  const [output, setOutput] = createSignal<PlannerOutput | null>(savedPlans?.output ?? null);
+  const [computedInput, setComputedInput] = createSignal<string | null>(savedPlans?.input ?? null);
   let fileRef: HTMLInputElement | undefined;
   const cycle = currentCycle();
   const blessing = cycle.blessingOfTheAbyssalMoon;
   const floor12 = floor12Of(cycle);
+  const inputKey = () =>
+    plansInputKey({
+      roster: roster(),
+      fullCharacters: fullCharacters(),
+      fullWeapons: fullWeapons(),
+      cycleId: cycle.fileId,
+    });
+  const stale = () => output() != null && computedInput() !== inputKey();
 
   const update = (next: Roster) => {
     setRoster(next);
@@ -142,6 +161,14 @@ export function PlannerPage(props: { lang: Lang; section: string }) {
     setStatus(null);
     window.setTimeout(() => {
       const result = findTeams(current, { fullCharacters: fullC, fullWeapons: fullW });
+      const input = plansInputKey({
+        roster: current,
+        fullCharacters: fullC,
+        fullWeapons: fullW,
+        cycleId: cycle.fileId,
+      });
+      setComputedInput(input);
+      savePlans(input, result);
       setOutput(result);
       setBusy(false);
       if (result.plans.length === 0) setStatus(hint);
@@ -422,7 +449,7 @@ export function PlannerPage(props: { lang: Lang; section: string }) {
           </Show>
         </KeepAlive>
         <KeepAlive active={props.section === "team"}>
-          <Results lang={props.lang} output={output()} />
+          <Results lang={props.lang} output={output()} stale={stale()} />
         </KeepAlive>
       </div>
     </div>
@@ -485,31 +512,123 @@ function compareRoster(
   return a.name.localeCompare(b.name, "en");
 }
 
-function Results(props: { lang: Lang; output: PlannerOutput | null }) {
+function Results(props: { lang: Lang; output: PlannerOutput | null; stale: boolean }) {
   const text = () => t(props.lang);
+  const membersByKey = createMemo(() => {
+    const map = new Map<string, MemberBuild>();
+    props.output?.plans.forEach((plan, pi) => {
+      plan.half1.members.forEach((member, mi) => map.set(`${pi}-1-${mi}`, member));
+      plan.half2.members.forEach((member, mi) => map.set(`${pi}-2-${mi}`, member));
+    });
+    return map;
+  });
+  const preview = createCatalogPreview(() => [...membersByKey().keys()]);
   return (
-    <Show when={props.output} fallback={<p class="empty">{text().abyssNoResultsHint}</p>}>
-      {(output) => (
-        <Show when={output().plans.length > 0} fallback={<p class="empty">{text().abyssEmpty}</p>}>
-          <p class="notice">{text().abyssHalfPlanNotice}</p>
-          <Show when={output().recommendation}>
-            <aside class="callout turning">
-              <span class="callout-bar" />
-              <div class="callout-body">{output().recommendation}</div>
-            </aside>
+    <div ref={preview.bindRoot}>
+      <Show when={props.output} fallback={<p class="empty">{text().abyssNoResultsHint}</p>}>
+        {(output) => (
+          <Show when={output().plans.length > 0} fallback={<p class="empty">{text().abyssEmpty}</p>}>
+            <p class="notice">{text().abyssHalfPlanNotice}</p>
+            <Show when={props.stale}>
+              <p class="notice">{text().abyssStaleResult}</p>
+            </Show>
+            <For each={output().plans}>
+              {(plan, index) => (
+                <PlanCard
+                  rank={index() + 1}
+                  plan={plan}
+                  lang={props.lang}
+                  half1={output().half1Text}
+                  half2={output().half2Text}
+                  planIndex={index()}
+                  preview={preview}
+                />
+              )}
+            </For>
           </Show>
-          <For each={output().plans}>
-            {(plan, index) => (
-              <PlanCard
-                rank={index() + 1}
-                plan={plan}
-                lang={props.lang}
-                half1={output().half1Text}
-                half2={output().half2Text}
-              />
-            )}
-          </For>
+        )}
+      </Show>
+      <div
+        id="team-build-preview"
+        popover="manual"
+        class="catalog-popover"
+        ref={preview.bindPopover}
+        aria-labelledby="build-preview-name"
+        onPointerEnter={preview.hold}
+        onPointerLeave={preview.release}
+      >
+        <Show when={preview.openId()} keyed>
+          {(key) => {
+            const member = membersByKey().get(key);
+            return member ? <BuildPreviewBody lang={props.lang} member={member} /> : null;
+          }}
         </Show>
+      </div>
+    </div>
+  );
+}
+
+function BuildPreviewBody(props: { lang: Lang; member: MemberBuild }) {
+  const text = () => t(props.lang);
+  const character = () => charactersByID[props.member.characterId];
+  const weapon = () => (props.member.weaponId ? weaponsByID[props.member.weaponId] : undefined);
+  const set = () => (props.member.artifactSetId ? artifactSetsByID[props.member.artifactSetId] : undefined);
+  const piece = (value: { description: string; descriptionVI?: string }) =>
+    props.lang === "vi" ? value.descriptionVI ?? value.description : value.description;
+  return (
+    <Show when={character()} keyed>
+      {(c) => (
+        <article>
+          <header class="catalog-preview-head">
+            <Portrait kind="characters" id={c.id} alt="" />
+            <div>
+              <h2 id="build-preview-name">
+                <a href={`/abyss/characters/${c.id}`}>{props.lang === "vi" ? c.nameVI ?? c.name : c.name}</a>
+              </h2>
+              <p class="meta">
+                <ElementBadge element={c.element} />
+                {` ${weaponTypeName(c.weaponType, props.lang)} · ${props.member.role}`}
+                {props.member.constellation ? ` · C${props.member.constellation}` : ""}
+              </p>
+            </div>
+          </header>
+          <Show when={weapon()} keyed>
+            {(w) => (
+              <>
+                <h3>{text().abyssWeapons}</h3>
+                <p>
+                  <a href={`/abyss/weapons/${w.id}`}>{props.lang === "vi" ? w.nameVI ?? w.name : w.name}</a>
+                  {props.member.refinement != null ? ` R${props.member.refinement}` : ""}
+                  {w.subStat.type
+                    ? ` · ${w.subStat.type} ${formatStatValue(w.subStat.type, w.subStat.valueLv90)}`
+                    : ""}
+                </p>
+                <Show when={w.passive?.name} keyed>
+                  {(name) => <p class="meta">{name}</p>}
+                </Show>
+              </>
+            )}
+          </Show>
+          <h3>{text().abyssArtifacts}</h3>
+          <Show when={props.member.artifactMains} keyed>
+            {(mains) => (
+              <p class="meta">
+                {text().abyssMainStats}: {mains.sands} · {mains.goblet} · {mains.circlet}
+              </p>
+            )}
+          </Show>
+          <Show when={set()} keyed>
+            {(s) => (
+              <>
+                <p>
+                  <a href={`/abyss/artifacts/${s.id}`}>{props.lang === "vi" ? s.nameVI ?? s.name : s.name}</a>
+                </p>
+                <p class="meta">{`2: ${piece(s.twoPiece)}`}</p>
+                <p class="meta">{`4: ${piece(s.fourPiece)}`}</p>
+              </>
+            )}
+          </Show>
+        </article>
       )}
     </Show>
   );
@@ -521,6 +640,8 @@ function PlanCard(props: {
   lang: Lang;
   half1?: string;
   half2?: string;
+  planIndex: number;
+  preview: ReturnType<typeof createCatalogPreview>;
 }) {
   const text = () => t(props.lang);
   const totalHP = () =>
@@ -540,8 +661,8 @@ function PlanCard(props: {
         </span>
       </div>
       <div class="team-halves">
-        <HalfTeam title={text().abyssHalf1} hint={props.half1} team={props.plan.half1} hp={props.plan.firstHalfHP} lang={props.lang} />
-        <HalfTeam title={text().abyssHalf2} hint={props.half2} team={props.plan.half2} hp={props.plan.secondHalfHP} lang={props.lang} />
+        <HalfTeam title={text().abyssHalf1} hint={props.half1} team={props.plan.half1} hp={props.plan.firstHalfHP} lang={props.lang} prefix={`${props.planIndex}-1`} preview={props.preview} />
+        <HalfTeam title={text().abyssHalf2} hint={props.half2} team={props.plan.half2} hp={props.plan.secondHalfHP} lang={props.lang} prefix={`${props.planIndex}-2`} preview={props.preview} />
       </div>
     </section>
   );
@@ -553,6 +674,8 @@ function HalfTeam(props: {
   team: PlannedPlan["half1"];
   hp: number | null;
   lang: Lang;
+  prefix: string;
+  preview: ReturnType<typeof createCatalogPreview>;
 }) {
   const text = () => t(props.lang);
   const time = () => clearSeconds(props.hp, props.team.score);
@@ -591,13 +714,30 @@ function HalfTeam(props: {
       </Show>
       <div class="catalog">
         <For each={props.team.members}>
-          {(member) => {
+          {(member, mi) => {
             const character = charactersByID[member.characterId];
             const weapon = member.weaponId ? weaponsByID[member.weaponId] : undefined;
             const set = member.artifactSetId ? artifactSetsByID[member.artifactSetId] : undefined;
             if (!character) return null;
+            const key = `${props.prefix}-${mi()}`;
+            const trigger = props.preview.triggers(key);
             return (
-              <a href={`/abyss/characters/${character.id}`} class="tile" data-rarity={character.rarity}>
+              <a
+                href={`/abyss/characters/${character.id}`}
+                class="tile"
+                classList={{ "is-preview": props.preview.openId() === key }}
+                data-rarity={character.rarity}
+                aria-expanded={props.preview.openId() === key ? "true" : "false"}
+                aria-controls="team-build-preview"
+                onPointerEnter={trigger.onPointerEnter}
+                onPointerLeave={trigger.onPointerLeave}
+                onFocus={trigger.onFocus}
+                onBlur={trigger.onBlur}
+                onClick={(event) => {
+                  if (!finePointer()) event.preventDefault();
+                  trigger.onClick(event);
+                }}
+              >
                 <Portrait kind="characters" id={character.id} alt={character.name} />
                 <span class="tile-copy">
                   <strong>{props.lang === "vi" ? character.nameVI ?? character.name : character.name}</strong>

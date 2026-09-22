@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { computeDynamicSecret, parseHoyolabCredential, pickGameRole } from "./hoyolab";
 import { md5 } from "./md5";
-import { findTeams } from "./planner";
+import { findTeams, roleOf } from "./planner";
+import { artifactMains } from "./combat/sheet";
+import { charactersByID } from "./abyss";
 import { parseRoster } from "./roster";
 import rosterExample from "../../../Tests/NSLauncherAppTests/Fixtures/roster.example.json";
 
@@ -56,5 +58,57 @@ describe("findTeams", () => {
       fullWeapons: true,
     });
     expect(output.plans.length).toBeGreaterThan(0);
+  });
+
+  it("attaches artifact main-stat advice to every planned member", () => {
+    const output = findTeams(parseRoster({ characters: [], weapons: [] }), {
+      fullCharacters: true,
+      fullWeapons: true,
+    });
+    const members = output.plans.flatMap((plan) => [...plan.half1.members, ...plan.half2.members]);
+    expect(members.length).toBeGreaterThan(0);
+    for (const member of members) {
+      expect(member.artifactMains?.sands).toBeTruthy();
+      expect(member.artifactMains?.goblet).toBeTruthy();
+      expect(member.artifactMains?.circlet).toBeTruthy();
+    }
+  });
+});
+
+describe("roleOf", () => {
+  // Regression: sustain words inside "cần …"/"combo phổ biến" clauses describe
+  // teammates, so on-field carries used to be misread as shielders/healers.
+  it.each([
+    ["yoimiya", "dps"],
+    ["xiao", "dps"],
+    ["sandrone", "dps"],
+    ["eula", "dps"],
+    ["furina", "support"],
+    ["charlotte", "healer"],
+    ["zhongli", "shield"],
+    ["kuki-shinobu", "healer"],
+  ])("%s is %s", (id, expected) => {
+    const character = charactersByID[id];
+    expect(character, id).toBeTruthy();
+    expect(roleOf(character)).toBe(expected);
+  });
+});
+
+describe("artifactMains", () => {
+  it("recommends ER + elemental DMG + CRIT for a burst-reliant support", () => {
+    const mains = artifactMains("xingqiu", "support");
+    expect(mains.sands).toBe("ER");
+    expect(mains.goblet).toBe("Hydro DMG");
+    expect(mains.circlet).toBe("CRIT Rate");
+  });
+
+  it("recommends full EM for Anemo supports (swirl drivers)", () => {
+    expect(artifactMains("sucrose", "support")).toEqual({ sands: "EM", goblet: "EM", circlet: "EM" });
+  });
+
+  it("recommends healing builds for healers", () => {
+    const mains = artifactMains("sangonomiya-kokomi", "healer");
+    expect(mains.circlet).toBe("Healing Bonus");
+    expect(mains.goblet).toBe("HP%");
   });
 });
