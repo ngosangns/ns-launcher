@@ -1,6 +1,6 @@
 # Ký Sự Teyvat
 
-Trang web cho cốt truyện và La Hoàn: đọc chương truyện, tra cứu nhân vật/vũ
+Trang SolidJS cho cốt truyện và La Hoàn: đọc chương truyện, tra cứu nhân vật/vũ
 khí/thánh di vật, xem chu kỳ Trầm Thủy, và ghép đội theo Ley Line. App macOS
 không còn hai màn này.
 
@@ -16,7 +16,7 @@ vật; 2 chu kỳ quái; cộng hưởng / Nguyệt Triệu / Hexerei / Nightsou
 công thức sát thương trong `damage-formula.json`.
 
 Trang **Đội hình**: roster (đánh dấu sở hữu, cung mệnh, tinh luyện, nhập/xuất
-JSON), nhập UID qua Enka, nhập full roster HoYoLAB, và **Tìm đội hình** cho
+JSON), nhập roster HoYoLAB bằng token, và **Tìm đội hình** cho
 tầng 12 (hai nửa, không trùng người/vũ khí, gán thánh di vật, cộng hưởng,
 thời gian dọn ước lượng).
 
@@ -26,10 +26,10 @@ thời gian dọn ước lượng).
 
 ## Theme & chữ
 
-Nền đêm/vàng của launcher (`LauncherTheme`). Chữ:
+Bàn màu lá thông, thanh điều hướng vải đậm, trang đọc là một tờ giấy. Màu nguyên tố chỉ xuất hiện trên dữ liệu nhân vật và kháng quái. Token nằm trong `web/src/styles.css`.
 
-- **Be Vietnam Pro** — UI, được thiết kế cho tiếng Việt
-- **Source Serif 4** — thân bài cốt truyện, subset tiếng Việt trên Google Fonts
+- **Be Vietnam Pro** — UI
+- **Newsreader** — tên trang và thân bài cốt truyện
 
 ## Chạy
 
@@ -48,6 +48,8 @@ npm run preview
 ```
 
 `task web` từ thư mục gốc repo cũng chạy `npm run dev`.
+
+Điều hướng nằm trong app (`web/src/router.ts`): click cùng origin đổi URL bằng History API, không tải lại trang. Home, Cốt truyện và La Hoàn (kể cả từng mục La Hoàn) giữ nguyên trong DOM và crossfade trong `.stage`, nên scroll, roster và kết quả tìm đội còn khi đổi tab.
 
 ## Deploy
 

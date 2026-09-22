@@ -1,3 +1,4 @@
+import { For, Match, Switch } from "solid-js";
 import { InlineMarkdown } from "../components/InlineMarkdown";
 import type { StoryBlock, StoryCalloutKind } from "../lib/markdown";
 import { t, type Lang } from "../lib/i18n";
@@ -8,82 +9,95 @@ function calloutClass(kind: StoryCalloutKind): string {
   return "note";
 }
 
-export function StoryBlocks({ blocks, lang }: { blocks: StoryBlock[]; lang: Lang }) {
-  const copy = t(lang);
+function Block(props: { block: StoryBlock; lang: Lang }) {
+  const text = () => t(props.lang);
   return (
-    <div className="story-body">
-      {blocks.map((block, index) => {
-        if (block.type === "paragraph") {
-          return (
-            <p key={index}>
-              <InlineMarkdown text={block.markdown} />
-            </p>
-          );
-        }
-        if (block.type === "callout") {
-          const label =
-            block.kind === "turningPoint"
-              ? copy.turningPoint
-              : block.kind === "openMystery"
-                ? copy.openMystery
-                : copy.note;
-          return (
-            <aside key={index} className={`callout ${calloutClass(block.kind)}`}>
-              <span className="callout-bar" />
-              <div className="callout-body">
-                <span className="visually-hidden">{label}. </span>
-                <InlineMarkdown text={block.markdown} />
-              </div>
-            </aside>
-          );
-        }
-        if (block.type === "table") {
-          return (
-            <div key={index} className="md-table-wrap">
-              <table className="md-table">
-                <thead>
-                  <tr>
-                    {block.headers.map((header) => (
-                      <th key={header}>
+    <Switch>
+      <Match when={props.block.type === "paragraph" ? props.block : undefined}>
+        {(block) => (
+          <p>
+            <InlineMarkdown text={block().markdown} />
+          </p>
+        )}
+      </Match>
+      <Match when={props.block.type === "callout" ? props.block : undefined}>
+        {(block) => (
+          <aside class={`callout ${calloutClass(block().kind)}`}>
+            <span class="callout-bar" />
+            <div class="callout-body">
+              <span class="visually-hidden">
+                {block().kind === "turningPoint"
+                  ? text().turningPoint
+                  : block().kind === "openMystery"
+                    ? text().openMystery
+                    : text().note}
+                .{" "}
+              </span>
+              <InlineMarkdown text={block().markdown} />
+            </div>
+          </aside>
+        )}
+      </Match>
+      <Match when={props.block.type === "table" ? props.block : undefined}>
+        {(block) => (
+          <div class="md-table-wrap">
+            <table class="md-table">
+              <thead>
+                <tr>
+                  <For each={block().headers}>
+                    {(header) => (
+                      <th>
                         <InlineMarkdown text={header} />
                       </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {block.rows.map((row, rowIndex) => (
-                    <tr key={rowIndex}>
-                      {row.map((cell, cellIndex) => (
-                        <td key={cellIndex}>
-                          <InlineMarkdown text={cell} />
-                        </td>
-                      ))}
+                    )}
+                  </For>
+                </tr>
+              </thead>
+              <tbody>
+                <For each={block().rows}>
+                  {(row) => (
+                    <tr>
+                      <For each={row}>
+                        {(cell) => (
+                          <td>
+                            <InlineMarkdown text={cell} />
+                          </td>
+                        )}
+                      </For>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          );
-        }
-        if (block.type === "list") {
-          return (
-            <ul key={index} className="bullet-list">
-              {block.items.map((item, itemIndex) => (
-                <li key={itemIndex}>
+                  )}
+                </For>
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Match>
+      <Match when={props.block.type === "list" ? props.block : undefined}>
+        {(block) => (
+          <ul class="bullet-list">
+            <For each={block().items}>
+              {(item) => (
+                <li>
                   <span>
                     <InlineMarkdown text={item} />
                   </span>
                 </li>
-              ))}
-            </ul>
-          );
-        }
-        return (
-          <pre key={index} className="tree-block">
-            {block.lines.join("\n")}
-          </pre>
-        );
-      })}
+              )}
+            </For>
+          </ul>
+        )}
+      </Match>
+      <Match when={props.block.type === "tree" ? props.block : undefined}>
+        {(block) => <pre class="tree-block">{block().lines.join("\n")}</pre>}
+      </Match>
+    </Switch>
+  );
+}
+
+export function StoryBlocks(props: { blocks: StoryBlock[]; lang: Lang }) {
+  return (
+    <div class="story-body">
+      <For each={props.blocks}>{(block) => <Block block={block} lang={props.lang} />}</For>
     </div>
   );
 }

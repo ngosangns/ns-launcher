@@ -1,16 +1,11 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+import { render } from "solid-js/web";
 import { App } from "./App";
 import { readLang } from "./lib/i18n";
+import { startRouter } from "./router";
 import "./styles.css";
 
 document.documentElement.lang = readLang() === "en" ? "en" : "vi";
+startRouter();
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </StrictMode>,
-);
+const root = document.getElementById("root");
+if (root) render(() => <App />, root);

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, type ReactNode } from "react";
+import { onCleanup, onMount, type JSX } from "solid-js";
 
 type Box = { x: number; y: number; w: number; h: number };
 
@@ -19,82 +19,78 @@ function readBox(root: HTMLElement): Box | null {
  * Pill that slides between the active tab. Geometry is written on the indicator
  * so a re-render does not restart the CSS transition.
  */
-export function Segmented({
-  children,
-  className = "",
-  label,
-  nav = false,
-}: {
-  children: ReactNode;
-  className?: string;
-  label?: string;
-  nav?: boolean;
-}) {
-  const ref = useRef<HTMLElement | null>(null);
-  const indicatorRef = useRef<HTMLSpanElement | null>(null);
-  const boxRef = useRef<Box | null>(null);
-  const readyRef = useRef(false);
-  const applyRef = useRef<() => void>(() => {});
+export function Segmented(props: { children?: JSX.Element; class?: string; label?: string; nav?: boolean }) {
+  let root: HTMLElement | undefined;
+  let indicator: HTMLSpanElement | undefined;
+  let box: Box | null = null;
+  let ready = false;
 
-  useLayoutEffect(() => {
-    const root = ref.current;
-    const indicator = indicatorRef.current;
-    if (!root || !indicator) return;
+  onMount(() => {
+    const host = root;
+    const pill = indicator;
+    if (!host || !pill) return;
 
     const apply = () => {
-      const next = readBox(root);
+      const next = readBox(host);
       if (!next) return;
-      const prev = boxRef.current;
+      const prev = box;
       if (prev && prev.x === next.x && prev.y === next.y && prev.w === next.w && prev.h === next.h) return;
-      boxRef.current = next;
-      const snap = !readyRef.current;
-      if (snap) indicator.style.transition = "none";
-      indicator.style.opacity = "1";
-      indicator.style.width = `${next.w}px`;
-      indicator.style.height = `${next.h}px`;
-      indicator.style.transform = `translate3d(${next.x}px, ${next.y}px, 0)`;
+      box = next;
+      const snap = !ready;
+      if (snap) pill.style.transition = "none";
+      pill.style.opacity = "1";
+      pill.style.width = `${next.w}px`;
+      pill.style.height = `${next.h}px`;
+      pill.style.transform = `translate3d(${next.x}px, ${next.y}px, 0)`;
       if (snap) {
-        void indicator.offsetWidth;
-        indicator.style.transition = "";
-        readyRef.current = true;
+        void pill.offsetWidth;
+        pill.style.transition = "";
+        ready = true;
       }
     };
 
-    applyRef.current = apply;
-    apply();
-  });
+    const watchChildren = () => {
+      resize.disconnect();
+      resize.observe(host);
+      for (const child of host.children) {
+        if (child instanceof HTMLElement && !child.classList.contains("tab-indicator")) resize.observe(child);
+      }
+    };
 
-  useLayoutEffect(() => {
-    const root = ref.current;
-    if (!root) return;
-    const onResize = () => applyRef.current();
-    const observer = new ResizeObserver(onResize);
-    observer.observe(root);
-    for (const child of root.children) {
-      if (child instanceof HTMLElement && !child.classList.contains("tab-indicator")) observer.observe(child);
-    }
+    const resize = new ResizeObserver(() => apply());
+    const mutations = new MutationObserver(() => {
+      watchChildren();
+      apply();
+    });
+    mutations.observe(host, { subtree: true, childList: true, attributes: true, attributeFilter: ["class"] });
+    watchChildren();
+    const onResize = () => apply();
     window.addEventListener("resize", onResize);
     void document.fonts?.ready.then(onResize);
-    return () => {
-      observer.disconnect();
+    apply();
+    onCleanup(() => {
+      mutations.disconnect();
+      resize.disconnect();
       window.removeEventListener("resize", onResize);
-    };
-  }, []);
+    });
+  });
 
-  const indicator = <span ref={indicatorRef} className="tab-indicator" aria-hidden="true" />;
-  const classes = `segmented ${className}`.trim();
-  if (nav) {
+  const classes = () => `segmented ${props.class ?? ""}`.trim();
+  const indicatorNode = (
+    <span ref={indicator} class="tab-indicator" aria-hidden="true" />
+  );
+  if (props.nav) {
     return (
-      <nav ref={(node) => { ref.current = node; }} className={classes} aria-label={label}>
-        {indicator}
-        {children}
+      <nav ref={(el) => (root = el)} class={classes()} aria-label={props.label}>
+        {indicatorNode}
+        {props.children}
       </nav>
     );
   }
   return (
-    <div ref={(node) => { ref.current = node; }} className={classes} role="group" aria-label={label}>
-      {indicator}
-      {children}
+    <div ref={(el) => (root = el)} class={classes()} role="group" aria-label={props.label}>
+      {indicatorNode}
+      {props.children}
     </div>
   );
 }

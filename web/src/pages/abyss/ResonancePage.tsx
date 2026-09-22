@@ -1,269 +1,274 @@
-import { Link } from "react-router-dom";
+import { For, Show } from "solid-js";
 import { charactersWithTag, damageFormula, teamBonus } from "../../lib/abyss";
 import { t, type Lang } from "../../lib/i18n";
+import { MathBlock } from "../../components/MathBlock";
 import { ElementBadge } from "../../components/ui";
+import { formulaTex } from "./formulaTex";
 
-function CoeffTable({ values }: { values: Record<string, number> }) {
+function CoeffTable(props: { values: Record<string, number> }) {
   return (
-    <div className="md-table-wrap">
-      <table className="md-table">
+    <div class="md-table-wrap">
+      <table class="md-table">
         <tbody>
-          {Object.entries(values).map(([key, value]) => (
-            <tr key={key}>
-              <td>{key}</td>
-              <td>{value}</td>
-            </tr>
-          ))}
+          <For each={Object.entries(props.values)}>
+            {([key, value]) => (
+              <tr>
+                <td>{key}</td>
+                <td>{value}</td>
+              </tr>
+            )}
+          </For>
         </tbody>
       </table>
     </div>
   );
 }
 
-function TaggedList({ tag, lang }: { tag: string; lang: Lang }) {
-  const copy = t(lang);
-  const list = charactersWithTag(tag);
-  if (list.length === 0) return null;
+function TaggedList(props: { tag: string; lang: Lang }) {
+  const text = () => t(props.lang);
+  const list = () => charactersWithTag(props.tag);
   return (
-    <p className="prose">
-      <strong>
-        {copy.taggedCharacters} ({list.length}):
-      </strong>{" "}
-      {list.map((character, index) => (
-        <span key={character.id}>
-          {index > 0 ? ", " : ""}
-          <Link to={`/abyss/characters/${character.id}`}>
-            {lang === "vi" ? character.nameVI ?? character.name : character.name}
-          </Link>
-        </span>
-      ))}
-    </p>
+    <Show when={list().length > 0}>
+      <p class="prose">
+        <strong>
+          {text().taggedCharacters} ({list().length}):
+        </strong>{" "}
+        <For each={list()}>
+          {(character, index) => (
+            <span>
+              {index() > 0 ? ", " : ""}
+              <a href={`/abyss/characters/${character.id}`}>
+                {props.lang === "vi" ? character.nameVI ?? character.name : character.name}
+              </a>
+            </span>
+          )}
+        </For>
+      </p>
+    </Show>
   );
 }
 
-export function ResonancePage({ lang }: { lang: Lang }) {
-  const copy = t(lang);
+export function ResonancePage(props: { lang: Lang }) {
+  const text = () => t(props.lang);
   const df = damageFormula;
   return (
     <>
-      <section className="panel" style={{ marginBottom: 16 }}>
-        <h2 style={{ marginTop: 0 }}>{copy.abyssResonance}</h2>
-        {teamBonus.elementalResonance.map((item) => (
-          <div key={item.id} className="constellation">
-            <div />
-            <div>
-              <strong>{lang === "vi" ? item.nameVI ?? item.name : item.name}</strong>
-              <div className="meta" style={{ margin: "4px 0" }}>
-                {item.elements.map((element) => (
-                  <ElementBadge key={element} element={element} />
-                ))}
-                {item.requiresUniqueElements
-                  ? ` · ${item.requiredCount} unique`
-                  : item.elements.length > 0
-                    ? ` ×${item.requiredCount}`
-                    : ""}
+      <section class="panel" style={{ "margin-bottom": "16px" }}>
+        <h2 style={{ "margin-top": "0" }}>{text().abyssResonance}</h2>
+        <For each={teamBonus.elementalResonance}>
+          {(item) => (
+            <div class="constellation">
+              <div />
+              <div>
+                <strong>{props.lang === "vi" ? item.nameVI ?? item.name : item.name}</strong>
+                <div class="meta" style={{ margin: "4px 0" }}>
+                  <For each={item.elements}>{(element) => <ElementBadge element={element} />}</For>
+                  {item.requiresUniqueElements
+                    ? ` · ${item.requiredCount} unique`
+                    : item.elements.length > 0
+                      ? ` ×${item.requiredCount}`
+                      : ""}
+                </div>
+                <p class="prose">{item.description}</p>
               </div>
-              <p className="prose">{item.description}</p>
             </div>
-          </div>
-        ))}
+          )}
+        </For>
       </section>
 
-      <section className="panel" style={{ marginBottom: 16 }}>
-        <h2 style={{ marginTop: 0 }}>Moonsign / Nguyệt Triệu</h2>
-        {teamBonus.moonsign.note && <p className="meta">{teamBonus.moonsign.note}</p>}
-        {teamBonus.moonsign.levels.map((level) => (
-          <p key={level.name} className="prose">
-            <strong>
-              {level.name} ({level.requiredCount}+).
-            </strong>{" "}
-            {level.description}
-          </p>
-        ))}
-        <TaggedList tag="moonsign" lang={lang} />
-        {teamBonus.moonsign.lunarReactionDmgBonusByElement && (
-          <>
-            <div className="section-title">{copy.lunarBonus}</div>
-            <div className="md-table-wrap">
-              <table className="md-table">
-                <thead>
-                  <tr>
-                    <th>Elements</th>
-                    <th>Stat</th>
-                    <th>Rate</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {teamBonus.moonsign.lunarReactionDmgBonusByElement.map((row) => (
-                    <tr key={row.elements.join(",")}>
-                      <td>{row.elements.join(", ")}</td>
+      <section class="panel" style={{ "margin-bottom": "16px" }}>
+        <h2 style={{ "margin-top": "0" }}>Moonsign / Nguyệt Triệu</h2>
+        {teamBonus.moonsign.note && <p class="meta">{teamBonus.moonsign.note}</p>}
+        <For each={teamBonus.moonsign.levels}>
+          {(level) => (
+            <p class="prose">
+              <strong>
+                {level.name} ({level.requiredCount}+).
+              </strong>{" "}
+              {level.description}
+            </p>
+          )}
+        </For>
+        <TaggedList tag="moonsign" lang={props.lang} />
+        <Show when={teamBonus.moonsign.lunarReactionDmgBonusByElement}>
+          <div class="section-title">{text().lunarBonus}</div>
+          <div class="md-table-wrap">
+            <table class="md-table">
+              <thead>
+                <tr>
+                  <th>Elements</th>
+                  <th>Stat</th>
+                  <th>Rate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <For each={teamBonus.moonsign.lunarReactionDmgBonusByElement ?? []}>
+                  {(row) => (
+                    <tr>
+                      <td class="element-list">
+                        <For each={row.elements}>{(element) => <ElementBadge element={element} />}</For>
+                      </td>
                       <td>{row.statBasis}</td>
                       <td>{row.note ?? row.ratePer100OrPer1000}</td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </>
-        )}
-        {teamBonus.moonsign.maxBuffThresholds && (
-          <>
-            <div className="section-title">{copy.lunarCap}</div>
-            <div className="md-table-wrap">
-              <table className="md-table">
-                <thead>
-                  <tr>
-                    <th>Elements</th>
-                    <th>Stat</th>
-                    <th>Cap</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {teamBonus.moonsign.maxBuffThresholds.map((row) => (
-                    <tr key={row.elements.join(",")}>
-                      <td>{row.elements.join(", ")}</td>
+                  )}
+                </For>
+              </tbody>
+            </table>
+          </div>
+        </Show>
+        <Show when={teamBonus.moonsign.maxBuffThresholds}>
+          <div class="section-title">{text().lunarCap}</div>
+          <div class="md-table-wrap">
+            <table class="md-table">
+              <thead>
+                <tr>
+                  <th>Elements</th>
+                  <th>Stat</th>
+                  <th>Cap</th>
+                </tr>
+              </thead>
+              <tbody>
+                <For each={teamBonus.moonsign.maxBuffThresholds ?? []}>
+                  {(row) => (
+                    <tr>
+                      <td class="element-list">
+                        <For each={row.elements}>{(element) => <ElementBadge element={element} />}</For>
+                      </td>
                       <td>{row.statBasis}</td>
                       <td>{row.thresholdValue}</td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </>
-        )}
+                  )}
+                </For>
+              </tbody>
+            </table>
+          </div>
+        </Show>
       </section>
 
-      <section className="panel" style={{ marginBottom: 16 }}>
-        <h2 style={{ marginTop: 0 }}>Hexerei</h2>
-        <p className="prose">{teamBonus.hexerei.description}</p>
-        {teamBonus.hexerei.requirement && <p className="meta">{teamBonus.hexerei.requirement}</p>}
-        <TaggedList tag="hexerei" lang={lang} />
+      <section class="panel" style={{ "margin-bottom": "16px" }}>
+        <h2 style={{ "margin-top": "0" }}>Hexerei</h2>
+        <p class="prose">{teamBonus.hexerei.description}</p>
+        {teamBonus.hexerei.requirement && <p class="meta">{teamBonus.hexerei.requirement}</p>}
+        <TaggedList tag="hexerei" lang={props.lang} />
       </section>
 
-      <section className="panel" style={{ marginBottom: 16 }}>
-        <h2 style={{ marginTop: 0 }}>Stellar Jubilee</h2>
-        <TaggedList tag="stellar-jubilee" lang={lang} />
+      <section class="panel" style={{ "margin-bottom": "16px" }}>
+        <h2 style={{ "margin-top": "0" }}>Stellar Jubilee</h2>
+        <TaggedList tag="stellar-jubilee" lang={props.lang} />
       </section>
 
-      <section className="panel" style={{ marginBottom: 16 }}>
-        <h2 style={{ marginTop: 0 }}>Nightsoul Burst</h2>
-        <p className="prose">{teamBonus.nightsoulBurst.description}</p>
-        <ul className="bullet-list">
-          {teamBonus.nightsoulBurst.intervalsByCount.map((row) => (
-            <li key={row.natlanCharacterCount}>
-              <span>
-                {row.natlanCharacterCount} Natlan · {row.intervalSeconds}s
-              </span>
-            </li>
-          ))}
+      <section class="panel" style={{ "margin-bottom": "16px" }}>
+        <h2 style={{ "margin-top": "0" }}>Nightsoul Burst</h2>
+        <p class="prose">{teamBonus.nightsoulBurst.description}</p>
+        <ul class="bullet-list">
+          <For each={teamBonus.nightsoulBurst.intervalsByCount}>
+            {(row) => (
+              <li>
+                <span>
+                  {row.natlanCharacterCount} Natlan · {row.intervalSeconds}s
+                </span>
+              </li>
+            )}
+          </For>
         </ul>
-        {teamBonus.nightsoulBurst.exclusionNote && (
-          <p className="meta">{teamBonus.nightsoulBurst.exclusionNote}</p>
-        )}
+        {teamBonus.nightsoulBurst.exclusionNote && <p class="meta">{teamBonus.nightsoulBurst.exclusionNote}</p>}
       </section>
 
-      <section className="panel">
-        <h2 style={{ marginTop: 0 }}>{copy.formulaTitle}</h2>
-        <p className="prose">
-          <strong>RES.</strong> {df.resMultiplier.formula}
-        </p>
-        <ul className="bullet-list">
-          {df.resMultiplier.breakpoints.map((row) => (
-            <li key={row.condition}>
-              <span>
-                {row.condition}: {row.formula}
-              </span>
-            </li>
-          ))}
+      <section class="panel">
+        <h2 style={{ "margin-top": "0" }}>{text().formulaTitle}</h2>
+        <p class="formula-label">RES</p>
+        <MathBlock tex={formulaTex.res} />
+        <ul class="formula-cases">
+          <For each={formulaTex.resCases}>
+            {(row) => (
+              <li>
+                <MathBlock tex={row.condition} display={false} />
+                <MathBlock tex={row.formula} display={false} />
+              </li>
+            )}
+          </For>
         </ul>
-        {df.resMultiplier.note && <p className="meta">{df.resMultiplier.note}</p>}
-        <p className="prose">
-          <strong>DEF.</strong> {df.defMultiplier.formula}
-        </p>
-        {df.elevationMultiplier && (
-          <p className="prose">
-            <strong>Elevation.</strong> {df.elevationMultiplier.formula} {df.elevationMultiplier.note}
-          </p>
-        )}
-        <p className="prose">
-          <strong>CRIT.</strong> {df.critMultiplier.critFormula ?? ""} EV:{" "}
-          {df.critMultiplier.expectedValueFormula}
-        </p>
-        {df.critValueHeuristic && (
-          <p className="prose">
-            <strong>Crit Value.</strong> {df.critValueHeuristic.formula} ({df.critValueHeuristic.targetRatio})
-          </p>
-        )}
-        <p className="prose">
-          <strong>Amplifying.</strong> {df.amplifying.formula} EM: {df.amplifying.emBonusFormula}
-        </p>
-        {df.amplifying.note && <p className="meta">{df.amplifying.note}</p>}
+        {df.resMultiplier.note && <p class="meta">{df.resMultiplier.note}</p>}
+        <p class="formula-label">DEF</p>
+        <MathBlock tex={formulaTex.def} />
+        <MathBlock tex={formulaTex.defK} />
+        <Show when={df.elevationMultiplier}>
+          <p class="formula-label">Elevation</p>
+          <MathBlock tex={formulaTex.elevation} />
+          <p class="meta">{df.elevationMultiplier?.note}</p>
+        </Show>
+        <p class="formula-label">CRIT</p>
+        <MathBlock tex={formulaTex.crit} />
+        <MathBlock tex={formulaTex.critExpected} />
+        <Show when={df.critValueHeuristic}>
+          <p class="formula-label">Crit Value</p>
+          <MathBlock tex={formulaTex.critValue} />
+          <p class="meta">{df.critValueHeuristic?.targetRatio}</p>
+        </Show>
+        <p class="formula-label">Amplifying</p>
+        <MathBlock tex={formulaTex.amplifying} />
+        <MathBlock tex={formulaTex.amplifyingDmg} />
+        <MathBlock tex={formulaTex.amplifyingEm} />
+        {df.amplifying.note && <p class="meta">{df.amplifying.note}</p>}
         <CoeffTable values={df.amplifying.coefficients} />
-        {df.catalyze && (
-          <>
-            <p className="prose">
-              <strong>Catalyze.</strong> {df.catalyze.formula} EM: {df.catalyze.emBonusFormula}
-            </p>
-            <CoeffTable values={df.catalyze.coefficients} />
-          </>
-        )}
-        {df.transformative && (
-          <>
-            <p className="prose">
-              <strong>Transformative.</strong> {df.transformative.formula} EM:{" "}
-              {df.transformative.emBonusFormula}
-            </p>
-            {df.transformative.note && <p className="meta">{df.transformative.note}</p>}
-            {df.transformative.coefficients && <CoeffTable values={df.transformative.coefficients} />}
-          </>
-        )}
-        {df.lunarStellar && (
-          <>
-            <p className="prose">
-              <strong>Lunar / Stellar.</strong> EM: {df.lunarStellar.emBonusFormula}
-            </p>
-            {df.lunarStellar.note && <p className="meta">{df.lunarStellar.note}</p>}
-            {df.lunarStellar.direct && (
-              <p className="prose">
-                <strong>Direct ({df.lunarStellar.direct.appliesTo.join(", ")}).</strong>{" "}
-                {df.lunarStellar.direct.formula}
-              </p>
-            )}
-            {df.lunarStellar.direct && <CoeffTable values={df.lunarStellar.direct.coefficients} />}
-            {df.lunarStellar.indirect && (
-              <p className="prose">
-                <strong>Indirect ({df.lunarStellar.indirect.appliesTo.join(", ")}).</strong>{" "}
-                {df.lunarStellar.indirect.perCharacterFormula} {df.lunarStellar.indirect.aggregationFormula}
-              </p>
-            )}
-            {df.lunarStellar.indirect && <CoeffTable values={df.lunarStellar.indirect.coefficients} />}
-          </>
-        )}
-        {df.trueDamage && (
-          <p className="prose">
-            <strong>True DMG.</strong> {df.trueDamage.note}
-          </p>
-        )}
-        {df.workedExample && (
-          <>
-            <div className="section-title">Worked example</div>
-            <p className="prose">{df.workedExample.scenario}</p>
-            <ul className="bullet-list">
-              {Object.entries(df.workedExample.steps).map(([key, value]) => (
-                <li key={key}>
-                  <span>
-                    {key}: {value}
-                  </span>
+        <Show when={df.catalyze}>
+          <p class="formula-label">Catalyze</p>
+          <MathBlock tex={formulaTex.catalyze} />
+          <p class="meta">{formulaTex.catalyzeNote}</p>
+          <MathBlock tex={formulaTex.catalyzeEm} />
+          <CoeffTable values={df.catalyze?.coefficients ?? {}} />
+        </Show>
+        <Show when={df.transformative}>
+          <p class="formula-label">Transformative</p>
+          <MathBlock tex={formulaTex.transformative} />
+          <MathBlock tex={formulaTex.transformativeEm} />
+          {df.transformative?.note && <p class="meta">{df.transformative.note}</p>}
+          <Show when={df.transformative?.coefficients}>
+            <CoeffTable values={df.transformative?.coefficients ?? {}} />
+          </Show>
+        </Show>
+        <Show when={df.lunarStellar}>
+          <p class="formula-label">Lunar / Stellar</p>
+          <MathBlock tex={formulaTex.lunarEm} />
+          {df.lunarStellar?.note && <p class="meta">{df.lunarStellar.note}</p>}
+          <Show when={df.lunarStellar?.direct}>
+            <p class="formula-label">Direct · {df.lunarStellar?.direct?.appliesTo.join(", ")}</p>
+            <MathBlock tex={formulaTex.direct} />
+            {df.lunarStellar?.direct?.note && <p class="meta">{df.lunarStellar.direct.note}</p>}
+            <CoeffTable values={df.lunarStellar?.direct?.coefficients ?? {}} />
+          </Show>
+          <Show when={df.lunarStellar?.indirect}>
+            <p class="formula-label">Indirect · {df.lunarStellar?.indirect?.appliesTo.join(", ")}</p>
+            <MathBlock tex={formulaTex.indirect} />
+            <MathBlock tex={formulaTex.aggregation} />
+            <p class="meta">{formulaTex.aggregationNote}</p>
+            <CoeffTable values={df.lunarStellar?.indirect?.coefficients ?? {}} />
+          </Show>
+        </Show>
+        <Show when={df.trueDamage}>
+          <p class="formula-label">True DMG</p>
+          <p class="prose">{df.trueDamage?.note}</p>
+        </Show>
+        <Show when={df.workedExample}>
+          <div class="section-title">Worked example</div>
+          <p class="prose">{df.workedExample?.scenario}</p>
+          <ul class="formula-cases">
+            <For each={Object.entries(df.workedExample?.steps ?? {})}>
+              {([key, value]) => (
+                <li>
+                  <span class="meta">{key}</span>
+                  <MathBlock tex={formulaTex.steps[key] ?? value} />
                 </li>
-              ))}
-            </ul>
-            <p className="prose">
-              <strong>
-                {df.workedExample.result.value} {df.workedExample.result.unit}
-              </strong>
-            </p>
-          </>
-        )}
+              )}
+            </For>
+          </ul>
+          <p class="prose">
+            <strong>
+              {df.workedExample?.result.value} {df.workedExample?.result.unit}
+            </strong>
+          </p>
+        </Show>
       </section>
     </>
   );

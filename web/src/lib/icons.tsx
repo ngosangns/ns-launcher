@@ -1,13 +1,5 @@
 type IconProps = { size?: number; className?: string };
 
-export function SparkleIcon({ size = 18 }: IconProps) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M12 3.2 13.4 9 19 10.5 13.4 12 12 17.8 10.6 12 5 10.5 10.6 9Z" />
-    </svg>
-  );
-}
-
 export function BookIcon({ size = 16 }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden>

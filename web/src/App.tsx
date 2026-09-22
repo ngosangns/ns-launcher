@@ -1,33 +1,34 @@
-import { useEffect, useState } from "react";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { createEffect, createSignal } from "solid-js";
 import { KeepAlive } from "./components/KeepAlive";
 import { Segmented } from "./components/Segmented";
 import { HomePage } from "./pages/HomePage";
 import { StoryPage } from "./pages/StoryPage";
 import { AbyssLayout } from "./pages/AbyssLayout";
-import { BookIcon, HomeIcon, ShieldIcon, SparkleIcon } from "./lib/icons";
+import { BookIcon, HomeIcon, ShieldIcon } from "./lib/icons";
 import { readLang, t, writeLang, type Lang } from "./lib/i18n";
 import { topTab } from "./lib/paths";
+import { hash, navigate, pathname, search } from "./router";
 
 export function App() {
-  const [lang, setLang] = useState<Lang>(readLang);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const tab = topTab(location.pathname);
-  const [last, setLast] = useState({ home: "/", story: "/story", abyss: "/abyss/team" });
+  const [lang, setLang] = createSignal<Lang>(readLang());
+  const [last, setLast] = createSignal({ home: "/", story: "/story", abyss: "/abyss/characters" });
+  const tab = () => topTab(pathname());
+  const text = () => t(lang());
 
-  useEffect(() => {
-    const path = `${location.pathname}${location.search}${location.hash}`;
-    if (location.pathname === "/abyss" || location.pathname === "/abyss/") {
-      navigate("/abyss/team", { replace: true });
+  createEffect(() => {
+    const path = pathname();
+    if (path === "/abyss" || path === "/abyss/") {
+      navigate("/abyss/characters", { replace: true });
       return;
     }
-    setLast((current) => {
-      if (tab === "story") return { ...current, story: path };
-      if (tab === "abyss") return { ...current, abyss: path };
-      return { ...current, home: path };
+    const full = `${path}${search()}${hash()}`;
+    const current = topTab(path);
+    setLast((prev) => {
+      if (current === "story") return { ...prev, story: full };
+      if (current === "abyss") return { ...prev, abyss: full };
+      return { ...prev, home: full };
     });
-  }, [location.hash, location.pathname, location.search, navigate, tab]);
+  });
 
   const switchLang = (next: Lang) => {
     setLang(next);
@@ -35,52 +36,47 @@ export function App() {
     document.documentElement.lang = next === "vi" ? "vi" : "en";
   };
 
-  const copy = t(lang);
-
   return (
-    <div className="app-shell">
-      <div className="backdrop" aria-hidden />
-      <header className="topbar">
-        <NavLink to="/" className="mark" aria-label={copy.home}>
-          <SparkleIcon size={18} />
-        </NavLink>
-        <NavLink to="/" className="brand">
-          {copy.brand}
-        </NavLink>
-        <Segmented nav className="tabs" label={copy.brand}>
-          <NavLink to="/" end className={({ isActive }) => `tab ${isActive ? "active" : ""}`}>
+    <div class="app-shell">
+      <header class="topbar">
+        <a href="/" class="brand">
+          <img class="brand-logo" src="/icons/brand/genshin-logo.png" alt="" />
+          {text().brand}
+        </a>
+        <Segmented nav class="tabs" label={text().brand}>
+          <a href="/" class="tab" classList={{ active: tab() === "home" }} aria-current={tab() === "home" ? "page" : undefined}>
             <HomeIcon />
-            <span className="label">{copy.home}</span>
-          </NavLink>
-          <NavLink to={last.story} className={`tab ${tab === "story" ? "active" : ""}`}>
+            <span class="label">{text().home}</span>
+          </a>
+          <a href={last().story} class="tab" classList={{ active: tab() === "story" }}>
             <BookIcon />
-            <span className="label">{copy.story}</span>
-          </NavLink>
-          <NavLink to={last.abyss} className={`tab ${tab === "abyss" ? "active" : ""}`}>
+            <span class="label">{text().story}</span>
+          </a>
+          <a href={last().abyss} class="tab" classList={{ active: tab() === "abyss" }}>
             <ShieldIcon />
-            <span className="label">{copy.abyss}</span>
-          </NavLink>
+            <span class="label">{text().abyss}</span>
+          </a>
         </Segmented>
-        <span className="spacer" />
-        <Segmented className="lang-switch" label="Language">
-          <button type="button" className={lang === "vi" ? "active" : ""} onClick={() => switchLang("vi")}>
+        <span class="spacer" />
+        <Segmented class="lang-switch" label="Language">
+          <button type="button" classList={{ active: lang() === "vi" }} onClick={() => switchLang("vi")}>
             VI
           </button>
-          <button type="button" className={lang === "en" ? "active" : ""} onClick={() => switchLang("en")}>
+          <button type="button" classList={{ active: lang() === "en" }} onClick={() => switchLang("en")}>
             EN
           </button>
         </Segmented>
       </header>
-      <main className="page">
-        <div className="stage">
-          <KeepAlive stage active={tab === "home"}>
-            <HomePage lang={lang} />
+      <main class="page">
+        <div class="stage">
+          <KeepAlive stage active={tab() === "home"}>
+            <HomePage lang={lang()} />
           </KeepAlive>
-          <KeepAlive stage active={tab === "story"}>
-            <StoryPage lang={lang} active={tab === "story"} />
+          <KeepAlive stage active={tab() === "story"}>
+            <StoryPage lang={lang()} active={tab() === "story"} />
           </KeepAlive>
-          <KeepAlive stage active={tab === "abyss"} className="keep-alive-fill">
-            <AbyssLayout lang={lang} />
+          <KeepAlive stage active={tab() === "abyss"} class="keep-alive-fill">
+            <AbyssLayout lang={lang()} />
           </KeepAlive>
         </div>
       </main>

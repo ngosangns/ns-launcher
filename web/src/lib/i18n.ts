@@ -22,7 +22,6 @@ export function writeLang(lang: Lang): void {
 
 type Copy = {
   brand: string;
-  tagline: string;
   home: string;
   story: string;
   abyss: string;
@@ -47,6 +46,7 @@ type Copy = {
   turningPoint: string;
   openMystery: string;
   note: string;
+  back: string;
   abyssCycle: string;
   abyssCharacters: string;
   abyssWeapons: string;
@@ -82,9 +82,6 @@ type Copy = {
   abyssPickTeam: string;
   abyssClearSlot: string;
   abyssTeamHint: string;
-  homeStoryLead: string;
-  homeAbyssLead: string;
-  homeOpen: string;
   formulaTitle: string;
   twoPiece: string;
   fourPiece: string;
@@ -107,16 +104,12 @@ type Copy = {
   lunarBonus: string;
   lunarCap: string;
   currentCycle: string;
-  previousCycle: string;
-  expired: string;
   abyssRoster: string;
   abyssResults: string;
+  abyssInfo: string;
   abyssFindTeams: string;
   abyssSearching: string;
-  abyssImportUID: string;
-  abyssUIDPlaceholder: string;
   abyssImport: string;
-  abyssUIDHint: string;
   abyssImportFull: string;
   abyssHoyolabHint: string;
   abyssMethodology: string;
@@ -126,14 +119,16 @@ type Copy = {
   abyssFullChars: string;
   abyssFullWeapons: string;
   abyssOwnedOnly: string;
+  abyssSort: string;
   abyssSortRarity: string;
   abyssSortName: string;
   abyssSortOwned: string;
+  abyssSortAtk: string;
   abyssConstellationNote: string;
   abyssExport: string;
   abyssClearCharacters: string;
   abyssClearWeapons: string;
-  abyssEmptyRoster: string;
+
   abyssNoResultsHint: string;
   abyssHalfPlanNotice: string;
   abyssClearApprox: string;
@@ -141,7 +136,6 @@ type Copy = {
 
 const vi: Copy = {
   brand: "Ký Sự Teyvat",
-  tagline: "Cốt truyện và La Hoàn, viết lại bằng tiếng Việt",
   home: "Trang chủ",
   story: "Cốt truyện",
   abyss: "La Hoàn",
@@ -167,6 +161,7 @@ const vi: Copy = {
   turningPoint: "Bước ngoặt",
   openMystery: "Bí ẩn còn bỏ ngỏ",
   note: "Ghi chú",
+  back: "Quay lại",
   abyssCycle: "Chu kỳ",
   abyssCharacters: "Nhân vật",
   abyssWeapons: "Vũ khí",
@@ -183,7 +178,7 @@ const vi: Copy = {
   abyssBlessing: "Uyên Nguyệt Chúc Phúc",
   abyssLeyLine: "Ley Line Disorder",
   abyssRecommendation: "Gợi ý",
-  abyssChamber: "Chặng",
+  abyssChamber: "Phòng",
   abyssWave: "Đợt",
   abyssLevel: "Cấp",
   abyssHP: "HP",
@@ -203,11 +198,6 @@ const vi: Copy = {
   abyssClearSlot: "Bỏ",
   abyssTeamHint:
     "Tìm đội hình bằng một vòng đánh 20 giây: hồi chiêu, năng lượng, đòn đánh và phản ứng trên một mục tiêu. Thời gian dọn là HP nửa tầng chia cho sát thương mỗi giây.",
-  homeStoryLead:
-    "Chín chương từ Mondstadt tới Snezhnaya, danh mục nhiệm vụ, và hồ sơ nhân vật liên kết với nhau.",
-  homeAbyssLead:
-    "Roster, nhập UID, tìm đội hình tầng 12, chu kỳ quái, catalog nhân vật/vũ khí/thánh di vật và cộng hưởng.",
-  homeOpen: "Mở",
   formulaTitle: "Công thức sát thương",
   twoPiece: "2 món",
   fourPiece: "4 món",
@@ -230,20 +220,15 @@ const vi: Copy = {
   lunarBonus: "Tăng sát thương Lunar theo chỉ số",
   lunarCap: "Trần buff",
   currentCycle: "Chu kỳ hiện tại",
-  previousCycle: "Chu kỳ trước",
-  expired: "Đã hết hạn",
   abyssRoster: "Roster của tôi",
   abyssResults: "Đội hình gợi ý",
+  abyssInfo: "Chi tiết",
   abyssFindTeams: "Tìm đội hình",
   abyssSearching: "Đang tìm...",
-  abyssImportUID: "Nhập từ UID",
-  abyssUIDPlaceholder: "UID (9-10 chữ số)",
   abyssImport: "Nhập",
-  abyssUIDHint:
-    'Qua Enka.Network — không cần đăng nhập. Tối đa 8 nhân vật; cần bật "Hiển thị chi tiết nhân vật" trong game. Chạy qua `npm run dev` để proxy Enka.',
-  abyssImportFull: "Nhập toàn bộ roster",
+  abyssImportFull: "Nhập từ token",
   abyssHoyolabHint:
-    "Dán ltuid_v2 và ltoken_v2. UID Genshin ở ô trên chỉ cần khi tài khoản có nhiều UID — bỏ trống sẽ lấy UID cấp cao nhất. Cần bật Character Details.",
+    "Dán ltuid_v2 và ltoken_v2. Nếu tài khoản có nhiều UID, lấy UID cấp cao nhất. Cần bật Character Details.",
   abyssMethodology:
     "Điểm là sát thương mỗi giây của một vòng đánh 20 giây: hồi chiêu, năng lượng, đòn và phản ứng trên một mục tiêu. Thời gian dọn bằng HP nửa tầng chia cho điểm đó. Quái nhiều con được tính bằng tổng HP.",
   abyssFallbackNote: "Chưa có kit chiêu, mỗi dòng talent tính một lần",
@@ -252,14 +237,16 @@ const vi: Copy = {
   abyssFullChars: "So sánh toàn bộ nhân vật",
   abyssFullWeapons: "So sánh toàn bộ vũ khí",
   abyssOwnedOnly: "Chỉ đồ đang có",
+  abyssSort: "Sắp xếp",
   abyssSortRarity: "Số sao",
   abyssSortName: "Tên",
   abyssSortOwned: "Đang sở hữu",
+  abyssSortAtk: "Tấn công",
   abyssConstellationNote: "Cung mệnh được lưu nhưng chưa tính vào điểm.",
   abyssExport: "Xuất",
   abyssClearCharacters: "Xoá hết nhân vật",
   abyssClearWeapons: "Xoá hết vũ khí",
-  abyssEmptyRoster: "Roster còn trống. Đánh dấu nhân vật và vũ khí bạn đang có, hoặc nhập từ UID/file.",
+
   abyssNoResultsHint: 'Bấm "Tìm đội hình" để bắt đầu.',
   abyssHalfPlanNotice: "Tầng 12 là hai lượt đánh. Mỗi phương án gồm một đội cho mỗi nửa, không ai đứng cả hai.",
   abyssClearApprox: "≈ để dọn",
@@ -267,7 +254,6 @@ const vi: Copy = {
 
 const en: Copy = {
   brand: "Teyvat Chronicle",
-  tagline: "Story and Spiral Abyss, retold in Vietnamese",
   home: "Home",
   story: "Story",
   abyss: "Abyss",
@@ -293,6 +279,7 @@ const en: Copy = {
   turningPoint: "Turning point",
   openMystery: "Open mystery",
   note: "Note",
+  back: "Back",
   abyssCycle: "Cycle",
   abyssCharacters: "Characters",
   abyssWeapons: "Weapons",
@@ -329,11 +316,6 @@ const en: Copy = {
   abyssClearSlot: "Clear",
   abyssTeamHint:
     "Team search simulates a 20-second rotation: cooldowns, energy, hits and reactions on one target. Clear time is that half's HP divided by damage per second.",
-  homeStoryLead:
-    "Nine chapters from Mondstadt to Snezhnaya, a quest catalogue, and a linked character glossary.",
-  homeAbyssLead:
-    "Roster, UID import, floor-12 team search, the current cycle, character/weapon/artifact catalogs, and resonance.",
-  homeOpen: "Open",
   formulaTitle: "Damage formula",
   twoPiece: "2-piece",
   fourPiece: "4-piece",
@@ -356,20 +338,15 @@ const en: Copy = {
   lunarBonus: "Lunar reaction bonus by stat",
   lunarCap: "Bonus cap",
   currentCycle: "Current cycle",
-  previousCycle: "Previous cycle",
-  expired: "Expired",
   abyssRoster: "My roster",
   abyssResults: "Suggested teams",
+  abyssInfo: "Details",
   abyssFindTeams: "Find teams",
   abyssSearching: "Searching...",
-  abyssImportUID: "Import from UID",
-  abyssUIDPlaceholder: "UID (9-10 digits)",
   abyssImport: "Import",
-  abyssUIDHint:
-    'Via Enka.Network — no login. Up to 8 characters; needs "Show Character Details" in game. Use `npm run dev` so the Enka proxy is available.',
-  abyssImportFull: "Import full roster",
+  abyssImportFull: "Import from token",
   abyssHoyolabHint:
-    "Paste ltuid_v2 and ltoken_v2. The Genshin UID above is only needed when the account has several UIDs — leave it empty to use the highest-level one. Character Details must be on.",
+    "Paste ltuid_v2 and ltoken_v2. If the account has several UIDs, the highest-level one is used. Character Details must be on.",
   abyssMethodology:
     "The score is damage per second over a 20-second rotation: cooldowns, energy, hits and reactions on one target. Clear time is that half's HP divided by the score. Several enemies count as their combined HP.",
   abyssFallbackNote: "No attack kit yet, so each talent line is counted once",
@@ -378,14 +355,16 @@ const en: Copy = {
   abyssFullChars: "Compare across all characters",
   abyssFullWeapons: "Compare across all weapons",
   abyssOwnedOnly: "Owned only",
+  abyssSort: "Sort",
   abyssSortRarity: "Stars",
   abyssSortName: "Name",
   abyssSortOwned: "Owned",
+  abyssSortAtk: "ATK",
   abyssConstellationNote: "C-level is saved but does not affect scoring yet.",
   abyssExport: "Export",
   abyssClearCharacters: "Clear characters",
   abyssClearWeapons: "Clear weapons",
-  abyssEmptyRoster: "Nothing in your roster yet. Mark what you own, or import from UID/file.",
+
   abyssNoResultsHint: 'Press "Find teams" to search.',
   abyssHalfPlanNotice: "Floor 12 is two fights. Each plan is a team for each half, with nobody in both.",
   abyssClearApprox: "≈ to clear",

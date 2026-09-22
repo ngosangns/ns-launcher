@@ -49,8 +49,8 @@
       "valueLv90": 94
     },
     "passive": {
-      "name": "Bane of Flame and Water",
-      "description": "R1: Tăng 15% sát thương lên kẻ địch đang dính hiệu ứng Thủy hoặc Hỏa R5: Tăng 24% sát thương lên kẻ địch đang dính hiệu ứng Thủy hoặc Hỏa",
+      "name": "Diệt Hỏa Ngưng Thủy",
+      "description": "Sát thương tạo ra cho kẻ địch bị ảnh hưởng bởi nguyên tố Thủy hoặc Hỏa tăng 12%.",
       "effects": []
     },
     "acquisition": "Rương kho báu (Tinh xảo trở lên) rải rác khắp Teyvat",
@@ -73,8 +73,8 @@
       "valueLv90": 0.469
     },
     "passive": {
-      "name": "Precise",
-      "description": "R1: Tăng 30% sát thương khi bắn trúng điểm yếu R5: Tăng 48% sát thương khi bắn trúng điểm yếu",
+      "name": "Tinh Chuẩn",
+      "description": "Tăng 24% sát thương tạo thành với điểm yếu.",
       "effects": []
     },
     "acquisition": "Rương kho báu (Tinh xảo trở lên) rải rác khắp Teyvat",
@@ -97,8 +97,8 @@
       "valueLv90": 0.469
     },
     "passive": {
-      "name": "Cull the Weak",
-      "description": "R1: Hạ gục kẻ địch hồi phục 10% HP R5: Hạ gục kẻ địch hồi phục 16% HP",
+      "name": "Dứt Điểm",
+      "description": "Khi đánh bại kẻ địch, hồi 8% HP.",
       "effects": []
     },
     "acquisition": "Rương kho báu (Tinh xảo trở lên) rải rác khắp Teyvat",
@@ -121,8 +121,8 @@
       "valueLv90": 0.312
     },
     "passive": {
-      "name": "Slingshot",
-      "description": "R1: Nếu Đòn thường/Đòn nặng trúng mục tiêu trong 0.3s sau khi bắn, tăng 42% sát thương; nếu không, giảm 10% sát thương R5: Nếu Đòn thường/Đòn nặng trúng mục tiêu trong 0.3s sau khi bắn, tăng 60% sát thương; nếu không, giảm 10% sát thương",
+      "name": "Nỏ Kéo",
+      "description": "Khi đánh thường hoặc trọng kích, nếu mũi tên bắn trúng kẻ địch trong 0.3s sau khi phóng, sát thương tạo thành sẽ tăng 36%; Nếu không, sát thương tạo thành giảm 10%.",
       "effects": []
     },
     "acquisition": "Rương kho báu (Tinh xảo trở lên) rải rác khắp Teyvat",
@@ -145,8 +145,8 @@
       "valueLv90": 0.312
     },
     "passive": {
-      "name": "Archer's Message",
-      "description": "R1: Đòn nặng trúng điểm yếu gây thêm 100% ATK dưới dạng sát thương CRIT, chỉ kích hoạt 1 lần mỗi 10s R5: Đòn nặng trúng điểm yếu gây thêm 200% ATK dưới dạng sát thương CRIT, chỉ kích hoạt 1 lần mỗi 10s",
+      "name": "Mũi Tên Truyền Tin",
+      "description": "Nếu trọng kích đánh trúng điểm yếu, sẽ tạo thành thêm sát thương bằng 100% tấn công, sát thương này chắc chắn bạo kích. Mỗi 10s chỉ có hiệu quả 1 lần.",
       "effects": []
     },
     "acquisition": "Rương kho báu (Tinh xảo trở lên), chủ yếu tại Liyue",
@@ -169,8 +169,8 @@
       "valueLv90": 0.613
     },
     "passive": {
-      "name": "Windfall",
-      "description": "R1: Đòn chí mạng có 60% cơ hội tạo Nguyên Tố Vi Lạp hồi 6 Năng lượng, chỉ kích hoạt 1 lần mỗi 12s R5: Đòn chí mạng có 100% cơ hội tạo Nguyên Tố Vi Lạp hồi 6 Năng lượng, chỉ kích hoạt 1 lần mỗi 6s",
+      "name": "Đi Cùng Với Gió",
+      "description": "Khi tạo thành bạo kích có tỷ lệ 60% sinh ra một lượng nhỏ Nguyên Tố Hạt Nhân, khôi phục 6 Năng Lượng Nguyên Tố cho nhân vật. Mỗi 12s mới thi triển 1 lần.",
       "effects": []
     },
     "acquisition": "Banner tiêu chuẩn (Khát Vọng Lang Thang) hoặc rơi ra như vũ khí 4★ phụ trên mọi banner Nguyện ước",
@@ -194,8 +194,8 @@
       "valueLv90": 165
     },
     "passive": {
-      "name": "Arrowless Song",
-      "description": "R1: Tăng 24% sát thương Kỹ năng và Trọng kích nguyên tố R5: Tăng 48% sát thương Kỹ năng và Trọng kích nguyên tố",
+      "name": "Bài Ca Không Tên",
+      "description": "Tăng 24% sát thương kỹ năng Nguyên Tố và kỹ năng nộ.",
       "effects": []
     },
     "acquisition": "Từng là phần thưởng sự kiện (bản 1.1); hiện có thể nhận như vũ khí 4★ phụ khi quay banner vũ khí giới hạn (Sử Thi Hóa)",
@@ -219,8 +219,8 @@
       "valueLv90": 0.306
     },
     "passive": {
-      "name": "Composed",
-      "description": "R1: Sau khi Kỹ năng nguyên tố gây sát thương, có 40% cơ hội kết thúc hồi chiêu của chính nó, chỉ kích hoạt 1 lần mỗi 30s R5: Sau khi Kỹ năng nguyên tố gây sát thương, có 80% cơ hội kết thúc hồi chiêu của chính nó, chỉ kích hoạt 1 lần mỗi 16s",
+      "name": "Khí Định Thần",
+      "description": "Khi kỹ năng Nguyên Tố tạo thành sát thương, có tỷ lệ 40% làm mới thời gian CD kỹ năng đó, mỗi 30s mới thi triển 1 lần.",
       "effects": []
     },
     "acquisition": "Banner tiêu chuẩn (Khát Vọng Lang Thang) hoặc rơi ra như vũ khí 4★ phụ trên mọi banner Nguyện ước",
@@ -244,8 +244,8 @@
       "valueLv90": 0.413
     },
     "passive": {
-      "name": "Focus",
-      "description": "R1: Gây sát thương lên kẻ địch tăng 8% Tỉ lệ chí mạng, tối đa 5 lớp, đòn chí mạng xóa hết lớp R5: Gây sát thương lên kẻ địch tăng 16% Tỉ lệ chí mạng, tối đa 5 lớp, đòn chí mạng xóa hết lớp",
+      "name": "Chuyên Chú",
+      "description": "Khi tấn công tạo thành sát thương, tăng tỷ lệ bạo kích 8%, nhiều nhất cộng dồn 5 lần. Sau khi tấn công tạo thành bạo kích, xóa hiệu quả Chuyên Chú đã có.",
       "effects": []
     },
     "acquisition": "Banner tiêu chuẩn (Khát Vọng Lang Thang) hoặc rơi ra như vũ khí 4★ phụ trên mọi banner Nguyện ước",
@@ -269,8 +269,8 @@
       "valueLv90": 0.413
     },
     "passive": {
-      "name": "Rapid Firing",
-      "description": "R1: Tăng 40% sát thương Đòn thường nhưng giảm 10% sát thương Đòn nặng R5: Tăng 80% sát thương Đòn thường nhưng giảm 10% sát thương Đòn nặng",
+      "name": "Cung Tên Tốc Xạ",
+      "description": "Tăng 40% sát thương của tấn công thường, giảm 10% sát thương trọng kích.",
       "effects": []
     },
     "acquisition": "Banner tiêu chuẩn (Khát Vọng Lang Thang) hoặc rơi ra như vũ khí 4★ phụ trên mọi banner Nguyện ước",
@@ -293,8 +293,8 @@
       "valueLv90": 0.413
     },
     "passive": {
-      "name": "Unreturning",
-      "description": "R1: Đòn nặng trúng điểm yếu tăng 10% tốc độ di chuyển và 36% ATK trong 10s R5: Đòn nặng trúng điểm yếu tăng 10% tốc độ di chuyển và 72% ATK trong 10s",
+      "name": "Rời Khỏi Bầy Đàn",
+      "description": "Nếu trọng kích đánh trúng điểm yếu, sẽ tăng 10% tốc độ di chuyển và 36% tấn công, kéo dài 10s.",
       "effects": []
     },
     "acquisition": "Chế tạo tại Lò rèn bằng bản thiết kế \"Nguyên mẫu\" mua từ NPC Lò rèn ở Mondstadt",
@@ -318,8 +318,8 @@
       "valueLv90": 0.69
     },
     "passive": {
-      "name": "Infusion Arrow",
-      "description": "R1: Đòn thường/Đòn nặng trúng địch tăng 4% ATK và 1.2% tốc độ Đòn thường trong 6s, tối đa 4 lớp, chỉ kích hoạt 1 lần mỗi 0.3s R5: Đòn thường/Đòn nặng trúng địch tăng 8% ATK và 2.4% tốc độ Đòn thường trong 6s, tối đa 4 lớp, chỉ kích hoạt 1 lần mỗi 0.3s",
+      "name": "Mũi Tên Năng Lượng",
+      "description": "Khi đánh thường và trọng kích đánh trúng địch, tăng 4% tấn công và 1.2% tốc độ đánh thường. Kéo dài 6s, cộng dồn 4 tầng, mỗi 0.3s mới thi triển 1 lần.",
       "effects": []
     },
     "acquisition": "Chế tạo tại Lò rèn bằng bản thiết kế mua từ NPC Lò rèn ở Liyue",
@@ -342,8 +342,8 @@
       "valueLv90": 0.368
     },
     "passive": {
-      "name": "Press the Advantage",
-      "description": "R1: Hạ gục kẻ địch tăng 12% ATK trong 30s, tối đa 3 lớp, mỗi lớp tính thời gian riêng R5: Hạ gục kẻ địch tăng 24% ATK trong 30s, tối đa 3 lớp, mỗi lớp tính thời gian riêng",
+      "name": "Thừa Thắng Xông Lên",
+      "description": "Sau khi đánh bại kẻ địch, tấn công tăng 12%, kéo dài 30s. Hiệu quả này cộng dồn đến 3 tầng, CD mỗi tầng độc lập.",
       "effects": []
     },
     "acquisition": "Mua giới hạn thời gian bằng Sao Băng Vô Chủ tại cửa hàng Ưu Đãi Của Paimon khi có banner nhân vật liên quan",
@@ -366,8 +366,8 @@
       "valueLv90": 0.276
     },
     "passive": {
-      "name": "Verdant Wind",
-      "description": "R1: Đòn thường/Đòn nặng trúng địch có 50% cơ hội tạo lốc xoáy hút địch xung quanh, gây 40% ATK mỗi 0.5s trong 4s, chỉ kích hoạt 1 lần mỗi 14s R5: Đòn thường/Đòn nặng trúng địch có 50% cơ hội tạo lốc xoáy hút địch xung quanh, gây 80% ATK mỗi 0.5s trong 4s, chỉ kích hoạt 1 lần mỗi 10s",
+      "name": "Ngọn Gió Biếc",
+      "description": "Khi tấn công thường và trọng kích đánh trúng, có 50% tỷ lệ gây ra 1 mắt gió, thu hút địch xung quanh và mỗi 0.5s gây cho chúng sát thương bằng 40% tấn công. Hiệu quả kéo dài 4s, mỗi 14s thi triển nhiều nhất 1 lần.",
       "effects": []
     },
     "acquisition": "Chế tạo tại Lò rèn bằng bản thiết kế nhận được sau khi hoàn thành thử thách liên quan tại Mondstadt",
@@ -391,8 +391,8 @@
       "valueLv90": 0.276
     },
     "passive": {
-      "name": "Oppidan Ambush",
-      "description": "R1: Khi ở trong đội hình nhưng không xuất trận, sát thương tăng 2%/giây tối đa 20%; khi ra trận hơn 4s, hiệu ứng giảm dần 4%/giây R5: Khi ở trong đội hình nhưng không xuất trận, sát thương tăng 4%/giây tối đa 40%; khi ra trận hơn 4s, hiệu ứng giảm dần 8%/giây",
+      "name": "Phục Kích Ngõ Hẹp",
+      "description": "Khi nhân vật trang bị vũ khí này ở trong đội, cứ mỗi giây nhân vật sẽ tăng 2% sát thương tạo thành, tối đa có thể dùng cách này để tăng 20% sát thương; Sau khi ra trận quá 4s, hiệu quả sát thương tăng thêm nêu trên sẽ mất đi 4% sau mỗi giây, cho đến khi giảm xuống còn 0%.",
       "effects": []
     },
     "acquisition": "Vũ khí 4★ phụ khi quay banner vũ khí giới hạn (Sử Thi Hóa)",
@@ -415,8 +415,8 @@
       "valueLv90": 0.306
     },
     "passive": {
-      "name": "Radiance of the Deeps",
-      "description": "R1: Có 3 trạng thái Evengleam/Afterglow/Dawnblaze tăng lần lượt 6%/10%/14% sát thương, chuyển trạng thái kế tiếp khi đòn đánh trúng địch, đổi trạng thái tối đa 1 lần mỗi 7s R5: Có 3 trạng thái Evengleam/Afterglow/Dawnblaze tăng lần lượt 12%/20%/28% sát thương, chuyển trạng thái kế tiếp khi đòn đánh trúng địch, đổi trạng thái tối đa 1 lần mỗi 7s",
+      "name": "Vực Sâu Rạng Rỡ",
+      "description": "Có 3 loại trạng thái gồm Chạng Vạng, Lưu Hà, Hừng Đông, lần lượt tăng 6%/10%/14% sát thương gây ra. Khi tấn công trúng kẻ địch sẽ chuyển sang trạng thái tiếp theo, mỗi 7s tối đa chuyển trạng thái một lần. Nhân vật trang bị vũ khí này khi không ra trận cũng sẽ có thể kích hoạt chuyển đổi.",
       "effects": []
     },
     "acquisition": "Phần thưởng chuỗi nhiệm vụ thế giới tại Fontaine",
@@ -439,8 +439,8 @@
       "valueLv90": 0.517
     },
     "passive": {
-      "name": "Evernight Duet",
-      "description": "R1: Đòn thường trúng địch tăng 20% sát thương Kỹ năng nguyên tố trong 5s; Kỹ năng nguyên tố trúng địch tăng 20% sát thương Đòn thường trong 5s R5: Đòn thường trúng địch tăng 40% sát thương Kỹ năng nguyên tố trong 5s; Kỹ năng nguyên tố trúng địch tăng 40% sát thương Đòn thường trong 5s",
+      "name": "Cực Dạ Nhị Trùng Tấu",
+      "description": "Trong 5s sau khi tấn công thường đánh trúng địch, sát thương kỹ năng nguyên tố tạo thành tăng 20%; Trong 5s sau khi kỹ năng nguyên tố đánh trúng địch, sát thương đánh thường tạo thành tăng 20%.",
       "effects": []
     },
     "acquisition": "Chế tạo tại Lò rèn bằng bản thiết kế mua từ NPC tại Inazuma",
@@ -462,8 +462,8 @@
       "valueLv90": 165
     },
     "passive": {
-      "name": "Windblume Wish",
-      "description": "R1: Sau khi dùng Kỹ năng nguyên tố, nhận điều ước Lễ hội Hoa Phong tăng 16% ATK trong 6s R5: Sau khi dùng Kỹ năng nguyên tố, nhận điều ước Lễ hội Hoa Phong tăng 32% ATK trong 6s",
+      "name": "Ước Nguyện Hoa Gió",
+      "description": "Khi thi triển kỹ năng nguyên tố, nhận được lời chúc của Hoa Gió cổ xưa, tấn công tăng 16%, kéo dài 6s.",
       "effects": []
     },
     "acquisition": "Phần thưởng miễn phí từ sự kiện Lễ Hội Hoa Phong (Windblume Festival), tổ chức lại hàng năm tại Mondstadt",
@@ -486,8 +486,8 @@
       "valueLv90": 0.551
     },
     "passive": {
-      "name": "Full Draw",
-      "description": "R1: Tăng 16% sát thương Đòn thường và 12% sát thương Đòn nặng; khi Năng lượng đầy, hiệu ứng tăng gấp đôi R5: Tăng 32% sát thương Đòn thường và 24% sát thương Đòn nặng; khi Năng lượng đầy, hiệu ứng tăng gấp đôi",
+      "name": "Dòng Chảy Tịch Diệt",
+      "description": "Tăng 16% sát thương tấn công thường, tăng 12% sát thương trọng kích. Khi Năng Lượng Nguyên Tố đạt 100%, tăng 100% hiệu quả cho nhân vật trang bị vũ khí này.",
       "effects": []
     },
     "acquisition": "Chế tạo tại Lò rèn bằng bản thiết kế mua từ NPC tại Inazuma",
@@ -510,8 +510,8 @@
       "valueLv90": 0.413
     },
     "passive": {
-      "name": "Strong Strike (chỉ trên PlayStation™Network)",
-      "description": "R1: Gây sát thương Băng lên địch tăng 10% sát thương Đòn thường/Đòn nặng trong 6s, tối đa 2 lớp; riêng Aloy trang bị Predator được cộng thêm 66 ATK R5: Không có refine cao hơn (vũ khí không thể tinh chế)",
+      "name": "Tấn Công Mạnh Mẽ",
+      "description": "Chỉ có hiệu lực trong:\n\"PlayStation™Network\"\nSau khi gây Sát Thương Nguyên Tố Băng lên kẻ địch, tăng 10% sát thương tấn công thường và trọng kích gây ra, hiệu quả duy trì 6 giây, tối đa cộng dồn 2 lần; Ngoài ra, khi Aloy trang bị \"Kẻ Săn Mồi\", tấn công tăng 66 điểm.",
       "effects": []
     },
     "acquisition": "Nhận miễn phí kèm nhân vật Aloy khi đổi mã hoặc trong các đợt phát lại hợp tác PlayStation",
@@ -533,8 +533,8 @@
       "valueLv90": 0.276
     },
     "passive": {
-      "name": "Watatsumi Wavewalker",
-      "description": "R1: Mỗi điểm Năng lượng tối đa cộng dồn của cả đội tăng 0.12% sát thương Trọng kích, tối đa 40% R5: Mỗi điểm Năng lượng tối đa cộng dồn của cả đội tăng 0.24% sát thương Trọng kích, tối đa 80%",
+      "name": "Kẻ Cưỡi Sóng Watatsumi",
+      "description": "Tổng giới hạn Năng Lượng Nguyên Tố của tất cả nhân vật trong đội, mỗi 1 điểm sẽ tăng 0.12% sát thương Kỹ Năng Nộ của nhân vật trang bị vũ khí này gây ra. Thông qua cách này, sát thương Kỹ Năng Nộ tăng tối đa 40%.",
       "effects": []
     },
     "acquisition": "Banner vũ khí sự kiện giới hạn thời gian (Nguyện Ước Chuyển Dời)",
@@ -557,8 +557,8 @@
       "valueLv90": 0.551
     },
     "passive": {
-      "name": "Labyrinth Lord's Instruction",
-      "description": "R1: Dùng Kỹ năng/Trọng kích nguyên tố nhận hiệu ứng Lời Dạy Của Khu Rừng tăng 60 Tinh Thông Nguyên Tố trong 12s; khi hết hiệu ứng gây 100% ATK sát thương lên 1 địch gần đó, kích hoạt 1 lần mỗi 20s R5: Dùng Kỹ năng/Trọng kích nguyên tố nhận hiệu ứng Lời Dạy Của Khu Rừng tăng 140 Tinh Thông Nguyên Tố trong 12s; khi hết hiệu ứng gây 180% ATK sát thương lên 1 địch gần đó, kích hoạt 1 lần mỗi 20s",
+      "name": "Chỉ Dẫn Của Vua Mê Cung",
+      "description": "Khi thi triển Kỹ Năng Nguyên Tố hoặc Kỹ Năng Nộ sẽ nhận hiệu ứng \"Chỉ Dẫn Của Rừng Sâu\", tăng 60 Tinh Thông Nguyên Tố, duy trì 12s. Hiệu quả này sẽ hủy khi đổi nhân vật. \"Chỉ Dẫn Của Rừng Sâu\" khi kết thúc thời gian duy trì hoặc bị hủy sẽ gây cho một kẻ địch gần đó lượng sát thương bằng 100% tấn công. \"Chỉ Dẫn Của Rừng Sâu\" mỗi 20s tối đa kích hoạt một lần.",
       "effects": []
     },
     "acquisition": "Chế tạo tại Lò rèn: đổi \"Câu Chuyện Về Bạn\" (phần thưởng chuỗi nhiệm vụ Aranyaka) lấy bản thiết kế từ NPC Aravinay tại Vanarana, Sumeru, rồi rèn",
@@ -581,8 +581,8 @@
       "valueLv90": 0.459
     },
     "passive": {
-      "name": "Net Snapper",
-      "description": "R1: Sau khi dùng Kỹ năng nguyên tố, đòn đánh trúng địch kích hoạt hiệu ứng Flowrider gây 80% ATK sát thương diện rộng, tối đa 3 lần mỗi 15s, kích hoạt Flowrider 1 lần mỗi 12s R5: Sau khi dùng Kỹ năng nguyên tố, đòn đánh trúng địch kích hoạt hiệu ứng Flowrider gây 160% ATK sát thương diện rộng, tối đa 3 lần mỗi 15s, kích hoạt Flowrider 1 lần mỗi 12s",
+      "name": "Phá Lưới",
+      "description": "Thi triển Kỹ Năng Nguyên Tố sẽ kích hoạt hiệu ứng \"Xuôi Dòng\", khi đánh trúng kẻ địch sẽ gây sát thương diện rộng bằng 80% tấn công, hiệu quả này sẽ bị xóa sau 15s hoặc kích hoạt 3 lần sát thương diện rộng. Mỗi 2s tối đa gây một lần sát thương diện rộng bằng cách này, mỗi 12s tối đa kích hoạt một lần \"Xuôi Dòng\".",
       "effects": []
     },
     "acquisition": "Đổi từ Hiệp Hội Câu Cá Sumeru (NPC Loumelat) bằng các loại cá câu được",
@@ -606,8 +606,8 @@
       "valueLv90": 0.276
     },
     "passive": {
-      "name": "Secret Wisdom's Favor",
-      "description": "R1: Đòn nặng trúng địch tăng 40 Tinh Thông Nguyên Tố trong 6s, tối đa 2 lớp, chỉ kích hoạt 1 lần mỗi 0.5s R5: Đòn nặng trúng địch tăng 80 Tinh Thông Nguyên Tố trong 6s, tối đa 2 lớp, chỉ kích hoạt 1 lần mỗi 0.5s",
+      "name": "Ân Huệ Của Con Ngươi Trí Tuệ",
+      "description": "Trong 6s sau khi trọng kích trúng kẻ địch, Tinh Thông Nguyên Tố của nhân vật tăng 40 điểm. Hiệu quả này tối đa cộng dồn 2 tầng, mỗi 0.5s tối đa kích hoạt một lần.",
       "effects": []
     },
     "acquisition": "Đổi từ sự kiện \"Đấu Trường Chiêu Hoán\" (Duel! The Summoners' Summit) bằng Phiếu Chiêu Hoán",
@@ -630,8 +630,8 @@
       "valueLv90": 0.184
     },
     "passive": {
-      "name": "The Way of Sunfire",
-      "description": "R1: Sau khi đòn Charged Attack trúng địch, một Mũi Tên Sunfire rơi xuống gây 60% ATK sát thương và áp Heartsearer lên mục tiêu trong 10s, khiến mục tiêu chịu thêm 28% sát thương Charged Attack từ người dùng. Kích hoạt tối đa 1 lần/10s. R5: Mũi Tên Sunfire gây 120% ATK sát thương, Heartsearer tăng 56% sát thương Charged Attack nhận vào. Vẫn 1 lần/10s.",
+      "name": "Con Đường Lửa Mặt Trời",
+      "description": "Sau khi trọng kích đánh trúng kẻ địch, sẽ giáng xuống Mũi Tên Mặt Trời lên kẻ địch này, gây sát thương bằng 60% tấn công, đồng thời thi triển hiệu quả Thiêu Đốt Tâm Can duy trì 10s lên kẻ địch chịu sát thương từ Mũi Tên Mặt Trời. Sát thương từ trọng kích của người trang bị vũ khí này gây ra cho kẻ địch đang trong trạng thái Thiêu Đốt Tâm Can sẽ tăng 28%. Mũi Tên Mặt Trời mỗi 10s tối đa kích hoạt một lần.",
       "effects": []
     },
     "acquisition": "Vé Thông Hành (Gnostic Hymn – Battle Pass); có thể quay lại trên banner vũ khí giới hạn",
@@ -655,8 +655,8 @@
       "valueLv90": 0.413
     },
     "passive": {
-      "name": "Benthic Pulse",
-      "description": "R1: Sau khi người dùng được hồi máu, gây thêm 16% sát thương trong 8s. Kích hoạt được cả khi rời sân. R5: Sát thương tăng thêm 32% trong 8s, điều kiện như trên.",
+      "name": "Âm Điệu Biển Sâu",
+      "description": "Sau khi nhận trị liệu, sát thương gây ra tăng 16%, duy trì 8s. Nhân vật không ra trận cũng có thể kích hoạt.",
       "effects": []
     },
     "acquisition": "Chế tạo tại lò rèn (Forging)",
@@ -679,8 +679,8 @@
       "valueLv90": 165
     },
     "passive": {
-      "name": "Crag-Chiseled Forge",
-      "description": "R1: Sau khi Năng lượng Nguyên Tố giảm, Tinh Thông Nguyên Tố tăng 40 trong 18s, tối đa 2 lần cộng dồn. R5: Tinh Thông Nguyên Tố tăng 80 trong 18s, tối đa 2 lần.",
+      "name": "Khối Vuông Điêu Khắc",
+      "description": "Sau khi Năng Lượng Nguyên Tố giảm, Tinh Thông Nguyên Tố của người trang bị tăng 40 điểm. Hiệu quả này duy trì 18s, tối đa cộng dồn 2 tầng.",
       "effects": []
     },
     "acquisition": "Phần thưởng sự kiện giới hạn",
@@ -703,8 +703,8 @@
       "valueLv90": 0.276
     },
     "passive": {
-      "name": "Masons' Ditty",
-      "description": "R1: Khi được hồi máu hoặc hồi máu cho người khác, nhận 1 Unity's Symbol (tối đa 3, kéo dài 30s). Dùng Elemental Skill/Burst tiêu hết Symbol để nhận Struggle trong 10s: mỗi Symbol tiêu cho 3% ATK và 7% All Elemental DMG Bonus. Struggle tối đa 1 lần/15s; Symbol nhận được cả khi rời sân. R5: Mỗi Symbol tiêu cho 7% ATK và 13% All Elemental DMG Bonus, cơ chế còn lại giữ nguyên.",
+      "name": "Khúc Ca Thợ Đẽo Đá",
+      "description": "Khi trị liệu hoặc nhận trị liệu sẽ nhận một Ký Hiệu Đoàn Kết, duy trì 30s, tối đa có được 3 Ký Hiệu. Khi thi triển Kỹ Năng Nguyên Tố hoặc Kỹ Năng Nộ sẽ tiêu hao tất cả Ký Hiệu để sản sinh hiệu quả Chống Đối trong 10s：Mỗi Ký Hiệu tiêu hao sẽ tăng 3% tấn công và 7% buff sát thương tất cả nguyên tố. Mỗi 15s tối đa kích hoạt một lần hiệu quả Chống Đối; Nhân vật không ra trận cũng có thể nhận được Ký Hiệu Đoàn Kết.",
       "effects": []
     },
     "acquisition": "Banner vũ khí giới hạn (Weapon Event Wishes)",
@@ -726,8 +726,8 @@
       "valueLv90": 0.413
     },
     "passive": {
-      "name": "Inflorescence Unattainable",
-      "description": "R1: Giảm 15% tiêu hao thể lực khi lượn. Khi ngắm bắn, sát thương Charged Attack tăng 6% mỗi 0.5s ngắm, tối đa 6 lần, mất sau 10s rời chế độ ngắm. R5: Sát thương Charged Attack tăng 12% mỗi 0.5s ngắm, cơ chế còn lại giữ nguyên.",
+      "name": "Cụm Hoa Chưa Đến",
+      "description": "Giảm 15% thể lực tiêu hao khi bay. Khi tiến hành ngắm chuẩn, mỗi 0.5s sẽ tăng 6% sát thương Trọng Kích gây ra. Hiệu quả này tối đa cộng dồn 6 tầng và sẽ xóa sau 10s kể từ khi thoát trạng thái ngắm chuẩn.",
       "effects": []
     },
     "acquisition": "Banner vũ khí giới hạn",
@@ -751,8 +751,8 @@
       "valueLv90": 0.276
     },
     "passive": {
-      "name": "Flower-Feather Song",
-      "description": "R1: Mỗi thành viên trong đội đến từ Natlan hoặc khác nguyên tố với người dùng cho 4.8% ATK; có từ 3 nhân vật như vậy trở lên thì nhận thêm 24 Tinh Thông Nguyên Tố. R5: ATK cộng thêm 9.6% mỗi thành viên, và 48 Tinh Thông Nguyên Tố khi đủ điều kiện.",
+      "name": "Khúc Ca Hoa Và Lông Vũ",
+      "description": "Trong đội mỗi có một nhân vật Natlan hoặc khác loại nguyên tố với người trang bị, thì người trang bị sẽ tăng 4.8% Tấn Công; Khi số nhân vật nêu trên không ít hơn 3 người thì người trang bị sẽ tăng 24 Tinh Thông Nguyên Tố.",
       "effects": []
     },
     "acquisition": "Chế tạo tại lò rèn",
@@ -775,8 +775,8 @@
       "valueLv90": 0.413
     },
     "passive": {
-      "name": "Silent Trigger",
-      "description": "R1: Khi đòn đánh trúng địch, gây sát thương diện rộng bằng 40% HP tối đa tại vị trí mục tiêu, tối đa 1 lần/15s. R5: Sát thương diện rộng bằng 80% HP tối đa, vẫn 1 lần/15s.",
+      "name": "Kích Hoạt Lặng Lẽ",
+      "description": "Khi đánh trúng kẻ địch, sẽ gây sát thương diện rộng bằng 40% Giới Hạn HP tại vị trí mục tiêu. Hiệu quả này mỗi 15s tối đa kích hoạt một lần.",
       "effects": []
     },
     "acquisition": "Phần thưởng sự kiện giới hạn \"Whirling Waltz\" (bản 5.6)",
@@ -798,8 +798,8 @@
       "valueLv90": 0.613
     },
     "passive": {
-      "name": "Phantom Flash",
-      "description": "R1: Khi gây phản ứng nguyên tố, Tinh Thông Nguyên Tố tăng 60 trong 12s; nếu có Moonsign: Ascendant Gleam, tăng thêm 60. Kích hoạt được cả khi rời sân. R5: Tinh Thông Nguyên Tố tăng 120 (+120 với Moonsign), điều kiện như trên.",
+      "name": "Thoăn Thoắt Vô Ảnh",
+      "description": "Trong 12s sau khi kích hoạt phản ứng nguyên tố, Tinh Thông Nguyên Tố tăng 60 điểm. Nguyệt Triệu - Rực Sáng: Tinh Thông Nguyên Tố của hiệu quả này tăng thêm 60 điểm. Người trang bị không ra trận cũng có thể kích hoạt hiệu quả nêu trên.",
       "effects": []
     },
     "acquisition": "Chế tạo tại lò rèn (mua thiết kế từ Lyulka, Rossum Workshop, Nasha Town – Natlan)",
@@ -822,8 +822,8 @@
       "valueLv90": 0.459
     },
     "passive": {
-      "name": "Astral Whispers Beyond the Sacred Throne",
-      "description": "R1: ATK tăng 28% trong 8s sau khi đòn đánh của người dùng trúng địch trong lúc đang rời sân. R5: ATK tăng 56% trong 8s, điều kiện như trên.",
+      "name": "Ngôn Ngữ Tinh Tú Ngoài Thánh Tọa",
+      "description": "Khi người trang bị không ra trận, trong 8s sau khi đòn tấn công của người trang bị đánh trúng kẻ địch, Tấn Công tăng 28%.",
       "effects": []
     },
     "acquisition": "Phần thưởng sự kiện giới hạn",
@@ -846,8 +846,8 @@
       "valueLv90": 0.276
     },
     "passive": {
-      "name": "A Candle Woven From the Night",
-      "description": "R1: Mỗi thành viên khác trong đội cùng nguyên tố cho 64 Tinh Thông Nguyên Tố; mỗi thành viên khác nguyên tố cho 12% ATK. Hai hiệu ứng cộng dồn tối đa 3 lần (ưu tiên tính Tinh Thông Nguyên Tố trước). R5: Cùng nguyên tố cho 128 Tinh Thông Nguyên Tố; khác nguyên tố cho 24% ATK, tối đa 3 lần.",
+      "name": "Đan Đêm Làm Đèn",
+      "description": "Ngoại trừ người trang bị, với mỗi nhân vật trong đội: Có Loại Nguyên Tố giống với người trang bị: Tinh Thông Nguyên Tố của người trang bị tăng 64 điểm; Có Loại Nguyên Tố khác với người trang bị: Tấn Công của người trang bị tăng 12%. Hai loại hiệu quả trên tổng cộng tối đa cộng dồn 3 tầng, hiệu quả Loại Nguyên Tố giống nhau sẽ ưu tiên có hiệu lực.",
       "effects": []
     },
     "acquisition": "Vé Thông Hành (Gnostic Hymn – Battle Pass, bản 7.0)",
@@ -872,8 +872,8 @@
       "valueLv90": 0.517
     },
     "passive": {
-      "name": "The Law's Equilibrium",
-      "description": "R1: Sau khi dùng Elemental Skill, Tinh Thông Nguyên Tố tăng 120 trong 12s. R5: Tinh Thông Nguyên Tố tăng 240 trong 12s.",
+      "name": "Pháp Độ Cân Bằng",
+      "description": "Sau khi người trang bị thi triển Kỹ Năng Nguyên Tố, Tinh Thông Nguyên Tố tăng 120 điểm trong 12s.",
       "effects": []
     },
     "acquisition": "Chế tạo tại lò rèn",
@@ -896,8 +896,8 @@
       "valueLv90": 0.221
     },
     "passive": {
-      "name": "Echoing Ballad",
-      "description": "R1: Tăng 20% CRIT DMG. Đòn đánh trúng có 60% cơ hội gây một vụ nổ AoE nhỏ, gây 125% ATK sát thương Vật Lý, tối đa 1 lần/4s. R5: Tăng 40% CRIT DMG, 100% cơ hội gây nổ AoE, hồi chiêu còn 2s.",
+      "name": "Bài Thơ Vang Lên Trời Cao",
+      "description": "Sát thương bạo kích tăng 20%; Khi đánh trúng có 60% tỷ lệ tạo thành sát thương vật lý 125% trong phạm vi nhỏ, mỗi 4s mới có hiệu quả một lần.",
       "effects": []
     },
     "acquisition": "Banner Ước Nguyện tiêu chuẩn (vũ khí 5★ thường trực)",
@@ -921,8 +921,8 @@
       "valueLv90": 0.496
     },
     "passive": {
-      "name": "Strong-Willed",
-      "description": "R1: Tăng 12% sát thương Normal/Charged Attack; sau khi bắn, sát thương tăng thêm 8% mỗi 0.1s mũi tên còn bay, tối đa 5 lần. R5: Tăng 24% sát thương Normal/Charged Attack; sát thương tăng thêm 16% mỗi 0.1s, tối đa 5 lần.",
+      "name": "Ý Chí Không Quên",
+      "description": "Tăng 12% sát thương của tấn công thường và trọng kích. Tấn công thường và trọng kích mỗi 0.1s sau khi bắn tên, sát thương sẽ tăng 8%, tối đa tăng 5 lần.",
       "effects": []
     },
     "acquisition": "Banner Ước Nguyện tiêu chuẩn",
@@ -946,8 +946,8 @@
       "valueLv90": 0.551
     },
     "passive": {
-      "name": "The Parting Refrain",
-      "description": "R1: Tăng 60 Tinh Thông Nguyên Tố. Khi Elemental Skill/Burst trúng địch, nhận 1 Sigil of Remembrance (tối đa 1 lần/0.2s, cả khi rời sân). Đủ 4 Sigil, cả đội gần đó nhận \"Millennial Movement: Farewell Song\" 12s: +100 Tinh Thông Nguyên Tố và +20% ATK, sau đó khóa 20s không nhận Sigil mới. R5: Tăng 120 Tinh Thông Nguyên Tố nền; Farewell Song cho +200 Tinh Thông Nguyên Tố và +40% ATK, cơ chế còn lại giữ nguyên.",
+      "name": "Bài Ca Nỗi Nhớ Ly Biệt",
+      "description": "Một phần của \"Ca Khúc Thời Đại Nghìn Năm\" lãng du trong gió. Tinh Thông Nguyên Tố tăng 60 điểm. Khi Kỹ Năng Nguyên Tố hoặc Kỹ Năng Nộ của nhân vật dùng vũ khí này đánh trúng địch, nhân vật sẽ nhận 1 Lá Bùa Tưởng Nhớ, mỗi 0.2 giây kích hoạt nhiều nhất 1 lần, khi nhân vật ở trong đội phía sau cũng có thể kích hoạt. Khi có 4 Lá Bùa Tưởng Nhớ sẽ tiêu hao tất cả bùa, khiến tất cả nhân vật trong đội đang ở gần nhận hiệu quả \"Ca Khúc Thời Đại Nghìn Năm - Bài Ca Ly Biệt\": Tinh Thông Nguyên Tố tăng 100 điểm, tấn công tăng 20% trong 12 giây. Trong vòng 20 giây sau khi kích hoạt sẽ không thể nhận Lá Bùa Tưởng Nhớ nữa. Khi các hiệu quả của \"Ca Khúc Thời Đại Nghìn Năm\" đang kích hoạt, những hiệu quả cùng loại khác sẽ không được cộng dồn.",
       "effects": []
     },
     "acquisition": "Banner vũ khí giới hạn",
@@ -970,8 +970,8 @@
       "valueLv90": 0.331
     },
     "passive": {
-      "name": "Daylight's Augury",
-      "description": "R1: Tăng 12% sát thương Elemental Skill/Burst. Sau khi Normal/Charged Attack/Skill/Burst trúng địch, nhận 1 stack Ashen Nightstar (12s); có 1/2/3/4 stack cho ATK +10/20/30/48%. Stack từ 4 loại đòn tính độc lập. R5: Tăng 24% sát thương Skill/Burst; ATK +20/40/60/96% theo số stack.",
+      "name": "Điềm Báo Ban Trưa",
+      "description": "Tăng 12% sát thương Kỹ Năng Nguyên Tố và Kỹ Năng Nộ gây ra; Tấn công thường, trọng kích, Kỹ Năng Nguyên Tố hoặc Kỹ Năng Nộ sau khi đánh trúng kẻ địch sẽ sản sinh 1 tầng hiệu quả \"Ngôi Sao Đêm Trắng\" trong 12s. Khi trong trạng thái \"Ngôi Sao Đêm Trắng\" tầng 1/2/3/4, sức tấn công tăng 10/20/30/48%. Hiệu quả \"Ngôi Sao Đêm Trắng\" sinh ra từ tấn công thường, trọng kích, Kỹ Năng Nguyên Tố hoặc Kỹ Năng Nộ sẽ tồn tại độc lập với nhau.",
       "effects": []
     },
     "acquisition": "Banner vũ khí giới hạn",
@@ -994,8 +994,8 @@
       "valueLv90": 0.882
     },
     "passive": {
-      "name": "The Cleansing Form",
-      "description": "R1: Tăng 16% HP. Khi có địch ở gần, sát thương gây ra tăng 20%, hiệu lực cả khi rời sân. R5: Tăng 32% HP; sát thương tăng 40%, điều kiện như trên.",
+      "name": "Dạng Gột Rửa",
+      "description": "HP tăng 16%. Khi xung quanh có kẻ địch, sát thương gây ra của nhân vật trang bị vũ khí này tăng 20%, bất kể nhân vật này có trong trận hay không.",
       "effects": []
     },
     "acquisition": "Banner vũ khí giới hạn",
@@ -1019,8 +1019,8 @@
       "valueLv90": 0.662
     },
     "passive": {
-      "name": "Rule by Thunder",
-      "description": "R1: Tăng 20% ATK, nhận Thunder Emblem: 1/2/3 stack cho +12/24/40% sát thương Normal Attack. Nhận 1 stack khi Normal Attack trúng (5s), khi dùng Elemental Skill (10s), hoặc khi Năng lượng dưới 100% (mất khi đầy Năng lượng). R5: Tăng 40% ATK; Thunder Emblem cho +24/48/80% sát thương Normal Attack.",
+      "name": "Đế Chế Sấm Sét",
+      "description": "Tấn công tăng 20%, đồng thời nhận lấy sức mạnh \"Vết Cắt Sấm Sét\". Khi Vết Cắt Sấm Sét ở tầng 1/2/3 sẽ tăng sát thương tấn công thường tương ứng 12/24/40%. Nhân vật sẽ được nhận 1 tầng Vết Cắt Sấm Sét khi: Gây sát thương tấn công thường trong 5 giây; thi triển Kỹ Năng Nguyên Tố tồn tại trong 10 giây; ngoài ra Năng Lượng Nguyên Tố thấp hơn 100%, sẽ tạo một tầng Vết Cắt Sấm Sét, Vết Cắt Sấm Sét của lần này sẽ biến mất sau khi Năng Lượng Nguyên Tố của nhân vật được nạp đầy. Thời gian tồn tại của mỗi tầng Vết Cắt Sấm Sét được tính độc lập với nhau.",
       "effects": []
     },
     "acquisition": "Banner vũ khí giới hạn",
@@ -1043,8 +1043,8 @@
       "valueLv90": 0.441
     },
     "passive": {
-      "name": "At the End of the Beast-Paths",
-      "description": "R1: Tăng 12% All Elemental DMG Bonus. Sau khi Charged Attack trúng địch, nhận Tireless Hunt: sát thương Charged Attack tăng thêm 160% Tinh Thông Nguyên Tố, mất sau 12 đòn hoặc 10s, tối đa 1 lần/12s. R5: Tăng 24% All Elemental DMG Bonus; Tireless Hunt cộng thêm 320% Tinh Thông Nguyên Tố.",
+      "name": "Đường Cùng Của Thú",
+      "description": "Nhận 12% buff sát thương tất cả nguyên tố. Sau khi trọng kích đánh trúng kẻ địch sẽ nhận được hiệu ứng \"Săn Bắt Vô Tận\": Tăng sát thương trọng kích gây ra, lượng sát thương tăng thêm tương đương 160% Tinh Thông Nguyên Tố. Hiệu quả này sẽ biến mất sau khi có hiệu lực 12 lần hoặc sau 10s. Mỗi 12s tối đa kích hoạt một lần \"Săn Bắt Vô Tận\".",
       "effects": []
     },
     "acquisition": "Banner vũ khí giới hạn (ra mắt cùng Sumeru, bản 3.0); có thể roll lại qua Nguyện Vọng Hoài Niệm (Chronicled Wish)",
@@ -1066,8 +1066,8 @@
       "valueLv90": 0.662
     },
     "passive": {
-      "name": "Parsifal the Great",
-      "description": "R1: Tăng 16% sát thương Charged Attack. Mỗi thành viên cùng nguyên tố với người dùng (kể cả bản thân) cho 1 stack Gimmick; mỗi thành viên khác nguyên tố cho 1 stack Theatrics. Có 1/2/3+ Gimmick cho ATK +16/32/48%; có 1/2/3+ Theatrics cho tốc độ di chuyển +4/7/10%. R5: Tăng 32% sát thương Charged Attack; Gimmick cho ATK +32/64/96%; Theatrics cho tốc độ +12/15/18%.",
+      "name": "Parsifal Vĩ Đại",
+      "description": "Sát thương trọng kích tăng 16%; Trong đội mỗi tồn tại một nhân vật cùng loại nguyên tố với người trang bị (Bao gồm cả người trang bị), thì sẽ nhận 1 tầng \"Thủ Thuật\"; Trong đội mỗi tồn tại một nhân vật khác loại nguyên tố với người trang bị, thì sẽ nhận 1 tầng \"Diễn Xuất\". Hiệu ứng \"Thủ Thuật\" đạt từ 1/2/3 tầng trở lên, tấn công tăng 16%/32%/48%; Hiệu ứng \"Diễn Xuất\" đạt từ 1/2/3 tầng trở lên, tốc độ di chuyển tăng 4%/7%/10%.",
       "effects": []
     },
     "acquisition": "Banner vũ khí giới hạn (bản 4.0 – Fontaine)",
@@ -1090,8 +1090,8 @@
       "valueLv90": 0.662
     },
     "passive": {
-      "name": "Dryas's Nocturne",
-      "description": "R1: Nhận hiệu ứng Remedy; có 1/2/3 stack cho HP tối đa +12/24/40%. Nhận 1 stack khi dùng Elemental Skill (25s), khi giá trị Bond of Life tăng (25s), hoặc khi thực hiện hồi máu (20s); có thể kích hoạt cả khi rời sân. Đủ 3 stack, CRIT Rate của Elemental Burst +28% (mất sau 4s nếu tụt dưới 3 stack). R5: HP tối đa +24/48/80% theo stack; CRIT Rate Elemental Burst +56% khi đủ 3 stack.",
+      "name": "Dạ Khúc Của Dryas",
+      "description": "Người chơi nhận được hiệu quả \"Khôi Phục\". Mỗi khi có 1/2/3 tầng Khôi Phục, Giới Hạn HP tăng 12%/24%/40%. Người trang bị sẽ nhận 1 tầng Khôi Phục cho mỗi tình huống sau: Khi thi triển Kỹ Năng Nguyên Tố, duy trì 25s; Khi tăng giá trị Khế Ước Sinh Mệnh, duy trì 25s; Khi tiến hành trị liệu, duy trì 20s. Nhân vật không ra trận vẫn có thể kích hoạt. Thời gian duy trì của mỗi tầng Khôi Phục sẽ tính giờ riêng. Ngoài ra, khi có 3 tầng Khôi Phục, Tỷ Lệ Bạo Kích của Kỹ Năng Nộ tăng 28%, hiệu quả này sẽ bị xóa khi không có đủ 3 tầng Khôi Phục trong 4s.",
       "effects": []
     },
     "acquisition": "Banner vũ khí giới hạn (bản 4.7)",
@@ -1113,8 +1113,8 @@
       "valueLv90": 0.662
     },
     "passive": {
-      "name": "The Moonring Sighted",
-      "description": "R1: Sau khi kích hoạt phản ứng Swirl, ATK tăng 24% trong 12s. Khi có 1/2 thành viên trở lên khác nguyên tố với người dùng, sát thương Charged Attack tăng 20/48%, sát thương Elemental Burst tăng 10/24%. R5: ATK tăng 48%; Charged Attack tăng 40/96%; Elemental Burst tăng 20/48%.",
+      "name": "Ngọc Mặt Trăng Trong Mắt",
+      "description": "Trong 12s sau khi kích hoạt phản ứng Khuếch Tán hoặc Tinh-Khuếch Tán, Tấn Công tăng 24%. Ngoài ra, khi trong đội tồn tại ít nhất 1/2 nhân vật không cùng loại nguyên tố với người trang bị, thì sẽ khiến người trang bị tăng 20%/48% sát thương Trọng Kích gây ra, tăng 10%/24% sát thương Kỹ Năng Nộ gây ra.",
       "effects": []
     },
     "acquisition": "Banner vũ khí giới hạn (bản 5.2 – Natlan)",
@@ -1136,8 +1136,8 @@
       "valueLv90": 0.441
     },
     "passive": {
-      "name": "Ode Beyond Time",
-      "description": "R1: Nhận Stirring Dawn Breeze – 3s sau khi rời combat, sát thương Normal Attack/Elemental Skill/Elemental Burst tăng 60%; trong combat, mức tăng giảm dần 10%/giây cho tới 0%. Khi các đòn trên trúng địch, mức tăng tương ứng được cộng lại 10% (tối đa 60%), tối đa 1 lần/0.1s mỗi loại đòn, kích hoạt được cả khi rời sân. R5: Mức tăng ban đầu 120%, giảm 20%/giây trong combat, mỗi đòn trúng cộng lại 20% (tối đa 120%); khi đội có hiệu ứng Hexerei: Secret Rite, mức cộng thêm khi trúng đòn tăng lên 40%.",
+      "name": "Bài Ca Vang Vọng Xa Xưa",
+      "description": "Người trang bị nhận được \"Ngọn Gió Nổi\": 3s sau khi thoát chiến đấu, sát thương gây ra bởi Tấn Công Thường, Kỹ Năng Nguyên Tố và Kỹ Năng Nộ tăng 60%. Trong trạng thái chiến đấu, hiệu ứng tăng sát thương nêu trên giảm 10% mỗi giây cho đến khi giảm về 0%. Khi Tấn Công Thường, Kỹ Năng Nguyên Tố hoặc Kỹ Năng Nộ của người trang bị đánh trúng kẻ địch, hiệu quả tăng sát thương của loại sát thương tương ứng tăng 10% cho đến khi đạt 60%, mỗi loại tấn công nêu trên mỗi 0.1s tối đa kích hoạt hiệu quả này một lần. Người trang bị không ra trận vẫn có thể kích hoạt hiệu quả nêu trên.\nNgoài ra, khi đội có hiệu ứng \"Hexerei - Nghi Thức Bí Mật\", thì khi Tấn Công Thường, Kỹ Năng Nguyên Tố hoặc Kỹ Năng Nộ của người trang bị đánh trúng kẻ địch, sẽ đổi thành khiến hiệu quả tăng sát thương của tất cả loại sát thương tăng 20%.",
       "effects": []
     },
     "acquisition": "Banner vũ khí giới hạn (bản 6.2, Luna III)",
@@ -1160,8 +1160,8 @@
       "valueLv90": 0.882
     },
     "passive": {
-      "name": "Dawn's Salutation Returned",
-      "description": "R1: Tăng 16% DEF. Khi Elemental Skill hoặc đòn Lunar-Crystallize của người dùng trúng địch, nhận Frost Fae's Favor trong 6s: sát thương Geo và sát thương phản ứng Lunar-Crystallize +40%. Nếu có Moondrift gần đó trong lúc hiệu ứng còn hiệu lực, đồng đội xung quanh nhận Frost Fae's Mischief: sát thương Geo và Lunar-Crystallize +20% (kích hoạt được cả khi rời sân). R5: DEF +32%; Frost Fae's Favor cho +80% sát thương Geo/Lunar-Crystallize; Frost Fae's Mischief cho +40%.",
+      "name": "Lời Chào Từ Ánh Bình Minh",
+      "description": "Phòng Ngự tăng 16%. Khi Kỹ Năng Nguyên Tố hoặc tấn công Nguyệt-Kết Tinh của người trang bị đánh trúng kẻ địch, sẽ nhận hiệu quả \"Trả Ơn Của Fae Sương Giá\" trong 6s: Sát Thương Nguyên Tố Nham gây ra bởi người trang bị tăng 40%, sát thương phản ứng Nguyệt-Kết Tinh tăng 40%. Trong thời gian duy trì, nếu tồn tại Trăng Trôi ở xung quanh người trang bị, thì tất cả nhân vật khác trong đội ở gần sẽ còn nhận được hiệu quả \"Trò Đùa Của Fae Sương Giá\": Sát Thương Nguyên Tố Nham gây ra tăng 20%, sát thương phản ứng Nguyệt-Kết Tinh tăng 20%. Người trang bị không ra trận cũng có thể kích hoạt hiệu quả nêu trên.",
       "effects": []
     },
     "acquisition": "Banner vũ khí giới hạn (bản 6.5, Luna VI)",

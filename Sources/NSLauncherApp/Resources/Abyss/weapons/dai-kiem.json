@@ -11,8 +11,8 @@
       "valueLv90": 0.496
     },
     "passive": {
-      "name": "Wolfish Tracker",
-      "description": "ATK +20/25/30/35/40%. Đòn thường/trọng kích trúng địch có HP dưới 30% sẽ tăng ATK toàn đội (kể cả người mang) +40/50/60/70/80% trong 12s; hồi chuỗi 30s.",
+      "name": "Người Thợ Săn Như Sói",
+      "description": "Tấn công tăng 20%; Khi tấn công đánh trúng kẻ địch có HP dưới 30%, lực tấn công của tất cả thành viên đội tăng 40%, kéo dài 12s. Mỗi 30s mới thi triển 1 lần.",
       "effects": [
         {
           "stat": "ATK Buff",
@@ -53,8 +53,8 @@
       "valueLv90": 0.368
     },
     "passive": {
-      "name": "Sky-ripping Dragon Spine",
-      "description": "tăng toàn bộ sát thương +8/10/12/14/16%. Sau khi dùng Bùng nổ nguyên tố, đòn thường/trọng kích trúng địch tạo một lưỡi chém chân không gây 80/100/120/140/160% ATK sát thương xuyên các mục tiêu trên đường đi; hiệu ứng kéo dài 20s hoặc tối đa 8 lưỡi chém.",
+      "name": "Long Tích Chém Đứt Thanh Không",
+      "description": "Sát thương tạo thành tăng 8%; Sau khi thi triển kỹ năng nộ: Khi tấn công thường và trọng kích đánh trúng địch sẽ phóng ra lưỡi dao chân không, tạo thành 80% sát thương cho kẻ địch trên đường đi, kéo dài 20s hoặc đến khi phóng ra 8 lần dao chân không.",
       "effects": [
         {
           "stat": "All DMG Bonus",
@@ -94,8 +94,8 @@
       "valueLv90": 0.207
     },
     "passive": {
-      "name": "Rebel's Banner-Hymn",
-      "description": "ATK +16/20/24/28/32%; đòn thường/trọng kích trúng địch cho 1 Sigil of Whispers (hồi 0.3s). Khi đủ 4 Sigil, tiêu hao toàn bộ để cấp cho bản thân và đồng đội gần đó hiệu ứng \"Banner-Hymn\" trong 12s: tốc độ đánh thường +12/15/18/21/24%, ATK +20/25/30/35/40%; sau khi kích hoạt, ngừng nhận Sigil mới trong 20s (các hiệu ứng cùng loại của \"Millennial Movement\" không cộng dồn).",
+      "name": "Bài Ca Phản Nghịch",
+      "description": "Một phần của \"Ca Khúc Thời Đại Nghìn Năm\" lãng du trong gió. Tấn công tăng 16%; Khi đánh thường hoặc trọng kích trúng kẻ địch sẽ cung cấp cho nhân vật 1 Bùa Thì Thầm, mỗi 0.3s tối đa kích hoạt 1 lần. Khi có 4 Bùa Thì Thầm sẽ tiêu hao tất cả, khiến tất cả nhân vật trong đội gần đó sẽ nhận được hiệu ứng \"Ca Khúc Thời Đại Nghìn Năm - Khúc Ca Vén Cờ\" kéo dài 12s: Tốc độ đánh thường tăng 12%, tấn công tăng 20%. Trong 20s sau khi kích hoạt sẽ không thể nhận lại Bùa Thì Thầm. Các chỉ số cùng loại trong \"Ca Khúc Thời Đại Nghìn Năm\" không thể cộng dồn.",
       "effects": [
         {
           "stat": "ATK Buff",
@@ -143,8 +143,8 @@
       "valueLv90": 0.496
     },
     "passive": {
-      "name": "Golden Majesty",
-      "description": "Khiên hấp thụ +20/25/30/35/40%. Đòn đánh trúng địch tăng ATK +4/5/6/7/8% trong 8s, tối đa 5 lớp, hồi 0.3s; khi có khiên bảo vệ, mức tăng ATK này nhân đôi (8/10/12/14/16%).",
+      "name": "Hoàng Cực Chương Vàng",
+      "description": "Hiệu quả khiên tăng 20%. Trong vòng 8s sau khi đánh trúng, tấn công tăng 4%. Cộng dồn 5 tầng, mỗi 0.3s chỉ được thi triển 1 lần. Ngoài ra, khi được khiên bảo vệ, hiệu quả tăng tấn công sẽ tăng 100%.",
       "effects": [
         {
           "stat": "Shield Strength Buff",
@@ -193,7 +193,7 @@
     },
     "passive": {
       "name": "Gokadaiou Otogibanashi",
-      "description": "DEF +28/35/42/49/56%; sát thương đòn thường và trọng kích được cộng thêm 40/50/60/70/80% giá trị DEF của người mang.",
+      "description": "Phòng ngự tăng 28%; Tăng sát thương tấn công thường và trọng kích, lượng tăng thêm tương đương 40% phòng ngự.",
       "effects": [
         {
           "stat": "DEF Buff",
@@ -232,8 +232,8 @@
       "valueLv90": 0.221
     },
     "passive": {
-      "name": "Many Oaths of Dawn and Dusk",
-      "description": "ATK +20/25/30/35/40%. Khi đồng đội thu Mảnh Nguyên Tố từ phản ứng Kết Tinh (Crystallize) hoặc kích hoạt phản ứng Lunar-Crystallize, người mang nhận 1 Seal: Kỹ năng nguyên tố +18/22.5/27/31.5/36% sát thương, thời lượng 15s, tối đa 2 Seal (từ Lunar-Crystallize tối đa 1 Seal/giây); toàn bộ Seal biến mất 0.2s sau khi Kỹ năng nguyên tố gây sát thương.",
+      "name": "Vạn Lời Thề Của Bình Minh Và Hoàng Hôn",
+      "description": "Tấn công tăng 20%; Khi nhân vật trong đội nhận được mảnh tinh thể sinh ra từ phản ứng Kết Tinh hoặc kích hoạt phản ứng Nguyệt-Kết Tinh, người trang bị sẽ nhận được 1 \"Ấn Ký\", khiến sát thương gây ra từ Kỹ Năng Nguyên Tố tăng 18%. Ấn Ký duy trì 15s, tối đa có thể giữ 2 ấn cùng lúc. Tất cả Ấn Ký của người trang bị sẽ bị xóa sau 0.2s khi Kỹ Năng Nguyên Tố của người đó gây sát thương. Mỗi 1s tối đa nhận 1 Ấn Ký thông qua phản ứng Nguyệt-Kết Tinh.",
       "effects": [
         {
           "stat": "ATK Buff",
@@ -272,8 +272,8 @@
       "valueLv90": 0.11
     },
     "passive": {
-      "name": "Sunset Reignites the Dawn",
-      "description": "khi dùng Kỹ năng/Bùng nổ nguyên tố, nhận \"Scorching Brilliance\" trong 6s: CRIT DMG +20/25/30/35/40% và ATK +28/35/42/49/56%; hồi chuỗi 10s. Đòn thường/trọng kích gây sát thương nguyên tố kéo dài Scorching Brilliance thêm 2s (hồi 1s, tối đa +6s). Khi người mang trong trạng thái Nightsoul's Blessing, hiệu ứng Scorching Brilliance +75% và không đếm ngược thời lượng khi rời sân.",
+      "name": "Hoàng Hôn Thắp Sáng Bình Minh",
+      "description": "Khi thi triển Kỹ Năng Nguyên Tố hoặc Kỹ Năng Nộ sẽ nhận được hiệu quả \"Ánh Sáng Cháy Bỏng\": Sát Thương Bạo Kích tăng 20%, Tấn Công tăng 28% trong 6s, mỗi 10s tối đa kích hoạt một lần.\nTrong thời gian duy trì, Tấn Công Thường hoặc Trọng Kích sau khi gây sát thương nguyên tố, sẽ khiến hiệu quả Ánh Sáng Cháy Bỏng lần này kéo dài thêm 2s. Hiệu quả này mỗi giây kích hoạt 1 lần, tối đa thông qua cách thức này để kéo dài thêm 6s.\nNgoài ra, khi trong trạng thái Dạ Hồn Chúc Phúc, hiệu quả \"Ánh Sáng Cháy Bỏng\" tăng 75%, đồng thời hiệu quả này sẽ không tính giờ khi người trang bị không ra trận.",
       "effects": [
         {
           "stat": "Scorching Brilliance CRIT DMG Buff",
@@ -312,8 +312,8 @@
       "valueLv90": 0.11
     },
     "passive": {
-      "name": "Turquoise Hunt",
-      "description": "nhận 1 lớp Canopy's Favor sau khi Kỹ năng nguyên tố trúng địch (hồi 0.5s); khi đồng đội gần đó kích hoạt phản ứng Thiêu Đốt (Burning) hoặc Nảy Mầm (Burgeon), nhận thêm 3 lớp (hồi 2s, kích hoạt được cả khi đồng đội rời sân). Mỗi lớp Canopy's Favor: sát thương Kỹ năng và Bùng nổ nguyên tố +10/12.5/15/17.5/20% trong 6s, tối đa 6 lớp, mỗi lớp tính thời lượng riêng.",
+      "name": "Thợ Săn Lam Ngọc",
+      "description": "Sau khi Kỹ Năng Nguyên Tố đánh trúng kẻ địch, sẽ nhận được 1 tầng \"Chúc Phúc Vườn Treo\", hiệu quả này mỗi 0.5s tối đa kích hoạt 1 lần. Nhân vật trong đội gần đó sau khi kích hoạt phản ứng Thiêu Đốt hoặc Bung Tỏa, người trang bị sẽ nhận được 3 tầng Chúc Phúc Vườn Treo, hiệu quả này mỗi 2s tối đa kích hoạt 1 lần, nhân vật trong đội không ra trận cũng có thể kích hoạt. Chúc Phúc Vườn Treo: Sát thương Kỹ Năng Nguyên Tố và Kỹ Năng Nộ tăng 10% trong 6s, tối đa cộng dồn 6 tầng, mỗi tầng tính giờ riêng.",
       "effects": [
         {
           "stat": "Elemental Skill/Burst DMG Bonus per stack",
@@ -344,8 +344,8 @@
       "valueLv90": 0.441
     },
     "passive": {
-      "name": "White Fairy's Queening",
-      "description": "ATK +28/35/42/49/56%. Mỗi lần trọng kích trúng địch, người mang nhận \"Transcendence\" trong thời gian ngắn: sát thương phản ứng Stellar-Conduct và Stellar Swirl +16/20/24/28/32% trong 5s, hồi 0.2s, tối đa 3 lớp.",
+      "name": "Thăng Biến Của Bạch Nữ Hoàng",
+      "description": "Tấn Công tăng 28%.\nNgoài ra, sau mỗi lần Trọng Kích của người trang bị đánh trúng kẻ địch, đều sẽ đạt được hiệu quả \"Siêu Việt\" trong giây lát: Người trang bị tăng 16% sát thương phản ứng Tinh-Siêu Dẫn và Tinh-Khuếch Tán, duy trì 5s. Hiệu quả này tối đa cộng dồn 3 tầng, mỗi 0.2s tối đa cộng dồn một tầng.",
       "effects": [
         {
           "stat": "ATK Buff",
@@ -384,8 +384,8 @@
       "valueLv90": 0.331
     },
     "passive": {
-      "name": "Desert Watch",
-      "description": "sau khi Kỹ năng nguyên tố trúng địch, ATK +20/25/30/35/40% trong 8s; sau khi nhận sát thương, ATK +20/25/30/35/40% trong 8s (2 hiệu ứng trên kích hoạt được cả khi rời sân). Khi không có khiên bảo vệ, HP tối đa +32/40/48/56/64%.",
+      "name": "Thủ Hộ Biển Cát",
+      "description": "Sau khi dùng Kỹ Năng Nguyên Tố đánh trúng kẻ địch, tấn công tăng 20% trong 8s; Sau khi chịu phải sát thương, tấn công tăng 20% trong 8s. Nhân vật không ra trận cũng có thể kích hoạt 2 loại hiệu quả nêu trên. Ngoài ra, khi không có khiên bảo vệ, giới hạn HP tăng 32%.",
       "effects": [
         {
           "stat": "ATK Buff (Elemental Skill)",
@@ -432,8 +432,8 @@
       "valueLv90": 0.331
     },
     "passive": {
-      "name": "Indomitable Chivalry",
-      "description": "tăng tốc đánh thường +10%. Đòn thường trúng địch / dùng Kỹ năng nguyên tố / bắt đầu trọng kích lần lượt cho 1/2/2 lớp Four Winds' Hymn: sát thương gây ra +7.5/9.5/11.5/13.5/15.5% trong 4s, tối đa 4 lớp, hồi 0.01s. Khi đội có hiệu ứng \"Hexerei: Secret Rite\", mỗi lớp Four Winds' Hymn cũng tăng CRIT DMG người mang thêm 7.5/9.5/11.5/13.5/15.5%.",
+      "name": "Đạo Kỵ Sĩ Bất Diệt",
+      "description": "Tốc Độ Tấn Công tăng 10%. Khi Tấn Công Thường trúng kẻ địch/thi triển Kỹ Năng Nguyên Tố/bắt đầu Trọng Kích, người trang bị sẽ lần lượt nhận được 1/2/2 tầng \"Hệ Thơ Tứ Phong\": Sát thương gây ra tăng 7.5%. Hiệu quả này duy trì 4s, tối đa cộng dồn 4 lần, mỗi 0.01s tối đa kích hoạt một lần.\nNgoài ra, khi đội có hiệu ứng \"Hexerei - Nghi Thức Bí Mật\", mỗi tầng Hệ Thơ Tứ Phong sẽ còn khiến người trang bị tăng 7.5% Sát Thương Bạo Kích.",
       "effects": [
         {
           "stat": "DMG Bonus per Four Winds' Hymn stack",
@@ -472,8 +472,8 @@
       "valueLv90": 0.413
     },
     "passive": {
-      "name": "Watatsumi Wavewalker",
-      "description": "mỗi điểm Năng Lượng nguyên tố tối đa cộng dồn của toàn đội cho người mang +0.12/0.15/0.18/0.21/0.24% sát thương Bùng nổ nguyên tố, tối đa +40/50/60/70/80%.",
+      "name": "Kẻ Cưỡi Sóng Watatsumi",
+      "description": "Tổng giới hạn Năng Lượng Nguyên Tố của tất cả nhân vật trong đội, mỗi 1 điểm sẽ tăng 0.12% sát thương Kỹ Năng Nộ của nhân vật trang bị vũ khí này gây ra. Thông qua cách này, sát thương Kỹ Năng Nộ tăng tối đa 40%.",
       "effects": [
         {
           "stat": "Elemental Burst DMG per Max Energy point (%)",
@@ -513,8 +513,8 @@
       "valueLv90": 0.551
     },
     "passive": {
-      "name": "Press the Advantage",
-      "description": "sau khi hạ gục kẻ địch, ATK +12/15/18/21/24% trong 30s, tối đa 3 lớp, mỗi lớp tính thời lượng riêng.",
+      "name": "Thừa Thắng Xông Lên",
+      "description": "Sau khi đánh bại kẻ địch, tấn công tăng 12%, kéo dài 30s. Hiệu quả này cộng dồn đến 3 tầng, CD mỗi tầng độc lập.",
       "effects": [
         {
           "stat": "ATK Buff per stack",
@@ -546,8 +546,8 @@
       "valueLv90": 0.276
     },
     "passive": {
-      "name": "Repentance and Redemption",
-      "description": "kích hoạt phản ứng nguyên tố tăng Elemental Mastery người mang +64/80/96/112/128 trong 12s; kích hoạt phản ứng Stellar Glimmer tăng ATK +16/20/24/28/32% trong 12s (cả 2 hiệu ứng kích hoạt được cả khi rời sân).",
+      "name": "Ăn Năn Chuộc Tội",
+      "description": "Kích hoạt phản ứng nguyên tố sẽ tăng 64 điểm Tinh Thông Nguyên Tố cho người trang bị trong 12s; Kích hoạt phản ứng Tinh Tú Lấp Lánh, người trang bị sẽ tăng 16% Tấn Công trong 12s. Người trang bị không ra trận cũng có thể kích hoạt hiệu quả nêu trên.",
       "effects": [
         {
           "stat": "Elemental Mastery Buff (Elemental Reaction)",
@@ -586,8 +586,8 @@
       "valueLv90": 0.276
     },
     "passive": {
-      "name": "Oath of Qhapaq Nan",
-      "description": "sau khi đồng đội kích hoạt phản ứng liên quan Pyro, sát thương Kỹ năng nguyên tố người mang +16/20/24/28/32% trong 8s (kích hoạt được cả khi đồng đội rời sân).",
+      "name": "Lời Thề Qhapaq Nan",
+      "description": "Sau khi nhân vật trong đội kích hoạt phản ứng liên quan đến nguyên tố Hỏa, sát thương Kỹ Năng Nguyên Tố của người trang bị gây ra tăng 16% trong 8s. Hiệu quả này cũng có thể kích hoạt khi nhân vật trong đội không ra trận.",
       "effects": [
         {
           "stat": "Elemental Skill DMG Bonus",
@@ -618,8 +618,8 @@
       "valueLv90": 0.613
     },
     "passive": {
-      "name": "Windfall",
-      "description": "đòn chí mạng có 60/70/80/90/100% tỉ lệ tạo Hạt Nguyên Tố hồi 6 Năng Lượng, hồi chuỗi 12/10.5/9/7.5/6s.",
+      "name": "Đi Cùng Với Gió",
+      "description": "Khi tạo thành bạo kích có tỷ lệ 60% sinh ra một lượng nhỏ Nguyên Tố Hạt Nhân, khôi phục 6 Năng Lượng Nguyên Tố cho nhân vật. Mỗi 12s mới thi triển 1 lần.",
       "effects": [
         {
           "stat": "Particle Generation Chance",
@@ -658,8 +658,8 @@
       "valueLv90": 165
     },
     "passive": {
-      "name": "Mind in Bloom",
-      "description": "khi kích hoạt Điện Cảm (Electro-Charged), Lunar-Charged, Bloom/Lunar-Bloom, Kết Tinh (Crystallize) hoặc Lunar-Crystallize, hồi 12/15/18/21/24 Năng Lượng nguyên tố và Elemental Mastery +60/75/90/105/120 trong 15s; hồi chuỗi 15s, kích hoạt được cả khi rời sân.",
+      "name": "Tâm Tư Nở Rộ",
+      "description": "Khi kích hoạt phản ứng Điện Cảm, Nguyệt-Điện Cảm, Sum Suê, Nguyệt-Sum Suê, Kết Tinh hoặc Nguyệt-Kết Tinh, sẽ hồi phục 12 điểm Năng Lượng Nguyên Tố, đồng thời tăng 60 điểm Tinh Thông Nguyên Tố trong 15s tiếp theo. Hiệu quả này mỗi 15s tối đa kích hoạt một lần. Người trang bị không ra trận cũng có thể kích hoạt hiệu quả nêu trên.",
       "effects": [
         {
           "stat": "Energy Restore",
@@ -700,8 +700,8 @@
       "valueLv90": 0.306
     },
     "passive": {
-      "name": "Forest Sanctuary",
-      "description": "sau khi kích hoạt Thiêu Đốt, Kích Phát, Tăng Kích, Lan Tỏa, Nảy Mầm (Bloom/Lunar-Bloom), Kích Nổ Siêu Cấp hoặc Bùng Nổ, một Leaf of Consciousness xuất hiện quanh người mang (tối đa 10s); nhặt được cho Elemental Mastery +60/75/90/105/120 trong 12s (chỉ tạo 1 lá/20s, kích hoạt được cả khi rời sân, hiệu ứng không cộng dồn).",
+      "name": "Chúc Phúc Của Rừng",
+      "description": "Sau khi kích hoạt phản ứng Thiêu Đốt, Sinh Trưởng, Tăng Cường, Lan Tràn, Sum Suê, Nguyệt-Sum Suê, Nở Rộ hoặc Bung Tỏa sẽ sản sinh \"Lá Tri Thức\" tồn tại tối đa 10s ở xung quanh nhân vật. Nhân vật khi nhặt \"Lá Tri Thức\" sẽ tăng 60 điểm Tinh Thông Nguyên Tố, duy trì 12s. Mỗi 20s tối đa sản sinh một \"Lá Tri Thức\" bằng cách này. Nhân vật khi không ra trận cũng sẽ kích hoạt. Hiệu ứng Lá Tri Thức không thể cộng dồn.",
       "effects": [
         {
           "stat": "Elemental Mastery Buff",
@@ -732,8 +732,8 @@
       "valueLv90": 0.276
     },
     "passive": {
-      "name": "Day and Night in Counterpoint",
-      "description": "mỗi 10s, người mang lần lượt nhận 1 \"Harmonic Movement\" (10s): ATK +18/22.5/27/31.5/36% → Elemental Mastery +120/150/180/210/240 → sát thương phản ứng Stellar Glimmer +28/35/42/49/56% (kích hoạt được cả khi rời sân). Kích hoạt phản ứng Stellar Glimmer cho thêm 12s \"Harmonic Movement: Contrapuntal\" cùng hiệu ứng với lượt đang active, cộng dồn với Harmonic Movement gốc; hồi 12s.",
+      "name": "Hòa Tấu Ngày Và Đêm",
+      "description": "Mỗi 10s, người trang bị sẽ dựa trên thứ tự dưới đây để lần lượt tấu lên \"Bản Nhạc Hài Hòa\" tương ứng: Tấn Công tăng 18%/Tinh Thông Nguyên Tố tăng 120 điểm/Sát thương phản ứng Tinh Tú Lấp Lánh tăng 28%. Mỗi loại hiệu quả bản nhạc sẽ duy trì 10s, người trang bị không ra trận cũng có thể kích hoạt hiệu quả nêu trên.\nSau khi kích hoạt phản ứng Tinh Tú Lấp Lánh, sẽ còn nhận thêm hiệu quả \"Bản Nhạc Hài Hòa: Phức Điệu\" duy trì 12s, có hiệu quả tương đồng với Bản Nhạc Hài Hòa đã tấu vào lúc kích hoạt phản ứng Tinh Tú Lấp Lánh. Hiệu quả này có thể cộng dồn với bản nhạc gốc, mỗi 12s tối đa kích hoạt một lần.",
       "effects": [
         {
           "stat": "ATK Buff (Harmonic Movement)",
@@ -781,8 +781,8 @@
       "valueLv90": 0.276
     },
     "passive": {
-      "name": "The Weight of Falling Branches",
-      "description": "CRIT Rate trọng kích rơi (Plunging Attack) +16/20/24/28/32%; sau khi trọng kích rơi trúng địch, sát thương đòn thường/trọng kích/trọng kích rơi +16/20/24/28/32% trong 10s.",
+      "name": "Trọng Lượng Của Cành Rơi",
+      "description": "Tỷ Lệ Bạo Kích của Tấn Công Khi Đáp tăng 16%; Sau khi Tấn Công Khi Đáp trúng kẻ địch, sát thương của Tấn Công Thường, Trọng Kích và Tấn Công Khi Đáp tăng 16% trong 10s.",
       "effects": [
         {
           "stat": "Plunging Attack CRIT Rate Bonus",
@@ -821,8 +821,8 @@
       "valueLv90": 0.459
     },
     "passive": {
-      "name": "Samurai Conduct",
-      "description": "sát thương Kỹ năng nguyên tố +6/7.5/9/10.5/12%. Sau khi Kỹ năng nguyên tố trúng địch, người mang mất 3 Năng Lượng nhưng hồi 3/3.5/4/4.5/5 Năng Lượng mỗi 2s trong 6s tiếp theo; hồi chuỗi 10s, kích hoạt được cả khi rời sân.",
+      "name": "Vũ Điệu Samurai",
+      "description": "Tăng sát thương Kỹ Năng Nguyên Tố 6%. Sau khi Kỹ Năng Nguyên Tố đánh trúng, nhân vật mất 3 điểm Năng Lượng Nguyên Tố, đồng thời 6 giây tiếp theo mỗi 2 giây hồi phục 3 điểm. Hiệu quả này mỗi 10 giây kích hoạt 1 lần, nhân vật ở trong đội nhưng không ra trận vẫn có thể kích hoạt.",
       "effects": [
         {
           "stat": "Elemental Skill DMG Bonus",
@@ -863,8 +863,8 @@
       "valueLv90": 0.413
     },
     "passive": {
-      "name": "Lithic Axiom: Unity",
-      "description": "mỗi nhân vật trong đội có quê quán Liyue cho người mang +7/8/9/10/11% ATK và +3/4/5/6/7% CRIT Rate, tối đa 4 lần (tính theo quê quán Liyue, không phụ thuộc hệ nguyên tố).",
+      "name": "Thiên Nham Quyết - Đồng Tâm",
+      "description": "Mỗi khi trong đội có 1 nhân vật Liyue, nhân vật trang bị vũ khí này sẽ nhận 7% tăng tấn công và 3% tăng tỷ lệ bạo kích. Nhiều nhất có thể nhận 4 tầng hiệu quả tăng.",
       "effects": [
         {
           "stat": "ATK Buff per Liyue character",
@@ -906,8 +906,8 @@
       "valueLv90": 0.551
     },
     "passive": {
-      "name": "Oceanic Victory",
-      "description": "tăng sát thương Bùng nổ nguyên tố +12/15/18/21/24%. Khi Bùng nổ nguyên tố trúng địch, 100% tỉ lệ triệu hồi đàn cá ngừ gây 100/125/150/175/200% ATK sát thương AoE; hồi chuỗi 15s.",
+      "name": "Chiến Thắng Của Biển Cả",
+      "description": "Sát thương từ Kỹ Năng Nộ tăng 12%. Khi Kỹ Năng Nộ trúng địch, có 100% tỷ lệ triệu hồi kình ngư xung kích, gây sát thương phạm vi bằng 100% sức tấn công. Hiệu quả này mỗi 15s tối đa kích hoạt một lần.",
       "effects": [
         {
           "stat": "Elemental Burst DMG Bonus",
@@ -946,8 +946,8 @@
       "valueLv90": 110
     },
     "passive": {
-      "name": "Whispers of Wind and Flower",
-      "description": "trong 8s sau khi Kỹ năng nguyên tố trúng địch hoặc kích hoạt phản ứng nguyên tố, ATK +12/15/18/21/24% và Elemental Mastery +48/60/72/84/96.",
+      "name": "Lời Thì Thầm Hoa Gió",
+      "description": "Trong 8s sau khi Kỹ Năng Nguyên Tố đánh trúng kẻ địch hoặc kích hoạt phản ứng nguyên tố, tấn công tăng 12%, Tinh Thông Nguyên Tố tăng 48 điểm.",
       "effects": [
         {
           "stat": "ATK Buff",
@@ -987,8 +987,8 @@
       "valueLv90": 165
     },
     "passive": {
-      "name": "Desert Pavilion",
-      "description": "mỗi 10s, người mang nhận thêm ATK = 24/30/36/42/48% Elemental Mastery của bản thân trong 12s; đồng đội gần đó nhận 30% giá trị buff này trong cùng thời lượng. Nhiều bản sao vũ khí cho phép cộng dồn; kích hoạt được cả khi rời sân.",
+      "name": "Đình Đài Trên Cát",
+      "description": "Mỗi 10s sẽ sản sinh hiệu quả sau: Tăng tấn công dựa vào 24% Tinh Thông Nguyên Tố của nhân vật trang bị vũ khí này, đồng thời tăng 30% tấn công dựa vào hiệu quả trên cho nhân vật trong đội gần đó, duy trì 12s, hiệu ứng này có thể cộng dồn từ nhiều vũ khí cùng tên. Nhân vật khi không ra trận cũng có thể kích hoạt hiệu ứng.",
       "effects": [
         {
           "stat": "ATK from EM (%)",
@@ -1019,8 +1019,8 @@
       "valueLv90": 0.613
     },
     "passive": {
-      "name": "Fall Into Place",
-      "description": "kích hoạt phản ứng nguyên tố tăng Elemental Mastery +60/75/90/105/120 trong 12s; khi có \"Moonsign: Ascendant Gleam\", tăng thêm 60/75/90/105/120 Elemental Mastery nữa; kích hoạt được cả khi rời sân.",
+      "name": "Đón Đao Giải Thoát",
+      "description": "Trong 12s sau khi kích hoạt phản ứng nguyên tố, Tinh Thông Nguyên Tố tăng 60 điểm. Nguyệt Triệu - Rực Sáng: Tinh Thông Nguyên Tố của hiệu quả này tăng thêm 60 điểm. Người trang bị không ra trận cũng có thể kích hoạt hiệu quả nêu trên.",
       "effects": [
         {
           "stat": "Elemental Mastery Buff",
@@ -1060,8 +1060,8 @@
       "valueLv90": 0.551
     },
     "passive": {
-      "name": "Sea Shanty",
-      "description": "khi người mang được hồi máu hoặc hồi máu cho đồng đội, nhận 1 Stoic's Symbol (tối đa 3, thời lượng 30s); dùng Kỹ năng/Bùng nổ nguyên tố tiêu hao toàn bộ Symbol để nhận \"Roused\" 10s: mỗi Symbol tiêu hao cho 40/50/60/70/80 Elemental Mastery, 2s sau đó hồi 2/2.5/3/3.5/4 Năng Lượng mỗi Symbol; hồi chuỗi Roused 15s, nhận Symbol được cả khi rời sân.",
+      "name": "Khúc Hát Thuyền Viên",
+      "description": "Khi trị liệu hoặc nhận trị liệu sẽ nhận một Ký Hiệu Kiên Nhẫn, duy trì 30s, tối đa có được 3 Ký Hiệu. Khi thi triển Kỹ Năng Nguyên Tố hoặc Kỹ Năng Nộ sẽ tiêu hao tất cả Ký Hiệu để sản sinh hiệu quả Phấn Khởi trong 10s: Mỗi Ký Hiệu tiêu hao sẽ tăng 40 điểm Tinh Thông Nguyên Tố, đồng thời sau 2s khi hiệu quả được sản sinh, mỗi Ký Hiệu tiêu hao sẽ hồi phục 2 điểm Năng Lượng Nguyên Tố cho người trang bị. Mỗi 15s tối đa kích hoạt một lần hiệu quả Phấn Khởi; Nhân vật không ra trận cũng có thể nhận được Ký Hiệu Kiên Nhẫn.",
       "effects": [
         {
           "stat": "Elemental Mastery Buff per Symbol",
@@ -1100,8 +1100,8 @@
       "valueLv90": 0.276
     },
     "passive": {
-      "name": "Crush",
-      "description": "đòn thường/trọng kích trúng địch có 50% tỉ lệ gây thêm 240/300/360/420/480% ATK sát thương AoE nhỏ; hồi chuỗi 15s.",
+      "name": "Vụn Vỡ",
+      "description": "Khi tấn công thường và trọng kích đánh trúng địch, có tỷ lệ 50% tạo thành 240% sát thương thêm trong phạm vi nhỏ. Mỗi 15s mới thi triển 1 lần.",
       "effects": [
         {
           "stat": "Bonus AoE DMG (% ATK)",
@@ -1132,8 +1132,8 @@
       "valueLv90": 165
     },
     "passive": {
-      "name": "Bane of Storm and Tide",
-      "description": "sát thương gây cho địch dính hiệu ứng Thủy hoặc Lôi +20/24/28/32/36%.",
+      "name": "Ngưng Thủy Diệt Lôi",
+      "description": "Sát thương tạo ra cho kẻ địch bị ảnh hưởng bởi Nguyên Tố Thủy hoặc Lôi tăng 20%.",
       "effects": [
         {
           "stat": "DMG Bonus vs Hydro/Electro-afflicted",
@@ -1164,8 +1164,8 @@
       "valueLv90": 0.276
     },
     "passive": {
-      "name": "Focus",
-      "description": "gây sát thương lên địch tăng CRIT Rate +8/10/12/14/16%, tối đa 5 lớp; một đòn chí mạng sẽ xóa toàn bộ lớp.",
+      "name": "Chuyên Chú",
+      "description": "Khi tấn công tạo thành sát thương, tăng tỷ lệ bạo kích 8%, nhiều nhất cộng dồn 5 lần. Sau khi tấn công tạo thành bạo kích, xóa hiệu quả Chuyên Chú đã có.",
       "effects": [
         {
           "stat": "CRIT Rate Buff per stack",
@@ -1197,8 +1197,8 @@
       "valueLv90": 0.306
     },
     "passive": {
-      "name": "Composed",
-      "description": "sau khi Kỹ năng nguyên tố trúng địch, có 40/50/60/70/80% tỉ lệ hồi chuỗi Kỹ năng ngay lập tức; hồi chuỗi hiệu ứng 30/26/22/19/16s.",
+      "name": "Khí Định Thần",
+      "description": "Khi kỹ năng Nguyên Tố tạo thành sát thương, có tỷ lệ 40% làm mới thời gian CD kỹ năng đó, mỗi 30s mới thi triển 1 lần.",
       "effects": [
         {
           "stat": "Reset Chance",
@@ -1237,8 +1237,8 @@
       "valueLv90": 0.276
     },
     "passive": {
-      "name": "Wavesplitter",
-      "description": "cứ mỗi 4s trên sân, sát thương gây ra +6/7/8/9/10% và sát thương phải nhận +3/2.7/2.4/2.2/2%; tối đa 5 lớp, không mất khi rời sân nhưng giảm 1 lớp khi nhận sát thương.",
+      "name": "Phá Sóng",
+      "description": "Khi nhân vật ra trận, mỗi 4s tăng 6% sát thương gây ra, 3% sát thương phải chịu. Cộng dồn tối đa 5 tầng, không làm mới khi nhân vật rời khỏi trận, sau khi chịu sát thương sẽ giảm 1 tầng hiệu quả.",
       "effects": [
         {
           "stat": "DMG Bonus per stack",
@@ -1278,8 +1278,8 @@
       "valueLv90": 0.345
     },
     "passive": {
-      "name": "Frost Burial",
-      "description": "đòn thường/trọng kích trúng địch có 60/70/80/90/100% tỉ lệ tạo cơn lốc băng gây 80/95/110/125/140% ATK sát thương AoE (200/240/280/320/360% ATK nếu địch dính Băng); hồi chuỗi 10s.",
+      "name": "Sương Táng",
+      "description": "Khi tấn công thường và trọng kích đánh trúng kẻ địch có tỷ lệ 60% tạo ra Đá Vĩnh Hằng phía trên kẻ địch và rơi xuống, gây sát thương phạm vi bằng 80% tấn công. Nếu địch bị ảnh hưởng bởi nguyên tố Băng, sẽ gây sát thương bằng 200% tấn công. Hiệu quả này mỗi 10s kích hoạt 1 lần.",
       "effects": [
         {
           "stat": "Proc Chance",
@@ -1326,8 +1326,8 @@
       "valueLv90": 0.184
     },
     "passive": {
-      "name": "\"The Silver Tongue\"",
-      "description": "sau khi dính Hỏa, ATK +16/20/24/28/32% trong 15s, hồi 12s. Sau khi dính Thủy/Băng/Lôi/Thảo, toàn bộ Elemental DMG Bonus +12/15/18/21/24% trong 15s, hồi 12s.",
+      "name": "\"Miệng Mồm Lanh Lợi\"",
+      "description": "Trong 15s khi bị gán ấn nguyên tố Hỏa, tấn công tăng 16%, mỗi 12s tối đa kích hoạt một lần; Trong 15s khi bị gán ấn nguyên tố Thủy, Băng, Lôi hoặc Thảo, buff sát thương tất cả nguyên tố tăng 12%, mỗi 12s tối đa kích hoạt một lần.",
       "effects": [
         {
           "stat": "ATK Buff (Pyro)",
@@ -1367,8 +1367,8 @@
       "valueLv90": 0.413
     },
     "passive": {
-      "name": "Rebellious Guardian",
-      "description": "nhận sát thương tạo khiên hấp thụ tối đa 20/23/26/29/32% HP tối đa, kéo dài 10s hoặc đến khi vỡ, hồi chuỗi 45s; trong lúc có khiên, sát thương gây ra +12/15/18/21/24%.",
+      "name": "Kẻ Bảo Vệ Phản Nghịch",
+      "description": "Khi nhận sát thương sẽ tạo ra khiên có lượng hấp thụ sát thương bằng 20% giới hạn HP, kéo dài 10s hoặc đến khi khiên mất hiệu lực, mỗi 45s chỉ thi triển 1 lần. Khi nhân vật được khiên bảo vệ, sát thương tạo thành tăng 12%.",
       "effects": [
         {
           "stat": "Shield Absorption (% Max HP)",
@@ -1408,8 +1408,8 @@
       "valueLv90": 0.413
     },
     "passive": {
-      "name": "White Cruising Wave",
-      "description": "sau khi người mang được hồi máu, ATK +24/30/36/42/48% trong 8s; kích hoạt được cả khi rời sân.",
+      "name": "Sóng Trắng Dao Động",
+      "description": "Sau khi nhận trị liệu, tấn công tăng 24% trong 8s. Nhân vật không ra trận cũng có thể kích hoạt.",
       "effects": [
         {
           "stat": "ATK Buff",
@@ -1441,8 +1441,8 @@
       "valueLv90": 0.517
     },
     "passive": {
-      "name": "Infusion Blade",
-      "description": "đòn thường/trọng kích trúng địch tăng ATK và DEF +6/7.5/9/10.5/12% trong 6s, tối đa 4 lớp, hồi 0.5s.",
+      "name": "Đỉnh Năng Lượng",
+      "description": "Sau khi tấn công thường và trọng kích đánh trúng địch, tấn công và phòng ngự tăng 6%. Kéo dài 6s, tối đa cộng dồn 4 lần. Mỗi 0.5s mới thi triển 1 lần.",
       "effects": [
         {
           "stat": "ATK & DEF Buff per stack",
@@ -1473,8 +1473,8 @@
       "valueLv90": 0.306
     },
     "passive": {
-      "name": "Melussistance!",
-      "description": "ATK +12/15/18/21/24%. Ngoài ra, dựa theo số Melusine đã giúp đỡ tại Merusea Village, ATK cộng thêm tối đa +12/15/18/21/24% nữa.",
+      "name": "Cố Lên Nào!",
+      "description": "Tấn công tăng 12%. Không những vậy, tiếng lòng của các Melusine ở Làng Merusea sẽ cung cấp thêm sức mạnh. Căn cứ vào số lượng Melusine đã giúp đỡ, tấn công sẽ tăng thêm tối đa 12%.",
       "effects": [
         {
           "stat": "ATK Buff",
@@ -1500,7 +1500,7 @@
       "không gắn với nhân vật cụ thể"
     ],
     "sourceFile": "vu-khi/dai-kiem.md",
-    "nameVI": "Bá Vương Tối Thượng Siêu Cấp Ma Kiếm"
+    "nameVI": "\"Bá Vương Tối Thượng Siêu Cấp Ma Kiếm\""
   },
   {
     "id": "bloodtainted-greatsword",
@@ -1514,8 +1514,8 @@
       "valueLv90": 187
     },
     "passive": {
-      "name": "Bane of Fire and Thunder",
-      "description": "sát thương gây cho địch dính hiệu ứng Hỏa hoặc Lôi +12/15/18/21/24%.",
+      "name": "Trừ Lôi Dập Hỏa",
+      "description": "Sát thương tạo ra cho kẻ địch bị ảnh hưởng bởi nguyên tố Hỏa hoặc Lôi tăng 12%.",
       "effects": [
         {
           "stat": "DMG Bonus vs Pyro/Electro-afflicted",
@@ -1547,8 +1547,8 @@
       "valueLv90": 0.352
     },
     "passive": {
-      "name": "Blunt Conclusion",
-      "description": "sau khi dùng Kỹ năng nguyên tố, đòn thường/trọng kích trúng địch gây thêm 60/75/90/105/120% ATK sát thương AoE nhỏ, hiệu ứng kéo dài 15s; sát thương cộng thêm chỉ kích hoạt 1 lần/3s.",
+      "name": "Lời Nói Thẳng Thắn",
+      "description": "Sau khi thi triển kỹ năng nguyên tố, tấn công thường và trọng kích đánh trúng địch sẽ tạo thêm sát thương bằng 60% tấn công trong phạm vi nhỏ. Hiệu quả kéo dài 15s, sát thương mỗi 3s mới thi triển 1 lần.",
       "effects": [
         {
           "stat": "Bonus AoE DMG (% ATK)",
@@ -1580,8 +1580,8 @@
       "valueLv90": 0.352
     },
     "passive": {
-      "name": "Unbending",
-      "description": "khi HP dưới 70/75/80/85/90%, sát thương trọng kích +30/35/40/45/50% và trọng kích khó bị ngắt hơn.",
+      "name": "Bất Khuất",
+      "description": "Khi HP dưới 70%, trọng kích khó bị ngắt đoạn, và tăng 30% sát thương trọng kích.",
       "effects": [
         {
           "stat": "HP Threshold (%)",
@@ -1621,8 +1621,8 @@
       "valueLv90": 0.439
     },
     "passive": {
-      "name": "Courage",
-      "description": "đòn thường/trọng kích trúng địch tăng ATK +6/7/8/9/10% trong 6s, tối đa 4 lớp, hồi 0.5s.",
+      "name": "Dũng Khí",
+      "description": "Khi tấn công thường và trọng kích đánh trúng địch, tấn công tăng 6%, kéo dài 6s, tối đa cộng dồn 4 lần. Mỗi 0.5s mới thi triển 1 lần.",
       "effects": [
         {
           "stat": "ATK Buff per stack",
@@ -1653,8 +1653,8 @@
       "valueLv90": 0.439
     },
     "passive": {
-      "name": "Cull the Weak",
-      "description": "hạ gục địch hồi 8/10/12/14/16% HP cho người mang.",
+      "name": "Dứt Điểm",
+      "description": "Khi đánh bại kẻ địch, hồi 8% HP.",
       "effects": [
         {
           "stat": "HP Restore (%)",

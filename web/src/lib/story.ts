@@ -1,5 +1,8 @@
-import { leadingNumber } from "./slug";
+import { charactersByID } from "./abyss";
+import { leadingNumber, storySlug } from "./slug";
 import { parseDocument, type StoryDocument } from "./markdown";
+
+export type { StoryDocument } from "./markdown";
 import {
   ENTITY_KIND_ORDER,
   linkDocument,
@@ -107,6 +110,56 @@ export function chaptersOf(library: StoryLibrary): StoryDocument[] {
 
 export function questsOf(library: StoryLibrary): StoryDocument[] {
   return library.documents.filter((doc) => doc.kind === "questReference");
+}
+
+export type QuestFace = {
+  sectionID: string;
+  title: string;
+  iconId?: string;
+};
+
+// Chapter portraits for the Archon Quest sidebar. Song of the Welkin Moon
+// uses Columbina, the playable lead of that chapter.
+const ARCHON_CHAPTER_ICONS: Array<[RegExp, string]> = [
+  [/^prologue\b/i, "venti"],
+  [/^chapter i:/i, "zhongli"],
+  [/^chapter ii:/i, "raiden-shogun"],
+  [/^chapter iii:/i, "nahida"],
+  [/^chapter iv:/i, "furina"],
+  [/^chapter v:/i, "mavuika"],
+  [/^song of the welkin moon\b/i, "columbina"],
+  [/^chapter vii:/i, "tsaritsa"],
+];
+
+function knownIcon(id: string | undefined): string | undefined {
+  if (id && charactersByID[id]) return id;
+  return undefined;
+}
+
+function iconIdForName(name: string): string | undefined {
+  const stripped = name.replace(/\s*\([^)]*\)\s*/gu, " ").replace(/\s+/gu, " ").trim();
+  return knownIcon(storySlug(stripped));
+}
+
+/** Character story chapters and Archon Quest chapters, for sidebar avatars. */
+export function questFaces(doc: StoryDocument): QuestFace[] {
+  if (doc.id === "02-story-quests") {
+    return doc.sections
+      .filter((section) => section.level === 3 && section.heading)
+      .map((section) => {
+        const name = section.heading.split(/\s+[—–]\s+/u).at(-1)?.trim() ?? section.heading;
+        return { sectionID: section.id, title: section.heading, iconId: iconIdForName(name) };
+      });
+  }
+  if (doc.id === "01-archon-quests") {
+    return doc.sections
+      .filter((section) => section.level === 2 && section.heading && section.heading !== "Nguồn")
+      .map((section) => {
+        const iconId = ARCHON_CHAPTER_ICONS.find(([pattern]) => pattern.test(section.heading))?.[1];
+        return { sectionID: section.id, title: section.heading, iconId: knownIcon(iconId) };
+      });
+  }
+  return [];
 }
 
 export function entitiesByKind(

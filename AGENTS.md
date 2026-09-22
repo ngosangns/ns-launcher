@@ -15,7 +15,7 @@ When updating this file, preserve this bar for all agents and keep entries conci
 
 ## Web companion
 
-`web/` is a Vite + React site (Ký Sự Teyvat) for Story and Abyss. The macOS
+`web/` is a Vite + SolidJS site (Ký Sự Teyvat) for Story and Abyss. The macOS
 launcher does not include those screens. The site reads data from
 `Sources/NSLauncherApp/Resources/` (no copies). Run with `task web` or
 `cd web && npm run dev`. See `web/README.md`.

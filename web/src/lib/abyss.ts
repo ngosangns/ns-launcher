@@ -29,6 +29,19 @@ export const WEAPON_TYPES: WeaponType[] = [
   "Catalyst",
 ];
 
+// vi labels from the `type` field of gi.yatta.moe weapon details.
+export const WEAPON_TYPE_VI: Record<WeaponType, string> = {
+  Sword: "Kiếm Đơn",
+  Claymore: "Trọng Kiếm",
+  Polearm: "Vũ Khí Cán Dài",
+  Bow: "Cung",
+  Catalyst: "Pháp Khí",
+};
+
+export function weaponTypeName(type: WeaponType, lang: "vi" | "en"): string {
+  return lang === "vi" ? WEAPON_TYPE_VI[type] : type;
+}
+
 export type TalentHit = {
   label: string;
   values: Record<string, string>;
@@ -143,6 +156,7 @@ export type Resistances = Partial<Record<ElementName, number>> & {
 
 export type Monster = {
   name: string;
+  nameVI?: string;
   count: string;
   size: string | null;
   elements: string[];

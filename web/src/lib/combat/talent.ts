@@ -318,7 +318,8 @@ function lineHits(
 
 function splitContinuous(cast: HitTemplate[], description: string): { cast: HitTemplate[]; ticks: HitTemplate[] } {
   const text = foldVi(description);
-  if (!sustainedText(text) || cast.length === 0) return { cast, ticks: [] };
+  const repeating = sustainedText(text) || /tan cong thuong/.test(text);
+  if (!repeating || cast.length === 0) return { cast, ticks: [] };
   if (cast.length === 1 && /^skill dmg$/i.test(cast[0]?.label ?? "")) return { cast: [], ticks: cast };
   const ticks = cast.filter((hit) => !/swing|summoning|^skill dmg$|^total\b/i.test(hit.label));
   if (ticks.length === 0) return { cast, ticks: [] };
@@ -348,7 +349,7 @@ function sustainOf(
   const span = duration > 0 ? duration : interval * Math.max(events, 1);
   if (!onNormal && !sustainedText(text) && events <= 1) return null;
   if (span <= 0 || interval <= 0) return null;
-  const aoe = /dien rong|aoe|quanh|loc |vung/.test(text);
+  const aoe = /dien rong|pham vi|xung quanh|aoe|quanh|loc |vung/.test(text);
   return {
     ticks: ticks.map((tick) => ({ ...tick, aoe })),
     duration: span,
@@ -358,11 +359,11 @@ function sustainOf(
 }
 
 function sustainedText(text: string): boolean {
-  return /sat thuong lien tuc|tan cong lien tuc|dmg(?: [^.]{0,32})?lien tuc|lien tuc(?: [^.]{0,32})?dmg|dinh ky|chu ky|don\s*\/\s*s|s\s*\/\s*lan|xuc xac/.test(text);
+  return /sat thuong lien tuc|tan cong lien tuc|tan cong thuong|khong ngung|thoi gian ton tai|dmg(?: [^.]{0,32})?lien tuc|lien tuc(?: [^.]{0,40})?(?:dmg|sat thuong|ban|phun)|dinh ky|chu ky|don\s*\/\s*s|s\s*\/\s*lan|xuc xac/.test(text);
 }
 
 function markAoe(hits: HitTemplate[], description: string): HitTemplate[] {
-  const aoe = /dien rong|aoe|quanh|loc |vung/.test(foldVi(description));
+  const aoe = /dien rong|pham vi|xung quanh|aoe|quanh|loc |vung/.test(foldVi(description));
   if (!aoe) return hits;
   return hits.map((hit) => ({ ...hit, aoe: true }));
 }

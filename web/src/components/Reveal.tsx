@@ -1,30 +1,31 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { Show, createEffect, type JSX } from "solid-js";
 import { scrollBehavior } from "./motion";
 
-/** Replay a rise when `id` changes, and bring the surrounding pane back to the top. */
-export function Reveal({
-  id,
-  children,
-  className = "",
-  pinTop = true,
-}: {
-  id: string;
-  children: ReactNode;
-  className?: string;
-  pinTop?: boolean;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!pinTop) return;
-    const scroller = ref.current?.closest(".stage-pane");
+function Rise(props: { revealId: string; class?: string; pinTop?: boolean; children?: JSX.Element }) {
+  let ref: HTMLDivElement | undefined;
+  createEffect(() => {
+    props.revealId;
+    if (props.pinTop === false) return;
+    const scroller = ref?.closest(".stage-pane");
     if (!(scroller instanceof HTMLElement)) return;
     scroller.scrollTo({ top: 0, behavior: scrollBehavior() });
-  }, [id, pinTop]);
-
+  });
   return (
-    <div ref={ref} key={id} className={`rise-once ${className}`.trim()}>
-      {children}
+    <div ref={ref} class={`rise-once ${props.class ?? ""}`.trim()}>
+      {props.children}
     </div>
+  );
+}
+
+/** Replay a rise when `id` changes, and bring the surrounding pane back to the top. */
+export function Reveal(props: { id: string; children?: JSX.Element; class?: string; pinTop?: boolean }) {
+  return (
+    <Show when={props.id} keyed>
+      {(id) => (
+        <Rise revealId={id} class={props.class} pinTop={props.pinTop}>
+          {props.children}
+        </Rise>
+      )}
+    </Show>
   );
 }

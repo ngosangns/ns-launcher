@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { createEffect, createSignal, onCleanup, type JSX } from "solid-js";
 import { prefersReducedMotion } from "./motion";
 
 type Phase = "enter" | "shown" | "leave" | "idle";
@@ -7,24 +7,19 @@ const LEAVE_MS = 240;
 
 /**
  * Hide without unmounting, so scroll, form fields, and search results survive tab switches.
- * `stage` panes crossfade in place. Flow panes stay in document order and rise in when shown.
+ * `stage` panes crossfade in place. Flow panes stay in document order and stay mounted.
  */
-export function KeepAlive({
-  active,
-  children,
-  className = "",
-  stage = false,
-}: {
+export function KeepAlive(props: {
   active: boolean;
-  children: ReactNode;
-  className?: string;
+  children?: JSX.Element;
+  class?: string;
   stage?: boolean;
 }) {
-  const [phase, setPhase] = useState<Phase>(active ? "enter" : "idle");
+  const [phase, setPhase] = createSignal<Phase>(props.active ? "enter" : "idle");
 
-  useEffect(() => {
-    if (!stage) return;
-    if (active) {
+  createEffect(() => {
+    if (!props.stage) return;
+    if (props.active) {
       setPhase("enter");
       let second = 0;
       const first = requestAnimationFrame(() => {
@@ -32,38 +27,39 @@ export function KeepAlive({
       });
       // rAF does not run while the tab is in the background; don't leave the pane at opacity 0.
       const fallback = window.setTimeout(() => setPhase("shown"), 64);
-      return () => {
+      onCleanup(() => {
         cancelAnimationFrame(first);
         cancelAnimationFrame(second);
         window.clearTimeout(fallback);
-      };
+      });
+      return;
     }
     setPhase((current) => (current === "idle" ? "idle" : "leave"));
     const ms = prefersReducedMotion() ? 0 : LEAVE_MS;
     const timer = window.setTimeout(() => setPhase("idle"), ms);
-    return () => window.clearTimeout(timer);
-  }, [active, stage]);
+    onCleanup(() => window.clearTimeout(timer));
+  });
 
-  if (!stage) {
+  if (!props.stage) {
     return (
       <div
-        className={`keep-alive ${active ? "is-active" : ""} ${className}`.trim()}
-        hidden={!active}
-        inert={!active}
-        aria-hidden={!active}
+        class={`keep-alive ${props.active ? "is-active" : ""} ${props.class ?? ""}`.trim()}
+        hidden={!props.active}
+        inert={!props.active || undefined}
+        aria-hidden={!props.active}
       >
-        {children}
+        {props.children}
       </div>
     );
   }
 
   return (
     <div
-      className={`keep-alive stage-pane phase-${phase} ${active ? "is-active" : ""} ${className}`.trim()}
-      inert={!active}
-      aria-hidden={!active}
+      class={`keep-alive stage-pane phase-${phase()} ${props.active ? "is-active" : ""} ${props.class ?? ""}`.trim()}
+      inert={!props.active || undefined}
+      aria-hidden={!props.active}
     >
-      {children}
+      {props.children}
     </div>
   );
 }

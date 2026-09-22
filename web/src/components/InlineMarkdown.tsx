@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom";
-import type { ReactNode } from "react";
+import { For } from "solid-js";
 
 type Token =
   | { type: "text"; value: string }
@@ -37,38 +36,34 @@ function tokenize(markdown: string): Token[] {
   return tokens;
 }
 
-export function InlineMarkdown({ text }: { text: string }) {
-  const nodes: ReactNode[] = tokenize(text).map((token, index) => {
-    if (token.type === "strong") {
-      return (
-        <strong key={index}>
-          <InlineMarkdown text={token.value} />
-        </strong>
-      );
-    }
-    if (token.type === "em") {
-      return (
-        <em key={index}>
-          <InlineMarkdown text={token.value} />
-        </em>
-      );
-    }
-    if (token.type === "link") {
-      const internal = token.href.startsWith("/");
-      if (internal) {
-        return (
-          <Link key={index} to={token.href}>
-            {token.value}
-          </Link>
-        );
-      }
-      return (
-        <a key={index} href={token.href} rel="noreferrer">
-          {token.value}
-        </a>
-      );
-    }
-    return <span key={index}>{token.value}</span>;
-  });
-  return <>{nodes}</>;
+export function InlineMarkdown(props: { text: string }) {
+  return (
+    <For each={tokenize(props.text)}>
+      {(token) => {
+        if (token.type === "strong") {
+          return (
+            <strong>
+              <InlineMarkdown text={token.value} />
+            </strong>
+          );
+        }
+        if (token.type === "em") {
+          return (
+            <em>
+              <InlineMarkdown text={token.value} />
+            </em>
+          );
+        }
+        if (token.type === "link") {
+          if (token.href.startsWith("/")) return <a href={token.href}>{token.value}</a>;
+          return (
+            <a href={token.href} rel="noreferrer">
+              {token.value}
+            </a>
+          );
+        }
+        return <span>{token.value}</span>;
+      }}
+    </For>
+  );
 }

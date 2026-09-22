@@ -1,5 +1,5 @@
 import { defineConfig, type Plugin } from "vitest/config";
-import react from "@vitejs/plugin-react";
+import solid from "vite-plugin-solid";
 import type { ProxyOptions } from "vite";
 import type { IncomingMessage } from "node:http";
 import fs from "node:fs";
@@ -68,7 +68,7 @@ const apiProxy: Record<string, ProxyOptions> = {
 };
 
 export default defineConfig({
-  plugins: [react(), abyssIconPlugin()],
+  plugins: [solid({ hot: false }), abyssIconPlugin()],
   server: {
     fs: { allow: [repoRoot] },
     port: 5173,

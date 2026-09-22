@@ -1,21 +1,15 @@
-import type { ReactNode } from "react";
-import { Link } from "react-router-dom";
-import { iconUrl, type ElementName } from "../lib/abyss";
+import { createEffect, type JSX } from "solid-js";
+import { iconUrl } from "../lib/abyss";
 
-export function Panel({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <section className={`panel ${className}`}>{children}</section>;
+export function Panel(props: { children?: JSX.Element; class?: string }) {
+  return <section class={`panel ${props.class ?? ""}`}>{props.children}</section>;
 }
 
-export function GroupLabel({ children }: { children: ReactNode }) {
-  return <div className="group-label">{children}</div>;
+export function GroupLabel(props: { children?: JSX.Element }) {
+  return <div class="group-label">{props.children}</div>;
 }
 
-export function Portrait({
-  kind,
-  id,
-  alt,
-  large = false,
-}: {
+export function Portrait(props: {
   kind: "characters" | "weapons" | "artifact-sets" | "monsters";
   id: string;
   alt: string;
@@ -23,105 +17,110 @@ export function Portrait({
 }) {
   return (
     <img
-      className={large ? "portrait lg" : "portrait"}
-      src={iconUrl(kind, id)}
-      alt={alt}
+      class={props.large ? "portrait lg" : "portrait"}
+      src={iconUrl(props.kind, props.id)}
+      alt={props.alt}
       loading="lazy"
       onError={(event) => {
-        event.currentTarget.style.visibility = "hidden";
+        const img = event.currentTarget;
+        if (img instanceof HTMLImageElement) img.style.visibility = "hidden";
       }}
     />
   );
 }
 
-export function Stars({ n }: { n: number }) {
+export function ElementBadge(props: { element: string; size?: number }) {
+  const size = () => props.size ?? 20;
   return (
-    <span className="stars" aria-label={`${n} sao`}>
-      {"★".repeat(Math.max(0, Math.min(n, 5)))}
+    <span class="element" data-el={props.element} title={props.element} aria-label={props.element}>
+      <img
+        class="element-icon"
+        src={`/icons/elements/${props.element}.png`}
+        alt=""
+        width={size()}
+        height={size()}
+        style={{ width: `${size()}px`, height: `${size()}px` }}
+      />
     </span>
   );
 }
 
-export function ElementBadge({ element }: { element: string }) {
-  return (
-    <span className="element" data-el={element}>
-      {element}
-    </span>
-  );
-}
-
-const ACCENT: Record<string, string> = {
-  Pyro: "var(--pyro)",
-  Hydro: "var(--hydro)",
-  Anemo: "var(--anemo)",
-  Electro: "var(--electro)",
-  Dendro: "var(--dendro)",
-  Cryo: "var(--cryo)",
-  Geo: "var(--geo)",
-};
-
-export function elementColor(element: string): string {
-  return ACCENT[element] ?? "var(--gold)";
-}
-
-export function CatalogTile({
-  to,
-  kind,
-  id,
-  title,
-  subtitle,
-  accent,
-  selected = false,
-  disabled = false,
-  onClick,
-}: {
+export function CatalogTile(props: {
   to?: string;
   kind: "characters" | "weapons" | "artifact-sets" | "monsters";
   id: string;
   title: string;
-  subtitle: ReactNode;
-  accent?: ElementName | string;
+  subtitle: JSX.Element;
+  rarity?: number;
   selected?: boolean;
   disabled?: boolean;
   onClick?: () => void;
 }) {
   const inner = (
     <>
-      <span className="accent-bar" style={{ background: accent ? elementColor(accent) : "transparent" }} />
-      <Portrait kind={kind} id={id} alt="" />
-      <span className="tile-copy">
-        <strong>{title}</strong>
-        <span className="meta">{subtitle}</span>
+      <Portrait kind={props.kind} id={props.id} alt="" />
+      <span class="tile-copy">
+        <strong>{props.title}</strong>
+        <span class="meta">{props.subtitle}</span>
       </span>
     </>
   );
-  const className = `tile ${selected ? "selected" : ""} ${disabled ? "disabled" : ""}`;
-  if (onClick || disabled) {
+  const className = () => `tile ${props.selected ? "selected" : ""} ${props.disabled ? "disabled" : ""}`.trim();
+  if (props.onClick || props.disabled) {
     return (
-      <button type="button" className={className} onClick={onClick} disabled={disabled}>
+      <button
+        type="button"
+        class={className()}
+        data-rarity={props.rarity}
+        onClick={() => props.onClick?.()}
+        disabled={props.disabled}
+      >
         {inner}
       </button>
     );
   }
   return (
-    <Link to={to ?? "#"} className={className}>
+    <a href={props.to ?? "#"} class={className()} data-rarity={props.rarity}>
       {inner}
-    </Link>
+    </a>
   );
 }
 
-export function Chip({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: ReactNode;
-}) {
+export function Chip(props: { active: boolean; onClick: () => void; label?: string; children?: JSX.Element }) {
   return (
-    <button type="button" className={`chip ${active ? "active" : ""}`} onClick={onClick}>
-      {children}
+    <button
+      type="button"
+      class="chip"
+      classList={{ active: props.active }}
+      aria-label={props.label}
+      onClick={() => props.onClick()}
+    >
+      {props.children}
     </button>
+  );
+}
+
+/** Replay the catalog rise when the filter key changes, without remounting on every keystroke. */
+export function SwapGrid(props: { id: string; children?: JSX.Element }) {
+  let el: HTMLDivElement | undefined;
+  let seen = "";
+  createEffect(() => {
+    const id = props.id;
+    const node = el;
+    if (!node) return;
+    if (seen === "") {
+      seen = id;
+      return;
+    }
+    if (seen === id) return;
+    seen = id;
+    node.classList.remove("swap");
+    void node.offsetWidth;
+    node.classList.add("swap");
+  });
+  return (
+    <div ref={el} class="catalog swap">
+      {props.children}
+    </div>
   );
 }

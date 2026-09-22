@@ -43,6 +43,13 @@ RELIQUARY_ASSET_HOST = "https://gi.yatta.moe/assets/UI/reliquary"
 MONSTER_ASSET_HOST = "https://gi.yatta.moe/assets/UI/monster"
 USER_AGENT = "ns-launcher/icons (github.com/ngosangns/ns-launcher)"
 
+# These local legends are not in Yatta's monster catalog yet. The files are
+# the official 256px enemy portraits from the Genshin Impact Wiki CDN.
+WIKI_MONSTER_ICONS = {
+    "Battle-Hardened Domovoy Sculptor": "https://static.wikia.nocookie.net/gensin-impact/images/1/17/Churin_Icon.png/revision/latest?format=original",
+    "Battle-Hardened Lightkeeper": "https://static.wikia.nocookie.net/gensin-impact/images/f/f0/Sigurd_%28Local_Legend%29_Icon.png/revision/latest?format=original",
+}
+
 # The Traveler's portrait icon does not vary by element — only by which twin
 # is picked — and Yatta has no per-element art to match against. Aether (the
 # boy) is used for every traveler-* slug; this is an arbitrary but consistent
@@ -180,7 +187,10 @@ def fetch_monsters(force: bool) -> tuple[int, int, list[str]]:
                 icon = by_name.get(normalize(candidate))
                 if icon:
                     break
-        if icon and download(icon, destination, asset_host=MONSTER_ASSET_HOST):
+        wiki = WIKI_MONSTER_ICONS.get(monster.get("name") or "")
+        if wiki and download_url(wiki, destination):
+            fetched += 1
+        elif icon and download(icon, destination, asset_host=MONSTER_ASSET_HOST):
             fetched += 1
         else:
             missing.append(f"{monster.get('name')} ({slug})")
@@ -208,6 +218,71 @@ def monster_name_candidates(monster: dict) -> list[str]:
             seen.add(name)
             out.append(name)
     return out
+
+
+# Official element emblems and the game wordmark, from the Genshin Impact Wiki
+# CDN (the same files genshin-db cites). Saved under our icon tree so the site
+# does not hotlink.
+ELEMENT_ICON_URLS = {
+    "Pyro": "https://static.wikia.nocookie.net/gensin-impact/images/e/e8/Element_Pyro.png",
+    "Hydro": "https://static.wikia.nocookie.net/gensin-impact/images/3/35/Element_Hydro.png",
+    "Anemo": "https://static.wikia.nocookie.net/gensin-impact/images/a/a4/Element_Anemo.png",
+    "Electro": "https://static.wikia.nocookie.net/gensin-impact/images/7/73/Element_Electro.png",
+    "Dendro": "https://static.wikia.nocookie.net/gensin-impact/images/f/f4/Element_Dendro.png",
+    "Cryo": "https://static.wikia.nocookie.net/gensin-impact/images/8/88/Element_Cryo.png",
+    "Geo": "https://static.wikia.nocookie.net/gensin-impact/images/4/4a/Element_Geo.png",
+    # Physical has no base-game emblem; the TCG card icon is the official one.
+    "Physical": "https://static.wikia.nocookie.net/gensin-impact/images/d/d8/Element_Physical_TCG.png",
+}
+LOGO_URL = "https://static.wikia.nocookie.net/gensin-impact/images/2/2a/Genshin-Impact-Logo.png/revision/latest"
+
+
+def download_url(url: str, destination: str) -> bool:
+    result = subprocess.run(
+        ["curl", "-sSL", "--max-time", "30", "-A", USER_AGENT, "-H", "Accept: image/png", "-o", destination, url],
+        capture_output=True,
+        text=True,
+    )
+    ok = result.returncode == 0 and os.path.exists(destination) and os.path.getsize(destination) > 100
+    if not ok and os.path.exists(destination):
+        os.remove(destination)
+    return ok
+
+
+def knock_out_white(path: str) -> None:
+    """The wiki wordmark is on a white plate. Drop near-white pixels so it sits on the dark bar."""
+    from PIL import Image
+
+    image = Image.open(path).convert("RGBA")
+    pixels = [
+        (red, green, blue, 0 if min(red, green, blue) >= 236 else alpha)
+        for red, green, blue, alpha in image.getdata()
+    ]
+    image.putdata(pixels)
+    image.thumbnail((720, 280), Image.Resampling.LANCZOS)
+    image.save(path, "PNG", optimize=True)
+
+
+def fetch_marks(force: bool) -> list[str]:
+    missing: list[str] = []
+    element_dir = os.path.join(ICONS, "elements")
+    os.makedirs(element_dir, exist_ok=True)
+    for name, url in ELEMENT_ICON_URLS.items():
+        destination = os.path.join(element_dir, f"{name}.png")
+        if os.path.exists(destination) and not force:
+            continue
+        if not download_url(url, destination):
+            missing.append(name)
+    logo_dir = os.path.join(ICONS, "brand")
+    os.makedirs(logo_dir, exist_ok=True)
+    logo = os.path.join(logo_dir, "genshin-logo.png")
+    if force or not os.path.exists(logo):
+        if download_url(LOGO_URL, logo):
+            knock_out_white(logo)
+        else:
+            missing.append("logo")
+    print(f"marks: elements {len(ELEMENT_ICON_URLS) - sum(1 for n in ELEMENT_ICON_URLS if n in missing)}, logo {'ok' if 'logo' not in missing else 'missing'}")
+    return missing
 
 
 def main() -> int:
@@ -251,7 +326,11 @@ def main() -> int:
     if m_missing:
         print(f"  missing: {', '.join(m_missing)}")
 
-    return 1 if (c_missing or w_missing or s_missing or m_missing) else 0
+    marks_missing = fetch_marks(args.force)
+    if marks_missing:
+        print(f"  missing marks: {', '.join(marks_missing)}")
+
+    return 1 if (c_missing or w_missing or s_missing or m_missing or marks_missing) else 0
 
 
 if __name__ == "__main__":

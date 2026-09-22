@@ -1,5 +1,4 @@
-import { useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { createMemo, createSignal, For, Show } from "solid-js";
 import {
   artifactSetsByID,
   characters,
@@ -14,9 +13,9 @@ import {
   type Weapon,
   type WeaponType,
   WEAPON_TYPES,
+  weaponTypeName,
 } from "../../lib/abyss";
 import { formatDateRange, formatHP } from "../../lib/format";
-import { fetchEnkaShowcase } from "../../lib/enka";
 import { fetchHoyolabRoster } from "../../lib/hoyolab";
 import { t, type Lang } from "../../lib/i18n";
 import {
@@ -33,10 +32,16 @@ import {
 } from "../../lib/roster";
 import { clearSeconds, findTeams, type PlannedPlan, type PlannedTeam, type PlannerOutput } from "../../lib/planner";
 import { foldVi } from "../../lib/slug";
+import { navigate } from "../../router";
 import { KeepAlive } from "../../components/KeepAlive";
 import { Segmented } from "../../components/Segmented";
-import { CatalogTile, Chip, ElementBadge, Portrait, Stars } from "../../components/ui";
-import { FloorMonsters, UniqueMonsterStrip } from "./MonsterList";
+import { Chip, ElementBadge, Portrait } from "../../components/ui";
+import {
+  CharacterPreviewBody,
+  WeaponPreviewBody,
+  createCatalogPreview,
+} from "./CatalogPages";
+import { FloorMonsters } from "./MonsterList";
 
 function clock(seconds: number): string {
   const total = Math.max(0, Math.round(seconds));
@@ -73,81 +78,88 @@ function formatRotation(team: PlannedTeam, lang: Lang, onField: string): string 
   return [...casts, `${nameOf(team.onFieldId)} ${onField}`].join(" · ");
 }
 
-export function PlannerPage({ lang }: { lang: Lang }) {
-  const copy = t(lang);
-  const [roster, setRoster] = useState<Roster>(loadRoster);
-  const [section, setSection] = useState<"roster" | "monsters" | "results">("roster");
-  const [tab, setTab] = useState<"characters" | "weapons">("characters");
-  const [query, setQuery] = useState("");
-  const [element, setElement] = useState<ElementName | "all">("all");
-  const [weaponType, setWeaponType] = useState<WeaponType | "all">("all");
-  const [ownedOnly, setOwnedOnly] = useState(false);
-  const [sort, setSort] = useState<"name" | "rarity" | "owned">("rarity");
-  const [fullCharacters, setFullCharacters] = useState(false);
-  const [fullWeapons, setFullWeapons] = useState(false);
-  const [uid, setUid] = useState("");
-  const [ltuid, setLtuid] = useState("");
-  const [ltoken, setLtoken] = useState("");
-  const [status, setStatus] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [output, setOutput] = useState<PlannerOutput | null>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
+export function PlannerPage(props: { lang: Lang; section: string }) {
+  const text = () => t(props.lang);
+  const [roster, setRoster] = createSignal<Roster>(loadRoster());
+  const charactersView = () => props.section === "characters";
+  const [query, setQuery] = createSignal("");
+  const [element, setElement] = createSignal<ElementName | "all">("all");
+  const [weaponType, setWeaponType] = createSignal<WeaponType | "all">("all");
+  const [ownedOnly, setOwnedOnly] = createSignal(false);
+  const [sort, setSort] = createSignal<"name" | "rarity" | "owned">("rarity");
+  const [fullCharacters, setFullCharacters] = createSignal(false);
+  const [fullWeapons, setFullWeapons] = createSignal(false);
+  const [ltuid, setLtuid] = createSignal("");
+  const [ltoken, setLtoken] = createSignal("");
+  const [status, setStatus] = createSignal<string | null>(null);
+  const [busy, setBusy] = createSignal(false);
+  const [output, setOutput] = createSignal<PlannerOutput | null>(null);
+  let fileRef: HTMLInputElement | undefined;
   const cycle = currentCycle();
   const blessing = cycle.blessingOfTheAbyssalMoon;
   const floor12 = floor12Of(cycle);
-  const needle = foldVi(query);
-  const ownedChars = new Set(roster.characters.map((item) => item.id));
-  const ownedWeapons = new Set(roster.weapons.map((item) => item.id));
 
   const update = (next: Roster) => {
     setRoster(next);
     saveRoster(next);
   };
 
-  const visibleCharacters = useMemo(() => {
+  const visibleCharacters = createMemo(() => {
+    const owned = new Set(roster().characters.map((item) => item.id));
+    const needle = foldVi(query());
     return characters
       .filter((character) => {
-        if (element !== "all" && character.element !== element) return false;
-        if (ownedOnly && !ownedChars.has(character.id)) return false;
+        if (element() !== "all" && character.element !== element()) return false;
+        if (ownedOnly() && !owned.has(character.id)) return false;
         if (needle && !foldVi(`${character.name} ${character.nameVI ?? ""}`).includes(needle)) return false;
         return true;
       })
-      .sort((a, b) => compareRoster(a, b, ownedChars.has(a.id), ownedChars.has(b.id), sort));
-  }, [element, ownedOnly, needle, sort, ownedChars]);
+      .sort((a, b) => compareRoster(a, b, owned.has(a.id), owned.has(b.id), sort()));
+  });
 
-  const visibleWeapons = useMemo(() => {
+  const visibleWeapons = createMemo(() => {
+    const owned = new Set(roster().weapons.map((item) => item.id));
+    const needle = foldVi(query());
     return weapons
       .filter((weapon) => {
-        if (weaponType !== "all" && weapon.type !== weaponType) return false;
-        if (ownedOnly && !ownedWeapons.has(weapon.id)) return false;
+        if (weaponType() !== "all" && weapon.type !== weaponType()) return false;
+        if (ownedOnly() && !owned.has(weapon.id)) return false;
         if (needle && !foldVi(`${weapon.name} ${weapon.nameVI ?? ""}`).includes(needle)) return false;
         return true;
       })
-      .sort((a, b) => compareRoster(a, b, ownedWeapons.has(a.id), ownedWeapons.has(b.id), sort));
-  }, [weaponType, ownedOnly, needle, sort, ownedWeapons]);
+      .sort((a, b) => compareRoster(a, b, owned.has(a.id), owned.has(b.id), sort()));
+  });
+
+  const characterPreview = createCatalogPreview(() => visibleCharacters().map((character) => character.id));
+  const weaponPreview = createCatalogPreview(() => visibleWeapons().map((weapon) => weapon.id));
 
   const search = () => {
+    const hint = text().abyssNoResultsHint;
+    const current = roster();
+    const fullC = fullCharacters();
+    const fullW = fullWeapons();
     setBusy(true);
     setStatus(null);
     window.setTimeout(() => {
-      const result = findTeams(roster, { fullCharacters, fullWeapons });
+      const result = findTeams(current, { fullCharacters: fullC, fullWeapons: fullW });
       setOutput(result);
-      setSection("results");
       setBusy(false);
-      if (result.plans.length === 0) {
-        setStatus(copy.abyssNoResultsHint);
-      }
+      if (result.plans.length === 0) setStatus(hint);
+      navigate("/abyss/team");
     }, 30);
   };
 
-  const importUID = async () => {
+  const importHoyolab = async () => {
+    const label = text();
+    const current = roster();
     setBusy(true);
     setStatus(null);
     try {
-      const imported = await fetchEnkaShowcase(uid);
-      update(mergeImported(roster, imported));
+      const imported = await fetchHoyolabRoster("", ltuid(), ltoken());
+      update(mergeImported(current, imported));
+      const others = imported.otherUids.length > 0 ? ` · UID khác: ${imported.otherUids.join(", ")}` : "";
       setStatus(
-        `${imported.nickname || uid} — ${imported.characters.length} ${copy.abyssCharacters.toLowerCase()}`,
+        `${imported.nickname || imported.uid} (${imported.uid}) — ${imported.characters.length} ${label.abyssCharacters.toLowerCase()}${others}`,
       );
     } catch (error) {
       setStatus(error instanceof Error ? error.message : String(error));
@@ -156,157 +168,119 @@ export function PlannerPage({ lang }: { lang: Lang }) {
     }
   };
 
-  const importHoyolab = async () => {
-    setBusy(true);
-    setStatus(null);
-    try {
-      const imported = await fetchHoyolabRoster(uid, ltuid, ltoken);
-      update(mergeImported(roster, imported));
-      const others = imported.otherUids.length > 0 ? ` · UID khác: ${imported.otherUids.join(", ")}` : "";
-      setStatus(
-        `${imported.nickname || imported.uid} (${imported.uid}) — ${imported.characters.length} ${copy.abyssCharacters.toLowerCase()}${others}`,
-      );
-    } catch (error) {
-      setStatus(error instanceof Error ? error.message : String(error));
-    } finally {
-      setBusy(false);
-    }
+  const exportFile = () => {
+    const blob = new Blob([exportRoster(roster())], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "abyss-roster.json";
+    anchor.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
-    <div className="split">
-      <aside className="sidebar">
-        <div className="group-label">{copy.abyssBlessing}</div>
-        <p className="prose" style={{ margin: 0 }}>
-          <strong>{lang === "vi" ? blessing.nameVI ?? blessing.name : blessing.name}</strong>
+    <div class="split">
+      <aside class="sidebar">
+        <div class="group-label">{text().abyssBlessing}</div>
+        <p class="prose" style={{ margin: "0" }}>
+          <strong>{props.lang === "vi" ? blessing.nameVI ?? blessing.name : blessing.name}</strong>
         </p>
-        <p className="meta">{formatDateRange(cycle.periodStart, cycle.periodEnd, lang)}</p>
-        <p className="notice">{blessing.description}</p>
-        {floor12 && (
-          <>
-            <div className="group-label">{copy.abyssMonsters} · 12</div>
-            <UniqueMonsterStrip floor={floor12} lang={lang} />
-          </>
-        )}
+        <p class="meta">{formatDateRange(cycle.periodStart, cycle.periodEnd, props.lang)}</p>
+        <p class="notice">{blessing.description}</p>
 
-        <div className="group-label">{copy.abyssImportUID}</div>
-        <input className="search" value={uid} onChange={(e) => setUid(e.target.value)} placeholder={copy.abyssUIDPlaceholder} />
-        <button type="button" className={`btn btn-quiet ${busy ? "is-busy" : ""}`} disabled={busy} onClick={() => void importUID()}>
-          {copy.abyssImport}
+        <div class="group-label">{text().abyssImportFull}</div>
+        <input class="search" value={ltuid()} onInput={(event) => setLtuid(event.currentTarget.value)} placeholder="ltuid_v2" />
+        <input class="search" value={ltoken()} onInput={(event) => setLtoken(event.currentTarget.value)} placeholder="ltoken_v2" />
+        <button type="button" class="btn btn-quiet" classList={{ "is-busy": busy() }} disabled={busy()} onClick={() => void importHoyolab()}>
+          {text().abyssImport}
         </button>
-        <p className="notice">{copy.abyssUIDHint}</p>
+        <p class="notice">{text().abyssHoyolabHint}</p>
+        <Show when={status()} keyed>
+          {(message) => <p class="meta rise-once">{message}</p>}
+        </Show>
+        <p class="notice">{text().abyssMethodology}</p>
 
-        <div className="group-label">{copy.abyssImportFull}</div>
-        <input className="search" value={ltuid} onChange={(e) => setLtuid(e.target.value)} placeholder="ltuid_v2" />
-        <input className="search" value={ltoken} onChange={(e) => setLtoken(e.target.value)} placeholder="ltoken_v2" />
-        <button type="button" className={`btn btn-quiet ${busy ? "is-busy" : ""}`} disabled={busy} onClick={() => void importHoyolab()}>
-          {copy.abyssImport}
-        </button>
-        <p className="notice">{copy.abyssHoyolabHint}</p>
-        {status && (
-          <p className="meta rise-once" key={status}>
-            {status}
-          </p>
-        )}
-        <p className="notice">{copy.abyssMethodology}</p>
-
-        <label className="meta" style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <input type="checkbox" checked={fullCharacters} onChange={(e) => setFullCharacters(e.target.checked)} />
-          {copy.abyssFullChars}
+        <label class="meta" style={{ display: "flex", gap: "8px", "align-items": "center" }}>
+          <input type="checkbox" checked={fullCharacters()} onChange={(event) => setFullCharacters(event.currentTarget.checked)} />
+          {text().abyssFullChars}
         </label>
-        <label className="meta" style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <input type="checkbox" checked={fullWeapons} onChange={(e) => setFullWeapons(e.target.checked)} />
-          {copy.abyssFullWeapons}
+        <label class="meta" style={{ display: "flex", gap: "8px", "align-items": "center" }}>
+          <input type="checkbox" checked={fullWeapons()} onChange={(event) => setFullWeapons(event.currentTarget.checked)} />
+          {text().abyssFullWeapons}
         </label>
-        <button type="button" className={`btn btn-primary ${busy ? "is-busy" : ""}`} disabled={busy} onClick={search}>
-          {busy ? copy.abyssSearching : copy.abyssFindTeams}
+        <button type="button" class="btn btn-primary" classList={{ "is-busy": busy() }} disabled={busy()} onClick={search}>
+          {busy() ? text().abyssSearching : text().abyssFindTeams}
         </button>
       </aside>
 
-      <div className="detail" style={{ maxWidth: "none" }}>
-        <Segmented className="abyss-nav tabs" label={copy.abyssTeam}>
-          <button type="button" className={`tab ${section === "roster" ? "active" : ""}`} onClick={() => setSection("roster")}>
-            {copy.abyssRoster}
-          </button>
-          <button type="button" className={`tab ${section === "monsters" ? "active" : ""}`} onClick={() => setSection("monsters")}>
-            {copy.abyssMonsters}
-          </button>
-          <button type="button" className={`tab ${section === "results" ? "active" : ""}`} onClick={() => setSection("results")}>
-            {copy.abyssResults}
-          </button>
-        </Segmented>
-
-        <KeepAlive active={section === "roster"}>
-          <>
-            <Segmented className="abyss-nav tabs" label={copy.abyssRoster}>
-              <button type="button" className={`tab ${tab === "characters" ? "active" : ""}`} onClick={() => setTab("characters")}>
-                {copy.abyssCharacters}
+      <div class="detail" style={{ "max-width": "none" }}>
+        <KeepAlive active={props.section === "characters" || props.section === "weapons"}>
+          <p class="meta" style={{ "margin-top": "0" }}>
+            {charactersView()
+              ? `${roster().characters.length} ${text().abyssCharacters.toLowerCase()}`
+              : `${roster().weapons.length} ${text().abyssWeapons.toLowerCase()}`}
+          </p>
+          <div class="filters">
+            <input
+              class="search"
+              value={query()}
+              onInput={(event) => setQuery(event.currentTarget.value)}
+              placeholder={charactersView() ? text().abyssSearchCharacters : text().abyssSearchWeapons}
+            />
+          </div>
+          <div class="filters facets">
+            <Show
+              when={charactersView()}
+              fallback={
+                <For each={WEAPON_TYPES}>
+                  {(item) => (
+                    <Chip active={weaponType() === item} onClick={() => setWeaponType(weaponType() === item ? "all" : item)}>
+                      {weaponTypeName(item, props.lang)}
+                    </Chip>
+                  )}
+                </For>
+              }
+            >
+              <For each={ELEMENTS}>
+                {(item) => (
+                  <Chip active={element() === item} label={item} onClick={() => setElement(element() === item ? "all" : item)}>
+                    <ElementBadge element={item} size={18} />
+                  </Chip>
+                )}
+              </For>
+            </Show>
+            <div class="spacer" />
+            <Chip active={ownedOnly()} onClick={() => setOwnedOnly(!ownedOnly())}>
+              {text().abyssOwnedOnly}
+            </Chip>
+          </div>
+          <div class="filters tools">
+            <Segmented class="tabs sort-tabs" label={text().abyssSort}>
+              <button type="button" class="tab" classList={{ active: sort() === "rarity" }} onClick={() => setSort("rarity")}>
+                {text().abyssSortRarity}
               </button>
-              <button type="button" className={`tab ${tab === "weapons" ? "active" : ""}`} onClick={() => setTab("weapons")}>
-                {copy.abyssWeapons}
+              <button type="button" class="tab" classList={{ active: sort() === "name" }} onClick={() => setSort("name")}>
+                {text().abyssSortName}
               </button>
-              <span className="meta" style={{ marginLeft: "auto", alignSelf: "center" }}>
-                {tab === "characters"
-                  ? `${roster.characters.length} ${copy.abyssCharacters.toLowerCase()}`
-                  : `${roster.weapons.length} ${copy.abyssWeapons.toLowerCase()}`}
-              </span>
+              <button type="button" class="tab" classList={{ active: sort() === "owned" }} onClick={() => setSort("owned")}>
+                {text().abyssSortOwned}
+              </button>
             </Segmented>
-            <div className="filters">
-              <input className="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={tab === "characters" ? copy.abyssSearchCharacters : copy.abyssSearchWeapons} />
-            </div>
-            <div className="filters">
-              {tab === "characters"
-                ? ELEMENTS.map((item) => (
-                    <Chip key={item} active={element === item} onClick={() => setElement(element === item ? "all" : item)}>
-                      {item}
-                    </Chip>
-                  ))
-                : WEAPON_TYPES.map((item) => (
-                    <Chip key={item} active={weaponType === item} onClick={() => setWeaponType(weaponType === item ? "all" : item)}>
-                      {item}
-                    </Chip>
-                  ))}
-              <Chip active={ownedOnly} onClick={() => setOwnedOnly(!ownedOnly)}>
-                {copy.abyssOwnedOnly}
-              </Chip>
-              <Chip active={sort === "rarity"} onClick={() => setSort("rarity")}>
-                {copy.abyssSortRarity}
-              </Chip>
-              <Chip active={sort === "name"} onClick={() => setSort("name")}>
-                {copy.abyssSortName}
-              </Chip>
-              <Chip active={sort === "owned"} onClick={() => setSort("owned")}>
-                {copy.abyssSortOwned}
-              </Chip>
-            </div>
-            <p className="notice">{copy.abyssConstellationNote}</p>
-            <div className="filters">
-              <button type="button" className="btn btn-quiet" onClick={() => fileRef.current?.click()}>
-                {copy.abyssImport}
+            <div class="filter-actions">
+              <button type="button" class="btn btn-quiet" onClick={() => fileRef?.click()}>
+                {text().abyssImport}
+              </button>
+              <button type="button" class="btn btn-quiet" onClick={exportFile}>
+                {text().abyssExport}
               </button>
               <button
                 type="button"
-                className="btn btn-quiet"
-                onClick={() => {
-                  const blob = new Blob([exportRoster(roster)], { type: "application/json" });
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement("a");
-                  a.href = url;
-                  a.download = "abyss-roster.json";
-                  a.click();
-                  URL.revokeObjectURL(url);
-                }}
-              >
-                {copy.abyssExport}
-              </button>
-              <button
-                type="button"
-                className="btn btn-quiet"
+                class="btn btn-quiet"
                 onClick={() =>
-                  update(tab === "characters" ? { ...roster, characters: [] } : { ...roster, weapons: [] })
+                  update(charactersView() ? { ...roster(), characters: [] } : { ...roster(), weapons: [] })
                 }
               >
-                {tab === "characters" ? copy.abyssClearCharacters : copy.abyssClearWeapons}
+                {charactersView() ? text().abyssClearCharacters : text().abyssClearWeapons}
               </button>
               <input
                 ref={fileRef}
@@ -314,101 +288,188 @@ export function PlannerPage({ lang }: { lang: Lang }) {
                 accept="application/json"
                 hidden
                 onChange={(event) => {
-                  const file = event.target.files?.[0];
+                  const file = event.currentTarget.files?.[0];
                   if (!file) return;
-                  void file.text().then((text) => {
+                  void file.text().then((body) => {
                     try {
-                      update(parseRoster(JSON.parse(text)));
+                      update(parseRoster(JSON.parse(body)));
                     } catch {
                       setStatus("File roster không đọc được.");
                     }
                   });
-                  event.target.value = "";
+                  event.currentTarget.value = "";
                 }}
               />
             </div>
-            {roster.characters.length === 0 && roster.weapons.length === 0 && (
-              <p className="empty">{copy.abyssEmptyRoster}</p>
-            )}
-            <KeepAlive active={tab === "characters"}>
-              <div className="catalog">
-                {visibleCharacters.map((character) => {
-                  const owned = roster.characters.find((item) => item.id === character.id);
+          </div>
+          <p class="notice">{text().abyssConstellationNote}</p>
+
+          <KeepAlive active={props.section === "characters"}>
+            <div class="catalog" ref={characterPreview.bindRoot}>
+              <For each={visibleCharacters()}>
+                {(character) => {
+                  const owned = () => roster().characters.find((item) => item.id === character.id);
+                  const trigger = characterPreview.triggers(character.id);
                   return (
-                    <div key={character.id}>
-                      <CatalogTile
-                        kind="characters"
-                        id={character.id}
-                        title={lang === "vi" ? character.nameVI ?? character.name : character.name}
-                        accent={character.element}
-                        selected={Boolean(owned)}
-                        onClick={() => update(toggleCharacter(roster, character.id))}
-                        subtitle={
-                          <>
-                            <Stars n={character.rarity} /> {character.element}
-                          </>
-                        }
-                      />
-                      {owned && (
-                        <div className="meta" style={{ padding: "4px 8px" }}>
-                          C{owned.constellation}{" "}
-                          <button type="button" className="chip" onClick={() => update(setConstellation(roster, character.id, owned.constellation - 1))}>
-                            −
-                          </button>
-                          <button type="button" className="chip" onClick={() => update(setConstellation(roster, character.id, owned.constellation + 1))}>
-                            +
-                          </button>
-                        </div>
-                      )}
+                    <div
+                      class="tile roster-tile"
+                      classList={{ selected: Boolean(owned()), "is-preview": characterPreview.openId() === character.id }}
+                      data-rarity={character.rarity}
+                    >
+                      <button
+                        type="button"
+                        class="tile-main"
+                        onClick={() => update(toggleCharacter(roster(), character.id))}
+                      >
+                        <Portrait kind="characters" id={character.id} alt="" />
+                        <span class="tile-copy">
+                          <strong>{props.lang === "vi" ? character.nameVI ?? character.name : character.name}</strong>
+                        </span>
+                      </button>
+                      <div class="roster-foot">
+                        <span class="meta">
+                          <ElementBadge element={character.element} size={16} /> ·{" "}
+                          {weaponTypeName(character.weaponType, props.lang)}
+                        </span>
+                        <Show when={owned()}>
+                          {(row) => (
+                            <LevelStepper
+                              label={`C${row().constellation}`}
+                              onDecrease={() =>
+                                update(setConstellation(roster(), character.id, row().constellation - 1))
+                              }
+                              onIncrease={() =>
+                                update(setConstellation(roster(), character.id, row().constellation + 1))
+                              }
+                            />
+                          )}
+                        </Show>
+                      </div>
+                      <InfoButton label={text().abyssInfo} trigger={trigger} />
                     </div>
                   );
-                })}
-              </div>
-            </KeepAlive>
-            <KeepAlive active={tab === "weapons"}>
-              <div className="catalog">
-                {visibleWeapons.map((weapon) => {
-                  const owned = roster.weapons.find((item) => item.id === weapon.id);
+                }}
+              </For>
+            </div>
+            <div
+              id="character-preview"
+              popover="manual"
+              class="catalog-popover"
+              ref={characterPreview.bindPopover}
+              aria-labelledby="character-preview-title"
+              onPointerEnter={characterPreview.hold}
+              onPointerLeave={characterPreview.release}
+            >
+              <Show when={characterPreview.openId()} keyed>
+                {(id) => <CharacterPreviewBody lang={props.lang} id={id} />}
+              </Show>
+            </div>
+          </KeepAlive>
+          <KeepAlive active={props.section === "weapons"}>
+            <div class="catalog" ref={weaponPreview.bindRoot}>
+              <For each={visibleWeapons()}>
+                {(weapon) => {
+                  const owned = () => roster().weapons.find((item) => item.id === weapon.id);
+                  const trigger = weaponPreview.triggers(weapon.id);
                   return (
-                    <div key={weapon.id}>
-                      <CatalogTile
-                        kind="weapons"
-                        id={weapon.id}
-                        title={lang === "vi" ? weapon.nameVI ?? weapon.name : weapon.name}
-                        selected={Boolean(owned)}
-                        onClick={() => update(toggleWeapon(roster, weapon.id))}
-                        subtitle={
-                          <>
-                            <Stars n={weapon.rarity} /> {weapon.type}
-                          </>
-                        }
-                      />
-                      {owned && (
-                        <div className="meta" style={{ padding: "4px 8px" }}>
-                          R{owned.refinement}{" "}
-                          <button type="button" className="chip" onClick={() => update(setRefinement(roster, weapon.id, owned.refinement - 1))}>
-                            −
-                          </button>
-                          <button type="button" className="chip" onClick={() => update(setRefinement(roster, weapon.id, owned.refinement + 1))}>
-                            +
-                          </button>
-                        </div>
-                      )}
+                    <div
+                      class="tile roster-tile"
+                      classList={{ selected: Boolean(owned()), "is-preview": weaponPreview.openId() === weapon.id }}
+                      data-rarity={weapon.rarity}
+                    >
+                      <button type="button" class="tile-main" onClick={() => update(toggleWeapon(roster(), weapon.id))}>
+                        <Portrait kind="weapons" id={weapon.id} alt="" />
+                        <span class="tile-copy">
+                          <strong>{props.lang === "vi" ? weapon.nameVI ?? weapon.name : weapon.name}</strong>
+                        </span>
+                      </button>
+                      <div class="roster-foot">
+                        <span class="meta">{weaponTypeName(weapon.type, props.lang)}</span>
+                        <Show when={owned()}>
+                          {(row) => (
+                            <LevelStepper
+                              label={`R${row().refinement}`}
+                              onDecrease={() => update(setRefinement(roster(), weapon.id, row().refinement - 1))}
+                              onIncrease={() => update(setRefinement(roster(), weapon.id, row().refinement + 1))}
+                            />
+                          )}
+                        </Show>
+                      </div>
+                      <InfoButton label={text().abyssInfo} trigger={trigger} />
                     </div>
                   );
-                })}
-              </div>
-            </KeepAlive>
-          </>
+                }}
+              </For>
+            </div>
+            <div
+              id="weapon-roster-preview"
+              popover="manual"
+              class="catalog-popover"
+              ref={weaponPreview.bindPopover}
+              aria-labelledby="weapon-preview-title"
+              onPointerEnter={weaponPreview.hold}
+              onPointerLeave={weaponPreview.release}
+            >
+              <Show when={weaponPreview.openId()} keyed>
+                {(id) => <WeaponPreviewBody lang={props.lang} id={id} />}
+              </Show>
+            </div>
+          </KeepAlive>
         </KeepAlive>
-        <KeepAlive active={section === "monsters"}>
-          {floor12 && <FloorMonsters floor={floor12} lang={lang} defaultOpen />}
+        <KeepAlive active={props.section === "monsters"}>
+          <Show when={floor12}>
+            <FloorMonsters floor={floor12!} lang={props.lang} defaultOpen />
+          </Show>
         </KeepAlive>
-        <KeepAlive active={section === "results"}>
-          <Results lang={lang} output={output} />
+        <KeepAlive active={props.section === "team"}>
+          <Results lang={props.lang} output={output()} />
         </KeepAlive>
       </div>
     </div>
+  );
+}
+
+function LevelStepper(props: { label: string; onDecrease: () => void; onIncrease: () => void }) {
+  return (
+    <div class="stepper">
+      <button type="button" class="chip" aria-label="−" onClick={() => props.onDecrease()}>
+        −
+      </button>
+      <span class="stepper-value">{props.label}</span>
+      <button type="button" class="chip" aria-label="+" onClick={() => props.onIncrease()}>
+        +
+      </button>
+    </div>
+  );
+}
+
+function InfoButton(props: {
+  label: string;
+  trigger: {
+    onPointerEnter: (event: PointerEvent) => void;
+    onPointerLeave: (event: PointerEvent) => void;
+    onFocus: (event: FocusEvent) => void;
+    onBlur: (event: FocusEvent) => void;
+    onClick: (event: MouseEvent) => void;
+  };
+}) {
+  return (
+    <button
+      type="button"
+      class="tile-info"
+      aria-label={props.label}
+      onPointerEnter={props.trigger.onPointerEnter}
+      onPointerLeave={props.trigger.onPointerLeave}
+      onFocus={props.trigger.onFocus}
+      onBlur={props.trigger.onBlur}
+      onClick={props.trigger.onClick}
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8" />
+        <path d="M12 11v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+        <circle cx="12" cy="7.5" r="1.1" fill="currentColor" />
+      </svg>
+    </button>
   );
 }
 
@@ -424,125 +485,136 @@ function compareRoster(
   return a.name.localeCompare(b.name, "en");
 }
 
-function Results({ lang, output }: { lang: Lang; output: PlannerOutput | null }) {
-  const copy = t(lang);
-  if (!output) return <p className="empty">{copy.abyssNoResultsHint}</p>;
-  if (output.plans.length === 0) return <p className="empty">{copy.abyssEmpty}</p>;
+function Results(props: { lang: Lang; output: PlannerOutput | null }) {
+  const text = () => t(props.lang);
   return (
-    <>
-      <p className="notice">{copy.abyssHalfPlanNotice}</p>
-      {output.recommendation && (
-        <aside className="callout turning">
-          <span className="callout-bar" />
-          <div className="callout-body">{output.recommendation}</div>
-        </aside>
+    <Show when={props.output} fallback={<p class="empty">{text().abyssNoResultsHint}</p>}>
+      {(output) => (
+        <Show when={output().plans.length > 0} fallback={<p class="empty">{text().abyssEmpty}</p>}>
+          <p class="notice">{text().abyssHalfPlanNotice}</p>
+          <Show when={output().recommendation}>
+            <aside class="callout turning">
+              <span class="callout-bar" />
+              <div class="callout-body">{output().recommendation}</div>
+            </aside>
+          </Show>
+          <For each={output().plans}>
+            {(plan, index) => (
+              <PlanCard
+                rank={index() + 1}
+                plan={plan}
+                lang={props.lang}
+                half1={output().half1Text}
+                half2={output().half2Text}
+              />
+            )}
+          </For>
+        </Show>
       )}
-      {output.plans.map((plan, index) => (
-        <PlanCard key={index} rank={index + 1} plan={plan} lang={lang} half1={output.half1Text} half2={output.half2Text} />
-      ))}
-    </>
+    </Show>
   );
 }
 
-function PlanCard({
-  rank,
-  plan,
-  lang,
-  half1,
-  half2,
-}: {
+function PlanCard(props: {
   rank: number;
   plan: PlannedPlan;
   lang: Lang;
   half1?: string;
   half2?: string;
 }) {
-  const copy = t(lang);
-  const totalHP =
-    plan.firstHalfHP != null && plan.secondHalfHP != null ? plan.firstHalfHP + plan.secondHalfHP : null;
-  const time = clearSeconds(totalHP, plan.score);
+  const text = () => t(props.lang);
+  const totalHP = () =>
+    props.plan.firstHalfHP != null && props.plan.secondHalfHP != null
+      ? props.plan.firstHalfHP + props.plan.secondHalfHP
+      : null;
+  const time = () => clearSeconds(totalHP(), props.plan.score);
   return (
-    <section className="panel plan-card" style={{ marginBottom: 16, animationDelay: `${Math.min(rank - 1, 8) * 55}ms` }}>
-      <div className="floor-head">
-        <strong>#{rank}</strong>
-        <span className="meta">
-          {time != null ? `${copy.abyssClearApprox} ${clock(time)}` : ""} · {Math.round(plan.score)}/s
+    <section
+      class="panel plan-card"
+      style={{ "margin-bottom": "16px", "animation-delay": `${Math.min(props.rank - 1, 8) * 55}ms` }}
+    >
+      <div class="floor-head">
+        <strong>#{props.rank}</strong>
+        <span class="meta">
+          {time() != null ? `${text().abyssClearApprox} ${clock(time()!)}` : ""} · {Math.round(props.plan.score)}/s
         </span>
       </div>
-      <div className="team-halves">
-        <HalfTeam title={copy.abyssHalf1} hint={half1} team={plan.half1} hp={plan.firstHalfHP} lang={lang} />
-        <HalfTeam title={copy.abyssHalf2} hint={half2} team={plan.half2} hp={plan.secondHalfHP} lang={lang} />
+      <div class="team-halves">
+        <HalfTeam title={text().abyssHalf1} hint={props.half1} team={props.plan.half1} hp={props.plan.firstHalfHP} lang={props.lang} />
+        <HalfTeam title={text().abyssHalf2} hint={props.half2} team={props.plan.half2} hp={props.plan.secondHalfHP} lang={props.lang} />
       </div>
     </section>
   );
 }
 
-function HalfTeam({
-  title,
-  hint,
-  team,
-  hp,
-  lang,
-}: {
+function HalfTeam(props: {
   title: string;
   hint?: string;
   team: PlannedPlan["half1"];
   hp: number | null;
   lang: Lang;
 }) {
-  const copy = t(lang);
-  const time = clearSeconds(hp, team.score);
+  const text = () => t(props.lang);
+  const time = () => clearSeconds(props.hp, props.team.score);
   return (
     <div>
-      <h3>{title}</h3>
-      {hint && <p className="meta">{hint}</p>}
-      <p className="meta">
-        {time != null ? `${copy.abyssClearApprox} ${clock(time)}` : ""}
-        {hp != null ? ` · HP ${formatHP(hp)}` : ""} · {Math.round(team.score)}/s
+      <h3>{props.title}</h3>
+      <Show when={props.hint}>
+        <p class="meta">{props.hint}</p>
+      </Show>
+      <p class="meta">
+        {time() != null ? `${text().abyssClearApprox} ${clock(time()!)}` : ""}
+        {props.hp != null ? ` · HP ${formatHP(props.hp)}` : ""} · {Math.round(props.team.score)}/s
       </p>
-      {team.rotation.length > 0 && <p className="meta">{formatRotation(team, lang, copy.abyssOnField)}</p>}
-      {team.reactions.length > 0 && (
-        <p className="meta">
-          {team.reactions
+      <Show when={props.team.rotation.length > 0}>
+        <p class="meta">{formatRotation(props.team, props.lang, text().abyssOnField)}</p>
+      </Show>
+      <Show when={props.team.reactions.length > 0}>
+        <p class="meta">
+          {props.team.reactions
             .slice(0, 4)
-            .map((reaction) => `${reactionLabel(reaction.id, lang)} ${reaction.count}`)
+            .map((reaction) => `${reactionLabel(reaction.id, props.lang)} ${reaction.count}`)
             .join(" · ")}
-          {team.shockwaves > 0 ? ` · ${copy.abyssShockwave} × ${team.shockwaves}` : ""}
+          {props.team.shockwaves > 0 ? ` · ${text().abyssShockwave} × ${props.team.shockwaves}` : ""}
         </p>
-      )}
-      {team.fallbackIds.length > 0 && (
-        <p className="meta">
-          {team.fallbackIds
+      </Show>
+      <Show when={props.team.fallbackIds.length > 0}>
+        <p class="meta">
+          {props.team.fallbackIds
             .map((id) => {
               const character = charactersByID[id];
-              return lang === "vi" ? character?.nameVI ?? character?.name ?? id : character?.name ?? id;
+              return props.lang === "vi" ? character?.nameVI ?? character?.name ?? id : character?.name ?? id;
             })
             .join(", ")}
-          {` — ${copy.abyssFallbackNote}`}
+          {` — ${text().abyssFallbackNote}`}
         </p>
-      )}
-      <div className="catalog">
-        {team.members.map((member) => {
-          const character = charactersByID[member.characterId];
-          const weapon = member.weaponId ? weaponsByID[member.weaponId] : undefined;
-          const set = member.artifactSetId ? artifactSetsByID[member.artifactSetId] : undefined;
-          if (!character) return null;
-          return (
-            <Link key={member.characterId} to={`/abyss/characters/${character.id}`} className="tile">
-              <Portrait kind="characters" id={character.id} alt={character.name} />
-              <span className="tile-copy">
-                <strong>{lang === "vi" ? character.nameVI ?? character.name : character.name}</strong>
-                <span className="meta">
-                  <ElementBadge element={character.element} /> {member.role}
-                  {weapon ? ` · ${lang === "vi" ? weapon.nameVI ?? weapon.name : weapon.name}` : ""}
-                  {set ? ` · ${lang === "vi" ? set.nameVI ?? set.name : set.name}` : ""}
+      </Show>
+      <div class="catalog">
+        <For each={props.team.members}>
+          {(member) => {
+            const character = charactersByID[member.characterId];
+            const weapon = member.weaponId ? weaponsByID[member.weaponId] : undefined;
+            const set = member.artifactSetId ? artifactSetsByID[member.artifactSetId] : undefined;
+            if (!character) return null;
+            return (
+              <a href={`/abyss/characters/${character.id}`} class="tile" data-rarity={character.rarity}>
+                <Portrait kind="characters" id={character.id} alt={character.name} />
+                <span class="tile-copy">
+                  <strong>{props.lang === "vi" ? character.nameVI ?? character.name : character.name}</strong>
+                  <span class="meta">
+                    <ElementBadge element={character.element} /> {member.role}
+                    {weapon ? ` · ${props.lang === "vi" ? weapon.nameVI ?? weapon.name : weapon.name}` : ""}
+                    {set ? ` · ${props.lang === "vi" ? set.nameVI ?? set.name : set.name}` : ""}
+                  </span>
                 </span>
-              </span>
-            </Link>
-          );
-        })}
+              </a>
+            );
+          }}
+        </For>
       </div>
-      {team.notes.length > 0 && <p className="meta">{team.notes.join(" · ")}</p>}
+      <Show when={props.team.notes.length > 0}>
+        <p class="meta">{props.team.notes.join(" · ")}</p>
+      </Show>
     </div>
   );
 }

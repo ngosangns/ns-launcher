@@ -1,3 +1,4 @@
+import { createSignal, Show } from "solid-js";
 import {
   monsterHPBreakdown,
   monsterIconId,
@@ -17,22 +18,21 @@ function resistanceValue(monster: Monster, key: string): number | null {
   return value == null ? null : value;
 }
 
-function ResistanceTable({ monster }: { monster: Monster }) {
-  const cells = RES_ORDER.map((key) => ({ key, value: resistanceValue(monster, key) }));
+function ResistanceTable(props: { monster: Monster }) {
+  const cells = RES_ORDER.map((key) => ({ key, value: resistanceValue(props.monster, key) }));
   if (cells.every((cell) => cell.value == null)) return null;
   return (
-    <div className="res-table">
+    <div class="res-table">
       {cells.map((cell) => {
         const value = cell.value ?? 0.1;
         const known = cell.value != null;
         return (
           <span
-            key={cell.key}
-            className={`res-cell ${!known ? "unknown" : value < 0 ? "weak" : value > 0.15 ? "strong" : ""}`}
+            class={`res-cell ${!known ? "unknown" : value < 0 ? "weak" : value > 0.15 ? "strong" : ""}`}
             title={cell.key}
           >
-            <span className="element" data-el={cell.key === "Physical" ? undefined : cell.key}>
-              {cell.key === "Physical" ? "Phys" : cell.key.slice(0, 3)}
+            <span class="element" data-el={cell.key} aria-label={cell.key}>
+              <ElementBadge element={cell.key} size={16} />
             </span>
             {known ? formatPercent(value, value % 0.01 === 0 ? 0 : 0) : "—"}
           </span>
@@ -42,151 +42,136 @@ function ResistanceTable({ monster }: { monster: Monster }) {
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat(props: { label: string; value: string }) {
   return (
-    <div className="monster-stat">
-      <span className="monster-stat-label">{label}</span>
-      <span>{value}</span>
+    <div class="monster-stat">
+      <span class="monster-stat-label">{props.label}</span>
+      <span>{props.value}</span>
     </div>
   );
 }
 
-export function MonsterCard({
-  monster,
-  level,
-  multiplier,
-  lang,
-}: {
-  monster: Monster;
-  level: number;
-  multiplier: number;
-  lang: Lang;
-}) {
-  const copy = t(lang);
-  const hp = monsterHPBreakdown(monster, level, multiplier);
-  const icon = monsterIconId(monster);
+export function MonsterCard(props: { monster: Monster; level: number; multiplier: number; lang: Lang }) {
+  const text = () => t(props.lang);
+  const hp = () => monsterHPBreakdown(props.monster, props.level, props.multiplier);
+  const icon = () => monsterIconId(props.monster);
   return (
-    <div className="monster-card">
-      <Portrait kind="monsters" id={icon} alt={monster.name} large />
-      <div className="monster-body">
-        <div className="monster-top">
-          <strong>{monster.name}</strong>
-          <span className="meta">{monster.elements.map((element) => (
-            <ElementBadge key={element} element={element} />
-          ))}</span>
+    <div class="monster-card">
+      <Portrait kind="monsters" id={icon()} alt={props.monster.name} large />
+      <div class="monster-body">
+        <div class="monster-top">
+          <strong>
+            {props.lang === "vi" ? props.monster.nameVI ?? props.monster.name : props.monster.name}
+          </strong>
+          <span class="meta">
+            {props.monster.elements.map((element) => (
+              <ElementBadge element={element} />
+            ))}
+          </span>
         </div>
-        <div className="monster-stats">
-          <Stat label={copy.abyssCount} value={monster.count} />
-          {monster.spawns != null && <Stat label={copy.abyssSpawns} value={String(monster.spawns)} />}
-          {monster.size && <Stat label={copy.abyssSize} value={monster.size} />}
-          <Stat label={copy.abyssLevel} value={String(level)} />
-          {hp && <Stat label={copy.abyssHPEach} value={formatHP(hp.perSpawn)} />}
-          {hp && <Stat label={copy.abyssHPTotal} value={formatHP(hp.total)} />}
-          {hp && (
+        <div class="monster-stats">
+          <Stat label={text().abyssCount} value={props.monster.count} />
+          <Show when={props.monster.spawns != null}>
+            <Stat label={text().abyssSpawns} value={String(props.monster.spawns ?? "")} />
+          </Show>
+          <Show when={props.monster.size}>
+            <Stat label={text().abyssSize} value={props.monster.size ?? ""} />
+          </Show>
+          <Stat label={text().abyssLevel} value={String(props.level)} />
+          <Show when={hp()}>
+            {(row) => (
+              <>
+                <Stat label={text().abyssHPEach} value={formatHP(row().perSpawn)} />
+                <Stat label={text().abyssHPTotal} value={formatHP(row().total)} />
+                <Stat label={text().abyssHPRatio} value={`${row().ratio} × type ${row().type} ×${props.multiplier}`} />
+              </>
+            )}
+          </Show>
+          <Show when={props.monster.hp?.variant}>
+            <Stat label={text().abyssVariant} value={props.monster.hp?.variant ?? ""} />
+          </Show>
+          <Show when={props.monster.weakpoint != null}>
             <Stat
-              label={copy.abyssHPRatio}
-              value={`${hp.ratio} × type ${hp.type} ×${multiplier}`}
+              label={text().abyssWeakpoint}
+              value={props.monster.weakpoint ? (props.lang === "vi" ? "Có" : "Yes") : props.lang === "vi" ? "Không" : "No"}
             />
-          )}
-          {monster.hp?.variant && <Stat label={copy.abyssVariant} value={monster.hp.variant} />}
-          {monster.weakpoint != null && (
-            <Stat label={copy.abyssWeakpoint} value={monster.weakpoint ? (lang === "vi" ? "Có" : "Yes") : (lang === "vi" ? "Không" : "No")} />
-          )}
+          </Show>
         </div>
-        <ResistanceTable monster={monster} />
-        {monster.mechanics && monster.mechanics !== "chưa xác nhận" && (
-          <p className="meta" style={{ margin: "6px 0 0" }}>
-            {copy.abyssMechanics}: {monster.mechanics}
+        <ResistanceTable monster={props.monster} />
+        <Show when={props.monster.mechanics && props.monster.mechanics !== "chưa xác nhận"}>
+          <p class="meta" style={{ margin: "6px 0 0" }}>
+            {text().abyssMechanics}: {props.monster.mechanics}
           </p>
-        )}
-        {monster.resistanceNotes && <p className="meta">{monster.resistanceNotes}</p>}
-        {monster.hpRatio && monster.hpRatio !== "chưa xác nhận" && (
-          <p className="meta">{monster.hpRatio}</p>
-        )}
+        </Show>
+        <Show when={props.monster.resistanceNotes}>
+          <p class="meta">{props.monster.resistanceNotes}</p>
+        </Show>
+        <Show when={props.monster.hpRatio && props.monster.hpRatio !== "chưa xác nhận"}>
+          <p class="meta">{props.monster.hpRatio}</p>
+        </Show>
       </div>
     </div>
   );
 }
 
-export function FloorMonsters({
-  floor,
-  lang,
-  defaultOpen = true,
-}: {
-  floor: CycleFloor;
-  lang: Lang;
-  defaultOpen?: boolean;
-}) {
-  const copy = t(lang);
-  const split = splitDisorder(floor.leyLineDisorder);
-  const multiplier = floor.enemyHPMultiplier ?? 1;
+export function FloorMonsters(props: { floor: CycleFloor; lang: Lang; defaultOpen?: boolean }) {
+  const text = () => t(props.lang);
+  const split = () => splitDisorder(props.floor.leyLineDisorder);
+  const multiplier = () => props.floor.enemyHPMultiplier ?? 1;
+  const [opened, setOpened] = createSignal(props.defaultOpen !== false);
   return (
     <details
-      className={`panel floor${defaultOpen ? " open" : ""}`}
-      open={defaultOpen}
-      onToggle={(event) => {
-        event.currentTarget.classList.toggle("open", event.currentTarget.open);
+      class="panel floor"
+      classList={{ open: opened() }}
+      open={opened()}
+      on:toggle={(event) => {
+        const node = event.currentTarget;
+        if (node instanceof HTMLDetailsElement && node.open !== opened()) setOpened(node.open);
       }}
     >
-      <summary className="floor-head">
+      <summary class="floor-head">
         <strong>
-          {lang === "vi" ? "Tầng" : "Floor"} {floor.floor}
+          {props.lang === "vi" ? "Tầng" : "Floor"} {props.floor.floor}
         </strong>
-        <span className="meta">
-          ×{multiplier} HP · {monsterCount(floor)} {copy.abyssMonsters.toLowerCase()}
+        <span class="meta">
+          ×{multiplier()} HP · {monsterCount(props.floor)} {text().abyssMonsters.toLowerCase()}
         </span>
       </summary>
-      <div className="fold">
-        <div className="fold-inner">
-      <div className="section-title">{copy.abyssLeyLine}</div>
-      {split.half1 || split.half2 ? (
-        <>
-          {split.half1 && (
-            <p className="prose">
-              <strong>{copy.abyssHalf1}.</strong> {split.half1}
-            </p>
-          )}
-          {split.half2 && (
-            <p className="prose">
-              <strong>{copy.abyssHalf2}.</strong> {split.half2}
-            </p>
-          )}
-        </>
-      ) : (
-        <p className="prose">{floor.leyLineDisorder}</p>
-      )}
-      {floor.recommendation && (
-        <aside className="callout turning" style={{ marginTop: 12 }}>
-          <span className="callout-bar" />
-          <div className="callout-body">
-            <strong>{copy.abyssRecommendation}.</strong> {floor.recommendation}
-          </div>
-        </aside>
-      )}
-      {floor.chambers.map((chamber) => (
-        <div key={chamber.chamber}>
-          <div className="section-title">
-            {copy.abyssChamber} {chamber.chamber} · {copy.abyssLevel} {chamber.monsterLevel}
-          </div>
-          {chamber.waves.map((wave) => (
-            <div key={wave.wave}>
-              <div className="wave-label">
-                {copy.abyssWave} {wave.wave}
-                {wave.wave === 1 ? ` · ${copy.abyssHalf1}` : wave.wave === 2 ? ` · ${copy.abyssHalf2}` : ""}
+      <div class="fold">
+        <div class="fold-inner">
+          <div class="section-title">{text().abyssLeyLine}</div>
+          <Show
+            when={split().half1 || split().half2}
+            fallback={<p class="prose">{props.floor.leyLineDisorder}</p>}
+          >
+            <Show when={split().half1}>
+              <p class="prose">
+                <strong>{text().abyssHalf1}.</strong> {split().half1}
+              </p>
+            </Show>
+            <Show when={split().half2}>
+              <p class="prose">
+                <strong>{text().abyssHalf2}.</strong> {split().half2}
+              </p>
+            </Show>
+          </Show>
+          {props.floor.chambers.map((chamber) => (
+            <div>
+              <div class="section-title">
+                {text().abyssChamber} {chamber.chamber} · {text().abyssLevel} {chamber.monsterLevel}
               </div>
-              {wave.monsters.map((monster, index) => (
-                <MonsterCard
-                  key={`${monster.name}-${wave.wave}-${index}`}
-                  monster={monster}
-                  level={chamber.monsterLevel}
-                  multiplier={multiplier}
-                  lang={lang}
-                />
+              {chamber.waves.map((wave) => (
+                <div>
+                  <div class="wave-label">
+                    {wave.wave === 1 ? text().abyssHalf1 : wave.wave === 2 ? text().abyssHalf2 : `${text().abyssWave} ${wave.wave}`}
+                  </div>
+                  {wave.monsters.map((monster) => (
+                    <MonsterCard monster={monster} level={chamber.monsterLevel} multiplier={multiplier()} lang={props.lang} />
+                  ))}
+                </div>
               ))}
             </div>
           ))}
-        </div>
-      ))}
         </div>
       </div>
     </details>
@@ -200,34 +185,4 @@ function monsterCount(floor: CycleFloor): number {
   );
 }
 
-export function UniqueMonsterStrip({ floor, lang }: { floor: CycleFloor; lang: Lang }) {
-  const seen = new Set<string>();
-  const unique: Monster[] = [];
-  for (const chamber of floor.chambers) {
-    for (const wave of chamber.waves) {
-      for (const monster of wave.monsters) {
-        if (seen.has(monster.name)) continue;
-        seen.add(monster.name);
-        unique.push(monster);
-      }
-    }
-  }
-  return (
-    <div className="monster-strip">
-      {unique.map((monster) => (
-        <div key={monster.name} className="monster-chip">
-          <Portrait kind="monsters" id={monsterIconId(monster)} alt="" />
-          <div>
-            <strong>{monster.name}</strong>
-            <span className="meta">
-              {monster.elements.map((element) => (
-                <ElementBadge key={element} element={element} />
-              ))}
-            </span>
-          </div>
-        </div>
-      ))}
-      {unique.length === 0 && <span className="meta">{t(lang).abyssEmpty}</span>}
-    </div>
-  );
-}
+
