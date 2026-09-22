@@ -7,6 +7,8 @@ description: Fetch official Vietnamese Genshin Impact text (character names, wea
 
 Genshin ships an official Vietnamese localisation. `gi.yatta.moe/api/v2/vi` serves it straight from the game files — this is the repo's canonical source for VI names and prose. Hand-translating produces names that don't match what players see in-game.
 
+**Rule: never self-translate game text in either direction.** VI fields come from this API or TextMapVI; EN fields come from the sources in the `genshin-en-text` skill. Authored prose may be written in either language, but game terms inside it must match the official text.
+
 ## API
 
 Base: `https://gi.yatta.moe/api/v2/vi` (also `/en`, and other langs).

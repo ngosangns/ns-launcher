@@ -11,7 +11,7 @@
     "timeStart": "2026-09-16 04:00:00",
     "timeEnd": "2026-10-16 03:59:59",
     "relatedMechanic": "Stellar Swirl (Tinh-Khuếch Tán) — biến thể Khuếch Tán (Anemo+Cryo) khi đội có nhân vật mang Stellar Jubilee (Sandrone/traveler-cryo/Odette). Chúc phúc này khuếch đại MỌI đòn Khuếch Tán (kể cả Khuếch Tán thường, không riêng biến thể Stellar) suốt cả chu kỳ, cộng dồn thêm phần Ley Line Disorder riêng của Tầng 12 nửa đầu.",
-    "descriptionEN": "When a character deals Swirl or Stellar Swirl reaction DMG to an opponent, a shockwave is unleashed at the opponent's position, dealing True DMG. This effect can trigger at most once every 4s.",
+    "descriptionEN": "When a character deals Swirl or Stellar Swirl DMG to an opponent, a shockwave will be unleashed at the opponent's position, dealing True DMG. This effect can be triggered once every 4s.",
     "relatedMechanicEN": "Stellar Swirl (Tinh-Khuếch Tán) — a Swirl variant (Anemo+Cryo) available when the party includes a character with Stellar Jubilee (Sandrone/traveler-cryo/Odette). This blessing amplifies EVERY Swirl hit (regular Swirl included, not only the Stellar variant) for the whole cycle, stacking with Floor 12's first-half Ley Line Disorder."
   },
   "floors": [
@@ -287,7 +287,7 @@
         }
       ],
       "recommendation": "Nửa 1 gần như bắt buộc đội Anemo+Cryo để kích hoạt Khuếch Tán/Stellar Swirl với hệ số khổng lồ (+200%/+75%) — mang một trong ba nhân vật Stellar Jubilee (Sandrone/traveler-cryo/Odette) để ăn trọn phần Stellar Swirl, cộng dồn thêm với chúc phúc Cascading Moon của cả mùa. Nửa 2 đổi hẳn sang Electro+Hydro để kích hoạt Điện Cảm/Lunar-Charged, cùng hệ số +200%/+75% — vẫn nên mang nhân vật Stellar Jubilee để biến Điện Cảm thường thành Nguyệt-Điện Cảm. Battle-Hardened Domovoy Sculptor (phòng 3 nửa 1) có điểm yếu khai thác; Immortal Construct (phòng 2 nửa 1) và hai boss phòng 3 là mục tiêu đơn, ưu tiên burst nhanh hơn AoE.",
-      "leyLineDisorderEN": "Half 1: Characters' Swirl reaction DMG is increased by 200%, and Stellar Swirl DMG is increased by 75%. Half 2: Characters' Electro-Charged reaction DMG is increased by 200%, and Lunar-Charged DMG is increased by 75%.",
+      "leyLineDisorderEN": "Half 1: Characters' Swirl DMG increased by 200% and Stellar-Swirl DMG increased by 75%. Half 2: Characters' Electro-Charged DMG increased by 200% and Lunar-Charged DMG increased by 75%.",
       "recommendationEN": "Half 1 effectively demands an Anemo+Cryo team to trigger Swirl/Stellar Swirl at massive multipliers (+200%/+75%) — bring one of the three Stellar Jubilee characters (Sandrone/traveler-cryo/Odette) to capture the Stellar Swirl share, stacking with the season-long Cascading Moon blessing. Half 2 switches entirely to Electro+Hydro for Electro-Charged/Lunar-Charged at the same +200%/+75% — a Stellar Jubilee character is still recommended to convert regular Electro-Charged into Lunar-Charged. The Battle-Hardened Domovoy Sculptor (chamber 3, half 1) has an exploitable weakpoint; the Immortal Construct (chamber 2, half 1) and both chamber-3 bosses are single targets — favor fast burst over AoE."
     }
   ]

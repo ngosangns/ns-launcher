@@ -46,7 +46,7 @@ Runs in order, stopping at first failure:
 2. `sync-abyss-monster-hp.py` — writes `spawns`, `hp` (wiki `Enemy Stats` ratio/type), floor `enemyHPMultiplier`, and refreshes `enemy-hp.json`. Refuses on ambiguous variants or >1% Yatta disagreement.
 3. JSON Schema validation (`toi-uu-doi-hinh/data-model/schema/abyss-cycle.schema.json`).
 4. `npm test` in `web/` — regression check on published data only; it does not see the override file.
-- Bilingual: every hand-written VI text field has an `*EN` twin (`descriptionEN`, `leyLineDisorderEN` — use `Half 1: ... Half 2: ...`, `recommendationEN`, `countEN`, `sizeEN`, `mechanicsEN`, `resistanceNotesEN`). Write both when filling a cycle; the web falls back to VI when EN is absent.
+- Bilingual: every hand-written VI text field has an `*EN` twin (`descriptionEN`, `leyLineDisorderEN` — use `Half 1: ... Half 2: ...`, `recommendationEN`, `countEN`, `sizeEN`, `mechanicsEN`, `resistanceNotesEN`). Write both when filling a cycle; the web falls back to VI when EN is absent. Game text must come from official sources — blessing/LLD EN from the wiki (`genshin-en-text` skill), VI from Yatta (`genshin-vi-text` skill); never self-translate.
 
 Needs network (gi.yatta.moe + Fandom wiki).
 
