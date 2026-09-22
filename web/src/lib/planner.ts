@@ -4,6 +4,7 @@ import {
   characters,
   charactersByID,
   currentCycle,
+  floor12 as floor12Of,
   monsterHP,
   splitDisorder,
   weapons,
@@ -202,7 +203,7 @@ export function findTeams(
   options: { fullCharacters: boolean; fullWeapons: boolean },
 ): PlannerOutput {
   const cycle = currentCycle();
-  const floor = cycle.floors.find((item) => item.floor === 12);
+  const floor = floor12Of(cycle);
   const split = floor ? splitDisorder(floor.leyLineDisorder) : {};
   const half1Text = split.half1 ?? floor?.leyLineDisorder ?? "";
   const half2Text = split.half2 ?? floor?.leyLineDisorder ?? "";

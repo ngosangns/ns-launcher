@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
-import { currentCycle, cycles } from "../../lib/abyss";
+import { currentCycle, cycles, floor12 as floor12Of } from "../../lib/abyss";
 import { formatDateRange, todayISO } from "../../lib/format";
 import { t, type Lang } from "../../lib/i18n";
+import { Reveal } from "../../components/Reveal";
 import { FloorMonsters, UniqueMonsterStrip } from "./MonsterList";
 
 export function CyclePage({ lang }: { lang: Lang }) {
@@ -14,7 +15,7 @@ export function CyclePage({ lang }: { lang: Lang }) {
   const now = todayISO();
   const expired = cycle.periodEnd < now;
   const blessing = cycle.blessingOfTheAbyssalMoon;
-  const floor12 = cycle.floors.find((floor) => floor.floor === 12);
+  const floor12 = floor12Of(cycle);
 
   return (
     <>
@@ -32,6 +33,7 @@ export function CyclePage({ lang }: { lang: Lang }) {
         ))}
       </div>
 
+      <Reveal id={cycle.fileId}>
       <section className="panel" style={{ marginBottom: 16 }}>
         <div className="group-label">{copy.abyssBlessing}</div>
         <h2 style={{ margin: "4px 0 8px" }}>
@@ -53,9 +55,8 @@ export function CyclePage({ lang }: { lang: Lang }) {
         </section>
       )}
 
-      {cycle.floors.map((floor) => (
-        <FloorMonsters key={floor.floor} floor={floor} lang={lang} defaultOpen />
-      ))}
+      {floor12 && <FloorMonsters floor={floor12} lang={lang} defaultOpen />}
+      </Reveal>
     </>
   );
 }

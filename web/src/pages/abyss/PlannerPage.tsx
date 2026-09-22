@@ -6,6 +6,7 @@ import {
   charactersByID,
   currentCycle,
   ELEMENTS,
+  floor12 as floor12Of,
   weapons,
   weaponsByID,
   type Character,
@@ -33,6 +34,7 @@ import {
 import { clearSeconds, findTeams, type PlannedPlan, type PlannerOutput } from "../../lib/planner";
 import { foldVi } from "../../lib/slug";
 import { KeepAlive } from "../../components/KeepAlive";
+import { Segmented } from "../../components/Segmented";
 import { CatalogTile, Chip, ElementBadge, Portrait, Stars } from "../../components/ui";
 import { FloorMonsters, UniqueMonsterStrip } from "./MonsterList";
 
@@ -62,7 +64,7 @@ export function PlannerPage({ lang }: { lang: Lang }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const cycle = currentCycle();
   const blessing = cycle.blessingOfTheAbyssalMoon;
-  const floor12 = cycle.floors.find((floor) => floor.floor === 12);
+  const floor12 = floor12Of(cycle);
   const needle = foldVi(query);
   const ownedChars = new Set(roster.characters.map((item) => item.id));
   const ownedWeapons = new Set(roster.weapons.map((item) => item.id));
@@ -156,7 +158,7 @@ export function PlannerPage({ lang }: { lang: Lang }) {
 
         <div className="group-label">{copy.abyssImportUID}</div>
         <input className="search" value={uid} onChange={(e) => setUid(e.target.value)} placeholder={copy.abyssUIDPlaceholder} />
-        <button type="button" className="btn btn-quiet" disabled={busy} onClick={() => void importUID()}>
+        <button type="button" className={`btn btn-quiet ${busy ? "is-busy" : ""}`} disabled={busy} onClick={() => void importUID()}>
           {copy.abyssImport}
         </button>
         <p className="notice">{copy.abyssUIDHint}</p>
@@ -164,11 +166,15 @@ export function PlannerPage({ lang }: { lang: Lang }) {
         <div className="group-label">{copy.abyssImportFull}</div>
         <input className="search" value={ltuid} onChange={(e) => setLtuid(e.target.value)} placeholder="ltuid_v2" />
         <input className="search" value={ltoken} onChange={(e) => setLtoken(e.target.value)} placeholder="ltoken_v2" />
-        <button type="button" className="btn btn-quiet" disabled={busy} onClick={() => void importHoyolab()}>
+        <button type="button" className={`btn btn-quiet ${busy ? "is-busy" : ""}`} disabled={busy} onClick={() => void importHoyolab()}>
           {copy.abyssImport}
         </button>
         <p className="notice">{copy.abyssHoyolabHint}</p>
-        {status && <p className="meta">{status}</p>}
+        {status && (
+          <p className="meta rise-once" key={status}>
+            {status}
+          </p>
+        )}
         <p className="notice">{copy.abyssMethodology}</p>
 
         <label className="meta" style={{ display: "flex", gap: 8, alignItems: "center" }}>
@@ -179,13 +185,13 @@ export function PlannerPage({ lang }: { lang: Lang }) {
           <input type="checkbox" checked={fullWeapons} onChange={(e) => setFullWeapons(e.target.checked)} />
           {copy.abyssFullWeapons}
         </label>
-        <button type="button" className="btn btn-primary" disabled={busy} onClick={search}>
+        <button type="button" className={`btn btn-primary ${busy ? "is-busy" : ""}`} disabled={busy} onClick={search}>
           {busy ? copy.abyssSearching : copy.abyssFindTeams}
         </button>
       </aside>
 
       <div className="detail" style={{ maxWidth: "none" }}>
-        <div className="abyss-nav tabs">
+        <Segmented className="abyss-nav tabs" label={copy.abyssTeam}>
           <button type="button" className={`tab ${section === "roster" ? "active" : ""}`} onClick={() => setSection("roster")}>
             {copy.abyssRoster}
           </button>
@@ -195,11 +201,11 @@ export function PlannerPage({ lang }: { lang: Lang }) {
           <button type="button" className={`tab ${section === "results" ? "active" : ""}`} onClick={() => setSection("results")}>
             {copy.abyssResults}
           </button>
-        </div>
+        </Segmented>
 
         <KeepAlive active={section === "roster"}>
           <>
-            <div className="abyss-nav tabs">
+            <Segmented className="abyss-nav tabs" label={copy.abyssRoster}>
               <button type="button" className={`tab ${tab === "characters" ? "active" : ""}`} onClick={() => setTab("characters")}>
                 {copy.abyssCharacters}
               </button>
@@ -211,7 +217,7 @@ export function PlannerPage({ lang }: { lang: Lang }) {
                   ? `${roster.characters.length} ${copy.abyssCharacters.toLowerCase()}`
                   : `${roster.weapons.length} ${copy.abyssWeapons.toLowerCase()}`}
               </span>
-            </div>
+            </Segmented>
             <div className="filters">
               <input className="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={tab === "characters" ? copy.abyssSearchCharacters : copy.abyssSearchWeapons} />
             </div>
@@ -363,9 +369,7 @@ export function PlannerPage({ lang }: { lang: Lang }) {
           </>
         </KeepAlive>
         <KeepAlive active={section === "monsters"}>
-          {cycle.floors.map((floor) => (
-            <FloorMonsters key={floor.floor} floor={floor} lang={lang} defaultOpen={floor.floor === 12} />
-          ))}
+          {floor12 && <FloorMonsters floor={floor12} lang={lang} defaultOpen />}
         </KeepAlive>
         <KeepAlive active={section === "results"}>
           <Results lang={lang} output={output} />
@@ -425,7 +429,7 @@ function PlanCard({
     plan.firstHalfHP != null && plan.secondHalfHP != null ? plan.firstHalfHP + plan.secondHalfHP : null;
   const time = clearSeconds(totalHP, plan.score);
   return (
-    <section className="panel" style={{ marginBottom: 16 }}>
+    <section className="panel plan-card" style={{ marginBottom: 16, animationDelay: `${Math.min(rank - 1, 8) * 55}ms` }}>
       <div className="floor-head">
         <strong>#{rank}</strong>
         <span className="meta">

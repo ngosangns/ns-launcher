@@ -348,6 +348,11 @@ export function currentCycle(now = todayISO()): AbyssCycle {
   return cycles.find((cycle) => cycle.periodStart <= now && now <= cycle.periodEnd) ?? cycles[0];
 }
 
+/** Spiral Abyss planning on this site only uses floor 12. */
+export function floor12(cycle: AbyssCycle): CycleFloor | undefined {
+  return cycle.floors.find((floor) => floor.floor === 12);
+}
+
 export const teamBonus = teamBonusJson as TeamBonus;
 export const damageFormula = damageFormulaJson as DamageFormula;
 
