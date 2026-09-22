@@ -158,11 +158,15 @@ export type Monster = {
   name: string;
   nameVI?: string;
   count: string;
+  countEN?: string;
   size: string | null;
+  sizeEN?: string | null;
   elements: string[];
   resistanceNotes: string | null;
+  resistanceNotesEN?: string | null;
   weakpoint: boolean | null;
   mechanics: string | null;
+  mechanicsEN?: string | null;
   hpRatio: string | null;
   gameId?: number;
   resistances?: Record<string, number>;
@@ -174,6 +178,7 @@ export type Monster = {
 export type CycleFloor = {
   floor: number;
   leyLineDisorder: string;
+  leyLineDisorderEN?: string;
   enemyHPMultiplier?: number;
   chambers: Array<{
     chamber: number;
@@ -181,6 +186,7 @@ export type CycleFloor = {
     waves: Array<{ wave: number; monsters: Monster[] }>;
   }>;
   recommendation?: string;
+  recommendationEN?: string;
 };
 
 export type AbyssCycle = {
@@ -191,7 +197,9 @@ export type AbyssCycle = {
     name: string;
     nameVI?: string;
     description: string;
+    descriptionEN?: string;
     relatedMechanic?: string;
+    relatedMechanicEN?: string;
   };
   floors: CycleFloor[];
   fileId: string;
@@ -406,8 +414,8 @@ export function iconUrl(
 }
 
 export function splitDisorder(text: string): { half1?: string; half2?: string } {
-  const half1 = text.match(/Nửa 1:\s*([\s\S]+?)(?=\s*Nửa 2:|$)/u)?.[1]?.trim();
-  const half2 = text.match(/Nửa 2:\s*([\s\S]+)$/u)?.[1]?.trim();
+  const half1 = text.match(/(?:Nửa 1|Half 1):\s*([\s\S]+?)(?=\s*(?:Nửa 2|Half 2):|$)/u)?.[1]?.trim();
+  const half2 = text.match(/(?:Nửa 2|Half 2):\s*([\s\S]+)$/u)?.[1]?.trim();
   return { half1, half2 };
 }
 

@@ -17,8 +17,18 @@ const chapterModules = import.meta.glob(
   { query: "?raw", eager: true, import: "default" },
 ) as Record<string, string>;
 
+const chapterModulesEN = import.meta.glob(
+  "../../../Sources/NSLauncherApp/Resources/Story/chapters/en/*.md",
+  { query: "?raw", eager: true, import: "default" },
+) as Record<string, string>;
+
 const questModules = import.meta.glob(
   "../../../Sources/NSLauncherApp/Resources/Story/quests/*.md",
+  { query: "?raw", eager: true, import: "default" },
+) as Record<string, string>;
+
+const questModulesEN = import.meta.glob(
+  "../../../Sources/NSLauncherApp/Resources/Story/quests/en/*.md",
   { query: "?raw", eager: true, import: "default" },
 ) as Record<string, string>;
 
@@ -47,17 +57,35 @@ export type StoryLibrary = {
   occurrences: Record<string, StoryOccurrence[]>;
 };
 
-function buildLibrary(): StoryLibrary {
-  const entities = (entitiesJson as StoryEntity[]).slice().sort((a, b) =>
-    a.displayName.localeCompare(b.displayName, "vi"),
-  );
-  const parsed = [
-    ...loadKind(chapterModules, "narrativeChapter"),
-    ...loadKind(questModules, "questReference"),
-  ];
+function buildLibrary(lang: "vi" | "en"): StoryLibrary {
+  const entities = (entitiesJson as StoryEntity[])
+    .map((entity) =>
+      lang === "en"
+        ? {
+            ...entity,
+            displayName: entity.displayNameEN ?? entity.displayName,
+            aliases: entity.aliasesEN ?? entity.aliases,
+            summary: entity.summaryEN ?? entity.summary,
+            homeHeading: entity.homeHeadingEN ?? entity.homeHeading,
+          }
+        : entity,
+    )
+    .slice()
+    .sort((a, b) => a.displayName.localeCompare(b.displayName, lang === "vi" ? "vi" : "en"));
+  const parsed =
+    lang === "en"
+      ? [
+          ...loadKind(chapterModulesEN, "narrativeChapter"),
+          ...loadKind(questModulesEN, "questReference"),
+        ]
+      : [
+          ...loadKind(chapterModules, "narrativeChapter"),
+          ...loadKind(questModules, "questReference"),
+        ];
   const linked = parsed
     .map((document) => linkDocument(document, entities))
     .sort((a, b) => a.order - b.order);
+
 
   const documentsByID = Object.fromEntries(linked.map((doc) => [doc.id, doc]));
   const entitiesByID = Object.fromEntries(entities.map((entity) => [entity.id, entity]));
@@ -102,7 +130,8 @@ function buildLibrary(): StoryLibrary {
   return { documents: linked, documentsByID, entities, entitiesByID, occurrences };
 }
 
-export const storyLibrary = buildLibrary();
+export const storyLibrary = buildLibrary("vi");
+export const storyLibraryEN = buildLibrary("en");
 
 export function chaptersOf(library: StoryLibrary): StoryDocument[] {
   return library.documents.filter((doc) => doc.kind === "narrativeChapter");

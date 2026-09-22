@@ -10,7 +10,9 @@
     "description": "Khi nhân vật gây sát thương phản ứng Khuếch Tán hoặc sát thương Tinh-Khuếch Tán lên kẻ địch, sẽ giải phóng sóng xung kích tại vị trí kẻ địch, gây Sát Thương Chuẩn. Hiệu quả này mỗi 4s tối đa kích hoạt một lần.",
     "timeStart": "2026-09-16 04:00:00",
     "timeEnd": "2026-10-16 03:59:59",
-    "relatedMechanic": "Stellar Swirl (Tinh-Khuếch Tán) — biến thể Khuếch Tán (Anemo+Cryo) khi đội có nhân vật mang Stellar Jubilee (Sandrone/traveler-cryo/Odette). Chúc phúc này khuếch đại MỌI đòn Khuếch Tán (kể cả Khuếch Tán thường, không riêng biến thể Stellar) suốt cả chu kỳ, cộng dồn thêm phần Ley Line Disorder riêng của Tầng 12 nửa đầu."
+    "relatedMechanic": "Stellar Swirl (Tinh-Khuếch Tán) — biến thể Khuếch Tán (Anemo+Cryo) khi đội có nhân vật mang Stellar Jubilee (Sandrone/traveler-cryo/Odette). Chúc phúc này khuếch đại MỌI đòn Khuếch Tán (kể cả Khuếch Tán thường, không riêng biến thể Stellar) suốt cả chu kỳ, cộng dồn thêm phần Ley Line Disorder riêng của Tầng 12 nửa đầu.",
+    "descriptionEN": "When a character deals Swirl or Stellar Swirl reaction DMG to an opponent, a shockwave is unleashed at the opponent's position, dealing True DMG. This effect can trigger at most once every 4s.",
+    "relatedMechanicEN": "Stellar Swirl (Tinh-Khuếch Tán) — a Swirl variant (Anemo+Cryo) available when the party includes a character with Stellar Jubilee (Sandrone/traveler-cryo/Odette). This blessing amplifies EVERY Swirl hit (regular Swirl included, not only the Stellar variant) for the whole cycle, stacking with Floor 12's first-half Ley Line Disorder."
   },
   "floors": [
     {
@@ -24,104 +26,14 @@
             {
               "wave": 1,
               "monsters": [
-                {
-                  "name": "Winged Halberd-Knight",
-                  "count": "1→5 (hồi thêm)",
-                  "size": "Vừa",
-                  "elements": [
-                    "Anemo"
-                  ],
-                  "resistanceNotes": "kháng Anemo +20%",
-                  "weakpoint": false,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 25130101,
-                  "resistances": {
-                    "Anemo": 0.2,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 5,
-                  "hp": {
-                    "page": "Winged Halberd-Knight",
-                    "variant": "Normal",
-                    "ratio": 1.5,
-                    "type": "2"
-                  },
-                  "nameVI": "Kỵ Sĩ Cánh Cầm Kích"
-                },
-                {
-                  "name": "Winged Soarer Knight",
-                  "count": "2→10 (hồi thêm)",
-                  "size": "Vừa",
-                  "elements": [
-                    "Anemo"
-                  ],
-                  "resistanceNotes": "kháng Anemo +20%",
-                  "weakpoint": false,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 25130201,
-                  "resistances": {
-                    "Anemo": 0.2,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 10,
-                  "hp": {
-                    "page": "Winged Soarer Knight",
-                    "variant": "Normal",
-                    "ratio": 1.4,
-                    "type": "2"
-                  },
-                  "nameVI": "Kỵ Sĩ Cánh Nhảy Múa"
-                }
+                { "name": "Winged Halberd-Knight", "count": "1→5 (hồi thêm)", "size": "Vừa", "elements": ["Anemo"], "resistanceNotes": "kháng Anemo +20%", "weakpoint": false, "mechanics": null, "hpRatio": null, "gameId": 25130101, "resistances": {"Anemo": 0.2, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 5, "hp": {"page": "Winged Halberd-Knight", "variant": "Normal", "ratio": 1.5, "type": "2"}, "nameVI": "Kỵ Sĩ Cánh Cầm Kích", "countEN": "1→5 (respawning)", "sizeEN": "Medium", "resistanceNotesEN": "Anemo RES +20%" },
+                { "name": "Winged Soarer Knight", "count": "2→10 (hồi thêm)", "size": "Vừa", "elements": ["Anemo"], "resistanceNotes": "kháng Anemo +20%", "weakpoint": false, "mechanics": null, "hpRatio": null, "gameId": 25130201, "resistances": {"Anemo": 0.2, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 10, "hp": {"page": "Winged Soarer Knight", "variant": "Normal", "ratio": 1.4, "type": "2"}, "nameVI": "Kỵ Sĩ Cánh Nhảy Múa", "countEN": "2→10 (respawning)", "sizeEN": "Medium", "resistanceNotesEN": "Anemo RES +20%" }
               ]
             },
             {
               "wave": 2,
               "monsters": [
-                {
-                  "name": "Cutting Edge All-Purpose Storm Landcruiser",
-                  "count": "1 (boss)",
-                  "size": "Lớn (máy Fatui)",
-                  "elements": [
-                    "Electro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": "Có thể làm tê liệt 2s nếu kích 4 lần Electro-Charged/Lunar-Charged trong lúc dùng chiêu lớn",
-                  "hpRatio": "hp_ratio 7, atk_ratio 6 — rất trâu",
-                  "gameId": 23085101,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 1,
-                  "hp": {
-                    "page": "Cutting Edge All-Purpose Storm Landcruiser",
-                    "variant": "Normal",
-                    "ratio": 7.0,
-                    "type": "2"
-                  },
-                  "nameVI": "Tàu Lục Chiến - Mẫu Tiên Phong Đa Năng"
-                }
+                { "name": "Cutting Edge All-Purpose Storm Landcruiser", "count": "1 (boss)", "size": "Lớn (máy Fatui)", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "Có thể làm tê liệt 2s nếu kích 4 lần Electro-Charged/Lunar-Charged trong lúc dùng chiêu lớn", "hpRatio": "hp_ratio 7, atk_ratio 6 — rất trâu", "gameId": 23085101, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 1, "hp": {"page": "Cutting Edge All-Purpose Storm Landcruiser", "variant": "Normal", "ratio": 7.0, "type": "2"}, "nameVI": "Tàu Lục Chiến - Mẫu Tiên Phong Đa Năng", "countEN": "1 (boss)", "sizeEN": "Large (Fatui machine)", "mechanicsEN": "Can be paralyzed for 2s by triggering Electro-Charged/Lunar-Charged 4 times during its big attack" }
               ]
             }
           ]
@@ -133,106 +45,14 @@
             {
               "wave": 1,
               "monsters": [
-                {
-                  "name": "Winged Halberd-Knight",
-                  "count": "1→4",
-                  "size": "Vừa",
-                  "elements": [
-                    "Anemo"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": false,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 25130101,
-                  "resistances": {
-                    "Anemo": 0.2,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 4,
-                  "hp": {
-                    "page": "Winged Halberd-Knight",
-                    "variant": "Normal",
-                    "ratio": 1.5,
-                    "type": "2"
-                  },
-                  "nameVI": "Kỵ Sĩ Cánh Cầm Kích"
-                },
-                {
-                  "name": "Volkodlak Basher",
-                  "count": "2→8",
-                  "size": "Vừa/Lớn (Elite)",
-                  "elements": [
-                    "Cryo",
-                    "Geo",
-                    "Pyro"
-                  ],
-                  "resistanceNotes": "nguyên tố tuỳ màu dấu (xanh/nâu/cam)",
-                  "weakpoint": null,
-                  "mechanics": "Choáng khi trúng Stellar Glimmer Reaction lúc gầm hoặc sau combo",
-                  "hpRatio": "hp_ratio 1.5, atk_ratio 2 — khá mỏng máu so với Elite khác",
-                  "gameId": 25131201,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 8,
-                  "hp": {
-                    "page": "Volkodlak Basher",
-                    "variant": "Normal",
-                    "ratio": 1.5,
-                    "type": "2"
-                  },
-                  "nameVI": "Volkodlak Kẻ Gõ Đập"
-                }
+                { "name": "Winged Halberd-Knight", "count": "1→4", "size": "Vừa", "elements": ["Anemo"], "resistanceNotes": null, "weakpoint": false, "mechanics": null, "hpRatio": null, "gameId": 25130101, "resistances": {"Anemo": 0.2, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 4, "hp": {"page": "Winged Halberd-Knight", "variant": "Normal", "ratio": 1.5, "type": "2"}, "nameVI": "Kỵ Sĩ Cánh Cầm Kích", "countEN": "1→4", "sizeEN": "Medium" },
+                { "name": "Volkodlak Basher", "count": "2→8", "size": "Vừa/Lớn (Elite)", "elements": ["Cryo", "Geo", "Pyro"], "resistanceNotes": "nguyên tố tuỳ màu dấu (xanh/nâu/cam)", "weakpoint": null, "mechanics": "Choáng khi trúng Stellar Glimmer Reaction lúc gầm hoặc sau combo", "hpRatio": "hp_ratio 1.5, atk_ratio 2 — khá mỏng máu so với Elite khác", "gameId": 25131201, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 8, "hp": {"page": "Volkodlak Basher", "variant": "Normal", "ratio": 1.5, "type": "2"}, "nameVI": "Volkodlak Kẻ Gõ Đập", "countEN": "2→8", "sizeEN": "Medium/Large (Elite)", "mechanicsEN": "Staggers when hit by a Stellar Glimmer Reaction while roaring or after its combo", "resistanceNotesEN": "element depends on mark color (blue/brown/orange)" }
               ]
             },
             {
               "wave": 2,
               "monsters": [
-                {
-                  "name": "Cutting Edge Fire Support Ground Effect Landcruiser",
-                  "count": "2 (nối tiếp)",
-                  "size": "Lớn (máy Fatui)",
-                  "elements": [
-                    "Pyro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": "Tê liệt 5s nếu kích 4 lần Electro-Charged/Lunar-Charged",
-                  "hpRatio": "hp_ratio 6, atk_ratio 6",
-                  "gameId": 23085301,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 2,
-                  "hp": {
-                    "page": "Cutting Edge Fire Support Ground Effect Landcruiser",
-                    "variant": "Normal",
-                    "ratio": 6.0,
-                    "type": "2"
-                  },
-                  "nameVI": "Tàu Lục Chiến - Mẫu Hỏa Lực Địa Hình Đa Năng"
-                }
+                { "name": "Cutting Edge Fire Support Ground Effect Landcruiser", "count": "2 (nối tiếp)", "size": "Lớn (máy Fatui)", "elements": ["Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "Tê liệt 5s nếu kích 4 lần Electro-Charged/Lunar-Charged", "hpRatio": "hp_ratio 6, atk_ratio 6", "gameId": 23085301, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 2, "hp": {"page": "Cutting Edge Fire Support Ground Effect Landcruiser", "variant": "Normal", "ratio": 6.0, "type": "2"}, "nameVI": "Tàu Lục Chiến - Mẫu Hỏa Lực Địa Hình Đa Năng", "countEN": "2 (in sequence)", "sizeEN": "Large (Fatui machine)", "mechanicsEN": "Paralyzed for 5s after triggering Electro-Charged/Lunar-Charged 4 times" }
               ]
             }
           ]
@@ -244,141 +64,23 @@
             {
               "wave": 1,
               "monsters": [
-                {
-                  "name": "Juvenile Tree Segment",
-                  "count": "2 rồi 2",
-                  "size": "Vừa (Elite)",
-                  "elements": [
-                    "Geo"
-                  ],
-                  "resistanceNotes": "rất yếu Pyro (pyro_res -20%); kháng Dendro/Geo +20~30%",
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": "hp_ratio 2",
-                  "gameId": 25138001,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.2,
-                    "Electro": 0.1,
-                    "Geo": 0.2,
-                    "Hydro": 0.1,
-                    "Pyro": -0.2
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 4,
-                  "hp": {
-                    "page": "Juvenile Tree Segment",
-                    "variant": "Normal",
-                    "ratio": 2.0,
-                    "type": "2"
-                  },
-                  "nameVI": "Cây Phân Đoạn Non Nớt"
-                },
-                {
-                  "name": "Rugged Elder Leshy",
-                  "count": "1 (đợt nhỏ 2)",
-                  "size": "Lớn (Elite)",
-                  "elements": [
-                    "Geo"
-                  ],
-                  "resistanceNotes": "rất yếu Pyro (pyro_res -220% khi 'Rooted'); kháng Dendro/Geo +20~30%",
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": "hp_ratio 8",
-                  "gameId": 25137001,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.3,
-                    "Electro": 0.1,
-                    "Geo": 0.3,
-                    "Hydro": 0.1,
-                    "Pyro": -0.2
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 1,
-                  "hp": {
-                    "page": "Rugged Elder Leshy",
-                    "variant": "Normal",
-                    "ratio": 8.0,
-                    "type": "2"
-                  },
-                  "nameVI": "Mộc Linh Trưởng Cổ Thụ"
-                }
+                { "name": "Juvenile Tree Segment", "count": "2 rồi 2", "size": "Vừa (Elite)", "elements": ["Geo"], "resistanceNotes": "rất yếu Pyro (pyro_res -20%); kháng Dendro/Geo +20~30%", "weakpoint": null, "mechanics": null, "hpRatio": "hp_ratio 2", "gameId": 25138001, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.2, "Electro": 0.1, "Geo": 0.2, "Hydro": 0.1, "Pyro": -0.2}, "physicalResistance": 0.1, "spawns": 4, "hp": {"page": "Juvenile Tree Segment", "variant": "Normal", "ratio": 2.0, "type": "2"}, "nameVI": "Cây Phân Đoạn Non Nớt", "countEN": "2 then 2", "sizeEN": "Medium (Elite)", "resistanceNotesEN": "very weak to Pyro (pyro_res -20%); Dendro/Geo RES +20~30%" },
+                { "name": "Rugged Elder Leshy", "count": "1 (đợt nhỏ 2)", "size": "Lớn (Elite)", "elements": ["Geo"], "resistanceNotes": "rất yếu Pyro (pyro_res -220% khi 'Rooted'); kháng Dendro/Geo +20~30%", "weakpoint": null, "mechanics": null, "hpRatio": "hp_ratio 8", "gameId": 25137001, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.3, "Electro": 0.1, "Geo": 0.3, "Hydro": 0.1, "Pyro": -0.2}, "physicalResistance": 0.1, "spawns": 1, "hp": {"page": "Rugged Elder Leshy", "variant": "Normal", "ratio": 8.0, "type": "2"}, "nameVI": "Mộc Linh Trưởng Cổ Thụ", "countEN": "1 (small wave 2)", "sizeEN": "Large (Elite)", "resistanceNotesEN": "very weak to Pyro (pyro_res -220% while 'Rooted'); Dendro/Geo RES +20~30%" }
               ]
             },
             {
               "wave": 2,
               "monsters": [
-                {
-                  "name": "Cutting Edge Fire Support Ground Effect Landcruiser",
-                  "count": "1 (cùng lúc)",
-                  "size": "Lớn",
-                  "elements": [
-                    "Pyro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": "hp_ratio 6-7",
-                  "gameId": 23085301,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 1,
-                  "hp": {
-                    "page": "Cutting Edge Fire Support Ground Effect Landcruiser",
-                    "variant": "Normal",
-                    "ratio": 6.0,
-                    "type": "2"
-                  },
-                  "nameVI": "Tàu Lục Chiến - Mẫu Hỏa Lực Địa Hình Đa Năng"
-                },
-                {
-                  "name": "Cutting Edge All-Purpose Storm Landcruiser",
-                  "count": "1 (cùng lúc)",
-                  "size": "Lớn",
-                  "elements": [
-                    "Electro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": "hp_ratio 6-7",
-                  "gameId": 23085101,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 1,
-                  "hp": {
-                    "page": "Cutting Edge All-Purpose Storm Landcruiser",
-                    "variant": "Normal",
-                    "ratio": 7.0,
-                    "type": "2"
-                  },
-                  "nameVI": "Tàu Lục Chiến - Mẫu Tiên Phong Đa Năng"
-                }
+                { "name": "Cutting Edge Fire Support Ground Effect Landcruiser", "count": "1 (cùng lúc)", "size": "Lớn", "elements": ["Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": "hp_ratio 6-7", "gameId": 23085301, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 1, "hp": {"page": "Cutting Edge Fire Support Ground Effect Landcruiser", "variant": "Normal", "ratio": 6.0, "type": "2"}, "nameVI": "Tàu Lục Chiến - Mẫu Hỏa Lực Địa Hình Đa Năng", "countEN": "1 (simultaneous)", "sizeEN": "Large" },
+                { "name": "Cutting Edge All-Purpose Storm Landcruiser", "count": "1 (cùng lúc)", "size": "Lớn", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": "hp_ratio 6-7", "gameId": 23085101, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 1, "hp": {"page": "Cutting Edge All-Purpose Storm Landcruiser", "variant": "Normal", "ratio": 7.0, "type": "2"}, "nameVI": "Tàu Lục Chiến - Mẫu Tiên Phong Đa Năng", "countEN": "1 (simultaneous)", "sizeEN": "Large" }
               ]
             }
           ]
         }
       ],
-      "recommendation": "Mang một trong ba nhân vật có Stellar Jubilee (Sandrone / traveler-cryo / Odette) kết hợp Cryo + Anemo để vừa ăn full 50% sát thương Stellar Swirl vừa khống chế (choáng) Volkodlak Basher. Winged Knight không có điểm yếu để bắn trúng — ưu tiên AoE diện rộng vì hồi quân liên tục theo đợt. Landcruiser cỡ lớn có thể bị tê liệt bằng combo Electro-Charged/Lunar-Charged. Phòng 3 nên mang một DPS/support Pyro vì Juvenile Tree Segment và đặc biệt Rugged Elder Leshy cực yếu Hỏa."
+      "recommendation": "Mang một trong ba nhân vật có Stellar Jubilee (Sandrone / traveler-cryo / Odette) kết hợp Cryo + Anemo để vừa ăn full 50% sát thương Stellar Swirl vừa khống chế (choáng) Volkodlak Basher. Winged Knight không có điểm yếu để bắn trúng — ưu tiên AoE diện rộng vì hồi quân liên tục theo đợt. Landcruiser cỡ lớn có thể bị tê liệt bằng combo Electro-Charged/Lunar-Charged. Phòng 3 nên mang một DPS/support Pyro vì Juvenile Tree Segment và đặc biệt Rugged Elder Leshy cực yếu Hỏa.",
+      "leyLineDisorderEN": "Stellar Swirl DMG dealt by characters is increased by 50%.",
+      "recommendationEN": "Bring one of the three Stellar Jubilee characters (Sandrone / traveler-cryo / Odette) with Cryo + Anemo to both take the full +50% Stellar Swirl DMG and crowd-control (stagger) the Volkodlak Bashers. Winged Knights have no weakpoint to shoot — prefer wide AoE since waves respawn continuously. The large Landcruiser can be paralyzed with an Electro-Charged/Lunar-Charged combo. Chamber 3 wants a Pyro DPS/support: Juvenile Tree Segment and especially Rugged Elder Leshy are extremely weak to Pyro."
     },
     {
       "floor": 10,
@@ -391,111 +93,14 @@
             {
               "wave": 1,
               "monsters": [
-                {
-                  "name": "Volkodlak Lobber",
-                  "count": "1→5",
-                  "size": "Vừa/Lớn (Elite)",
-                  "elements": [
-                    "Physical",
-                    "Dendro",
-                    "Pyro",
-                    "Geo"
-                  ],
-                  "resistanceNotes": "đa dạng theo biến thể",
-                  "weakpoint": null,
-                  "mechanics": "chưa xác nhận điểm yếu cụ thể",
-                  "hpRatio": null,
-                  "gameId": 25131001,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 5,
-                  "hp": {
-                    "page": "Volkodlak Lobber",
-                    "variant": "Normal",
-                    "ratio": 1.5,
-                    "type": "2"
-                  },
-                  "nameVI": "Volkodlak Kẻ Quăng Ném"
-                },
-                {
-                  "name": "Volkodlak Raider",
-                  "count": "2→10",
-                  "size": "Vừa/Lớn (Elite)",
-                  "elements": [
-                    "Physical",
-                    "Dendro",
-                    "Electro",
-                    "Pyro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": "chưa xác nhận",
-                  "hpRatio": null,
-                  "gameId": 25131401,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 10,
-                  "hp": {
-                    "page": "Volkodlak Raider",
-                    "variant": "Normal",
-                    "ratio": 1.3,
-                    "type": "2"
-                  },
-                  "nameVI": "Volkodlak Kẻ Cướp Bóc"
-                }
+                { "name": "Volkodlak Lobber", "count": "1→5", "size": "Vừa/Lớn (Elite)", "elements": ["Physical", "Dendro", "Pyro", "Geo"], "resistanceNotes": "đa dạng theo biến thể", "weakpoint": null, "mechanics": "chưa xác nhận điểm yếu cụ thể", "hpRatio": null, "gameId": 25131001, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 5, "hp": {"page": "Volkodlak Lobber", "variant": "Normal", "ratio": 1.5, "type": "2"}, "nameVI": "Volkodlak Kẻ Quăng Ném", "countEN": "1→5", "sizeEN": "Medium/Large (Elite)", "mechanicsEN": "specific weakpoint unconfirmed", "resistanceNotesEN": "varies by variant" },
+                { "name": "Volkodlak Raider", "count": "2→10", "size": "Vừa/Lớn (Elite)", "elements": ["Physical", "Dendro", "Electro", "Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null, "gameId": 25131401, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 10, "hp": {"page": "Volkodlak Raider", "variant": "Normal", "ratio": 1.3, "type": "2"}, "nameVI": "Volkodlak Kẻ Cướp Bóc", "countEN": "2→10", "sizeEN": "Medium/Large (Elite)", "mechanicsEN": "unconfirmed" }
               ]
             },
             {
               "wave": 2,
               "monsters": [
-                {
-                  "name": "Oprichniki Fireblade Shock Trooper",
-                  "count": "2",
-                  "size": "Vừa (Common, lính Fatui)",
-                  "elements": [
-                    "Electro",
-                    "Pyro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": "chưa xác nhận",
-                  "hpRatio": null,
-                  "gameId": 23079101,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": -0.2,
-                  "spawns": 2,
-                  "hp": {
-                    "page": "Oprichniki Fireblade Shock Trooper",
-                    "variant": "Normal",
-                    "ratio": 4.4,
-                    "type": "2"
-                  },
-                  "nameVI": "Đao Lửa Đột Kích Oprichniki"
-                }
+                { "name": "Oprichniki Fireblade Shock Trooper", "count": "2", "size": "Vừa (Common, lính Fatui)", "elements": ["Electro", "Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null, "gameId": 23079101, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": -0.2, "spawns": 2, "hp": {"page": "Oprichniki Fireblade Shock Trooper", "variant": "Normal", "ratio": 4.4, "type": "2"}, "nameVI": "Đao Lửa Đột Kích Oprichniki", "countEN": "2", "sizeEN": "Medium (Common, Fatui soldier)", "mechanicsEN": "unconfirmed" }
               ]
             }
           ]
@@ -507,106 +112,14 @@
             {
               "wave": 1,
               "monsters": [
-                {
-                  "name": "Leomastiff Guard",
-                  "count": "1→4",
-                  "size": "Vừa/Lớn (Elite)",
-                  "elements": [
-                    "Physical",
-                    "Hydro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": "chưa xác nhận",
-                  "hpRatio": null,
-                  "gameId": 25132601,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 4,
-                  "hp": {
-                    "page": "Leomastiff Guard",
-                    "variant": "Normal",
-                    "ratio": 2.6,
-                    "type": "2"
-                  },
-                  "nameVI": "Hộ Vệ Ngao Sư Tử"
-                },
-                {
-                  "name": "Channel Contact",
-                  "count": "1→4",
-                  "size": "Vừa/Lớn (Elite)",
-                  "elements": [
-                    "Physical",
-                    "Dendro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": "chưa xác nhận",
-                  "hpRatio": null,
-                  "gameId": 25132801,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 4,
-                  "hp": {
-                    "page": "Channel Contact",
-                    "variant": "Normal",
-                    "ratio": 2.1,
-                    "type": "2"
-                  },
-                  "nameVI": "Đầu Mối Liên Lạc"
-                }
+                { "name": "Leomastiff Guard", "count": "1→4", "size": "Vừa/Lớn (Elite)", "elements": ["Physical", "Hydro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null, "gameId": 25132601, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 4, "hp": {"page": "Leomastiff Guard", "variant": "Normal", "ratio": 2.6, "type": "2"}, "nameVI": "Hộ Vệ Ngao Sư Tử", "countEN": "1→4", "sizeEN": "Medium/Large (Elite)", "mechanicsEN": "unconfirmed" },
+                { "name": "Channel Contact", "count": "1→4", "size": "Vừa/Lớn (Elite)", "elements": ["Physical", "Dendro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null, "gameId": 25132801, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 4, "hp": {"page": "Channel Contact", "variant": "Normal", "ratio": 2.1, "type": "2"}, "nameVI": "Đầu Mối Liên Lạc", "countEN": "1→4", "sizeEN": "Medium/Large (Elite)", "mechanicsEN": "unconfirmed" }
               ]
             },
             {
               "wave": 2,
               "monsters": [
-                {
-                  "name": "Oprichniki Thunderblitz Gvardiya",
-                  "count": "2",
-                  "size": "Vừa (Common, lính Fatui)",
-                  "elements": [
-                    "Electro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": "chưa xác nhận",
-                  "hpRatio": null,
-                  "gameId": 23079301,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": -0.2,
-                  "spawns": 2,
-                  "hp": {
-                    "page": "Oprichniki Thunderblitz Gvardiya",
-                    "variant": "Normal",
-                    "ratio": 4.0,
-                    "type": "2"
-                  },
-                  "nameVI": "Gvardiya Sấm Sét Oprichniki"
-                }
+                { "name": "Oprichniki Thunderblitz Gvardiya", "count": "2", "size": "Vừa (Common, lính Fatui)", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null, "gameId": 23079301, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": -0.2, "spawns": 2, "hp": {"page": "Oprichniki Thunderblitz Gvardiya", "variant": "Normal", "ratio": 4.0, "type": "2"}, "nameVI": "Gvardiya Sấm Sét Oprichniki", "countEN": "2", "sizeEN": "Medium (Common, Fatui soldier)", "mechanicsEN": "unconfirmed" }
               ]
             }
           ]
@@ -618,174 +131,24 @@
             {
               "wave": 1,
               "monsters": [
-                {
-                  "name": "Glaciomancer",
-                  "count": "2→ (2+1 boss)",
-                  "size": "Vừa (Common, tiên linh Snowland Fae)",
-                  "elements": [
-                    "Cryo"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": "chưa xác nhận",
-                  "hpRatio": null,
-                  "gameId": 25135001,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.3,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 4,
-                  "hp": {
-                    "page": "Glaciomancer",
-                    "variant": "Normal",
-                    "ratio": 1.2,
-                    "type": "2"
-                  },
-                  "nameVI": "Pháp Sư Ngưng Băng"
-                },
-                {
-                  "name": "Glacial Warden",
-                  "count": "1 (đợt nhỏ 2)",
-                  "size": "Vừa (Common, tiên linh Snowland Fae)",
-                  "elements": [
-                    "Cryo"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": "chưa xác nhận",
-                  "hpRatio": null,
-                  "gameId": 25135101,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.3,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 1,
-                  "hp": {
-                    "page": "Glacial Warden",
-                    "variant": "Normal",
-                    "ratio": 6.0,
-                    "type": "2"
-                  },
-                  "nameVI": "Thủ Vệ Ngưng Băng"
-                }
+                { "name": "Glaciomancer", "count": "2→ (2+1 boss)", "size": "Vừa (Common, tiên linh Snowland Fae)", "elements": ["Cryo"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null, "gameId": 25135001, "resistances": {"Anemo": 0.1, "Cryo": 0.3, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 4, "hp": {"page": "Glaciomancer", "variant": "Normal", "ratio": 1.2, "type": "2"}, "nameVI": "Pháp Sư Ngưng Băng", "countEN": "2→ (2+1 boss)", "sizeEN": "Medium (Common, Snowland Fae spirit)", "mechanicsEN": "unconfirmed" },
+                { "name": "Glacial Warden", "count": "1 (đợt nhỏ 2)", "size": "Vừa (Common, tiên linh Snowland Fae)", "elements": ["Cryo"], "resistanceNotes": null, "weakpoint": null, "mechanics": "chưa xác nhận", "hpRatio": null, "gameId": 25135101, "resistances": {"Anemo": 0.1, "Cryo": 0.3, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 1, "hp": {"page": "Glacial Warden", "variant": "Normal", "ratio": 6.0, "type": "2"}, "nameVI": "Thủ Vệ Ngưng Băng", "countEN": "1 (small wave 2)", "sizeEN": "Medium (Common, Snowland Fae spirit)", "mechanicsEN": "unconfirmed" }
               ]
             },
             {
               "wave": 2,
               "monsters": [
-                {
-                  "name": "Oprichniki Thunderblitz Gvardiya",
-                  "count": "1 rồi 1",
-                  "size": "Vừa (Common, lính Fatui)",
-                  "elements": [
-                    "Electro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 23079301,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": -0.2,
-                  "spawns": 2,
-                  "hp": {
-                    "page": "Oprichniki Thunderblitz Gvardiya",
-                    "variant": "Normal",
-                    "ratio": 4.0,
-                    "type": "2"
-                  },
-                  "nameVI": "Gvardiya Sấm Sét Oprichniki"
-                },
-                {
-                  "name": "Oprichniki Medic",
-                  "count": "2 (đợt đầu)",
-                  "size": "Vừa (Common, lính Fatui)",
-                  "elements": [
-                    "Physical",
-                    "Hydro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": "support/hồi máu — ưu tiên diệt trước",
-                  "hpRatio": null,
-                  "gameId": 23076101,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": -0.2,
-                  "spawns": 2,
-                  "hp": {
-                    "page": "Oprichniki Medic",
-                    "variant": "Normal",
-                    "ratio": 1.0,
-                    "type": "2"
-                  },
-                  "nameVI": "Lính Cứu Trợ Oprichniki"
-                },
-                {
-                  "name": "Oprichniki Fireblade Shock Trooper",
-                  "count": "1 (đợt sau)",
-                  "size": "Vừa (Common, lính Fatui)",
-                  "elements": [
-                    "Electro",
-                    "Pyro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 23079101,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": -0.2,
-                  "spawns": 1,
-                  "hp": {
-                    "page": "Oprichniki Fireblade Shock Trooper",
-                    "variant": "Normal",
-                    "ratio": 4.4,
-                    "type": "2"
-                  },
-                  "nameVI": "Đao Lửa Đột Kích Oprichniki"
-                }
+                { "name": "Oprichniki Thunderblitz Gvardiya", "count": "1 rồi 1", "size": "Vừa (Common, lính Fatui)", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 23079301, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": -0.2, "spawns": 2, "hp": {"page": "Oprichniki Thunderblitz Gvardiya", "variant": "Normal", "ratio": 4.0, "type": "2"}, "nameVI": "Gvardiya Sấm Sét Oprichniki", "countEN": "1 then 1", "sizeEN": "Medium (Common, Fatui soldier)" },
+                { "name": "Oprichniki Medic", "count": "2 (đợt đầu)", "size": "Vừa (Common, lính Fatui)", "elements": ["Physical", "Hydro"], "resistanceNotes": null, "weakpoint": null, "mechanics": "support/hồi máu — ưu tiên diệt trước", "hpRatio": null, "gameId": 23076101, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": -0.2, "spawns": 2, "hp": {"page": "Oprichniki Medic", "variant": "Normal", "ratio": 1.0, "type": "2"}, "nameVI": "Lính Cứu Trợ Oprichniki", "countEN": "2 (first wave)", "sizeEN": "Medium (Common, Fatui soldier)", "mechanicsEN": "support/healer — kill first" },
+                { "name": "Oprichniki Fireblade Shock Trooper", "count": "1 (đợt sau)", "size": "Vừa (Common, lính Fatui)", "elements": ["Electro", "Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 23079101, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": -0.2, "spawns": 1, "hp": {"page": "Oprichniki Fireblade Shock Trooper", "variant": "Normal", "ratio": 4.4, "type": "2"}, "nameVI": "Đao Lửa Đột Kích Oprichniki", "countEN": "1 (later wave)", "sizeEN": "Medium (Common, Fatui soldier)" }
               ]
             }
           ]
         }
       ],
-      "recommendation": "Chúc phúc thiên hẳn về Cryo+Electro — mang Sandrone/traveler-cryo/Odette để biến Superconduct thường thành Stellar-Conduct và ăn +50% sát thương. Đa số quái Fatui Oprichniki và Volkodlak ở tầng này không có dữ liệu điểm yếu nguyên tố công khai rõ ràng — ưu tiên diệt Oprichniki Medic trước (hỗ trợ/hồi máu) và dùng đội hình ngắt chiêu (Cryo+Electro liên tục) để khống chế đám đông trước khi hồi quân."
+      "recommendation": "Chúc phúc thiên hẳn về Cryo+Electro — mang Sandrone/traveler-cryo/Odette để biến Superconduct thường thành Stellar-Conduct và ăn +50% sát thương. Đa số quái Fatui Oprichniki và Volkodlak ở tầng này không có dữ liệu điểm yếu nguyên tố công khai rõ ràng — ưu tiên diệt Oprichniki Medic trước (hỗ trợ/hồi máu) và dùng đội hình ngắt chiêu (Cryo+Electro liên tục) để khống chế đám đông trước khi hồi quân.",
+      "leyLineDisorderEN": "Stellar-Conduct DMG dealt by characters is increased by 50%.",
+      "recommendationEN": "The blessing leans fully into Cryo+Electro — bring Sandrone/traveler-cryo/Odette to turn regular Superconduct into Stellar-Conduct and take the +50% DMG. Most Fatui Oprichniki and Volkodlak on this floor have no clearly published elemental weakpoint data — prioritize killing Oprichniki Medics first (support/healing) and use interruption-heavy teams (constant Cryo+Electro) to control crowds before respawns."
     },
     {
       "floor": 11,
@@ -799,172 +162,16 @@
             {
               "wave": 1,
               "monsters": [
-                {
-                  "name": "Volkodlak Sharpshooter",
-                  "count": "2→20 (hồi thêm)",
-                  "size": "Vừa/Lớn (Elite)",
-                  "elements": [
-                    "Physical",
-                    "Anemo",
-                    "Cryo",
-                    "Dendro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 25131601,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 20,
-                  "hp": {
-                    "page": "Volkodlak Sharpshooter",
-                    "variant": "Normal",
-                    "ratio": 1.2,
-                    "type": "2"
-                  },
-                  "nameVI": "Volkodlak Kẻ Ngắm Bắn"
-                },
-                {
-                  "name": "Volkodlak Lobber",
-                  "count": "1→10 (hồi thêm)",
-                  "size": "Vừa/Lớn (Elite)",
-                  "elements": [
-                    "Physical",
-                    "Dendro",
-                    "Pyro",
-                    "Geo"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 25131001,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 10,
-                  "hp": {
-                    "page": "Volkodlak Lobber",
-                    "variant": "Normal",
-                    "ratio": 1.5,
-                    "type": "2"
-                  },
-                  "nameVI": "Volkodlak Kẻ Quăng Ném"
-                }
+                { "name": "Volkodlak Sharpshooter", "count": "2→20 (hồi thêm)", "size": "Vừa/Lớn (Elite)", "elements": ["Physical", "Anemo", "Cryo", "Dendro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 25131601, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 20, "hp": {"page": "Volkodlak Sharpshooter", "variant": "Normal", "ratio": 1.2, "type": "2"}, "nameVI": "Volkodlak Kẻ Ngắm Bắn", "countEN": "2→20 (respawning)", "sizeEN": "Medium/Large (Elite)" },
+                { "name": "Volkodlak Lobber", "count": "1→10 (hồi thêm)", "size": "Vừa/Lớn (Elite)", "elements": ["Physical", "Dendro", "Pyro", "Geo"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 25131001, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 10, "hp": {"page": "Volkodlak Lobber", "variant": "Normal", "ratio": 1.5, "type": "2"}, "nameVI": "Volkodlak Kẻ Quăng Ném", "countEN": "1→10 (respawning)", "sizeEN": "Medium/Large (Elite)" }
               ]
             },
             {
               "wave": 2,
               "monsters": [
-                {
-                  "name": "Cutting Edge All-Purpose Scout Landcruiser",
-                  "count": "1→8 (hồi thêm)",
-                  "size": "Lớn (máy Fatui)",
-                  "elements": [
-                    "Hydro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 23085201,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 8,
-                  "hp": {
-                    "page": "Cutting Edge All-Purpose Scout Landcruiser",
-                    "variant": "Normal",
-                    "ratio": 8.0,
-                    "type": "2"
-                  },
-                  "nameVI": "Tàu Lục Chiến - Mẫu Do Thám Đa Năng"
-                },
-                {
-                  "name": "Cutting Edge Fire Support Ground Effect Landcruiser",
-                  "count": "1→8 (hồi thêm)",
-                  "size": "Lớn (máy Fatui)",
-                  "elements": [
-                    "Pyro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 23085301,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 8,
-                  "hp": {
-                    "page": "Cutting Edge Fire Support Ground Effect Landcruiser",
-                    "variant": "Normal",
-                    "ratio": 6.0,
-                    "type": "2"
-                  },
-                  "nameVI": "Tàu Lục Chiến - Mẫu Hỏa Lực Địa Hình Đa Năng"
-                },
-                {
-                  "name": "Force Recon Ground Effect Landcruiser",
-                  "count": "1→8 (hồi thêm)",
-                  "size": "Lớn (máy Fatui)",
-                  "elements": [
-                    "Anemo"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 23080501,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 8,
-                  "hp": {
-                    "page": "Force Recon Ground Effect Landcruiser",
-                    "variant": "Normal",
-                    "ratio": 1.6,
-                    "type": "2"
-                  },
-                  "nameVI": "Tàu Lục Chiến - Mẫu Trinh Sát Địa Hình"
-                }
+                { "name": "Cutting Edge All-Purpose Scout Landcruiser", "count": "1→8 (hồi thêm)", "size": "Lớn (máy Fatui)", "elements": ["Hydro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 23085201, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 8, "hp": {"page": "Cutting Edge All-Purpose Scout Landcruiser", "variant": "Normal", "ratio": 8.0, "type": "2"}, "nameVI": "Tàu Lục Chiến - Mẫu Do Thám Đa Năng", "countEN": "1→8 (respawning)", "sizeEN": "Large (Fatui machine)" },
+                { "name": "Cutting Edge Fire Support Ground Effect Landcruiser", "count": "1→8 (hồi thêm)", "size": "Lớn (máy Fatui)", "elements": ["Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 23085301, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 8, "hp": {"page": "Cutting Edge Fire Support Ground Effect Landcruiser", "variant": "Normal", "ratio": 6.0, "type": "2"}, "nameVI": "Tàu Lục Chiến - Mẫu Hỏa Lực Địa Hình Đa Năng", "countEN": "1→8 (respawning)", "sizeEN": "Large (Fatui machine)" },
+                { "name": "Force Recon Ground Effect Landcruiser", "count": "1→8 (hồi thêm)", "size": "Lớn (máy Fatui)", "elements": ["Anemo"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 23080501, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 8, "hp": {"page": "Force Recon Ground Effect Landcruiser", "variant": "Normal", "ratio": 1.6, "type": "2"}, "nameVI": "Tàu Lục Chiến - Mẫu Trinh Sát Địa Hình", "countEN": "1→8 (respawning)", "sizeEN": "Large (Fatui machine)" }
               ]
             }
           ]
@@ -976,217 +183,18 @@
             {
               "wave": 1,
               "monsters": [
-                {
-                  "name": "Eremite Stone Enchanter",
-                  "count": "1 (nhóm A, xen kẽ với Glacial Warden)",
-                  "size": "Vừa (Common, Eremite)",
-                  "elements": [
-                    "Geo"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": true,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 25410101,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": -0.2,
-                  "spawns": 1,
-                  "hp": {
-                    "page": "Eremite Stone Enchanter",
-                    "variant": "Normal",
-                    "ratio": 5.0,
-                    "type": "2"
-                  },
-                  "nameVI": "Eremite - Kẻ Gọi Đá"
-                },
-                {
-                  "name": "Glacial Warden",
-                  "count": "1 (nhóm A, xen kẽ với Eremite Stone Enchanter)",
-                  "size": "Vừa (Common, tiên linh Snowland Fae)",
-                  "elements": [
-                    "Cryo"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 25135101,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.3,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 1,
-                  "hp": {
-                    "page": "Glacial Warden",
-                    "variant": "Normal",
-                    "ratio": 6.0,
-                    "type": "2"
-                  },
-                  "nameVI": "Thủ Vệ Ngưng Băng"
-                },
-                {
-                  "name": "Glaciomancer",
-                  "count": "2 (nhóm B, xen kẽ với Rugged Elder Leshy)",
-                  "size": "Vừa (Common, tiên linh Snowland Fae)",
-                  "elements": [
-                    "Cryo"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 25135001,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.3,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 2,
-                  "hp": {
-                    "page": "Glaciomancer",
-                    "variant": "Normal",
-                    "ratio": 1.2,
-                    "type": "2"
-                  },
-                  "nameVI": "Pháp Sư Ngưng Băng"
-                },
-                {
-                  "name": "Rugged Elder Leshy",
-                  "count": "1 (nhóm B, xen kẽ với Glaciomancer)",
-                  "size": "Lớn (Elite)",
-                  "elements": [
-                    "Physical",
-                    "Geo"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 25137001,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.3,
-                    "Electro": 0.1,
-                    "Geo": 0.3,
-                    "Hydro": 0.1,
-                    "Pyro": -0.2
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 1,
-                  "hp": {
-                    "page": "Rugged Elder Leshy",
-                    "variant": "Normal",
-                    "ratio": 8.0,
-                    "type": "2"
-                  },
-                  "nameVI": "Mộc Linh Trưởng Cổ Thụ"
-                },
-                {
-                  "name": "Juvenile Tree Segment",
-                  "count": "2 (cố định)",
-                  "size": "Vừa (Elite)",
-                  "elements": [
-                    "Geo"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 25138001,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.2,
-                    "Electro": 0.1,
-                    "Geo": 0.2,
-                    "Hydro": 0.1,
-                    "Pyro": -0.2
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 2,
-                  "hp": {
-                    "page": "Juvenile Tree Segment",
-                    "variant": "Normal",
-                    "ratio": 2.0,
-                    "type": "2"
-                  },
-                  "nameVI": "Cây Phân Đoạn Non Nớt"
-                }
+                { "name": "Eremite Stone Enchanter", "count": "1 (nhóm A, xen kẽ với Glacial Warden)", "size": "Vừa (Common, Eremite)", "elements": ["Geo"], "resistanceNotes": null, "weakpoint": true, "mechanics": null, "hpRatio": null, "gameId": 25410101, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": -0.2, "spawns": 1, "hp": {"page": "Eremite Stone Enchanter", "variant": "Normal", "ratio": 5.0, "type": "2"}, "nameVI": "Eremite - Kẻ Gọi Đá", "countEN": "1 (group A, alternating with Glacial Warden)", "sizeEN": "Medium (Common, Eremite)" },
+                { "name": "Glacial Warden", "count": "1 (nhóm A, xen kẽ với Eremite Stone Enchanter)", "size": "Vừa (Common, tiên linh Snowland Fae)", "elements": ["Cryo"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 25135101, "resistances": {"Anemo": 0.1, "Cryo": 0.3, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 1, "hp": {"page": "Glacial Warden", "variant": "Normal", "ratio": 6.0, "type": "2"}, "nameVI": "Thủ Vệ Ngưng Băng", "countEN": "1 (group A, alternating with Eremite Stone Enchanter)", "sizeEN": "Medium (Common, Snowland Fae spirit)" },
+                { "name": "Glaciomancer", "count": "2 (nhóm B, xen kẽ với Rugged Elder Leshy)", "size": "Vừa (Common, tiên linh Snowland Fae)", "elements": ["Cryo"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 25135001, "resistances": {"Anemo": 0.1, "Cryo": 0.3, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 2, "hp": {"page": "Glaciomancer", "variant": "Normal", "ratio": 1.2, "type": "2"}, "nameVI": "Pháp Sư Ngưng Băng", "countEN": "2 (group B, alternating with Rugged Elder Leshy)", "sizeEN": "Medium (Common, Snowland Fae spirit)" },
+                { "name": "Rugged Elder Leshy", "count": "1 (nhóm B, xen kẽ với Glaciomancer)", "size": "Lớn (Elite)", "elements": ["Physical", "Geo"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 25137001, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.3, "Electro": 0.1, "Geo": 0.3, "Hydro": 0.1, "Pyro": -0.2}, "physicalResistance": 0.1, "spawns": 1, "hp": {"page": "Rugged Elder Leshy", "variant": "Normal", "ratio": 8.0, "type": "2"}, "nameVI": "Mộc Linh Trưởng Cổ Thụ", "countEN": "1 (group B, alternating with Glaciomancer)", "sizeEN": "Large (Elite)" },
+                { "name": "Juvenile Tree Segment", "count": "2 (cố định)", "size": "Vừa (Elite)", "elements": ["Geo"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 25138001, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.2, "Electro": 0.1, "Geo": 0.2, "Hydro": 0.1, "Pyro": -0.2}, "physicalResistance": 0.1, "spawns": 2, "hp": {"page": "Juvenile Tree Segment", "variant": "Normal", "ratio": 2.0, "type": "2"}, "nameVI": "Cây Phân Đoạn Non Nớt", "countEN": "2 (fixed)", "sizeEN": "Medium (Elite)" }
               ]
             },
             {
               "wave": 2,
               "monsters": [
-                {
-                  "name": "Tainted Water-Splitting Phantasm",
-                  "count": "1 (xen kẽ với bản Veteran)",
-                  "size": "Vừa/Lớn",
-                  "elements": [
-                    "Hydro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": false,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 20051001,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 1,
-                  "hp": {
-                    "page": "Tainted Water-Splitting Phantasm",
-                    "variant": "Normal",
-                    "ratio": 5.0,
-                    "type": "2"
-                  },
-                  "nameVI": "Ảo Linh Nước Đục Phân Tách"
-                },
-                {
-                  "name": "Veteran Tainted Water-Spouting Phantasm",
-                  "count": "1 (xen kẽ với bản thường)",
-                  "size": "Vừa/Lớn",
-                  "elements": [
-                    "Hydro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": false,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "spawns": 1,
-                  "hp": {
-                    "page": "Tainted Water-Spouting Phantasm",
-                    "variant": "Normal",
-                    "ratio": 4.0,
-                    "type": "2"
-                  }
-                }
+                { "name": "Tainted Water-Splitting Phantasm", "count": "1 (xen kẽ với bản Veteran)", "size": "Vừa/Lớn", "elements": ["Hydro"], "resistanceNotes": null, "weakpoint": false, "mechanics": null, "hpRatio": null, "gameId": 20051001, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 1, "hp": {"page": "Tainted Water-Splitting Phantasm", "variant": "Normal", "ratio": 5.0, "type": "2"}, "nameVI": "Ảo Linh Nước Đục Phân Tách", "countEN": "1 (alternating with the Veteran variant)", "sizeEN": "Medium/Large" },
+                { "name": "Veteran Tainted Water-Spouting Phantasm", "count": "1 (xen kẽ với bản thường)", "size": "Vừa/Lớn", "elements": ["Hydro"], "resistanceNotes": null, "weakpoint": false, "mechanics": null, "hpRatio": null, "spawns": 1, "hp": {"page": "Tainted Water-Spouting Phantasm", "variant": "Normal", "ratio": 4.0, "type": "2"}, "countEN": "1 (alternating with the normal variant)", "sizeEN": "Medium/Large" }
               ]
             }
           ]
@@ -1198,138 +206,23 @@
             {
               "wave": 1,
               "monsters": [
-                {
-                  "name": "Construction Specialist Mek - Ousia",
-                  "count": "1 (xen kẽ với Ruin Drake: Earthguard)",
-                  "size": "Vừa/Lớn",
-                  "elements": [
-                    "Physical",
-                    "Cryo",
-                    "Pyro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": false,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "spawns": 1,
-                  "hp": {
-                    "page": "Construction Specialist Mek",
-                    "variant": "Normal",
-                    "ratio": 7.0,
-                    "type": "2"
-                  }
-                },
-                {
-                  "name": "Ruin Drake: Earthguard",
-                  "count": "1 (xen kẽ với Construction Specialist Mek - Ousia)",
-                  "size": "Lớn (Automaton)",
-                  "elements": [
-                    "Physical",
-                    "Anemo",
-                    "Cryo",
-                    "Dendro",
-                    "Electro",
-                    "Geo",
-                    "Hydro",
-                    "Pyro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": true,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 24030201,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.5,
-                  "spawns": 1,
-                  "hp": {
-                    "page": "Ruin Drake: Earthguard",
-                    "variant": "Normal",
-                    "ratio": 7.0,
-                    "type": "2"
-                  },
-                  "nameVI": "Rồng Di Tích - Địa Vệ"
-                }
+                { "name": "Construction Specialist Mek - Ousia", "count": "1 (xen kẽ với Ruin Drake: Earthguard)", "size": "Vừa/Lớn", "elements": ["Physical", "Cryo", "Pyro"], "resistanceNotes": null, "weakpoint": false, "mechanics": null, "hpRatio": null, "spawns": 1, "hp": {"page": "Construction Specialist Mek", "variant": "Normal", "ratio": 7.0, "type": "2"}, "countEN": "1 (alternating with Ruin Drake: Earthguard)", "sizeEN": "Medium/Large" },
+                { "name": "Ruin Drake: Earthguard", "count": "1 (xen kẽ với Construction Specialist Mek - Ousia)", "size": "Lớn (Automaton)", "elements": ["Physical", "Anemo", "Cryo", "Dendro", "Electro", "Geo", "Hydro", "Pyro"], "resistanceNotes": null, "weakpoint": true, "mechanics": null, "hpRatio": null, "gameId": 24030201, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.5, "spawns": 1, "hp": {"page": "Ruin Drake: Earthguard", "variant": "Normal", "ratio": 7.0, "type": "2"}, "nameVI": "Rồng Di Tích - Địa Vệ", "countEN": "1 (alternating with Construction Specialist Mek - Ousia)", "sizeEN": "Large (Automaton)" }
               ]
             },
             {
               "wave": 2,
               "monsters": [
-                {
-                  "name": "Wilderness Exile",
-                  "count": "2 (xen kẽ với 1 Wilderness Hunter)",
-                  "size": "Vừa (Elite, The Abyss)",
-                  "elements": [
-                    "Physical"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 22130001,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 2,
-                  "hp": {
-                    "page": "Wilderness Exile",
-                    "variant": "Normal",
-                    "ratio": 2.4,
-                    "type": "2"
-                  },
-                  "nameVI": "Kẻ Lưu Vong Hoang Dã"
-                },
-                {
-                  "name": "Wilderness Hunter",
-                  "count": "1 (xen kẽ với 2 Wilderness Exile)",
-                  "size": "Vừa (Elite, The Abyss)",
-                  "elements": [
-                    "Physical"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 22131001,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 1,
-                  "hp": {
-                    "page": "Wilderness Hunter",
-                    "variant": "Normal",
-                    "ratio": 10.4,
-                    "type": "2"
-                  },
-                  "nameVI": "Thợ Săn Hoang Dã"
-                }
+                { "name": "Wilderness Exile", "count": "2 (xen kẽ với 1 Wilderness Hunter)", "size": "Vừa (Elite, The Abyss)", "elements": ["Physical"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 22130001, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 2, "hp": {"page": "Wilderness Exile", "variant": "Normal", "ratio": 2.4, "type": "2"}, "nameVI": "Kẻ Lưu Vong Hoang Dã", "countEN": "2 (alternating with 1 Wilderness Hunter)", "sizeEN": "Medium (Elite, The Abyss)" },
+                { "name": "Wilderness Hunter", "count": "1 (xen kẽ với 2 Wilderness Exile)", "size": "Vừa (Elite, The Abyss)", "elements": ["Physical"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 22131001, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 1, "hp": {"page": "Wilderness Hunter", "variant": "Normal", "ratio": 10.4, "type": "2"}, "nameVI": "Thợ Săn Hoang Dã", "countEN": "1 (alternating with 2 Wilderness Exile)", "sizeEN": "Medium (Elite, The Abyss)" }
               ]
             }
           ]
         }
       ],
-      "recommendation": "Chúc phúc tầng cộng thẳng cả Anemo lẫn Electro cho toàn đội cùng lúc — đội hình lý tưởng kết hợp 1 DPS/support Anemo (gom quái, giảm kháng bằng Viridescent Venerer) với 1 DPS Electro hoặc đội Electro-Charged/Aggravate để ăn cả hai. Phòng 1 quái hồi liên tục (Volkodlak/Landcruiser) nên ưu tiên AoE; Ruin Drake: Earthguard ở phòng 3 có điểm yếu khai thác (weakpoint) và kháng đều mọi nguyên tố — combo phá giáp/plunge thay vì cố tìm nguyên tố khắc chế. Eremite Stone Enchanter cũng có điểm yếu khai thác, ưu tiên diệt trước nếu nó cùng nhóm với hỗ trợ khác."
+      "recommendation": "Chúc phúc tầng cộng thẳng cả Anemo lẫn Electro cho toàn đội cùng lúc — đội hình lý tưởng kết hợp 1 DPS/support Anemo (gom quái, giảm kháng bằng Viridescent Venerer) với 1 DPS Electro hoặc đội Electro-Charged/Aggravate để ăn cả hai. Phòng 1 quái hồi liên tục (Volkodlak/Landcruiser) nên ưu tiên AoE; Ruin Drake: Earthguard ở phòng 3 có điểm yếu khai thác (weakpoint) và kháng đều mọi nguyên tố — combo phá giáp/plunge thay vì cố tìm nguyên tố khắc chế. Eremite Stone Enchanter cũng có điểm yếu khai thác, ưu tiên diệt trước nếu nó cùng nhóm với hỗ trợ khác.",
+      "leyLineDisorderEN": "All party members gain a 60% Anemo DMG Bonus. All party members gain a 60% Electro DMG Bonus.",
+      "recommendationEN": "The floor blessing grants both Anemo and Electro to the whole party at once — the ideal team pairs an Anemo DPS/support (grouping, Viridescent Venerer shred) with an Electro DPS or an Electro-Charged/Aggravate team to benefit from both. Chamber 1 respawns continuously (Volkodlak/Landcruiser) so prefer AoE; the Ruin Drake: Earthguard in chamber 3 has an exploitable weakpoint and uniform elemental resistance — use armor-break/plunge combos rather than hunting a counter element. The Eremite Stone Enchanter also has an exploitable weakpoint; kill it first if grouped with other supports."
     },
     {
       "floor": 12,
@@ -1343,81 +236,14 @@
             {
               "wave": 1,
               "monsters": [
-                {
-                  "name": "Battle-Hardened Chimeric Burrowbeast",
-                  "count": "1",
-                  "size": "Vừa/Lớn (Elite)",
-                  "elements": [
-                    "Electro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "spawns": 1,
-                  "hp": {
-                    "page": "Chimeric Burrowbeast",
-                    "variant": "Battle-Hardened",
-                    "ratio": 17.48,
-                    "type": "2"
-                  }
-                }
+                { "name": "Battle-Hardened Chimeric Burrowbeast", "count": "1", "size": "Vừa/Lớn (Elite)", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "spawns": 1, "hp": {"page": "Chimeric Burrowbeast", "variant": "Battle-Hardened", "ratio": 17.48, "type": "2"}, "countEN": "1", "sizeEN": "Medium/Large (Elite)" }
               ]
             },
             {
               "wave": 2,
               "monsters": [
-                {
-                  "name": "Wilderness Exile",
-                  "count": "3→9 (hồi thêm, xen kẽ với bản Fireblade)",
-                  "size": "Vừa (Elite, The Abyss)",
-                  "elements": [
-                    "Physical"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 22130001,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 9,
-                  "hp": {
-                    "page": "Wilderness Exile",
-                    "variant": "Normal",
-                    "ratio": 2.4,
-                    "type": "2"
-                  },
-                  "nameVI": "Kẻ Lưu Vong Hoang Dã"
-                },
-                {
-                  "name": "Battle-Hardened Fireblade Shock Trooper",
-                  "count": "1 (xen kẽ với Wilderness Exile)",
-                  "size": "Vừa (Common, lính Fatui)",
-                  "elements": [
-                    "Electro",
-                    "Pyro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "spawns": 1,
-                  "hp": {
-                    "page": "Oprichniki Fireblade Shock Trooper",
-                    "variant": "Battle-Hardened",
-                    "ratio": 22.91616,
-                    "type": "2"
-                  }
-                }
+                { "name": "Wilderness Exile", "count": "3→9 (hồi thêm, xen kẽ với bản Fireblade)", "size": "Vừa (Elite, The Abyss)", "elements": ["Physical"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 22130001, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 9, "hp": {"page": "Wilderness Exile", "variant": "Normal", "ratio": 2.4, "type": "2"}, "nameVI": "Kẻ Lưu Vong Hoang Dã", "countEN": "3→9 (respawning, alternating with the Fireblade variant)", "sizeEN": "Medium (Elite, The Abyss)" },
+                { "name": "Battle-Hardened Fireblade Shock Trooper", "count": "1 (xen kẽ với Wilderness Exile)", "size": "Vừa (Common, lính Fatui)", "elements": ["Electro", "Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "spawns": 1, "hp": {"page": "Oprichniki Fireblade Shock Trooper", "variant": "Battle-Hardened", "ratio": 22.91616, "type": "2"}, "countEN": "1 (alternating with Wilderness Exile)", "sizeEN": "Medium (Common, Fatui soldier)" }
               ]
             }
           ]
@@ -1429,105 +255,14 @@
             {
               "wave": 1,
               "monsters": [
-                {
-                  "name": "Immortal Construct",
-                  "count": "1 (boss)",
-                  "size": "Lớn (Trùm)",
-                  "elements": [
-                    "Physical",
-                    "Pyro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 25140101,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.5
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 1,
-                  "hp": {
-                    "page": "Immortal Construct",
-                    "variant": "Normal",
-                    "ratio": 31.0,
-                    "type": "2"
-                  },
-                  "nameVI": "Tạo Vật Phái Sinh Bất Diệt"
-                }
+                { "name": "Immortal Construct", "count": "1 (boss)", "size": "Lớn (Trùm)", "elements": ["Physical", "Pyro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 25140101, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.5}, "physicalResistance": 0.1, "spawns": 1, "hp": {"page": "Immortal Construct", "variant": "Normal", "ratio": 31.0, "type": "2"}, "nameVI": "Tạo Vật Phái Sinh Bất Diệt", "countEN": "1 (boss)", "sizeEN": "Large (Boss)" }
               ]
             },
             {
               "wave": 2,
               "monsters": [
-                {
-                  "name": "Fisher of Hidden Depths",
-                  "count": "4 (xen kẽ với Lord of the Hidden Depths)",
-                  "size": "Vừa (Elite, The Abyss)",
-                  "elements": [
-                    "Electro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 22140101,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 4,
-                  "hp": {
-                    "page": "Fisher of Hidden Depths",
-                    "variant": "Normal",
-                    "ratio": 3.0,
-                    "type": "2"
-                  },
-                  "nameVI": "Thợ Câu U Ám"
-                },
-                {
-                  "name": "Lord of the Hidden Depths: Whisperer of Nightmares",
-                  "count": "1 (boss, xen kẽ với 4 Fisher of Hidden Depths)",
-                  "size": "Lớn (Trùm)",
-                  "elements": [
-                    "Electro"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "gameId": 22150101,
-                  "resistances": {
-                    "Anemo": 0.1,
-                    "Cryo": 0.1,
-                    "Dendro": 0.1,
-                    "Electro": 0.1,
-                    "Geo": 0.1,
-                    "Hydro": 0.1,
-                    "Pyro": 0.1
-                  },
-                  "physicalResistance": 0.1,
-                  "spawns": 1,
-                  "hp": {
-                    "page": "Lord of the Hidden Depths: Whisperer of Nightmares",
-                    "variant": "Normal",
-                    "ratio": 27.0,
-                    "type": "2"
-                  },
-                  "nameVI": "Chúa Tể Ác Mộng U Ám"
-                }
+                { "name": "Fisher of Hidden Depths", "count": "4 (xen kẽ với Lord of the Hidden Depths)", "size": "Vừa (Elite, The Abyss)", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 22140101, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 4, "hp": {"page": "Fisher of Hidden Depths", "variant": "Normal", "ratio": 3.0, "type": "2"}, "nameVI": "Thợ Câu U Ám", "countEN": "4 (alternating with Lord of the Hidden Depths)", "sizeEN": "Medium (Elite, The Abyss)" },
+                { "name": "Lord of the Hidden Depths: Whisperer of Nightmares", "count": "1 (boss, xen kẽ với 4 Fisher of Hidden Depths)", "size": "Lớn (Trùm)", "elements": ["Electro"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "gameId": 22150101, "resistances": {"Anemo": 0.1, "Cryo": 0.1, "Dendro": 0.1, "Electro": 0.1, "Geo": 0.1, "Hydro": 0.1, "Pyro": 0.1}, "physicalResistance": 0.1, "spawns": 1, "hp": {"page": "Lord of the Hidden Depths: Whisperer of Nightmares", "variant": "Normal", "ratio": 27.0, "type": "2"}, "nameVI": "Chúa Tể Ác Mộng U Ám", "countEN": "1 (boss, alternating with 4 Fisher of Hidden Depths)", "sizeEN": "Large (Boss)" }
               ]
             }
           ]
@@ -1539,57 +274,21 @@
             {
               "wave": 1,
               "monsters": [
-                {
-                  "name": "Battle-Hardened Domovoy Sculptor",
-                  "count": "1 (boss, Local Legend)",
-                  "size": "Lớn (Trùm, Local Legend)",
-                  "elements": [
-                    "Anemo",
-                    "Cryo"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": true,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "spawns": 1,
-                  "hp": {
-                    "page": "Churin (Local Legend)",
-                    "variant": "Battle-Hardened",
-                    "ratio": 25.168,
-                    "type": "2"
-                  }
-                }
+                { "name": "Battle-Hardened Domovoy Sculptor", "count": "1 (boss, Local Legend)", "size": "Lớn (Trùm, Local Legend)", "elements": ["Anemo", "Cryo"], "resistanceNotes": null, "weakpoint": true, "mechanics": null, "hpRatio": null, "spawns": 1, "hp": {"page": "Churin (Local Legend)", "variant": "Battle-Hardened", "ratio": 25.168, "type": "2"}, "sizeEN": "Large (Boss, Local Legend)", "countEN": "1 (boss, Local Legend)" }
               ]
             },
             {
               "wave": 2,
               "monsters": [
-                {
-                  "name": "Battle-Hardened Lightkeeper",
-                  "count": "1 (boss, Local Legend)",
-                  "size": "Lớn (Trùm, Local Legend)",
-                  "elements": [
-                    "Electro",
-                    "Physical"
-                  ],
-                  "resistanceNotes": null,
-                  "weakpoint": null,
-                  "mechanics": null,
-                  "hpRatio": null,
-                  "spawns": 1,
-                  "hp": {
-                    "page": "Sigurd (Local Legend)",
-                    "variant": "Battle-Hardened",
-                    "ratio": 9.45,
-                    "type": "2"
-                  }
-                }
+                { "name": "Battle-Hardened Lightkeeper", "count": "1 (boss, Local Legend)", "size": "Lớn (Trùm, Local Legend)", "elements": ["Electro", "Physical"], "resistanceNotes": null, "weakpoint": null, "mechanics": null, "hpRatio": null, "spawns": 1, "hp": {"page": "Sigurd (Local Legend)", "variant": "Battle-Hardened", "ratio": 9.45, "type": "2"}, "sizeEN": "Large (Boss, Local Legend)", "countEN": "1 (boss, Local Legend)" }
               ]
             }
           ]
         }
       ],
-      "recommendation": "Nửa 1 gần như bắt buộc đội Anemo+Cryo để kích hoạt Khuếch Tán/Stellar Swirl với hệ số khổng lồ (+200%/+75%) — mang một trong ba nhân vật Stellar Jubilee (Sandrone/traveler-cryo/Odette) để ăn trọn phần Stellar Swirl, cộng dồn thêm với chúc phúc Cascading Moon của cả mùa. Nửa 2 đổi hẳn sang Electro+Hydro để kích hoạt Điện Cảm/Lunar-Charged, cùng hệ số +200%/+75% — vẫn nên mang nhân vật Stellar Jubilee để biến Điện Cảm thường thành Nguyệt-Điện Cảm. Battle-Hardened Domovoy Sculptor (phòng 3 nửa 1) có điểm yếu khai thác; Immortal Construct (phòng 2 nửa 1) và hai boss phòng 3 là mục tiêu đơn, ưu tiên burst nhanh hơn AoE."
+      "recommendation": "Nửa 1 gần như bắt buộc đội Anemo+Cryo để kích hoạt Khuếch Tán/Stellar Swirl với hệ số khổng lồ (+200%/+75%) — mang một trong ba nhân vật Stellar Jubilee (Sandrone/traveler-cryo/Odette) để ăn trọn phần Stellar Swirl, cộng dồn thêm với chúc phúc Cascading Moon của cả mùa. Nửa 2 đổi hẳn sang Electro+Hydro để kích hoạt Điện Cảm/Lunar-Charged, cùng hệ số +200%/+75% — vẫn nên mang nhân vật Stellar Jubilee để biến Điện Cảm thường thành Nguyệt-Điện Cảm. Battle-Hardened Domovoy Sculptor (phòng 3 nửa 1) có điểm yếu khai thác; Immortal Construct (phòng 2 nửa 1) và hai boss phòng 3 là mục tiêu đơn, ưu tiên burst nhanh hơn AoE.",
+      "leyLineDisorderEN": "Half 1: Characters' Swirl reaction DMG is increased by 200%, and Stellar Swirl DMG is increased by 75%. Half 2: Characters' Electro-Charged reaction DMG is increased by 200%, and Lunar-Charged DMG is increased by 75%.",
+      "recommendationEN": "Half 1 effectively demands an Anemo+Cryo team to trigger Swirl/Stellar Swirl at massive multipliers (+200%/+75%) — bring one of the three Stellar Jubilee characters (Sandrone/traveler-cryo/Odette) to capture the Stellar Swirl share, stacking with the season-long Cascading Moon blessing. Half 2 switches entirely to Electro+Hydro for Electro-Charged/Lunar-Charged at the same +200%/+75% — a Stellar Jubilee character is still recommended to convert regular Electro-Charged into Lunar-Charged. The Battle-Hardened Domovoy Sculptor (chamber 3, half 1) has an exploitable weakpoint; the Immortal Construct (chamber 2, half 1) and both chamber-3 bosses are single targets — favor fast burst over AoE."
     }
   ]
 }

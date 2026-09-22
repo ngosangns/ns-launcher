@@ -17,8 +17,8 @@ export function CyclePage(props: { lang: Lang }) {
         <h2 style={{ margin: "4px 0 8px" }}>
           {props.lang === "vi" ? blessing.nameVI ?? blessing.name : blessing.name}
         </h2>
-        <p class="prose">{blessing.description}</p>
-        {blessing.relatedMechanic && <p class="meta">{blessing.relatedMechanic}</p>}
+        <p class="prose">{props.lang === "en" ? blessing.descriptionEN ?? blessing.description : blessing.description}</p>
+        {(props.lang === "en" ? blessing.relatedMechanicEN ?? blessing.relatedMechanic : blessing.relatedMechanic) && <p class="meta">{props.lang === "en" ? blessing.relatedMechanicEN ?? blessing.relatedMechanic : blessing.relatedMechanic}</p>}
         <p class="meta" style={{ "margin-top": "8px" }}>
           {formatDateRange(cycle.periodStart, cycle.periodEnd, props.lang)}
           {cycle.gameVersion ? ` · v${cycle.gameVersion}` : ""}

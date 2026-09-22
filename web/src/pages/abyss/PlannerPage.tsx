@@ -116,6 +116,7 @@ export function PlannerPage(props: { lang: Lang; section: string }) {
       fullCharacters: fullCharacters(),
       fullWeapons: fullWeapons(),
       cycleId: cycle.fileId,
+      lang: props.lang,
     });
   const stale = () => output() != null && computedInput() !== inputKey();
 
@@ -161,12 +162,13 @@ export function PlannerPage(props: { lang: Lang; section: string }) {
     setBusy(true);
     setStatus(null);
     window.setTimeout(() => {
-      const result = findTeams(current, { fullCharacters: fullC, fullWeapons: fullW });
+      const result = findTeams(current, { fullCharacters: fullC, fullWeapons: fullW, lang: props.lang });
       const input = plansInputKey({
         roster: current,
         fullCharacters: fullC,
         fullWeapons: fullW,
         cycleId: cycle.fileId,
+        lang: props.lang,
       });
       setComputedInput(input);
       savePlans(input, result);
@@ -214,7 +216,7 @@ export function PlannerPage(props: { lang: Lang; section: string }) {
           <strong>{props.lang === "vi" ? blessing.nameVI ?? blessing.name : blessing.name}</strong>
         </p>
         <p class="meta">{formatDateRange(cycle.periodStart, cycle.periodEnd, props.lang)}</p>
-        <p class="notice">{blessing.description}</p>
+        <p class="notice">{props.lang === "en" ? blessing.descriptionEN ?? blessing.description : blessing.description}</p>
 
         <div class="group-label">{text().abyssImportFull}</div>
         <input class="search" value={ltuid()} onInput={(event) => setLtuid(event.currentTarget.value)} placeholder="ltuid_v2" />

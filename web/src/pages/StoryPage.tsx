@@ -14,6 +14,7 @@ import {
   questFaces,
   questsOf,
   storyLibrary,
+  storyLibraryEN,
   type StoryDocument,
 } from "../lib/story";
 import { navigate, pathname } from "../router";
@@ -24,7 +25,7 @@ export function StoryPage(props: { lang: Lang; active: boolean }) {
   const [heldPath, setHeldPath] = createSignal(pathname());
   const [query, setQuery] = createSignal("");
   const [open, setOpen] = createSignal(false);
-  const library = storyLibrary;
+  const library = () => (props.lang === "en" ? storyLibraryEN : storyLibrary);
 
   createEffect(() => {
     const path = pathname();
@@ -35,13 +36,13 @@ export function StoryPage(props: { lang: Lang; active: boolean }) {
   const parsed = createMemo(() => parseStoryPath(pathname().startsWith("/story") ? pathname() : heldPath()));
   const needle = () => foldVi(query().trim());
   const chapters = createMemo(() => {
-    const all = chaptersOf(library);
+    const all = chaptersOf(library());
     const q = needle();
     if (!q) return all;
     return all.filter((doc) => foldVi(`${doc.title} ${doc.id}`).includes(q));
   });
   const quests = createMemo(() => {
-    const all = questsOf(library);
+    const all = questsOf(library());
     const q = needle();
     if (!q) return all;
     return all.filter((doc) => {
@@ -50,7 +51,7 @@ export function StoryPage(props: { lang: Lang; active: boolean }) {
     });
   });
   const entities = createMemo(() => {
-    const all = library.entities;
+    const all = library().entities;
     const q = needle();
     if (!q) return all;
     return all.filter((entity) =>
@@ -59,17 +60,17 @@ export function StoryPage(props: { lang: Lang; active: boolean }) {
   });
   const selectedDocument = () => {
     const docId = parsed().docId;
-    return docId ? library.documentsByID[docId] : undefined;
+    return docId ? library().documentsByID[docId] : undefined;
   };
   const selectedEntity = () => {
     const entityId = parsed().entityId;
-    return entityId ? library.entitiesByID[entityId] : undefined;
+    return entityId ? library().entitiesByID[entityId] : undefined;
   };
 
   createEffect(() => {
     if (!props.active) return;
     if (!parsed().docId && !parsed().entityId) {
-      const first = chaptersOf(library)[0];
+      const first = chaptersOf(library())[0];
       if (first) navigate(documentHref(first.id), { replace: true });
     }
   });
@@ -255,8 +256,9 @@ function QuestNav(props: {
 
 function EntityDetail(props: { lang: Lang; entityId: string }) {
   const text = () => t(props.lang);
-  const entity = () => storyLibrary.entitiesByID[props.entityId];
-  const occurrences = () => storyLibrary.occurrences[props.entityId] ?? [];
+  const library = () => (props.lang === "en" ? storyLibraryEN : storyLibrary);
+  const entity = () => library().entitiesByID[props.entityId];
+  const occurrences = () => library().occurrences[props.entityId] ?? [];
   const chapters = () => occurrences().filter((item) => item.documentKind === "narrativeChapter");
   const quests = () => occurrences().filter((item) => item.documentKind === "questReference");
 
@@ -279,7 +281,7 @@ function EntityDetail(props: { lang: Lang; entityId: string }) {
           <Show when={chapters().length > 0}>
             <div class="section-title">{text().storyAppearsIn}</div>
             {chapters().map((occurrence) => {
-              const section = storyLibrary.documentsByID[occurrence.documentID]?.sections.find(
+              const section = library().documentsByID[occurrence.documentID]?.sections.find(
                 (entry) => entry.id === occurrence.sectionID,
               );
               return (

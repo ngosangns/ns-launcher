@@ -2,13 +2,13 @@ import { For } from "solid-js";
 import { currentCycle } from "../lib/abyss";
 import { formatDateRange } from "../lib/format";
 import { t, type Lang } from "../lib/i18n";
-import { chaptersOf, documentHref, storyLibrary } from "../lib/story";
+import { chaptersOf, documentHref, storyLibrary, storyLibraryEN } from "../lib/story";
 
 export function HomePage(props: { lang: Lang }) {
   const text = () => t(props.lang);
   const cycle = currentCycle();
   const blessing = cycle.blessingOfTheAbyssalMoon;
-  const chapters = chaptersOf(storyLibrary);
+  const chapters = () => chaptersOf(props.lang === "en" ? storyLibraryEN : storyLibrary);
   const blessingName = () => (props.lang === "vi" ? blessing.nameVI ?? blessing.name : blessing.name);
 
   return (
@@ -20,7 +20,7 @@ export function HomePage(props: { lang: Lang }) {
         <section class="sheet" aria-labelledby="home-story">
           <h2 id="home-story">{text().story}</h2>
           <ol class="toc">
-            <For each={chapters}>
+            <For each={chapters()}>
               {(doc, index) => (
                 <li>
                   <a href={documentHref(doc.id)}>

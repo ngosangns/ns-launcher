@@ -8,6 +8,7 @@ export type PlansInput = {
   fullCharacters: boolean;
   fullWeapons: boolean;
   cycleId: string;
+  lang?: "vi" | "en";
 };
 
 export function plansInputKey(input: PlansInput): string {

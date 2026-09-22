@@ -300,13 +300,18 @@ function halfHP(floor: CycleFloor | undefined, half: 1 | 2): number | null {
 
 export function findTeams(
   roster: Roster,
-  options: { fullCharacters: boolean; fullWeapons: boolean },
+  options: { fullCharacters: boolean; fullWeapons: boolean; lang?: "vi" | "en" },
 ): PlannerOutput {
   const cycle = currentCycle();
   const floor = floor12Of(cycle);
   const split = floor ? splitDisorder(floor.leyLineDisorder) : {};
   const half1Text = split.half1 ?? floor?.leyLineDisorder ?? "";
   const half2Text = split.half2 ?? floor?.leyLineDisorder ?? "";
+  const displayDisorder = options.lang === "en" ? floor?.leyLineDisorderEN ?? floor?.leyLineDisorder : floor?.leyLineDisorder;
+  const displaySplit = displayDisorder ? splitDisorder(displayDisorder) : {};
+  const displayHalf1 = displaySplit.half1 ?? displayDisorder ?? "";
+  const displayHalf2 = displaySplit.half2 ?? displayDisorder ?? "";
+  const displayRecommendation = options.lang === "en" ? floor?.recommendationEN ?? floor?.recommendation : floor?.recommendation;
 
   const characterPool = (
     options.fullCharacters ? characters : characters.filter((item) => roster.characters.some((owned) => owned.id === item.id))
@@ -325,7 +330,7 @@ export function findTeams(
   }
 
   if (characterPool.length < 8 && !options.fullCharacters) {
-    return { plans: [], half1Text, half2Text, recommendation: floor?.recommendation };
+    return { plans: [], half1Text: displayHalf1, half2Text: displayHalf2, recommendation: displayRecommendation };
   }
 
   const shockwave = /khuech|swirl/i.test(foldVi(`${cycle.blessingOfTheAbyssalMoon.description} ${half1Text} ${half2Text}`));
@@ -393,9 +398,9 @@ export function findTeams(
 
   return {
     plans: unique,
-    half1Text,
-    half2Text,
-    recommendation: floor?.recommendation,
+    half1Text: displayHalf1,
+    half2Text: displayHalf2,
+    recommendation: displayRecommendation,
   };
 }
 

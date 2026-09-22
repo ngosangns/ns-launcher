@@ -12,10 +12,14 @@ export type StoryEntity = {
   id: string;
   kind: StoryEntityKind;
   displayName: string;
+  displayNameEN?: string;
   aliases: string[];
+  aliasesEN?: string[];
   summary: string | null;
+  summaryEN?: string | null;
   homeDocument: string;
   homeHeading: string | null;
+  homeHeadingEN?: string | null;
 };
 
 export type StoryOccurrence = {

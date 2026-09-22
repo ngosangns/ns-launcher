@@ -70,12 +70,12 @@ export function MonsterCard(props: { monster: Monster; level: number; multiplier
           </span>
         </div>
         <div class="monster-stats">
-          <Stat label={text().abyssCount} value={props.monster.count} />
+          <Stat label={text().abyssCount} value={props.lang === "en" ? props.monster.countEN ?? props.monster.count : props.monster.count} />
           <Show when={props.monster.spawns != null}>
             <Stat label={text().abyssSpawns} value={String(props.monster.spawns ?? "")} />
           </Show>
-          <Show when={props.monster.size}>
-            <Stat label={text().abyssSize} value={props.monster.size ?? ""} />
+          <Show when={props.lang === "en" ? props.monster.sizeEN ?? props.monster.size : props.monster.size}>
+            <Stat label={text().abyssSize} value={(props.lang === "en" ? props.monster.sizeEN ?? props.monster.size : props.monster.size) ?? ""} />
           </Show>
           <Stat label={text().abyssLevel} value={String(props.level)} />
           <Show when={hp()}>
@@ -98,13 +98,13 @@ export function MonsterCard(props: { monster: Monster; level: number; multiplier
           </Show>
         </div>
         <ResistanceTable monster={props.monster} />
-        <Show when={props.monster.mechanics && props.monster.mechanics !== "chưa xác nhận"}>
+        <Show when={(props.lang === "en" ? props.monster.mechanicsEN ?? props.monster.mechanics : props.monster.mechanics) && (props.lang === "en" ? props.monster.mechanicsEN ?? props.monster.mechanics : props.monster.mechanics) !== "chưa xác nhận"}>
           <p class="meta" style={{ margin: "6px 0 0" }}>
-            {text().abyssMechanics}: {props.monster.mechanics}
+            {text().abyssMechanics}: {props.lang === "en" ? props.monster.mechanicsEN ?? props.monster.mechanics : props.monster.mechanics}
           </p>
         </Show>
-        <Show when={props.monster.resistanceNotes}>
-          <p class="meta">{props.monster.resistanceNotes}</p>
+        <Show when={props.lang === "en" ? props.monster.resistanceNotesEN ?? props.monster.resistanceNotes : props.monster.resistanceNotes}>
+          <p class="meta">{props.lang === "en" ? props.monster.resistanceNotesEN ?? props.monster.resistanceNotes : props.monster.resistanceNotes}</p>
         </Show>
         <Show when={props.monster.hpRatio && props.monster.hpRatio !== "chưa xác nhận"}>
           <p class="meta">{props.monster.hpRatio}</p>
@@ -116,7 +116,8 @@ export function MonsterCard(props: { monster: Monster; level: number; multiplier
 
 export function FloorMonsters(props: { floor: CycleFloor; lang: Lang; defaultOpen?: boolean }) {
   const text = () => t(props.lang);
-  const split = () => splitDisorder(props.floor.leyLineDisorder);
+  const disorder = () => (props.lang === "en" ? props.floor.leyLineDisorderEN ?? props.floor.leyLineDisorder : props.floor.leyLineDisorder);
+  const split = () => splitDisorder(disorder());
   const multiplier = () => props.floor.enemyHPMultiplier ?? 1;
   const [opened, setOpened] = createSignal(props.defaultOpen !== false);
   return (
@@ -142,7 +143,7 @@ export function FloorMonsters(props: { floor: CycleFloor; lang: Lang; defaultOpe
           <div class="section-title">{text().abyssLeyLine}</div>
           <Show
             when={split().half1 || split().half2}
-            fallback={<p class="prose">{props.floor.leyLineDisorder}</p>}
+            fallback={<p class="prose">{disorder()}</p>}
           >
             <Show when={split().half1}>
               <p class="prose">
