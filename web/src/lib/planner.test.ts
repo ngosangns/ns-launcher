@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { computeDynamicSecret } from "./hoyolab";
+import { computeDynamicSecret, parseHoyolabCredential, pickGameRole } from "./hoyolab";
 import { md5 } from "./md5";
 import { findTeams } from "./planner";
 import { parseRoster } from "./roster";
@@ -13,6 +13,20 @@ describe("md5 / HoYoLAB ds", () => {
     expect(computeDynamicSecret(1_700_000_000, "AbCdEf")).toBe(
       "1700000000,AbCdEf,52762c606b53f6830e4692f53664105e",
     );
+  });
+
+  it("reads a pasted cookie and picks the requested or highest-level role", () => {
+    expect(parseHoyolabCredential("ltuid_v2=98671210; ltoken_v2=v2_abc", "")).toEqual({
+      ltuid: "98671210",
+      ltoken: "v2_abc",
+    });
+    const roles = [
+      { game_uid: "800000001", region: "os_asia", level: 48, nickname: "asia" },
+      { game_uid: "700000001", region: "os_euro", level: 59, nickname: "euro" },
+    ];
+    expect(pickGameRole(roles).game_uid).toBe("700000001");
+    expect(pickGameRole(roles, "800000001").nickname).toBe("asia");
+    expect(() => pickGameRole(roles, "612345678")).toThrow(/không nằm trong tài khoản/);
   });
 });
 

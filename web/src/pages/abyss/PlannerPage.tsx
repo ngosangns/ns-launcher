@@ -162,7 +162,10 @@ export function PlannerPage({ lang }: { lang: Lang }) {
     try {
       const imported = await fetchHoyolabRoster(uid, ltuid, ltoken);
       update(mergeImported(roster, imported));
-      setStatus(`${imported.characters.length} ${copy.abyssCharacters.toLowerCase()}`);
+      const others = imported.otherUids.length > 0 ? ` · UID khác: ${imported.otherUids.join(", ")}` : "";
+      setStatus(
+        `${imported.nickname || imported.uid} (${imported.uid}) — ${imported.characters.length} ${copy.abyssCharacters.toLowerCase()}${others}`,
+      );
     } catch (error) {
       setStatus(error instanceof Error ? error.message : String(error));
     } finally {

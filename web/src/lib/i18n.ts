@@ -243,7 +243,7 @@ const vi: Copy = {
     'Qua Enka.Network — không cần đăng nhập. Tối đa 8 nhân vật; cần bật "Hiển thị chi tiết nhân vật" trong game. Chạy qua `npm run dev` để proxy Enka.',
   abyssImportFull: "Nhập toàn bộ roster",
   abyssHoyolabHint:
-    "Dán ltuid_v2/ltoken_v2 từ cookie hoyolab.com. Cần bật Character Details. Chỉ hoạt động khi chạy Vite (có proxy).",
+    "Dán ltuid_v2 và ltoken_v2. UID Genshin ở ô trên chỉ cần khi tài khoản có nhiều UID — bỏ trống sẽ lấy UID cấp cao nhất. Cần bật Character Details.",
   abyssMethodology:
     "Điểm là sát thương mỗi giây của một vòng đánh 20 giây: hồi chiêu, năng lượng, đòn và phản ứng trên một mục tiêu. Thời gian dọn bằng HP nửa tầng chia cho điểm đó. Quái nhiều con được tính bằng tổng HP.",
   abyssFallbackNote: "Chưa có kit chiêu, mỗi dòng talent tính một lần",
@@ -369,7 +369,7 @@ const en: Copy = {
     'Via Enka.Network — no login. Up to 8 characters; needs "Show Character Details" in game. Use `npm run dev` so the Enka proxy is available.',
   abyssImportFull: "Import full roster",
   abyssHoyolabHint:
-    "Paste ltuid_v2/ltoken_v2 from hoyolab.com cookies. Needs Character Details on. Works when served through Vite (proxy).",
+    "Paste ltuid_v2 and ltoken_v2. The Genshin UID above is only needed when the account has several UIDs — leave it empty to use the highest-level one. Character Details must be on.",
   abyssMethodology:
     "The score is damage per second over a 20-second rotation: cooldowns, energy, hits and reactions on one target. Clear time is that half's HP divided by the score. Several enemies count as their combined HP.",
   abyssFallbackNote: "No attack kit yet, so each talent line is counted once",
