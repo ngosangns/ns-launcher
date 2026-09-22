@@ -40,7 +40,6 @@ export function App() {
     <div class="app-shell">
       <header class="topbar">
         <a href="/" class="brand">
-          <img class="brand-logo" src="/icons/brand/genshin-logo.png" alt="" />
           {text().brand}
         </a>
         <Segmented nav class="tabs" label={text().brand}>

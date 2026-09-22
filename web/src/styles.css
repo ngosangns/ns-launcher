@@ -192,11 +192,6 @@ img {
   font-optical-sizing: auto;
 }
 
-.brand-logo {
-  height: 32px;
-  width: auto;
-  display: block;
-}
 
 .brand:hover {
   color: var(--paper);
@@ -1490,8 +1485,58 @@ button.tile {
 
 .team-halves {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 16px;
+}
+
+.team-members {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.member-tile {
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 8px;
+  min-height: 0;
+  text-align: center;
+}
+
+.member-tile .portrait {
+  width: 64px;
+  height: 64px;
+}
+
+.member-icons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  line-height: 0;
+}
+
+.member-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  object-fit: cover;
+  background: var(--well);
+  outline: 1px solid oklch(0 0 0 / 0.1);
+  outline-offset: -1px;
+}
+
+.preview-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.preview-item .member-icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
 }
 
 .slot-row {
@@ -1688,9 +1733,6 @@ details.floor > summary {
     white-space: nowrap;
   }
 
-  .brand-logo {
-    height: 26px;
-  }
 
   .topbar .tabs {
     flex: 1 1 100%;

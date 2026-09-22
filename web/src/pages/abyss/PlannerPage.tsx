@@ -1,6 +1,7 @@
 import { createMemo, createSignal, For, Show } from "solid-js";
 import {
   artifactSetsByID,
+  iconUrl,
   characters,
   charactersByID,
   currentCycle,
@@ -522,7 +523,7 @@ function Results(props: { lang: Lang; output: PlannerOutput | null; stale: boole
     });
     return map;
   });
-  const preview = createCatalogPreview(() => [...membersByKey().keys()]);
+  const preview = createCatalogPreview(() => [...membersByKey().keys()], { prefer: "vertical" });
   return (
     <div ref={preview.bindRoot}>
       <Show when={props.output} fallback={<p class="empty">{text().abyssNoResultsHint}</p>}>
@@ -596,7 +597,8 @@ function BuildPreviewBody(props: { lang: Lang; member: MemberBuild }) {
             {(w) => (
               <>
                 <h3>{text().abyssWeapons}</h3>
-                <p>
+                <p class="preview-item">
+                  <img class="member-icon" src={iconUrl("weapons", w.id)} alt="" loading="lazy" />
                   <a href={`/abyss/weapons/${w.id}`}>{props.lang === "vi" ? w.nameVI ?? w.name : w.name}</a>
                   {props.member.refinement != null ? ` R${props.member.refinement}` : ""}
                   {w.subStat.type
@@ -620,7 +622,8 @@ function BuildPreviewBody(props: { lang: Lang; member: MemberBuild }) {
           <Show when={set()} keyed>
             {(s) => (
               <>
-                <p>
+                <p class="preview-item">
+                  <img class="member-icon" src={iconUrl("artifact-sets", s.id)} alt="" loading="lazy" />
                   <a href={`/abyss/artifacts/${s.id}`}>{props.lang === "vi" ? s.nameVI ?? s.name : s.name}</a>
                 </p>
                 <p class="meta">{`2: ${piece(s.twoPiece)}`}</p>
@@ -712,21 +715,23 @@ function HalfTeam(props: {
           {` — ${text().abyssFallbackNote}`}
         </p>
       </Show>
-      <div class="catalog">
+      <div class="team-members">
         <For each={props.team.members}>
           {(member, mi) => {
             const character = charactersByID[member.characterId];
             const weapon = member.weaponId ? weaponsByID[member.weaponId] : undefined;
             const set = member.artifactSetId ? artifactSetsByID[member.artifactSetId] : undefined;
             if (!character) return null;
+            const name = props.lang === "vi" ? character.nameVI ?? character.name : character.name;
             const key = `${props.prefix}-${mi()}`;
             const trigger = props.preview.triggers(key);
             return (
               <a
                 href={`/abyss/characters/${character.id}`}
-                class="tile"
+                class="tile member-tile"
                 classList={{ "is-preview": props.preview.openId() === key }}
                 data-rarity={character.rarity}
+                title={`${name} — ${member.role}`}
                 aria-expanded={props.preview.openId() === key ? "true" : "false"}
                 aria-controls="team-build-preview"
                 onPointerEnter={trigger.onPointerEnter}
@@ -738,14 +743,27 @@ function HalfTeam(props: {
                   trigger.onClick(event);
                 }}
               >
-                <Portrait kind="characters" id={character.id} alt={character.name} />
-                <span class="tile-copy">
-                  <strong>{props.lang === "vi" ? character.nameVI ?? character.name : character.name}</strong>
-                  <span class="meta">
-                    <ElementBadge element={character.element} /> {member.role}
-                    {weapon ? ` · ${props.lang === "vi" ? weapon.nameVI ?? weapon.name : weapon.name}` : ""}
-                    {set ? ` · ${props.lang === "vi" ? set.nameVI ?? set.name : set.name}` : ""}
-                  </span>
+                <Portrait kind="characters" id={character.id} alt={name} />
+                <span class="member-icons">
+                  <ElementBadge element={character.element} size={24} />
+                  {weapon ? (
+                    <img
+                      class="member-icon"
+                      src={iconUrl("weapons", weapon.id)}
+                      alt={props.lang === "vi" ? weapon.nameVI ?? weapon.name : weapon.name}
+                      title={props.lang === "vi" ? weapon.nameVI ?? weapon.name : weapon.name}
+                      loading="lazy"
+                    />
+                  ) : null}
+                  {set ? (
+                    <img
+                      class="member-icon"
+                      src={iconUrl("artifact-sets", set.id)}
+                      alt={props.lang === "vi" ? set.nameVI ?? set.name : set.name}
+                      title={props.lang === "vi" ? set.nameVI ?? set.name : set.name}
+                      loading="lazy"
+                    />
+                  ) : null}
                 </span>
               </a>
             );

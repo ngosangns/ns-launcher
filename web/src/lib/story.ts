@@ -162,6 +162,19 @@ export function questFaces(doc: StoryDocument): QuestFace[] {
   return [];
 }
 
+// Entity ids that differ from their character icon id.
+const ENTITY_ICON_ALIASES: Record<string, string> = {
+  ayaka: "kamisato-ayaka",
+  ayato: "kamisato-ayato",
+  traveler: "traveler-anemo",
+};
+
+/** Character icon id for a story entity, when one exists. */
+export function entityIconId(entity: StoryEntity): string | undefined {
+  if (entity.kind !== "character" && entity.kind !== "archon") return undefined;
+  return knownIcon(ENTITY_ICON_ALIASES[entity.id] ?? entity.id);
+}
+
 export function entitiesByKind(
   entities: StoryEntity[],
 ): Array<{ kind: StoryEntityKind; entities: StoryEntity[] }> {

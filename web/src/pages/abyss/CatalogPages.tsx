@@ -739,6 +739,8 @@ export function WeaponDetail(props: { lang: Lang; id?: string }) {
 const PREVIEW_GAP = 8;
 const PREVIEW_MARGIN = 12;
 const PREVIEW_CAP = 360;
+const PREVIEW_MIN_SIDE_WIDTH = 260;
+const PREVIEW_MIN_VERTICAL_HEIGHT = 200;
 
 export function finePointer(): boolean {
   return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
@@ -760,16 +762,41 @@ function otherName(lang: Lang, name: string, nameVI?: string): string {
   return lang === "vi" ? name : nameVI;
 }
 
-function placeCatalogPreview(pop: HTMLElement, target: HTMLElement) {
+type PreviewPlacement = "side" | "vertical";
+
+function placeCatalogPreview(pop: HTMLElement, target: HTMLElement, prefer: PreviewPlacement) {
   const anchor = target.getBoundingClientRect();
+  const spaceRight = Math.max(0, window.innerWidth - PREVIEW_MARGIN - anchor.right - PREVIEW_GAP);
+  const spaceLeft = Math.max(0, anchor.left - PREVIEW_GAP - PREVIEW_MARGIN);
   const spaceBelow = Math.max(0, window.innerHeight - PREVIEW_MARGIN - anchor.bottom - PREVIEW_GAP);
   const spaceAbove = Math.max(0, anchor.top - PREVIEW_GAP - PREVIEW_MARGIN);
+  const placeRight = spaceRight >= spaceLeft;
+  const sideSpace = placeRight ? spaceRight : spaceLeft;
   const placeBelow = spaceBelow >= spaceAbove;
-  const available = placeBelow ? spaceBelow : spaceAbove;
-  const maxHeight = Math.min(PREVIEW_CAP, Math.max(available, 160), window.innerHeight - PREVIEW_MARGIN * 2);
-  pop.style.maxHeight = `${Math.floor(maxHeight)}px`;
+  const verticalSpace = placeBelow ? spaceBelow : spaceAbove;
   pop.style.right = "auto";
   pop.style.bottom = "auto";
+
+  const useSide =
+    prefer === "side" ? sideSpace >= PREVIEW_MIN_SIDE_WIDTH : verticalSpace < PREVIEW_MIN_VERTICAL_HEIGHT;
+
+  if (useSide) {
+    pop.style.maxWidth = `${Math.floor(sideSpace)}px`;
+    pop.style.maxHeight = `${Math.floor(Math.min(PREVIEW_CAP, window.innerHeight - PREVIEW_MARGIN * 2))}px`;
+    const box = pop.getBoundingClientRect();
+    const left = placeRight ? anchor.right + PREVIEW_GAP : anchor.left - PREVIEW_GAP - box.width;
+    let top = anchor.top + anchor.height / 2 - box.height / 2;
+    const maxTop = window.innerHeight - PREVIEW_MARGIN - box.height;
+    if (top > maxTop) top = Math.max(PREVIEW_MARGIN, maxTop);
+    if (top < PREVIEW_MARGIN) top = PREVIEW_MARGIN;
+    pop.style.left = `${Math.round(left)}px`;
+    pop.style.top = `${Math.round(top)}px`;
+    return;
+  }
+
+  pop.style.maxWidth = "";
+  const maxHeight = Math.min(PREVIEW_CAP, Math.max(verticalSpace, 160), window.innerHeight - PREVIEW_MARGIN * 2);
+  pop.style.maxHeight = `${Math.floor(maxHeight)}px`;
   const box = pop.getBoundingClientRect();
   let left = anchor.left;
   const maxLeft = window.innerWidth - PREVIEW_MARGIN - box.width;
@@ -780,7 +807,8 @@ function placeCatalogPreview(pop: HTMLElement, target: HTMLElement) {
   pop.style.top = `${Math.round(top)}px`;
 }
 
-export function createCatalogPreview(listed: () => string[]) {
+export function createCatalogPreview(listed: () => string[], options?: { prefer?: PreviewPlacement }) {
+  const prefer = options?.prefer ?? "side";
   const [openId, setOpenId] = createSignal<string | null>(null);
   let rootEl: HTMLElement | undefined;
   let popoverEl: HTMLDivElement | undefined;
@@ -804,7 +832,7 @@ export function createCatalogPreview(listed: () => string[]) {
     const pop = popoverEl;
     if (!pop) return;
     if (!pop.matches(":popover-open")) pop.showPopover();
-    placeCatalogPreview(pop, target);
+    placeCatalogPreview(pop, target, prefer);
   };
 
   const scheduleOpen = (id: string, target: HTMLElement) => {
@@ -853,7 +881,7 @@ export function createCatalogPreview(listed: () => string[]) {
         closePreview();
         return;
       }
-      placeCatalogPreview(pop, anchor);
+      placeCatalogPreview(pop, anchor, prefer);
     };
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") closePreview();

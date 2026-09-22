@@ -34,7 +34,7 @@ bằng việc hé lộ hai sự thật lớn: Stormterror thực chất là Dval
 Thẳm đầu độc, và người song sinh của Traveler đang ở phía bên kia chiến
 tuyến.
 
-### Act I — The Outlander Who Caught the Wind
+### Màn 1 — Người Phương Xa Đuổi Theo Gió
 
 *Điều kiện: hoàn thành Wanderer's Trail.*
 
@@ -54,7 +54,7 @@ tuyến.
 
 *Ba nhiệm vụ 9–11 chơi theo thứ tự tùy ý.*
 
-### Act II — For a Tomorrow Without Tears
+### Màn 2 — Vì Một Ngày Mai Không Rơi Lệ
 
 *Điều kiện: Adventure Rank 10.*
 
@@ -78,7 +78,7 @@ tuyến.
 
 *Ba nhiệm vụ 11–13 chơi theo thứ tự tùy ý.*
 
-### Act III — Song of the Dragon and Freedom
+### Màn 3 — Bài Ca Về Rồng Và Tự Do
 
 *Điều kiện: Adventure Rank 18.*
 
@@ -103,7 +103,7 @@ giữa ba thế lực: Qixing của Ningguang, giới Adepti, và Fatui do Child
 sang người. Act IV tách riêng khỏi Liyue, đưa Traveler tới cuộc hội ngộ
 đầu tiên với người song sinh.
 
-### Act I — Of the Land Amidst Monoliths
+### Màn 1 — Phù Thế Phù Sinh Thiên Nham Gian
 
 *Điều kiện: Adventure Rank 23.*
 
@@ -118,7 +118,7 @@ sang người. Act IV tách riêng khỏi Liyue, đưa Traveler tới cuộc h�
 
 *Ba nhiệm vụ 3–5 chơi theo thứ tự tùy ý.*
 
-### Act II — Farewell, Archaic Lord
+### Màn 2 — Lời Tạm Biệt Thể Xác Vĩnh Hằng
 
 *Điều kiện: Adventure Rank 25.*
 
@@ -132,7 +132,7 @@ sang người. Act IV tách riêng khỏi Liyue, đưa Traveler tới cuộc h�
 | 6 | Guizhong | Sửa lại khẩu Guizhong Ballista cổ và đẩy lui Treasure Hoarders. |
 | 7 | Zhongli's Treat | Zhongli mời ăn ở quán Third-Round Knockout rồi bỏ Traveler lại trả tiền. |
 
-### Act III — A New Star Approaches
+### Màn 3 — Ngôi Sao Đang Đến
 
 *Điều kiện: Adventure Rank 28.*
 
@@ -145,7 +145,7 @@ sang người. Act IV tách riêng khỏi Liyue, đưa Traveler tới cuộc h�
 | 5 | Turning Point | Childe triệu hồi Osial; cả Liyue hợp sức bảo vệ Guizhong Ballista. |
 | 6 | The Fond Farewell | Zhongli tự nhận mình là Morax và giải thích việc trao Gnosis. |
 
-### Act IV - Prelude — Bough Keeper: Dainsleif
+### Giới Thiệu — Dainsleif
 
 *Điều kiện: Adventure Rank 28. Đây là một World Quest đóng vai trò dạo
 đầu cho Act IV, không tính vào danh sách Archon Quest.*
@@ -154,7 +154,7 @@ sang người. Act IV tách riêng khỏi Liyue, đưa Traveler tới cuộc h�
 |---|---|---|
 | 1 | Bough Keeper: Dainsleif | Lần theo một người lạ ở Mondstadt tới Temple of the Falcon, rồi cùng Dainsleif truy dấu Abyss Order tới Stormterror's Lair. |
 
-### Act IV — We Will Be Reunited
+### Màn 4 — Chúng Ta Ắt Sẽ Trùng Phùng
 
 *Điều kiện: Adventure Rank 28 và Lupus Minor Chapter Act I —
 The Meaning of Lupical (Story Quest của Razor).*
@@ -175,7 +175,7 @@ Fatui đứng sau việc thao túng cả hai phía, và cuối cùng đấu tay 
 chính vị thần trong Plane of Euthymia. Act IV chuyển sang The Chasm để
 tiếp nối mạch Khaenri'ah.
 
-### Prologue — Autumn Winds, Scarlet Leaves
+### Mở Đầu — Gió Thu Vén Áo Hỏi Lá Đỏ
 
 *Điều kiện: Adventure Rank 30.*
 
@@ -185,7 +185,7 @@ tiếp nối mạch Khaenri'ah.
 | 2 | The Crux Clash | Tham gia giải đấu trên tàu và thắng các vòng loại. |
 | 3 | Follow the Wind | Kaedehara Kazuha lần theo chiếc Vision của người bạn đã khuất. |
 
-### Act I — The Immovable God and the Eternal Euthymia
+### Màn 1 — Lôi Thần Uy Nghiêm, Địa Đàng Vĩnh Hằng
 
 *Điều kiện: Adventure Rank 30.*
 
@@ -200,7 +200,7 @@ tiếp nối mạch Khaenri'ah.
 | 7 | A Swordmaster's Path Is Paved With Broken Blades | Theo dõi một buổi trừ tà đáng ngờ liên quan tới Vision bị mất. |
 | 8 | A Flower Blooms in a Prison | Giải cứu nghệ nhân pháo hoa Masakatsu và gặp Kamisato Ayaka. |
 
-### Act II — Stillness, the Sublimation of Shadow
+### Màn 2 — Tâm Vô Tạp Niệm, Bất Sinh Bất Diệt
 
 *Điều kiện: Adventure Rank 30, Grus Nivis Chapter Act I —
 The Whispers of the Crane and the White Rabbit (Kamisato Ayaka), và
@@ -211,7 +211,7 @@ Carassius Auratus Chapter Act I — Dreamlike Timelessness (Yoimiya).*
 | 1 | Amidst Stormy Judgment | Dự Vision Hunt Ceremony và lần đầu giao chiến với Raiden Shogun. |
 | 2 | In the Name of the Resistance | Gia nhập phe kháng chiến ở Tatarasuna, gặp Gorou và Teppei. |
 
-### Act III — Omnipresence Over Mortals
+### Màn 3 — Thiên Thủ Bách Nhãn, Thiên Hạ Nhân Gian
 
 *Điều kiện: Adventure Rank 30.*
 
@@ -227,7 +227,7 @@ Carassius Auratus Chapter Act I — Dreamlike Timelessness (Yoimiya).*
 | 8 | The Omnipresent God | Đánh bại Raiden Shogun trong Plane of Euthymia. |
 | 9 | Wishes | Thăm Yae Miko, khép lại chuyện Vision Hunt Decree. |
 
-### Act IV — Requiem of the Echoing Depths
+### Màn 4 — Khúc An Hồn Nơi Đáy Vực
 
 *Điều kiện: Adventure Rank 30.*
 
@@ -247,7 +247,7 @@ dự án lớn hơn. Chương gồm hai nửa rõ rệt: rừng mưa với bện
 sa mạc với di sản của King Deshret. Act VI tách ra để kể chuyện
 Khaenri'ah qua ký ức của Dainsleif.
 
-### Act I — Through Mists of Smoke and Forests Dark
+### Màn 1 — Xuyên Qua Màn Sương Và Rừng Rậm
 
 *Điều kiện: Adventure Rank 35.*
 
@@ -261,7 +261,7 @@ Khaenri'ah qua ký ức của Dainsleif.
 | 6 | Lost in Prosperity | Thu thập tin tức ở Port Ormos qua đám Eremite và sinh viên Akademiya. |
 | 7 | Ever So Close | Alhaitham nhờ thử nghiệm Canned Knowledge ngoài hoang dã. |
 
-### Act II — The Morn a Thousand Roses Brings
+### Màn 2 — Bình Minh Của Ngàn Đóa Hồng
 
 *Điều kiện: Adventure Rank 35.*
 
@@ -276,7 +276,7 @@ Khaenri'ah qua ký ức của Dainsleif.
 | 7 | The End of the Sabzeruz Festival | Thoát khỏi vòng lặp và lộ ra kẻ đóng giả Dunyarzad. |
 | 8 | Dawn | Nahida hiện thân thật sự và ngỏ lời hợp tác với Traveler. |
 
-### Act III — Dreams, Emptiness, Deception
+### Màn 3 — Ảo Mộng, Trống Rỗng Và Dối Gian
 
 *Điều kiện: Adventure Rank 35.*
 
@@ -286,7 +286,7 @@ Khaenri'ah qua ký ức của Dainsleif.
 | 2 | The Gaze From a Certain God | Eremite phục kích Gandharva Ville; Tighnari đưa nhóm về Pardis Dhyai. |
 | 3 | The Four at Loggerheads | Bốn phía cùng vào cuộc ở Aaru Village: Alhaitham, Cyno, Candace, Dehya. |
 
-### Act IV — King Deshret and the Three Magi
+### Màn 4 — Xích Thổ Chi Vương Và Tam Triều Thánh Giả
 
 *Điều kiện: Adventure Rank 35.*
 
@@ -296,7 +296,7 @@ Khaenri'ah qua ký ức của Dainsleif.
 | 2 | Cry From the Eleazar Hospital | Xâm nhập bệnh viện Eleazar và phát hiện thí nghiệm bên dưới. |
 | 3 | Secret of the Scorching Desert | Vào tàn tích sa mạc, hé lộ liên hệ giữa King Deshret và Akademiya. |
 
-### Act V — Akasha Pulses, the Kalpa Flame Rises
+### Màn 5 — Akasha Rung Động, Kiếp Hỏa Dâng Trào
 
 *Điều kiện: Adventure Rank 35.*
 
@@ -308,7 +308,7 @@ Khaenri'ah qua ký ức của Dainsleif.
 | 4 | Where the Boat of Consciousness Lies | Đánh bại Everlasting Lord of Arcane Wisdom, giải cứu Nahida. |
 | 5 | A Toast to Victory | Đi khắp Sumeru thăm lại bạn bè sau khi Akasha bị gỡ bỏ. |
 
-### Act VI — Caribert
+### Màn 6 — Caribert
 
 *Điều kiện: Adventure Rank 35.*
 
@@ -328,7 +328,7 @@ Meropide. Sự thật cuối cùng là một vở kịch kéo dài 500 năm: Fur
 phải thần, mà là một con người tình nguyện đóng vai thần để câu giờ cho
 kế hoạch tự hủy của Focalors.
 
-### Act I — Prelude of Blancheur and Noirceur
+### Màn 1 — Khúc Dạo Đầu Của Sương Trắng Và Sóng Đen
 
 *Điều kiện: Adventure Rank 40.*
 
@@ -338,7 +338,7 @@ kế hoạch tự hủy của Focalors.
 | 2 | The City of Rains and Remembrance | Đụng độ Confrerie of Cabriere, gặp lại Childe, và vào nhà hát. |
 | 3 | Lies Cast Shadows Under Gathered Lights | Phiên tòa xử Lyney; Traveler phải tự tìm bằng chứng gỡ tội. |
 
-### Act II — As Light Rain Falls Without Reason
+### Màn 2 — Như Làn Mưa Nhẹ Không Rõ Nguyên Nhân
 
 *Điều kiện: Adventure Rank 40.*
 
@@ -348,7 +348,7 @@ kế hoạch tự hủy của Focalors.
 | 2 | The Truth, Lost With the Rain | Điều tra ở Poisson và Court of Fontaine cùng Neuvillette. |
 | 3 | When All Return to the Waters | Lặn xuống tìm "tổng hành dinh" của kẻ bắt cóc. |
 
-### Act III — To the Stars Shining in the Depths
+### Màn 3 — Ngôi Sao Tỏa Sáng Dưới Biển Sâu
 
 *Điều kiện: Adventure Rank 40.*
 
@@ -359,7 +359,7 @@ kế hoạch tự hủy của Focalors.
 | 3 | The Proscribed, Hidden in Plain Sight | Làm việc trong khu sản xuất và thi đấu ở Pankration Ring để lấy tin. |
 | 4 | Lost in Deep Seas | Dò hỏi tù nhân về những người mất tích. |
 
-### Act IV — Cataclysm's Quickening
+### Màn 4 — Thảm Họa Cận Kề
 
 *Điều kiện: Adventure Rank 40.*
 
@@ -371,7 +371,7 @@ kế hoạch tự hủy của Focalors.
 | 4 | Calamitous Tread | The Knave xuất hiện; nước biển dâng và tiên tri bắt đầu ứng nghiệm. |
 | 5 | A Moment's Respite | Kiểm tra tình hình mọi người trong nhà tù trước biến cố tiếp theo. |
 
-### Act V — Masquerade of the Guilty
+### Màn 5 — Vũ Điệu Của Tội Lỗi
 
 *Điều kiện: Adventure Rank 40.*
 
@@ -384,7 +384,7 @@ kế hoạch tự hủy của Focalors.
 | 5 | The Opera of Noirceur and Blancheur | Vào ý thức của Focalors; sự thật 500 năm được phơi bày. |
 | 6 | Finale | Đi chào từng người sau khi Fontaine thoát lời tiên tri. |
 
-### Act VI — Bedtime Story
+### Màn 6 — Câu Chuyện Trước Khi Ngủ
 
 *Điều kiện: Adventure Rank 40.*
 
@@ -403,7 +403,7 @@ cùng với Vực Thẳm — và cái giá bà định trả là chính mình. C
 là nơi Fatui dưới quyền Capitano thay đổi hoàn toàn vai trò của mình
 trong câu chuyện.
 
-### Act I — Flowers Resplendent on the Sun-Scorched Sojourn
+### Màn 1 — Sắc Hoa Rực Rỡ Trong Hành Trình Nắng Cháy
 
 *Điều kiện: Adventure Rank 40.*
 
@@ -413,7 +413,7 @@ trong câu chuyện.
 | 2 | Pilgrimage of the Return of the Sacred Flame | Tham dự nghi lễ tranh tài của các bộ tộc và gặp Mavuika. |
 | 3 | Home of the Hot Springs | Làm quen People of the Springs và Mualani. |
 
-### Act II — Black Stone Under a White Stone
+### Màn 2 — Đá Đen Ẩn Dưới Lớp Đá Trắng
 
 *Điều kiện: Adventure Rank 40.*
 
@@ -425,7 +425,7 @@ trong câu chuyện.
 | 4 | Into Eternal Night | Lần đầu vào Night Kingdom và đụng độ Abyss Herald. |
 | 5 | Past and Future | Dự tiệc cùng Mavuika, nghe bà nói về kế hoạch dài hạn. |
 
-### Act III — Beyond the Smoke and Mirrors
+### Màn 3 — Bên Kia Của Gương Và Khói
 
 *Điều kiện: Adventure Rank 40.*
 
@@ -435,7 +435,7 @@ trong câu chuyện.
 | 2 | To Whence the Smoke Drifts | Theo Citlali lần ra các trại đóng quân khả nghi. |
 | 3 | The Flickering Light Splits in Twain | Phá Abyssal Pylon và bảo vệ đoàn tiếp tế. |
 
-### Act IV — The Rainbow Destined to Burn
+### Màn 4 — Cầu Vồng Định Sẵn Sẽ Cháy
 
 *Điều kiện: Adventure Rank 40.*
 
@@ -448,7 +448,7 @@ trong câu chuyện.
 | 5 | No One Fights Alone | Dùng năng lực Saurian dọn sạch các Abyssal Pylon còn lại. |
 | 6 | A Fuel Named "Fate" | Mavuika nói rõ cái giá của Ngọn Lửa Thiêng cho Traveler. |
 
-### Interlude — All Fires Fuel the Flame
+### Phần Đệm — Vạn Hỏa Quy Nhất
 
 *Điều kiện: Adventure Rank 40.*
 
@@ -456,7 +456,7 @@ trong câu chuyện.
 |---|---|---|
 | 1 | For the Same Land | Tới Flower-Feather Clan cùng Iansan, điều trị những người nhiễm bệnh sau trận chiến. |
 
-### Act V — Incandescent Ode of Resurrection
+### Màn 5 — Bài Thơ Về Sự Tái Sinh Rực Rỡ
 
 *Điều kiện: Adventure Rank 40.*
 
@@ -468,7 +468,7 @@ trong câu chuyện.
 | 4 | Where All Hopes Lie | Đối đầu "Gosoythoth" nhiều lượt trong lõi Night Kingdom. |
 | 5 | When All Becomes a Monument | Lễ tưởng niệm các anh hùng và kết thúc mạch Natlan. |
 
-### Act VI — A Space and Time for You
+### Màn 6 — Thời Không Mà Ta Tồn Tại
 
 *Điều kiện: Adventure Rank 40.*
 
@@ -487,7 +487,7 @@ tên tên Columbina, bầy Wild Hunt do Tội Nhân Rerir điều khiển, và c
 cùng là cuộc đối đầu trực diện với Dottore. Hai Act cuối chuyển hẳn về
 Sumeru để khép lại mạch Irminsul.
 
-### Prelude — The Journey Home
+### Mở Đầu — Đường Về Nhà
 
 *Điều kiện: Adventure Rank 40.*
 
@@ -497,7 +497,7 @@ Sumeru để khép lại mạch Irminsul.
 | 2 | Smoldering | Gặp Ineffa, cỗ máy mất trí nhớ dạt vào Natlan, và đẩy lui Source Mechanism. |
 | 3 | Searing | Vào tàn tích cùng Ineffa, lần ra manh mối đầu tiên về gốc gác của cô. |
 
-### Act I — A Dance of Snowy Tides and Hoarfrost Groves
+### Màn 1 — Vũ Điệu Của Rừng Sương Và Sóng Tuyết
 
 *Điều kiện: Adventure Rank 40 và Interlude Chapter Act IV — Paralogism.
 Có tùy chọn Quick Start ở AR 28 sau Chapter I Act III.*
@@ -508,7 +508,7 @@ Có tùy chọn Quick Start ở AR 28 sau Chapter I Act III.*
 | 2 | Reunion Beneath the Moonlight | Theo chỉ dẫn của Luonnotar vào thánh địa của Frostmoon Scions. |
 | 3 | In the Shadows of Night | Cùng Jahoda đột nhập Fatui Experimental Design Bureau. |
 
-### Act II — Elegy of Dust and Lamplight
+### Màn 2 — Bi Ca Của Cát Bụi Và Ánh Đèn
 
 *Điều kiện: Adventure Rank 40.*
 
@@ -520,7 +520,7 @@ Có tùy chọn Quick Start ở AR 28 sau Chapter I Act III.*
 | 4 | The Ashen-White Order Burns | Gặp Flins ở Final Night Cemetery giữa lúc hỗn loạn. |
 | 5 | Rest Beyond Reach | Theo Flins và Luonnotar rời hiện trường, gặp The Damselette. |
 
-### Act III — A Nation That Doesn't Exist
+### Màn 3 — Vương Quốc Không Tồn Tại
 
 *Điều kiện: Adventure Rank 40.*
 
@@ -530,7 +530,7 @@ Có tùy chọn Quick Start ở AR 28 sau Chapter I Act III.*
 | 2 | Special Operation | Tới Kuuvahki Experimental Design Bureau, đối đầu "Rächer of Solnari". |
 | 3 | Everlasting As the Moon | Lách qua tuần tra Wild Hunt và bước vào không gian của Crimson Moon. |
 
-### Act IV — An Elegy for Faded Moonlight
+### Màn 4 — Bi Ca Ánh Trăng Tàn
 
 *Điều kiện: Adventure Rank 40.*
 
@@ -540,7 +540,7 @@ Có tùy chọn Quick Start ở AR 28 sau Chapter I Act III.*
 | 2 | Dance of Death: Serpent and Scorpion | Đi qua các không gian ký ức nối Nod-Krai với Aaru Village. |
 | 3 | Echoes of Fate | Tập hợp Dori, Albedo, Durin và Dainsleif để hạ Rerir. |
 
-### Act V — A Nocturne of the Far North
+### Màn 5 — Thơ Dạ Hành Cực Bắc
 
 *Điều kiện: Adventure Rank 40.*
 
@@ -549,7 +549,7 @@ Có tùy chọn Quick Start ở AR 28 sau Chapter I Act III.*
 | 1 | In the Shifting Light of the Moon | Cùng Lauma và Varka tìm cách giữ Columbina khỏi tan biến. |
 | 2 | Ripples That Will Never Reach | Đi dạo cùng Columbina và Alice qua Nasha Town và Frostmoon Enclave. |
 
-### Act VI — Melting Moonlight in the Morning Mist
+### Màn 6 — Ánh Trăng Tan Trong Sương Sớm
 
 *Điều kiện: Adventure Rank 40.*
 
@@ -560,7 +560,7 @@ Có tùy chọn Quick Start ở AR 28 sau Chapter I Act III.*
 | 3 | Return to the Moon | Nghi thức đưa cô về mặt trăng bị Dottore cướp quyền. |
 | 4 | The Empty Courtyard | Ghé lại Silvermoon Hall sau biến cố (nhiệm vụ phụ, thuộc loại World Quest, biến mất sau Descending Moon). |
 
-### Act VII — A Traveler on a Winter's Night
+### Màn 7 — Nếu Một Đêm Đông, Có Vị Lữ Khách
 
 *Điều kiện: Adventure Rank 40.*
 
@@ -570,7 +570,7 @@ Có tùy chọn Quick Start ở AR 28 sau Chapter I Act III.*
 | 2 | Where Our Space and Time Intersect | Bước vào thế giới trong gương và ghé nhà các phù thủy. |
 | 3 | Tracing the Footsteps of the Past | Hỗ trợ Marionette thu thập tài liệu cho phép tính cứu Columbina. |
 
-### Act VIII — True Moon
+### Màn 8 — Mặt Trăng Thực Sự
 
 *Điều kiện: Adventure Rank 40.*
 
@@ -580,7 +580,7 @@ Có tùy chọn Quick Start ở AR 28 sau Chapter I Act III.*
 | 2 | Descending Moon | Bảo vệ Nasha Town nhiều đợt rồi đánh bại Dottore. |
 | 3 | Welkin Moon's Homecoming | Lên Frost Moon cùng Columbina và tìm lại phi thuyền của Traveler. |
 
-### Act IX — As All Falls to Emptiness
+### Màn 9 — Thân Thổ Tiêu Tan, Ngũ Uẩn Chuyển Biến
 
 *Điều kiện: Adventure Rank 40. Act IX và X quay về Sumeru; trong game
 chúng ban đầu hiển thị biểu tượng Nod-Krai trước khi đổi sang Sumeru.*
@@ -591,7 +591,7 @@ chúng ban đầu hiển thị biểu tượng Nod-Krai trước khi đổi sang
 | 2 | A Divergence Leading to Oneself | Đưa Nahida đi thương lượng với Apep về giải pháp. |
 | 3 | Ancient Shadows Re-Emerge | Vào Temple of Silence và Great Hall of Truths, tìm hiểu cấu trúc Aaru. |
 
-### Act X — Truth Amongst the Pages of Purana
+### Màn 10 — Vô Vàn Con Đường, Biến Chuyển Và Tan Rã
 
 *Điều kiện: Adventure Rank 40. Act này khởi đầu dưới tên
 "Of Myriad Paths, Flux, and Dissolution" rồi mới đổi tên trong lúc chơi.*
@@ -612,7 +612,7 @@ quyền năng phát ra từ Armory Palace, và một tổ chức ngầm tên Rok
 tìm cách chặn dự án. Chương mới có hai Act, và Chapter VII vẫn đang được
 cập nhật.
 
-### Act I — Everwinter Without Mercy
+### Màn 1 — Đất Nước Của Tuyết Không Được Thần Thương Yêu
 
 | # | Nhiệm vụ | Tóm tắt |
 |---|---|---|
@@ -621,7 +621,7 @@ cập nhật.
 | 3 | Great Deeds on the Tundra | Đi tàu tới Snezhnograd và làm quen thủ đô. |
 | 4 | Silence Alone is Disfavored | Xem một buổi diễn ở Nhà hát Korolevskiy, gom tin, rồi dự phiên họp Veche nơi Project Stuzha được thông qua sít sao. |
 
-### Act II — Wraith's Nocturne
+### Màn 2 — Dạ Khúc Của Những Linh Hồn Đã Chết
 
 | # | Nhiệm vụ | Tóm tắt |
 |---|---|---|
@@ -651,7 +651,7 @@ mạch The Chasm, thân thế của Scaramouche, và cuối cùng là một vụ
 Mondstadt dẫn thẳng vào chương Nod-Krai. Đây cũng là nơi game đặt những
 mảnh lore không tiện nhét vào chương chính.
 
-### Act I — The Crane Returns on the Wind
+### Màn 1 — Phong Khởi Hạc Quy
 
 *Điều kiện: Adventure Rank 28 và Chapter I Act III — A New Star
 Approaches.*
@@ -663,7 +663,7 @@ Approaches.*
 | 3 | Bygones Times Like Dust Passing | Đi tìm Wonder Core và quặng Subrosium quanh Mt. Tianheng cùng Shenhe. |
 | 4 | Where the Heart Finds Rest | Nộp đủ nguyên liệu, hạ Beisht "The Avenger of the Vortex", rồi dự tiệc mừng ở Jade Chamber mới. |
 
-### Act II — Perilous Trail
+### Màn 2 — Lộ Trình Nguy Hiểm
 
 *Điều kiện: Adventure Rank 40, Chapter I Act III — A New Star Approaches,
 Imperatrix Umbrosa Chapter Act II — Transient Dreams (Raiden Shogun),
@@ -678,7 +678,7 @@ Wherefore Did the Spiritstone Descend?, và A Teapot to Call Home: Part I.*
 | 4 | End of the Line | Đi qua chuỗi không gian Vực Thẳm cùng Yanfei, Yelan và Xiao. |
 | 5 | At Tunnel's End, Light | Gặp lại những người ở lại và nói chuyện với Xiao sau khi thoát ra. |
 
-### Act III — Inversion of Genesis
+### Màn 3 — Cội Nguồn Nghiêng Ngả
 
 *Điều kiện: Adventure Rank 40, Chapter III Act V — Akasha Pulses, the
 Kalpa Flame Rises, và Acer Palmatum Chapter Act I — A Strange and
@@ -691,7 +691,7 @@ Friendless Road (Kaedehara Kazuha).*
 | 3 | The Kabukimono's Finale | Bước vào chuỗi ký ức về bước ngoặt biến Kabukimono thành Scaramouche. |
 | 4 | As Though Morning Dew | Ký ức bị xóa khỏi Irminsul; Traveler đặt cho Wanderer một cái tên mới. |
 
-### Act IV — Paralogism
+### Màn 4 — Ngộ Biện
 
 *Điều kiện: Adventure Rank 40, Interlude Chapter Act III — Inversion of
 Genesis, và Princeps Cretaceus Chapter Act I — Traveler Observation

@@ -10,6 +10,7 @@ import {
   chaptersOf,
   documentHref,
   entitiesByKind,
+  entityIconId,
   questFaces,
   questsOf,
   storyLibrary,
@@ -125,16 +126,30 @@ export function StoryPage(props: { lang: Lang; active: boolean }) {
                 {entitiesByKind(entities()).map((group) => (
                   <div>
                     <div class="kind-label">{entityKindLabel(props.lang, group.kind)}</div>
-                    {group.entities.map((entity) => (
-                      <a
-                        class="nav-item"
-                        classList={{ active: parsed().entityId === entity.id }}
-                        href={`/story/e/${entity.id}`}
-                        onClick={() => setOpen(false)}
-                      >
-                        {entity.displayName}
-                      </a>
-                    ))}
+                    {group.entities.map((entity) => {
+                      const iconId = entityIconId(entity);
+                      return (
+                        <a
+                          class="nav-item"
+                          classList={{ active: parsed().entityId === entity.id }}
+                          href={`/story/e/${entity.id}`}
+                          onClick={() => setOpen(false)}
+                        >
+                          <Show when={iconId}>
+                            <img
+                              class="nav-avatar"
+                              src={iconUrl("characters", iconId!)}
+                              alt=""
+                              onError={(event) => {
+                                const img = event.currentTarget;
+                                if (img instanceof HTMLImageElement) img.style.visibility = "hidden";
+                              }}
+                            />
+                          </Show>
+                          <span class="nav-label">{entity.displayName}</span>
+                        </a>
+                      );
+                    })}
                   </div>
                 ))}
               </Show>
