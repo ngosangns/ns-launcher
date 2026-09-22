@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fetches Resources/Abyss/icons/{characters,weapons,artifact-sets}/<slug>.png.
+"""Fetches Resources/Abyss/icons/{characters,weapons,artifact-sets,monsters}/<slug>.png.
 
 Character and weapon portraits are matched by name against gi.yatta.moe — the
 same source the rest of the Abyss data was transcribed from — and saved under
@@ -40,6 +40,7 @@ ICONS = os.path.join(DATA, "icons")
 YATTA = "https://gi.yatta.moe/api/v2/en"
 ASSET_HOST = "https://gi.yatta.moe/assets/UI"
 RELIQUARY_ASSET_HOST = "https://gi.yatta.moe/assets/UI/reliquary"
+MONSTER_ASSET_HOST = "https://gi.yatta.moe/assets/UI/monster"
 USER_AGENT = "ns-launcher/icons (github.com/ngosangns/ns-launcher)"
 
 # The Traveler's portrait icon does not vary by element — only by which twin
@@ -140,6 +141,75 @@ def fetch_artifact_sets(force: bool) -> tuple[int, int, list[str]]:
     return fetched, skipped, missing
 
 
+def iter_cycle_monsters() -> list[dict]:
+    monsters: list[dict] = []
+    for path in sorted(glob.glob(os.path.join(DATA, "abyss-monsters", "*.json"))):
+        payload = json.load(open(path, encoding="utf-8"))
+        for floor in payload.get("floors", []):
+            for chamber in floor.get("chambers", []):
+                for wave in chamber.get("waves", []):
+                    monsters.extend(wave.get("monsters", []))
+    return monsters
+
+
+def fetch_monsters(force: bool) -> tuple[int, int, list[str]]:
+    """Saves icons/monsters/<gameId>.png, keyed the same way the cycle JSON is."""
+    subdir = "monsters"
+    os.makedirs(os.path.join(ICONS, subdir), exist_ok=True)
+    catalog = fetch_json(f"{YATTA}/monster")["data"]["items"]
+    by_id = {int(item["id"]): item.get("icon") for item in catalog.values() if item.get("icon")}
+    by_name = {normalize(item["name"]): item.get("icon") for item in catalog.values() if item.get("icon")}
+
+    fetched, skipped, missing = 0, 0, []
+    seen: set[str] = set()
+    for monster in iter_cycle_monsters():
+        game_id = monster.get("gameId")
+        slug = str(game_id) if game_id else normalize(monster.get("name") or "")
+        if not slug or slug in seen:
+            continue
+        seen.add(slug)
+        destination = os.path.join(ICONS, subdir, f"{slug}.png")
+        if os.path.exists(destination) and not force:
+            skipped += 1
+            continue
+        icon = None
+        if game_id:
+            icon = by_id.get(int(game_id))
+        if not icon:
+            for candidate in monster_name_candidates(monster):
+                icon = by_name.get(normalize(candidate))
+                if icon:
+                    break
+        if icon and download(icon, destination, asset_host=MONSTER_ASSET_HOST):
+            fetched += 1
+        else:
+            missing.append(f"{monster.get('name')} ({slug})")
+    return fetched, skipped, missing
+
+
+def monster_name_candidates(monster: dict) -> list[str]:
+    """Base-form names to try when a rotation title is a prefix/variant."""
+    names: list[str] = []
+    raw = monster.get("name") or ""
+    page = (monster.get("hp") or {}).get("page") or ""
+    for value in (raw, page):
+        if not value:
+            continue
+        names.append(value)
+        stripped = re.sub(r"^(?:Battle-Hardened|Veteran)\s+", "", value)
+        stripped = re.sub(r"\s+-\s+(?:Ousia|Pneuma)$", "", stripped)
+        stripped = re.sub(r"\s*\([^)]*\)\s*$", "", stripped)
+        names.append(stripped)
+    # Preserve order, drop empties/dupes.
+    seen: set[str] = set()
+    out: list[str] = []
+    for name in names:
+        if name and name not in seen:
+            seen.add(name)
+            out.append(name)
+    return out
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--force", action="store_true", help="refetch files that already exist")
@@ -176,7 +246,12 @@ def main() -> int:
     if s_missing:
         print(f"  missing: {', '.join(s_missing)}")
 
-    return 1 if (c_missing or w_missing or s_missing) else 0
+    m_fetched, m_skipped, m_missing = fetch_monsters(args.force)
+    print(f"monsters: fetched {m_fetched}, already had {m_skipped}, missing {len(m_missing)}")
+    if m_missing:
+        print(f"  missing: {', '.join(m_missing)}")
+
+    return 1 if (c_missing or w_missing or s_missing or m_missing) else 0
 
 
 if __name__ == "__main__":

@@ -69,6 +69,14 @@ type Copy = {
   abyssHP: string;
   abyssRes: string;
   abyssMechanics: string;
+  abyssSpawns: string;
+  abyssHPEach: string;
+  abyssHPTotal: string;
+  abyssHPRatio: string;
+  abyssWeakpoint: string;
+  abyssCount: string;
+  abyssSize: string;
+  abyssVariant: string;
   abyssHalf1: string;
   abyssHalf2: string;
   abyssPickTeam: string;
@@ -178,6 +186,14 @@ const vi: Copy = {
   abyssHP: "HP",
   abyssRes: "Kháng",
   abyssMechanics: "Cơ chế",
+  abyssSpawns: "Số con",
+  abyssHPEach: "HP mỗi con",
+  abyssHPTotal: "Tổng HP",
+  abyssHPRatio: "Hệ số HP",
+  abyssWeakpoint: "Điểm yếu",
+  abyssCount: "Số lượng",
+  abyssSize: "Kích thước",
+  abyssVariant: "Biến thể",
   abyssHalf1: "Nửa 1",
   abyssHalf2: "Nửa 2",
   abyssPickTeam: "Chọn nhân vật cho mỗi nửa tầng 12",
@@ -293,6 +309,14 @@ const en: Copy = {
   abyssHP: "HP",
   abyssRes: "RES",
   abyssMechanics: "Mechanics",
+  abyssSpawns: "Spawns",
+  abyssHPEach: "HP each",
+  abyssHPTotal: "Total HP",
+  abyssHPRatio: "HP ratio",
+  abyssWeakpoint: "Weak point",
+  abyssCount: "Count",
+  abyssSize: "Size",
+  abyssVariant: "Variant",
   abyssHalf1: "First half",
   abyssHalf2: "Second half",
   abyssPickTeam: "Pick characters for each floor-12 half",

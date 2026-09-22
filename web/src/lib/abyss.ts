@@ -354,6 +354,14 @@ export const damageFormula = damageFormulaJson as DamageFormula;
 const hpCurves = (enemyHpJson as EnemyHpFile).types;
 
 export function monsterHP(monster: Monster, level: number, floorMultiplier = 1): number | null {
+  return monsterHPBreakdown(monster, level, floorMultiplier)?.total ?? null;
+}
+
+export function monsterHPBreakdown(
+  monster: Monster,
+  level: number,
+  floorMultiplier = 1,
+): { perSpawn: number; total: number; ratio: number; type: string } | null {
   const ratio = monster.hp?.ratio;
   const type = monster.hp?.type;
   if (ratio == null || type == null) return null;
@@ -361,11 +369,20 @@ export function monsterHP(monster: Monster, level: number, floorMultiplier = 1):
   if (!curve) return null;
   const base = curve[level - 1];
   if (base == null) return null;
+  const perSpawn = ratio * base * floorMultiplier;
   const spawns = monster.spawns ?? 1;
-  return ratio * base * floorMultiplier * spawns;
+  return { perSpawn, total: perSpawn * spawns, ratio, type };
 }
 
-export function iconUrl(kind: "characters" | "weapons" | "artifact-sets", id: string): string {
+export function monsterIconId(monster: Monster): string {
+  if (monster.gameId != null) return String(monster.gameId);
+  return monster.name.toLowerCase().replace(/[^a-z0-9]+/g, "");
+}
+
+export function iconUrl(
+  kind: "characters" | "weapons" | "artifact-sets" | "monsters",
+  id: string,
+): string {
   return `/icons/${kind}/${id}.png`;
 }
 

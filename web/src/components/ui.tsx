@@ -16,7 +16,7 @@ export function Portrait({
   alt,
   large = false,
 }: {
-  kind: "characters" | "weapons" | "artifact-sets";
+  kind: "characters" | "weapons" | "artifact-sets" | "monsters";
   id: string;
   alt: string;
   large?: boolean;
@@ -76,7 +76,7 @@ export function CatalogTile({
   onClick,
 }: {
   to?: string;
-  kind: "characters" | "weapons" | "artifact-sets";
+  kind: "characters" | "weapons" | "artifact-sets" | "monsters";
   id: string;
   title: string;
   subtitle: ReactNode;

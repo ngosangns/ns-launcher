@@ -1,34 +1,52 @@
 import {
-  monsterHP,
+  monsterHPBreakdown,
+  monsterIconId,
   splitDisorder,
   type CycleFloor,
   type Monster,
 } from "../../lib/abyss";
 import { formatHP, formatPercent } from "../../lib/format";
 import { t, type Lang } from "../../lib/i18n";
-import { ElementBadge } from "../../components/ui";
+import { ElementBadge, Portrait } from "../../components/ui";
 
-function ResistancePips({ monster }: { monster: Monster }) {
-  const entries: Array<[string, number]> = [];
-  if (monster.resistances) {
-    for (const [element, value] of Object.entries(monster.resistances)) {
-      entries.push([element, value]);
-    }
-  }
-  if (monster.physicalResistance != null) entries.push(["Physical", monster.physicalResistance]);
-  if (entries.length === 0) return null;
+const RES_ORDER = ["Anemo", "Geo", "Electro", "Dendro", "Hydro", "Pyro", "Cryo", "Physical"] as const;
+
+function resistanceValue(monster: Monster, key: string): number | null {
+  if (key === "Physical") return monster.physicalResistance ?? null;
+  const value = monster.resistances?.[key];
+  return value == null ? null : value;
+}
+
+function ResistanceTable({ monster }: { monster: Monster }) {
+  const cells = RES_ORDER.map((key) => ({ key, value: resistanceValue(monster, key) }));
+  if (cells.every((cell) => cell.value == null)) return null;
   return (
-    <div className="res-pips">
-      {entries
-        .filter(([, value]) => value !== 0.1)
-        .map(([element, value]) => (
+    <div className="res-table">
+      {cells.map((cell) => {
+        const value = cell.value ?? 0.1;
+        const known = cell.value != null;
+        return (
           <span
-            key={element}
-            className={`res-pip ${value < 0 ? "weak" : value > 0.15 ? "strong" : ""}`}
+            key={cell.key}
+            className={`res-cell ${!known ? "unknown" : value < 0 ? "weak" : value > 0.15 ? "strong" : ""}`}
+            title={cell.key}
           >
-            {element} {formatPercent(value, 0)}
+            <span className="element" data-el={cell.key === "Physical" ? undefined : cell.key}>
+              {cell.key === "Physical" ? "Phys" : cell.key.slice(0, 3)}
+            </span>
+            {known ? formatPercent(value, value % 0.01 === 0 ? 0 : 0) : "—"}
           </span>
-        ))}
+        );
+      })}
+    </div>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="monster-stat">
+      <span className="monster-stat-label">{label}</span>
+      <span>{value}</span>
     </div>
   );
 }
@@ -45,30 +63,47 @@ export function MonsterCard({
   lang: Lang;
 }) {
   const copy = t(lang);
-  const hp = monsterHP(monster, level, multiplier);
+  const hp = monsterHPBreakdown(monster, level, multiplier);
+  const icon = monsterIconId(monster);
   return (
-    <div className="monster">
-      <div className="monster-top">
-        <strong>{monster.name}</strong>
-        <span className="meta">
-          {monster.count}
-          {hp != null ? ` · ${copy.abyssHP} ${formatHP(hp)}` : ""}
-        </span>
+    <div className="monster-card">
+      <Portrait kind="monsters" id={icon} alt={monster.name} large />
+      <div className="monster-body">
+        <div className="monster-top">
+          <strong>{monster.name}</strong>
+          <span className="meta">{monster.elements.map((element) => (
+            <ElementBadge key={element} element={element} />
+          ))}</span>
+        </div>
+        <div className="monster-stats">
+          <Stat label={copy.abyssCount} value={monster.count} />
+          {monster.spawns != null && <Stat label={copy.abyssSpawns} value={String(monster.spawns)} />}
+          {monster.size && <Stat label={copy.abyssSize} value={monster.size} />}
+          <Stat label={copy.abyssLevel} value={String(level)} />
+          {hp && <Stat label={copy.abyssHPEach} value={formatHP(hp.perSpawn)} />}
+          {hp && <Stat label={copy.abyssHPTotal} value={formatHP(hp.total)} />}
+          {hp && (
+            <Stat
+              label={copy.abyssHPRatio}
+              value={`${hp.ratio} × type ${hp.type} ×${multiplier}`}
+            />
+          )}
+          {monster.hp?.variant && <Stat label={copy.abyssVariant} value={monster.hp.variant} />}
+          {monster.weakpoint != null && (
+            <Stat label={copy.abyssWeakpoint} value={monster.weakpoint ? (lang === "vi" ? "Có" : "Yes") : (lang === "vi" ? "Không" : "No")} />
+          )}
+        </div>
+        <ResistanceTable monster={monster} />
+        {monster.mechanics && monster.mechanics !== "chưa xác nhận" && (
+          <p className="meta" style={{ margin: "6px 0 0" }}>
+            {copy.abyssMechanics}: {monster.mechanics}
+          </p>
+        )}
+        {monster.resistanceNotes && <p className="meta">{monster.resistanceNotes}</p>}
+        {monster.hpRatio && monster.hpRatio !== "chưa xác nhận" && (
+          <p className="meta">{monster.hpRatio}</p>
+        )}
       </div>
-      <div className="meta">
-        {monster.elements.map((element) => (
-          <ElementBadge key={element} element={element} />
-        ))}
-        {monster.size ? ` · ${monster.size}` : ""}
-        {monster.weakpoint ? " · weak point" : ""}
-      </div>
-      <ResistancePips monster={monster} />
-      {monster.mechanics && monster.mechanics !== "chưa xác nhận" && (
-        <p className="meta" style={{ margin: "6px 0 0" }}>
-          {copy.abyssMechanics}: {monster.mechanics}
-        </p>
-      )}
-      {monster.resistanceNotes && <p className="meta">{monster.resistanceNotes}</p>}
     </div>
   );
 }
@@ -171,12 +206,15 @@ export function UniqueMonsterStrip({ floor, lang }: { floor: CycleFloor; lang: L
     <div className="monster-strip">
       {unique.map((monster) => (
         <div key={monster.name} className="monster-chip">
-          <strong>{monster.name}</strong>
-          <span className="meta">
-            {monster.elements.map((element) => (
-              <ElementBadge key={element} element={element} />
-            ))}
-          </span>
+          <Portrait kind="monsters" id={monsterIconId(monster)} alt="" />
+          <div>
+            <strong>{monster.name}</strong>
+            <span className="meta">
+              {monster.elements.map((element) => (
+                <ElementBadge key={element} element={element} />
+              ))}
+            </span>
+          </div>
         </div>
       ))}
       {unique.length === 0 && <span className="meta">{t(lang).abyssEmpty}</span>}
