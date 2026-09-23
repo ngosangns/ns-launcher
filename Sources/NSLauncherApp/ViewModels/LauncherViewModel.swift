@@ -508,6 +508,12 @@ final class LauncherViewModel: ObservableObject {
                 self.appendUpdateLogLine(self.logText(en: "Latest version: \(plan.latestVersion)", vi: "Phiên bản mới nhất: \(plan.latestVersion)"))
                 self.appendUpdateLogLine(self.logText(en: "Items to update: \(plan.changedItemCount)", vi: "Mục cần cập nhật: \(plan.changedItemCount)"))
                 self.appendUpdateLogLine(self.logText(en: "Items already valid: \(plan.skippedItemCount)", vi: "Mục đã hợp lệ: \(plan.skippedItemCount)"))
+                if plan.sophonGenderFilteredAssets > 0 {
+                    self.appendUpdateLogLine(self.logText(
+                        en: "Cutscenes skipped for non-selected gender: \(plan.sophonGenderFilteredAssets)",
+                        vi: "Cutscene bỏ qua do khác giới tính đã chọn: \(plan.sophonGenderFilteredAssets)"
+                    ))
+                }
                 self.appendUpdateLogLine(self.logText(en: "Bytes to download: \(downloadText)", vi: "Dung lượng cần tải: \(downloadText)"))
                 if plan.sourceKind == .sophon {
                     self.appendUpdateLogLine(self.logText(

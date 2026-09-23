@@ -49,10 +49,11 @@ enum AppLanguage: String, Codable, CaseIterable, Identifiable {
     }
 }
 
-/// Player-selected Traveler gender. Informational only: NS Launcher has no reliable way to map
-/// cutscene files to a gender variant (see `CutsceneFile`), so this is not used to filter or
-/// auto-select anything — it's shown alongside the manual cutscene browser for the player's own
-/// reference.
+/// Player-selected Traveler gender. Shown alongside the manual cutscene browser (see
+/// `CutsceneFile`) and, during a Sophon update, used to skip downloading a *missing*
+/// cutscene for the gender the player didn't pick (see
+/// `GenshinSophonInstaller.isOppositeGenderCutscene`) — cutscenes already on disk are
+/// never touched by this filter.
 enum TravelerGender: String, Codable, CaseIterable, Identifiable {
     case aether
     case lumine
@@ -351,6 +352,9 @@ struct GameUpdatePlan: Hashable {
     var sophonTargetAssets: [SophonAsset] = []
     var sophonAssetsToWrite: [SophonAsset] = []
     var sophonSkippedAssets: Int = 0
+    /// Missing cutscene assets left off the download because they're the Traveler gender the
+    /// player didn't select (see `GenshinSophonInstaller.isOppositeGenderCutscene`).
+    var sophonGenderFilteredAssets: Int = 0
     var bytesToDownload: Int64
     var decompressedBytesToWrite: Int64 = 0
     var peakTemporaryBytes: Int64

@@ -92,6 +92,7 @@ struct LauncherCoordinator: Sendable {
             for: game,
             build: build,
             installedMetadata: installedMetadata(for: game),
+            travelerGender: settings.travelerGender,
             onEvent: onEvent
         )
     }
@@ -138,8 +139,10 @@ struct LauncherCoordinator: Sendable {
     /// Lists every cutscene video file under `StreamingAssets/VideoAssets` for manual review.
     ///
     /// This is a plain on-disk listing, not a classification: NS Launcher has no reliable way to
-    /// tell which quest or Traveler-gender variant a file belongs to (see `QuestAssetAnalysis`),
-    /// so nothing here is pre-selected or auto-removed — the player opens and deletes individually.
+    /// tell which quest a file belongs to (see `QuestAssetAnalysis`), so nothing here is
+    /// pre-selected or auto-removed by quest — the player opens and deletes individually. Gender
+    /// variants ARE reliably classified, via `travelerGenderToken`; that's used by the Cutscenes
+    /// settings tab's Boy/Girl filter and by the Sophon downloader's gender skip.
     func listCutsceneFiles(for game: GameDefinition) -> [CutsceneFile] {
         Self.listCutsceneFiles(for: game)
     }

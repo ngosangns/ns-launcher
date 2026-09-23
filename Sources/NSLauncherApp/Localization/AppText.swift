@@ -158,15 +158,15 @@ struct AppText {
     var cutscenesTitle: String { localized(en: "Cutscenes", vi: "Cutscene") }
     var cutscenesSubtitle: String {
         localized(
-            en: "Every cutscene video installed under StreamingAssets, for you to review yourself. NS Launcher cannot tell which quest or Traveler-gender variant a file belongs to, so nothing here is selected automatically — open a file to check it, then delete only what you're sure you don't need.",
-            vi: "Toàn bộ video cutscene đã cài trong StreamingAssets, để bạn tự xem lại. NS Launcher không thể biết một file thuộc nhiệm vụ nào hay biến thể giới tính Traveler nào, nên không có gì được chọn sẵn — hãy mở file để kiểm tra rồi chỉ xóa những gì bạn chắc chắn không cần."
+            en: "Every cutscene video installed under StreamingAssets, for you to review yourself. NS Launcher cannot tell which quest a file belongs to, so nothing here is selected automatically by quest — open a file to check it, then delete only what you're sure you don't need. Gender is filtered by the tab below and by the Traveler gender setting.",
+            vi: "Toàn bộ video cutscene đã cài trong StreamingAssets, để bạn tự xem lại. NS Launcher không thể biết một file thuộc nhiệm vụ nào, nên không có gì được chọn sẵn theo nhiệm vụ — hãy mở file để kiểm tra rồi chỉ xóa những gì bạn chắc chắn không cần. Giới tính được lọc theo tab bên dưới và theo setting giới tính Traveler."
         )
     }
     var travelerGenderLabel: String { localized(en: "Traveler gender", vi: "Giới tính Traveler") }
     var travelerGenderHint: String {
         localized(
-            en: "For your own reference while reviewing the list below — it does not filter or select anything.",
-            vi: "Chỉ để bạn tham khảo khi xem danh sách bên dưới — không dùng để lọc hay chọn file nào cả."
+            en: "Used to filter the list below, and to skip downloading a missing cutscene for the other gender during updates. Cutscenes you already have installed are never deleted by this.",
+            vi: "Dùng để lọc danh sách bên dưới, và bỏ qua tải cutscene còn thiếu của giới tính còn lại khi cập nhật. Cutscene đã cài sẵn sẽ không bị xóa vì setting này."
         )
     }
     func travelerGenderName(_ gender: TravelerGender) -> String {

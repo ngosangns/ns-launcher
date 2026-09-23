@@ -11,8 +11,11 @@
 //      pruning step below removes any pack a previous launcher version left behind.
 //   4. Download zstd-compressed protobuf manifests; verify compressed size,
 //      decompressed size, and manifest MD5.
-//   5. Decode assets/chunks; plan changed assets by local size + asset MD5.
-//   6. Prune files outside the target set (via InstallTargetPruner).
+//   5. Decode assets/chunks; plan changed assets by local size + asset MD5, skipping a
+//      missing cutscene for the non-selected Traveler gender (Settings > Cutscenes).
+//   6. Prune files outside the target set (via InstallTargetPruner) — the target set still
+//      includes both genders' cutscenes, so an already-downloaded opposite-gender file is
+//      never pruned by step 5's skip.
 //   7. Download missing chunks with bounded concurrency; decompress with in-process
 //      libzstd when available (CLI fallback); verify each decompressed chunk MD5;
 //      write by offset into `.nslauncher-sophon-staging`.
@@ -99,6 +102,7 @@ protocol SophonInstalling: Sendable {
         for game: GameDefinition,
         build: SophonBuild,
         installedMetadata: InstalledGameMetadata?,
+        travelerGender: TravelerGender,
         onEvent: (@Sendable (InstallProgressEvent) async -> Void)?
     ) async throws -> GameUpdatePlan
     func update(
@@ -331,31 +335,51 @@ actor GenshinSophonInstaller: SophonInstalling {
         return protectedPrefixes.contains(where: { normalized == $0 || normalized.hasPrefix($0 + "/") })
     }
 
+    /// True when `path` is a `StreamingAssets/VideoAssets` cutscene for the Traveler gender the
+    /// player did NOT select in Settings (suffix convention shared with
+    /// `LauncherCoordinator.travelerGenderToken`). Only defers a *missing* file's download —
+    /// callers never apply this to files that already exist locally.
+    static func isOppositeGenderCutscene(_ path: String, selected: TravelerGender) -> Bool {
+        let normalized = path.replacingOccurrences(of: "\\", with: "/")
+        guard normalized.contains("/StreamingAssets/VideoAssets/"),
+              let fileGender = LauncherCoordinator.travelerGenderToken(inRelativePath: normalized) else {
+            return false
+        }
+        return fileGender != selected
+    }
+
     /// Computes a full-build Sophon delta by checking existing files by size and MD5.
     ///
-    /// The target set is the full manifest: any file the launcher withholds is one the
-    /// game re-downloads for itself into `GenshinImpact_Data/Persistent`, so filtering
-    /// here saves nothing and only moves the bytes onto a slower, unobserved path.
+    /// The target set (`sophonTargetAssets`) stays the full manifest, so `InstallTargetPruner`
+    /// never deletes an opposite-gender cutscene the player already has on disk. Only the
+    /// download list (`sophonAssetsToWrite`) is narrowed: a missing cutscene for the
+    /// non-selected Traveler gender (see `isOppositeGenderCutscene`) is left off, deferring
+    /// that download to the game's own on-demand fetch into `GenshinImpact_Data/Persistent`
+    /// if a story scene ever actually needs it.
     func planUpdate(
         for game: GameDefinition,
         build: SophonBuild,
         installedMetadata: InstalledGameMetadata?,
+        travelerGender: TravelerGender,
         onEvent: (@Sendable (InstallProgressEvent) async -> Void)? = nil
     ) async throws -> GameUpdatePlan {
         let assets = build.manifests.flatMap(\.assets).filter { !$0.isDirectory }
         await onEvent?(.diagnostic("scan local install root=\(game.installDirectory.path) targetAssets=\(assets.count) installedVersion=\(installedMetadata?.version ?? "missing") latestVersion=\(build.version)"))
         var assetsToWrite: [SophonAsset] = []
         var skippedAssets = 0
+        var skippedGenderFilteredAssets = 0
 
         for (index, asset) in assets.enumerated() {
             let destination = game.installDirectory.appendingPathComponent(asset.path)
             if try existingAssetMatches(asset, at: destination) {
                 skippedAssets += 1
+            } else if Self.isOppositeGenderCutscene(asset.path, selected: travelerGender) {
+                skippedGenderFilteredAssets += 1
             } else {
                 assetsToWrite.append(asset)
             }
             if (index + 1).isMultiple(of: 250) || index + 1 == assets.count {
-                await onEvent?(.diagnostic("scan progress \(index + 1)/\(assets.count) valid=\(skippedAssets) changed=\(assetsToWrite.count) current=\(asset.path)"))
+                await onEvent?(.diagnostic("scan progress \(index + 1)/\(assets.count) valid=\(skippedAssets) genderFiltered=\(skippedGenderFilteredAssets) changed=\(assetsToWrite.count) current=\(asset.path)"))
             }
         }
 
@@ -374,6 +398,7 @@ actor GenshinSophonInstaller: SophonInstalling {
             sophonTargetAssets: assets,
             sophonAssetsToWrite: assetsToWrite,
             sophonSkippedAssets: skippedAssets,
+            sophonGenderFilteredAssets: skippedGenderFilteredAssets,
             bytesToDownload: compressedBytes,
             decompressedBytesToWrite: decompressedBytes,
             peakTemporaryBytes: min(

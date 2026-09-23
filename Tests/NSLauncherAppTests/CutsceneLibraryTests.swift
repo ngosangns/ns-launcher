@@ -109,4 +109,19 @@ final class CutsceneLibraryTests: XCTestCase {
         // Case must match exactly — no accidental substring match on an unrelated lowercase word.
         XCTAssertNil(LauncherCoordinator.travelerGenderToken(inRelativePath: "StandaloneWindows64/Cs_Cowboy.usm"))
     }
+
+    func testIsOppositeGenderCutsceneSkipsOnlyTheNonSelectedGenderUnderVideoAssets() {
+        let boyPath = "GenshinImpact_Data\\StreamingAssets\\VideoAssets\\StandaloneWindows64\\Cs_Sumeru_AQ_30280701_MS_Boy.usm"
+        let girlPath = "GenshinImpact_Data\\StreamingAssets\\VideoAssets\\StandaloneWindows64\\Cs_Fontaine_LQ140061601_SUDO_Girl.usm"
+        let ungenderedPath = "GenshinImpact_Data\\StreamingAssets\\VideoAssets\\StandaloneWindows64\\Cs_LQ1101505_YunjinOpera.usm"
+        let nonCutscenePath = "GenshinImpact_Data\\Persistent\\SomeAsset_Boy.usm"
+
+        XCTAssertFalse(GenshinSophonInstaller.isOppositeGenderCutscene(boyPath, selected: .aether))
+        XCTAssertTrue(GenshinSophonInstaller.isOppositeGenderCutscene(boyPath, selected: .lumine))
+        XCTAssertFalse(GenshinSophonInstaller.isOppositeGenderCutscene(girlPath, selected: .lumine))
+        XCTAssertTrue(GenshinSophonInstaller.isOppositeGenderCutscene(girlPath, selected: .aether))
+        // No detected gender token, or outside StreamingAssets/VideoAssets: never filtered.
+        XCTAssertFalse(GenshinSophonInstaller.isOppositeGenderCutscene(ungenderedPath, selected: .aether))
+        XCTAssertFalse(GenshinSophonInstaller.isOppositeGenderCutscene(nonCutscenePath, selected: .lumine))
+    }
 }
