@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, macmini]
     steps:
       - uses: actions/checkout@v4
 

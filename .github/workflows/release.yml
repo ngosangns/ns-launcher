@@ -14,7 +14,7 @@ env:
 
 jobs:
   release:
-    runs-on: macos-15
+    runs-on: [self-hosted, macmini]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -29,7 +29,7 @@ jobs:
       - name: Show Swift/Xcode version
         run: |
           swift --version
-          xcodebuild -version
+          xcodebuild -version 2>/dev/null || echo "xcodebuild unavailable (CLT-only runner)"
 
       - name: Build release binary
         run: swift build -c release
